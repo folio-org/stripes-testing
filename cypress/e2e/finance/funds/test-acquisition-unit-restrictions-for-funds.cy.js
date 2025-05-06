@@ -26,29 +26,7 @@ describe('ui-finance: Funds', () => {
       });
     });
     cy.createTempUser([
-      permissions.uiFinanceFinanceViewGroup.gui,
-      permissions.uiFinanceCreateAllocations.gui,
-      permissions.uiFinanceCreateTransfers.gui,
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceExportFinanceRecords.gui,
-      permissions.uiFinanceManageAcquisitionUnits.gui,
-      permissions.uiFinanceManuallyReleaseEncumbrance.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewGroups.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewEditFiscalYear.gui,
-      permissions.uiFinanceViewEditFundAndBudget.gui,
-      permissions.uiFinanceViewEditGroup.gui,
-      permissions.uiFinanceViewEditLedger.gui,
-      permissions.uiFinanceViewEditCreateFiscalYear.gui,
       permissions.uiFinanceViewEditCreateFundAndBudget.gui,
-      permissions.uiFinanceCreateViewEditGroups.gui,
-      permissions.uiFinanceViewEditCreateLedger.gui,
-      permissions.uiFinanceViewEditDeleteFiscalYear.gui,
-      permissions.uiFinanceViewEditDeletFundBudget.gui,
-      permissions.uiFinanceViewEditDeletGroups.gui,
-      permissions.uiFinanceViewEditDeleteLedger.gui,
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
     ]).then((userProperties) => {
       user = userProperties;

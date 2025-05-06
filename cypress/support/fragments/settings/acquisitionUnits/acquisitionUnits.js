@@ -77,6 +77,7 @@ export default {
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
+    cy.wait(3000);
   },
 
   assignAdmin: () => {

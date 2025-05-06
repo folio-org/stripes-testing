@@ -381,11 +381,11 @@ export default {
   checkTransactionList: (fundCode) => {
     cy.expect([
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '$50.00' }),
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .has({ content: `${fundCode}` }),
     ]);
@@ -398,14 +398,14 @@ export default {
         .find(Link())
         .click(),
     );
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
       transactionDetailSection.find(KeyValue('Status')).has({ value: status }),
-    );
+    ]);
   },
 
   checkPaymentInTransactionDetails: (indexNumber, fiscalYear, source, fund, amount) => {
@@ -415,13 +415,13 @@ export default {
         .find(Link())
         .click(),
     );
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
       transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
-    );
+    ]);
   },
 
   checkStatusInTransactionDetails: (status) => {
@@ -449,19 +449,19 @@ export default {
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: 'Encumbrance' }),
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: `${amount}` }),
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .has({ content: `${fundCode}` }),
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 5 }))
         .has({ content: 'PO line' }),
     ]);
@@ -1052,9 +1052,11 @@ export default {
       MultiSelect({ id: 'fund-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))
         .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(3000);
+    cy.do(MultiSelectOption(AUName).click());
+    cy.wait(3000);
+    cy.do(saveAndCloseButton.click());
     this.waitForFundDetailsLoading();
   },
 
@@ -1142,23 +1144,23 @@ export default {
 
   varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
     cy.wait(4000);
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
-    );
+    ]);
   },
 
   varifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('To')).has({ value: fund }),
-    );
+    ]);
   },
 
   cancelUnreleaseEncumbrance: () => {
