@@ -63,16 +63,7 @@ describe('MARC', () => {
         before('Creating user and records', () => {
           // make sure there are no duplicate authority records in the system
           cy.getAdminToken().then(() => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C366578"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366578');
           });
           cy.loginAsAdmin();
           marcFiles.forEach((marcFile) => {
@@ -111,7 +102,7 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });

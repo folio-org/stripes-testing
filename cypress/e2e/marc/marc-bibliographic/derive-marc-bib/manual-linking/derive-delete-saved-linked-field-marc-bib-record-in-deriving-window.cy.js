@@ -83,16 +83,7 @@ describe('MARC', () => {
           cy.loginAsAdmin();
           // make sure there are no duplicate authority records in the system
           cy.getAdminToken().then(() => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C366574"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366574');
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -128,7 +119,7 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -136,6 +127,11 @@ describe('MARC', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
             });
           });
         });
@@ -160,7 +156,7 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(75);
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
