@@ -121,6 +121,11 @@ describe('MARC', () => {
               cy.login(userData.username, userData.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+              }).then(() => {
+                cy.waitForAuthRefresh(() => {
+                  cy.reload();
+                  InventoryInstances.waitContentLoading();
+                }, 20_000);
               });
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
