@@ -40,3 +40,4 @@ import './usage-reports';
 import './reading-room-access';
 import './bulk-edit';
 import './locate';
+import './sso';

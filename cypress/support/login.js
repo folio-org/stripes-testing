@@ -132,6 +132,9 @@ Cypress.Commands.add(
 
     // Verify that SSO button displayed
     cy.expect([Button('Log in via SSO').exists()]);
+    // refresh page and check SSO again
+    cy.reload(true);
+    cy.expect([Button('Log in via SSO').exists()]);
   },
 );
 
