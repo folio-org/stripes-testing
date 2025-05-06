@@ -75,7 +75,7 @@ const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 
 export default {
   defaultUiFund: {
-    name: `a_autotest_fund_${getRandomPostfix()}`,
+    name: `1_autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -270,6 +270,15 @@ export default {
         .find(KeyValue({ value: group }))
         .exists(),
     );
+  },
+
+  addTransferFrom: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      MultiSelect({ label: 'Transfer from' }).select([fund]),
+      saveAndCloseButton.click(),
+    ]);
   },
 
   checkWarningMessageFundCodeUsed: () => {
@@ -539,6 +548,9 @@ export default {
   closeTransferModal() {
     cy.do(addTransferModal.find(cancelButton).click());
   },
+  openMoveAllocationModal() {
+    cy.do([actionsButton.click(), moveAllocationButton.click()]);
+  },
   fillAllocationFields({ toFund, fromFund, amount }) {
     if (toFund) {
       cy.do([
@@ -564,6 +576,23 @@ export default {
     cy.xpath(budgetTitleXpath)
       .should('be.visible')
       .and('have.text', fundCode.concat('-', fiscalYear));
+  },
+  fillInAllAllocationFields(toFund, fromFund, amount) {
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
   },
 
   checkFundingInformation: (
@@ -1196,5 +1225,9 @@ export default {
 
   openSource: (linkName) => {
     cy.do(transactionDetailSection.find(Link(linkName)).click());
+  },
+
+  clickOnGroupTab: () => {
+    cy.get('button[data-test-finance-navigation-group="true"]').click();
   },
 };
