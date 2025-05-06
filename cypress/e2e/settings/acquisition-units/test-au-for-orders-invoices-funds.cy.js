@@ -9,9 +9,10 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Acquisition Units', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -48,9 +49,13 @@ describe('Acquisition Units', () => {
   let user;
   let orderNumber;
   let location;
+  let adminName;
 
   before(() => {
     cy.getAdminToken();
+    cy.getAdminSourceRecord().then((adminSourceRecord) => {
+      adminName = adminSourceRecord;
+    });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
@@ -135,14 +140,16 @@ describe('Acquisition Units', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.deleteInvoiceViaActions();
-    Invoices.confirmInvoiceDeletion();
+    cy.getAdminToken();
+    Invoices.getInvoiceViaApi({
+      query: `vendorInvoiceNo="${invoice.invoiceNumber}"`,
+    }).then(({ invoices }) => {
+      invoices.forEach(({ id }) => Invoices.deleteInvoiceViaApi(id));
+    });
     Orders.deleteOrderViaApi(defaultOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-
+    Users.deleteViaApi(user.userId);
+    cy.loginAsAdmin();
     TopMenuNavigation.openAppFromDropdown('Finance');
     FinanceHelp.selectFundsNavigation();
     FinanceHelp.searchByName(defaultFund.name);
@@ -152,12 +159,11 @@ describe('Acquisition Units', () => {
     Funds.deleteFundViaActions();
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-
-    cy.visit(SettingsMenu.acquisitionUnitsPath);
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
-    Users.deleteViaApi(user.userId);
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+    });
   });
 
   it(
@@ -169,9 +175,10 @@ describe('Acquisition Units', () => {
         waiter: AcquisitionUnits.waitLoading,
       });
       AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name, adminName);
       AcquisitionUnits.assignUser(user.username);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
+      FinanceHelp.selectFundsNavigation();
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.addAUToFund(defaultAcquisitionUnit.name);
@@ -189,7 +196,8 @@ describe('Acquisition Units', () => {
       OrderLines.deleteFundInPOL();
       OrderLines.backToEditingOrder();
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.selectInvoiceLine();
