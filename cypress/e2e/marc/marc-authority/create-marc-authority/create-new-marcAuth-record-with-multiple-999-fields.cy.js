@@ -19,7 +19,7 @@ describe('MARC', () => {
         startWithNumber: '1',
         isActive: true,
       };
-      const headerText = 'Create a new MARC authority record';
+      const headerText = /New .*MARC authority record/;
       const newField010 = {
         rowIndex: 3,
         tag: '010',
