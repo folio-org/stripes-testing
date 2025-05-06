@@ -40,7 +40,7 @@ describe('Citation: MARC Authority integration', () => {
     tag100: '100',
     tag010Value: 'n00776432',
     tag001Value: 'n4332123',
-    headerText: 'Create a new MARC authority record',
+    headerText: /New .*MARC authority record/,
     AUTHORIZED: 'Authorized',
   };
 

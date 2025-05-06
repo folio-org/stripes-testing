@@ -189,8 +189,7 @@ describe('MARC', () => {
             testData.searchOptions.uniformTitle,
             testData.booleanOptions.or,
           );
-          MarcAuthorities.clickCancelButton();
-          MarcAuthorities.checkAdvancedSearchModalAbsence();
+          MarcAuthorities.closeAdvSearchModal();
           MarcAuthorities.checkResultList([
             testData.titles.titleCorporateName,
             testData.titles.titlePersonalName,

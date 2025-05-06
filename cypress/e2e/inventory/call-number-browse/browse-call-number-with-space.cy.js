@@ -24,6 +24,7 @@ describe('Inventory', () => {
       chronology: 'ch.3',
       effectiveItemCallNumberWithSuffix: 'itemFullCallNumbers="PRT 718 suf"',
       effectiveItemCallNumber: 'itemFullCallNumbers="RR 718"',
+      querySearchOption: 'Query search',
     };
 
     const itemA1 = {
@@ -222,7 +223,8 @@ describe('Inventory', () => {
         BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
-        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumber);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(item.querySearchOption);
+        InventorySearchAndFilter.checkSearchQueryText(item.effectiveItemCallNumber);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
 
         InventorySearchAndFilter.switchToBrowseTab();
