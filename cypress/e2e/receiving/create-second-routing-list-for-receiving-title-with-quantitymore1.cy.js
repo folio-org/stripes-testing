@@ -1,22 +1,22 @@
-import permissions from '../../support/dictionary/permissions';
-import getRandomPostfix from '../../support/utils/stringTools';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Receiving', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -154,7 +154,7 @@ describe('Receiving', () => {
   });
 
   it(
-    'C468148 Create second routing list for a PO line with quantity > 1 (thunderjet)',
+    'C468206 Create second routing list for a Receiving title with quantity > 1 (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
