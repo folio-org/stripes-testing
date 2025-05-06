@@ -50,21 +50,23 @@ describe('Eureka', () => {
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create role, user', () => {
-        cy.createTempUser([]).then((createdUserProperties) => {
-          testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
-          if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.createAuthorizationRoleApi().then((role) => {
-            testData.roleName = role.name;
-            testData.roleId = role.id;
-            testData.originalCapabilities.forEach((capability) => {
-              capability.type = capability.table;
-              cy.getCapabilityIdViaApi(capability).then((capabId) => {
-                testData.capabIds.push(capabId);
+        cy.getAdminToken().then(() => {
+          cy.createTempUser([]).then((createdUserProperties) => {
+            testData.user = createdUserProperties;
+            cy.assignCapabilitiesToExistingUser(
+              testData.user.userId,
+              capabsToAssign,
+              capabSetsToAssign,
+            );
+            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
+            cy.createAuthorizationRoleApi().then((role) => {
+              testData.roleName = role.name;
+              testData.roleId = role.id;
+              testData.originalCapabilities.forEach((capability) => {
+                capability.type = capability.table;
+                cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                  testData.capabIds.push(capabId);
+                });
               });
             });
           });
