@@ -2,11 +2,11 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import Funds from '../../../support/fragments/finance/funds/funds';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   let aUnit;
   let tag;
   let ledger;

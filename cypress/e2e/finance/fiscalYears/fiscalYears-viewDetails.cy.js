@@ -3,7 +3,7 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('ui-finance: Fiscal Year', () => {
+describe('Fiscal Year', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
   before(() => {
     cy.loginAsAdmin();

@@ -1,12 +1,12 @@
+import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const currentBudgetSectionId = 'currentBudget';
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
 
