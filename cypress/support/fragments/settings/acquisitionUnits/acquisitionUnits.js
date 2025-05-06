@@ -54,9 +54,9 @@ export default {
     cy.do(Button('New').click());
   },
 
-  fillInInfo(name) {
-    cy.do([nameTextField.fillIn(name), viewCheckbox.click(), saveAUButton.click()]);
-    this.assignAdmin();
+  fillInInfo(AUName, adminName) {
+    cy.do([nameTextField.fillIn(AUName), viewCheckbox.click(), saveAUButton.click()]);
+    this.assignAdmin(adminName);
     cy.wait(4000);
   },
 
@@ -80,10 +80,10 @@ export default {
     cy.wait(4000);
   },
 
-  assignAdmin: () => {
+  assignAdmin: (adminName) => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('folio-aqa'),
+      userSearchModal.find(searchTextField).fillIn(adminName),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
@@ -97,6 +97,7 @@ export default {
       .parent('div[class*="mclRow-"]')
       .find('button[icon="trash"]')
       .click();
+    cy.wait(2000);
   },
 
   unAssignAdmin: (AUName) => {

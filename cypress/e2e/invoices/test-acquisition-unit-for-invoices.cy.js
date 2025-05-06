@@ -12,6 +12,7 @@ describe('Invoices', () => {
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
   let user;
+  let adminName;
 
   before(() => {
     cy.createTempUser([
@@ -43,17 +44,18 @@ describe('Invoices', () => {
     cy.getBatchGroups().then((batchGroup) => {
       invoice.batchGroup = batchGroup.name;
     });
+    cy.getAdminSourceRecord().then((adminSourceRecord) => {
+      adminName = adminSourceRecord;
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
+    cy.getAdminToken();
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
     });
-
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
     Users.deleteViaApi(user.userId);
   });
 
@@ -66,7 +68,7 @@ describe('Invoices', () => {
         waiter: AcquisitionUnits.waitLoading,
       });
       AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name, adminName);
       // Need to wait,while data is load
       cy.wait(2000);
       AcquisitionUnits.assignUser(user.username);
