@@ -153,17 +153,18 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);
               InventoryInstance.verifySelectMarcAuthorityModal();
+              MarcAuthorities.clickResetAndCheckBrowse();
             });
 
             linkValuesWithAuthoritySource.forEach((linkValue) => {
               MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
               MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
               MarcAuthorities.selectTitle(linkValue.value);
-              MarcAuthorities.selectTitle(linkValue.value);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);
               InventoryInstance.verifySelectMarcAuthorityModal();
               MarcAuthorities.closeAuthoritySourceOption();
+              MarcAuthorities.clickResetAndCheckBrowse();
             });
           },
         );

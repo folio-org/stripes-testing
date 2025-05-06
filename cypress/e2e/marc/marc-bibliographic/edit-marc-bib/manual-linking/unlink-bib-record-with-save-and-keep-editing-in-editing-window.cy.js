@@ -114,7 +114,7 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
               QuickMarcEditor.closeCallout();
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -159,7 +159,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkLinkButtonExist(testData.tag100);
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
