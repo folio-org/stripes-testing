@@ -60,16 +60,7 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="374146" and (authRefType==("Authorized" or "Auth/Ref"))',
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374146');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -106,8 +97,9 @@ describe('MARC', () => {
             testData.tag655,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
