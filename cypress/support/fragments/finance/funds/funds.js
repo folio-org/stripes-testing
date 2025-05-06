@@ -77,7 +77,7 @@ const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 
 export default {
   defaultUiFund: {
-    name: `a_autotest_fund_${getRandomPostfix()}`,
+    name: `1_autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -272,6 +272,15 @@ export default {
         .find(KeyValue({ value: group }))
         .exists(),
     );
+  },
+
+  addTransferFrom: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      MultiSelect({ label: 'Transfer from' }).select([fund]),
+      saveAndCloseButton.click(),
+    ]);
   },
 
   checkWarningMessageFundCodeUsed: () => {
