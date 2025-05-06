@@ -1,35 +1,35 @@
 import uuid from 'uuid';
 import {
-  Button,
-  TextField,
-  Selection,
-  SelectionList,
   Accordion,
-  Modal,
+  Button,
   Checkbox,
-  MultiSelect,
-  SearchField,
-  Section,
   HTML,
   including,
   KeyValue,
-  Pane,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  SelectionOption,
   Link,
+  Modal,
   MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  MultiSelect,
   MultiSelectOption,
+  Pane,
   PaneHeader,
+  SearchField,
+  Section,
   Select,
+  Selection,
+  SelectionList,
+  SelectionOption,
+  TextField,
 } from '../../../../../interactors';
-import FundDetails from './fundDetails';
-import FundEditForm from './fundEditForm';
-import FinanceHelp from '../financeHelper';
-import TopMenu from '../../topMenu';
-import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
+import getRandomPostfix from '../../../utils/stringTools';
+import TopMenu from '../../topMenu';
+import FinanceHelp from '../financeHelper';
+import FundDetails from './fundDetails';
+import FundEditForm from './fundEditForm';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -72,6 +72,7 @@ const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
+const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 
 export default {
   defaultUiFund: {
@@ -536,6 +537,9 @@ export default {
     cy.do([actionsButton.click(), moveAllocationButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount });
   },
+  openMoveAllocationModal() {
+    cy.do([actionsButton.click(), moveAllocationButton.click()]);
+  },
   closeTransferModal() {
     cy.do(addTransferModal.find(cancelButton).click());
   },
@@ -564,6 +568,25 @@ export default {
     cy.xpath(budgetTitleXpath)
       .should('be.visible')
       .and('have.text', fundCode.concat('-', fiscalYear));
+  },
+  fillInAllAllocationFields(toFund, fromFund, amount) {
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+    ]);
+
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+
+    cy.do([
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
   },
 
   checkFundingInformation: (
@@ -1196,5 +1219,17 @@ export default {
 
   openSource: (linkName) => {
     cy.do(transactionDetailSection.find(Link(linkName)).click());
+  },
+
+  clickOnFiscalYearTab: () => {
+    cy.do(fundsFiltersSection.find(Button('Fiscal year')).click());
+  },
+
+  clickOnGroupTab: () => {
+    cy.get('button[data-test-finance-navigation-group="true"]').click();
+  },
+
+  clickOnLedgerTab: () => {
+    cy.do(fundsFiltersSection.find(Button('Ledger')).click());
   },
 };
