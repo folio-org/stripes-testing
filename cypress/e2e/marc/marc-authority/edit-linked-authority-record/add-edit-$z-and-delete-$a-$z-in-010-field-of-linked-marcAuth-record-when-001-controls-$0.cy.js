@@ -86,8 +86,13 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin();
+              cy.visit(TopMenu.inventoryPath);
+              InventoryInstances.waitContentLoading();
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -116,11 +121,14 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
-
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
       });
 

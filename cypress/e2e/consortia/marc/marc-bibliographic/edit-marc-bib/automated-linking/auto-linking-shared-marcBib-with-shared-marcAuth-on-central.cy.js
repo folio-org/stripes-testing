@@ -97,7 +97,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });
@@ -153,7 +153,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(users.userProperties.userId);
           createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
             else InventoryInstance.deleteInstanceViaApi(id);
           });
         });

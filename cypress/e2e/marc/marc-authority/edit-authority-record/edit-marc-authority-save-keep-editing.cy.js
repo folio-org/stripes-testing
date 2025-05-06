@@ -100,13 +100,13 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
           headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
           cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
             cy.reload();
+            MarcAuthorities.waitLoading();
           }, 30_000);
         });
       });
@@ -247,7 +247,7 @@ describe('MARC', () => {
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
           );
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
@@ -268,7 +268,7 @@ describe('MARC', () => {
             `${subfieldPrefix}${testData.editedFieldC360093.secondContent}`,
           );
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.secondContent}`,

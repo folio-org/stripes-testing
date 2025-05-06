@@ -81,7 +81,6 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
-              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405560');
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
