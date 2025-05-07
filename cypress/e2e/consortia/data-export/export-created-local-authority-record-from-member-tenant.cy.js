@@ -93,7 +93,7 @@ describe('Data Export', () => {
       { tags: ['criticalPathECS', 'spitfire', 'C436900'] },
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
-        QuickMarcEditor.checkPaneheaderContains('Create a new local MARC authority record');
+        QuickMarcEditor.checkPaneheaderContains('New local MARC authority record');
         MarcAuthority.checkSourceFileSelectShown();
         MarcAuthority.selectSourceFile(LC_NAME_AUTHORITY_FILE);
 

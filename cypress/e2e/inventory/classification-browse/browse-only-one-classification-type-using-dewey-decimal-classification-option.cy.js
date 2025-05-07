@@ -14,6 +14,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -130,11 +131,6 @@ describe('Inventory', () => {
         ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
           (response) => {
             classificationIdentifierTypeId = response.body.id;
-            ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-              testData.classificationBrowseId,
-            ).then((types) => {
-              testData.originalTypes = types;
-            });
             ClassificationBrowse.updateIdentifierTypesAPI(
               testData.classificationBrowseId,
               testData.classificationBrowseAlgorithm,
@@ -196,7 +192,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       createdRecordIDs.forEach((id) => {
@@ -212,6 +208,7 @@ describe('Inventory', () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });
+        BrowseClassifications.waitForClassificationNumberToAppear('598.0994');
         testData.marcRecordsTitlesAndClassifications.forEach((marcInstance) => {
           if (marcInstance.classificationValue === '598.0994') {
             search(marcInstance.classificationValue, false);
