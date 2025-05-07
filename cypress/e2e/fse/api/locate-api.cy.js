@@ -3,7 +3,7 @@ describe('fse-locate-integration - API', () => {
 
   it(
     `TC195871 - edge-rtac verification for ${Cypress.env('LOCATE_HOST')}`,
-    { tags: ['fse', 'api', 'locate'] },
+    { tags: ['fse', 'api', 'locate', 'locate-edge-rtac'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -19,7 +19,7 @@ describe('fse-locate-integration - API', () => {
 
   it(
     `TC195872 - edge-patron verification for ${Cypress.env('LOCATE_HOST')}`,
-    { tags: ['fse', 'api', 'locate'] },
+    { tags: ['fse', 'api', 'locate', 'locate-edge-patron'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
