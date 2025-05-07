@@ -17,7 +17,7 @@ describe('fse-sso - UI', () => {
           cy.checkSsoButton();
         } else {
           cy.log(
-            `SSO button is not supported on the current tenant ${Cypress.env('OKAPI_TENANT')} or saml/check returned error`,
+            `SSO is not supported on the current tenant ${Cypress.env('OKAPI_TENANT')} or saml/check returned error`,
           );
         }
       });

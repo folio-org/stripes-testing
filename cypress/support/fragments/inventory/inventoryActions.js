@@ -53,13 +53,18 @@ export default {
   import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     open();
     cy.do(importButtonInActions.click());
-    cy.expect(OCLWorldCatIdentifierTextField.exists());
-    this.fillImportFields(specialOCLCWorldCatidentifier);
+    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose('OCLC WorldCat'));
+      }
+      cy.expect(OCLWorldCatIdentifierTextField.exists());
+      this.fillImportFields(specialOCLCWorldCatidentifier);
 
-    this.pressImportInModal(specialOCLCWorldCatidentifier);
-    // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
-    // InteractorsTools.closeCalloutMessage();
-    InventoryInstance.checkExpectedMARCSource();
+      this.pressImportInModal(specialOCLCWorldCatidentifier);
+      // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
+      // InteractorsTools.closeCalloutMessage();
+      InventoryInstance.checkExpectedMARCSource();
+    });
   },
 
   openSingleReportImportModal: () => {
@@ -177,34 +182,41 @@ export default {
     cy.do(importButtonInActions.click());
     cy.expect([
       importModal.exists(),
-      importTypeSelect.exists(),
       importProfileSelect.exists(),
       importButtonInModal.is({ disabled: or(true, false) }),
       cancelImportButtonInModal.exists(),
     ]);
-    cy.do(importTypeSelect.choose('Library of Congress'));
-    cy.expect(locIdInputField.exists());
-    this.fillImportFields(specialLOCidentifier);
-    cy.wait(1000);
-    this.pressImportInModal(specialLOCidentifier);
-    InventoryInstance.checkExpectedMARCSource();
+    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose('Library of Congress'));
+      }
+
+      cy.expect(locIdInputField.exists());
+      this.fillImportFields(specialLOCidentifier);
+      cy.wait(1000);
+      this.pressImportInModal(specialLOCidentifier);
+      InventoryInstance.checkExpectedMARCSource();
+    });
   },
 
   overlayLoc(specialLOCidentifier = InventoryInstance.validLOC, expandIdentifiers = false) {
     cy.do([instanceActionsButton.click(), reImportButtonInActions.click()]);
     cy.expect([
       importModal.exists(),
-      importTypeSelect.exists(),
       importProfileSelect.exists(),
       importButtonInModal.is({ disabled: true }),
       cancelImportButtonInModal.exists(),
     ]);
-    cy.do(importTypeSelect.choose('Library of Congress'));
-    cy.expect(locIdInputField.exists());
-    this.fillImportFields(specialLOCidentifier);
-    cy.wait(1000);
-    this.pressImportInModal(specialLOCidentifier, true, expandIdentifiers);
-    cy.expect(importModal.absent());
-    InventoryInstance.checkExpectedMARCSource();
+    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose('Library of Congress'));
+      }
+      cy.expect(locIdInputField.exists());
+      this.fillImportFields(specialLOCidentifier);
+      cy.wait(1000);
+      this.pressImportInModal(specialLOCidentifier, true, expandIdentifiers);
+      cy.expect(importModal.absent());
+      InventoryInstance.checkExpectedMARCSource();
+    });
   },
 };

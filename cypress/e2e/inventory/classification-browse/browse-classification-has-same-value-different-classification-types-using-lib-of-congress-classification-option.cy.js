@@ -68,7 +68,7 @@ describe('Inventory', () => {
         },
       ],
       classificationOption: 'Library of Congress classification',
-      classificationValue: 'test004. HD',
+      classificationValue: `test004. HD ${getRandomPostfix()}`,
       querySearchOption: 'Query search',
       instanceTitleWithLocalClassification:
         'C468160 Browse by Class-on (different inst-s with same class-on value) Instance 11 - Local',
@@ -98,11 +98,6 @@ describe('Inventory', () => {
             },
           );
 
-          ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-            testData.classificationBrowseId,
-          ).then((types) => {
-            testData.originalTypes = types;
-          });
           ClassificationBrowse.updateIdentifierTypesAPI(
             testData.classificationBrowseId,
             testData.classificationBrowseAlgorithm,
@@ -163,7 +158,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       createdRecordIDs.forEach((id) => {

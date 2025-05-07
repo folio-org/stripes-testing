@@ -136,7 +136,7 @@ export default {
     });
   },
 
-  changeOclcWorldCatValueViaApi: (value) => {
+  changeOclcWorldCatValueViaApi: (value, locEnabled = true) => {
     cy.okapiRequest({
       method: 'PUT',
       path: `copycat/profiles/${defaultCopyCatProfileId}`,
@@ -171,7 +171,7 @@ export default {
         allowedUpdateJobProfileIds: [defaultUpdateInstanceJobProfileId],
         targetOptions: { preferredRecordSyntax: 'usmarc' },
         externalIdentifierType: 'c858e4f2-2b6b-4385-842b-60732ee14abb',
-        enabled: false,
+        enabled: locEnabled,
       },
       isDefaultSearchParamsRequired: false,
     });

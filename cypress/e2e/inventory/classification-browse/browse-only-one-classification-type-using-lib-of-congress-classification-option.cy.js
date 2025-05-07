@@ -132,11 +132,6 @@ describe('Inventory', () => {
         ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
           (response) => {
             classificationIdentifierTypeId = response.body.id;
-            ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-              testData.classificationBrowseId,
-            ).then((types) => {
-              testData.originalTypes = types;
-            });
             ClassificationBrowse.updateIdentifierTypesAPI(
               testData.classificationBrowseId,
               testData.classificationBrowseAlgorithm,
@@ -201,7 +196,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       createdRecordIDs.forEach((id) => {

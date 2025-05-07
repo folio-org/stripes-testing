@@ -20,7 +20,7 @@ describe('MARC', () => {
             tag245: '245',
           },
           fieldContents: {
-            tag245Content: 'Created MARC bib with linked field',
+            tag245Content: `AT_C422140_MarcBibInstance_${getRandomPostfix()}`,
           },
           marcAuthIcon: 'Linked to MARC authority',
           accordion: 'Contributor',
@@ -136,25 +136,25 @@ describe('MARC', () => {
             );
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
-            });
 
-            cy.login(testData.userBData.username, testData.userBData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+              cy.login(testData.userBData.username, testData.userBData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              InventoryInstances.searchByTitle(createdAuthorityIDs[1]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              QuickMarcEditor.verifyTagFieldAfterLinking(
+                newFields.rowIndex,
+                newFields.tag,
+                '\\',
+                '\\',
+                `${newFields.boxFourth}`,
+                `${newFields.boxFifth}`,
+                `${newFields.boxSixth}`,
+                `${newFields.boxSeventh}`,
+              );
             });
-            InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.verifyTagFieldAfterLinking(
-              newFields.rowIndex,
-              newFields.tag,
-              '\\',
-              '\\',
-              `${newFields.boxFourth}`,
-              `${newFields.boxFifth}`,
-              `${newFields.boxSixth}`,
-              `${newFields.boxSeventh}`,
-            );
           },
         );
       });
