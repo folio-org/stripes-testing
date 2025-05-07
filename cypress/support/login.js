@@ -142,7 +142,7 @@ Cypress.Commands.add(
   'openLocateUiPage',
   (
     visitPath = {
-      path: Cypress.config().baseUrl.replace('folio', 'locate'),
+      path: Cypress.env('LOCATE_HOST'),
       waiter: () => cy.expect(
         Heading(including('Choose a filter or enter a search query to show results.')).exists(),
       ),
