@@ -1267,7 +1267,7 @@ export default {
   },
 
   verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
-    cy.get('[class^="ElectronicAccess"]')
+    cy.get('[class^="EmbeddedTable-"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')
@@ -1376,6 +1376,7 @@ export default {
       // get an array of instance note column name
       const noteColumnNames = columnNames.slice(
         columnNames.findIndex((item) => item === 'Publication range') + 1,
+        columnNames.findIndex((item) => item === 'With note') + 1,
       );
       const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort();
 
