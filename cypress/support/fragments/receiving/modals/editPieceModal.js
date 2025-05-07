@@ -74,10 +74,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton() {
+  clickDeleteButton(POLineQuantity) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView();
+    DeletePieceModal.verifyModalView(POLineQuantity);
 
     return DeletePieceModal;
   },

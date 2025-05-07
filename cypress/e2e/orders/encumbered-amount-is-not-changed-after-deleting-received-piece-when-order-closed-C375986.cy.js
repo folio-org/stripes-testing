@@ -1,30 +1,31 @@
 import uuid from 'uuid';
 
+import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
+import { InventoryHoldings, InventoryInstances } from '../../support/fragments/inventory';
+import { Invoices } from '../../support/fragments/invoices';
 import {
   BasicOrderLine,
-  NewOrder,
-  Orders,
-  OrderLines,
   CheckIn,
+  NewOrder,
+  OrderLines,
+  Orders,
   Pieces,
 } from '../../support/fragments/orders';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { Invoices } from '../../support/fragments/invoices';
-import { InventoryHoldings, InventoryInstances } from '../../support/fragments/inventory';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
+import Receiving from '../../support/fragments/receiving/receiving';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Receiving from '../../support/fragments/receiving/receiving';
 
 describe('Orders', () => {
   const testData = {
     organization: NewOrganization.getDefaultOrganization(),
     servicePoint: ServicePoints.getDefaultServicePoint(),
     materialType: MaterialTypes.getDefaultMaterialType(),
+    POLineQuantity: 1,
     order: {},
     orderLine: {},
     user: {},
@@ -65,9 +66,10 @@ describe('Orders', () => {
     testData.order = {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
       reEncumber: true,
+      orderType: 'Ongoing',
     };
     testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-      checkinItems: false,
+      checkinItems: true,
       createInventory: 'Instance, Holding, Item',
       specialLocationId: testData.location.id,
       specialMaterialTypeId: testData.materialType.id,
@@ -121,6 +123,12 @@ describe('Orders', () => {
             workflowStatus: ORDER_STATUSES.CLOSED,
           });
         });
+      cy.getAdminToken().then(() => {
+        Invoices.changeInvoiceStatusViaApi({
+          invoice: testData.invoice,
+          status: INVOICE_STATUSES.PAID,
+        });
+      });
 
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.ordersPath,
@@ -145,13 +153,6 @@ describe('Orders', () => {
     'C375986 Encumbered amount is not changed after deleting received piece when related paid invoice exists and order is closed (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.getAdminToken().then(() => {
-        Invoices.changeInvoiceStatusViaApi({
-          invoice: testData.invoice,
-          status: INVOICE_STATUSES.PAID,
-        });
-      });
-
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderDetails({
@@ -178,10 +179,9 @@ describe('Orders', () => {
         { label: 'Piece format', conditions: { required: true, value: 'Physical' } },
         { label: 'Create item', conditions: { value: 'Connected' } },
       ]);
-
       // Click "Delete" button
       Receiving.openDropDownInEditPieceModal();
-      const DeletePieceModal = EditPieceModal.clickDeleteButton();
+      const DeletePieceModal = EditPieceModal.clickDeleteButton(testData.POLineQuantity);
 
       // Click "Delete item" button
       DeletePieceModal.clickDeleteItemButton();

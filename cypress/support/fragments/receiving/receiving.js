@@ -381,6 +381,7 @@ export default {
 
   openDropDownInEditPieceModal: () => {
     cy.do(Button({ dataTestID: 'dropdown-trigger-button' }).click());
+    cy.wait(2000);
   },
 
   quickReceiveInEditPieceModal() {
