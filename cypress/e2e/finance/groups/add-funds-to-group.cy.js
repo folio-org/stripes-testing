@@ -15,7 +15,7 @@ Cypress.on('uncaught:exception', () => false);
 describe('ui-finance: Groups', () => {
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
+    name: `2_autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',

@@ -193,7 +193,6 @@ describe('Finance', () => {
         );
         Funds.closeTransactionDetails();
         Funds.checkPaymentInTransactionDetails(
-          0,
           defaultFiscalYear.code,
           firstInvoice.vendorInvoiceNo,
           `${defaultFund.name} (${defaultFund.code})`,

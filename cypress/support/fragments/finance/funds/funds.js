@@ -408,20 +408,20 @@ export default {
     );
   },
 
-  checkPaymentInTransactionDetails: (indexNumber, fiscalYear, source, fund, amount) => {
+  checkPaymentInTransactionDetails: (fiscalYear, source, fund, amount, type = 'Payment') => {
     cy.do(
       transactionList
-        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListRow(including(type), { isContainer: true }))
         .find(Link())
         .click(),
     );
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
-      transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
-    );
+    ]);
   },
 
   checkStatusInTransactionDetails: (status) => {
