@@ -1003,7 +1003,7 @@ export default {
       .set('Publisher', orderLine.publisher)
       .set('Vendor account', orderLine.vendorDetail.vendorAccount)
       .set('Vendor reference number', orderLine.vendorDetail.referenceNumbers[0].refNumber)
-      .set('Donor', orderLine.donor)
+      .set('Donor (Deprecated)', orderLine.donor)
       .set('Selector', orderLine.selector)
       .set('Volumes', orderLine.physical.volumes[0])
       .set('Product ID', orderLine.details.productIds[0].productId)

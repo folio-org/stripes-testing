@@ -170,7 +170,7 @@ describe('Finance', () => {
         Funds.checkTransactionDetails(
           1,
           defaultFiscalYear.code,
-          '($0.00)',
+          '$0.00',
           `${orderNumber}-1`,
           'Encumbrance',
           `${defaultFund.name} (${defaultFund.code})`,
@@ -183,7 +183,7 @@ describe('Finance', () => {
         TopMenuNavigation.navigateToApp('Finance');
         Funds.closeTransactionDetails();
         Funds.checkTransactionDetails(
-          2,
+          1,
           defaultFiscalYear.code,
           '($100.00)',
           `${orderNumber}-1`,
@@ -193,9 +193,8 @@ describe('Finance', () => {
         );
         Funds.closeTransactionDetails();
         Funds.checkPaymentInTransactionDetails(
-          1,
+          0,
           defaultFiscalYear.code,
-          '($100.00)',
           firstInvoice.vendorInvoiceNo,
           `${defaultFund.name} (${defaultFund.code})`,
           '$100.00',

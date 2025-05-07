@@ -100,7 +100,7 @@ describe('ui-finance: Groups', () => {
       Groups.selectGroup(defaultGroup.name);
       Groups.addLedgerToGroup(defaultLedger.name);
       InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-      Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
+      Groups.checkAddingMultiplyFunds(firstFund.name, secondFund.name);
     },
   );
 });

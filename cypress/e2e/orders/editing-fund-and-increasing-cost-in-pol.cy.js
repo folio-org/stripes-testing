@@ -202,7 +202,7 @@ describe('ui-orders: Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.checkPaymentInTransactionDetails(
-        1,
+        0,
         defaultFiscalYear.code,
         firstInvoice.vendorInvoiceNo,
         `${firstFund.name} (${firstFund.code})`,

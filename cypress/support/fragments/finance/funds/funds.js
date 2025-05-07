@@ -381,11 +381,11 @@ export default {
   checkTransactionList: (fundCode) => {
     cy.expect([
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '$50.00' }),
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .has({ content: `${fundCode}` }),
     ]);
@@ -1052,9 +1052,11 @@ export default {
       MultiSelect({ id: 'fund-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))
         .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(3000);
+    cy.do(MultiSelectOption(AUName).click());
+    cy.wait(3000);
+    cy.do(saveAndCloseButton.click());
     this.waitForFundDetailsLoading();
   },
 
