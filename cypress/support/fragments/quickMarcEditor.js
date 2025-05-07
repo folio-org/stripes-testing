@@ -112,7 +112,7 @@ const calloutMarcTagWrongLength = Callout(
   'Record cannot be saved. A MARC tag must contain three characters.',
 );
 const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
-const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
+const calloutNo245MarcTag = Callout('Field 245 is required.');
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
 const calloutMultiple010MarcTags = Callout('Record cannot be saved with more than one 010 field');
@@ -144,6 +144,7 @@ const confirmButtonInDeleteFieldsModal = Button({
 const validationCalloutMainText =
   'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
 const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
+const derivePaneHeaderText = /Derive a new .*MARC bib record/;
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -537,9 +538,13 @@ export default {
     this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
 
-    cy.intercept('PUT', '/records-editor/records/*').as('saveRecordRequest');
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
     cy.do(saveAndCloseButton.click());
-    cy.wait('@saveRecordRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 202);
+    cy.wait('@saveRecordRequest', { timeout: 5_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
   },
 
   pressSaveAndKeepEditing(calloutMsg) {
@@ -2168,6 +2173,7 @@ export default {
         cy.do(Callout({ id: calloutId }).dismiss());
       }
     });
+    cy.expect(Callout().absent());
   },
 
   verifyInvalidLDRCalloutLink() {
@@ -2856,5 +2862,9 @@ export default {
         .find(TextArea({ warning: warningMessage }))
         .exists(),
     );
+  },
+
+  checkDerivePaneheader() {
+    this.checkPaneheaderContains(derivePaneHeaderText);
   },
 };

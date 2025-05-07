@@ -88,7 +88,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('', testData.tag001Content);
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
 
