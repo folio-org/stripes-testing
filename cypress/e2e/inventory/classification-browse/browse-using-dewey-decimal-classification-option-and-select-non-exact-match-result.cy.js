@@ -75,11 +75,6 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-          testData.classificationBrowseId,
-        ).then((types) => {
-          testData.originalTypes = types;
-        });
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
@@ -106,7 +101,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);

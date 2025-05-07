@@ -129,11 +129,6 @@ describe('Inventory', () => {
         ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
           (response) => {
             classificationIdentifierTypeId = response.body.id;
-            ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-              testData.classificationBrowseId,
-            ).then((types) => {
-              testData.originalTypes = types;
-            });
             ClassificationBrowse.updateIdentifierTypesAPI(
               testData.classificationBrowseId,
               testData.classificationBrowseAlgorithm,
@@ -199,7 +194,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       createdRecordIDs.forEach((id) => {
@@ -212,6 +207,9 @@ describe('Inventory', () => {
       'C468155 Only one Classification identifier type could be found in the browse result list by "Classification (all)" browse option when only one Classification identifier type is selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468155'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.localInstnaceClassificationValue,
+        );
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });

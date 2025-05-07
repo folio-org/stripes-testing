@@ -20,8 +20,8 @@ describe('Inventory', () => {
     const testData = {
       classificationOption: 'Library of Congress classification',
       querySearchOption: 'Query search',
-      negativeSearchQuery: 'N332.G33 B443913 2055',
-      positiveSearchQuery: 'N72.S3 R53 2018',
+      negativeSearchQuery: 'N332.G33 B468146 2019',
+      positiveSearchQuery: 'N72.S3 R46 8146',
       instanceTitle:
         'C468146 Why science needs art : from historical to modern day perspectives / Richard AP Roche, Francesca R. Farina, Seán Commins.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,
@@ -75,11 +75,6 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-          testData.classificationBrowseId,
-        ).then((types) => {
-          testData.originalTypes = types;
-        });
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
@@ -109,7 +104,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
