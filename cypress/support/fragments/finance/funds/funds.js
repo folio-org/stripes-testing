@@ -869,28 +869,23 @@ export default {
       currency: 'USD',
       restrictEncumbrance: false,
       restrictExpenditures: false,
-      acqUnitIds: '',
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
-      ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-      FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
-        console.log(fiscalYearResponse);
-        ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
-        cy.createLedgerApi({
-          ...ledger,
-        });
-        fund.ledgerName = ledger.name;
-        cy.loginAsAdmin({
-          path: TopMenu.fundPath,
-          waiter: this.waitLoading,
-        });
-        this.createFund(fund);
-        this.checkCreatedFund(fund.name);
-        cy.wrap(ledger).as('createdLedger');
-        return cy.get('@createdLedger');
+    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
+      ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
+      cy.createLedgerApi({
+        ...ledger,
       });
+      fund.ledgerName = ledger.name;
+      cy.loginAsAdmin({
+        path: TopMenu.fundPath,
+        waiter: this.waitLoading,
+      });
+      this.createFund(fund);
+      this.checkCreatedFund(fund.name);
+      cy.wrap(ledger).as('createdLedger');
+      return cy.get('@createdLedger');
     });
     return cy.get('@createdLedger');
   },
