@@ -129,7 +129,6 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.checkPaymentInTransactionDetails(
-        2,
         defaultFiscalYear.code,
         invoice.invoiceNumber,
         `${firstFund.name} (${firstFund.code})`,

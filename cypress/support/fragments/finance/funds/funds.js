@@ -381,11 +381,11 @@ export default {
   checkTransactionList: (fundCode) => {
     cy.expect([
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '$50.00' }),
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .has({ content: `${fundCode}` }),
     ]);
@@ -408,20 +408,20 @@ export default {
     );
   },
 
-  checkPaymentInTransactionDetails: (indexNumber, fiscalYear, source, fund, amount) => {
+  checkPaymentInTransactionDetails: (fiscalYear, source, fund, amount, type = 'Payment') => {
     cy.do(
       transactionList
-        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListRow(including(type), { isContainer: true }))
         .find(Link())
         .click(),
     );
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
-      transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
-    );
+    ]);
   },
 
   checkStatusInTransactionDetails: (status) => {
@@ -1052,9 +1052,11 @@ export default {
       MultiSelect({ id: 'fund-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))
         .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(3000);
+    cy.do(MultiSelectOption(AUName).click());
+    cy.wait(3000);
+    cy.do(saveAndCloseButton.click());
     this.waitForFundDetailsLoading();
   },
 

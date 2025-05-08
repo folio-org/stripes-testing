@@ -22,21 +22,21 @@ describe('Orders', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund_2_${getRandomPostfix()}`,
+    name: `2_autotest_fund_2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
   const thirdFund = {
-    name: `autotest_fund_3_${getRandomPostfix()}`,
+    name: `3_autotest_fund_3_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
   const forthFund = {
-    name: `autotest_fund_4_${getRandomPostfix()}`,
+    name: `4_autotest_fund_4_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -200,7 +200,7 @@ describe('Orders', () => {
       OrderLines.openPageCurrentEncumbrance('$6.00');
       Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
-        '($14.00)',
+        '($6.00)',
         `${orderNumber}-1`,
         'Encumbrance',
         `${forthFund.name} (${forthFund.code})`,

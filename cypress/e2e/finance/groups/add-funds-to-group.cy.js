@@ -15,7 +15,7 @@ Cypress.on('uncaught:exception', () => false);
 describe('ui-finance: Groups', () => {
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
+    name: `2_autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -126,7 +126,7 @@ describe('ui-finance: Groups', () => {
     Groups.selectGroup(firstGroup.name);
     Groups.addFundToGroup(secondFund.name);
     InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-    Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
+    Groups.checkAddingMultiplyFunds(firstFund.name, secondFund.name);
     FinanceHelp.searchByName(secondGroup.name);
     Groups.selectGroup(secondGroup.name);
     Groups.addFundToGroup(firstFund.name);

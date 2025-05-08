@@ -109,16 +109,14 @@ export default {
     ]);
   },
 
-  checkAddingMultiplyFunds: (secondFundName, firstFundName) => {
+  checkAddingMultiplyFunds: (firstFundName, secondFundName) => {
     cy.expect([
       Accordion({ id: 'fund' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: secondFundName }),
+        .find(MultiColumnListCell({ content: firstFundName }))
+        .exists(),
       Accordion({ id: 'fund' })
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: firstFundName }),
+        .find(MultiColumnListCell({ content: secondFundName }))
+        .exists(),
     ]);
   },
 

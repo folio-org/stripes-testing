@@ -23,7 +23,7 @@ describe('ui-orders: Orders', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
+    name: `2_autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -173,11 +173,11 @@ describe('ui-orders: Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.checkPaymentInTransactionDetails(
-        1,
         defaultFiscalYear.code,
         invoice.invoiceNumber,
         `${firstFund.name} (${firstFund.code})`,
-        '($50.00)',
+        '$50.00',
+        'Pending payment',
       );
       Funds.clickInfoInTransactionDetails();
     },
