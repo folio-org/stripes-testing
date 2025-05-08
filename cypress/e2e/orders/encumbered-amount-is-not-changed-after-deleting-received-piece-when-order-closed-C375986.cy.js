@@ -7,11 +7,11 @@ import { InventoryHoldings, InventoryInstances } from '../../support/fragments/i
 import { Invoices } from '../../support/fragments/invoices';
 import {
   BasicOrderLine,
-  CheckIn,
   NewOrder,
   OrderLines,
   Orders,
   Pieces,
+  CheckIn,
 } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -67,6 +67,7 @@ describe('Orders', () => {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
       reEncumber: true,
       orderType: 'Ongoing',
+      ongoing: { isSubscription: false, manualRenewal: false },
     };
     testData.orderLine = BasicOrderLine.getDefaultOrderLine({
       checkinItems: true,
@@ -82,23 +83,38 @@ describe('Orders', () => {
 
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: ORDER_STATUSES.OPEN });
 
-      Pieces.getOrderPiecesViaApi({ query: `poLineId=="${testData.orderLine.id}"` }).then(
-        ({ pieces }) => {
-          testData.barcode = uuid();
-
-          const checkInConfig = CheckIn.getDefaultCheckInConfig({
-            poLineId: pieces[0].poLineId,
-            orderPieceId: pieces[0].id,
-            holdingId: pieces[0].holdingId,
-            barcode: testData.barcode,
-          });
-          CheckIn.createOrderCheckInViaApi(checkInConfig);
-        },
-      );
-
       OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` })
         .then((orderLines) => {
           testData.orderLine = orderLines[0];
+
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${testData.orderLine.instanceId}"`,
+          }).then((holdings) => {
+            Receiving.getTitleIdViaApi(testData.orderLine.poLineNumber).then((titleId) => {
+              Pieces.createOrderPieceViaApi({
+                poLineId: testData.orderLine.id,
+                titleId,
+                format: 'Physical',
+                holdingId: holdings[0].id,
+                displayOnHolding: true,
+                discoverySuppress: false,
+                displayToPublic: false,
+                isBound: false,
+                supplement: false,
+              }).then((responce) => {
+                testData.barcode = uuid();
+
+                const checkInConfig = CheckIn.getDefaultCheckInConfig({
+                  poLineId: responce.poLineId,
+                  orderPieceId: responce.id,
+                  holdingId: responce.holdingId,
+                  barcode: testData.barcode,
+                });
+                CheckIn.createOrderCheckInViaApi(checkInConfig);
+              });
+            });
+          });
 
           Invoices.createInvoiceWithInvoiceLineViaApi({
             vendorId: testData.organization.id,
@@ -163,6 +179,9 @@ describe('Orders', () => {
       });
 
       // Click "Actions" button, Select "Receive" option
+      console.log(testData.orderLine);
+      cy.pause();
+      OrderDetails.openPolDetails(testData.orderLine.title);
       const Receivings = OrderDetails.openReceivingsPage();
 
       // Click <Title name from PO line> link
