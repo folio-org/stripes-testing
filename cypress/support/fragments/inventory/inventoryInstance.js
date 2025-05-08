@@ -48,6 +48,7 @@ import InventoryViewSource from './inventoryViewSource';
 import ItemRecordEdit from './item/itemRecordEdit';
 import ItemRecordView from './item/itemRecordView';
 import NewOrderModal from './modals/newOrderModal';
+import Tenant from '../../tenant';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const actionsButton = instanceDetailsSection.find(Button('Actions'));
@@ -1429,6 +1430,31 @@ export default {
 
   shareInstance() {
     cy.do(shareInstanceModal.find(Button('Share')).click());
+  },
+
+  waitForSharingToComplete() {
+    cy.intercept('GET', '/consortia/*/sharing/instances*').as('getSharingInstances');
+    cy.getConsortiaId().then((consortiaId) => {
+      cy.wait('@getSharingInstances', { timeout: 60000 }).then((interception) => {
+        const sharingInstanceId = interception.response.body.sharingInstances[0].instanceIdentifier;
+        cy.recurse(
+          () => cy.okapiRequest({
+            path: `consortia/${consortiaId}/sharing/instances/`,
+            searchParams: {
+              instanceIdentifier: sharingInstanceId,
+              sourceTenantId: Tenant.get(),
+            },
+            isDefaultSearchParamsRequired: false,
+          }),
+          (response) => response.body.sharingInstances[0].status === 'COMPLETE',
+          {
+            limit: 12,
+            timeout: 60000,
+            delay: 5000,
+          },
+        );
+      });
+    });
   },
 
   verifyCalloutMessage(message) {
