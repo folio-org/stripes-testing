@@ -69,6 +69,7 @@ export const MultiColumnListHeader = HTML.extend('multi column list header')
     index: childIndex,
     id: (el) => el.getAttribute('id'),
     sort: (el) => el.getAttribute('aria-sort'),
+    sortable: (el) => el.getAttribute('class').includes('mclSortIndicator'),
   })
   .actions({
     click: ({ perform }) => perform((el) => el.querySelector('[role=button]').click()),
