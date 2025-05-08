@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -15,14 +16,47 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 const marcInstance = {
-  title: `AT_C503070_MarcInstance_${getRandomPostfix()}`,
+  title: `AT_C648518_MarcInstance_${getRandomPostfix()}`,
 };
-const actionNote = 'Action note text';
+const marcInstanceFields = [
+  {
+    tag: '008',
+    content: QuickMarcEditor.defaultValid008Values,
+  },
+  {
+    tag: '245',
+    content: `$a ${marcInstance.title}`,
+    indicators: ['1', '0'],
+  },
+  {
+    tag: '700',
+    content: '$a Beethoven, Ludwig van, $d 1770-1827. $t Sonatas, $m piano. $k Selections.',
+    indicators: ['1', '\\'],
+  },
+  {
+    tag: '700',
+    content: '$a Ludwig van Beethoven $d 1770-1827.',
+    indicators: ['1', '\\'],
+  },
+  {
+    tag: '700',
+    content: '$a Beethoven',
+    indicators: ['1', '\\'],
+  },
+];
+const contributorsFieldValue =
+  'Beethoven, Ludwig van, 1770-1827. Sonatas, Selections; Ludwig van Beethoven 1770-1827; Beethoven';
+const newValueOfContributorsField = {
+  subfieldA: 'Hallmark Collection (Library of Congress)',
+  subfield5: 'DLC',
+};
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
 const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
 const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
 const changedRecordsFileNameMrc = BulkEditFiles.getChangedRecordsMarcFileName(
@@ -47,15 +81,20 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-          marcInstance.uuid = instanceId;
+        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
+          (instanceId) => {
+            marcInstance.uuid = instanceId;
 
-          cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-            marcInstance.hrid = instanceData.hrid;
+            cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
+              marcInstance.hrid = instanceData.hrid;
 
-            FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, marcInstance.uuid);
-          });
-        });
+              FileManager.createFile(
+                `cypress/fixtures/${instanceUUIDsFileName}`,
+                marcInstance.uuid,
+              );
+            });
+          },
+        );
 
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -87,53 +126,76 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C503070 Add MARC field (583) mapped to Inventory Instance (MARC, Logs) (firebird)',
-      { tags: ['smoke', 'firebird', 'C503070'] },
+      'C648518 Bulk edit marc fields (700, 710) for all records (MARC, Logs) (firebird)',
+      { tags: ['smoke', 'firebird', 'C648518'] },
       () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          'MARC',
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          contributorsFieldValue,
         );
-        BulkEditSearchPane.verifyResultColumnTitlesDoNotIncludeTitles(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE,
+        BulkEditSearchPane.uncheckShowColumnCheckbox(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
         );
         BulkEditActions.openStartBulkEditMarcInstanceForm();
-        BulkEditActions.verifyInitialStateBulkEditMarcFieldsForm(
-          instanceUUIDsFileName,
-          '1 instance',
-        );
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('583', '0', '\\', 'a');
-        BulkEditActions.selectActionForMarcInstance('Add');
-        BulkEditActions.verifySelectSecondActionRequired(false);
-        BulkEditActions.fillInDataTextAreaForMarcInstance(actionNote);
+        BulkEditActions.verifyInitialStateBulkEditsFormForMarcInstance();
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('700', '1', '\\', 'a');
+        BulkEditActions.findAndRemoveFieldActionForMarc('Beethoven');
+        BulkEditActions.verifyConfirmButtonDisabled(false);
+        BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('710', '2', '\\', 'a', 1);
+        BulkEditActions.selectActionForMarcInstance('Add', 1);
+        BulkEditActions.fillInDataTextAreaForMarcInstance(newValueOfContributorsField.subfieldA, 1);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
+        BulkEditActions.selectSecondActionForMarcInstance('Additional subfield', 1);
+        BulkEditActions.verifyAdditionalSubfieldRowInitialState(1);
+        BulkEditActions.fillInSubfieldInSubRow('5', 1);
+        BulkEditActions.fillInDataInSubRow(newValueOfContributorsField.subfield5, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE,
-          `${actionNote} (staff only)`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          newValueOfContributorsField.subfieldA,
         );
         BulkEditActions.verifyAreYouSureForm(1);
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
         BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
         BulkEditActions.downloadPreviewInMarcFormat();
 
+        const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
+        const currentTimestampUpToMinutesOneMinuteAfter =
+          DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
         const assertionsOnMarcFileContent = [
           (record) => expect(record.leader).to.exist,
           (record) => expect(record.get('001')).to.not.be.empty,
           (record) => expect(record.get('005')).to.not.be.empty,
+          (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
+          (record) => {
+            expect(
+              record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
+                record.get('005')[0].value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
+            ).to.be.true;
+          },
           (record) => expect(record.get('008')).to.not.be.empty,
 
-          (record) => expect(record.get('583')[0].ind1).to.eq('0'),
-          (record) => expect(record.get('583')[0].ind2).to.eq(' '),
-          (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),
-          (record) => expect(record.get('583')[0].subf[0][1]).to.eq(actionNote),
+          (record) => expect(record.get('700')).to.be.empty,
+
+          (record) => expect(record.get('710')[0].ind1).to.eq('2'),
+          (record) => expect(record.get('710')[0].ind2).to.eq(' '),
+          (record) => expect(record.get('710')[0].subf[0][0]).to.eq('a'),
+          (record) => {
+            expect(record.get('710')[0].subf[0][1]).to.eq(newValueOfContributorsField.subfieldA);
+          },
+          (record) => expect(record.get('710')[0].subf[1][0]).to.eq('5'),
+          (record) => {
+            expect(record.get('710')[0].subf[1][1]).to.eq(newValueOfContributorsField.subfield5);
+          },
 
           (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
           (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -146,18 +208,18 @@ describe('bulk-edit', () => {
           previewFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
-          'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE};${actionNote};true`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          newValueOfContributorsField.subfieldA,
         );
         BulkEditActions.commitChanges();
 
-        const updateDate = new Date();
+        const updateDate = DateTools.getFormattedEndDateWithTimUTC(new Date());
 
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE,
-          `${actionNote} (staff only)`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          newValueOfContributorsField.subfieldA,
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
         BulkEditActions.openActions();
@@ -170,8 +232,8 @@ describe('bulk-edit', () => {
           changedRecordsFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
-          'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE};${actionNote};true`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          newValueOfContributorsField.subfieldA,
         );
 
         // remove earlier downloaded files
@@ -197,16 +259,16 @@ describe('bulk-edit', () => {
           matchedRecordsFileName,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
-          'Notes',
-          '',
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          contributorsFieldValue,
         );
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyValueInRowByUUID(
           previewFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
-          'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE};${actionNote};true`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          newValueOfContributorsField.subfieldA,
         );
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
@@ -217,8 +279,8 @@ describe('bulk-edit', () => {
           changedRecordsFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
-          'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE};${actionNote};true`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+          newValueOfContributorsField.subfieldA,
         );
         BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 
@@ -228,15 +290,17 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyLastUpdatedDate();
-        InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
+        InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(
           0,
-          'Yes',
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE,
-          actionNote,
+          newValueOfContributorsField.subfieldA,
         );
+        InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('583', `\t583\t0  \t$a ${actionNote} `);
+        InventoryViewSource.verifyFieldInMARCBibSource(
+          '710',
+          `\t710\t2  \t$a ${newValueOfContributorsField.subfieldA} $5 ${newValueOfContributorsField.subfield5}`,
+        );
+        InventoryViewSource.verifyAbsenceOfValue('700\t');
         InventoryViewSource.verifyFieldContent(3, updateDate);
       },
     );
