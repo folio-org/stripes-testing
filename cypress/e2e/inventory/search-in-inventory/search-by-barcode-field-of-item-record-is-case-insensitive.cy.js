@@ -16,11 +16,11 @@ describe('Inventory', () => {
         barcodeOption: 'Barcode',
         instances: [
           {
-            title: "C466081 Instance 1, Item's barcode lower case",
+            title: "C729565 Instance 1, Item's barcode lower case",
             barcode: 'CSC001',
           },
           {
-            title: "C466081 Instance 2, Item's barcode number UPPER case",
+            title: "C729565 Instance 2, Item's barcode number UPPER case",
             barcode: 'csc0011',
           },
         ],
@@ -105,8 +105,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466081 Search by "Barcode" field of "Item" record is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C466081'] },
+        'C729565 Search by "Barcode" field of "Item" record is case-insensitive (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C729565'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
