@@ -6,7 +6,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultfund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };

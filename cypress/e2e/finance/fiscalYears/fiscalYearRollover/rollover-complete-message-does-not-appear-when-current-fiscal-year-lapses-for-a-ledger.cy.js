@@ -1,15 +1,15 @@
 import permissions from '../../../../support/dictionary/permissions';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../../support/fragments/users/users';
-import Funds from '../../../../support/fragments/finance/funds/funds';
-import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../../support/utils/dateTools';
 import Budgets from '../../../../support/fragments/finance/budgets/budgets';
+import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import interactorsTools from '../../../../support/utils/interactorsTools';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };

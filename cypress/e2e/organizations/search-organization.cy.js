@@ -2,13 +2,17 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('ui-organizations: Search organization', () => {
+describe('Organizations', () => {
   const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
+    });
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
     });
   });
 
@@ -30,7 +34,6 @@ describe('ui-organizations: Search organization', () => {
       'C6712 Test the Organizations app searches (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
-        cy.visit(TopMenu.organizationsPath);
         Organizations.searchByParameters(searcher.parameter, searcher.value);
         Organizations.checkSearchResults(organization);
         Organizations.resetFilters();

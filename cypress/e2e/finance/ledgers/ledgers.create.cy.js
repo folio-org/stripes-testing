@@ -4,7 +4,7 @@ import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('ui-finance: Ledgers', () => {
+describe('Ledgers', () => {
   before(() => {
     cy.loginAsAdmin({ path: TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
   });

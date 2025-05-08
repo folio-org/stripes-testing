@@ -2,17 +2,18 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import Funds from '../../../support/fragments/finance/funds/funds';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   let aUnit;
   let tag;
   let ledger;
   let group;
   let fundType;
   let user;
+  let isAUnitCreated = false;
 
   const fund = {
     id: uuid(),
@@ -23,6 +24,8 @@ describe('ui-finance: Funds', () => {
     externalAccountNo: `fund external  ${getRandomPostfix()}`,
   };
 
+  const aUnitName = `E2E AcqUnit ${getRandomPostfix()}`;
+
   before(() => {
     cy.getAdminToken();
 
@@ -32,8 +35,13 @@ describe('ui-finance: Funds', () => {
     cy.getTagsApi({ limit: 1 }).then(({ body }) => {
       tag = body.tags[0];
     });
-    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
-      aUnit = body.acquisitionsUnits[0];
+    cy.getAcqUnitsApi({ query: 'name="main"' }).then(({ body }) => {
+      if (body.acquisitionsUnits.length === 0) {
+        cy.createAcqUnitApi(aUnitName).then((response) => {
+          aUnit = response.body;
+          isAUnitCreated = true;
+        });
+      } else aUnit = body.acquisitionsUnits[0];
     });
     cy.getLedgersApi({ limit: 1 }).then(({ body }) => {
       ledger = body.ledgers[0];
@@ -64,6 +72,7 @@ describe('ui-finance: Funds', () => {
     cy.getAdminToken();
     cy.deleteFundApi(fund.id);
     Users.deleteViaApi(user.userId);
+    if (isAUnitCreated) cy.deleteAcqUnitApi(aUnit.id);
   });
 
   it(

@@ -1,32 +1,32 @@
 import uuid from 'uuid';
-import permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../../support/fragments/users/users';
-import Funds from '../../../../support/fragments/finance/funds/funds';
-import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../../support/utils/dateTools';
-import NewOrder from '../../../../support/fragments/orders/newOrder';
-import Orders from '../../../../support/fragments/orders/orders';
-import OrderLines from '../../../../support/fragments/orders/orderLines';
-import Organizations from '../../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import Invoices from '../../../../support/fragments/invoices/invoices';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import Budgets from '../../../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
 } from '../../../../support/constants';
+import permissions from '../../../../support/dictionary/permissions';
+import Budgets from '../../../../support/fragments/finance/budgets/budgets';
+import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../../../support/fragments/invoices/invoices';
 import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../../support/fragments/orders/orderLines';
+import Orders from '../../../../support/fragments/orders/orders';
+import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../../support/fragments/organizations/organizations';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
+import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,

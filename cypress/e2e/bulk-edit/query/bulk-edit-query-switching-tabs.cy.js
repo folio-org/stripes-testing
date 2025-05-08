@@ -98,12 +98,12 @@ describe('bulk-edit', () => {
         QueryModal.verifyQueryAreaContent('(items.status_name  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(items.status_name in (""))');
+        QueryModal.verifyQueryAreaContent('(items.status_name in ())');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
         QueryModal.verifyQueryAreaContent(
-          `(items.status_name in ("${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.AGED_TO_LOST}"))`,
+          `(items.status_name in [${ITEM_STATUS_NAMES.AVAILABLE}, ${ITEM_STATUS_NAMES.AGED_TO_LOST}])`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

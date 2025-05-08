@@ -1,22 +1,22 @@
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
