@@ -4,7 +4,7 @@ import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFis
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-finance: Fiscal Year', () => {
+describe('Fiscal Year', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
   let user;
   before(() => {

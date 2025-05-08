@@ -2,7 +2,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('ui-organizations: Search organization', () => {
+describe('Organizations', () => {
   const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {

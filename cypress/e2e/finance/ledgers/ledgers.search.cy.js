@@ -8,7 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe(
-  'ui-finance: Ledgers',
+  'Ledgers',
   {
     retries: {
       runMode: 1,

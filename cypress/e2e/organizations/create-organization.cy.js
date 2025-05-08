@@ -3,7 +3,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe(
-  'ui-organizations: Creating organization',
+  'Organizations',
   {
     retries: {
       runMode: 1,
