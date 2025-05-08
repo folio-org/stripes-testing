@@ -132,6 +132,9 @@ Cypress.Commands.add(
 
     // Verify that SSO button displayed
     cy.expect([Button('Log in via SSO').exists()]);
+    // refresh page and check SSO again
+    cy.reload(true);
+    cy.expect([Button('Log in via SSO').exists()]);
   },
 );
 
@@ -139,7 +142,7 @@ Cypress.Commands.add(
   'openLocateUiPage',
   (
     visitPath = {
-      path: Cypress.config().baseUrl.replace('folio', 'locate'),
+      path: Cypress.env('LOCATE_HOST'),
       waiter: () => cy.expect(
         Heading(including('Choose a filter or enter a search query to show results.')).exists(),
       ),

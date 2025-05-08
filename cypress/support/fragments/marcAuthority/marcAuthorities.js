@@ -81,7 +81,7 @@ const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
-const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
+const buttonResetAllInAdvancedModal = Button({ ariaLabel: 'Reset all' });
 const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
@@ -765,8 +765,8 @@ export default {
     cy.expect(searchInput.has({ value }));
   },
 
-  clickCancelButton() {
-    cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
+  clickResetAllButtonInAdvSearchModal() {
+    cy.do(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).click());
   },
 
   checkAdvancedSearchModalAbsence() {
@@ -793,8 +793,8 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
-      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
-      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonResetAllInAdvancedModal).is({ disabled: or(true, false) }),
     ]);
     if (boolean) {
       cy.expect([
@@ -1662,5 +1662,10 @@ export default {
         cy.setActiveAuthoritySourceFileViaAPI(id, _version, isActive);
       }
     });
+  },
+
+  closeAdvSearchModal() {
+    cy.do(modalAdvancedSearch.find(Button({ icon: 'times' })).click());
+    cy.expect(modalAdvancedSearch.absent());
   },
 };

@@ -25,7 +25,7 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication, false);
 
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
@@ -36,6 +36,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
           (instance) => {

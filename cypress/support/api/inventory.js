@@ -660,3 +660,12 @@ Cypress.Commands.add('getStatisticalCodeTypes', (searchParams) => {
     return body.statisticalCodeTypes;
   });
 });
+
+Cypress.Commands.add('getSingleImportProfilesViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'copycat/profiles',
+  }).then(({ body }) => {
+    return body.profiles;
+  });
+});

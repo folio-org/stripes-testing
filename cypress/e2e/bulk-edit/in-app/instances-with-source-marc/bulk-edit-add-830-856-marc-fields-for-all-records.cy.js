@@ -92,7 +92,7 @@ const marcInstanceFields = [
 const seriesStatement = 'United States congressional serial set.';
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
-describe('Bulk-edit', () => {
+describe('bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();

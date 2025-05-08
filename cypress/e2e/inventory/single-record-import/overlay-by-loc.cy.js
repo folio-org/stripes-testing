@@ -47,7 +47,6 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      cy.toggleLocSingleImportProfileViaAPI(false);
       InventoryInstance.deleteInstanceViaApi(createdInstaceId);
       Users.deleteViaApi(user.userId);
     });

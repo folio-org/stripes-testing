@@ -10,7 +10,7 @@ import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
-      const headerText = 'Create a new MARC authority record';
+      const headerText = /New .*MARC authority record/;
       const newField010 = {
         previousFieldTag: '008',
         tag: '010',

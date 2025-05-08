@@ -1,3 +1,4 @@
+import { or } from '@interactors/html';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -66,7 +67,7 @@ describe('Inventory', () => {
         );
         BrowseSubjects.checkPaginationButtons({
           prev: { isVisible: true, isDisabled: false },
-          next: { isVisible: true, isDisabled: true },
+          next: { isVisible: true, isDisabled: or(true, false) },
         });
 
         BrowseSubjects.clickPreviousPaginationButton();

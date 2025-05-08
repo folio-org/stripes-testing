@@ -68,7 +68,7 @@ describe('Inventory', () => {
         },
       ],
       classificationOption: 'Classification (all)',
-      classificationValue: 'test004. HD',
+      classificationValue: `test006. HD ${getRandomPostfix()}`,
       querySearchOption: 'Query search',
       instanceTitleWithLocalClassification:
         'C468158 Browse by Class-on (different inst-s with same class-on value) Instance 11 - Local',
@@ -99,11 +99,6 @@ describe('Inventory', () => {
           );
 
           // remove all identifier types from target classification browse, if any
-          ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-            testData.classificationBrowseId,
-          ).then((types) => {
-            testData.originalTypes = types;
-          });
           ClassificationBrowse.updateIdentifierTypesAPI(
             testData.classificationBrowseId,
             testData.classificationBrowseAlgorithm,
@@ -164,7 +159,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       createdRecordIDs.forEach((id) => {
@@ -178,6 +173,10 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C468158'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.classificationValue,
+          testData.classificationBrowseId,
+        );
         InventorySearchAndFilter.browseSearch(testData.classificationValue);
         BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifySearchResultIncludingValue(testData.classificationValue);

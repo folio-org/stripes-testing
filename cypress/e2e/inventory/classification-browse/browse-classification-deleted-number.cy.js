@@ -41,8 +41,7 @@ describe('Inventory', () => {
         // remove all identifier types from target classification browse, if any
         ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
           testData.classificationBrowseId,
-        ).then((types) => {
-          testData.originalTypes = types;
+        ).then(() => {
           ClassificationBrowse.updateIdentifierTypesAPI(
             testData.classificationBrowseId,
             testData.classificationBrowseAlgorithm,
@@ -86,7 +85,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       InventoryInstance.deleteInstanceViaApi(createdRecordId);
       Users.deleteViaApi(user.userId);
