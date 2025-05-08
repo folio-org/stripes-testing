@@ -313,7 +313,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.selectTransactionInList('Encumbrance');
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
-        '$70.00',
+        '($70.00)',
         `${firstOrderNumber}-1`,
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,

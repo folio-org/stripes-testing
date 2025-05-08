@@ -45,7 +45,11 @@ export default {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
   clickDeleteButtonForAddressValue(addressValue) {
-    cy.do(MultiColumnListRow(including(addressValue)).find(deleteAddressButton).click());
+    cy.do(
+      MultiColumnListRow(including(addressValue), { isContainer: true })
+        .find(deleteAddressButton)
+        .click(),
+    );
   },
   verifyDeleteModalDisplayed() {
     cy.expect(deleteAddressModal.exists());
