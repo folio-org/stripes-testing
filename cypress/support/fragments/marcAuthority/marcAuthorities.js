@@ -31,6 +31,8 @@ import {
   including,
   not,
   or,
+  matching,
+  MultiColumnListHeader,
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -62,9 +64,24 @@ const buttonExportSelected = authorityActionsDropDownMenu.find(
   Button('Export selected records (CSV/MARC)'),
 );
 const buttonNew = authorityActionsDropDownMenu.find(Button('New'));
-const marcAuthUpdatesCsvBtn = authorityActionsDropDownMenu.find(
-  Button('MARC authority headings updates (CSV)'),
+const marcAuthUpdatesCsvBtn = Button('MARC authority headings updates (CSV)');
+const actionsMenuSortBySection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Sort by' }),
 );
+const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Show columns' }),
+);
+const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
+const saveCqlButton = authorityActionsDropDownMenu.find(
+  Button({ id: 'dropdown-clickable-export-cql' }),
+);
+const actionsShowColumnsOptions = [
+  'Authorized/Reference',
+  'Type of heading',
+  'Authority source',
+  'Number of titles',
+];
+const sortOptions = ['Relevance', 'Authorized/Reference', 'Heading/Reference', 'Type of heading'];
 
 // auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
@@ -134,10 +151,18 @@ const default008FieldValues = {
   Undef_30: '\\',
   Undef_34: '\\\\\\\\',
 };
+const resultsPaneHeader = PaneHeader('MARC authority');
+const resultsListColumns = [
+  'Authorized/Reference',
+  'Heading/Reference',
+  'Type of heading',
+  'Authority source',
+  'Number of titles',
+];
 
 export default {
   waitLoading() {
-    cy.expect(PaneHeader('MARC authority').exists());
+    cy.expect(resultsPaneHeader.exists());
   },
   clickNewAuthorityButton() {
     cy.do(newAuthorityButton.click());
@@ -667,14 +692,14 @@ export default {
   },
 
   actionsSortBy(value) {
-    cy.do(Select({ dataTestID: 'sort-by-selection' }).choose(value));
+    cy.do(sortBySelect.choose(value));
     // need to wait until content will be sorted
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
   },
 
   verifyActionsSortedBy(value) {
-    cy.expect(Select({ dataTestID: 'sort-by-selection', checkedOptionText: value }).exists());
+    cy.expect(sortBySelect.has({ checkedOptionText: value }));
   },
 
   actionsSelectCheckbox(value) {
@@ -1667,5 +1692,27 @@ export default {
   closeAdvSearchModal() {
     cy.do(modalAdvancedSearch.find(Button({ icon: 'times' })).click());
     cy.expect(modalAdvancedSearch.absent());
+  },
+
+  verifyActionsMenu(saveCqlEnabled = false, sortOption = sortOptions[0]) {
+    cy.expect([
+      saveCqlButton.is({ disabled: !saveCqlEnabled }),
+      actionsMenuSortBySection.find(sortBySelect).has({ checkedOptionText: sortOption }),
+      sortBySelect.has({ content: sortOptions.join('') }),
+    ]);
+    actionsShowColumnsOptions.forEach((option) => {
+      actionsMenuShowColumnsSection.find(Checkbox(option)).exists();
+    });
+  },
+
+  verifyResultsPane() {
+    cy.expect([
+      resultsPaneHeader.has({ subtitle: matching(/\d+ records? found/) }),
+      actionsButton.exists(),
+    ]);
+    resultsListColumns.forEach((column, index) => {
+      if (index < 3) rootSection.find(MultiColumnListHeader(column)).is({ sortable: true });
+      else rootSection.find(MultiColumnListHeader(column)).is({ sortable: false });
+    });
   },
 };
