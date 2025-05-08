@@ -10,6 +10,10 @@ describe('ui-organizations: Search organization', () => {
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
+    });
   });
 
   after(() => {
@@ -30,7 +34,6 @@ describe('ui-organizations: Search organization', () => {
       'C6712 Test the Organizations app searches (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
-        cy.visit(TopMenu.organizationsPath);
         Organizations.searchByParameters(searcher.parameter, searcher.value);
         Organizations.checkSearchResults(organization);
         Organizations.resetFilters();
