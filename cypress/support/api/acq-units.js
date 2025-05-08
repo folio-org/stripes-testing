@@ -21,6 +21,15 @@ Cypress.Commands.add(
         protectUpdate: restrictions.update,
         protectDelete: restrictions.delete,
       },
+      isDefaultSearchParams: false,
     });
   },
 );
+
+Cypress.Commands.add('deleteAcqUnitApi', (unitId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `acquisitions-units/units/${unitId}`,
+    isDefaultSearchParams: false,
+  });
+});
