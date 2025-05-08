@@ -111,7 +111,7 @@ const searchHoldingsOptions = [
   'Query search',
   'Advanced search',
 ];
-const searchItemsOptions = [
+export const searchItemsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Barcode',
   'ISBN',
