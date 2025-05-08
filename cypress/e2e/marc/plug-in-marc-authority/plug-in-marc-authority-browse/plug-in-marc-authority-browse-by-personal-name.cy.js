@@ -17,15 +17,15 @@ describe('MARC', () => {
         searchOption: 'Personal name',
         value: 'UXPROD-4394C380551',
         valueFullText:
-          'UXPROD-4394C380551 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq--Musical settings--Literary style--Stage history--1950---England',
+          'UXPROD-4394C380551 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq Musical settings Literary style Stage history 1950- England',
         validSearchResults: [
           'UXPROD-4394C380551 Personal name 100 Elizabeth',
           'UXPROD-4394C380551 Personal name 400 Elizabeth,',
         ],
         unvalidSearchResults: [
-          'UXPROD-4394C380551 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq--subv--subx--suby--subz',
-          'UXPROD-4394C380551 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq subk--Musical settings--Literary style--Stage history--1950---England',
-          'UXPROD-4394C380551 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk--subv--subx--suby--subz',
+          'UXPROD-4394C380551 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+          'UXPROD-4394C380551 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq subk Musical settings Literary style Stage history 1950- England',
+          'UXPROD-4394C380551 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk subv subx suby subz',
         ],
       };
 
