@@ -54,8 +54,8 @@ export default {
     cy.do(Button('New').click());
   },
 
-  fillInInfo(name) {
-    cy.do([nameTextField.fillIn(name), viewCheckbox.click(), saveAUButton.click()]);
+  fillInInfo(AUName) {
+    cy.do([nameTextField.fillIn(AUName), viewCheckbox.click(), saveAUButton.click()]);
     this.assignAdmin();
     cy.wait(4000);
   },

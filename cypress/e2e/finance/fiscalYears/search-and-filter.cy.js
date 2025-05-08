@@ -3,7 +3,7 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('ui-finance: Fiscal Year', () => {
+describe('Fiscal Year', () => {
   const defaultFiscalYear = {
     ...FiscalYears.defaultUiFiscalYear,
     name: `1autotest_year_${getRandomPostfix()}`,
