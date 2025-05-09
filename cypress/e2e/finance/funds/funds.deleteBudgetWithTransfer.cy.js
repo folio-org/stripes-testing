@@ -6,7 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const fundFrom = { ...NewFund.defaultFund };
   const fundTo = { ...NewFund.defaultFund };
 

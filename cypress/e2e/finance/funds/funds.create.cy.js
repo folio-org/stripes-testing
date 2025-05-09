@@ -1,10 +1,10 @@
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import newFund from '../../../support/fragments/finance/funds/newFund';
+import NewFund from '../../../support/fragments/finance/funds/newFund';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('ui-finance: Funds', () => {
-  const fund = { ...newFund.defaultFund };
+describe('Funds', () => {
+  const fund = { ...NewFund.defaultFund };
   let createdLedgerId;
 
   afterEach(() => {

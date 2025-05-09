@@ -24,6 +24,16 @@ const resultsPane = Section({ id: 'authority-search-results-pane' });
 const showFiltersButton = Button('Show filters');
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
 const searchButton = Button({ id: 'submit-authorities-search' });
+const resetAllButton = Button({ id: 'clickable-reset-all' });
+const advancedSearchButton = Button('Advanced search');
+const searchAccordionNames = [
+  'Authority source',
+  'References',
+  'Thesaurus',
+  'Type of heading',
+  'Date created',
+  'Date updated',
+];
 
 export default {
   searchBy: (parameter, value) => {
@@ -168,5 +178,21 @@ export default {
 
   clickSearchButton() {
     cy.do(rootSection.find(searchButton).click());
+  },
+
+  verifyDefaultSearchPaneState() {
+    this.verifySearchPaneExpanded(true);
+    cy.expect([
+      searchButton.has({ disabled: true }),
+      resetAllButton.has({ disabled: true }),
+      advancedSearchButton.exists(),
+    ]);
+    searchAccordionNames.forEach((name, index) => {
+      if (index) cy.expect(Accordion(name).has({ open: false }));
+      else cy.expect(Accordion(name).has({ open: true }));
+    });
+    this.verifyFiltersState('keyword', '', 'Search');
+    marcAuthorities.checkRecordsResultListIsAbsent();
+    marcAuthorities.verifyEmptyAuthorityField();
   },
 };

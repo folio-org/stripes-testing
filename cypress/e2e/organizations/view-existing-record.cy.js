@@ -2,7 +2,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('ui-organizations: View organization', () => {
+describe('Organizations', () => {
   const organization = {
     name: `1_autotest_name_${getRandomPostfix()}`,
     status: 'Active',

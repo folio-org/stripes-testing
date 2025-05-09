@@ -19,7 +19,6 @@ describe('MARC', () => {
         const testData = {
           tag111: '111',
           authorityMarkedValue: 'Mediterranean Conference on Medical and Biological Engineering',
-          subjectValue: 'C374197 Speaking Oratory--debating',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Contributor',
         };

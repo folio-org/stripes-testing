@@ -19,7 +19,6 @@ describe('MARC', () => {
         const testData = {
           tag110: '110',
           authorityMarkedValue: 'C374194 Beatles',
-          subjectValue: 'C374194 Speaking Oratory--debating',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Contributor',
         };
