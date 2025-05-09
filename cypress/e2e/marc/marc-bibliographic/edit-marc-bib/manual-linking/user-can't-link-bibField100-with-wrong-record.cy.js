@@ -78,8 +78,9 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380449*');
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440112*');
+          ['C380557', 'C380449', 'C440112'].forEach((id) => {
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(id);
+          });
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -101,14 +102,14 @@ describe('MARC', () => {
                 });
               });
             });
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
               cy.reload();
               InventoryInstances.waitContentLoading();
-            }, 20_000);
+            });
           });
         });
 
@@ -205,7 +206,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
             MarcAuthoritiesSearch.selectExcludeReferencesFilter();
-            MarcAuthorities.selectTitle(testData.authorityFieldValue.field150);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();

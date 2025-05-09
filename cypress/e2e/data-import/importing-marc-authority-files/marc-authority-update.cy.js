@@ -173,14 +173,14 @@ describe('Data Import', () => {
       'C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C374186'] },
       () => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
           cy.reload();
           InventoryInstances.waitContentLoading();
-        }, 20_000);
+        });
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -192,9 +192,7 @@ describe('Data Import', () => {
         InventoryInstance.searchResults(testData.authorityTitle);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority('700');
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
@@ -232,7 +230,9 @@ describe('Data Import', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
-        InventoryInstance.verifyRecordStatus('Automated linking update');
+
+        const { lastName, firstName, middleName } = testData.userProperties.personal;
+        InventoryInstance.verifyRecordStatus(`${lastName}, ${firstName} ${middleName}`);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           59,

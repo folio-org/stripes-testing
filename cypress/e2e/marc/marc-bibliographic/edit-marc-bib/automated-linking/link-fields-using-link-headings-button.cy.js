@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -7,7 +7,6 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
@@ -197,9 +196,14 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-              InventoryInstances.waitContentLoading();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              });
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -216,9 +220,7 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(4000);
-              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -228,6 +230,10 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            InventoryInstances.waitContentLoading();
           });
         });
 

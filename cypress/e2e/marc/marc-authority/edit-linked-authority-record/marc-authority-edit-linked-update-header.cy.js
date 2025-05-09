@@ -148,7 +148,9 @@ describe('MARC', () => {
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
           InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
-          InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
+
+          const { lastName, firstName, middleName } = testData.userProperties.personal;
+          InventoryInstance.verifyRecordStatus(`${lastName}, ${firstName} ${middleName}`);
           InventoryInstance.verifyInstanceSubject(
             11,
             0,
@@ -159,9 +161,9 @@ describe('MARC', () => {
           );
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.checkPaneheaderContains(`Source: ${testData.autoUpdateUserName}`);
+          QuickMarcEditor.checkPaneheaderContains(`Source: ${lastName}, ${firstName}`);
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            52,
+            51,
             '655',
             '\\',
             '7',
