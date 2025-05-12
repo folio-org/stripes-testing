@@ -30,6 +30,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -61,14 +62,20 @@ describe('Data Import', () => {
       profileName: `C385666 Check acquisitions unit.${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+    const acqUnit = AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true });
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      AcquisitionUnits.createAcquisitionUnitViaApi(acqUnit);
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        AcquisitionUnits.assignUserViaApi(user.userId, acqUnit.id);
 
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -79,6 +86,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        AcquisitionUnits.deleteAcquisitionUnitViaApi(acqUnit.id);
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
