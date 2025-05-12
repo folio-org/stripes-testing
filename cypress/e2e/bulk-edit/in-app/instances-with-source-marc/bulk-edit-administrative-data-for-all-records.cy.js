@@ -37,6 +37,12 @@ let loanTypeId;
 let materialTypeId;
 let sourceId;
 let statisticalCode;
+let identifiersQueryFilename;
+let matchedRecordsQueryFileName;
+let previewQueryFileNameCsv;
+let previewQueryFileNameMrc;
+let changedRecordsQueryFileNameCsv;
+let changedRecordsQueryFileNameMrc;
 const itemBarcode = getRandomPostfix();
 const administrativeNoteText = "Administrative note ~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,";
 const administrativeNoteActionOptions = ['Add note', 'Find', 'Remove all'];
@@ -56,12 +62,6 @@ const marcInstanceFields = [
   },
 ];
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-let identifiersQueryFilename;
-let matchedRecordsQueryFileName;
-let previewQueryFileNameCsv;
-let previewQueryFileNameMrc;
-let changedRecordsQueryFileNameCsv;
-let changedRecordsQueryFileNameMrc;
 
 describe('bulk-edit', () => {
   describe('In-app approach', () => {
