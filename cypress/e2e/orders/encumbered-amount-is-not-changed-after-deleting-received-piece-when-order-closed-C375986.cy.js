@@ -1,34 +1,29 @@
 import uuid from 'uuid';
-
-import { INVOICE_STATUSES, ORDER_STATUSES, LOCATION_NAMES } from '../../support/constants';
+import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-// import { InventoryHoldings, InventoryInstances } from '../../support/fragments/inventory';
+import { InventoryHoldings, InventoryInstances } from '../../support/fragments/inventory';
 import { Invoices } from '../../support/fragments/invoices';
 import {
   BasicOrderLine,
+  CheckIn,
   NewOrder,
   OrderLines,
   Orders,
   Pieces,
-  CheckIn,
 } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
-import { ServicePoints } from '../../support/fragments/settings/tenant';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
-// import Users from '../../support/fragments/users/users';
-import orderLineDetails from '../../support/fragments/orders/orderLines';
-import receivingDetails from '../../support/fragments/receiving/receivingDetails';
-import editPieceModal from '../../support/fragments/receiving/modals/editPieceModal';
+import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
   const testData = {
     organization: NewOrganization.getDefaultOrganization(),
     servicePoint: ServicePoints.getDefaultServicePoint(),
     materialType: MaterialTypes.getDefaultMaterialType(),
-    POLineQuantity: 1,
     order: {},
     orderLine: {},
     user: {},
@@ -36,15 +31,12 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-    // ServicePoints.createViaApi(testData.servicePoint).then(() => {
-    //   testData.location = Locations.getDefaultLocation({
-    //     servicePointId: testData.servicePoint.id,
-    //   }).location;
+    ServicePoints.createViaApi(testData.servicePoint).then(() => {
+      testData.location = Locations.getDefaultLocation({
+        servicePointId: testData.servicePoint.id,
+      }).location;
 
-    //   Locations.createViaApi(testData.location);
-    // });
-    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
-      testData.location = res;
+      Locations.createViaApi(testData.location);
     });
 
     Organizations.createOrganizationViaApi(testData.organization);
@@ -72,16 +64,14 @@ describe('Orders', () => {
     testData.order = {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
       reEncumber: true,
-      orderType: 'Ongoing',
-      ongoing: { isSubscription: false, manualRenewal: false },
     };
     testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-      checkinItems: true,
+      checkinItems: false,
+      createInventory: 'Instance, Holding, Item',
       specialLocationId: testData.location.id,
       specialMaterialTypeId: testData.materialType.id,
       listUnitPrice: 90,
       fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
-      createInventory: 'Instance, Holding, Item',
     });
 
     Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
@@ -89,64 +79,23 @@ describe('Orders', () => {
 
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: ORDER_STATUSES.OPEN });
 
+      Pieces.getOrderPiecesViaApi({ query: `poLineId=="${testData.orderLine.id}"` }).then(
+        ({ pieces }) => {
+          testData.barcode = uuid();
+
+          const checkInConfig = CheckIn.getDefaultCheckInConfig({
+            poLineId: pieces[0].poLineId,
+            orderPieceId: pieces[0].id,
+            holdingId: pieces[0].holdingId,
+            barcode: testData.barcode,
+          });
+          CheckIn.createOrderCheckInViaApi(checkInConfig);
+        },
+      );
+
       OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` })
         .then((orderLines) => {
           testData.orderLine = orderLines[0];
-          console.log(orderLines[0]);
-          cy.pause();
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${testData.orderLine.instanceId}"`,
-          }).then((holdings) => {
-            // create and receive the first piece
-            Receiving.getTitleIdViaApi(testData.orderLine.poLineNumber).then((titleId) => {
-              Pieces.createOrderPieceViaApi({
-                poLineId: testData.orderLine.id,
-                titleId,
-                format: 'Physical',
-                holdingId: holdings[0].id,
-                displayOnHolding: true,
-                discoverySuppress: false,
-                displayToPublic: false,
-                isBound: false,
-                supplement: false,
-              }).then((responce) => {
-                testData.firstPieceBarcode = uuid();
-
-                const checkInConfig = CheckIn.getDefaultCheckInConfig({
-                  poLineId: responce.poLineId,
-                  orderPieceId: responce.id,
-                  holdingId: responce.holdingId,
-                  barcode: testData.firstPieceBarcode,
-                });
-                CheckIn.createOrderCheckInViaApi(checkInConfig);
-              });
-            });
-            //   // create and receive the second piece
-            //   Receiving.getTitleIdViaApi(testData.orderLine.poLineNumber).then((titleId) => {
-            //     Pieces.createOrderPieceViaApi({
-            //       poLineId: testData.orderLine.id,
-            //       titleId,
-            //       format: 'Physical',
-            //       holdingId: holdings[0].id,
-            //       displayOnHolding: true,
-            //       discoverySuppress: false,
-            //       displayToPublic: false,
-            //       isBound: false,
-            //       supplement: false,
-            //     }).then((responce) => {
-            //       testData.secondPieceBarcode = uuid();
-
-            //       const checkInConfig = CheckIn.getDefaultCheckInConfig({
-            //         poLineId: responce.poLineId,
-            //         orderPieceId: responce.id,
-            //         holdingId: responce.holdingId,
-            //         barcode: testData.secondPieceBarcode,
-            //       });
-            //       CheckIn.createOrderCheckInViaApi(checkInConfig);
-            //     });
-            //   });
-          });
 
           Invoices.createInvoiceWithInvoiceLineViaApi({
             vendorId: testData.organization.id,
@@ -163,10 +112,6 @@ describe('Orders', () => {
               invoice: testData.invoice,
               status: INVOICE_STATUSES.APPROVED,
             });
-            Invoices.changeInvoiceStatusViaApi({
-              invoice: testData.invoice,
-              status: INVOICE_STATUSES.PAID,
-            });
           });
         })
         .then(() => {
@@ -175,12 +120,6 @@ describe('Orders', () => {
             workflowStatus: ORDER_STATUSES.CLOSED,
           });
         });
-      // cy.getAdminToken().then(() => {
-      //   Invoices.changeInvoiceStatusViaApi({
-      //     invoice: testData.invoice,
-      //     status: INVOICE_STATUSES.PAID,
-      //   });
-      // });
 
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.ordersPath,
@@ -189,23 +128,30 @@ describe('Orders', () => {
     });
   });
 
-  // after('Delete test data', () => {
-  //   cy.getAdminToken();
-  //   cy.wait(6000);
-  //   Organizations.deleteOrganizationViaApi(testData.organization.id);
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.firstPieceBarcode);
-  //   InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-  //   Locations.deleteViaApi(testData.location);
-  //   MaterialTypes.deleteViaApi(testData.materialType.id);
-  //   ServicePoints.deleteViaApi(testData.servicePoint.id);
-  //   Users.deleteViaApi(testData.user.userId);
-  // });
+  after('Delete test data', () => {
+    cy.getAdminToken();
+    cy.wait(6000);
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+    InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
+    Locations.deleteViaApi(testData.location);
+    MaterialTypes.deleteViaApi(testData.materialType.id);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Users.deleteViaApi(testData.user.userId);
+  });
 
   it(
     'C375986 Encumbered amount is not changed after deleting received piece when related paid invoice exists and order is closed (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      // Click PO number link from Preconditions item #1
+      cy.getAdminToken().then(() => {
+        Invoices.changeInvoiceStatusViaApi({
+          invoice: testData.invoice,
+          status: INVOICE_STATUSES.PAID,
+        });
+      });
+
+      // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderDetails({
         summary: [
@@ -213,62 +159,58 @@ describe('Orders', () => {
           { key: 'Total encumbered', value: '$0.00' },
         ],
       });
-      cy.pause();
-      // Go to PO line details pane. Click "Actions" button on POL details pane. Select "Receive" option
-      OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
-      orderLineDetails.openReceiving();
+
+      // Click "Actions" button, Select "Receive" option
+      const Receivings = OrderDetails.openReceivingsPage();
 
       // Click <Title name from PO line> link
-      Receiving.selectFromResultsList();
-      receivingDetails.waitLoading();
-      receivingDetails.checkReceivingDetails({
+      const ReceivingDetails = Receivings.selectFromResultsList(testData.orderLine.titleOrPackage);
+      ReceivingDetails.checkReceivingDetails({
         orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
         expected: [],
-        received: [
-          // { barcode: testData.secondPieceBarcode, format: 'Physical' },
-          { barcode: testData.firstPieceBarcode, format: 'Physical' },
-        ],
+        received: [{ barcode: testData.barcode, format: 'Physical' }],
       });
 
-      // Click on any record in "Received" accordion
-      receivingDetails.openEditPieceModal({ section: 'Received' });
-      editPieceModal.checkFieldsConditions([
+      // Click on the record in "Received" accordion on "<Title name>" pane
+      const EditPieceModal = ReceivingDetails.openEditPieceModal({ section: 'Received' });
+      EditPieceModal.checkFieldsConditions([
         { label: 'Piece format', conditions: { required: true, value: 'Physical' } },
-        // { label: 'Create item', conditions: { value: 'Connected' } },
+        { label: 'Create item', conditions: { value: 'Connected' } },
       ]);
+
       // Click "Delete" button
       Receiving.openDropDownInEditPieceModal();
-      editPieceModal.clickDeleteButton(testData.POLineQuantity);
+      const DeletePieceModal = EditPieceModal.clickDeleteButton();
 
       // Click "Delete item" button
-      // DeletePieceModal.clickDeleteItemButton();
-      // ReceivingDetails.checkReceivingDetails({
-      //   orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
-      //   expected: [],
-      //   received: [],
-      // });
+      DeletePieceModal.clickDeleteItemButton();
+      ReceivingDetails.checkReceivingDetails({
+        orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
+        expected: [],
+        received: [],
+      });
 
       // Click "POL number" link in "POL details" accordion
-      // const OrderLineDetails = ReceivingDetails.openOrderLineDetails();
-      // OrderLineDetails.checkFundDistibutionTableContent([
-      //   { name: testData.fund.name, currentEncumbrance: '$0.00' },
-      // ]);
+      const OrderLineDetails = ReceivingDetails.openOrderLineDetails();
+      OrderLineDetails.checkFundDistibutionTableContent([
+        { name: testData.fund.name, currentEncumbrance: '$0.00' },
+      ]);
 
-      // // Click "Current encumbrance" link in "Fund distribution" accordion
-      // const TransactionDetails = OrderLineDetails.openEncumbrancePane();
-      // TransactionDetails.checkTransactionDetails({
-      //   information: [
-      //     { key: 'Fiscal year', value: testData.fiscalYear.code },
-      //     { key: 'Amount', value: '$0.00' },
-      //     { key: 'Source', value: `${testData.order.poNumber}-1` },
-      //     { key: 'Type', value: 'Encumbrance' },
-      //     { key: 'From', value: testData.fund.name },
-      //     { key: 'Initial encumbrance', value: '$0.00' },
-      //     { key: 'Awaiting payment', value: '$0.00' },
-      //     { key: 'Expended', value: '$25.00' },
-      //     { key: 'Status', value: 'Released' },
-      //   ],
-      // });
+      // Click "Current encumbrance" link in "Fund distribution" accordion
+      const TransactionDetails = OrderLineDetails.openEncumbrancePane();
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${testData.order.poNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Initial encumbrance', value: '$0.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$25.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
     },
   );
 });
