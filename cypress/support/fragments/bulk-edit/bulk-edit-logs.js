@@ -405,6 +405,20 @@ export default {
     }
   },
 
+  verifyLogsRowActionWhenCompletedWithQuery(isMarcInstance = false) {
+    cy.expect([
+      queryIdentifiersBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists(),
+    ]);
+
+    if (isMarcInstance) {
+      cy.expect(previewPorposedChangesMarcBtn.exists());
+      cy.expect(updatedRecordMarcBtn.exists());
+    }
+  },
+
   verifyLogsRowActionWhenNoChangesApplied() {
     cy.expect([
       triggerBtn.exists(),
