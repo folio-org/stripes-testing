@@ -32,4 +32,21 @@ describe('fse-locate-integration - API', () => {
       });
     },
   );
+
+  it(
+    `TCxxxx - check IDP url for ${Cypress.env('LOCATE_HOST')}`,
+    { tags: ['fse', 'api', 'locateSso'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.checkIdpUrl().then((response) => {
+        cy.expect(response.status).to.eq(200);
+        // Verify the Content-Type response header
+        cy.expect(response.headers['content-type']).to.include('xml');
+        // Verify the response body contains valid XML
+        const responseBody = response.body;
+        // Ensure response body starts with XML declaration
+        expect(responseBody).to.match(/<\?xml/);
+      });
+    },
+  );
 });
