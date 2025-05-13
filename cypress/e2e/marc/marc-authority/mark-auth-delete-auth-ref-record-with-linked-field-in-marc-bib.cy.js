@@ -85,19 +85,7 @@ describe('MARC', () => {
         .then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
-          testData.searchAuthorityQueries.forEach((query) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
-                });
-              }
-            });
-          });
-
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374148');
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -131,8 +119,9 @@ describe('MARC', () => {
             QuickMarcEditor.closeCallout();
           });
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
 
       cy.createTempUser([

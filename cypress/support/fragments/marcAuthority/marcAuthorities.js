@@ -619,10 +619,9 @@ export default {
   },
 
   chooseAuthoritySourceOption: (option) => {
-    cy.do([
-      cy.wait(1000), // without wait will immediately close accordion
-      MultiSelect({ label: 'Authority source' }).select([including(option)]),
-    ]);
+    cy.wait(1000);
+    cy.do(MultiSelect({ label: 'Authority source' }).select([including(option)]));
+    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
