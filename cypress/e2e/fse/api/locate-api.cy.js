@@ -34,7 +34,7 @@ describe('fse-locate-integration - API', () => {
   );
 
   it(
-    `TCxxxx - check IDP url for ${Cypress.env('LOCATE_HOST')}`,
+    `TC195873 - check IDP url for ${Cypress.env('LOCATE_HOST')}`,
     { tags: ['fse', 'api', 'locateSso'] },
     () => {
       cy.allure().logCommandSteps(false);
