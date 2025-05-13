@@ -30,3 +30,11 @@ Cypress.Commands.add('getLocatePatron', (externalSystemId) => {
     },
   });
 });
+
+Cypress.Commands.add('checkIdpUrl', () => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('LOCATE_IDP_URL')}`,
+    headers: {},
+  });
+});
