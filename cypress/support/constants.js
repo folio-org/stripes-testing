@@ -804,7 +804,7 @@ export const electronicAccessRelationshipId = {
   RESOURCE: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
 };
 
-export const electronicAccessRelationshipName = {
+export const ELECTRONIC_ACCESS_RELATIONSHIP_NAME = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
 };

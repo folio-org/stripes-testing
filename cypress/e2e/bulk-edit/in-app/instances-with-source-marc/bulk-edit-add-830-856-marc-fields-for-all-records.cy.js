@@ -12,7 +12,11 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
@@ -26,11 +30,15 @@ import { getLongDelay } from '../../../../support/utils/cypressTools';
 let user;
 let previewQueryFileNameCsv;
 let previewQueryFileNameMrc;
+let changedRecordsQueryFileNameCsv;
+let changedRecordsQueryFileNameMrc;
 const postfix = getRandomPostfix();
 const marcInstance = {
   title: `AT_C663269_MarcInstance_${postfix}`,
 };
 const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
+const electronicAccessTableHeadersInFile =
+  'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const electronicAccessFields = {
   uri: 'http://proxy.library.tamu.edu/login?url=http://congressional.proquest.com/congcomp/getdoc?SERIAL-SET-ID=12247+H.rp.1979',
   urlPublicNote: 'Connect to the full text of this electronic book',
@@ -146,6 +154,8 @@ describe('bulk-edit', () => {
           )[1];
           previewQueryFileNameCsv = `${todayDate}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
           previewQueryFileNameMrc = `${todayDate}-Updates-Preview-MARC-Query-${interceptedUuid}.mrc`;
+          changedRecordsQueryFileNameCsv = `${todayDate}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
+          changedRecordsQueryFileNameMrc = `${todayDate}-Changed-Records-MARC-Query-${interceptedUuid}.mrc`;
         });
       });
     });
@@ -154,7 +164,12 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
-      FileManager.deleteFileFromDownloadsByMask(previewQueryFileNameCsv, previewQueryFileNameMrc);
+      FileManager.deleteFileFromDownloadsByMask(
+        previewQueryFileNameCsv,
+        previewQueryFileNameMrc,
+        changedRecordsQueryFileNameCsv,
+        changedRecordsQueryFileNameMrc,
+      );
     });
 
     it(
@@ -166,20 +181,41 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+        );
+        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+          true,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
           '',
         );
+        BulkEditSearchPane.verifyElectronicAccessColumnHeaders();
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          0,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccessFields.uri);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          4,
+          electronicAccessFields.urlPublicNote,
+        );
         BulkEditSearchPane.changeShowColumnCheckbox(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
         );
-        BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
+        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
           false,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
         );
-        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotIncludeTitles(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
         );
         BulkEditActions.openStartBulkEditMarcInstanceForm();
@@ -203,6 +239,18 @@ describe('bulk-edit', () => {
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
           seriesStatement,
+        );
+        BulkEditSearchPane.verifyElectronicAccessColumnHeaders();
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          0,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccessFields.uri);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          4,
+          electronicAccessFields.newUrlPublicNote,
         );
         BulkEditActions.verifyAreYouSureForm(1);
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
@@ -245,11 +293,16 @@ describe('bulk-edit', () => {
 
         parseMrcFileContentAndVerify(previewQueryFileNameMrc, 0, assertionsOnMarcFileContent, 1);
 
+        const updatedHoldingElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccessFields.uri};-;-;${electronicAccessFields.newUrlPublicNote}`;
+
         BulkEditActions.downloadPreview();
         FileManager.convertCsvToJson(previewQueryFileNameCsv).then((csvFileData) => {
           cy.expect(
             csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
           ).to.equal(seriesStatement);
+          cy.expect(
+            csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS],
+          ).to.equal(updatedHoldingElectronicAccessInFile);
         });
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
@@ -264,6 +317,24 @@ describe('bulk-edit', () => {
           `${electronicAccessTableHeaders}Resource${electronicAccessFields.uri}--${electronicAccessFields.newUrlPublicNote}`,
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        FileManager.convertCsvToJson(changedRecordsQueryFileNameCsv).then((csvFileData) => {
+          cy.expect(
+            csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
+          ).to.equal(seriesStatement);
+          cy.expect(
+            csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS],
+          ).to.equal(updatedHoldingElectronicAccessInFile);
+        });
+        BulkEditActions.downloadChangedMarc();
+
+        parseMrcFileContentAndVerify(
+          changedRecordsQueryFileNameMrc,
+          0,
+          assertionsOnMarcFileContent,
+          1,
+        );
 
         const updateDate = DateTools.getFormattedEndDateWithTimUTC(new Date());
 

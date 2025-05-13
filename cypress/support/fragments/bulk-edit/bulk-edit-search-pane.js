@@ -1128,6 +1128,15 @@ export default {
       DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE))
         .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUBJECT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION))
+        .has({ checked: false }),
     ]);
   },
 
@@ -1328,6 +1337,26 @@ export default {
       .find('td')
       .eq(elementIndex)
       .should('have.text', expectedText);
+  },
+
+  verifyElectronicAccessColumnHeaders() {
+    cy.get('[class^="EmbeddedTable-"]')
+      .find('tr')
+      .eq(0)
+      .then((headerRow) => {
+        const headerCells = headerRow.find('th');
+        const expectedHeaders = [
+          'Relationship',
+          'URI',
+          'Link text',
+          'Materials specified',
+          'Public note',
+        ];
+
+        expectedHeaders.forEach((header, index) => {
+          expect(headerCells.eq(index).text()).to.equal(header);
+        });
+      });
   },
 
   verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
