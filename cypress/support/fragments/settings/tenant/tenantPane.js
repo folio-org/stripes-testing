@@ -40,6 +40,9 @@ export default {
 
     return tenantSections[section];
   },
+  verifyIconInTenantOption() {
+    cy.expect(NavListItem('Tenant').has({ icon: 'Tenant' }));
+  },
   goToTenantTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());

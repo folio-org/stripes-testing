@@ -20,6 +20,10 @@ export const NavListItem = HTML.extend('Nav List Item')
     label,
     href: (el) => el.getAttribute('href'),
     content: (el) => el.textContent,
+    icon: (el) => {
+      const img = el.querySelector('img');
+      return img ? img.getAttribute('alt') : '';
+    },
   });
 
 export const NavItemList = HTML.extend('Nav Item List')
