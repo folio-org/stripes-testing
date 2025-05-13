@@ -1330,6 +1330,26 @@ export default {
       .should('have.text', expectedText);
   },
 
+  verifyElectronicAccessColumnHeaders() {
+    cy.get('[class^="EmbeddedTable-"]')
+      .find('tr')
+      .eq(0)
+      .then((headerRow) => {
+        const headerCells = headerRow.find('th');
+        const expectedHeaders = [
+          'Relationship',
+          'URI',
+          'Link text',
+          'Materials specified',
+          'Public note',
+        ];
+
+        expectedHeaders.forEach((header, index) => {
+          expect(headerCells.eq(index).text()).to.equal(header);
+        });
+      });
+  },
+
   verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
     cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
