@@ -153,6 +153,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uncheckShowColumnCheckbox(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
         );
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
+        );
 
         createdInstanceHrids.forEach((instanceHrid) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
