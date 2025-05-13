@@ -48,7 +48,6 @@ import InventoryViewSource from './inventoryViewSource';
 import ItemRecordEdit from './item/itemRecordEdit';
 import ItemRecordView from './item/itemRecordView';
 import NewOrderModal from './modals/newOrderModal';
-import Tenant from '../../tenant';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const actionsButton = instanceDetailsSection.find(Button('Actions'));
@@ -1428,32 +1427,32 @@ export default {
     cy.wait(1500);
   },
 
-  shareInstance() {
+  clickShareInstance() {
     cy.do(shareInstanceModal.find(Button('Share')).click());
   },
 
-  waitForSharingToComplete() {
-    cy.intercept('GET', '/consortia/*/sharing/instances*').as('getSharingInstances');
-    cy.getConsortiaId().then((consortiaId) => {
-      cy.wait('@getSharingInstances', { timeout: 60000 }).then((interception) => {
-        const sharingInstanceId = interception.response.body.sharingInstances[0].instanceIdentifier;
-        cy.recurse(
-          () => cy.okapiRequest({
-            path: `consortia/${consortiaId}/sharing/instances/`,
-            searchParams: {
-              instanceIdentifier: sharingInstanceId,
-              sourceTenantId: Tenant.get(),
-            },
-            isDefaultSearchParamsRequired: false,
-          }),
-          (response) => response.body.sharingInstances[0].status === 'COMPLETE',
-          {
-            limit: 12,
-            timeout: 60000,
-            delay: 5000,
+  shareInstance() {
+    cy.intercept('POST', '/consortia/*/sharing/instances').as('postSharingInstances');
+    this.clickShareLocalInstanceButton();
+    this.clickShareInstance();
+    cy.wait('@postSharingInstances', { timeout: 60000 }).then((interception) => {
+      const sharingInstanceId = interception.response.body.instanceIdentifier;
+      const consortiaId = interception.request.url.split('/consortia/')[1].split('/')[0];
+      return cy.recurse(
+        () => cy.okapiRequest({
+          path: `consortia/${consortiaId}/sharing/instances`,
+          searchParams: {
+            instanceIdentifier: sharingInstanceId,
           },
-        );
-      });
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        }),
+        (response) => response.body.sharingInstances[0].status === 'COMPLETE',
+        {
+          limit: 20,
+          delay: 1000,
+        },
+      );
     });
   },
 

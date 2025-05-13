@@ -7,9 +7,12 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-// import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
+import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import inventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -72,44 +75,28 @@ describe('Inventory', () => {
       'C692169 Verify version history after sharing a local MARC instance (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C692169'] },
       () => {
+        // Step 1: Search and select the instance
         InventoryInstances.searchByTitle(marcFile.instanceTitle);
+        InventorySearchAndFilter.byShared('No');
+        cy.wait(1000);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
         QuickMarcEditor.saveAndCloseWithValidationWarnings();
 
-        cy.pause();
-
-        InventoryInstance.clickShareLocalInstanceButton();
-        InventoryInstance.verifyShareInstanceModal(marcFile.instanceTitle);
+        // Step 2: Share the local instance
         InventoryInstance.shareInstance();
-        // InventoryInstance.waitForSharingToComplete();
-        InventoryInstance.verifyCalloutMessage(
-          `Local instance ${marcFile.fileName} has been successfully shared`,
-        );
+        InstanceRecordView.verifyInstanceSource('MARC');
 
-        // // Step 1: Search and select the instance
-        // InventoryInstances.searchByTitle(testData.instanceId);
-        // InventoryInstances.selectInstance();
-        // InventoryInstance.waitLoading();
-
-        // // Step 2: Share the local instance
-        // InventoryInstance.clickShareLocalInstanceButton();
-        // InventoryInstance.verifyShareInstanceModal(marcFile.title);
-        // InventoryInstance.shareInstance();
-        // InventoryInstance.verifyCalloutMessage(
-        //   `Local instance ${marcFile.title} has been successfully shared`,
-        // );
-
-        // // Step 3: Verify version history
-        // InventoryInstance.openViewSource();
-        // InventoryInstance.openVersionHistory();
-        // VersionHistorySection.waitLoading();
-        // VersionHistorySection.verifyListOfChanges([
-        //   'Shared',
-        //   `${testData.user.lastName}, ${testData.user.firstName}`,
-        // ]);
+        // Step 3: Verify version history
+        InventoryInstance.viewSource();
+        inventoryViewSource.clickVersionHistoryButton();
+        VersionHistorySection.verifyVersionsCount(1);
+        VersionHistorySection.verifyListOfChanges([
+          'Shared',
+          `${testData.userProperties.lastName}, ${testData.userProperties.firstName}`,
+        ]);
       },
     );
   });
