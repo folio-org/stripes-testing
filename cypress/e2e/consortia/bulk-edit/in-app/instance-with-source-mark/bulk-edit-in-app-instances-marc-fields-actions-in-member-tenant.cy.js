@@ -1,22 +1,25 @@
-import permissions from '../../../../support/dictionary/permissions';
-import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import permissions from '../../../../../support/dictionary/permissions';
+import BulkEditActions from '../../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../../../support/fragments/bulk-edit/bulk-edit-files';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import FileManager from '../../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../../../support/constants';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcFileContent';
 
 let user;
 const marcInstance = {
