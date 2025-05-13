@@ -41,7 +41,7 @@ export default {
   },
 
   verifyItemInDetailPanel() {
-    cy.expect([actions.absent(), newButton.has({ disabled: true })]);
+    cy.expect([actions.absent(), newButton.absent()]);
   },
 
   fillRequiredFields: (expenseClasses) => {

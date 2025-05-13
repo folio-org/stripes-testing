@@ -148,7 +148,14 @@ describe('Orders', () => {
 
       // Click on the invoice line related to PO line
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
-      InvoiceLineDetails.checkFundDistibutionTableContent();
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        {
+          name: testData.fund.code,
+          expenseClass: '-',
+          currentEncumbrance: '-',
+          initialEncumbrance: '-',
+        },
+      ]);
     },
   );
 });
