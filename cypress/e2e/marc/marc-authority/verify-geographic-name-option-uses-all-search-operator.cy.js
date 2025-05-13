@@ -82,6 +82,7 @@ describe('MARC', () => {
       { tags: ['criticalPath', 'spitfire', 'C584445'] },
       () => {
         // execute search by "Keyword" option
+        MarcAuthorities.switchToSearch();
         testData.searchOptions.forEach((option) => {
           testData.searchQueries.forEach((query) => {
             MarcAuthorities.searchByParameter(option, query);
