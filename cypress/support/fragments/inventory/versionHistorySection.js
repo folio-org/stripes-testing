@@ -1,7 +1,8 @@
 import { including } from '@interactors/html';
-import { Button, HTML, Pane } from '../../../../interactors';
+import { Button, HTML, Pane, PaneHeader } from '../../../../interactors';
 
 const rootSection = Pane({ title: 'Version history' });
+const paneHeader = rootSection.find(PaneHeader());
 const closeButton = Button({ icon: 'times' });
 
 export default {
@@ -19,6 +20,10 @@ export default {
     changes.forEach((change) => {
       cy.expect(rootSection.find(HTML({ text: including(change) })).absent());
     });
+  },
+
+  verifyVersionsCount(count) {
+    cy.expect(paneHeader.has({ text: including(`${count} version`) }));
   },
 
   clickCloseButton() {
