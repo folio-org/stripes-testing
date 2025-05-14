@@ -1,4 +1,11 @@
+const isEureka = Cypress.env('eureka');
+
 describe('fse-sso - UI', () => {
+  if (isEureka) {
+    it.skip('Skipping tests for eureka tenants', () => {});
+    return;
+  }
+
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
