@@ -433,7 +433,7 @@ const UI = {
   },
 
   verifyQuery(query) {
-    cy.get('#results-viewer-accordion').contains(`Query: ${query}`).should('be.visible');
+    cy.get('#results-viewer-accordion').contains(`Query: (${query})`).should('be.visible');
   },
 
   openList(listName) {

@@ -140,6 +140,9 @@ describe('Check in', () => {
           CheckInPane.verifyResultCells();
           CheckInPane.checkResultsInTheRow(checkInResultsData);
           CheckInActions.checkActionsMenuOptions();
+          CheckInActions.openActions();
+          CheckInActions.clickLoanDetailsOption();
+          CheckInActions.openCheckInPane();
           CheckInActions.openLoanDetails(userData.username);
           CheckInActions.openCheckInPane();
           CheckInActions.openPatronDetails(userData.username);
