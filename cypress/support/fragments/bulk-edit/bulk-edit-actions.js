@@ -30,6 +30,7 @@ const actionsBtn = Button('Actions');
 const bulkEditsAccordion = Accordion('Bulk edits');
 const bulkEditsAdministrativeDataAccordion = Accordion('Bulk edits for administrative data');
 const bulkEditsMarcInstancesAccordion = Accordion('Bulk edits for instances with source MARC');
+const bulkEditsAccordions = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
@@ -93,6 +94,10 @@ export default {
     cy.wait(2000);
   },
 
+  verifyStartBulkEditOptions() {
+    cy.expect([startBulkEditInstanceButton.exists(), startBulkEditMarcInstanceButton.exists()]);
+  },
+
   verifyOptionsLength(optionsLength, count) {
     cy.expect(optionsLength).to.eq(count);
   },
@@ -130,7 +135,8 @@ export default {
 
   verifyOptionSelected(optionName, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(bulkPageSelections.valueType)
         .has({ singleValue: optionName }),
     );
@@ -164,7 +170,8 @@ export default {
 
   verifySecondActionSelected(option, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-1' }))
         .has({ checkedOptionText: option }),
     );
@@ -547,7 +554,7 @@ export default {
 
   addNewBulkEditFilterString() {
     cy.wait(1000);
-    cy.do(plusBtn.click());
+    cy.do(bulkEditsAccordions.find(plusBtn).click());
     cy.wait(1000);
   },
 
@@ -565,14 +572,22 @@ export default {
 
   verifyNewBulkEditRow(rowIndex = 1) {
     cy.expect([
-      RepeatableFieldItem({ index: rowIndex - 1 })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex - 1 }))
         .find(plusBtn)
         .absent(),
-      RepeatableFieldItem({ index: rowIndex - 1 })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex - 1 }))
         .find(deleteBtn)
         .has({ disabled: false }),
-      RepeatableFieldItem({ index: rowIndex }).find(plusBtn).exists(),
-      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).exists(),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(plusBtn)
+        .exists(),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(deleteBtn)
+        .exists(),
       confirmChangesButton.has({ disabled: true }),
     ]);
   },
@@ -771,8 +786,10 @@ export default {
 
   verifyTheActionOptions(expectedOptions, rowIndex = 0) {
     cy.then(() => {
+      cy.wait(1000);
       cy.do(
-        RepeatableFieldItem({ index: rowIndex })
+        bulkEditsAccordions
+          .find(RepeatableFieldItem({ index: rowIndex }))
           .find(Select('Actions select'))
           .allOptionsText()
           .then((actualOptions) => {
@@ -827,7 +844,8 @@ export default {
 
   verifyValueInSecondTextArea(value, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .has({ value }),
     );
@@ -892,9 +910,18 @@ export default {
 
   addItemNote(type, value, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Add note'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.valueType)
+        .choose(type),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.action)
+        .choose('Add note'),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea())
+        .fillIn(value),
     ]);
   },
 

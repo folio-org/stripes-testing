@@ -1427,8 +1427,33 @@ export default {
     cy.wait(1500);
   },
 
-  shareInstance() {
+  clickShareInstance() {
     cy.do(shareInstanceModal.find(Button('Share')).click());
+  },
+
+  shareInstance() {
+    cy.intercept('POST', '/consortia/*/sharing/instances').as('postSharingInstances');
+    this.clickShareLocalInstanceButton();
+    this.clickShareInstance();
+    cy.wait('@postSharingInstances', { timeout: 60000 }).then((interception) => {
+      const sharingInstanceId = interception.response.body.instanceIdentifier;
+      const consortiaId = interception.request.url.split('/consortia/')[1].split('/')[0];
+      return cy.recurse(
+        () => cy.okapiRequest({
+          path: `consortia/${consortiaId}/sharing/instances`,
+          searchParams: {
+            instanceIdentifier: sharingInstanceId,
+          },
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        }),
+        (response) => response.body.sharingInstances[0].status === 'COMPLETE',
+        {
+          limit: 20,
+          delay: 1000,
+        },
+      );
+    });
   },
 
   verifyCalloutMessage(message) {
