@@ -39,7 +39,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
+    name: `2_autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -313,7 +313,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.selectTransactionInList('Encumbrance');
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
-        '$70.00',
+        '($70.00)',
         `${firstOrderNumber}-1`,
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
@@ -321,6 +321,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.checkStatusInTransactionDetails('Unreleased');
       Funds.closeTransactionApp(secondFund, secondFiscalYear);
       Funds.closeBudgetDetails();
+      Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectPreviousBudgetDetails();

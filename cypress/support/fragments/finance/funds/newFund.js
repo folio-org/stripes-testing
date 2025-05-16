@@ -3,8 +3,8 @@ import FinanceHelp from '../financeHelper';
 
 export default {
   defaultFund: {
-    name: `autotest_fund_${getRandomPostfix()}`,
-    code: `autotest_fund_code_${getRandomPostfix()}`,
+    name: `1_autotest_fund_${getRandomPostfix()}`,
+    code: `1_autotest_fund_code_${getRandomPostfix()}`,
     status: FinanceHelp.statusActive,
     ledgerName: '',
     externalAccount: 'autotest_external_account',

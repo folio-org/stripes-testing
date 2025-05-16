@@ -1,8 +1,8 @@
 import {
   Button,
   KeyValue,
-  Label,
   Pane,
+  Modal,
   Select,
   Selection,
   TextArea,
@@ -22,6 +22,7 @@ const cancelButton = editPieceModal.find(Button('Cancel'));
 const deleteButton = Button('Delete');
 const quickReceiveButton = Button('Quick receive');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
+const deleteHoldingsModal = Modal('Delete Holdings');
 
 const editPieceFields = {
   Caption: editPieceModal.find(TextField({ name: 'displaySummary' })),
@@ -31,7 +32,7 @@ const editPieceFields = {
   'Piece format': editPieceModal.find(Select({ name: 'format' })),
   'Expected receipt date': editPieceModal.find(TextField({ name: 'receiptDate' })),
   Comment: editPieceModal.find(TextArea({ name: 'comment' })),
-  'Order line locations': editPieceModal.find(Label('Order line locations')),
+  'Order line locations': editPieceModal.find(KeyValue('Order line locations')),
   'Create item': editPieceModal.find(KeyValue('Create item')),
 };
 
@@ -83,6 +84,7 @@ export default {
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
     cy.do(quickReceiveButton.click());
+    this.clickKeepHoldingsInDeleteHoldingsModal();
 
     if (peiceReceived) {
       InteractorsTools.checkCalloutMessage(
@@ -97,5 +99,9 @@ export default {
     if (pieceSaved) {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }
+  },
+  clickKeepHoldingsInDeleteHoldingsModal() {
+    cy.do(deleteHoldingsModal.find(Button('Keep Holdings')).click());
+    cy.expect(deleteHoldingsModal.absent());
   },
 };

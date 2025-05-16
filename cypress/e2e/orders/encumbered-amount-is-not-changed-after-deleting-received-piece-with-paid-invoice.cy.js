@@ -13,6 +13,9 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
+import { APPLICATION_NAMES, RECEIVING_WORKFLOW_NAMES } from '../../support/constants';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -37,6 +40,9 @@ describe('Orders', () => {
   const allocatedQuantity = '1000';
   const barcode = FinanceHelp.getRandomBarcode();
   const enumeration = 'autotestCaption';
+  const copyNumber = FinanceHelp.getRandomBarcode();
+  const chronology = FinanceHelp.getRandomBarcode();
+  const displaySummary = `AQA_${FinanceHelp.getRandomBarcode()}`;
   let user;
   let orderNumber;
   let servicePointId;
@@ -44,6 +50,7 @@ describe('Orders', () => {
   let orderLineTitle;
 
   before(() => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -76,7 +83,8 @@ describe('Orders', () => {
       firstOrder.orderType = 'One-time';
     });
     firstOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+    Orders.selectOrdersPane();
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -89,6 +97,7 @@ describe('Orders', () => {
         '1',
         '100',
         location.name,
+        RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -97,11 +106,15 @@ describe('Orders', () => {
       }).then((orderLinesResponse) => {
         orderLineTitle = orderLinesResponse[0].titleOrPackage;
       });
-      Orders.receiveOrderViaActions();
+      OrderLines.selectPOLInOrder();
+      OrderLines.receiveOrderLinesViaActions();
       Receiving.selectPOLInReceive(orderLineTitle);
-      Receiving.receivePiece(0, enumeration, barcode);
+      Receiving.addPiece(displaySummary, copyNumber, enumeration, chronology);
+      Receiving.selectPiece(displaySummary);
+      Receiving.openDropDownInEditPieceModal();
+      Receiving.quickReceivePiece(enumeration);
       Receiving.checkReceivedPiece(0, enumeration, barcode);
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
@@ -134,12 +147,13 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      Orders.receiveOrderViaActions();
+      OrderLines.selectPOLInOrder();
+      OrderLines.receiveOrderLinesViaActions();
       Receiving.selectPOLInReceive(orderLineTitle);
-      Receiving.selectPieceInReceived(barcode);
+      Receiving.selectPieceInReceived(chronology);
       Receiving.openDropDownInEditPieceModal();
       Receiving.deleteItemPiece();
-      Receiving.selectInstanceInReceive(`${orderNumber}-1`);
+      ReceivingDetails.openOrderLineDetails();
       OrderLines.openPageCurrentEncumbrance('$0.00');
       Funds.varifyDetailsInTransaction(
         firstFiscalYear.code,
@@ -148,6 +162,7 @@ describe('Orders', () => {
         'Encumbrance',
         `${firstFund.name} (${firstFund.code})`,
       );
+      Funds.checkInitialEncumbranceDetails('$100.00');
       Funds.checkStatusInTransactionDetails('Released');
     },
   );
