@@ -234,7 +234,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.call_number starts with "${callNumberStarts}")`,
+              `(holdings.call_number starts with ${callNumberStarts})`,
             );
 
             const holdingHrids = [...folioInstance.holdingHrids, ...marcInstance.holdingHrids];
