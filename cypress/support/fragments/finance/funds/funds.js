@@ -73,10 +73,11 @@ const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
+const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 
 export default {
   defaultUiFund: {
-    name: `a_autotest_fund_${getRandomPostfix()}`,
+    name: `1_autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -273,6 +274,15 @@ export default {
     );
   },
 
+  addTransferFrom: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      MultiSelect({ label: 'Transfer from' }).select([fund]),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
   checkWarningMessageFundCodeUsed: () => {
     cy.do(codeField.has({ error: 'This Fund code is already in use.' }));
   },
@@ -409,20 +419,20 @@ export default {
     );
   },
 
-  checkPaymentInTransactionDetails: (indexNumber, fiscalYear, source, fund, amount) => {
+  checkPaymentInTransactionDetails: (fiscalYear, source, fund, amount, type = 'Payment') => {
     cy.do(
       transactionList
-        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListRow(including(type), { isContainer: true }))
         .find(Link())
         .click(),
     );
-    cy.expect(
+    cy.expect([
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
-      transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
-    );
+    ]);
   },
 
   checkStatusInTransactionDetails: (status) => {
@@ -447,25 +457,35 @@ export default {
     );
   },
 
-  checkOrderInTransactionList: (fundCode, amount) => {
-    cy.expect([
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: 'Encumbrance' }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: `${amount}` }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .has({ content: `${fundCode}` }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 5 }))
-        .has({ content: 'PO line' }),
-    ]);
+  findResultRowIndexByContent(content) {
+    return cy
+      .get('*[class^="mclCell"]')
+      .contains(content)
+      .parent()
+      .invoke('attr', 'data-row-inner');
+  },
+
+  checkOrderInTransactionList(fundCode, amount) {
+    this.findResultRowIndexByContent('PO line').then((rowIndex) => {
+      cy.expect([
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: 'Encumbrance' }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: `${amount}` }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 3 }))
+          .has({ content: `${fundCode}` }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 5 }))
+          .has({ content: 'PO line' }),
+      ]);
+    });
   },
 
   selectTransactionInList: (transactionType) => {
@@ -537,6 +557,9 @@ export default {
     cy.do([actionsButton.click(), moveAllocationButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount });
   },
+  openMoveAllocationModal() {
+    cy.do([actionsButton.click(), moveAllocationButton.click()]);
+  },
   closeTransferModal() {
     cy.do(addTransferModal.find(cancelButton).click());
   },
@@ -565,6 +588,25 @@ export default {
     cy.xpath(budgetTitleXpath)
       .should('be.visible')
       .and('have.text', fundCode.concat('-', fiscalYear));
+  },
+  fillInAllAllocationFields(toFund, fromFund, amount) {
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+    ]);
+
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+
+    cy.do([
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
   },
 
   checkFundingInformation: (
@@ -1186,5 +1228,17 @@ export default {
 
   openSource: (linkName) => {
     cy.do(transactionDetailSection.find(Link(linkName)).click());
+  },
+
+  clickOnFiscalYearTab: () => {
+    cy.do(fundsFiltersSection.find(Button('Fiscal year')).click());
+  },
+
+  clickOnGroupTab: () => {
+    cy.get('button[data-test-finance-navigation-group="true"]').click();
+  },
+
+  clickOnLedgerTab: () => {
+    cy.do(fundsFiltersSection.find(Button('Ledger')).click());
   },
 };

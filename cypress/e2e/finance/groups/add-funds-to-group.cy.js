@@ -130,7 +130,7 @@ describe('ui-finance: Groups', () => {
       Groups.selectGroup(firstGroup.name);
       Groups.addFundToGroup(secondFund.name);
       InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-      Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
+      Groups.checkAddingMultiplyFunds(firstFund.name, secondFund.name);
       FinanceHelp.searchByName(secondGroup.name);
       Groups.selectGroup(secondGroup.name);
       Groups.addFundToGroup(firstFund.name);

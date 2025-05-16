@@ -13,14 +13,14 @@ describe('ui-finance: Funds', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
+    name: `1_autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: `2${getRandomPostfix()}`,
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
   const thirdFund = {
-    name: `autotest_fund3_${getRandomPostfix()}`,
+    name: `1_autotest_fund3_${getRandomPostfix()}`,
     code: `3${getRandomPostfix()}`,
     externalAccountNo: `32${getRandomPostfix()}`,
     fundStatus: 'Active',
