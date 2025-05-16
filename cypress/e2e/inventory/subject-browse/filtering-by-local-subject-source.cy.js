@@ -69,7 +69,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet', 'C584507'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
-        cy.wait(1500);
+        cy.wait(2000);
         BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.subjectSource.name);

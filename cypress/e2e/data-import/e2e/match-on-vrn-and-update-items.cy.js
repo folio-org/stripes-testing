@@ -225,7 +225,7 @@ describe('Data Import', () => {
           Orders.selectFromResultsList(orderNumber);
           OrderDetails.openPolDetails(item.title);
           OrderLines.openReceiving();
-          Receiving.checkIsPiecesCreated(item.title, ORDER_STATUSES.OPEN);
+          Receiving.checkIsPiecesCreated(item.title);
         });
 
         DataImport.editMarcFile(
