@@ -140,6 +140,17 @@ const verifyStatisticalCode = (value) => {
   );
 };
 
+const verifyStatisticalCodeTypeAndName = (type, name) => {
+  cy.expect([
+    MultiColumnList({ id: 'list-statistical-codes' })
+      .find(MultiColumnListCell({ column: 'Statistical code type', content: type }))
+      .exists(),
+    MultiColumnList({ id: 'list-statistical-codes' })
+      .find(MultiColumnListCell({ column: 'Statistical code name', content: name }))
+      .exists(),
+  ]);
+};
+
 const verifyNatureOfContent = (value) => {
   cy.expect(KeyValue('Nature of content').has({ value }));
 };
@@ -227,6 +238,7 @@ export default {
   verifyAdministrativeNote,
   verifyInstanceNote,
   verifyStatisticalCode,
+  verifyStatisticalCodeTypeAndName,
   verifyNatureOfContent,
   verifyInstanceSource,
   verifyInstanceRecordViewOpened,

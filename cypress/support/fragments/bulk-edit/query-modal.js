@@ -39,6 +39,7 @@ export const instanceFieldValues = {
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
+  statisticalCodeNames: 'Instance — Statistical code names',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
@@ -94,6 +95,7 @@ export const QUERY_OPERATIONS = {
   NOT_IN: 'not in',
   IS_NULL: 'is null/empty',
   CONTAINS: 'contains',
+  CONTAINS_ANY: 'contains any',
   START_WITH: 'starts with',
   GREATER_THAN: 'greater than',
   LESS_THAN: 'less than',

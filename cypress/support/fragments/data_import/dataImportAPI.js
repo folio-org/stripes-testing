@@ -480,10 +480,22 @@ export const DataImportAPI = {
     filesList.forEach((file) => {
       this.uploadFileViaApi(file.marc, file.fileName, file.jobProfileToRun).then((response) => {
         response.forEach((record) => {
-          if (file.propertyName === 'instance') ids.createdInstanceIDs.push(record[file.propertyName].id);
-          if (file.propertyName === 'authority') ids.createdAuthorityIDs.push(record[file.propertyName].id);
-          if (file.propertyName === 'holdings') ids.createdHoldingIDs.push(record[file.propertyName].id);
-          if (file.propertyName === 'item') ids.createdItemIDs.push(record[file.propertyName].id);
+          switch (file.propertyName) {
+            case 'instance':
+              ids.createdInstanceIDs.push(record[file.propertyName].id);
+              break;
+            case 'authority':
+              ids.createdAuthorityIDs.push(record[file.propertyName].id);
+              break;
+            case 'holdings':
+              ids.createdHoldingIDs.push(record[file.propertyName].id);
+              break;
+            case 'item':
+              ids.createdItemIDs.push(record[file.propertyName].id);
+              break;
+            default:
+              throw new Error(`Unknown file type: ${file.propertyName}`);
+          }
         });
       });
     });
