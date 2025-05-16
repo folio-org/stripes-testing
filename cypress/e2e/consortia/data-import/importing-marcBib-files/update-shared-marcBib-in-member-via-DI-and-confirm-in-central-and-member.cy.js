@@ -219,6 +219,7 @@ describe('Data Import', () => {
           users.userAProperties.firstName,
           users.userAProperties.lastName,
         );
+        cy.resetTenant();
 
         cy.login(users.userBProperties.username, users.userBProperties.password, {
           path: TopMenu.inventoryPath,
