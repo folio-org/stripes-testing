@@ -76,7 +76,7 @@ const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 
 export default {
   defaultUiFund: {
-    name: `1_autotest_fund_${getRandomPostfix()}`,
+    name: `autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',

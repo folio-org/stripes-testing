@@ -40,7 +40,7 @@ const searchButton = Button('Search');
 
 export default {
   defaultUiFiscalYear: {
-    name: `1_autotest_year_${getRandomPostfix()}`,
+    name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+12:00`,
     periodEnd: `${DateTools.get2DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+12:00`,
