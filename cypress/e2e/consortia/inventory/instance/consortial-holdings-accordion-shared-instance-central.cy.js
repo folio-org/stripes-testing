@@ -78,13 +78,8 @@ describe('Inventory', () => {
                 Affiliations.Consortia,
               );
 
-              InventoryInstance.shareInstanceViaApi(
-                testData.testInstanceIds.instanceId,
-                testData.consortiaId,
-                Affiliations.College,
-                Affiliations.Consortia,
-              );
               // adding Holdings in College for shared Instance
+              cy.resetTenant();
               cy.setTenant(Affiliations.College);
               const collegeLocationData = Locations.getDefaultLocation({
                 servicePointId: ServicePoints.getDefaultServicePoint().id,

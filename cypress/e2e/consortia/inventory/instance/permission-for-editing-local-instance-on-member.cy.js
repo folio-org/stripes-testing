@@ -48,7 +48,6 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
