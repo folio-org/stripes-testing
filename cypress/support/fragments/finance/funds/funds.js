@@ -72,8 +72,8 @@ const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
-const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
+const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 
 export default {
   defaultUiFund: {

@@ -1,24 +1,23 @@
 import uuid from 'uuid';
-
+import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
+import { InventoryHoldings, InventoryInstances } from '../../support/fragments/inventory';
+import { Invoices } from '../../support/fragments/invoices';
 import {
   BasicOrderLine,
-  NewOrder,
-  Orders,
-  OrderLines,
   CheckIn,
+  NewOrder,
+  OrderLines,
+  Orders,
   Pieces,
 } from '../../support/fragments/orders';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { Invoices } from '../../support/fragments/invoices';
-import { InventoryHoldings, InventoryInstances } from '../../support/fragments/inventory';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
+import Receiving from '../../support/fragments/receiving/receiving';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Receiving from '../../support/fragments/receiving/receiving';
 
 describe('Orders', () => {
   const testData = {

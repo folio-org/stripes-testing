@@ -381,6 +381,7 @@ export default {
 
   openDropDownInEditPieceModal: () => {
     cy.do(Button({ dataTestID: 'dropdown-trigger-button' }).click());
+    cy.wait(2000);
   },
 
   quickReceiveInEditPieceModal() {
@@ -482,5 +483,15 @@ export default {
 
   addRoutingListExist: () => {
     cy.expect(Button('Add routing list').exists());
+  },
+
+  getTitleIdViaApi: (polNumber) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `orders/titles?query=%28%28%28poLine.poLineNumber%3D%3D*${polNumber}*%29%29%29+sortby+title%2Fsort.ascending&limit=50&offset=0`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.titles[0].id);
   },
 };

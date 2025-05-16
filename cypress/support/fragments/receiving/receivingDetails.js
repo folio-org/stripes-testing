@@ -79,24 +79,24 @@ export default {
     }
   },
   checkReceivedTableContent(records = []) {
-    records.forEach((record, index) => {
-      if (record.barcode) {
-        cy.expect(
-          receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Barcode' }))
-            .has({ content: including(record.barcode) }),
-        );
-      }
-      if (record.format) {
-        cy.expect(
-          receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Piece format' }))
-            .has({ content: including(record.format) }),
-        );
-      }
-    });
-
-    if (!records.length) {
+    if (records.length) {
+      records.forEach((record, index) => {
+        if (record.barcode) {
+          cy.expect(
+            receivedSection
+              .find(MultiColumnListCell({ row: index, column: 'Barcode' }))
+              .has({ content: including(record.barcode) }),
+          );
+        }
+        if (record.format) {
+          cy.expect(
+            receivedSection
+              .find(MultiColumnListCell({ row: index, column: 'Piece format' }))
+              .has({ content: including(record.format) }),
+          );
+        }
+      });
+    } else {
       cy.expect(receivedSection.has({ text: including('The list contains no items') }));
     }
   },
