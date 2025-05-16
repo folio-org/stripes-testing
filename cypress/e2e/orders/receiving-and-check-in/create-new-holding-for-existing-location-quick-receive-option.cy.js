@@ -128,7 +128,7 @@ describe('Orders', () => {
         EditPieceModal.checkFieldsConditions([
           {
             label: 'Order line locations',
-            conditions: { text: including(testData.location.name) },
+            conditions: { value: including(testData.location.name) },
           },
         ]);
 

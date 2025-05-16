@@ -166,7 +166,7 @@ export default {
     if (batchGroupId) {
       create(invoice);
     } else {
-      cy.getBatchGroups().then(({ id }) => {
+      cy.getBatchGroups({ query: '"name" == "FOLIO"' }).then(({ id }) => {
         create({ ...invoice, batchGroupId: id });
       });
     }

@@ -601,7 +601,14 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund(fund, unitPrice, quantity, value, institutionId) {
+  rolloverPOLineInfoforPhysicalMaterialWithFund(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+    receivingWorkflow = RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+  ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -609,9 +616,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(
-        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
-      ),
+      receivingWorkflowSelect.choose(receivingWorkflow),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       addFundDistributionButton.click(),

@@ -45,7 +45,6 @@ const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-const admin = 'ADMINISTRATOR, Diku_admin';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -176,7 +175,7 @@ export default {
   assignOrderToAdmin: (rowNumber = 0) => {
     cy.do([
       Button({ id: 'clickable-plugin-find-user' }).click(),
-      TextField({ name: 'query' }).fillIn(admin),
+      TextField({ name: 'query' }).fillIn(Cypress.env('diku_login')),
       searchButton.click(),
       MultiColumnListRow({ index: rowNumber }).click(),
     ]);
@@ -547,7 +546,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-assignedTo' }).click(),
       Button({ id: 'assignedTo-button' }).click(),
-      TextField({ name: 'query' }).fillIn(admin),
+      TextField({ name: 'query' }).fillIn(Cypress.env('diku_login')),
       searchButton.click(),
       MultiColumnListRow({ index: rowNumber }).click(),
     ]);
@@ -572,7 +571,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-closeReason.reason' }).click(),
       Button({ id: 'closeReason.reason-selection' }).click(),
-      SelectionOption({ id: 'option-closeReason.reason-selection-0-Cancelled' }).click(),
+      SelectionOption('Cancelled').click(),
     ]);
   },
   selectReEncumberFilter: () => {

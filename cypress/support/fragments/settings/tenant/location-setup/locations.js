@@ -31,16 +31,16 @@ const getDefaultLocation = ({
 } = {}) => {
   const institution = Institutions.getDefaultInstitution({
     id: institutionId,
-    name: `autotest_institution_${getRandomPostfix()}`,
+    name: `1_autotest_institution_${getRandomPostfix()}`,
   });
   const campus = Campuses.getDefaultCampuse({
     id: campusId,
-    name: `autotest_campuse_${getRandomPostfix()}`,
+    name: `1_autotest_campuse_${getRandomPostfix()}`,
     institutionId: institution.id,
   });
   const library = Libraries.getDefaultLibrary({
     id: libraryId,
-    name: `autotest_library_${getRandomPostfix()}`,
+    name: `1_autotest_library_${getRandomPostfix()}`,
     campusId: campus.id,
   });
   const location = {
