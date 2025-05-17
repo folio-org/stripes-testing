@@ -16,6 +16,7 @@ describe('Data Import', () => {
     };
 
     beforeEach('Create test user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
