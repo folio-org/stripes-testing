@@ -29,31 +29,7 @@ Cypress.Commands.add(
       cy.clearCookies({ domain: null }).then(() => {
         cy.visit(visitPath.path);
 
-        cy.get('img').then(() => {
-          cy.wait(1000).then(() => {
-            cy.get('body').then(($body) => {
-              if ($body.find('select').length > 0) {
-                cy.getAdminToken();
-                cy.getConsortiaStatus().then((consortiaData) => {
-                  const targetTenantId = Tenant.get();
-                  cy.setTenant(consortiaData.centralTenantId);
-                  cy.getAllTenants().then((userTenants) => {
-                    const targetTenant = userTenants.filter(
-                      (element) => element.id === targetTenantId,
-                    )[0];
-                    cy.setTenant(targetTenantId);
-                    cy.do(Select('Tenant/Library').choose(targetTenant.name));
-                    cy.wait(500);
-                    cy.do(Button('Continue').click());
-                    cy.wait(1000);
-                  });
-                });
-              } else {
-                cy.log('No tenant/library select found');
-              }
-            });
-          });
-        });
+        cy.selectTenantIfDropdown();
 
         cy.do([
           TextInput('Username').fillIn(username),
@@ -185,3 +161,31 @@ Cypress.Commands.add(
     cy.visit(visitPath.path);
   },
 );
+
+Cypress.Commands.add('selectTenantIfDropdown', () => {
+  cy.get('img').then(() => {
+    cy.wait(1000).then(() => {
+      cy.get('body').then(($body) => {
+        if ($body.find('select').length > 0) {
+          cy.getAdminToken();
+          cy.getConsortiaStatus().then((consortiaData) => {
+            const targetTenantId = Tenant.get();
+            cy.setTenant(consortiaData.centralTenantId);
+            cy.getAllTenants().then((userTenants) => {
+              const targetTenant = userTenants.filter(
+                (element) => element.id === targetTenantId,
+              )[0];
+              cy.setTenant(targetTenantId);
+              cy.do(Select('Tenant/Library').choose(targetTenant.name));
+              cy.wait(500);
+              cy.do(Button('Continue').click());
+              cy.wait(1000);
+            });
+          });
+        } else {
+          cy.log('No tenant/library select found');
+        }
+      });
+    });
+  });
+});
