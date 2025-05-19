@@ -367,7 +367,7 @@ export default {
         .find(MultiSelectOption(including(subjectSource)))
         .click(),
     );
-    cy.wait(2000);
+    cy.wait(4000);
   },
 
   selectSubjectType(subjectType) {
@@ -379,7 +379,7 @@ export default {
         .find(MultiSelectOption(including(subjectType)))
         .click(),
     );
-    cy.wait(2000);
+    cy.wait(4000);
   },
 
   openInstance: (subject) => {
