@@ -66,6 +66,10 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
@@ -83,6 +87,9 @@ describe('Inventory', () => {
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);

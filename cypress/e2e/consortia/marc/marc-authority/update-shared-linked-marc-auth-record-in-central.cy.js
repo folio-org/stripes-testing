@@ -90,7 +90,7 @@ describe('MARC', () => {
       const instancesToCheckInM2 = ['C405927 Instance Shared 3', 'C405927 Instance Local M2'];
 
       const linkingTagAndValues = {
-        rowIndex: 16,
+        rowIndex: 15,
         value: 'C405927 Lentz Shared',
         tag: '100',
         secondBox: '1',
@@ -104,8 +104,15 @@ describe('MARC', () => {
       before('Create users, data', () => {
         cy.getAdminToken();
 
-        InventoryInstances.deleteInstanceByTitleViaApi('C405927');
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405927');
+        [Affiliations.Consortia, Affiliations.University, Affiliations.College].forEach(
+          (tenant) => {
+            cy.withinTenant(tenant, () => {
+              InventoryInstances.deleteInstanceByTitleViaApi('C405927');
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405927');
+            });
+          },
+        );
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -218,6 +225,10 @@ describe('MARC', () => {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 30_000);
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
           MarcAuthorities.selectTitle(`Shared\n${testData.authorityTitle}`);
           MarcAuthority.edit();

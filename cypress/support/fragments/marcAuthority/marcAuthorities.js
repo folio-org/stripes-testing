@@ -1191,9 +1191,12 @@ export default {
     });
   },
 
-  checkResultsListRecordsCount() {
+  checkResultsListRecordsCount(facetFilter) {
     const alias = `getItems${getRandomPostfix()}`;
     cy.intercept('GET', '/search/authorities?*').as(alias);
+    if (facetFilter && typeof facetFilter === 'function') {
+      facetFilter();
+    }
     cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
       cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());

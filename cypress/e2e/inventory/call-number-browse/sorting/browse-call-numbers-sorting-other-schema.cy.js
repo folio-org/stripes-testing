@@ -79,10 +79,6 @@ describe('Inventory', () => {
       cy.getAdminToken()
         .then(() => {
           InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C388549');
-          InventoryInstances.deleteFullInstancesWithCallNumber({
-            type: 'other',
-            value: 'B JORDAN DVD',
-          });
           CallNumberBrowseSettings.assignCallNumberTypesViaApi({
             name: CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME,
             callNumberTypes: [

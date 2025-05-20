@@ -124,6 +124,10 @@ describe('Data Import', () => {
           waiter: InventoryInstances.waitContentLoading,
         })
           .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
@@ -179,6 +183,10 @@ describe('Data Import', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 

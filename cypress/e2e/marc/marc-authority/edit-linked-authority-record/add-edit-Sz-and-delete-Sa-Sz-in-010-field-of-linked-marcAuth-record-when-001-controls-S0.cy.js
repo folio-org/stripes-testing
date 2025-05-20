@@ -86,8 +86,14 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -101,9 +107,7 @@ describe('MARC', () => {
               linkingTagAndValues.tag,
               linkingTagAndValues.rowIndex,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -120,6 +124,10 @@ describe('MARC', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+          });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            MarcAuthorities.waitLoading();
           });
         });
       });
@@ -191,8 +199,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
 

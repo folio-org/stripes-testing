@@ -16,6 +16,7 @@ describe('Inventory', () => {
       'C347902 Verify Browse call numbers form (spitfire)',
       { tags: ['smoke', 'spitfire', 'C347902'] },
       () => {
+        const callNumber = 'Holdings magazine Q1';
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.validateBrowseToggleIsSelected();
         InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
@@ -29,12 +30,12 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
-        InventorySearchAndFilter.fillInBrowseSearch('DE3');
+        InventorySearchAndFilter.fillInBrowseSearch(callNumber);
         InventorySearchAndFilter.verifySearchButtonDisabled(false);
         InventorySearchAndFilter.verifyResetAllButtonDisabled(false);
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: 'DE3' }],
+          records: [{ callNumber }],
         });
         InventorySearchAndFilter.validateSearchTableHeaders();
       },
