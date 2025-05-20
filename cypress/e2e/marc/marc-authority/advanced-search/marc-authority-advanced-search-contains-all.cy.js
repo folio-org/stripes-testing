@@ -221,6 +221,10 @@ describe('MARC', () => {
         'C407722 Advanced search of "MARC authority" records using "Contains all" search operator (Personal name and Name-title) (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C407722'] },
         () => {
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           searchData.forEach((search, index) => {
             MarcAuthorities.clickAdvancedSearchButton();
             if (!index) {

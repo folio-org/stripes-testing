@@ -20,8 +20,8 @@ describe('Inventory', () => {
     const testData = {
       classificationOption: 'Library of Congress classification',
       querySearchOption: 'Query search',
-      negativeSearchQuery: 'N332.G33 B468146 2019',
-      positiveSearchQuery: 'N72.S3 R46 8146',
+      negativeSearchQuery: 'N332.G33 B443913 2055',
+      positiveSearchQuery: 'N332.G33 B53 2018',
       instanceTitle:
         'C468146 Why science needs art : from historical to modern day perspectives / Richard AP Roche, Francesca R. Farina, Seán Commins.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,
