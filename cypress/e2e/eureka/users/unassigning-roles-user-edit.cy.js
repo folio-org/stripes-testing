@@ -88,10 +88,14 @@ describe('Eureka', () => {
           testData.roleDId,
         ]);
       }
-      cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-        waiter: UsersCard.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.tempUser.username, testData.tempUser.password, {
+          path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
+          waiter: UsersCard.waitLoading,
+        });
+        cy.reload();
+        UsersCard.waitLoading();
+      }, 20_000);
     });
 
     after('Delete roles, users', () => {
