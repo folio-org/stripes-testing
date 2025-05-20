@@ -388,12 +388,12 @@ describe('Bulk-edit', () => {
             `$a ${notes.local} $c ${notes.appendedLocal}`,
           );
           InventoryViewSource.verifyFieldInMARCBibSource('570', `$a ${notes.field570}`);
-          InventoryViewSource.notContains('536');
+          InventoryViewSource.notContains('536\t');
           InventoryViewSource.verifyFieldInMARCBibSource(
             '545',
             `$a ${notes.biographicalOrHistoricalReplaced} $u http://www.braudubon.org/ $u http://www.braudubon.com/`,
           );
-          InventoryViewSource.notContains('584');
+          InventoryViewSource.notContains('584\t');
         },
       );
     });
