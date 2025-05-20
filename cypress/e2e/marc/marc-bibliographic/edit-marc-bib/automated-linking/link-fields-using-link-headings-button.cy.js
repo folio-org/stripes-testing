@@ -163,6 +163,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388536');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Martin, Laura (Comic book artist)');
           [...matchingNaturalIds, ...notMatchingNaturalIds].forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,

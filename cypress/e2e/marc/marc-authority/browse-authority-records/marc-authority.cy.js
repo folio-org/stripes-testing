@@ -46,7 +46,7 @@ describe('MARC', () => {
           type: 'Authorized',
         },
       };
-      const querySearch = ['C350902*', 'C350667*'];
+      const querySearch = ['C350902*', 'C350667*', 'Congress and foreign policy series'];
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const createdJobProfile = {
         profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,

@@ -179,9 +179,7 @@ describe('Data Import', () => {
             linkingTagAndValues.tag,
             linkingTagAndValues.rowIndex,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 

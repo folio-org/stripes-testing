@@ -103,16 +103,16 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C407633" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id, true);
+
+        [Affiliations.Consortia, Affiliations.University, Affiliations.College].forEach(
+          (tenant) => {
+            cy.withinTenant(tenant, () => {
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407633');
+              InventoryInstances.deleteInstanceByTitleViaApi('C407633');
             });
-          }
-        });
+          },
+        );
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

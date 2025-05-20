@@ -269,6 +269,7 @@ export default {
     } else {
       cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
     }
+    cy.wait(1000);
   },
 
   byKeywords(kw = '*') {

@@ -43,7 +43,7 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       testData.searchQueries.forEach((query) => {
-        InventoryInstances.deleteFullInstancesByTitleViaApi(query.replace(/[:&/]/g, ''));
+        InventoryInstances.deleteInstanceByTitleViaApi(query.replace(/[:&/]/g, ''));
       });
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
@@ -77,7 +77,7 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C368027', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
           });
           InventoryInstances.searchByTitle(query);
@@ -88,7 +88,7 @@ describe('Inventory', () => {
           InventoryInstances.resetAllFilters();
         });
 
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchByTitle('Harry Potter and the cursed child Parts one, two');
@@ -98,7 +98,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchByTitle(
