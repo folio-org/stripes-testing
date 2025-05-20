@@ -132,7 +132,13 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        BrowseCallNumber.waitForCallNumberToAppear(exactMatchQuery);
+        callNumberItemProperties
+          .map(
+            (data) => `${data.itemLevelCallNumber}${data.itemLevelCallNumberSuffix ? ' ' + data.itemLevelCallNumberSuffix : ''}`,
+          )
+          .forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          });
 
         InventorySearchAndFilter.browseSearch(exactMatchQuery);
         BrowseCallNumber.valueInResultTableIsHighlighted(exactMatchQuery);

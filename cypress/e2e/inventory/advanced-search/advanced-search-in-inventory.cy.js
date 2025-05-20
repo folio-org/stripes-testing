@@ -254,6 +254,9 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);
@@ -295,6 +298,9 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);
@@ -317,6 +323,9 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);

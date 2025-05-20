@@ -3,7 +3,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
@@ -68,7 +68,7 @@ describe('Inventory', () => {
         },
       ],
       classificationOption: 'Classification (all)',
-      classificationValue: 'test004. HD',
+      classificationValue: `test004. HD ${getRandomLetters(6)}`,
       querySearchOption: 'Query search',
       instanceTitleWithLocalClassification:
         'C468158 Browse by Class-on (different inst-s with same class-on value) Instance 11 - Local',
@@ -178,6 +178,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C468158'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
+        BrowseClassifications.waitForClassificationNumberToAppear(testData.classificationValue);
         InventorySearchAndFilter.browseSearch(testData.classificationValue);
         BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifySearchResultIncludingValue(testData.classificationValue);

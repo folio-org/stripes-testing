@@ -17,7 +17,7 @@ describe('Inventory', () => {
     const testData = {
       classificationOption: 'Classification (all)',
       querySearchOption: 'Query search',
-      negativeSearchQuery: 'ML410.P11 A3 2055',
+      negativeSearchQuery: 'N332.G33 B3 2055',
       positiveSearchQuery: 'N332.G33 B443913 2018',
       instanceTitle:
         'C468142 The spirit of the Bauhaus / texts, Raphaèle Billé, Monique Blanc, Marie-Sophie Carron de la Carrière, Louise Curtis, Nicholas Fox Weber, Olivier Gabet, Jean-Louis Gaillemin, Anne Monier, Béatrice Quette ; translated from the French by Ruth Sharman.',
