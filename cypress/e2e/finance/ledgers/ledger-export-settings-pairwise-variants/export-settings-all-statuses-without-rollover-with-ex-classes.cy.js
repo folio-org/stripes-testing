@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -11,6 +12,7 @@ import Organizations from '../../../../support/fragments/organizations/organizat
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Finance: Ledgers', () => {
@@ -68,7 +70,8 @@ describe('Finance: Ledgers', () => {
         });
         firstOrder.vendor = organization.name;
         secondOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
           firstOrder.id = firstOrderResponse.id;
           Orders.checkCreatedOrder(firstOrder);
