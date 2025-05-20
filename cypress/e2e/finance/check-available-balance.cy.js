@@ -13,8 +13,10 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Finance', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -71,7 +73,8 @@ describe('Finance', () => {
       invoice.accountingCode = organization.erpCode;
     });
     defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+    Orders.selectOrdersPane();
     Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);

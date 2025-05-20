@@ -71,6 +71,7 @@ describe('Inventory', () => {
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
         cy.wait(1000);
+        cy.setTenant(Affiliations.College);
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
           ExportFile.downloadExportedMarcFile(name);

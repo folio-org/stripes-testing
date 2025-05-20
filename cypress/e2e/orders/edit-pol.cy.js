@@ -61,6 +61,7 @@ describe('orders: create', () => {
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
+      cy.wait(5000);
     });
 
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {

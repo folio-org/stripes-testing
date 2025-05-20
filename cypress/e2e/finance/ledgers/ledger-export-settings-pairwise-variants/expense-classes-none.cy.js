@@ -1,4 +1,5 @@
 import permissions from '../../../../support/dictionary/permissions';
+import { BudgetDetails } from '../../../../support/fragments/finance';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../../support/fragments/finance/funds/funds';
@@ -11,9 +12,11 @@ import Organizations from '../../../../support/fragments/organizations/organizat
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 describe('Finance: Ledgers', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -83,8 +86,8 @@ describe('Finance: Ledgers', () => {
           organization.id = responseOrganizations;
         });
         firstOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
           firstOrder.id = firstOrderResponse.id;
           Orders.checkCreatedOrder(firstOrder);
@@ -100,7 +103,9 @@ describe('Finance: Ledgers', () => {
           OrderLines.backToEditingOrder();
           Orders.openOrder();
         });
-        cy.visit(TopMenu.ledgerPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
+        BudgetDetails.closeBudgetDetails();
+        FinanceHelp.clickLedgerButton();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -109,7 +114,7 @@ describe('Finance: Ledgers', () => {
           'None',
           'Allocation',
         );
-        cy.visit(TopMenu.fiscalYearPath);
+        FinanceHelp.clickFiscalYearButton();
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
         FiscalYears.editFiscalYearDetails();

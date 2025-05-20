@@ -65,6 +65,7 @@ describe('Inventory', () => {
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.waitLandingPageOpened();
+        cy.setTenant(Affiliations.College);
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
           ExportFile.downloadExportedMarcFile(name);

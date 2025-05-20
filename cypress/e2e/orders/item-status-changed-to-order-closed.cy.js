@@ -5,8 +5,9 @@ import { NewOrder, Orders, BasicOrderLine, OrderLines } from '../../support/frag
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import { InventoryHoldings } from '../../support/fragments/inventory';
 import { OrderLinesLimit } from '../../support/fragments/settings/orders';
-import { ORDER_STATUSES } from '../../support/constants';
+import { APPLICATION_NAMES, ORDER_STATUSES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
@@ -132,7 +133,9 @@ describe('Orders', () => {
       });
 
       // Go to "Orders" app, Open Order line #1
-      cy.visit(TopMenu.orderLinesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      cy.wait(3000);
+      Orders.selectOrderLines();
       Orders.searchByParameter('PO line number', testData.order.poNumber);
       cy.wait(5000);
       OrderLines.resetFilters();
@@ -153,7 +156,9 @@ describe('Orders', () => {
       });
 
       // Go to "Orders" app
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      cy.wait(3000);
+      Orders.selectOrdersPane();
 
       // Click on the record with Order name from precondition
       Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -179,7 +184,9 @@ describe('Orders', () => {
       });
 
       // Go to "Orders" app, Open Order line #2
-      cy.visit(TopMenu.orderLinesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      cy.wait(3000);
+      Orders.selectOrderLines();
       OrderLines.selectOrderLineByPolNumber(`${testData.order.poNumber}-2`);
 
       // Click "Current encumbrance" link for **"Fund"** in "Fund distribution" accordion.

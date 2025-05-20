@@ -22,16 +22,16 @@ describe('Settings: Tenant', () => {
       cy.getAdminToken().then(() => {
         testData.institution = Institutions.getDefaultInstitution({
           id: uuid(),
-          name: `1_autotest_institution_${getRandomPostfix()}`,
+          name: `11_autotest_institution_${getRandomPostfix()}`,
         });
         testData.campus = Campuses.getDefaultCampuse({
           id: uuid(),
-          name: `1_autotest_campuse_${getRandomPostfix()}`,
+          name: `11_autotest_campuse_${getRandomPostfix()}`,
           institutionId: testData.institution.id,
         });
         testData.library = Libraries.getDefaultLibrary({
           id: uuid(),
-          name: `1_autotest_library_${getRandomPostfix()}`,
+          name: `11_autotest_library_${getRandomPostfix()}`,
           campusId: testData.campus.id,
         });
         testData.location = {
@@ -44,9 +44,9 @@ describe('Settings: Tenant', () => {
           libraryId: testData.library.id,
           libraryName: testData.library.name,
           servicePointIds: [testData.servicePoint.id],
-          name: `1_autotest_location_name_${getRandomPostfix()}`,
-          code: `1_autotest_location_code_${getRandomPostfix()}`,
-          discoveryDisplayName: `1_autotest_name_${getRandomPostfix()}`,
+          name: `11_autotest_location_name_${getRandomPostfix()}`,
+          code: `11_autotest_location_code_${getRandomPostfix()}`,
+          discoveryDisplayName: `11_autotest_name_${getRandomPostfix()}`,
           primaryServicePoint: testData.servicePoint.id,
         };
 

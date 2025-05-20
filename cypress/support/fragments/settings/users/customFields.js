@@ -7,6 +7,7 @@ import {
   MultiColumnListRow,
   NavListItem,
   Pane,
+  Section,
   TextField,
 } from '../../../../../interactors';
 
@@ -26,6 +27,10 @@ export default {
 
   waitLoading() {
     cy.expect(customFieldsPane.exists());
+  },
+
+  verifyCustomFieldExists(name) {
+    cy.expect(customFieldsPane.find(Section({ label: including(name) })).exists());
   },
 
   addMultiSelectCustomField(data) {

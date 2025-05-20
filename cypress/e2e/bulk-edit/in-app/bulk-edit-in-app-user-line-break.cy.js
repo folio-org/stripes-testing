@@ -47,7 +47,8 @@ describe('bulk-edit', () => {
             waiter: CustomFields.waitLoading,
           });
           CustomFields.addTextAreaCustomField(customFieldName);
-          cy.visit(TopMenu.usersPath);
+          CustomFields.verifyCustomFieldExists(customFieldName);
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByKeywords(testUsersBarcodes[0]);
           UserEdit.addCustomField(customFieldName, customFieldText);
 

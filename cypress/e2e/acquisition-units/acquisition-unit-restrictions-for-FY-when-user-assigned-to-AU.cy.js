@@ -4,9 +4,11 @@ import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Acquisition Units', () => {
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -73,10 +75,8 @@ describe('Acquisition Units', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
-    });
+    cy.loginAsAdmin();
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS, 'Acquisition units');
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
     Users.deleteViaApi(user.userId);
@@ -91,6 +91,7 @@ describe('Acquisition Units', () => {
       FiscalYears.editFiscalYearDetails();
       FiscalYears.editDescription();
       FiscalYears.deleteFiscalYearViaActions();
+      cy.wait(2000);
       FiscalYears.createDefaultFiscalYear(secondFiscalYear);
       FiscalYears.closeThirdPane();
       FiscalYears.resetFilters();

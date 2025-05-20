@@ -13,11 +13,13 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import Invoices from '../../support/fragments/invoices/invoices';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Finance', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -93,7 +95,8 @@ describe('Finance', () => {
         invoice.accountingCode = organization.erpCode;
       });
       defaultOrder.vendor = organization.name;
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
       Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
         defaultOrder.id = firstOrderResponse.id;
         orderNumber = firstOrderResponse.poNumber;
@@ -109,10 +112,11 @@ describe('Finance', () => {
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
         Invoices.createRolloverInvoice(invoice, organization.name);
         Invoices.createInvoiceLineFromPol(orderNumber);
-        cy.visit(TopMenu.ledgerPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
+        FinanceHelp.clickLedgerButton();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -122,7 +126,7 @@ describe('Finance', () => {
           'Allocation',
         );
         Ledgers.closeRolloverInfo();
-        cy.visit(TopMenu.fiscalYearPath);
+        FinanceHelp.clickFiscalYearButton();
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
