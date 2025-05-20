@@ -230,7 +230,7 @@ describe('Orders', () => {
 
     it(
       'C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         Receiving.searchByParameter({ parameter: 'Keyword', value: instance.title });
         Receiving.selectFromResultsList(instance.title);
