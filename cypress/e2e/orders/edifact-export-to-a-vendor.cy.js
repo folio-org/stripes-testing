@@ -1,3 +1,4 @@
+import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -9,13 +10,15 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Integrations from '../../support/fragments/organizations/integrations/integrations';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
     describe('Orders Export to a Vendor', () => {
+      const now = moment();
       const order = {
         ...NewOrder.defaultOneTimeOrder,
         orderType: 'Ongoing',
@@ -51,19 +54,11 @@ describe('Export Manager', () => {
           },
         ],
       };
-      const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
-      const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
-      const integartionDescription1 = 'Test Integation descripton1';
-      const integartionDescription2 = 'Test Integation descripton2';
-      const vendorEDICodeFor1Integration = getRandomPostfix();
-      const libraryEDICodeFor1Integration = getRandomPostfix();
-      const vendorEDICodeFor2Integration = getRandomPostfix();
-      const libraryEDICodeFor2Integration = getRandomPostfix();
+      const integrations = [];
       let user;
       let location;
       let servicePointId;
       let orderNumber;
-      const UTCTime = DateTools.getUTCDateForScheduling();
 
       before(() => {
         cy.getAdminToken();
@@ -78,32 +73,35 @@ describe('Export Manager', () => {
           organization.id = organizationsResponse;
           order.vendor = organizationsResponse;
         });
-        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-        Organizations.searchByParameters('Name', organization.name);
-        Organizations.checkSearchResults(organization);
-        Organizations.selectOrganization(organization.name);
-        Organizations.addIntegration();
-        Organizations.fillIntegrationInformation(
-          integrationName1,
-          integartionDescription1,
-          vendorEDICodeFor1Integration,
-          libraryEDICodeFor1Integration,
-          organization.accounts[0].accountNo,
-          'Purchase',
-          UTCTime,
-        );
-        Organizations.addIntegration();
-        cy.wait(2000);
-        Organizations.fillIntegrationInformation(
-          integrationName2,
-          integartionDescription2,
-          vendorEDICodeFor2Integration,
-          libraryEDICodeFor2Integration,
-          organization.accounts[1].accountNo,
-          'Purchase At Vendor System',
-          UTCTime,
-        );
 
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
+        }).then(({ body: { acquisitionMethods } }) => {
+          const acqMethod = acquisitionMethods.find(
+            ({ value }) => value === ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE,
+          );
+
+          now.set('second', now.second() + 60);
+
+          organization.accounts.forEach((account) => {
+            const integration = Integrations.getDefaultIntegration({
+              vendorId: organization.id,
+              acqMethodId: acqMethod.id,
+              accountNoList: [account.accountNo],
+              ediFtp: {
+                ftpFormat: 'SFTP',
+                serverAddress: 'sftp://ftp.ci.folio.org',
+                orderDirectory: '/ftp/files/orders',
+              },
+              scheduleTime: now.utc().format('HH:mm:ss'),
+              isDefaultConfig: false,
+            });
+
+            integrations.push(integration);
+
+            Integrations.createIntegrationViaApi(integration);
+          });
+        });
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
         });
@@ -141,13 +139,23 @@ describe('Export Manager', () => {
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
           OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
+          OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
+            'Purchase',
+            location.name,
+            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+          );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
           TopMenuNavigation.navigateToApp('Export manager');
           ExportManagerSearchPane.selectOrganizationsSearch();
-          ExportManagerSearchPane.selectExportMethod(integrationName1);
-          ExportManagerSearchPane.selectJobByIntegrationInList(integrationName1);
+
+          const firstIntegrationName =
+            integrations[0].exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
+          const secondIntegrationName =
+            integrations[1].exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
+
+          ExportManagerSearchPane.selectExportMethod(firstIntegrationName);
+          ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
           ExportManagerSearchPane.rerunJob();
           cy.reload();
           ExportManagerSearchPane.verifyResult('Successful');
@@ -155,8 +163,8 @@ describe('Export Manager', () => {
           ExportManagerSearchPane.downloadJob();
           ExportManagerSearchPane.resetAll();
           ExportManagerSearchPane.selectOrganizationsSearch();
-          ExportManagerSearchPane.selectExportMethod(integrationName2);
-          ExportManagerSearchPane.selectJobByIntegrationInList(integrationName2);
+          ExportManagerSearchPane.selectExportMethod(secondIntegrationName);
+          ExportManagerSearchPane.selectJobByIntegrationInList(secondIntegrationName);
           ExportManagerSearchPane.rerunJob();
           cy.reload();
           ExportManagerSearchPane.verifyResult('Failed');
