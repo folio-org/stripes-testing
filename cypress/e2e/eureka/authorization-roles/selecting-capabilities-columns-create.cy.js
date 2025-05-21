@@ -8,7 +8,7 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C624253 ${getRandomPostfix()}`,
+        roleName: `AT_C624253_UserRole_${getRandomPostfix()}`,
         applicationName: 'app-platform-minimal',
         capabilitySetsColumnToSelect: {
           type: CAPABILITY_TYPES.DATA,

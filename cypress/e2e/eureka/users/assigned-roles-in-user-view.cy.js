@@ -12,9 +12,9 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      role0Name: `Auto Role 0 C627435 ${getRandomPostfix()}`,
-      roleAName: `Auto Role A C627435 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C627435 ${getRandomPostfix()}`,
+      role0Name: `AT_C627435_UserRole_0_${getRandomPostfix()}`,
+      roleAName: `AT_C627435_UserRole_A_${getRandomPostfix()}`,
+      roleBName: `AT_C627435_UserRole_B_${getRandomPostfix()}`,
     };
 
     const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
