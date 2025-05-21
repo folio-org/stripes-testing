@@ -11,19 +11,19 @@ describe('Eureka', () => {
             type: 'staff',
             active: true,
             personal: {
-              lastName: `User C627445 ${getRandomPostfix()}`,
-              email: 'testuser@test.org',
+              lastName: `AT_C627445_LastName_${getRandomPostfix()}`,
+              email: 'AT_C627445@test.com',
               preferredContactTypeId: '002',
             },
           },
-          roleName: `Role C627445 ${getRandomPostfix()}`,
+          roleName: `AT_C627445_UserRole_${getRandomPostfix()}`,
           noKeycloakErrorMessage: "Keycloak user doesn't exist",
         };
         const userA = { ...testData.userBody };
         const userB = { ...testData.userBody };
         const userC = { ...testData.userBody };
-        userA.username = `userac627445${getRandomPostfix()}`;
-        userC.username = `usercc627445${getRandomPostfix()}`;
+        userA.username = `at_c627445_username_a_${getRandomPostfix()}`;
+        userC.username = `at_c627445_username_c_${getRandomPostfix()}`;
 
         before('Create data', () => {
           cy.getAdminToken();

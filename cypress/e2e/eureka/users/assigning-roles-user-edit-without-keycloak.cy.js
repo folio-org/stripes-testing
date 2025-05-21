@@ -14,18 +14,18 @@ describe('Eureka', () => {
   describe('Users', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleAName: `Auto Role A C627437 ${randomPostfix}`,
-      roleBName: `Auto Role B C627437 ${randomPostfix}`,
+      roleAName: `AT_C627437_UserRole_A_${randomPostfix}`,
+      roleBName: `AT_C627437_UserRole_B_${randomPostfix}`,
       promotePath: '/users-keycloak/auth-users',
       userBody: {
         type: 'staff',
         active: true,
-        username: `userc627437${randomPostfix}`,
+        username: `at_c627437_username_${randomPostfix}`,
         patronGroup: '',
         personal: {
-          lastName: `Last c627437 ${randomPostfix}`,
-          firstName: `First c627437 ${randomPostfix}`,
-          email: 'testuser@test.org',
+          lastName: `AT_C627437_LastName_${randomPostfix}`,
+          firstName: `AT_C627437_FirstName_${randomPostfix}`,
+          email: 'AT_C627437@test.com',
           preferredContactTypeId: '002',
         },
       },
