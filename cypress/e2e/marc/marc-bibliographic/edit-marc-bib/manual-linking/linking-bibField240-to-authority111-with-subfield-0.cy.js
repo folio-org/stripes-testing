@@ -20,13 +20,13 @@ describe('MARC', () => {
           tag100: '111',
           tag240: '240',
           tag240content:
-            '$a C380746 Conf on Security & Cooperation in Europe $c H. Finland $0 n88606074',
+            '$a C380746 Conf on Security & Cooperation in Europe $c H. Finland $0 n88380746',
           filterStateTag111: [
             'advancedSearch',
-            'keyword exactPhrase C380746 Conf on Security & Cooperation in Europe or identifiers.value exactPhrase n88606074',
+            'keyword exactPhrase C380746 Conf on Security & Cooperation in Europe or identifiers.value exactPhrase n88380746',
           ],
           markedValue: 'C380746 Conference on Security and Cooperation in Europe',
-          authority010FieldValue: 'n  88606074',
+          authority010FieldValue: 'n  88380746',
           authority111FieldValue: 'C380746 Conference on Security and Cooperation in Europe',
           authorityIconText: 'Linked to MARC authority',
           calloutMessage:
@@ -57,7 +57,7 @@ describe('MARC', () => {
           '\\',
           '$a Final Act $d (1972-1975 : $l English',
           '$c H. Finland',
-          '$0 http://id.loc.gov/authorities/names/n88606074',
+          '$0 http://id.loc.gov/authorities/names/n88380746',
           '',
         ];
         const bib240AfterUninkingToAuth111 = [
@@ -65,14 +65,13 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '\\',
-          '$a Final Act $d (1972-1975 : $l English $c H. Finland $0 http://id.loc.gov/authorities/names/n88606074',
+          '$a Final Act $d (1972-1975 : $l English $c H. Finland $0 http://id.loc.gov/authorities/names/n88380746',
         ];
 
         before('Creating test data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380746');
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374142');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
