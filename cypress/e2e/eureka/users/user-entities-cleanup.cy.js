@@ -5,7 +5,7 @@ import { AUTHORIZATION_POLICY_TYPES } from '../../../support/constants';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      roleName: `Test Role C436914 ${getRandomPostfix()}`,
+      roleName: `AT_C436914_UserRole_${getRandomPostfix()}`,
     };
 
     before(() => {
