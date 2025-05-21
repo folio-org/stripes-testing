@@ -63,7 +63,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C380646'] },
         () => {
           InventoryInstances.searchByTitle(testData.marcBibTitle);
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
           });
           InventoryInstance.selectTopRecord();

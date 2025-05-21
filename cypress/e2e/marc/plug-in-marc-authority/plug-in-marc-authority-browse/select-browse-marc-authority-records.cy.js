@@ -66,7 +66,7 @@ describe('MARC', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -92,10 +92,14 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(testData.instanceTitle);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -126,6 +130,10 @@ describe('MARC', () => {
           MarcAuthorityBrowse.checkSearchOptions();
 
           MarcAuthorityBrowse.searchBy('Personal name', testData.authTitle);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.checkColumnExists('Link');
           MarcAuthorities.checkColumnExists('Authorized/Reference');

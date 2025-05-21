@@ -537,9 +537,13 @@ export default {
     this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
 
-    cy.intercept('PUT', '/records-editor/records/*').as('saveRecordRequest');
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
     cy.do(saveAndCloseButton.click());
-    cy.wait('@saveRecordRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 202);
+    cy.wait('@saveRecordRequest', { timeout: 5_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
   },
 
   pressSaveAndKeepEditing(calloutMsg) {

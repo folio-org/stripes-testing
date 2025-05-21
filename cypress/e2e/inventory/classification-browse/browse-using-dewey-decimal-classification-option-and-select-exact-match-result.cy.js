@@ -20,7 +20,7 @@ describe('Inventory', () => {
     const testData = {
       classificationOption: 'Dewey Decimal classification',
       querySearchOption: 'Query search',
-      searchQuery: '974.7004975542',
+      searchQuery: '974.7004975542468141',
       instanceTitle:
         'C468141 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
