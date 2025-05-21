@@ -16,6 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { ExpenseClasses } from '../../support/fragments/settings/finance';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -49,6 +50,8 @@ describe('Orders', () => {
     approved: true,
     reEncumber: true,
   };
+  const firstExpenseClass = ExpenseClasses.getDefaultExpenseClass();
+  const secondExpenseClass = ExpenseClasses.getDefaultExpenseClass();
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
@@ -59,6 +62,8 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
+    ExpenseClasses.createExpenseClassViaApi(firstExpenseClass);
+    ExpenseClasses.createExpenseClassViaApi(secondExpenseClass);
 
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
@@ -78,7 +83,7 @@ describe('Orders', () => {
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
-          Funds.addExpensesClass('Electronic');
+          Funds.addExpensesClass(firstExpenseClass.name);
         });
         Funds.createViaApi(secondFund).then((fundResponse) => {
           secondFund.id = fundResponse.fund.id;
@@ -89,7 +94,7 @@ describe('Orders', () => {
           Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
-          Funds.addExpensesClass('Print');
+          Funds.addExpensesClass(secondExpenseClass.name);
         });
         Funds.createViaApi(thirdFund).then((fundResponse) => {
           thirdFund.id = fundResponse.fund.id;
@@ -100,7 +105,7 @@ describe('Orders', () => {
           Funds.selectFund(thirdFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
-          Funds.addExpensesClass('Electronic');
+          Funds.addExpensesClass(firstExpenseClass.name);
         });
         Funds.createViaApi(forthFund).then((fundResponse) => {
           forthFund.id = fundResponse.fund.id;
@@ -111,7 +116,7 @@ describe('Orders', () => {
           Funds.selectFund(forthFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
-          Funds.addExpensesClass('Print');
+          Funds.addExpensesClass(secondExpenseClass.name);
         });
       });
     });
