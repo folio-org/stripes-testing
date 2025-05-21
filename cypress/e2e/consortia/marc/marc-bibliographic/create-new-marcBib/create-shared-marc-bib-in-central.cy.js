@@ -13,6 +13,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
+        headerText: 'New shared MARC bib record',
         tags: {
           tag245: '245',
         },
@@ -83,6 +84,8 @@ describe('MARC', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C422123'] },
         () => {
           InventoryInstance.newMarcBibRecord();
+          // Verify pane header label
+          QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.updateExistingField(
             testData.tags.tag245,
             `$a ${testData.fieldContents.tag245Content}`,

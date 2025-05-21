@@ -13,6 +13,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
+        headerText: 'New local MARC bib record',
         tags: {
           tag245: '245',
         },
@@ -81,6 +82,8 @@ describe('MARC', () => {
           }, 20_000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstance.newMarcBibRecord();
+          // Verify pane header label
+          QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.updateExistingField(
             testData.tags.tag245,
             `$a ${testData.fieldContents.tag245Content}`,
