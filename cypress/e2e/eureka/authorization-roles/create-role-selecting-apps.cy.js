@@ -8,7 +8,7 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C430260 ${getRandomPostfix()}`,
+        roleName: `AT_C430260_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description C430260 ${getRandomPostfix()}`,
         firstApplicationName: 'app-dcb',
         secondApplicationName: 'app-acquisitions',

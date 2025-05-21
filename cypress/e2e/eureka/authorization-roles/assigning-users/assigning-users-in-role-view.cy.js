@@ -8,8 +8,8 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleAName: `Autotest Role A C627249 ${getRandomPostfix()}`,
-        roleBName: `Autotest Role B C627249 ${getRandomPostfix()}`,
+        roleAName: `AT_C627249_UserRole_A_${getRandomPostfix()}`,
+        roleBName: `AT_C627249_UserRole_B_${getRandomPostfix()}`,
         filtername: 'Status',
         optionName: 'Active',
       };

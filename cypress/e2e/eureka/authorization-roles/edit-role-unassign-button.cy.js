@@ -9,9 +9,9 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        roleAName: `Auto Role A C553051 ${randomPostfix}`,
-        roleBName: `Auto Role B C553051 ${randomPostfix}`,
-        roleCName: `Auto Role C C553051 ${randomPostfix}`,
+        roleAName: `AT_C553051_UserRole_A_${randomPostfix}`,
+        roleBName: `AT_C553051_UserRole_B_${randomPostfix}`,
+        roleCName: `AT_C553051_UserRole_C_${randomPostfix}`,
         capabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,

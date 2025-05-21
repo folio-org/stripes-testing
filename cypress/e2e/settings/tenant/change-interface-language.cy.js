@@ -3,7 +3,6 @@ import Localication, {
   LANGUAGES,
   NUMBERS,
 } from '../../../support/fragments/settings/tenant/general/localication';
-import { DEFAULT_LOCALE_STRING } from '../../../support/constants';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -31,15 +30,7 @@ describe('Settings: Tenant', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     // in case the test fails, return the language and localization settings to their default values
-    cy.getConfigForTenantByName('localeSettings').then((configs) => {
-      cy.updateConfigForTenantById(configs.id, {
-        configName: configs.configName,
-        enabled: true,
-        id: configs.id,
-        module: configs.module,
-        value: DEFAULT_LOCALE_STRING,
-      });
-    });
+    cy.setDefaultLocaleApi();
   });
 
   // Marked as flaky because it changes global Tenant settings and causes failures in other tests during parallel runs.

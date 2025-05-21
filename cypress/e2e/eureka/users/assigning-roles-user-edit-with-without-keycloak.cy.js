@@ -15,7 +15,7 @@ describe('Eureka', () => {
   describe('Users', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleName: `Auto Role C584520 ${randomPostfix}`,
+      roleName: `AT_C584520_UserRole_${randomPostfix}`,
       promotePath: '/users-keycloak/auth-users',
       errorCalloutText: 'Something went wrong. Please try again later.',
     };
@@ -42,12 +42,12 @@ describe('Eureka', () => {
             userBodies.push({
               type: 'staff',
               active: true,
-              username: `user${i}c584520${randomPostfix}`,
+              username: `at_c584520_username_${i}_${randomPostfix}`,
               patronGroup: Cypress.env('userGroups')[0].id,
               personal: {
-                lastName: `Last ${i} c584520${randomPostfix}`,
-                firstName: `First ${i} c584520${randomPostfix}`,
-                email: 'testuser@test.org',
+                lastName: `AT_C584520_LastName_${i}_${randomPostfix}`,
+                firstName: `AT_C584520_FirstName_${i}_${randomPostfix}`,
+                email: 'AT_C584520@test.com',
                 preferredContactTypeId: '002',
               },
             });
