@@ -142,6 +142,9 @@ describe('Inventory', () => {
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();
           InventoryInstances.checkAdvSearchModalAbsence();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
           InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
           InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
@@ -204,6 +207,9 @@ describe('Inventory', () => {
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();
           InventoryInstances.checkAdvSearchModalAbsence();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
           InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
           InventorySearchAndFilter.checkRowsCount(1);

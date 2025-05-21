@@ -132,7 +132,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C380573'] },
         () => {
           MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery, true);
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             MarcAuthorities.clickAccordionByName('Shared');
             MarcAuthorities.actionsSelectCheckbox('No');
           });
