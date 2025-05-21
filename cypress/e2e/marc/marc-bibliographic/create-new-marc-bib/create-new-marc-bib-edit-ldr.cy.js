@@ -25,7 +25,6 @@ import {
   INVENTORY_008_FIELD_REGL_DROPDOWN,
   INVENTORY_008_FIELD_S_L_DROPDOWN,
 } from '../../../../support/constants';
-import { Callout } from '../../../../../interactors';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -605,10 +604,7 @@ describe('MARC', () => {
               default:
                 break;
             }
-            QuickMarcEditor.pressSaveAndClose();
-            cy.expect(Callout({ type: 'warning' }).exists());
-            cy.wait(2000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkInstanceTitle(title);
             InventoryInstance.getId().then((id) => {
@@ -643,9 +639,7 @@ describe('MARC', () => {
             testData.tags.tag245,
             testData.fieldContents.tag245ValueWithAllSubfields,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.fieldContents.instanceTitleWithSubfields);
           InventoryInstance.editMarcBibliographicRecord();
@@ -687,7 +681,7 @@ describe('MARC', () => {
             QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
             set.tag008Fields();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
             InventoryInstance.waitInstanceRecordViewOpened(title);

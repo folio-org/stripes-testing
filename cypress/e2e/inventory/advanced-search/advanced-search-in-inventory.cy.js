@@ -313,13 +313,13 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
