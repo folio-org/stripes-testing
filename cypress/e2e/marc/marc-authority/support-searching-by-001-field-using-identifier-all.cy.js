@@ -105,6 +105,10 @@ describe('MARC', () => {
       () => {
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '01233282023710');
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthorities.checkRowsCount(1);
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,
