@@ -10,6 +10,7 @@ import { CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -160,6 +161,12 @@ describe('Inventory', () => {
       'C468180 Browse for classifications of Instance which has each classification type using "Library of Congress classification" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468180'] },
       () => {
+        ['JK608', 'VP111433', 'BJ1533.C5'].forEach((callNumber) => {
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            callNumber,
+            testData.classificationBrowseId,
+          );
+        });
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
             testData.classificationOption,
