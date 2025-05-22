@@ -31,6 +31,8 @@ describe('Inventory', () => {
     before('Creating data', () => {
       cy.getAdminToken()
         .then(() => {
+          InventoryInstances.deleteInstanceByTitleViaApi('C422016');
+          InventoryInstances.deleteInstanceByTitleViaApi('Adv search title 002');
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
           });
@@ -175,7 +177,7 @@ describe('Inventory', () => {
               rowNumber,
               '',
               'Contains all',
-              'Keyword (title, contributor, identifier, HRID, UUID)',
+              'Keyword (title, contributor)',
               'AND',
             );
           });

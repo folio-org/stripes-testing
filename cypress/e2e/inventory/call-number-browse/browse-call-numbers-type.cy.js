@@ -140,7 +140,9 @@ describe('Inventory', () => {
         const callNumber = folioInstances[1].items[0].itemLevelCallNumber;
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup('Call numbers (all)');
-        BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        callNumbers.forEach((cn) => {
+          BrowseCallNumber.waitForCallNumberToAppear(cn.value);
+        });
         InventorySearchAndFilter.browseSearch(callNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
           records: [{ callNumber }],

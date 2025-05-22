@@ -16,7 +16,7 @@ describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
       classificationOption: 'Classification (all)',
-      searchQuery: 'ML410.P11 A3 2018',
+      searchQuery: 'ML466.P323 A3 2018',
       instanceTitle:
         'C466323 My artistic memoirs / Giovanni Pacini ; edited and translated by Stephen Thompson Moore.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
@@ -117,7 +117,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
           'Query search',
-          'classifications.classificationNumber=="ML410.P11 A3 2018"',
+          `classifications.classificationNumber=="${testData.searchQuery}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
