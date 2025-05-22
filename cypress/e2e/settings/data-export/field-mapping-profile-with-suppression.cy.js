@@ -143,6 +143,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.verifyActionOptions();
         SingleFieldMappingProfilePane.duplicateFieldMappingProfile();
         InteractorsTools.checkCalloutMessage(duplicatedFieldMappingProfileCalloutMessage);
+        ExportFieldMappingProfiles.scrollDownIfListOfResultsIsLong();
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(duplicatedFieldMappingProfileName);
         ExportFieldMappingProfiles.deleteMappingProfile(duplicatedFieldMappingProfileName);
       },
