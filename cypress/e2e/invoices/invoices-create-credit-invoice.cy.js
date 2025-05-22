@@ -18,6 +18,7 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
+    Approvals.setApprovePayValue(false);
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
         invoice.accountingCode = organization.erpCode;

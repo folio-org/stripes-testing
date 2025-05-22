@@ -593,8 +593,12 @@ export default {
     cy.expect(errorsAccordion.absent());
   },
 
-  matchedAccordionIsAbsent() {
-    cy.expect(matchedAccordion.absent());
+  matchedAccordionIsAbsent(isAbsent = true) {
+    if (isAbsent) {
+      cy.expect(matchedAccordion.absent());
+    } else {
+      cy.expect(matchedAccordion.exists());
+    }
   },
 
   verifyUserBarcodesResultAccordion() {
@@ -1346,11 +1350,11 @@ export default {
       .then((headerRow) => {
         const headerCells = headerRow.find('th');
         const expectedHeaders = [
-          'Relationship',
+          'URL relationship',
           'URI',
           'Link text',
           'Materials specified',
-          'Public note',
+          'URL public note',
         ];
 
         expectedHeaders.forEach((header, index) => {
