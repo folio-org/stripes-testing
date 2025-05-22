@@ -11,8 +11,8 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleAName: `Auto Role A ErrHand ${getRandomPostfix()}`,
-        roleBName: `Auto Role B ErrHand ${getRandomPostfix()}`,
+        roleAName: `AT_C491278_UserRole_A_${getRandomPostfix()}`,
+        roleBName: `AT_C491278_UserRole_B_${getRandomPostfix()}`,
         postErrorMessage: 'POST request failed: unknown reason',
         putErrorMessage1: 'PUT request failed: user NOT found',
         putErrorMessage2: 'PUT request failed: timeout error',
@@ -39,37 +39,35 @@ describe('Eureka', () => {
 
       before('Create users, roles', () => {
         cy.getAdminToken();
-        cy.getUserGroups().then(() => {
-          cy.createTempUser([]).then((createdUserAProperties) => {
-            testData.userA = createdUserAProperties;
-            cy.createTempUser([]).then((createdUserBProperties) => {
-              testData.userB = createdUserBProperties;
-              cy.createTempUser([]).then((createdUserCProperties) => {
-                testData.userC = createdUserCProperties;
-                cy.createTempUser([]).then((createdUserDProperties) => {
-                  testData.userD = createdUserDProperties;
-                  cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
-                    testData.roleAId = role.id;
-                  });
-                  cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
-                    testData.roleBId = role.id;
-                    if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
-                    if (Cypress.env('runAsAdmin')) {
-                      cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
-                      cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
-                      cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
-                    } else {
-                      cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
-                      cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
-                      cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
-                    }
-                    cy.loginAsAdmin();
-                    TopMenuNavigation.openAppFromDropdown(
-                      APPLICATION_NAMES.SETTINGS,
-                      SETTINGS_SUBSECTION_AUTH_ROLES,
-                    );
-                    AuthorizationRoles.waitContentLoading();
-                  });
+        cy.createTempUser([]).then((createdUserAProperties) => {
+          testData.userA = createdUserAProperties;
+          cy.createTempUser([]).then((createdUserBProperties) => {
+            testData.userB = createdUserBProperties;
+            cy.createTempUser([]).then((createdUserCProperties) => {
+              testData.userC = createdUserCProperties;
+              cy.createTempUser([]).then((createdUserDProperties) => {
+                testData.userD = createdUserDProperties;
+                cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
+                  testData.roleAId = role.id;
+                });
+                cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
+                  testData.roleBId = role.id;
+                  if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
+                  if (Cypress.env('runAsAdmin')) {
+                    cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
+                    cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
+                    cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
+                  } else {
+                    cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
+                    cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
+                    cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
+                  }
+                  cy.loginAsAdmin();
+                  TopMenuNavigation.openAppFromDropdown(
+                    APPLICATION_NAMES.SETTINGS,
+                    SETTINGS_SUBSECTION_AUTH_ROLES,
+                  );
+                  AuthorizationRoles.waitContentLoading();
                 });
               });
             });

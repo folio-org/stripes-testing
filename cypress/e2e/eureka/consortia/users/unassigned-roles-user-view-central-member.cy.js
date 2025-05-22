@@ -16,10 +16,10 @@ describe('Eureka', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        centralRoleNameA: `Role CA C514899 ${randomPostfix}`,
-        collegeRoleNameA: `Role M1A C514899 ${randomPostfix}`,
-        collegeRoleNameB: `Role M1B C514899 ${randomPostfix}`,
-        universityRoleNameA: `Role M2A C514899 ${randomPostfix}`,
+        centralRoleNameA: `AT_C514899_UserRole_CA_${randomPostfix}`,
+        collegeRoleNameA: `AT_C514899_UserRole_M1A_${randomPostfix}`,
+        collegeRoleNameB: `AT_C514899_UserRole_M1B_${randomPostfix}`,
+        universityRoleNameA: `AT_C514899_UserRole_M2A_${randomPostfix}`,
       };
 
       const capabSetsToAssign = [

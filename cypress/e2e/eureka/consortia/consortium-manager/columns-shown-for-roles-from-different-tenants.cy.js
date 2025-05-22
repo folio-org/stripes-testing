@@ -19,8 +19,8 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      centralRoleName: `C502978 Autotest Role Central ${randomPostfix}`,
-      collegeRoleName: `C502978 Autotest Role College ${randomPostfix}`,
+      centralRoleName: `AT_C502978_UserRole_Central_${randomPostfix}`,
+      collegeRoleName: `AT_C502978_UserRole_College_${randomPostfix}`,
       collegeRoleNameDescription: `C502978 Autotest Description ${randomPostfix}`,
       getUpdatedDate: () => DateTools.getFormattedDateWithSlashes({ date: new Date() }),
     };

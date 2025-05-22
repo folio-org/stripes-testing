@@ -8,7 +8,9 @@ import Users from '../../../../support/fragments/users/users';
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
-      const testData = {};
+      const testData = {
+        headerText: /New .*MARC bib record/,
+      };
 
       before('Create test data', () => {
         cy.createTempUser([
@@ -40,6 +42,8 @@ describe('MARC', () => {
           // Click on "Actions" button in second pane
           // Click on "+New MARC Bib Record" option in expanded "Actions" menu
           InventoryInstance.newMarcBibRecord();
+          // Verify pane header label
+          QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           // Verify certain fields pre-populated with default values
           QuickMarcEditor.checkDefaultContent();
           // Close the pane with title "Create a new MARC bib record" by clicking on "x" icon in the upper left corner.

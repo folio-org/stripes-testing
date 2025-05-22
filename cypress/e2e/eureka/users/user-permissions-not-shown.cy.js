@@ -8,10 +8,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      lastName: `TestC442842User${generateItemBarcode()}`,
+      lastName: `AT_C442842_LastName_${generateItemBarcode()}`,
       userType: 'Patron',
-      userEmail: 'test@folio.org',
-      userName: `userc448284${generateItemBarcode()}`,
+      userEmail: 'AT_C442842@test.com',
+      userName: `at_c448284_username_${generateItemBarcode()}`,
     };
 
     before(() => {

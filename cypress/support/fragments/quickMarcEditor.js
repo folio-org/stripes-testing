@@ -1947,9 +1947,7 @@ export default {
   },
 
   checkRecordStatusNew() {
-    cy.expect(
-      Pane(matching(/Create a new .*MARC authority record/)).has({ subtitle: 'Status:New' }),
-    );
+    cy.expect(Pane(matching(/New .*MARC authority record/)).has({ subtitle: 'Status:New' }));
   },
 
   verifyPaneheaderWithContentAbsent(text) {

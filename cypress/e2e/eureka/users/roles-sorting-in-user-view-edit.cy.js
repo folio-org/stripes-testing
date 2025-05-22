@@ -1,9 +1,11 @@
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
 import { randomizeArray } from '../../../support/utils/arrays';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -45,8 +47,7 @@ describe('Eureka', () => {
       });
       testData.allRoleNamesSorted.forEach((roleName) => {
         cy.createAuthorizationRoleApi(roleName).then((role) => {
-          testData[roleName] = {};
-          testData[roleName].id = role.id;
+          testData[roleName] = { id: role.id };
         });
       });
     });
@@ -57,12 +58,14 @@ describe('Eureka', () => {
       if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, originalRoleIds);
       else cy.addRolesToNewUserApi(testData.userA.userId, originalRoleIds);
       cy.waitForAuthRefresh(() => {
-        cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-          waiter: UsersCard.waitLoading,
-        });
+        cy.login(testData.tempUser.username, testData.tempUser.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        Users.waitLoading();
         cy.reload();
+        Users.waitLoading();
       }, 20_000);
+      UsersSearchPane.searchByUsername(testData.userA.username);
+      UsersSearchPane.selectUserFromList(testData.userA.username);
       UsersCard.waitLoading();
     });
 

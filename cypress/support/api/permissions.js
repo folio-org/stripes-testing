@@ -176,7 +176,7 @@ Cypress.Commands.add('deleteCapabilitySetsFromRoleApi', (roleId) => {
 Cypress.Commands.add(
   'createAuthorizationRoleApi',
   (
-    name = `Test_Auto_Role_${getRandomPostfix()}`,
+    name = `AT_UserRole_${getRandomPostfix()}`,
     description = `Test_Auto_Description_${getRandomPostfix()}`,
   ) => {
     cy.okapiRequest({
