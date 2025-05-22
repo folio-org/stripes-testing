@@ -54,6 +54,9 @@ export const MultiSelectOption = HTML.extend('multi select option')
       const records = el.querySelector('[class^=totalRecords]').textContent || '';
       return parseInt(records.replace(/[^0-9]/g, ''), 10);
     },
+  })
+  .actions({
+    clickSegment: ({ perform }) => perform((el) => el.querySelector('[class^="optionSegment--"]').click()),
   });
 
 export const ValueChipRoot = HTML.extend('value chip root')
