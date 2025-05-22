@@ -93,11 +93,11 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
-        BulkEditSearchPane.checkboxWithTextAbsent('Relationship');
+        BulkEditSearchPane.checkboxWithTextAbsent('URL relationship');
         BulkEditSearchPane.checkboxWithTextAbsent('URI');
         BulkEditSearchPane.checkboxWithTextAbsent('Link text');
         BulkEditSearchPane.checkboxWithTextAbsent('Materials specified');
-        BulkEditSearchPane.checkboxWithTextAbsent('Public note');
+        BulkEditSearchPane.checkboxWithTextAbsent('URL public note');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,

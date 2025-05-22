@@ -1175,6 +1175,7 @@ export default {
     cy.do([fundAcqUnitsSelection.fillIn(AUName), MultiSelectOption(AUName).click()]);
     cy.wait(2000);
     cy.do(saveAndCloseButton.click());
+    cy.wait(3000);
   },
 
   varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
