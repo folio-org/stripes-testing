@@ -104,8 +104,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466156'] },
+      'C736739 Search Instances using advanced search with "AND" operator (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C736739'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
