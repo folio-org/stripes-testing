@@ -54,6 +54,8 @@ describe('Eureka', () => {
         capabSetIds: [],
       };
 
+      const duplicatedRoleNamePart = `${testData.roleName} (duplicate)`;
+
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Create' },
         { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'View' },
@@ -102,6 +104,9 @@ describe('Eureka', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.getUserRoleIdByNameApi(`${duplicatedRoleNamePart}*`).then((roleId) => {
+          cy.deleteAuthorizationRoleApi(roleId, true);
+        });
       });
 
       it(

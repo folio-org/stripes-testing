@@ -132,6 +132,9 @@ describe('Eureka', () => {
       Users.deleteViaApi(testUser.userId);
       Users.deleteViaApi(assignUserCentral.userId);
       cy.deleteSharedRoleApi({ id: testData.roleId, name: testData.roleName }, true);
+      cy.getUserRoleIdByNameApi(`${duplicatedRoleNamePart}*`).then((roleId) => {
+        cy.deleteAuthorizationRoleApi(roleId, true);
+      });
     });
 
     it(
