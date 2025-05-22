@@ -49,6 +49,7 @@ describe('bulk-edit', () => {
         QueryModal.clickTestQuery();
         QueryModal.clickRunQuery();
         QueryModal.verifyClosed();
+        BulkEditSearchPane.matchedAccordionIsAbsent(false);
         BulkEditSearchPane.getNumberMatchedRecordsFromPaneHeader().then((numberOfRecords) => {
           numberOfRecordsAfterRunQuery = numberOfRecords;
         });
