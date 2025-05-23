@@ -214,6 +214,10 @@ describe('MARC', () => {
                 InventoryInstance.verifySelectMarcAuthorityModal();
                 InventoryInstance.verifySearchOptions();
                 InventoryInstance.searchResults(linking.value);
+                cy.ifConsortia(true, () => {
+                  MarcAuthorities.clickAccordionByName('Shared');
+                  MarcAuthorities.actionsSelectCheckbox('No');
+                });
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
@@ -226,10 +230,14 @@ describe('MARC', () => {
         });
 
         beforeEach('Login to the application', () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
 
         after('Deleting created user and data', () => {
