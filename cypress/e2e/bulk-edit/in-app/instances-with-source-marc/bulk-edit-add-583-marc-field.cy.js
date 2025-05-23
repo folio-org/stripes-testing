@@ -228,7 +228,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyLastUpdatedDate();
+        InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
         InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
           0,
           'Yes',
