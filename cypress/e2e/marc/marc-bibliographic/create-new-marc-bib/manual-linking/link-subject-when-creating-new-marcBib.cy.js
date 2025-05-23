@@ -35,25 +35,25 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '600',
             content: '$e test123',
-            boxFourth: '$a C380728 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
+            boxFourth: '$a C422128 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '$e test123',
-            boxSixth: '$0 3052044',
+            boxSixth: '$0 3052044422128',
             boxSeventh: '',
             searchOption: 'Personal name',
-            marcValue: 'C380728 Jackson, Peter, 1950-2022',
-            valueAfterSave: 'C380728 Jackson, Peter, 1950-2022 Inspector Banks series ; test123',
+            marcValue: 'C422128 Jackson, Peter, 1950-2022',
+            valueAfterSave: 'C422128 Jackson, Peter, 1950-2022 Inspector Banks series ; test123',
           },
           {
             rowIndex: 6,
             tag: '611',
             content: '$4 test123',
-            boxFourth: '$a C380728 Mostly Chopin Festival. $e Orchestra $t sonet',
+            boxFourth: '$a C422128 Mostly Chopin Festival. $e Orchestra $t sonet',
             boxFifth: '',
-            boxSixth: '$0 997404',
+            boxSixth: '$0 997404422128',
             boxSeventh: '$4 test123',
             searchOption: 'Name-title',
-            marcValue: 'C380728 Mostly Chopin Festival. sonet',
-            valueAfterSave: 'C380728 Mostly Chopin Festival. Orchestra sonet',
+            marcValue: 'C422128 Mostly Chopin Festival. sonet',
+            valueAfterSave: 'C422128 Mostly Chopin Festival. Orchestra sonet',
           },
         ];
 
@@ -61,7 +61,7 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'marcAuthFileForC380728.mrc',
+            marc: 'marcAuthFileForC422128.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 2,
@@ -74,7 +74,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380728');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422128');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -107,7 +107,7 @@ describe('MARC', () => {
         after('Deleting created user and data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380728');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422128');
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
         });
 
@@ -182,10 +182,10 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380728 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $e test123 $0 3052044 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422128 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $e test123 $0 3052044422128 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380728 Mostly Chopin Festival. $e Orchestra $t sonet $0 997404 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422128 Mostly Chopin Festival. $e Orchestra $t sonet $0 997404422128 $9`,
             );
             QuickMarcEditor.closeEditorPane();
 
