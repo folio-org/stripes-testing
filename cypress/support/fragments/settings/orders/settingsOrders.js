@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   Checkbox,
@@ -176,16 +177,30 @@ export default {
     });
   },
 
+  generateUserCanEditPONumberConfig(canUserEditOrderNumber = false) {
+    return {
+      value: JSON.stringify({ canUserEditOrderNumber }),
+      module: 'ORDERS',
+      configName: 'orderNumber',
+      id: uuid(),
+    };
+  },
+
   getUserCanEditPONumberViaApi() {
     return Configs.getConfigViaApi({ query: '(module==ORDERS and configName==orderNumber)' });
   },
 
   setUserCanEditPONumberViaApi(canUserEditOrderNumber) {
     this.getUserCanEditPONumberViaApi().then((configs) => {
-      Configs.updateConfigViaApi({
-        ...configs[0],
-        value: JSON.stringify({ canUserEditOrderNumber }),
-      });
+      if (configs[0]) {
+        Configs.updateConfigViaApi({
+          ...configs[0],
+          value: JSON.stringify({ canUserEditOrderNumber }),
+        });
+      } else {
+        const config = this.generateUserCanEditPONumberConfig(canUserEditOrderNumber);
+        Configs.createConfigViaApi(config);
+      }
     });
   },
 

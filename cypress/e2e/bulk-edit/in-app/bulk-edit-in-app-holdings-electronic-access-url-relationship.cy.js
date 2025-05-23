@@ -94,15 +94,15 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
-        BulkEditActions.selectOption('URL Relationship');
+        BulkEditActions.selectOption('URL relationship');
         let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.verifyOptionAbsentInNewRow('URL Relationship');
+        BulkEditActions.verifyOptionAbsentInNewRow('URL relationship');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.selectOption('URL Relationship');
+        BulkEditActions.selectOption('URL relationship');
         BulkEditActions.selectSecondAction('Find (full field search)');
         BulkEditActions.verifyActionSelected('Find (full field search)');
         possibleActions = ['Replace with', 'Remove'];

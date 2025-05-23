@@ -317,7 +317,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
-          BulkEditActions.selectOption('URL Relationship');
+          BulkEditActions.selectOption('URL relationship');
           BulkEditActions.selectSecondAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);

@@ -6,6 +6,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { ExpenseClasses } from '../../../support/fragments/settings/finance';
 
 describe('Funds', () => {
   const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
@@ -16,6 +17,8 @@ describe('Funds', () => {
     ...Budgets.getDefaultBudget(),
     allocated: 100,
   };
+  let budgetId;
+
   before(() => {
     cy.getAdminToken();
     NewExpenseClass.createViaApi(firstExpenseClass).then((expenseClassId) => {
@@ -32,33 +35,36 @@ describe('Funds', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
           defaultBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(defaultBudget);
+          Budgets.createViaApi(defaultBudget).then((budgetResponse) => {
+            budgetId = budgetResponse.id;
+          });
         });
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     cy.getAdminToken();
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.editBudget();
-    Funds.deleteExpensesClass();
-    Funds.deleteBudgetViaActions();
-    InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    Funds.checkIsBudgetDeleted();
-    Funds.deleteFundViaApi(defaultFund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    Budgets.getBudgetByIdViaApi(budgetId).then((budgetResp) => {
+      delete budgetResp.statusExpenseClasses;
+      Budgets.updateBudgetViaApi({
+        ...budgetResp,
+      });
+    });
+    Budgets.deleteBudgetWithFundLedgerAndFYViaApi({
+      id: budgetId,
+      fundId: defaultFund.id,
+      ledgerId: defaultLedger.id,
+      fiscalYearId: defaultFiscalYear.id,
+    });
+    ExpenseClasses.deleteExpenseClassViaApi(firstExpenseClass.id);
   });
 
   it(
     'C15858 Add expense class to budget (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.visit(TopMenu.fundPath);
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
