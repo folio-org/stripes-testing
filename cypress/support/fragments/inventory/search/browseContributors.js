@@ -313,6 +313,7 @@ export default {
             query: `(name>="${contributorName}")`,
           },
           isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
         });
       },
       (response) => {
