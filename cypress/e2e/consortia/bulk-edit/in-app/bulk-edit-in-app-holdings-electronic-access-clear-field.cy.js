@@ -323,7 +323,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
-          const fieldsToClear = ['URL Relationship', 'URI', 'Link text', 'Materials specified'];
+          const fieldsToClear = ['URL relationship', 'URI', 'Link text', 'Materials specified'];
 
           fieldsToClear.forEach((field, rowIndex) => {
             BulkEditActions.selectOption(field, rowIndex);
