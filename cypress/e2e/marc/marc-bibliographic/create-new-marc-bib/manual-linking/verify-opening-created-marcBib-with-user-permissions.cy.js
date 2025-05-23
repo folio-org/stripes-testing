@@ -53,7 +53,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417050*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417050');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -127,7 +127,7 @@ describe('MARC', () => {
               `${newFields.boxSeventh}`,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

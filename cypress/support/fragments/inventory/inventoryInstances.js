@@ -179,8 +179,11 @@ const searchItemsOptionsValues = [
   'advancedSearch',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
+advSearchInstancesOptions[0] = 'Keyword (title, contributor)';
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
+advSearchHoldingsOptions[0] = 'Keyword (title, contributor)';
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
+advSearchItemsOptions[0] = 'Keyword (title, contributor)';
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 17);
@@ -1356,7 +1359,9 @@ export default {
         .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
       AdvancedSearchRow({ index: rowIndex })
         .find(advSearchOptionSelect)
-        .has({ value: advSearchItemsOptionsValues[searchItemsOptions.indexOf(option)] }),
+        .has({
+          value: advSearchItemsOptionsValues[advSearchItemsOptions.indexOf(option)],
+        }),
     ]);
     if (operator) {
       cy.expect(

@@ -33,6 +33,7 @@ describe('Invoices', () => {
       permissions.uiInvoicesCancelInvoices.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
       permissions.uiInvoicesExportSearchResults.gui,
       permissions.uiInvoicesManageAcquisitionUnits.gui,

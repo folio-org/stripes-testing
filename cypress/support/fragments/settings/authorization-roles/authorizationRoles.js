@@ -685,7 +685,7 @@ export default {
     const duplicatedTitleRegExp = new RegExp(
       `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
     );
-    this.clickActionsButton();
+    this.clickActionsButton(roleName);
     this.clickDuplicateButton();
     this.confirmDuplicateRole();
     InteractorsTools.checkCalloutMessage(duplicateCalloutSuccessText(roleName));

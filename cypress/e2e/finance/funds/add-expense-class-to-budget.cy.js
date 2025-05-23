@@ -4,8 +4,6 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
-import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
@@ -19,11 +17,10 @@ describe('Funds', () => {
     allocated: 100,
   };
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
-
+    NewExpenseClass.createViaApi(firstExpenseClass).then((expenseClassId) => {
+      firstExpenseClass.id = expenseClassId;
+    });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultBudget.fiscalYearId = firstFiscalYearResponse.id;
@@ -52,14 +49,8 @@ describe('Funds', () => {
     Funds.deleteBudgetViaActions();
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
     Funds.checkIsBudgetDeleted();
-
     Funds.deleteFundViaApi(defaultFund.id);
-
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.deleteExpenseClass(firstExpenseClass);
-
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 

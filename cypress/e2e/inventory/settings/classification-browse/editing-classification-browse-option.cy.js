@@ -32,11 +32,6 @@ describe('Inventory', () => {
       before('Create user, login', () => {
         cy.getAdminToken();
         // remove all identifier types from target classification browse, if any
-        ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-          testData.classificationBrowseId,
-        ).then((types) => {
-          testData.originalTypes = types;
-        });
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
@@ -63,11 +58,10 @@ describe('Inventory', () => {
 
       after('Delete user', () => {
         cy.getAdminToken();
-        // restore the original identifier types for target classification browse
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
-          testData.originalTypes,
+          [],
         );
         Users.deleteViaApi(user.userId);
         ClassificationIdentifierTypes.deleteViaApi(testData.classificationIdentifierTypeId);

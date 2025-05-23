@@ -6,7 +6,6 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewPreffixSuffix from '../../../support/fragments/settings/orders/newPreffixSuffix';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -18,6 +17,8 @@ describe('Orders', () => {
     const poSuffix = { ...NewPreffixSuffix.defaultSuffix };
     const orderNumber = Helper.getRandomOrderNumber();
     let user;
+    let orderPrefixId;
+    let orderSuffixId;
 
     before(() => {
       cy.getAdminToken();
@@ -27,13 +28,13 @@ describe('Orders', () => {
       });
       order.vendor = organization.name;
       order.orderType = 'One-time';
-      cy.loginAsAdmin();
-      cy.visit(SettingsMenu.ordersPrefixes);
-      SettingsOrders.createPreffix(poPreffix);
-      cy.visit(SettingsMenu.ordersSuffixes);
-      SettingsOrders.createSuffix(poSuffix);
-      cy.visit(SettingsMenu.ordersPONumberEditPath);
-      SettingsOrders.userCanEditPONumber();
+      SettingsOrders.createPrefixViaApi(poPreffix.name).then((prefixId) => {
+        orderPrefixId = prefixId;
+      });
+      SettingsOrders.createSuffixViaApi(poSuffix.name).then((suffixId) => {
+        orderSuffixId = suffixId;
+      });
+      SettingsOrders.setUserCanEditPONumberViaApi(true);
 
       cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
         user = userProperties;
@@ -46,17 +47,12 @@ describe('Orders', () => {
 
     after(() => {
       cy.getAdminToken();
+      SettingsOrders.setUserCanEditPONumberViaApi(false);
       Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPONumberEditPath,
-        waiter: SettingsOrders.waitLoadingEditPONumber,
-      });
-      SettingsOrders.userCanNotEditPONumber();
-      cy.visit(SettingsMenu.ordersPrefixes);
-      SettingsOrders.deletePrefix(poPreffix);
-      cy.visit(SettingsMenu.ordersSuffixes);
-      SettingsOrders.deleteSuffix(poSuffix);
+      SettingsOrders.deletePrefixViaApi(orderPrefixId);
+      SettingsOrders.deleteSuffixViaApi(orderSuffixId);
+      SettingsOrders.setUserCanEditPONumberViaApi(false);
       Users.deleteViaApi(user.userId);
     });
 

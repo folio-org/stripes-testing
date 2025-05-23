@@ -19,7 +19,7 @@ describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
       classificationOption: 'Library of Congress classification',
-      searchQuery: 'N332.G33 B443913 2018',
+      searchQuery: 'N332.G33 B468140 2018',
       instanceTitle:
         'C468140 The spirit of the Bauhaus / texts, Raphaèle Billé, Monique Blanc, Marie-Sophie Carron de la Carrière, Louise Curtis, Nicholas Fox Weber, Olivier Gabet, Jean-Louis Gaillemin, Anne Monier, Béatrice Quette ; translated from the French by Ruth Sharman.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,

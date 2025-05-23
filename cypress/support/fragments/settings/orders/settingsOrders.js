@@ -10,6 +10,7 @@ import {
   TextField,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
+import Configs from '../configs';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
@@ -172,6 +173,19 @@ export default {
       method: 'DELETE',
       path: `orders/configuration/suffixes/${suffixId}`,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getUserCanEditPONumberViaApi() {
+    return Configs.getConfigViaApi({ query: '(module==ORDERS and configName==orderNumber)' });
+  },
+
+  setUserCanEditPONumberViaApi(canUserEditOrderNumber) {
+    this.getUserCanEditPONumberViaApi().then((configs) => {
+      Configs.updateConfigViaApi({
+        ...configs[0],
+        value: JSON.stringify({ canUserEditOrderNumber }),
+      });
     });
   },
 
