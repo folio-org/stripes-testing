@@ -22,6 +22,7 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
+const optionToSelect = 'URL relationship';
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
@@ -94,15 +95,15 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
-        BulkEditActions.selectOption('URL relationship');
+        BulkEditActions.selectOption(optionToSelect);
         let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.verifyOptionAbsentInNewRow('URL relationship');
+        BulkEditActions.verifyOptionAbsentInNewRow(optionToSelect);
         BulkEditActions.deleteRow(1);
-        BulkEditActions.selectOption('URL relationship');
+        BulkEditActions.selectOption(optionToSelect);
         BulkEditActions.selectSecondAction('Find (full field search)');
         BulkEditActions.verifyActionSelected('Find (full field search)');
         possibleActions = ['Replace with', 'Remove'];
