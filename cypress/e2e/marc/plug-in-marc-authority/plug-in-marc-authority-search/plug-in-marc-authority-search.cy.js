@@ -83,6 +83,10 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

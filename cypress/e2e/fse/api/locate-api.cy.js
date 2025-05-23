@@ -1,6 +1,13 @@
 describe('fse-locate-integration - API', () => {
   // all test steps are hidden from report in order to hide sensitive edge related data (api key). TODO: update to hide only api key
 
+  before(() => {
+    // hide sensitive data from the allure report
+    cy.allure().logCommandSteps(false);
+    cy.getLocateGuestToken();
+    cy.allure().logCommandSteps();
+  });
+
   it(
     `TC195871 - edge-rtac verification for ${Cypress.env('LOCATE_HOST')}`,
     { tags: ['fse', 'api', 'locate', 'locate-edge-rtac'] },
@@ -46,6 +53,54 @@ describe('fse-locate-integration - API', () => {
         const responseBody = response.body;
         // Ensure response body starts with XML declaration
         expect(responseBody).to.match(/<\?xml/);
+      });
+    },
+  );
+
+  it(
+    `TC195921 - check locate source type mappings for ${Cypress.env('LOCATE_HOST')}`,
+    { tags: ['fse', 'api', 'locate'] },
+    () => {
+      const mappingsType = ['PRIMARY', 'SECONDARY'];
+      // check source mappings for both types
+      mappingsType.forEach((type) => {
+        cy.checkLocateSourceTypeMapping(type).then((response) => {
+          cy.expect(response.status).to.eq(200);
+          cy.expect(response.body).to.have.property('mappings');
+          cy.expect(response.body).to.have.property('order');
+        });
+      });
+    },
+  );
+
+  it(
+    `TC195922 - check locate note types mappings for ${Cypress.env('LOCATE_HOST')}`,
+    { tags: ['fse', 'api', 'locate'] },
+    () => {
+      cy.checkLocateNoteTypesMappings().then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('noteTypesForDisplay');
+      });
+    },
+  );
+
+  it(
+    `TC195923 - check locate availability-mappings for ${Cypress.env('LOCATE_HOST')}`,
+    { tags: ['fse', 'api', 'locate'] },
+    () => {
+      cy.checkLocateAvailabilityMappings().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
+    `TC195924 - check locate configuration features for ${Cypress.env('LOCATE_HOST')}`,
+    { tags: ['fse', 'api', 'locate'] },
+    () => {
+      cy.checkLocateConfigurationFeatures().then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('features');
       });
     },
   );
