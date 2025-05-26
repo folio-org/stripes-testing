@@ -18,7 +18,6 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(false);
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
         invoice.accountingCode = organization.erpCode;
@@ -44,10 +43,8 @@ describe('Invoices', () => {
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
-      Invoices.addFundDistributionToLine(invoiceLine, fund);
-      cy.getAdminToken();
       Approvals.setApprovePayValue(false);
-      cy.wait(4000);
+      Invoices.addFundDistributionToLine(invoiceLine, fund);
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');
