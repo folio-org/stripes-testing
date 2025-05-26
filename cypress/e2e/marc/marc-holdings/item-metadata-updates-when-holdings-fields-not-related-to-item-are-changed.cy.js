@@ -1,12 +1,7 @@
 import uuid from 'uuid';
-import {
-  DEFAULT_JOB_PROFILE_NAMES,
-  JOB_STATUS_NAMES,
-  LOCATION_NAMES,
-} from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -53,14 +48,14 @@ describe('MARC', () => {
           testData.materialTypeId = res.id;
         });
       });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       DataImport.uploadFileViaApi(
         marcFiles[0].marc,
         marcFiles[0].fileName,
         marcFiles[0].jobProfileToRun,
       ).then((response) => {
-        response.forEach((record) => {
-          testData.instanceHrid = record.instance.hrid;
+        testData.createdRecordIDs.push(response[0].instance.id);
+        cy.getInstanceById(testData.createdRecordIDs[0]).then((instance) => {
+          testData.instanceHrid = instance.hrid;
 
           // edit marc file adding instance hrid
           DataImport.editMarcFile(
@@ -70,18 +65,11 @@ describe('MARC', () => {
             [testData.instanceHrid],
           );
         });
-        cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFileViaApi(
           marcFiles[1].editedFileName,
           marcFiles[1].fileName,
           marcFiles[1].jobProfileToRun,
-        );
-        Logs.waitFileIsImported(marcFiles[1].fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFiles[1].fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
-
+        ).then(() => {
           cy.getHoldings({
             limit: 1,
             query: `"instanceId"="${testData.createdRecordIDs[0]}"`,
@@ -89,29 +77,28 @@ describe('MARC', () => {
             testData.holdingsId = holdings[0].id;
           });
         });
-      });
-      cy.logout();
 
-      cy.getAdminToken().then(() => {
-        cy.createTempUser([
-          Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-          Permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
+        cy.getAdminToken().then(() => {
+          cy.createTempUser([
+            Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+            Permissions.inventoryAll.gui,
+          ]).then((userProperties) => {
+            testData.user = userProperties;
 
-          ItemRecordNew.createViaApi({
-            holdingsId: testData.holdingsId,
-            itemBarcode: testData.itemBarcode,
-            materialTypeId: testData.materialTypeId,
-            permanentLoanTypeId: testData.loanTypeId,
+            ItemRecordNew.createViaApi({
+              holdingsId: testData.holdingsId,
+              itemBarcode: testData.itemBarcode,
+              materialTypeId: testData.materialTypeId,
+              permanentLoanTypeId: testData.loanTypeId,
+            });
+
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
           });
-
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
         });
       });
     });
