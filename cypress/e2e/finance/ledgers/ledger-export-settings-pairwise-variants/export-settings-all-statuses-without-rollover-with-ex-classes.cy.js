@@ -9,8 +9,6 @@ import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Orders from '../../../../support/fragments/orders/orders';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../../support/fragments/organizations/organizations';
-import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -35,7 +33,6 @@ describe('Finance: Ledgers', () => {
   const allocatedQuantity = '100';
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
-  let servicePointId;
   let location;
   let fileName;
 
@@ -59,37 +56,34 @@ describe('Finance: Ledgers', () => {
           Funds.addExpensesClass('Electronic');
         });
       });
-      cy.getAdminToken();
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-          location = res;
-        });
-        Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-          organization.id = responseOrganizations;
-        });
-        firstOrder.vendor = organization.name;
-        secondOrder.vendor = organization.name;
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
-        Orders.selectOrdersPane();
-        Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-          firstOrder.id = firstOrderResponse.id;
-          Orders.checkCreatedOrder(firstOrder);
-          OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
-            defaultFund,
-            'Electronic',
-            '10',
-            '1',
-            '10',
-            location.name,
-          );
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
-        });
-        fileName = `Export-${defaultLedger.code}-${firstFiscalYear.code}`;
+
+      cy.getLocations({ limit: 1 }).then((res) => {
+        location = res;
       });
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+      });
+      firstOrder.vendor = organization.name;
+      secondOrder.vendor = organization.name;
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
+        firstOrder.id = firstOrderResponse.id;
+        Orders.checkCreatedOrder(firstOrder);
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+          defaultFund,
+          'Electronic',
+          '10',
+          '1',
+          '10',
+          location.name,
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+      });
+      fileName = `Export-${defaultLedger.code}-${firstFiscalYear.code}`;
     });
     cy.createTempUser([
       permissions.uiFinanceExportFinanceRecords.gui,
