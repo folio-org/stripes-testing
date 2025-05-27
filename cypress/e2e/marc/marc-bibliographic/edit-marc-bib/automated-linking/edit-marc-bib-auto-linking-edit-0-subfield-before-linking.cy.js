@@ -28,15 +28,14 @@ describe('MARC', () => {
             tag: '650',
             value: 'Lesbian authors',
             rowIndex: 30,
-            newContent:
-              '$a Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
+            newContent: '$a Lesbian authors $0 http://id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
             value: 'Lesbian activists',
             rowIndex: 31,
             newContent:
-              '$a Lesbian activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh960075325555',
+              '$a Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
         ];
         const authority = {
