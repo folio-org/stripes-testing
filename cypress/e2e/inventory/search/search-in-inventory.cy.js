@@ -23,6 +23,8 @@ describe('Inventory', () => {
         Permissions.inventoryAll.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+        InventoryInstances.deleteInstanceByTitleViaApi('C360548');
+        InventoryInstances.deleteInstanceByTitleViaApi('C360555');
       });
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (createdUserProperties) => {
@@ -112,10 +114,10 @@ describe('Inventory', () => {
           );
           InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.verifySearchResult(
-            '"Closer to the truth than any fact" : memoir, memory, and Jim Crow / Jennifer Jensen Wallach.',
+            '"C360555 Closer to the truth than any fact" : memoir, memory, and Jim Crow / Jennifer Jensen Wallach.',
           );
           InventorySearchAndFilter.checkMissingSearchResult(
-            'Chopsticks only works in pairs (test) 9',
+            'C360555 Chopsticks only works in pairs (test) 9',
           );
           InventorySearchAndFilter.selectSearchResultItem();
           // Wait for details section reload and show updated ISBN number in Identifiers accordion.

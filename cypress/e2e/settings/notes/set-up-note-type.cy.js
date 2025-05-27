@@ -1,6 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Agreements from '../../../support/fragments/agreements/agreements';
+import SearchAndFilterAgreements from '../../../support/fragments/agreements/searchAndFilterAgreements';
 import NewNote from '../../../support/fragments/notes/newNote';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -53,6 +54,7 @@ describe('Notes', () => {
       NoteTypes.fillInNoteType(noteType);
       NoteTypes.saveNoteType(noteType);
       cy.visit(TopMenu.agreementsPath);
+      SearchAndFilterAgreements.search(Agreements.defaultAgreement.name);
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.openNotesSection();
       AgreementViewDetails.verifyNotesIsEmpty();

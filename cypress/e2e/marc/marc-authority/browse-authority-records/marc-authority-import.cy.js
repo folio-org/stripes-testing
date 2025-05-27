@@ -35,6 +35,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Angelou, Maya');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Twain, Mark, 1835-1910');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C356765');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C353995');
         });
       });
 

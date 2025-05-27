@@ -62,6 +62,7 @@ describe('MARC', () => {
             testData.userProperties = createdUserProperties;
           },
         );
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407726');
 
         cy.getAdminToken();
         DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(

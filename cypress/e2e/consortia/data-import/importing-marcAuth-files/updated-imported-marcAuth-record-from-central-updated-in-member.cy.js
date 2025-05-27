@@ -119,6 +119,7 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405144');
       // create user A
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -137,6 +138,7 @@ describe('Data Import', () => {
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, users.userBProperties.userId);
           cy.setTenant(Affiliations.College);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405144');
           cy.assignPermissionsToExistingUser(users.userBProperties.userId, [
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);

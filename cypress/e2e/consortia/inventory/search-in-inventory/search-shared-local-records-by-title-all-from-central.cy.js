@@ -69,6 +69,7 @@ describe('Inventory', () => {
 
           cy.resetTenant();
           cy.getAdminToken();
+          InventoryInstances.deleteInstanceByTitleViaApi('C411611');
 
           ServicePoints.createViaApi(testData.servicePoint);
           testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
@@ -107,7 +108,7 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.setTenant(Affiliations.College);
-
+          InventoryInstances.deleteInstanceByTitleViaApi('C411611');
           InventoryInstance.createAlternativeTitleTypeViaAPI(alternativeTitleTypeName).then(
             (alternativeTitleTypeID) => {
               testData.alternativeTitleTypeIDCollege = alternativeTitleTypeID;

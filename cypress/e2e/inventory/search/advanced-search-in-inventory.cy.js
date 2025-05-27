@@ -58,16 +58,7 @@ describe('Inventory', () => {
     before('Creating data', () => {
       cy.getAdminToken();
       testsIds.forEach((testId) => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `title="${testId}*"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-            });
-          }
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi(testId);
       });
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;

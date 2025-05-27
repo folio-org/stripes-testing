@@ -195,16 +195,7 @@ describe('MARC', () => {
               });
             });
           });
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: 'title="C389489*"',
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi('C389489');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,

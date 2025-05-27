@@ -79,28 +79,10 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.setTenant(Affiliations.College);
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404449');
         cy.resetTenant();
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404449');
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;

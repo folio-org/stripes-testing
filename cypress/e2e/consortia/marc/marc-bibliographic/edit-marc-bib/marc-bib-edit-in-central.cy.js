@@ -132,8 +132,8 @@ describe('MARC', () => {
             users.userAProperties.firstName,
             users.userAProperties.lastName,
           );
-          QuickMarcEditor.verifyTagValue(18, testData.tag504);
-          QuickMarcEditor.verifyTagValue(16, testData.tag500);
+          QuickMarcEditor.verifyTagValue(16, testData.tag504);
+          QuickMarcEditor.verifyTagValue(17, testData.tag500);
         },
       );
     });

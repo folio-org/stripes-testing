@@ -58,6 +58,7 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417049');
 
             cy.loginAsAdmin().then(() => {
               cy.visit(TopMenu.dataImportPath);

@@ -82,6 +82,7 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380729');
 
             cy.getAdminToken();
             marcFiles.forEach((marcFile) => {

@@ -76,6 +76,8 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C409449');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360532');
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties2) => {
             testData.userPropertiesC409449 = createdUserProperties2;
