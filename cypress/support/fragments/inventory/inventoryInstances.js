@@ -1341,4 +1341,24 @@ export default {
         .has({ text: including(contributorName) }),
     );
   },
+
+  deleteInstanceByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: 'search/instances',
+        searchParams: {
+          limit: 100,
+          query: `(title all "${instanceTitle}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      })
+      .then((instances) => {
+        instances.forEach((instance) => {
+          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
+  },
 };

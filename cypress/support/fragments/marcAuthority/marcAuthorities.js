@@ -33,6 +33,7 @@ import {
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
+import MarcAuthority from './marcAuthority';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -1424,6 +1425,16 @@ export default {
     this.getResultsListByColumn(4).then((cellTexts) => {
       cellTexts.forEach((cellText) => {
         expect(cellText).to.be.oneOf([...sourceNames]);
+      });
+    });
+  },
+
+  deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
+    this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
+      records.forEach((record) => {
+        if (record.authRefType === authRefType) {
+          MarcAuthority.deleteViaAPI(record.id, true);
+        }
       });
     });
   },

@@ -245,12 +245,6 @@ describe('Data Import', () => {
               testData.collegeHoldings.push(holding);
             });
           });
-
-          cy.resetTenant();
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
         });
     });
 
@@ -281,6 +275,12 @@ describe('Data Import', () => {
       'C411802 Updating "$0" in linked fields of shared "MARC Bib" which has "Shadow" copy in member tenant via Data Import from Central tenant (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire'] },
       () => {
+        cy.resetTenant();
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file

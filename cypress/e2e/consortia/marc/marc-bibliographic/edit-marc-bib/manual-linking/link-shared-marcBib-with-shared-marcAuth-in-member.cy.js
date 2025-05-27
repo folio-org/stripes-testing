@@ -71,6 +71,8 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          InventoryInstances.deleteInstanceByTitleViaApi('C410819');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410819');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -85,6 +87,8 @@ describe('MARC', () => {
               cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
+              InventoryInstances.deleteInstanceByTitleViaApi('C410819');
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410819');
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -94,6 +98,8 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
+              InventoryInstances.deleteInstanceByTitleViaApi('C410819');
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410819');
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

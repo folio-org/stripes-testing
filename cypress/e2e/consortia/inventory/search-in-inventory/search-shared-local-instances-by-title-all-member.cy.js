@@ -78,9 +78,11 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         users.userProperties = userProperties;
+        InventoryInstances.deleteInstanceByTitleViaApi('C411612');
 
         cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
         cy.setTenant(Affiliations.College);
+        InventoryInstances.deleteInstanceByTitleViaApi('C411612');
         cy.assignPermissionsToExistingUser(users.userProperties.userId, [
           Permissions.uiInventoryViewInstances.gui,
         ])
