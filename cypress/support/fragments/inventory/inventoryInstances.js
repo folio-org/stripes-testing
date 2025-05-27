@@ -97,7 +97,7 @@ export const searchInstancesOptions = [
   'Query search',
   'Advanced search',
 ];
-const searchHoldingsOptions = [
+export const searchHoldingsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'ISBN',
   'ISSN',

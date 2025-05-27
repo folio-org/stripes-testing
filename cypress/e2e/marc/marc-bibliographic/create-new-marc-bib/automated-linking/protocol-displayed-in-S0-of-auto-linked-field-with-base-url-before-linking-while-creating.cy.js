@@ -170,10 +170,6 @@ describe('MARC', () => {
               });
             });
 
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-
             cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -185,6 +181,11 @@ describe('MARC', () => {
                   createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
+            });
+
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
             });
 
             cy.login(userData.username, userData.password, {

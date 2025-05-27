@@ -111,7 +111,7 @@ describe('MARC', () => {
             rowIndex: 14,
             tag: '700',
             content:
-              '$aLee, Stan,$d1922-2018,$ecreator.$0 http://id.loc.gov/authorities/names/n83169267C389489',
+              '$aLee, Stan,$d1922-3894,$ecreator.$0 http://id.loc.gov/authorities/names/n83169267C389489',
             isLinked: true,
           },
           {
@@ -185,15 +185,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-
-            nonLinkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, false);
-            });
-
             cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -205,6 +196,15 @@ describe('MARC', () => {
                   createdAuthorityIDs.push(record.authority.id);
                 });
               });
+            });
+
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
+            nonLinkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, false);
             });
 
             cy.login(userData.username, userData.password, {
@@ -282,13 +282,13 @@ describe('MARC', () => {
               InventorySearchAndFilter.verifyKeywordsAsDefault();
               // Select "Contributors" as browse option
               BrowseContributors.select();
-              BrowseContributors.waitForContributorToAppear('Lee, Stan, 1922-2018', true, true);
+              BrowseContributors.waitForContributorToAppear('Lee, Stan, 1922-3894', true, true);
               // Fill in the search box with contributor name from any linked field, ex.: "Lee, Stan, 1922-2018"
               // Click on the "Search" button.
-              BrowseContributors.browse('Lee, Stan, 1922-2018');
-              BrowseSubjects.checkRowWithValueAndAuthorityIconExists('Lee, Stan, 1922-2018');
+              BrowseContributors.browse('Lee, Stan, 1922-3894');
+              BrowseSubjects.checkRowWithValueAndAuthorityIconExists('Lee, Stan, 1922-3894');
               // 11 Click on the highlighted in bold contributor in the browse result list.
-              BrowseSubjects.selectInstanceWithAuthorityIcon('Lee, Stan, 1922-2018');
+              BrowseSubjects.selectInstanceWithAuthorityIcon('Lee, Stan, 1922-3894');
               // 12 Open detail view of created by user "Instance" record
               InventoryInstances.selectInstanceById(createdInstanceID);
               // Click on the "Actions" in the third pane >> Select "View source".

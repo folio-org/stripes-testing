@@ -10,6 +10,7 @@ import Courses from './courses';
 import NoteEditForm from '../notes/existingNoteEdit';
 
 const notesSection = Section({ id: 'viewCourseNotes' });
+const newNoteButton = Button({ id: 'note-create-button' });
 
 export default {
   close() {
@@ -47,7 +48,7 @@ export default {
     }
   },
   openAddNewNoteForm() {
-    cy.do(notesSection.find(Button('New')).click());
+    cy.do(notesSection.find(newNoteButton).click());
     NoteEditForm.waitLoading();
 
     return NoteEditForm;
