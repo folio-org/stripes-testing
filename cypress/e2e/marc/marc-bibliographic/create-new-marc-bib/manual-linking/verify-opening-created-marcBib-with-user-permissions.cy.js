@@ -100,6 +100,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            });
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
@@ -126,9 +130,7 @@ describe('MARC', () => {
               `${newFields.boxSixth}`,
               `${newFields.boxSeventh}`,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -140,6 +142,10 @@ describe('MARC', () => {
               cy.login(testData.userBData.username, testData.userBData.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
               });
               InventoryInstances.searchByTitle(createdAuthorityIDs[1]);
               InventoryInstances.selectInstance();
