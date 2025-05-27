@@ -80,7 +80,7 @@ describe('Lists', () => {
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();
 
-        Lists.verifyQuery('users.active == false');
+        Lists.verifyQuery('users.active == False');
 
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(listData.name);

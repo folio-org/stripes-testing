@@ -63,8 +63,8 @@ describe('Lists', () => {
         field: 'POL exchange rate',
         operator: QUERY_OPERATIONS.GREATER_THAN,
         filedType: 'input',
-        value: '10',
-        query: 'pol_exchange_rate > 10',
+        value: '0',
+        query: 'pol_exchange_rate > 0',
       },
       {
         testCaseId: 'C442846',
