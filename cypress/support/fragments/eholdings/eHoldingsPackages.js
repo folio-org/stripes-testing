@@ -36,7 +36,7 @@ const endDateInput = TextField({ id: 'end-coverage-0' });
 const defaultPackage = {
   data: {
     type: 'packages',
-    attributes: { name: `autotestEHoldingsPackage_${getRandomPostfix()}`, contentType: 'E-Book' },
+    attributes: { name: `AT_EHoldingsPackage_${getRandomPostfix()}`, contentType: 'E-Book' },
   },
 };
 
