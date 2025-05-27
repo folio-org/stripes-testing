@@ -26,9 +26,7 @@ describe('fse-sso - UI', () => {
           }
         });
       } else {
-        // for eureka just check button placement, assuming that it should be present by default
-        // TBD: uncomment and update with getting configuration from the keycloak to avoid false errors
-        // cy.checkSsoButton(isEureka);
+        cy.checkSsoButton(isEureka);
       }
     },
   );
