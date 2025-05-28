@@ -16,8 +16,11 @@ import {
   SelectionOption,
   Link,
   SearchField,
+  HTML,
+  including,
 } from '../../../../../interactors';
 import GroupDetails from './groupDetails';
+import FinanceDetails from '../financeDetails';
 
 const newButton = Button('New');
 const nameField = TextField('Name*');
@@ -26,6 +29,7 @@ const fundModal = Modal('Select funds');
 const resetButton = Button({ id: 'reset-groups-filters' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
+const summarySection = Section({ id: 'financial-summary' });
 
 export default {
   defaultUiGroup: {
@@ -203,5 +207,30 @@ export default {
     GroupDetails.waitLoading();
 
     return GroupDetails;
+  },
+
+  checkBalance({ name, value }) {
+    cy.expect(summarySection.find(HTML(including(`${name} balance: ${value}`))).exists());
+  },
+
+  checkFinancialSummary({ summary = [], information = [], balance = {} } = {}) {
+    summary.forEach(({ key, value }) => {
+      cy.expect(
+        summarySection
+          .find(MultiColumnListRow({ isContainer: true, content: including(key) }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(value) }),
+      );
+    });
+    if (information.length) {
+      FinanceDetails.checkInformation(information);
+    }
+
+    if (balance.cash) {
+      this.checkBalance({ name: 'Cash', value: balance.cash });
+    }
+    if (balance.available) {
+      this.checkBalance({ name: 'Available', value: balance.available });
+    }
   },
 };

@@ -44,6 +44,7 @@ const currentBudgetSection = Section({ id: 'currentBudget' });
 const budgetPane = Section({ id: 'pane-budget' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
+const editButton = Button('Edit');
 const transferButton = Button('Transfer');
 const moveAllocationButton = Button('Move allocation');
 const FundsTab = Button('Fund');
@@ -1040,5 +1041,42 @@ export default {
 
   verifyFundLinkNameExists: (FundName) => {
     cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
+  },
+
+  fillInAllAllocationFields(toFund, fromFund, amount) {
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+    ]);
+
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+
+    cy.do([
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
+  },
+
+  openMoveAllocationModal() {
+    cy.do([actionsButton.click(), moveAllocationButton.click()]);
+  },
+
+  clickOnGroupTab: () => {
+    cy.get('button[data-test-finance-navigation-group="true"]').click();
+  },
+
+  addTransferFrom: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      MultiSelect({ label: 'Transfer from' }).select([fund]),
+      saveAndCloseButton.click(),
+    ]);
   },
 };
