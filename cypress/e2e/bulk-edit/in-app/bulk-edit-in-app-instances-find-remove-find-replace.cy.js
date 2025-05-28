@@ -147,7 +147,6 @@ describe('bulk-edit', () => {
           marcInstance.instanceId,
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
-        // 5
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.noteRemove('Dissertation note', 'Test');
         BulkEditActions.addNewBulkEditFilterString();
@@ -220,11 +219,11 @@ describe('bulk-edit', () => {
           [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-              value: 'true',
+              value: true,
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
+              value: true,
             },
             {
               header: 'Notes',
@@ -239,11 +238,11 @@ describe('bulk-edit', () => {
           [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-              value: 'true',
+              value: true,
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
+              value: true,
             },
             {
               header: 'Notes',
@@ -307,11 +306,11 @@ describe('bulk-edit', () => {
           [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-              value: 'true',
+              value: true,
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
+              value: true,
             },
             {
               header: 'Notes',
@@ -326,11 +325,11 @@ describe('bulk-edit', () => {
           [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-              value: 'true',
+              value: true,
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
+              value: true,
             },
             {
               header: 'Notes',
