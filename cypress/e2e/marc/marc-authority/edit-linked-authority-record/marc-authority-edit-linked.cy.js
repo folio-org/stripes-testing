@@ -49,6 +49,7 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376596');
 
           cy.getAdminToken();
           marcFiles.forEach((marcFile) => {

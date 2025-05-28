@@ -7,6 +7,7 @@ import {
   Pane,
   MultiColumnListCell,
   PaneHeader,
+  Spinner,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
@@ -77,6 +78,7 @@ const waitLandingPageOpened = () => {
 };
 
 const uploadFile = (fileName) => {
+  cy.expect(Spinner().absent());
   cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
 };
 

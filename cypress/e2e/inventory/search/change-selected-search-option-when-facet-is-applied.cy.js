@@ -55,18 +55,9 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C410764');
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
         .then(() => {
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: 'title="C410764"',
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
           DataImport.uploadFileViaApi(
             testData.marcFile.marc,
             testData.marcFile.fileName,

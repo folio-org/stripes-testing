@@ -80,6 +80,8 @@ describe('MARC', () => {
 
       before('Upload files', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360092');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360093');
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {

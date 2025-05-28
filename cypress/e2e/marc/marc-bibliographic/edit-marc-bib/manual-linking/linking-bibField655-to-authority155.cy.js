@@ -79,6 +79,7 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380766');
 
             cy.getAdminToken();
             marcFiles.forEach((marcFile) => {

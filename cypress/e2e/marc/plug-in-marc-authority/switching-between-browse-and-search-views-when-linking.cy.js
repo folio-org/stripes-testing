@@ -61,27 +61,8 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `title="${testData.instanceTitle}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-        // make sure there are no duplicate records in the system
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: `keyword="${testData.authTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id, true);
-            });
-          }
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authTitle);
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
         .then(() => {
@@ -109,7 +90,7 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.searchByTitle(testData.instanceTitle);
+          InventoryInstances.searchByTitle(testData.instanceIDs[0]);
           InventoryInstances.selectInstance();
         });
     });
@@ -147,6 +128,7 @@ describe('MARC', () => {
         MarcAuthorities.checkSearchOption(testData.searchOptions.personalName.value);
         MarcAuthorities.verifySearchResultTabletIsAbsent(false);
 
+        cy.wait(1000);
         MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.verifyBrowseAuthorityPane(
           testData.searchOptions.nameTitle.title,

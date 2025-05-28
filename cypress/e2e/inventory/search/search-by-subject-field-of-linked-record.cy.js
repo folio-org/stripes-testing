@@ -23,13 +23,13 @@ const testData = {
     QUERY_SEARCH: 'Query search',
   },
   instanceRecords: [
-    "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
-    'Radio Vaticana e ordinamento italiano : atti del seminario di studi, Roma 26 aprile 2004 / a cura di Giuseppe Dalla Torre, Cesare Mirabelli.',
-    'An Anglican view of the Vatican Council.',
-    'Marvel comics direct distributors meeting / Marvel Comics Group.',
-    'Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
-    'Clear Creek and Clear Lake, Tex. [electronic resource].',
-    'Titanic / written and directed by James Cameron.',
+    "C375259 Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
+    'C375259 Radio Vaticana e ordinamento italiano : atti del seminario di studi, Roma 26 aprile 2004 / a cura di Giuseppe Dalla Torre, Cesare Mirabelli.',
+    'C375259 An Anglican view of the Vatican Council.',
+    'C375259 Marvel comics direct distributors meeting / Marvel Comics Group.',
+    'C375259 Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
+    'C375259 Clear Creek and Clear Lake, Tex. [electronic resource].',
+    'C375259 Titanic / written and directed by James Cameron.',
   ],
   searchAuthorityQueries: [
     'Black Panther (Fictitious character)',
@@ -76,29 +76,11 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C375259');
+      testData.searchAuthorityQueries.forEach((query) => {
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
+      });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: testData.searchQueryBeforeTest,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id, true);
-              });
-            }
-          });
-        });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
