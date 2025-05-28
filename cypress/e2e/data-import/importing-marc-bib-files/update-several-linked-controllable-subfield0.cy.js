@@ -118,6 +118,7 @@ describe('Data Import', () => {
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385667');
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {

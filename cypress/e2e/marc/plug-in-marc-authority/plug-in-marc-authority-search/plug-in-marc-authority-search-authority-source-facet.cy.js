@@ -59,6 +59,7 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422166');
 
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {

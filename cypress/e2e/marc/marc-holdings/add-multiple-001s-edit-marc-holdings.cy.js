@@ -69,13 +69,14 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.wait(3000);
           },
         );
       });
     });
 
     afterEach('Deleting created user, data', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       Users.deleteViaApi(testData.createdUserProperties.userId);
       cy.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);

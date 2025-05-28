@@ -1063,7 +1063,7 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as(alias);
     cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+      cy.expect(Pane({ subtitle: including(`${totalRecords.toLocaleString('en-US')}`) }).exists());
     });
   },
 
@@ -1187,6 +1187,7 @@ export default {
   },
 
   verifyValueDoesntExistInColumn(column, value) {
+    cy.wait(3000);
     const actualValues = [];
     cy.then(() => authoritiesList.rowCount())
       .then((rowsCount) => {

@@ -69,27 +69,9 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
           // make sure there are no duplicate records in the system
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
           testData.authTitles.forEach((query) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id, true);
-                });
-              }
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
           });
 
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })

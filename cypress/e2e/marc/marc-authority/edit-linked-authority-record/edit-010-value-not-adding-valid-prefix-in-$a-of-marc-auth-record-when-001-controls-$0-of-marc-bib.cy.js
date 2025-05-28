@@ -64,6 +64,7 @@ describe('MARC', () => {
 
       before('Creating user and data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422065');
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

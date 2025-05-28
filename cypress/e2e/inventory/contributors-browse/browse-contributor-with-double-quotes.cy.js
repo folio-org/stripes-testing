@@ -27,6 +27,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui])
         .then((createdUserProperties) => {
           user.userProperties = createdUserProperties;
+          InventoryInstances.deleteInstanceByTitleViaApi('C397324');
         })
         .then(() => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
@@ -62,7 +63,7 @@ describe('Inventory', () => {
       () => {
         BrowseContributors.searchRecordByName(notExactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);
-        BrowseContributors.checkNonExactSearchResultForARow(notExactSearchName, 0);
+        BrowseContributors.checkNonExactMatchPlaceholder(notExactSearchName);
         BrowseContributors.searchRecordByName(exactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);
         BrowseContributors.checkSearchResultRecord(exactSearchName);

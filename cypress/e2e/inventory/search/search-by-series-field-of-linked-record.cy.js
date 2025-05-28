@@ -92,29 +92,11 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('Sleeping in the ground (Test record');
+      testData.searchAuthorityQueries.forEach((query) => {
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
+      });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="Sleeping in the ground"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id, true);
-              });
-            }
-          });
-        });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
