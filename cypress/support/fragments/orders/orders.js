@@ -68,6 +68,7 @@ const expandActionsDropdown = () => {
   );
 };
 const selectOrganizationModal = Modal('Select Organization');
+const selectLocationsModal = Modal('Select locations');
 
 export default {
   searchByParameter(parameter, value) {
@@ -610,22 +611,29 @@ export default {
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
+    cy.wait(2000);
+    cy.do([buttonLocationFilter.click(), Button('Location look-up').click()]);
+
+    cy.wait(2000);
     cy.do([
-      buttonLocationFilter.click(),
-      Button('Location look-up').click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
-      Select({ name: 'campusId' }).choose('City Campus'),
-      Button({ id: 'locationId' }).click(),
-      SelectionOption('Main Library (KU/CC/DI/M) ').click(),
-      Button('Save and close').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn('Main Library'),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
       buttonLocationFilter.click(),
     ]);
   },
   selectFilterFundCodeUSHISTPOL: () => {
+    cy.wait(2000);
     cy.do([
       buttonFundCodeFilter.click(),
-      Button({ id: 'fundCode-selection' }).click(),
-      SelectionOption('USHIST').click(),
+      Section({ id: 'fundCode' })
+        .find(Button({ className: including('multiSelectToggleButton-') }))
+        .click(),
+      MultiSelectOption(including('USHIST')).click(),
       buttonFundCodeFilter.click(),
     ]);
   },

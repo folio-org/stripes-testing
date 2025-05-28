@@ -21,7 +21,7 @@ import Users from '../../../support/fragments/users/users';
 
 describe('Orders: Receiving and Check-in', () => {
   const testData = {
-    servicePointName: 'Circ Desk 2',
+    servicePointName: 'Circ Desk 1',
     organization: NewOrganization.getDefaultOrganization({ accounts: 1 }),
     order: {},
     orderLine: {},

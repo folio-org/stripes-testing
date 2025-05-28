@@ -53,7 +53,7 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
       effectiveLocationServicePoint = servicePoints[0];
       NewLocation.createViaApi(
         NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
@@ -70,11 +70,14 @@ describe('orders: Settings', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
+          cy.wait(3000);
           OrderLines.POLineInfodorPhysicalMaterialWithLocation(
             orderLineTitle,
             locationResponse.name,
           );
+          cy.wait(3000);
           OrderLines.backToEditingOrder();
+          cy.wait(3000);
         });
       });
     });

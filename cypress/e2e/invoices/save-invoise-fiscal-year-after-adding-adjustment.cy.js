@@ -287,7 +287,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Allocation');
-      Funds.checkNoTransactionOfType('Encumbrance');
+      Funds.selectTransactionInList('Encumbrance');
       Funds.checkNoTransactionOfType('Pending payment');
       Funds.checkNoTransactionOfType('Expended');
     },

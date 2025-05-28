@@ -73,7 +73,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
         });
       });
     });
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
       effectiveLocationServicePoint = servicePoints[0];
       NewLocation.createViaApi(
         NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
