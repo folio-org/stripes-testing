@@ -12,20 +12,18 @@ describe('Inventory', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        searchQuery: `AT_C553018_FolioInstance_${randomPostfix}`,
-        allDates1: ['1902', '1903', '1904', '1905', '1906'],
-        allDates2: ['', '2021', '2022', '2022', ''],
+        searchQuery: `AT_C553030_FolioInstance_${randomPostfix}`,
+        allDates1: ['1955', '1954', ''],
+        allDates2: ['2022', '1955', '1956'],
+        allDateTypeNames: [],
         dateRangeAccordionName: 'Date range',
       };
-      const filterData = [
-        { range: ['1904', ''], dates: testData.allDates1.slice(2) },
-        { range: ['', '1904'], dates: testData.allDates1.slice(0, 3) },
-      ];
+      const filterData = { range: ['1955', '2022'], dates: [testData.allDates1[0]] };
       const createdInstanceIds = [];
 
       before('Create test data, login', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi('C553018');
+        InventoryInstances.deleteInstanceByTitleViaApi('C553030');
         cy.then(() => {
           cy.getInstanceDateTypesViaAPI().then((dateTypesResponse) => {
             testData.allDates1.forEach((date1, index) => {
@@ -63,29 +61,20 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553018 Filter "Instance" records by "Date range" filter using one box ("From" / "To") (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553018'] },
+        'C553030 Verify that "Date range" filter is working on "Date 1" field only (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C553030'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
           testData.allDates1.forEach((date) => {
             InventorySearchAndFilter.verifyResultWithDate1Found(date);
           });
-          filterData.forEach((filterDatum) => {
-            InventorySearchAndFilter.filterByDateRange(...filterDatum.range);
-            filterDatum.dates.forEach((date) => {
-              InventorySearchAndFilter.verifyResultWithDate1Found(date);
-            });
-            InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
-            InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName, false);
-          });
+          InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1.length);
 
-          InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
-          testData.allDates1.forEach((date) => {
+          InventorySearchAndFilter.filterByDateRange(...filterData.range);
+          filterData.dates.forEach((date) => {
             InventorySearchAndFilter.verifyResultWithDate1Found(date);
           });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1.length);
-          InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName);
-          InventorySearchAndFilter.verifyDateRangeAccordionValues('', '');
+          InventorySearchAndFilter.verifyNumberOfSearchResults(filterData.dates.length);
         },
       );
     });
