@@ -78,9 +78,9 @@ const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('Csv approach', () => {
       before('create test data', () => {
         cy.createTempUser([]).then((userProperties) => {
           user = userProperties;

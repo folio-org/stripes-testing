@@ -13,8 +13,8 @@ const invalidIdentifiersFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
 const csvContent = values.join('\n');
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditView.gui,

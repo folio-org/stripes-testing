@@ -15,8 +15,8 @@ let user;
 let userForBuildQuery;
 let numberOfRecordsAfterRunQuery;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([

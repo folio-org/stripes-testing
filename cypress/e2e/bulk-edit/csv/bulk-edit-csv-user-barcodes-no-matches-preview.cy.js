@@ -18,7 +18,7 @@ describe(
     },
   },
   () => {
-    describe('csv approach', () => {
+    describe('Csv approach', () => {
       beforeEach('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,

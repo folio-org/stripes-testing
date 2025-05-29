@@ -12,7 +12,7 @@ const invalidUserUUID = getRandomPostfix();
 const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe(
     'csv approach',
     {

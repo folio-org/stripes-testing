@@ -121,8 +121,8 @@ const capabSetsToUnselect = [
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([])
         .then((userProperties) => {

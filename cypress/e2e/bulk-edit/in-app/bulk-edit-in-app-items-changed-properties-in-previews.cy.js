@@ -25,8 +25,8 @@ const notes = {
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,

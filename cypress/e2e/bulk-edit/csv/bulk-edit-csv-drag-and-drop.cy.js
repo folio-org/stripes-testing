@@ -8,8 +8,8 @@ import FileManager from '../../../support/utils/fileManager';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     const testData = {};
     const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
     const validUserUUID = uuid();

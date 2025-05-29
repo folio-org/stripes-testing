@@ -16,7 +16,7 @@ describe(
     },
   },
   () => {
-    describe('csv approach', () => {
+    describe('Csv approach', () => {
       beforeEach('create test data', () => {
         cy.clearLocalStorage();
         cy.createTempUser([

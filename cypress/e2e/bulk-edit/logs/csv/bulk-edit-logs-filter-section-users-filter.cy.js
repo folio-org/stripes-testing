@@ -8,9 +8,9 @@ import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('Csv approach', () => {
       const users = [];
       const tastData = {
         usersAccordion: 'User',

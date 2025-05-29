@@ -29,8 +29,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instancUU
 const previewFileName = BulkEditFiles.getPreviewFileName(instancUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instancUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

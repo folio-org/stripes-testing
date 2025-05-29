@@ -16,8 +16,8 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditView.gui,

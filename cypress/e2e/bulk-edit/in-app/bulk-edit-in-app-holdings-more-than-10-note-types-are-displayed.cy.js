@@ -37,8 +37,8 @@ for (let i = 1; i <= numberOfNotes; i++) {
   createdNoteTypes.push(`C440089 Note type ${i} ${getRandomPostfix()}`);
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();

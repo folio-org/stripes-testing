@@ -10,8 +10,8 @@ let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

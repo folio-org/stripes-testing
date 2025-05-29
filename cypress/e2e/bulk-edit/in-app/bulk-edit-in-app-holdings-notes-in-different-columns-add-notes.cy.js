@@ -61,8 +61,8 @@ function verifyFileContent(fileName, headerValuePairs) {
   });
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();
