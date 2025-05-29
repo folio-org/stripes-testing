@@ -45,9 +45,9 @@ function waitForCommitCompletedAndVerify(allias, maxRetries = 10) {
   checkResponse();
 }
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditView.gui,

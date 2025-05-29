@@ -34,8 +34,8 @@ const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const previewFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName, true);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName, true);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

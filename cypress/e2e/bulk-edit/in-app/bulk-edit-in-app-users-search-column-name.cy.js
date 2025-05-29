@@ -12,8 +12,8 @@ const invalidUserUUID = getRandomPostfix();
 const validUserUUIDsFileName = `validUserUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUIDsFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,

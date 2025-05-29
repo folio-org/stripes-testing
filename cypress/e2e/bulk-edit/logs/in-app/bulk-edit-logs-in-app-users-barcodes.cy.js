@@ -25,9 +25,9 @@ const newExpirationDate = {
   dateWithDashes: DateTools.getFormattedDate({ date: afterThreeMonthsDate }),
 };
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditLogsView.gui,

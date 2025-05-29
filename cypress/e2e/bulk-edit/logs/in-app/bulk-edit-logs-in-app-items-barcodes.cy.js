@@ -16,9 +16,9 @@ const invalidItemBrcode = getRandomPostfix();
 const itemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemBarcodesFileName}*`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditView.gui,
