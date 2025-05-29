@@ -1359,8 +1359,13 @@ export default {
     this.selectFieldsDropdownOption('008', 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
   },
 
-  update008TextFields(dropdownLabel, value) {
-    cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
+  update008TextFields(dropdownLabel, value, typeSlowly = false) {
+    if (typeSlowly) {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).exists());
+      cy.get(`input[aria-label="${dropdownLabel}"][data-testid="fixed-field-String"]`)
+        .clear()
+        .type(value, { delay: 50 });
+    } else cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
   },
 
   verify008TextFields(dropdownLabel, value) {
