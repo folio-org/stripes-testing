@@ -9,6 +9,8 @@ import AuthorizationRoles, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import Modals from '../../../support/fragments/modals';
+import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Eureka', () => {
@@ -215,11 +217,18 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
         UserEdit.saveUserEditForm();
+
+        // workaround for issue UIU-3396
+        Modals.closeModalWithEscapeIfAny();
+
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
         );
         UsersCard.close();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchResultsPane.verifySearchPaneIsEmpty();
+        UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
