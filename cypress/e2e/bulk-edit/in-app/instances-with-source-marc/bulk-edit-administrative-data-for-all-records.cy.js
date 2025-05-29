@@ -231,7 +231,7 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-            value: 'true',
+            value: true,
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
@@ -239,7 +239,7 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            value: 'true',
+            value: true,
           },
         ];
 
