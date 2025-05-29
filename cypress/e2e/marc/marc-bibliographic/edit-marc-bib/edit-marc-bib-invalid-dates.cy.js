@@ -122,17 +122,13 @@ describe('MARC', () => {
             if (dateData.errors.length) {
               if (dateData.close) {
                 QuickMarcEditor.pressSaveAndClose();
-                dateData.errors.forEach((error) => {
-                  QuickMarcEditor.checkErrorMessage(3, error);
-                });
-                QuickMarcEditor.verifyValidationCallout(0, dateData.errors.length);
               } else {
                 QuickMarcEditor.clickSaveAndKeepEditingButton();
-                dateData.errors.forEach((error) => {
-                  QuickMarcEditor.checkErrorMessage(3, error);
-                });
-                QuickMarcEditor.verifyValidationCallout(0, dateData.errors.length);
               }
+              dateData.errors.forEach((error) => {
+                QuickMarcEditor.checkErrorMessage(3, error);
+              });
+              QuickMarcEditor.verifyValidationCallout(0, dateData.errors.length);
               QuickMarcEditor.closeAllCallouts();
             } else if (dateData.close) {
               QuickMarcEditor.pressSaveAndClose();

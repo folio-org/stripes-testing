@@ -15,7 +15,6 @@ describe('Inventory', () => {
         searchQuery: `AT_C553030_FolioInstance_${randomPostfix}`,
         allDates1: ['1955', '1954', ''],
         allDates2: ['2022', '1955', '1956'],
-        allDateTypeNames: [],
         dateRangeAccordionName: 'Date range',
       };
       const filterData = { range: ['1955', '2022'], dates: [testData.allDates1[0]] };
