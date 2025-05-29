@@ -34,8 +34,8 @@ for (let i = 1; i <= numberOfRecords; i++) {
   invalidInstanceIds.push(uuid());
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

@@ -63,7 +63,7 @@ const marcInstanceFields = [
 ];
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();

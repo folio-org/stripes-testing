@@ -18,8 +18,8 @@ const patronGroup = {
 };
 const invalidPatronGroup = `invalidPatronGroup${getRandomPostfix()}`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditCsvView.gui,

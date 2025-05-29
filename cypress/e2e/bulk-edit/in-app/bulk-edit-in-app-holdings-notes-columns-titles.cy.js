@@ -86,7 +86,7 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.verifyConfirmButtonDisabled(false);
 }
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe(
     'in-app approach',
     {

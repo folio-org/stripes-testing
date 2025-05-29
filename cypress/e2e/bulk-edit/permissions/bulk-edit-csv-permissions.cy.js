@@ -7,8 +7,8 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 let userWithCsvViewPermission;
 let userWithCsvPermissions;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test users', () => {
       cy.createTempUser([permissions.bulkEditCsvView.gui]).then((userProperties) => {
         userWithCsvViewPermission = userProperties;

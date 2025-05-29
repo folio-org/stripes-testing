@@ -18,9 +18,9 @@ const previewOfProposedChangesFileName = {
 };
 const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('Csv approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditLogsView.gui,

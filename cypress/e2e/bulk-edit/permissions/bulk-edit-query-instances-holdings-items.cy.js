@@ -81,8 +81,8 @@ const capabSetToUnselect = [
   },
 ];
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([]).then((userProperties) => {
         user = userProperties;

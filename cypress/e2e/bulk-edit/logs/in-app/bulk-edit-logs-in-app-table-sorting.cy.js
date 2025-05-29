@@ -8,9 +8,9 @@ import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs
 let user;
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditLogsView.gui,
