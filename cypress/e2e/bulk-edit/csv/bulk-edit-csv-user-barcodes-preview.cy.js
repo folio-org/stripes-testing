@@ -9,7 +9,7 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 
 describe(
-  'bulk-edit',
+  'Bulk-edit',
   {
     retries: {
       runMode: 1,
