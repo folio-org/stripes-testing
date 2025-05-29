@@ -154,7 +154,7 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-            value: editedNotes.action,
+            value: '[sample] no*te',
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE,
