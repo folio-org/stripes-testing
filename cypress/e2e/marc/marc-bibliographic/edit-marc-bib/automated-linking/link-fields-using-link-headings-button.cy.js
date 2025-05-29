@@ -208,9 +208,6 @@ describe('MARC', () => {
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
 
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
-              });
               linkingTagAndValues.forEach((linking) => {
                 QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
                 MarcAuthorities.switchToSearch();
@@ -227,6 +224,9 @@ describe('MARC', () => {
         });
 
         beforeEach('Login to the application', () => {
+          linkableFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
+          });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -336,7 +336,7 @@ describe('MARC', () => {
               '700',
               '1',
               '\\',
-              '$a C388536 Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262',
+              '$a C388536 Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262C388536',
             );
 
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -349,7 +349,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(manualLinkingCalloutText2);
             QuickMarcEditor.closeCallout(manualLinkingCalloutText2);
 
-            QuickMarcEditor.verifyTagWithNaturalIdExistance(79, '700', 'n2014052262');
+            QuickMarcEditor.verifyTagWithNaturalIdExistance(79, '700', 'n2014052262C388536');
             notMatchingNaturalIds.forEach((matchs) => {
               QuickMarcEditor.verifyTagWithNaturalIdExistance(
                 matchs.rowIndex,
