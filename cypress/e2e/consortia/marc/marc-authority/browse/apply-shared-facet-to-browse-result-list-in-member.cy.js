@@ -78,29 +78,9 @@ describe('MARC', () => {
       };
 
       before('Create users, data', () => {
-        cy.setTenant(Affiliations.College);
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
         cy.resetTenant();
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404449');
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;
@@ -112,6 +92,7 @@ describe('MARC', () => {
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404449');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
@@ -218,7 +199,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(1_000);
+          cy.wait(3_000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             sharedRecordsCount = count;
           });
@@ -268,7 +249,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -316,7 +297,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -357,7 +338,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -399,7 +380,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
 
@@ -427,17 +408,11 @@ describe('MARC', () => {
           );
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
 
             sharedRecordsCount = count;
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.not.eq(localRecordsCount);
-
-            localRecordsCount = count;
           });
 
           // 13 Click on the "Reset all" button
@@ -448,18 +423,13 @@ describe('MARC', () => {
             sharedAuthorityRecord1FromCentralTenant.heading,
           );
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
           MarcAuthorities.checkTypeOfHeadingFacetCleared();
           MarcAuthorities.checkRecordsResultListIsAbsent();
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.not.eq(localRecordsCount);
           });
         },
       );

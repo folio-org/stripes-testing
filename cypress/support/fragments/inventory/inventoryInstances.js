@@ -970,6 +970,18 @@ export default {
       });
   },
 
+  searchInstancesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'search/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      });
+  },
+
   deleteInstanceViaApi({
     instance,
     servicePoint,
@@ -1002,7 +1014,7 @@ export default {
   deleteInstanceByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: {
           limit: 100,
           query: `title="${instanceTitle}"`,

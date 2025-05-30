@@ -1,4 +1,7 @@
-import { DEFAULT_JOB_PROFILE_NAMES, CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  CLASSIFICATION_IDENTIFIER_TYPES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -10,6 +13,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -97,6 +101,10 @@ describe('Inventory', () => {
       'C468256 Browse for classification using "Library of Congress classification" option is case-insensitive (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468256'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.searchResults[0],
+          testData.classificationBrowseId,
+        );
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
             testData.classificationOption,

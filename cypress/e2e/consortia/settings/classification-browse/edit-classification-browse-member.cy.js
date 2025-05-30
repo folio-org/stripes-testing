@@ -30,17 +30,6 @@ describe('Inventory', () => {
         before('Create user, login', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          // remove all identifier types from target classification browse, if any
-          ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-            testData.classificationBrowseId,
-          ).then((types) => {
-            testData.originalTypes = types;
-          });
-          ClassificationBrowse.updateIdentifierTypesAPI(
-            testData.classificationBrowseId,
-            testData.classificationBrowseAlgorithm,
-            [],
-          );
           cy.createTempUser([
             Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
           ]).then((userProperties) => {
@@ -55,6 +44,12 @@ describe('Inventory', () => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+            // remove all identifier types from target classification browse, if any
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              testData.classificationBrowseId,
+              testData.classificationBrowseAlgorithm,
+              [],
+            );
             ClassificationBrowse.openClassificationBrowse();
             ClassificationBrowse.checkClassificationBrowsePaneOpened();
           });
@@ -67,7 +62,7 @@ describe('Inventory', () => {
           ClassificationBrowse.updateIdentifierTypesAPI(
             testData.classificationBrowseId,
             testData.classificationBrowseAlgorithm,
-            testData.originalTypes,
+            [],
           );
           Users.deleteViaApi(user.userId);
         });

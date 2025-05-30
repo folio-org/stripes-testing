@@ -10,6 +10,7 @@ import ClassificationBrowse, {
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -98,6 +99,10 @@ describe('Inventory', () => {
       'C468255 Browse for classification using "Classification (all)" option is case-insensitive (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468255'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.searchResults[0],
+          testData.classificationBrowseId,
+        );
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
           InventorySearchAndFilter.browseSearch(query);

@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
 
 describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () => {
   let userData = {};
@@ -83,11 +84,14 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
           });
         });
       });
-
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
     });
   });
 
@@ -142,6 +146,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinking);
       QuickMarcEditor.closeWithoutSaving();
       InventorySearchAndFilter.selectBrowseContributors();
+      BrowseContributors.waitForContributorToAppear(marcAuthData.tag100Value, true, true);
       InventorySearchAndFilter.browseSearch(marcAuthData.tag100Value);
       InventorySearchAndFilter.checkMarcAuthAppIconInSearchResult();
       InventorySearchAndFilter.verifyContributorsColumResult(marcAuthData.tag100Value);

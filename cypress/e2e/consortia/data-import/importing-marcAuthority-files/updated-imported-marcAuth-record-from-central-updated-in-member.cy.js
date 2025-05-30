@@ -40,12 +40,12 @@ describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       tag377: '377',
-      addedField: '400 0 $a Данте Алигери $d 1265-1321',
-      updated1XXField: '$a Dante Alighieri, $d 1265-1321, $t Divine Comedy',
+      addedField: '\t400\t0  \t$a Данте Алигери $d 1265-1321',
+      updated1XXField: '$a C405144 Dante Alighieri, $d 1265-1321, $t Divine Comedy',
       deletedSubfield: '$zno 98058852',
       createdRecordIDs: [],
       marcValue: 'C405144 Dante Alighieri, 1265-1321',
-      updatedMarcValue: 'Dante Alighieri, 1265-1321, Divine Comedy',
+      updatedMarcValue: 'C405144 Dante Alighieri, 1265-1321, Divine Comedy',
       markedValue: 'C405144 Dante Alighieri,',
       searchOption: 'Keyword',
       calloutMessage:
@@ -102,6 +102,7 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405144');
       // create user A
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -188,10 +189,14 @@ describe('Data Import', () => {
       'C405144 Updated "MARC authority" record via "Data import" from Central tenant is updated in Member tenant (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C405144'] },
       () => {
-        cy.login(users.userAProperties.username, users.userAProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(users.userAProperties.username, users.userAProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();
@@ -203,7 +208,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record found');
 
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -215,7 +220,7 @@ describe('Data Import', () => {
           testData.modifiedMarcFile,
         );
         // upload the exported marc file with 999.f.f.s fields
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitLoadingList();
@@ -224,10 +229,10 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
         Logs.checkJobStatus(testData.uploadModifiedMarcFile, 'Completed');
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
-        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        Logs.verifyInstanceStatus(0, 6, RECORD_STATUSES.UPDATED);
+        Logs.clickOnHotLink(0, 6, RECORD_STATUSES.UPDATED);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
 
@@ -237,8 +242,8 @@ describe('Data Import', () => {
         });
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
       },
