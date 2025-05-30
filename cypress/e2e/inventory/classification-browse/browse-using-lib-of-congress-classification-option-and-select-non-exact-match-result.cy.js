@@ -118,6 +118,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
         );
+        BrowseClassifications.waitForClassificationNumberToAppear(testData.positiveSearchQuery);
         InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
         verifySearchResult();
         BrowseClassifications.clickOnSearchResult(`${testData.negativeSearchQuery}would be here`);

@@ -14,6 +14,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -199,6 +200,11 @@ describe('Inventory', () => {
       'C468150 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option when all identifier types are selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468150'] },
       () => {
+        [...testData.folioInstances, ...testData.marcRecordsTitlesAndClassifications].forEach(
+          (instance) => {
+            BrowseClassifications.waitForClassificationNumberToAppear(instance.classificationValue);
+          },
+        );
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.classificationValue);
         });

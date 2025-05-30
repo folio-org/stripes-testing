@@ -63,6 +63,7 @@ export default {
   },
 
   addNoteType() {
+    cy.wait(2000);
     cy.do(newNoteTypeButton.click());
     this.checkNoteButtonsState();
   },

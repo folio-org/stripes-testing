@@ -13,6 +13,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -100,6 +101,10 @@ describe('Inventory', () => {
       'C468258 Browse for classification using "Dewey Decimal classification" option is case-insensitive (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468258'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.searchResults[0],
+          testData.classificationBrowseId,
+        );
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
             testData.classificationOption,

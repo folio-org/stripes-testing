@@ -77,7 +77,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.getInstancesViaApi({
+      InventoryInstances.searchInstancesViaApi({
         limit: 100,
         query: testData.searchQueryBeforeTest,
       }).then((instances) => {
@@ -87,7 +87,7 @@ describe('Inventory', () => {
           });
         }
       });
-      InventoryInstances.getInstancesViaApi({
+      InventoryInstances.searchInstancesViaApi({
         limit: 100,
         query: testData.searchQueries[1],
       }).then((instances) => {

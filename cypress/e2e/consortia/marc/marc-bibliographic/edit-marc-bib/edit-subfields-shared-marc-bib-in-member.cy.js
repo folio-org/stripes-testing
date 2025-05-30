@@ -204,6 +204,8 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            cy.setTenant(Affiliations.Consortia);
+            BrowseSubjects.waitForSubjectToAppear(testData.expectedSubjectName);
             BrowseSubjects.browse(testData.expectedSubjectName);
             BrowseSubjects.checkValueIsBold(testData.expectedSubjectName);
             BrowseSubjects.browse(testData.notExpectedSubjectName);
@@ -241,6 +243,9 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            cy.setTenant(Affiliations.University);
+            BrowseContributors.waitForContributorToAppear(testData.expectedContributorNames[0]);
+            BrowseContributors.waitForContributorToAppear(testData.expectedContributorNames[2]);
             BrowseContributors.browse(testData.expectedContributorNames[0]);
             BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[0]);
             BrowseContributors.browse(testData.expectedContributorNames[2]);

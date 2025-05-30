@@ -86,10 +86,14 @@ describe('MARC', () => {
               ]);
             })
             .then(() => {
-              cy.login(users.userAProperties.username, users.userAProperties.password, {
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userAProperties.username, users.userAProperties.password, {
+                  path: TopMenu.dataImportPath,
+                  waiter: DataImport.waitLoading,
+                });
+                cy.reload();
+                DataImport.waitLoading();
+              }, 20_000);
               cy.resetTenant();
               marcFiles.forEach((marcFile) => {
                 DataImport.uploadFileViaApi(

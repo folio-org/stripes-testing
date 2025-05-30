@@ -7,8 +7,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -36,16 +34,9 @@ describe('MARC', () => {
         testData.userProperties = createdUserProperties;
 
         cy.getAdminToken().then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-            (servicePoint) => {
-              testData.servicePointId = servicePoint[0].id;
-              NewLocation.createViaApi(
-                NewLocation.getDefaultLocation(testData.servicePointId),
-              ).then((res) => {
-                testData.location = res;
-              });
-            },
-          );
+          cy.getLocations().then((loc) => {
+            testData.location = loc;
+          });
         });
 
         cy.getAdminToken();
@@ -81,12 +72,12 @@ describe('MARC', () => {
         InventorySearchAndFilter.clickSearch();
         InventoryInstance.selectTopRecord();
         InventoryInstance.goToMarcHoldingRecordAdding();
-        QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
+        QuickMarcEditor.updateExistingField('852', `$b ${testData.location.code}`);
         MarcAuthority.checkAddNew001Tag(5, '$a test');
         cy.wait(1000); // wait until redirect marc holding page
         QuickMarcEditor.closeEditorPane();
         InventoryInstance.goToMarcHoldingRecordAdding();
-        QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
+        QuickMarcEditor.updateExistingField('852', `$b ${testData.location.code}`);
         MarcAuthority.checkAddNew001Tag(5, '$a test');
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.verifyOnlyOne001FieldAreDisplayed();

@@ -14,6 +14,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -209,6 +210,7 @@ describe('Inventory', () => {
       'C468156 Only one Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468156'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear('598.0994');
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });

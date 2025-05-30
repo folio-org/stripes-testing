@@ -10,8 +10,6 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -63,7 +61,6 @@ describe('MARC', () => {
     const instanceIds = [];
     const holdingsIds = [];
     let location;
-    let servicePointId;
 
     before('Create user, data', () => {
       cy.createTempUser([
@@ -73,18 +70,16 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         user = createdUserProperties;
 
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
+        cy.getLocations().then((loc) => {
+          location = loc;
+          cy.log(JSON.stringify(loc, null, 2));
 
-            for (let i = 0; i < 3; i++) {
-              cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} ${i}`);
-              QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} ${i}`).then((bib) => {
-                instanceIds.push(bib.id);
-              });
-            }
-          });
+          for (let i = 0; i < 3; i++) {
+            cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} ${i}`);
+            QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} ${i}`).then((bib) => {
+              instanceIds.push(bib.id);
+            });
+          }
         });
       });
     });
@@ -121,12 +116,6 @@ describe('MARC', () => {
       instanceIds.forEach((instanceId) => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
-      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id,
-      );
     });
 
     it(
