@@ -11,14 +11,14 @@ const invalidUserBarcode = getRandomPostfix();
 const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 
 describe(
-  'bulk-edit',
+  'Bulk-edit',
   {
     retries: {
       runMode: 1,
     },
   },
   () => {
-    describe('csv approach', () => {
+    describe('Csv approach', () => {
       beforeEach('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,

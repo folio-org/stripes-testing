@@ -34,8 +34,8 @@ const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const previewFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName, true);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName, true);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([
@@ -154,7 +154,7 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-            value: editedNotes.action,
+            value: '[sample] no*te',
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE,

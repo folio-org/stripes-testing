@@ -28,15 +28,15 @@ const notes = {
 
 const item = {
   barcode: getRandomPostfix(),
-  instanceName: `instance-${getRandomPostfix()}`,
+  instanceName: `AT_C430250_FolioInstance_${getRandomPostfix()}`,
 };
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
@@ -180,14 +180,14 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-            value: `${suppressFromDiscovery}`,
+            value: suppressFromDiscovery,
           },
         ];
 
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.barcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          item.itemId,
           editedHeaderValues,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
@@ -215,8 +215,8 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           changedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.barcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          item.itemId,
           editedHeaderValues,
         );
 

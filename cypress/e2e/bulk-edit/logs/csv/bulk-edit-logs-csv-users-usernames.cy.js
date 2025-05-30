@@ -14,9 +14,9 @@ const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUsernamesFileName}*`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('Csv approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditLogsView.gui,

@@ -276,7 +276,7 @@ export default {
       // eslint-disable-next-line no-unused-expressions
       expect(jsonDataArray).to.be.an('array').and.not.be.empty;
 
-      const targetRow = jsonDataArray.find((row) => row[uuidHeader]?.trim() === uuidValue);
+      const targetRow = jsonDataArray.find((row) => row[uuidHeader] === uuidValue);
 
       // eslint-disable-next-line no-unused-expressions
       expect(targetRow).to.exist;
@@ -292,9 +292,7 @@ export default {
       // eslint-disable-next-line no-unused-expressions
       expect(jsonDataArray).to.be.an('array').and.not.be.empty;
 
-      const targetRow = jsonDataArray.find(
-        (row) => row[identifierHeader]?.trim() === identifierValue,
-      );
+      const targetRow = jsonDataArray.find((row) => row[identifierHeader] === identifierValue);
 
       // eslint-disable-next-line no-unused-expressions
       expect(targetRow).to.exist;

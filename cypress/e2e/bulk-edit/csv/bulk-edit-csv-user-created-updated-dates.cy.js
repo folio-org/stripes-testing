@@ -23,14 +23,14 @@ const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDs
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe(
-  'bulk-edit',
+  'Bulk-edit',
   {
     retries: {
       runMode: 1,
     },
   },
   () => {
-    describe('csv approach', () => {
+    describe('Csv approach', () => {
       beforeEach('create test data', () => {
         cy.clearLocalStorage();
         cy.createTempUser([
