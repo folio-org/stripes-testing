@@ -222,15 +222,9 @@ export default {
       ledgerSelection.open(),
       SelectionList().select(defaultLedger),
     ]);
-    // TO DO: change xpath to interactors when it would be possible
-    cy.get('[data-test-col-transfer-from="true"]').click();
-    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
-      .contains(firstFund.name)
-      .click();
-    cy.get('[data-test-col-transfer-to="true"]').click();
-    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
-      .contains(secondFund.name)
-      .click();
+    MultiSelect({ label: 'Transfer from' }).select(firstFund);
+    cy.wait(1000);
+    MultiSelect({ label: 'Transfer from' }).select(secondFund);
     cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
     this.waitLoading();
   },
@@ -392,11 +386,11 @@ export default {
   checkTransactionList: (fundCode) => {
     cy.expect([
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '$50.00' }),
       transactionList
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .has({ content: `${fundCode}` }),
     ]);

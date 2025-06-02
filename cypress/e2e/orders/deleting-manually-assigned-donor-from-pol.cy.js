@@ -100,6 +100,7 @@ describe('Orders', () => {
       OrderLines.openDonorInformationSection();
       OrderLines.addDonor(secondOrganization.name);
       OrderLines.saveOrderLine();
+      cy.wait(4000);
     });
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;

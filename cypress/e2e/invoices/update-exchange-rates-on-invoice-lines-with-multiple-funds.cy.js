@@ -129,6 +129,7 @@ describe('Invoices', () => {
             Invoices.createInvoiceLineFromPol(firstOrderNumber);
             cy.wait(4000);
             Invoices.differentCurrencyConfirmation();
+            cy.wait(3000);
           },
         );
       });
