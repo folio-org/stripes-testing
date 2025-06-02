@@ -809,8 +809,9 @@ export default {
       Button({ id: 'fundDistributions-add-button' }).click(),
       Button({ id: `fundDistributions[${index}].fundId` }).click(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
-      TextField({ name: `fundDistributions[${index}].value` }).fillIn(value),
     ]);
+    cy.wait(1000);
+    cy.do(TextField({ name: `fundDistributions[${index}].value` }).fillIn(value));
   },
 
   saveLine: () => {

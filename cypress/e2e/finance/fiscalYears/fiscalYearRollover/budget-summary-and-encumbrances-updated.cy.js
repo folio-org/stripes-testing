@@ -321,6 +321,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.checkStatusInTransactionDetails('Unreleased');
       Funds.closeTransactionApp(secondFund, secondFiscalYear);
       Funds.closeBudgetDetails();
+      Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectPreviousBudgetDetails();

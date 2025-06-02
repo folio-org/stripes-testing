@@ -4,6 +4,7 @@ import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
 describe('Acquisition Units', () => {
@@ -71,10 +72,8 @@ describe('Acquisition Units', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
-    });
+    cy.loginAsAdmin();
+    TopMenuNavigation.openAppFromDropdown('Settings', 'Acquisition units');
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);

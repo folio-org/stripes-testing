@@ -80,7 +80,7 @@ export default {
     cy.wait(4000);
   },
 
-  assignAdmin: (adminName) => {
+  assignAdmin: (adminName = Cypress.env('diku_login')) => {
     cy.do([
       findUserButton.click(),
       userSearchModal.find(searchTextField).fillIn(adminName),

@@ -2595,7 +2595,7 @@ export default {
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       currencyButton.click(),
       SelectionOption(currency).click(),
-      Checkbox({ id: 'use-set-exhange-rate' }).click(),
+      Checkbox('Use set exchange rate').click(),
       TextField({ name: 'cost.exchangeRate' }).fillIn(exchangeRate),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
