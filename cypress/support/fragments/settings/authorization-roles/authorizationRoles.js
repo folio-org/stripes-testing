@@ -391,8 +391,9 @@ export default {
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
 
-  clickDeleteRole: () => {
-    cy.do([actionsButton.click(), deleteButton.click()]);
+  clickDeleteRole: (roleName = false) => {
+    const actionsButtonToClick = roleName ? Pane(roleName).find(actionsButton) : actionsButton;
+    cy.do([actionsButtonToClick.click(), deleteButton.click()]);
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
       deleteRoleModal.find(cancelButton).exists(),
@@ -685,5 +686,11 @@ export default {
   checkNoUsernameErrorCallout: () => {
     InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
     InteractorsTools.dismissCallout(noUsernameCalloutText);
+  },
+
+  checkRoleFound: (roleName, isFound = true) => {
+    const targetRow = rolesPane.find(HTML(roleName, { className: including('root') }));
+    if (isFound) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
   },
 };

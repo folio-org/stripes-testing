@@ -25,13 +25,8 @@ describe('Eureka', () => {
     const capabSetsToAssignCentral = [
       {
         type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
+        resource: 'UI-Authorization-Roles Settings Admin',
         action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.DELETE,
       },
       {
         type: CAPABILITY_TYPES.DATA,
@@ -49,12 +44,12 @@ describe('Eureka', () => {
     const capabSetsToAssignCollege = [
       {
         type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.DELETE,
+        resource: 'UI-Authorization-Roles Settings Admin',
+        action: CAPABILITY_ACTIONS.VIEW,
       },
       {
         type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Users Roles',
+        resource: 'UI-Users',
         action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
