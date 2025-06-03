@@ -44,7 +44,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund_2_${getRandomPostfix()}`,
+    name: `1_autotest_fund_2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
@@ -107,7 +107,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.closeBudgetDetails();
         });
       });
-      cy.getAdminToken();
       Ledgers.createViaApi(secondLedger).then((secondLedgerResponse) => {
         secondLedger.id = secondLedgerResponse.id;
         secondFund.ledgerId = secondLedger.id;
@@ -220,6 +219,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           'None',
           'Allocation',
         );
+        cy.wait(5000);
         cy.visit(TopMenu.ledgerPath);
         FinanceHelp.searchByName(secondLedger.name);
         Ledgers.selectLedger(secondLedger.name);
@@ -235,6 +235,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           'None',
           'Allocation',
         );
+        cy.wait(5000);
         cy.visit(TopMenu.fiscalYearPath);
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
@@ -257,6 +258,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         Invoices.createInvoiceFromOrder(invoice, firstFiscalYear.code);
         Invoices.approveInvoice();
         Invoices.payInvoice();
+        cy.wait(3000);
       });
 
       cy.createTempUser([
