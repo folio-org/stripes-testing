@@ -75,9 +75,9 @@ describe('Orders', () => {
   });
 
   afterEach(() => {
+    cy.loginAsAdmin();
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.setPurchaseOrderLinesLimit(1);
-    cy.loginAsAdmin();
     Users.deleteViaApi(user.userId);
   });
 
