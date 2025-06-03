@@ -222,9 +222,15 @@ export default {
       ledgerSelection.open(),
       SelectionList().select(defaultLedger),
     ]);
-    MultiSelect({ label: 'Transfer from' }).select(firstFund);
-    cy.wait(1000);
-    MultiSelect({ label: 'Transfer from' }).select(secondFund);
+    // TO DO: change xpath to interactors when it would be possible
+    cy.get('[data-test-col-transfer-from="true"]').click();
+    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
+      .contains(firstFund.name)
+      .click();
+    cy.get('[data-test-col-transfer-to="true"]').click();
+    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
+      .contains(secondFund.name)
+      .click();
     cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
     this.waitLoading();
   },
