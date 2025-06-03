@@ -173,6 +173,7 @@ describe('Orders', () => {
                 InventoryInstance.openItemByBarcodeAndIndex('No barcode');
                 InventoryItems.edit();
                 ItemRecordEdit.addBarcode(barcodeForSeventhItem);
+                cy.wait(1500);
                 ItemRecordEdit.saveAndClose();
                 // Need to wait,while instance will be saved
                 // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -226,7 +227,7 @@ describe('Orders', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
+    // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
 
     it(
       'C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)',

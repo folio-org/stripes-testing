@@ -57,6 +57,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.resetTenant();
+      cy.getAdminToken();
       cy.setTenant(Affiliations.College);
       cy.getInstance({
         limit: 1,
