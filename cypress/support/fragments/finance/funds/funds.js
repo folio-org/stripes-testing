@@ -449,19 +449,19 @@ export default {
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: 'Encumbrance' }),
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: `${amount}` }),
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .has({ content: `${fundCode}` }),
       transactionList
-        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 5 }))
         .has({ content: 'PO line' }),
     ]);
@@ -469,11 +469,17 @@ export default {
 
   selectTransactionInList: (transactionType) => {
     cy.wait(4000);
-    cy.get(`div[class*=mclCell-]:contains("${transactionType}")`)
-      .siblings('div[class*=mclCell-]')
-      .eq(0)
-      .find('a')
-      .click();
+    cy.do(
+      MultiColumnListCell({ content: transactionType }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(
+          MultiColumnListRow({ indexRow: `${rowNumber}` })
+            .find(Link())
+            .click(),
+        );
+      }),
+    );
   },
 
   selectTransactionWithAmountInList: (transactionType, amount) => {
