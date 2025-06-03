@@ -58,6 +58,7 @@ describe('Circulation log', () => {
   const goToCircLogApp = (filterName) => {
     TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
     SearchPane.waitLoading();
+    cy.wait(4000);
     SearchPane.setFilterOptionFromAccordion('fee', filterName);
     SearchPane.searchByItemBarcode(testData.itemBarcode);
     return SearchPane.findResultRowIndexByContent(filterName);

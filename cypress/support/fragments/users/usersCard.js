@@ -548,7 +548,7 @@ export default {
   },
 
   hasSaveError(errorMessage) {
-    cy.expect(rootSection.find(MessageBanner({ textContent: errorMessage })).exists());
+    cy.expect(rootSection.find(MessageBanner()).has({ textContent: errorMessage }));
   },
   startFeeFineAdding() {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());

@@ -73,8 +73,8 @@ describe('Requests', () => {
   });
 
   it(
-    'C540 Make sure that request type filters are working properly (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C540'] },
+    'C540 C541 Make sure that request type filters are working properly (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C540', 'C541'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       // Apply filters and test that the appropriate results display
