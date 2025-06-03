@@ -19,8 +19,8 @@ const jobTypeAccordionOptions = [
   'Edifact orders export',
 ];
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditCsvView.gui,

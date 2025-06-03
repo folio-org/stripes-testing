@@ -9,14 +9,14 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 
 describe(
-  'bulk-edit',
+  'Bulk-edit',
   {
     retries: {
       runMode: 1,
     },
   },
   () => {
-    describe('csv approach', () => {
+    describe('Csv approach', () => {
       beforeEach('create test data', () => {
         cy.clearLocalStorage();
         cy.createTempUser([

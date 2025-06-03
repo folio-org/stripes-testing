@@ -48,8 +48,8 @@ const columnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.PREFFERED_EMAIL_COMMUNICATIONS,
 ];
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.then(() => {

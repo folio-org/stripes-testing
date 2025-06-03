@@ -12,8 +12,8 @@ import DateTools from '../../../support/utils/dateTools';
 
 let user;
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([

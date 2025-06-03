@@ -9,8 +9,8 @@ import Users from '../../../support/fragments/users/users';
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
         (userProperties) => {

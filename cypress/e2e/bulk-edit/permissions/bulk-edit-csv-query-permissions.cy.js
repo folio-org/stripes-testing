@@ -6,8 +6,8 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 let user;
 let userWithProfileView;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test users', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,

@@ -34,7 +34,7 @@ const changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
   true,
 );
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe(
     'In-app approach',
     {

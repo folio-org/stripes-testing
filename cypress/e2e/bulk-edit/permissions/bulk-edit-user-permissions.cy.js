@@ -15,8 +15,8 @@ const capabsToAssign = [
   },
 ];
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test users', () => {
       cy.createTempUser([]).then((createdUserProperties) => {
         user = createdUserProperties;
