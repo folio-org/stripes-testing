@@ -33,7 +33,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund_2_${getRandomPostfix()}`,
+    name: `1_autotest_fund_2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',

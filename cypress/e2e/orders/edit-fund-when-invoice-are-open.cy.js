@@ -25,7 +25,7 @@ describe('ui-orders: Orders', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
+    name: `1_autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
