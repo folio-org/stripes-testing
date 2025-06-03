@@ -24,7 +24,7 @@ describe('Finance', () => {
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
@@ -142,6 +142,7 @@ describe('Finance', () => {
         Invoices.selectInvoice(invoice.invoiceNumber);
         Invoices.editInvoice();
         Invoices.changeFY(secondFiscalYear.code);
+        cy.wait(5000);
       });
     });
 
