@@ -1154,3 +1154,9 @@ export const ADVANCED_SEARCH_MODIFIERS = {
   EXACT_PHRASE: 'Exact phrase',
   CONTAINS_ANY: 'Contains any',
 };
+
+export const BULK_EDIT_FORMS = {
+  PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
+  ARE_YOU_SURE: 'Are you sure',
+  PREVIEW_OF_RECORDS_CHANGED: 'Preview of records changed',
+};
