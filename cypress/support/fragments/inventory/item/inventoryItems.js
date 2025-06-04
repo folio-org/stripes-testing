@@ -29,9 +29,10 @@ export default {
   openActions,
   clickNewRequestButton,
   edit() {
-    cy.wait(5000);
+    cy.wait(3000);
     openActions();
     cy.do(Button('Edit').click());
+    cy.wait(5000);
   },
 
   editItemViaApi: (item) => {

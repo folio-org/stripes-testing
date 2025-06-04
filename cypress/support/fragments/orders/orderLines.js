@@ -296,11 +296,13 @@ export default {
   },
 
   addPOLine: () => {
+    cy.wait(1000);
     cy.do([
       polListingAccordion.find(actionsButton).focus(),
       polListingAccordion.find(actionsButton).click(),
       Button('Add PO line').click(),
     ]);
+    cy.wait(2000);
   },
 
   expandPackageTitles: () => {
@@ -1845,6 +1847,7 @@ export default {
     { title, method, format, price, quantity, inventory, location, materialType },
     shouldSave = true,
   ) {
+    cy.wait(2000);
     this.addPOLine();
     this.fillPolByLinkTitle(title);
     this.addAcquisitionMethod(method);

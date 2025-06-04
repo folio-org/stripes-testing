@@ -31,18 +31,18 @@ const AnonymizeAllLoansModal = Modal('Anonymize all loans?');
 const AnonymizeModal = Modal('Anonymization prevented');
 const LoanActionsList = MultiColumnList({ id: 'list-loanactions' });
 
-const checkDeclareLostButtonActivity = (disabled) => {
-  cy.expect(DeclareLostButton.has({ disabled }));
+const checkDeclareLostButtonActivity = (status) => {
+  cy.expect(DeclareLostButton.has({ disabled: status }));
 };
 
 export default {
   waitLoading: () => {
     cy.expect(Pane({ id: 'pane-loanshistory' }).exists());
   },
-  checkDeclareLostButtonDisabled() {
+  checkDeclareLostButtonIsDisabled() {
     checkDeclareLostButtonActivity(true);
   },
-  checkDeclareLostButtonActive() {
+  checkDeclareLostButtonIsActive() {
     checkDeclareLostButtonActivity(false);
   },
   checkButtonsState(buttonsToCheck) {

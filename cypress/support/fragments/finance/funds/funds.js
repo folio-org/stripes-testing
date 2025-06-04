@@ -456,25 +456,35 @@ export default {
     );
   },
 
-  checkOrderInTransactionList: (fundCode, amount) => {
-    cy.expect([
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: 'Encumbrance' }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: `${amount}` }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .has({ content: `${fundCode}` }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 5 }))
-        .has({ content: 'PO line' }),
-    ]);
+  findResultRowIndexByContent(content) {
+    return cy
+      .get('*[class^="mclCell"]')
+      .contains(content)
+      .parent()
+      .invoke('attr', 'data-row-inner');
+  },
+
+  checkOrderInTransactionList(fundCode, amount) {
+    this.findResultRowIndexByContent('PO line').then((rowIndex) => {
+      cy.expect([
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: 'Encumbrance' }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: `${amount}` }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 3 }))
+          .has({ content: `${fundCode}` }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 5 }))
+          .has({ content: 'PO line' }),
+      ]);
+    });
   },
 
   selectTransactionInList: (transactionType) => {
