@@ -89,6 +89,10 @@ describe('MARC', () => {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        });
       });
     });
 
