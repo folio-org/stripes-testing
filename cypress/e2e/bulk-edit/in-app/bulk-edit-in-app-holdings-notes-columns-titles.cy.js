@@ -88,7 +88,7 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
 
 describe('Bulk-edit', () => {
   describe(
-    'in-app approach',
+    'In-app approach',
     {
       retries: {
         runMode: 1,
