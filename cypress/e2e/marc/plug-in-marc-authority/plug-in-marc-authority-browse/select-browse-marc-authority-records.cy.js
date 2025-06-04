@@ -109,6 +109,10 @@ describe('MARC', () => {
           MarcAuthorityBrowse.checkSearchOptions();
 
           MarcAuthorityBrowse.searchBy('Personal name', testData.authTitle);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.checkColumnExists('Link');
           MarcAuthorities.checkColumnExists('Authorized/Reference');

@@ -86,130 +86,142 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.verifyConfirmButtonDisabled(false);
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
-    before('create test data', () => {
-      cy.clearLocalStorage();
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-        permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+describe('Bulk-edit', () => {
+  describe(
+    'in-app approach',
+    {
+      retries: {
+        runMode: 1,
+      },
+    },
+    () => {
+      beforeEach('create test data', () => {
+        cy.clearLocalStorage();
+        cy.createTempUser([
+          permissions.bulkEditView.gui,
+          permissions.bulkEditEdit.gui,
+          permissions.inventoryAll.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
 
-        instance.instanceId = InventoryInstances.createInstanceViaApi(
-          instance.instanceName,
-          instance.itemBarcode,
-        );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${instance.instanceId}"`,
-        }).then((holdings) => {
-          instance.holdingHRID = holdings[0].hrid;
-          instance.holdingsUUID = holdings[0].id;
+          instance.instanceId = InventoryInstances.createInstanceViaApi(
+            instance.instanceName,
+            instance.itemBarcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instance.instanceId}"`,
+          }).then((holdings) => {
+            instance.holdingHRID = holdings[0].hrid;
+            instance.holdingsUUID = holdings[0].id;
 
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+          });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
-    });
 
-    after('delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName);
-    });
+      afterEach('delete test data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
+        FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName);
+      });
 
-    it(
-      'C430210 Verify Bulk Edit actions for Holdings notes - columns titles (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C430210'] },
-      () => {
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
-        BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(instance.holdingHRID);
-        BulkEditActions.openActions();
-        BulkEditSearchPane.searchColumnName('note');
+      it(
+        'C430210 Verify Bulk Edit actions for Holdings notes - columns titles (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C430210'] },
+        () => {
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
+          BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditSearchPane.verifyMatchedResults(instance.holdingHRID);
+          BulkEditActions.openActions();
+          BulkEditSearchPane.searchColumnName('note');
 
-        initialValueSets.forEach((initialValueSet) => {
-          BulkEditSearchPane.changeShowColumnCheckbox(initialValueSet[0]);
-          cy.wait(500);
-        });
+          initialValueSets.forEach((initialValueSet) => {
+            BulkEditSearchPane.changeShowColumnCheckbox(initialValueSet[0]);
+            cy.wait(500);
+          });
 
-        initialValueSets.forEach((initialValueSet) => {
-          BulkEditSearchPane.verifyResultsUnderColumns(...initialValueSet);
-        });
+          initialValueSets.forEach((initialValueSet) => {
+            BulkEditSearchPane.verifyResultsUnderColumns(...initialValueSet);
+          });
 
-        BulkEditActions.openActions();
-        BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [instance.holdingsUUID]);
-        BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.verifyBulkEditsAccordionExists();
-        BulkEditActions.verifyOptionsDropdown();
-        BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyHoldingsOptions();
-        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
-        BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
-        BulkEditActions.selectSecondAction(actionsToSelect.addNote);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
-        BulkEditActions.fillInSecondTextArea(notes.administrative);
-        BulkEditActions.verifyValueInSecondTextArea(notes.administrative);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
+          BulkEditActions.openActions();
+          BulkEditActions.downloadMatchedResults();
+          ExportFile.verifyFileIncludes(matchedRecordsFileName, [instance.holdingsUUID]);
+          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyOptionsDropdown();
+          BulkEditActions.verifyRowIcons();
+          BulkEditActions.verifyHoldingsOptions();
+          BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
+          BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
+          BulkEditActions.selectSecondAction(actionsToSelect.addNote);
+          BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
+          BulkEditActions.fillInSecondTextArea(notes.administrative);
+          BulkEditActions.verifyValueInSecondTextArea(notes.administrative);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        notesToAdd.forEach((noteToAdd) => {
-          addNoteInBulkEdit(...noteToAdd);
-        });
+          notesToAdd.forEach((noteToAdd) => {
+            addNoteInBulkEdit(...noteToAdd);
+          });
 
-        BulkEditActions.confirmChanges();
-        BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
-        BulkEditActions.verifyChangesInAreYouSureForm(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-          [instance.holdingHRID],
-        );
+          BulkEditActions.confirmChanges();
+          BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
+          BulkEditActions.verifyChangesInAreYouSureForm(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+            [instance.holdingHRID],
+          );
 
-        editedValueSets.forEach((editedValueSet) => {
-          BulkEditActions.verifyChangesInAreYouSureForm(editedValueSet[0], [editedValueSet[1]]);
-        });
+          editedValueSets.forEach((editedValueSet) => {
+            BulkEditActions.verifyChangesInAreYouSureForm(editedValueSet[0], [editedValueSet[1]]);
+          });
 
-        BulkEditActions.commitChanges();
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumns(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-          instance.holdingHRID,
-        );
+          BulkEditActions.commitChanges();
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.verifySuccessBanner(1);
+          BulkEditSearchPane.verifyExactChangesUnderColumns(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+            instance.holdingHRID,
+          );
 
-        editedValueSets.forEach((editedValueSet) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumns(...editedValueSet);
-        });
+          editedValueSets.forEach((editedValueSet) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumns(...editedValueSet);
+          });
 
-        BulkEditActions.openActions();
-        BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [instance.holdingsUUID]);
+          BulkEditActions.openActions();
+          BulkEditActions.downloadChangedCSV();
+          ExportFile.verifyFileIncludes(changedRecordsFileName, [instance.holdingsUUID]);
 
-        editedValueSets.forEach((editedValueSet) => {
-          ExportFile.verifyFileIncludes(changedRecordsFileName, editedValueSet);
-        });
+          editedValueSets.forEach((editedValueSet) => {
+            ExportFile.verifyFileIncludes(changedRecordsFileName, editedValueSet);
+          });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
-        InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.checkExactContentInAdministrativeNote(notes.administrative);
-        HoldingsRecordView.checkNotesByType(0, HOLDING_NOTE_TYPES.BINDING, notes.binding);
-        HoldingsRecordView.checkNotesByType(
-          1,
-          HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE,
-          notes.electronicBookplate,
-        );
-        HoldingsRecordView.checkNotesByType(2, HOLDING_NOTE_TYPES.PROVENANCE, notes.provenance);
-        HoldingsRecordView.checkNotesByType(3, HOLDING_NOTE_TYPES.REPRODUCTION, notes.reproduction);
-      },
-    );
-  });
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
+          InventorySearchAndFilter.selectViewHoldings();
+          HoldingsRecordView.checkExactContentInAdministrativeNote(notes.administrative);
+          HoldingsRecordView.checkNotesByType(0, HOLDING_NOTE_TYPES.BINDING, notes.binding);
+          HoldingsRecordView.checkNotesByType(
+            1,
+            HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE,
+            notes.electronicBookplate,
+          );
+          HoldingsRecordView.checkNotesByType(2, HOLDING_NOTE_TYPES.PROVENANCE, notes.provenance);
+          HoldingsRecordView.checkNotesByType(
+            3,
+            HOLDING_NOTE_TYPES.REPRODUCTION,
+            notes.reproduction,
+          );
+        },
+      );
+    },
+  );
 });

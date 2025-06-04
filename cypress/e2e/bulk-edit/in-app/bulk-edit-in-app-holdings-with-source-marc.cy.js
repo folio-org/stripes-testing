@@ -42,8 +42,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(validInst
 const previewFileName = BulkEditFiles.getPreviewFileName(validInstanceUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validInstanceUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
@@ -242,7 +242,7 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             uuid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            'true',
+            true,
           );
         });
 
@@ -270,7 +270,7 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             uuid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            'true',
+            true,
           );
         });
 

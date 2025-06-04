@@ -63,7 +63,7 @@ const marcInstanceFields = [
 ];
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
@@ -231,7 +231,7 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-            value: 'true',
+            value: true,
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
@@ -239,7 +239,7 @@ describe('bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            value: 'true',
+            value: true,
           },
         ];
 

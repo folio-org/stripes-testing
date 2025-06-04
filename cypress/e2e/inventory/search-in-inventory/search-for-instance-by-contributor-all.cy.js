@@ -15,6 +15,7 @@ const testData = {
   allSearchOption: 'All',
   advSearchOption: 'Advanced search',
   keywordSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
+  keywordAdvancedSearchOption: 'Keyword (title, contributor)',
   contributorValue: 'Dobynsauto, Stephenauto, 1941-',
   searchQueries: [
     'Dobynsauto, Stephenauto, 1941-',
@@ -42,7 +43,7 @@ const testData = {
 const advSearchParameters = [
   {
     modifier: 'Contains all',
-    searchOption: testData.keywordSearchOption,
+    searchOption: testData.keywordAdvancedSearchOption,
   },
   {
     modifier: 'Exact phrase',

@@ -37,8 +37,8 @@ const electronicAccess = [
 ];
 const newUri = 'testuri2.com/uri';
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
@@ -93,11 +93,11 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
-        BulkEditSearchPane.checkboxWithTextAbsent('Relationship');
+        BulkEditSearchPane.checkboxWithTextAbsent('URL relationship');
         BulkEditSearchPane.checkboxWithTextAbsent('URI');
         BulkEditSearchPane.checkboxWithTextAbsent('Link text');
         BulkEditSearchPane.checkboxWithTextAbsent('Materials specified');
-        BulkEditSearchPane.checkboxWithTextAbsent('Public note');
+        BulkEditSearchPane.checkboxWithTextAbsent('URL public note');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,

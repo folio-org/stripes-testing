@@ -13,8 +13,8 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
 const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(userUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([

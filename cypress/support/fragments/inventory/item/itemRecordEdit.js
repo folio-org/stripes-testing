@@ -20,8 +20,8 @@ import getRandomPostfix from '../../../utils/stringTools';
 const itemEditForm = HTML({ className: including('itemForm-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
 
-const cancelBtn = itemEditForm.find(Button({ id: 'cancel-item-edit' }));
-const saveAndCloseBtn = itemEditForm.find(Button({ id: 'clickable-save-item' }));
+const cancelBtn = Button({ id: 'cancel-item-edit' });
+const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
 
 const adminDataFields = {
   barcode: administrativeDataSection.find(TextField('Barcode')),
@@ -45,7 +45,7 @@ const permanentLocationList = SelectionList({ id: 'sl-container-additem_permanen
 
 export default {
   waitLoading: (itemTitle) => {
-    cy.expect(itemEditForm.find(PaneHeader(including(itemTitle))).exists());
+    cy.expect(PaneHeader(including(itemTitle)).exists());
     cy.expect(cancelBtn.has({ disabled: false }));
     cy.expect(saveAndCloseBtn.has({ disabled: true }));
   },

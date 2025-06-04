@@ -14,59 +14,59 @@ describe('Inventory', () => {
       searchItem: [
         {
           searchOption: 'Place of publication',
-          searchValue: 'Burlington, Massachusetts',
+          searchValue: 'Burlingtonauto, Massachusettsauto',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Burlington',
+          searchValue: 'Burlingtonauto',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Massachusetts',
+          searchValue: 'Massachusettsauto',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Burlington Massachusetts',
+          searchValue: 'Burlingtonauto Massachusettsauto',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Massachusetts, Burlington',
+          searchValue: 'Massachusettsauto, Burlingtonauto',
         },
         {
           searchOption: 'All',
-          searchValue: 'Burlington',
+          searchValue: 'Burlingtonauto',
         },
         {
           searchOption: 'All',
-          searchValue: 'Massachusetts',
+          searchValue: 'Massachusettsauto',
         },
         {
           searchOption: 'All',
-          searchValue: 'Burlington Massachusetts',
+          searchValue: 'Burlingtonauto Massachusettsauto',
         },
         {
           searchOption: 'All',
-          searchValue: 'Massachusetts, Burlington',
+          searchValue: 'Massachusettsauto, Burlingtonauto',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Massachusetts, Burlington',
+          searchValue: 'publication.place=Massachusettsauto, Burlingtonauto',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Burlington',
+          searchValue: 'publication.place=Burlingtonauto',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Massachusetts',
+          searchValue: 'publication.place=Massachusettsauto',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Burlington Massachusetts',
+          searchValue: 'publication.place=Burlingtonauto Massachusettsauto',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Massachusetts, Burlington',
+          searchValue: 'publication.place=Massachusettsauto, Burlingtonauto',
         },
       ],
       searchResult: 'C496179 Tabletop game design for video game designers / Ethan Ham.',

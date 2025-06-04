@@ -13,8 +13,8 @@ const testUsersBarcodes = [];
 const recordsNumber = 10;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       for (let i = 0; i < recordsNumber; i++) {
         cy.createTempUser([], patronGroupNames.STAFF).then((userProperties) => {

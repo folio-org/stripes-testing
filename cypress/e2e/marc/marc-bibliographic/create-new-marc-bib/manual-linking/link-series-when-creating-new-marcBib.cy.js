@@ -33,10 +33,10 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '800',
-            content: '$t testT $0 123 $dtestD  $a testA $0 971256',
+            content: '$t testT $0 123 $dtestD  $a testA $0 971256422129',
             boxFourth: '$a C422129 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '',
-            boxSixth: '$0 3052044',
+            boxSixth: '$0 3052044422129',
             boxSeventh: '',
             searchOption: 'Personal name',
             marcValue: 'C422129 Jackson, Peter, 1950-2022 Inspector Banks series ;',
@@ -50,7 +50,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C422129 John Bartholomew and Son. $t Bartholomew world travel series $d 1995 $l English',
             boxFifth: '',
-            boxSixth: '$0 http://id.loc.gov/authorities/names/n84704570',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84704570422129',
             boxSeventh: '',
             searchOption: 'Name-title',
             marcValue:
@@ -134,7 +134,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase testA estD testT or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971256',
+              'keyword exactPhrase testT estD testA or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971256422129',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.checkRecordDetailPageMarkedValue(newFields[0].markedValue);
@@ -214,10 +214,10 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422129 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422129 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044422129 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $t Bartholomew world travel series $d 1995 $l English $0 http://id.loc.gov/authorities/names/n84704570 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $t Bartholomew world travel series $d 1995 $l English $0 http://id.loc.gov/authorities/names/n84704570422129 $9`,
             );
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

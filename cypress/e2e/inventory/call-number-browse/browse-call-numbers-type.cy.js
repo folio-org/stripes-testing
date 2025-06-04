@@ -7,7 +7,7 @@ import Location from '../../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
 import { CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
@@ -15,20 +15,27 @@ import { CallNumberBrowseSettings } from '../../../support/fragments/settings/in
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {};
+    const randomLetters = getRandomLetters(7);
     let callNumberTypes = null;
     const getIdByName = (name) => callNumberTypes.find((type) => type.name === name)?.id;
     const getNameById = (id) => callNumberTypes.find((type) => type.id === id)?.name;
     const rnd = getRandomPostfix();
-    const localCallNumberTypeName = 'AT_C414972 Local CN type';
+    const localCallNumberTypeName = `AT_C414972 Local CN type ${rnd}`;
     const callNumbers = [
-      { type: 'Dewey Decimal classification', value: '414.972' },
-      { type: 'Library of Congress classification', value: 'Z668.R360 1987' },
-      { type: 'National Library of Medicine classification', value: 'WA 102.5 B5315 2010' },
-      { type: 'Other scheme', value: '364.15 Slater' },
-      { type: 'Superintendent of Documents classification', value: 'T22.19:M54/2005' },
-      { type: 'UDC', value: '338.48' },
-      { type: localCallNumberTypeName, value: 'localCallNumberTypeName' },
-      { value: 'Local.315' },
+      { type: 'Dewey Decimal classification', value: `414.972${randomLetters}` },
+      { type: 'Library of Congress classification', value: `Z668.R360 1987${randomLetters}` },
+      {
+        type: 'National Library of Medicine classification',
+        value: `WA 102.5 B5315 2010${randomLetters}`,
+      },
+      { type: 'Other scheme', value: `364.15 Slater${randomLetters}` },
+      {
+        type: 'Superintendent of Documents classification',
+        value: `T22.19:M54/2005${randomLetters}`,
+      },
+      { type: 'UDC', value: `338.48${randomLetters}` },
+      { type: localCallNumberTypeName, value: `localCallNumberTypeName${randomLetters}` },
+      { value: `Local.315${randomLetters}` },
     ];
     const callNumberTypesSettings = [
       { name: 'Call numbers (all)', callNumberTypes: [] },
@@ -140,7 +147,9 @@ describe('Inventory', () => {
         const callNumber = folioInstances[1].items[0].itemLevelCallNumber;
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup('Call numbers (all)');
-        BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        callNumbers.forEach((cn) => {
+          BrowseCallNumber.waitForCallNumberToAppear(cn.value);
+        });
         InventorySearchAndFilter.browseSearch(callNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
           records: [{ callNumber }],

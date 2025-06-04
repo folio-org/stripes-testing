@@ -9,13 +9,15 @@ import AuthorizationRoles, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import Modals from '../../../support/fragments/modals';
+import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Eureka', () => {
   describe('Users', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleName: `Auto Role C584520 ${randomPostfix}`,
+      roleName: `AT_C584520_UserRole_${randomPostfix}`,
       promotePath: '/users-keycloak/auth-users',
       errorCalloutText: 'Something went wrong. Please try again later.',
     };
@@ -42,12 +44,12 @@ describe('Eureka', () => {
             userBodies.push({
               type: 'staff',
               active: true,
-              username: `user${i}c584520${randomPostfix}`,
+              username: `at_c584520_username_${i}_${randomPostfix}`,
               patronGroup: Cypress.env('userGroups')[0].id,
               personal: {
-                lastName: `Last ${i} c584520${randomPostfix}`,
-                firstName: `First ${i} c584520${randomPostfix}`,
-                email: 'testuser@test.org',
+                lastName: `AT_C584520_LastName_${i}_${randomPostfix}`,
+                firstName: `AT_C584520_FirstName_${i}_${randomPostfix}`,
+                email: 'AT_C584520@test.com',
                 preferredContactTypeId: '002',
               },
             });
@@ -215,11 +217,18 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
         UserEdit.saveUserEditForm();
+
+        // workaround for issue UIU-3396
+        Modals.closeModalWithEscapeIfAny();
+
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
         );
         UsersCard.close();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchResultsPane.verifySearchPaneIsEmpty();
+        UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,

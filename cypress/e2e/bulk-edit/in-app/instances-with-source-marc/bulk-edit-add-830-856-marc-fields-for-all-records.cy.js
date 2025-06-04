@@ -36,7 +36,8 @@ const postfix = getRandomPostfix();
 const marcInstance = {
   title: `AT_C663269_MarcInstance_${postfix}`,
 };
-const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
+const electronicAccessTableHeaders =
+  'URL relationshipURILink textMaterials specifiedURL public note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const electronicAccessFields = {
@@ -100,7 +101,7 @@ const marcInstanceFields = [
 const seriesStatement = 'United States congressional serial set.';
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();

@@ -1,5 +1,8 @@
 import { Permissions } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances, {
+  searchHoldingsOptions,
+  searchItemsOptions,
+} from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -20,7 +23,6 @@ describe('Inventory', () => {
       itemHRIDValue: 'itemHrid',
       itemUUIDOption: 'Item UUID',
       itemUUIDValue: 'iid',
-      defaultValue: 'Keyword (title, contributor, identifier, HRID, UUID)',
     };
     before('Create test data', () => {
       cy.getAdminToken();
@@ -56,7 +58,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySpecificTabHighlighted('Holdings');
         InventorySearchAndFilter.verifySearchFieldIsEmpty();
         InventorySearchAndFilter.verifyResultPaneEmpty();
-        InventorySearchAndFilter.searchTypeDropdownDefaultValue(testData.defaultValue);
+        InventorySearchAndFilter.searchTypeDropdownDefaultValue(searchHoldingsOptions[0]);
         InventorySearchAndFilter.selectSearchOptions(testData.holdingsHRIDOption, '');
         InventorySearchAndFilter.verifySelectedSearchOption(testData.holdingsHRIDValue);
         InventorySearchAndFilter.selectSearchOptions(testData.holdingsUUIDOption, '');
@@ -66,7 +68,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySpecificTabHighlighted('Item');
         InventorySearchAndFilter.verifySearchFieldIsEmpty();
         InventorySearchAndFilter.verifyResultPaneEmpty();
-        InventorySearchAndFilter.searchTypeDropdownDefaultValue(testData.defaultValue);
+        InventorySearchAndFilter.searchTypeDropdownDefaultValue(searchItemsOptions[0]);
 
         InventorySearchAndFilter.selectSearchOptions(testData.itemHRIDOption, '');
         InventorySearchAndFilter.verifySelectedSearchOption(testData.itemHRIDValue);

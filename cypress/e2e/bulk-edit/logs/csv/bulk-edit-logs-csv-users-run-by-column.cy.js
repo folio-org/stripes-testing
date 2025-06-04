@@ -15,9 +15,9 @@ const names = {
 };
 const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('Csv approach', () => {
       before('create test data', () => {
         cy.createTempUser([permissions.bulkEditCsvEdit.gui, permissions.uiUserEdit.gui]).then(
           (userProperties) => {

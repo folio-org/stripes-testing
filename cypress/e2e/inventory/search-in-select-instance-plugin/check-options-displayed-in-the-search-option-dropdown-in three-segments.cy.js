@@ -11,7 +11,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
-    const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
+    const defaultSearchOptionHoldings = 'Keyword (title, contributor, identifier, HRID, UUID)';
+    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID, barcode)';
     const organization = {
       ...NewOrganization.defaultUiOrganizations,
       paymentMethod: 'EFT',
@@ -69,7 +70,7 @@ describe('Inventory', () => {
         // 2 Click on the "Holdings" tab in "Instance|Holdings|Item" toggle
         SelectInstanceModal.switchToHoldings();
         cy.wait(1000);
-        SelectInstanceModal.checkDefaultSearchOptionSelected(defaultSearchOption);
+        SelectInstanceModal.checkDefaultSearchOptionSelected(defaultSearchOptionHoldings);
         SelectInstanceModal.checkSearchInputFieldValue('');
         SelectInstanceModal.checkResultsListEmpty();
 
@@ -79,7 +80,7 @@ describe('Inventory', () => {
         // 4 Click on the "Item" tab in "Instance|Holdings|Item" toggle
         SelectInstanceModal.switchToItem();
         cy.wait(1000);
-        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(defaultSearchOption);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(defaultSearchOptionItem);
         SelectInstanceModal.checkSearchInputFieldValue('');
         SelectInstanceModal.checkResultsListEmpty();
 

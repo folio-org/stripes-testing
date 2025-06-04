@@ -136,3 +136,16 @@ Cypress.Commands.add('ifConsortia', (condition, callback) => {
     }
   });
 });
+
+Cypress.Commands.add('getLocateGuestToken', () => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('LOCATE_OKAPI_HOST')}/opac-auth/guest-token`,
+    headers: {
+      'x-okapi-tenant': `${Cypress.env('LOCATE_TENANT')}`,
+      'Content-type': 'application/json',
+    },
+  }).then(({ headers }) => {
+    Cypress.env('locate_guest_token', headers['x-okapi-token']);
+  });
+});

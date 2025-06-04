@@ -1,5 +1,8 @@
 import { Permissions } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances, {
+  searchHoldingsOptions,
+  searchItemsOptions,
+} from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -14,7 +17,6 @@ const testData = {
   searchOptions: {
     titleAllSearchOption: 'Title (all)',
     all: 'All',
-    defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
     holdingUUID: {
       title: 'Holdings UUID',
       value: 'holdingsId',
@@ -77,7 +79,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToHoldings();
         InventoryInstances.verifyInstanceResultListIsAbsent();
-        InventoryInstances.verifySelectedSearchOption(testData.searchOptions.defaultSearchOption);
+        InventoryInstances.verifySelectedSearchOption(searchHoldingsOptions[0]);
 
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.holdingUUID.title,
@@ -96,7 +98,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToItem();
         InventoryInstances.verifyInstanceResultListIsAbsent();
-        InventoryInstances.verifySelectedSearchOption(testData.searchOptions.defaultSearchOption);
+        InventoryInstances.verifySelectedSearchOption(searchItemsOptions[0]);
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.barcode.title,
           `${testData.instance.barcode}`,

@@ -21,8 +21,8 @@ const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userBarcodesFi
 const updatedRecordsFileName = `*-Changed-Records*-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser(
         [

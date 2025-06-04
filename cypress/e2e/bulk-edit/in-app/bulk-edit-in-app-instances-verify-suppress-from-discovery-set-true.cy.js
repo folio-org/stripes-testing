@@ -66,8 +66,8 @@ for (let i = 1; i <= 5; i++) {
   invalidInstanceIds.push(uuid());
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([
@@ -328,7 +328,7 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             instanceId,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            'false',
+            false,
           );
         });
 
@@ -358,7 +358,7 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             instanceId,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            'true',
+            true,
           );
         });
 
@@ -385,7 +385,7 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             instanceId,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-            'true',
+            true,
           );
         });
         createdInstanceHrids.forEach((instanceHrid) => {

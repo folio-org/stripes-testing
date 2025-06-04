@@ -23,8 +23,8 @@ const item = {
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const itemMatchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,

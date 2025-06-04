@@ -8,8 +8,6 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
@@ -23,12 +21,12 @@ const noteType = `Dew;ey Dec|im:al class & ${getRandomPostfix()}`;
 const itemNote = `Note with;special&characters) ${getRandomPostfix()}`;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const item = {
-  instanceName: `item_${getRandomPostfix()}`,
+  instanceName: `AT_C368480_FolioInstance_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -45,32 +43,40 @@ describe('bulk-edit', () => {
           });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            item.hrid = res.hrid;
-            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
-          },
-        );
+
         ItemNoteTypes.createItemNoteTypeViaApi(noteType).then((noteId) => {
           noteTypeId = noteId;
+
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (itemData) => {
+              item.hrid = itemData.hrid;
+
+              itemData.notes = [
+                {
+                  itemNoteTypeId: noteTypeId,
+                  note: itemNote,
+                  staffOnly: false,
+                },
+              ];
+
+              cy.updateItemViaApi(itemData);
+
+              FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
+            },
+          );
         });
+
         cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-        ItemRecordView.waitLoading();
-        InventoryItems.edit();
-        ItemRecordEdit.addItemsNotes(itemNote, noteType);
-        ItemRecordEdit.saveAndClose({ itemSaved: true });
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
     });
 
@@ -97,8 +103,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(location);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        ItemRecordView.closeDetailView();
-        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

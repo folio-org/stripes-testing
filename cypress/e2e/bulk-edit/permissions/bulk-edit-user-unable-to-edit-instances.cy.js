@@ -14,8 +14,8 @@ const item = {
 };
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,

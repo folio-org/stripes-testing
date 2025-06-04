@@ -138,6 +138,8 @@ describe('Loans', () => {
           permissions.uiUsersDeclareItemLost.gui,
         ]).then(({ username, password, userId, barcode: userBarcode }) => {
           testData.userId = userId;
+          testData.username = username;
+          testData.password = password;
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userId,
@@ -155,8 +157,10 @@ describe('Loans', () => {
                 servicePointId: testData.userServicePoint.id,
               });
             });
-            cy.login(username, password);
-            cy.visit(AppPaths.getOpenLoansPath(userId));
+            cy.login(username, password, {
+              path: AppPaths.getOpenLoansPath(userId),
+              waiter: () => cy.wait(5000),
+            });
           });
         });
       });
@@ -204,17 +208,18 @@ describe('Loans', () => {
             Loans.checkStatusDeclaredLost(SECOND_LOAN_ROW_INDEX);
 
             const testLoanDetails = (shouldDeclareLost, loanId, loanHistoryFirstAction) => {
-              cy.visit(AppPaths.getLoanDetailsPath(testData.userId, loanId));
-
-              cy.wait(2000);
+              cy.login(testData.username, testData.password, {
+                path: AppPaths.getLoanDetailsPath(testData.userId, loanId),
+                waiter: () => cy.wait(5000),
+              });
 
               if (shouldDeclareLost) {
-                LoanDetails.checkDeclareLostButtonActive();
+                LoanDetails.checkDeclareLostButtonIsActive();
                 LoanDetails.startDeclareLost();
                 LoanDetails.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
               }
 
-              LoanDetails.checkDeclareLostButtonDisabled();
+              LoanDetails.checkDeclareLostButtonIsDisabled();
               LoanDetails.checkStatusDeclaredLost();
               LoanDetails.checkLostDate(loanHistoryFirstAction.loan.metadata.updatedDate);
               LoanDetails.checkActionDate(

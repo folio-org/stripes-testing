@@ -10,8 +10,8 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const editedFileName = `edited-records-${userBarcodesFileName}.csv`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('Create test data', () => {
       cy.createTempUser(
         [Permissions.bulkEditUpdateRecords.gui, Permissions.uiUserEdit.gui],

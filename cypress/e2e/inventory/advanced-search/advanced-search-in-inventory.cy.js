@@ -126,13 +126,13 @@ describe('Inventory', () => {
           0,
           'The Beatles Adv search keyword',
           'Starts with',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'The Beatles Adv search keyword',
           'Starts with',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.fillAdvSearchRow(
           1,
@@ -244,16 +244,19 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);
@@ -265,13 +268,13 @@ describe('Inventory', () => {
           0,
           'McOrmond, Steven Craig, 1971-',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'McOrmond, Steven Craig, 1971-',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
@@ -285,16 +288,19 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);
@@ -307,16 +313,19 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor, identifier, HRID, UUID)',
+          'Keyword (title, contributor)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);

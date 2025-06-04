@@ -33,7 +33,6 @@ describe('Inventory', () => {
         Permissions.uiInventorySingleRecordImport.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.toggleLocSingleImportProfileViaAPI();
         InventoryInstances.getInstancesViaApi({
           limit: 100,
           query: `(title="${instanceTitlePartC490900}" or title="${instanceTitlePartC490902}")`,
@@ -48,6 +47,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.toggleLocSingleImportProfileViaAPI();
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,

@@ -6,7 +6,6 @@ import DateTools from '../../../support/utils/dateTools';
 import {
   AUTHORIZATION_POLICY_TYPES,
   AUTHORIZATION_POLICY_SOURCES,
-  DEFAULT_LOCALE_STRING,
 } from '../../../support/constants';
 
 describe('Eureka', () => {
@@ -15,9 +14,8 @@ describe('Eureka', () => {
       const testData = {
         startDateTime: `${new Date().getFullYear()}-01-01T00:00:00Z`,
         expiresDateTime: `${new Date().getFullYear() + 1}-12-01T00:00:00Z`,
-        policyName: `Auto policy time ${getRandomPostfix()}`,
-        updatedPolicyName: `Auto policy time ${getRandomPostfix()} UPD`,
-        localeConfigName: 'localeSettings',
+        policyName: `AT_C464308_AuthPolicy_Time_${getRandomPostfix()}`,
+        updatedPolicyName: `AT_C464308_AuthPolicy_Time_${getRandomPostfix()} UPD`,
       };
       const policyBody = {
         name: testData.policyName,
@@ -50,13 +48,7 @@ describe('Eureka', () => {
       before(() => {
         cy.getAdminToken();
         // set default locale settings for tenant (with UTC)
-        cy.getConfigForTenantByName(testData.localeConfigName).then((config) => {
-          if (config) {
-            const updatedConfig = { ...config };
-            updatedConfig.value = DEFAULT_LOCALE_STRING;
-            cy.updateConfigForTenantById(config.id, updatedConfig);
-          }
-        });
+        cy.setDefaultLocaleApi();
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
           cy.assignCapabilitiesToExistingUser(testData.userA.userId, [], capabSetsToAssign);
