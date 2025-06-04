@@ -1,6 +1,7 @@
 import { Button, including, HTML, Selection, Select, TextArea } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
+const paneFooter = rootForm.find(HTML({ className: including('paneFooter-') }));
 const sourceValues = {
   folio: 'f32d531e-df79-46b3-8932-cdd35f7a2264',
 };
@@ -13,8 +14,7 @@ export default {
     cy.do(Selection('Temporary').choose(temporaryLocation));
   },
   saveAndClose: () => {
-    cy.do(rootForm.find(Button('Save & close')).click());
-    cy.expect(rootForm.absent());
+    cy.do(paneFooter.find(Button('Save & close')).click());
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());

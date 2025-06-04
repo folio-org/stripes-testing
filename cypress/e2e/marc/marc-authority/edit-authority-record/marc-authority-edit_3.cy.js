@@ -30,16 +30,7 @@ describe('MARC', () => {
           testData.preconditionUserId = userProperties.userId;
 
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="C387460"',
-          }).then((records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
-              }
-            });
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C387460');
 
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
@@ -59,6 +50,10 @@ describe('MARC', () => {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          });
         });
       });
 
@@ -76,7 +71,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.checkAddNew001Tag(4, '$a test');
+          MarcAuthority.checkAddNew001Tag(4, '$a test', true);
           MarcAuthority.waitLoading();
           MarcAuthority.edit();
           MarcAuthority.checkTagInRowDoesntExist(5, '001');

@@ -104,6 +104,10 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
+                cy.waitForAuthRefresh(() => {
+                  cy.reload();
+                  InventoryInstances.waitContentLoading();
+                });
                 ConsortiumManager.switchActiveAffiliation(
                   tenantNames.central,
                   tenantNames.university,
