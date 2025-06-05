@@ -46,8 +46,8 @@ const notes = {
 };
 const editedNotes = {
   administrativeNoteText: '[administrative] no*te',
-  sharedNoteText: ' holdings shared note',
-  collegeLocalNoteText: ' holdings local note',
+  sharedNoteText: 'holdings shared note',
+  collegeLocalNoteText: 'holdings local note',
 };
 const centralSharedHoldingNoteType = {
   payload: {
@@ -355,7 +355,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
-          BulkEditActions.noteRemove(collegeHoldingNoteTypeNameWithAffiliation, 'test', 2);
+          BulkEditActions.noteRemove(collegeHoldingNoteTypeNameWithAffiliation, 'test ', 2);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
@@ -369,19 +369,11 @@ describe('Bulk-edit', () => {
               header: collegeHoldingNoteTypeNameWithAffiliation,
               value: editedNotes.collegeLocalNoteText,
             },
-            {
-              header: centralSharedHoldingNoteType.payload.name,
-              value: editedNotes.sharedNoteText,
-            },
           ];
           const editedHeaderValuesInUniversity = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
               value: editedNotes.administrativeNoteText,
-            },
-            {
-              header: centralSharedHoldingNoteType.payload.name,
-              value: editedNotes.sharedNoteText,
             },
             {
               header: collegeHoldingNoteTypeNameWithAffiliation,
@@ -399,6 +391,18 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
               hrid,
               editedHeaderValuesInUniversity,
+            );
+          });
+
+          holdingHrids.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+              hrid,
+              [
+                {
+                  header: centralSharedHoldingNoteType.payload.name,
+                  value: ` ${editedNotes.sharedNoteText}`,
+                },
+              ],
             );
           });
 
@@ -421,6 +425,19 @@ describe('Bulk-edit', () => {
               editedHeaderValuesInUniversity,
             );
           });
+          holdingHrids.forEach((hrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+              previewFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              hrid,
+              [
+                {
+                  header: centralSharedHoldingNoteType.payload.name,
+                  value: editedNotes.sharedNoteText,
+                },
+              ],
+            );
+          });
 
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
@@ -435,6 +452,17 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               hrid,
               editedHeaderValuesInUniversity,
+            );
+          });
+          holdingHrids.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+              hrid,
+              [
+                {
+                  header: centralSharedHoldingNoteType.payload.name,
+                  value: ` ${editedNotes.sharedNoteText}`,
+                },
+              ],
             );
           });
 
@@ -489,7 +517,7 @@ describe('Bulk-edit', () => {
             HoldingsRecordView.checkNotesByType(
               1,
               centralSharedHoldingNoteType.payload.name,
-              editedNotes.sharedNoteText,
+              ` ${editedNotes.sharedNoteText}`,
               'No',
             );
             HoldingsRecordView.checkNotesByType(
@@ -512,7 +540,7 @@ describe('Bulk-edit', () => {
             HoldingsRecordView.checkNotesByType(
               0,
               centralSharedHoldingNoteType.payload.name,
-              editedNotes.sharedNoteText,
+              ` ${editedNotes.sharedNoteText}`,
               'No',
             );
           });
