@@ -14,7 +14,7 @@ const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('Bulk-edit', () => {
   describe(
-    'csv approach',
+    'Csv approach',
     {
       retries: {
         runMode: 1,

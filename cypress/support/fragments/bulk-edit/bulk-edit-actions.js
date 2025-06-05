@@ -1404,6 +1404,17 @@ export default {
     );
   },
 
+  verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(
+    numberOfSupportedInstances,
+    numberOfUnsupportedInstances,
+  ) {
+    cy.expect(
+      areYouSureForm.find(MessageBanner()).has({
+        textContent: `${numberOfSupportedInstances} records will be changed when the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving. ${numberOfUnsupportedInstances} instances have source that is not supported by MARC records bulk edit and cannot be updated.`,
+      }),
+    );
+  },
+
   verifyActionsColumnIsNotPopulated() {
     cy.expect(bulkEditsAccordion.find(Select({ dataTestID: 'select-actions-1' })).absent());
   },

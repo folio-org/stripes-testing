@@ -16,6 +16,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
+  BULK_EDIT_FORMS,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
@@ -194,7 +195,10 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
           '',
         );
-        BulkEditSearchPane.verifyElectronicAccessColumnHeaders();
+        BulkEditSearchPane.verifyElectronicAccessColumnHeadersInForm(
+          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
+          marcInstance.hrid,
+        );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
@@ -241,7 +245,10 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
           seriesStatement,
         );
-        BulkEditSearchPane.verifyElectronicAccessColumnHeaders();
+        BulkEditSearchPane.verifyElectronicAccessColumnHeadersInForm(
+          BULK_EDIT_FORMS.ARE_YOU_SURE,
+          marcInstance.hrid,
+        );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
