@@ -8,7 +8,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -51,11 +51,11 @@ const editedNotes = {
 };
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `AT_C552505 Shared NoteType ${getRandomPostfix()}`,
+    name: `AT_C552505 Shared NoteType ${randomFourDigitNumber()}`,
   },
 };
 const collegeHoldingNoteType = {
-  name: `AT_C552505 College NoteType ${getRandomPostfix()}`,
+  name: `AT_C552505 College NoteType ${randomFourDigitNumber()}`,
 };
 const collegeHoldingNoteTypeNameWithAffiliation = `${collegeHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];

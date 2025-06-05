@@ -384,6 +384,7 @@ describe('Bulk-edit', () => {
             ]);
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            cy.wait(2000);
             InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
