@@ -61,7 +61,7 @@ const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclos
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
-  patronHasBlocksInPlace: 'Patron has block(s) in place',
+  patronHasBlocksInPlace: 'Patron has block in place',
 };
 const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
 const newNoteButton = notesSection.find(Button({ id: 'note-create-button' }));
