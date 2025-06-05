@@ -23,7 +23,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16994'], retries: 2 },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16994'] },
       () => {
         cy.getAdminToken();
         cy.createTempUser([
@@ -41,6 +41,7 @@ describe('eHoldings', () => {
           eHoldingsTitlesSearch.byPublicationType('Journal');
           eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.NOT_SELECTED);
           eHoldingsTitles.openTitle(1);
+          eHoldingsTitle.changePackageStatusViaApi({ isSelected: false });
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.filterPackages();
           eHoldingsTitle.waitPackagesLoading();
