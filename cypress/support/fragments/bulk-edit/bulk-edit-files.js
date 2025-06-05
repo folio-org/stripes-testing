@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
 
@@ -262,23 +263,18 @@ export default {
   },
 
   verifyCSVFileRowsRecordsNumber(fileName, recordsNumber) {
-    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
-      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
-        const values = this.getValuesFromValidCSVFile(actualContent);
-
-        expect(values).to.have.length(recordsNumber);
-      });
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
+      expect(jsonDataArray).to.have.length(recordsNumber);
     });
   },
 
   verifyValueInRowByUUID(filePath, uuidHeader, uuidValue, targetHeader, expectedValue) {
     return FileManager.convertCsvToJson(filePath).then((jsonDataArray) => {
-      // eslint-disable-next-line no-unused-expressions
       expect(jsonDataArray).to.be.an('array').and.not.be.empty;
 
       const targetRow = jsonDataArray.find((row) => row[uuidHeader] === uuidValue);
 
-      // eslint-disable-next-line no-unused-expressions
       expect(targetRow).to.exist;
 
       const actualValue = targetRow[targetHeader];
@@ -289,12 +285,10 @@ export default {
 
   verifyHeaderValueInRowByIdentifier(filePath, identifierHeader, identifierValue, targetValues) {
     return FileManager.convertCsvToJson(filePath).then((jsonDataArray) => {
-      // eslint-disable-next-line no-unused-expressions
       expect(jsonDataArray).to.be.an('array').and.not.be.empty;
 
       const targetRow = jsonDataArray.find((row) => row[identifierHeader] === identifierValue);
 
-      // eslint-disable-next-line no-unused-expressions
       expect(targetRow).to.exist;
 
       targetValues.forEach((pair) => {
