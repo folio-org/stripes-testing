@@ -16,7 +16,7 @@ const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 
 describe('Bulk-edit', () => {
   describe(
-    'permissions',
+    'Permissions',
     {
       retries: {
         runMode: 1,
