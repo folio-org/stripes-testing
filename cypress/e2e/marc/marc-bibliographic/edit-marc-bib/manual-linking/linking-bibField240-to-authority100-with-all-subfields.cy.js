@@ -20,9 +20,12 @@ describe('MARC', () => {
             '$a Fail $d PASS (editable) $t test $f fail $g fail $h fail $k fail $l fail $m fail $n fail $o fail $p fail $r fail $s fail $1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8  pass(editable)',
           browseSearchOption: 'nameTitle',
           searchOption: 'Keyword',
-          searchValue: 'Fail PASS (editable) test',
-          placeholderMessage: 'Fail PASS (editable) test would be here',
-          authorityMarkedValue: 'Dowland, John',
+          searchValue:
+            'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail',
+          placeholderMessage:
+            'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail would be here',
+          authorityMarkedValue:
+            'Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
           tag240rowindex: 28,
           authority100FieldValue:
             'C380763Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
@@ -108,7 +111,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C380763 Link the "240" of "MARC Bib" field with "1XX" field of "MARC Authority" record (all subfields) (spitfire) (TaaS)',
+          'C380763 Link "240" field with all subfields (except $0) when MARC authority 100 has all subfields (spitfire) (TaaS)',
           { tags: ['extendedPath', 'spitfire', 'C380763'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
