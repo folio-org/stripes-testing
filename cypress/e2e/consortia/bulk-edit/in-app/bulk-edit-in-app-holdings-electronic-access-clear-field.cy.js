@@ -42,7 +42,8 @@ const localUrlRelationship = {
   name: `C494101 local urlRelationship ${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
-const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
+const electronicAccessTableHeaders =
+  'URL relationshipURILink textMaterials specifiedURL public note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;

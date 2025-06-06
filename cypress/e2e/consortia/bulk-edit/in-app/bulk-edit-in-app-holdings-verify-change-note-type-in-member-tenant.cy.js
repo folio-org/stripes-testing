@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
@@ -39,11 +39,11 @@ const sharedNoteText = 'Shared note text';
 const collegeLocalNoteText = 'College note text';
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `AT_C566145 shared note type ${getRandomPostfix()}`,
+    name: `AT_C566145 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const collegeHoldingNoteType = {
-  name: `AT_C566145 College NoteType ${getRandomPostfix()}`,
+  name: `AT_C566145 College NoteType ${randomFourDigitNumber()}`,
 };
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;

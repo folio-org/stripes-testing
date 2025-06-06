@@ -42,11 +42,11 @@ const sharedNoteText = 'New shared note';
 const localNoteText = 'New local note';
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `AT_C566143 shared note type ${getRandomPostfix()}`,
+    name: `AT_C566143 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const localHoldingNoteType = {
-  name: `AT_C566143 college NoteType ${getRandomPostfix()}`,
+  name: `AT_C566143 college NoteType ${randomFourDigitNumber()}`,
 };
 const instances = [folioInstance, marcInstance];
 let identifiersQueryFilename;

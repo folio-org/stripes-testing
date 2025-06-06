@@ -5,7 +5,7 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
@@ -31,11 +31,11 @@ const marcInstance = {
 };
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `AT_C566147 shared note type ${getRandomPostfix()}`,
+    name: `AT_C566147 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const collegeHoldingNoteType = {
-  name: `AT_C566147 College NoteType ${getRandomPostfix()}`,
+  name: `AT_C566147 College NoteType ${randomFourDigitNumber()}`,
 };
 const notes = {
   adminUpperCase: 'Test [administrative] no*te',

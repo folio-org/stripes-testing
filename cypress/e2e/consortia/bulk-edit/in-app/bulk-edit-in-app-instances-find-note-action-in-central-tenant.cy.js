@@ -73,6 +73,7 @@ const testParams = [
     notesUpdatedValue: {
       adminUpperCase: 'Test replaced note',
       adminLowerCase: 'test replaced note',
+      adminLowerCaseInFile: 'test replaced note',
       reproductionUpperCase: 'Test replaced instance note',
       reproductionLowerCase: 'test replaced instance note',
       reproductionMarc: 'Reproduction test replaced instance note MARC',
@@ -90,6 +91,7 @@ const testParams = [
     notesUpdatedValue: {
       adminUpperCase: 'Test ',
       adminLowerCase: 'test ',
+      adminLowerCaseInFile: 'test',
       reproductionUpperCase: 'Test  instance note',
       reproductionLowerCase: 'test  instance note',
       reproductionMarc: 'Reproduction test instance note MARC',
@@ -310,7 +312,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                 instance.uuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
-                `${params.notesUpdatedValue.adminUpperCase} | ${params.notesUpdatedValue.adminLowerCase}`,
+                `${params.notesUpdatedValue.adminUpperCase} | ${params.notesUpdatedValue.adminLowerCaseInFile}`,
               );
             });
 
@@ -360,7 +362,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                 instance.uuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
-                `${params.notesUpdatedValue.adminUpperCase} | ${params.notesUpdatedValue.adminLowerCase}`,
+                `${params.notesUpdatedValue.adminUpperCase} | ${params.notesUpdatedValue.adminLowerCaseInFile}`,
               );
             });
 
@@ -384,10 +386,10 @@ describe('Bulk-edit', () => {
             ]);
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            cy.wait(4000);
             InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
-            cy.wait(3000);
             InstanceRecordView.verifyAdministrativeNote(params.notesUpdatedValue.adminUpperCase);
             InstanceRecordView.verifyAdministrativeNote(params.notesUpdatedValue.adminLowerCase);
             InstanceRecordView.checkMultipleItemNotesWithStaffOnly(

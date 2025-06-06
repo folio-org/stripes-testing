@@ -8,7 +8,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -56,14 +56,14 @@ const universityNoteText = 'University local note';
 const checkInNoteText = 'Check in note text';
 const centralSharedItemNoteType = {
   payload: {
-    name: `C478254 shared note type ${getRandomPostfix()}`,
+    name: `C478254 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const collegeItemNoteType = {
-  name: `C478254 College NoteType ${getRandomPostfix()}`,
+  name: `C478254 College NoteType ${randomFourDigitNumber()}`,
 };
 const universityItemNoteType = {
-  name: `C478254 University NoteType ${getRandomPostfix()}`,
+  name: `C478254 University NoteType ${randomFourDigitNumber()}`,
 };
 const collegeItemNoteTypeNameWithAffiliation = `${collegeItemNoteType.name} (${Affiliations.College})`;
 const universityItemNoteTypeNameWithAffiliation = `${universityItemNoteType.name} (${Affiliations.University})`;
