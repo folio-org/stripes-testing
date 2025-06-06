@@ -1,5 +1,6 @@
 import { including } from '@interactors/html';
 import {
+  HTML,
   ListRow,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -67,6 +68,7 @@ export default {
         expect(element.innerText).to.include(`-${jobId}.mrc`);
       }),
     );
+    cy.do(resultRow.fileName.find(HTML({ className: including('button') })).exists());
 
     // verify date (ended running)
     const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
