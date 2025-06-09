@@ -13,14 +13,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 let user;
 let instanceTypeId;
 const numberOfInstances = 10;
-const instances = [];
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
-
-for (let i = 0; i < numberOfInstances; i++) {
-  instances.push({
-    title: `AT_C9288_FolioInstance_${getRandomPostfix()}`,
-  });
-}
+const instances = [...Array(numberOfInstances)].map(() => ({
+  title: `AT_C9288_FolioInstance_${getRandomPostfix()}`,
+}));
 
 describe('Data Export', () => {
   describe('Export to MARC', () => {
