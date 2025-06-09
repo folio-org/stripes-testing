@@ -118,4 +118,50 @@ export default {
   verifySubjectIncludesValue(subject) {
     cy.expect(subjectKeyValue.has({ value: including(subject) }));
   },
+
+  getTitleIdFromUrl() {
+    return cy.location('pathname').then((path) => {
+      const titleId = path.split('/').pop();
+      return titleId;
+    });
+  },
+
+  changePackageStatusViaApi({ isSelected = true, packageName = '' } = {}) {
+    this.getTitleIdFromUrl().then((id) => {
+      cy.okapiRequest({
+        method: 'GET',
+        path: `/eholdings/titles/${id}`,
+        searchParams: {
+          include: 'resources',
+        },
+      }).then((response) => {
+        const resources = response.body.included.filter(
+          (resource) => resource.attributes.isSelected === !isSelected,
+        );
+        // If packageName is not set, pick first suitable resource
+        const selectedResource = packageName
+          ? resources.find((r) => r.attributes.packageName === packageName)
+          : resources[0];
+        if (selectedResource) {
+          const resourceId = selectedResource.id;
+          const payload = {
+            data: {
+              id: resourceId,
+              type: 'resources',
+              attributes: {
+                ...selectedResource.attributes,
+                isSelected,
+              },
+            },
+          };
+          cy.okapiRequest({
+            method: 'PUT',
+            path: `/eholdings/resources/${resourceId}`,
+            body: payload,
+            contentTypeHeader: 'application/vnd.api+json',
+          });
+        }
+      });
+    });
+  },
 };
