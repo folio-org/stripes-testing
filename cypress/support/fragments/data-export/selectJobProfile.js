@@ -5,6 +5,7 @@ import {
   PaneHeader,
   TextFieldIcon,
   MultiColumnListCell,
+  matching,
 } from '../../../../interactors';
 
 const searchResults = MultiColumnList({ id: 'search-results-list' });
@@ -80,5 +81,9 @@ export default {
     });
     cy.get(jobProfilescSearchId).invoke('val').should('equal', '');
     expect(searchButton.has({ disabled: true }));
+  },
+
+  verifySubtitle() {
+    cy.expect(Pane({ subtitle: matching(/^\d+ job profiles$/) }).exists());
   },
 };
