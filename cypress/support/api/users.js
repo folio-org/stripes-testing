@@ -394,7 +394,7 @@ Cypress.Commands.add('getAdminSourceRecord', () => {
 Cypress.Commands.add(
   'createUserGroupApi',
   ({
-    groupName = `Auto Group ${getRandomPostfix()}`,
+    groupName = `AT_UserGroup_${getRandomPostfix()}`,
     description = `Description ${getRandomPostfix()}`,
     expirationOffsetInDays = 0,
   } = {}) => {
@@ -413,11 +413,12 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('deleteUserGroupApi', (groupId) => {
+Cypress.Commands.add('deleteUserGroupApi', (groupId, ignoreErrors = false) => {
   return cy.okapiRequest({
     method: 'DELETE',
     path: `groups/${groupId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
