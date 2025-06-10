@@ -124,7 +124,7 @@ describe('MARC', () => {
             InventoryInstance.searchResults(value.marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
           });
