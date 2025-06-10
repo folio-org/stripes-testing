@@ -253,43 +253,48 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const assertionsOnMarcFileContent = [
-            (record) => expect(record.leader).to.exist,
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => expect(record.get('005')).to.not.be.empty,
-            (record) => expect(record.get('008')).to.not.be.empty,
-            (record) => expect(record.get('583')[0].ind1).to.eq('0'),
-            (record) => expect(record.get('583')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('583')[0].subf[0][1]).to.eq('Action note'),
-            (record) => expect(record.get('583')[0].subf[1][0]).to.eq('3'),
-            (record) => expect(record.get('583')[0].subf[1][1]).to.eq('v.5'),
-            (record) => expect(record.get('502')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('502')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('502')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('502')[0].subf[0][1]).to.eq(notes.dissertation),
-            (record) => expect(record.get('502')[0].subf[1][0]).to.eq('c'),
-            (record) => expect(record.get('502')[0].subf[1][1]).to.eq('Université de Nantes'),
-            (record) => expect(record.get('514')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('514')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('514')[0].subf[0][0]).to.eq('b'),
-            (record) => expect(record.get('514')[0].subf[0][1]).to.eq('Estimated to be 98.5%.'),
-            (record) => expect(record.get('514')[0].subf[1][0]).to.eq('b'),
-            (record) => expect(record.get('514')[0].subf[1][1]).to.eq('Approximately 95%'),
-            (record) => expect(record.get('566')).to.be.empty,
-            (record) => expect(record.get('945')[0].ind1).to.eq('0'),
-            (record) => expect(record.get('945')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('945')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('945')[0].subf[0][1]).to.eq(notes.firstLocalReplaced),
-            (record) => expect(record.get('945')[0].subf[1][0]).to.eq('u'),
-            (record) => expect(record.get('945')[0].subf[1][1]).to.eq('http://www.test1.org'),
-            (record) => expect(record.get('945')[0].subf[2][0]).to.eq('u'),
-            (record) => expect(record.get('945')[0].subf[2][1]).to.eq('https://www.test2.org'),
-            (record) => expect(record.get('984')).to.be.empty,
-            (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-            (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+            {
+              uuid: marcInstance.uuid,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => expect(record.get('001')).to.not.be.empty,
+                (record) => expect(record.get('005')).to.not.be.empty,
+                (record) => expect(record.get('008')).to.not.be.empty,
+                (record) => expect(record.get('583')[0].ind1).to.eq('0'),
+                (record) => expect(record.get('583')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('583')[0].subf[0][1]).to.eq('Action note'),
+                (record) => expect(record.get('583')[0].subf[1][0]).to.eq('3'),
+                (record) => expect(record.get('583')[0].subf[1][1]).to.eq('v.5'),
+                (record) => expect(record.get('502')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('502')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('502')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('502')[0].subf[0][1]).to.eq(notes.dissertation),
+                (record) => expect(record.get('502')[0].subf[1][0]).to.eq('c'),
+                (record) => expect(record.get('502')[0].subf[1][1]).to.eq('Université de Nantes'),
+                (record) => expect(record.get('514')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('514')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('514')[0].subf[0][0]).to.eq('b'),
+                (record) => expect(record.get('514')[0].subf[0][1]).to.eq('Estimated to be 98.5%.'),
+                (record) => expect(record.get('514')[0].subf[1][0]).to.eq('b'),
+                (record) => expect(record.get('514')[0].subf[1][1]).to.eq('Approximately 95%'),
+                (record) => expect(record.get('566')).to.be.empty,
+                (record) => expect(record.get('945')[0].ind1).to.eq('0'),
+                (record) => expect(record.get('945')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('945')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('945')[0].subf[0][1]).to.eq(notes.firstLocalReplaced),
+                (record) => expect(record.get('945')[0].subf[1][0]).to.eq('u'),
+                (record) => expect(record.get('945')[0].subf[1][1]).to.eq('http://www.test1.org'),
+                (record) => expect(record.get('945')[0].subf[2][0]).to.eq('u'),
+                (record) => expect(record.get('945')[0].subf[2][1]).to.eq('https://www.test2.org'),
+                (record) => expect(record.get('984')).to.be.empty,
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              ],
+            },
           ];
 
-          parseMrcFileContentAndVerify(previewFileName, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(previewFileName, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(1);
@@ -310,7 +315,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(changedRecordsFileName, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(changedRecordsFileName, assertionsOnMarcFileContent, 1);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);

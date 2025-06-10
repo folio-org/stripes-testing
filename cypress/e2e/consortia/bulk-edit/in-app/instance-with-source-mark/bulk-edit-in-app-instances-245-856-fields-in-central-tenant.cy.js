@@ -247,44 +247,51 @@ describe('Bulk-edit', () => {
             DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
 
           const assertionsOnMarcFileContent = [
-            (record) => expect(record.leader).to.exist,
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => expect(record.get('005')).to.not.be.empty,
-            (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-            (record) => {
-              expect(
-                record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-              ).to.be.true;
-            },
-            (record) => expect(record.get('008')).to.not.be.empty,
-            (record) => expect(record.get('245')[0].ind1).to.eq('1'),
-            (record) => expect(record.get('245')[0].ind2).to.eq('5'),
-            (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('245')[0].subf[0][1]).to.eq(instanceTitle),
-            (record) => expect(record.get('245')[0].subf[1][0]).to.eq('b'),
-            (record) => expect(record.get('245')[0].subf[1][1]).to.eq(addedSubfield),
+            {
+              uuid: marcInstance.uuid,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => expect(record.get('001')).to.not.be.empty,
+                (record) => expect(record.get('005')).to.not.be.empty,
+                (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
+                (record) => {
+                  expect(
+                    record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
+                      record
+                        .get('005')[0]
+                        .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
+                  ).to.be.true;
+                },
+                (record) => expect(record.get('008')).to.not.be.empty,
+                (record) => expect(record.get('245')[0].ind1).to.eq('1'),
+                (record) => expect(record.get('245')[0].ind2).to.eq('5'),
+                (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('245')[0].subf[0][1]).to.eq(instanceTitle),
+                (record) => expect(record.get('245')[0].subf[1][0]).to.eq('b'),
+                (record) => expect(record.get('245')[0].subf[1][1]).to.eq(addedSubfield),
 
-            (record) => expect(record.get('856')[0].ind1).to.eq('4'),
-            (record) => expect(record.get('856')[0].ind2).to.eq('0'),
-            (record) => expect(record.get('856')[0].subf[0][0]).to.eq('h'),
-            (record) => expect(record.get('856')[0].subf[0][1]).to.eq('http://mathnet.kaist.ac.kr'),
-            (record) => expect(record.get('856')[0].subf[1][0]).to.eq('u'),
-            (record) => {
-              expect(record.get('856')[0].subf[1][1]).to.eq(
-                'http://www.koreascience.or.kr/journal/E1TAAE/v2n1.page',
-              );
-            },
-            (record) => expect(record.get('856')[0].subf[2][0]).to.eq('u'),
-            (record) => {
-              expect(record.get('856')[0].subf[2][1]).to.eq('http://www.ksiam.org');
-            },
+                (record) => expect(record.get('856')[0].ind1).to.eq('4'),
+                (record) => expect(record.get('856')[0].ind2).to.eq('0'),
+                (record) => expect(record.get('856')[0].subf[0][0]).to.eq('h'),
+                (record) => expect(record.get('856')[0].subf[0][1]).to.eq('http://mathnet.kaist.ac.kr'),
+                (record) => expect(record.get('856')[0].subf[1][0]).to.eq('u'),
+                (record) => {
+                  expect(record.get('856')[0].subf[1][1]).to.eq(
+                    'http://www.koreascience.or.kr/journal/E1TAAE/v2n1.page',
+                  );
+                },
+                (record) => expect(record.get('856')[0].subf[2][0]).to.eq('u'),
+                (record) => {
+                  expect(record.get('856')[0].subf[2][1]).to.eq('http://www.ksiam.org');
+                },
 
-            (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-            (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              ],
+            },
           ];
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
           const updatedElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccessFields.newUri};-;-;-`;
 
@@ -336,12 +343,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(
-            changedRecordsFileNameMrc,
-            0,
-            assertionsOnMarcFileContent,
-            1,
-          );
+          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
