@@ -50,7 +50,7 @@ describe('Inventory', () => {
             cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
               testData.loanType = res[0].id;
             });
-            cy.geteSubjectTypesViaApi({ limit: 1, query: 'source="folio"' }).then((res) => {
+            cy.getSubjectTypesViaApi({ limit: 1, query: 'source="folio"' }).then((res) => {
               testData.subjectType = res[0].id;
             });
           })
