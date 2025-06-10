@@ -6,12 +6,10 @@ import BrowseCallNumber from '../../../../support/fragments/inventory/search/bro
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import {
   CALL_NUMBER_TYPES_DEFAULT,
   CallNumberTypes,
 } from '../../../../support/fragments/settings/inventory/instances/callNumberTypes';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
@@ -93,15 +91,15 @@ describe('Inventory', () => {
           CallNumberTypes.getCallNumberTypesViaAPI().then((res) => {
             callNumberTypes = res;
           });
-          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          testData.defaultLocation = Location.getDefaultLocation(servicePoint.id);
-          Location.createViaApi(testData.defaultLocation);
+          cy.getLocations({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
+            testData.location = res;
+          });
         })
         .then(() => {
           folioInstances = generateInstances();
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances,
-            location: testData.defaultLocation,
+            location: testData.location,
           });
         });
 
@@ -118,7 +116,6 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
       InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C388549');
-      Location.deleteViaApi(testData.defaultLocation.id);
     });
 
     it(
@@ -140,7 +137,10 @@ describe('Inventory', () => {
         ];
 
         InventorySearchAndFilter.switchToBrowseTab();
-        BrowseCallNumber.waitForCallNumberToAppear(exactMatchQuery);
+        callNumberItemProperties.forEach((item) => {
+          const suffix = item.itemLevelCallNumberSuffix ? ` ${item.itemLevelCallNumberSuffix}` : '';
+          BrowseCallNumber.waitForCallNumberToAppear(`${item.itemLevelCallNumber}${suffix}`);
+        });
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
