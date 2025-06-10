@@ -260,25 +260,30 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadPreviewInMarcFormat();
 
         const assertionsOnMarcFileContent = [
-          (record) => expect(record.leader).to.eq(ldrValue),
-          (record) => expect(record.get('001')).to.not.be.empty,
-          (record) => expect(record.get('005')).to.not.be.empty,
-          (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
+          {
+            uuid: marcInstance.uuid,
+            assertions: [
+              (record) => expect(record.leader).to.eq(ldrValue),
+              (record) => expect(record.get('001')).to.not.be.empty,
+              (record) => expect(record.get('005')).to.not.be.empty,
+              (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
 
-          (record) => expect(record.get('008')).to.not.be.empty,
+              (record) => expect(record.get('008')).to.not.be.empty,
 
-          (record) => expect(record.get('245')[0].ind1).to.eq('1'),
-          (record) => expect(record.get('245')[0].ind2).to.eq('0'),
-          (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
-          (record) => {
-            expect(record.get('245')[0].subf[0][1]).to.eq(marcInstance.title);
+              (record) => expect(record.get('245')[0].ind1).to.eq('1'),
+              (record) => expect(record.get('245')[0].ind2).to.eq('0'),
+              (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
+              (record) => {
+                expect(record.get('245')[0].subf[0][1]).to.eq(marcInstance.title);
+              },
+
+              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+              (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+            ],
           },
-
-          (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-          (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
         ];
 
-        parseMrcFileContentAndVerify(previewQueryFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(previewQueryFileNameMrc, assertionsOnMarcFileContent, 1);
 
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
@@ -299,7 +304,6 @@ describe('Bulk-edit', () => {
 
         parseMrcFileContentAndVerify(
           changedRecordsQueryFileNameMrc,
-          0,
           assertionsOnMarcFileContent,
           1,
         );
@@ -363,7 +367,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
-        parseMrcFileContentAndVerify(previewQueryFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(previewQueryFileNameMrc, assertionsOnMarcFileContent, 1);
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
@@ -376,7 +380,6 @@ describe('Bulk-edit', () => {
 
         parseMrcFileContentAndVerify(
           changedRecordsQueryFileNameMrc,
-          0,
           assertionsOnMarcFileContent,
           1,
         );

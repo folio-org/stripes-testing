@@ -924,6 +924,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     INDEX_TITLE: 'Index title',
     SERIES_STATEMENT: 'Series statements',
     CONTRIBUTORS: 'Contributors',
+    PUBLICATION: 'Publication',
     EDITION: 'Edition',
     PHYSICAL_DESCRIPTION: 'Physical description',
     RESOURCE_TYPE: 'Resource type',
