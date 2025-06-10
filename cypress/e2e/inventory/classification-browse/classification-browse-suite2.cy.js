@@ -2,7 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../../../support/constants';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
+  defaultClassificationBrowseNames,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
 import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
@@ -1537,6 +1538,313 @@ describe('Inventory', () => {
         InventoryInstances.checkSearchResultCount(/1 record found/);
         InventorySearchAndFilter.switchToBrowseTab();
         verifySearchResult();
+      },
+    );
+  });
+});
+
+describe('Inventory', () => {
+  describe('Instance classification browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const randomLetters = getRandomLetters(5);
+    const testData = {
+      instanceTitle: `AT_C468182_FolioInstance_${randomPostfix}`,
+      classificationValue1: `QL468.C18 E22 ${randomLetters} 1`,
+      classificationValue2: `QL468.C18 E22 ${randomLetters} 2`,
+      absentClassificationValue: `QL468.C18 E22 ${randomLetters} 0`,
+      identifierTypesToSet: [
+        CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+        CLASSIFICATION_IDENTIFIER_TYPES.LC,
+      ],
+      querySearchOption: 'Query search',
+    };
+    const createdRecordIDs = [];
+    let user;
+
+    before('Create user, test data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C468182');
+
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+        (createdUserProperties) => {
+          user = createdUserProperties;
+
+          cy.getInstanceTypes({ limit: 1 })
+            .then((instanceTypes) => {
+              testData.instanceTypeId = instanceTypes[0].id;
+            })
+            .then(() => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: testData.instanceTypeId,
+                  title: testData.instanceTitle,
+                  classifications: [
+                    {
+                      classificationNumber: testData.classificationValue1,
+                      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+                    },
+                    {
+                      classificationNumber: testData.classificationValue2,
+                      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+                    },
+                  ],
+                },
+              }).then((instance) => {
+                createdRecordIDs.push(instance.instanceId);
+
+                cy.getAdminToken();
+                defaultClassificationBrowseIdsAlgorithms.forEach((classifBrowse) => {
+                  ClassificationBrowse.updateIdentifierTypesAPI(
+                    classifBrowse.id,
+                    classifBrowse.algorithm,
+                    testData.identifierTypesToSet,
+                  );
+                });
+
+                cy.login(user.username, user.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                InventorySearchAndFilter.switchToBrowseTab();
+                InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+                InventorySearchAndFilter.verifyCallNumberBrowsePane();
+                BrowseClassifications.waitForClassificationNumberToAppear(
+                  testData.classificationValue1,
+                );
+                BrowseClassifications.waitForClassificationNumberToAppear(
+                  testData.classificationValue2,
+                );
+              });
+            });
+        },
+      );
+    });
+
+    after('Delete user, test data', () => {
+      cy.getAdminToken();
+      defaultClassificationBrowseIdsAlgorithms.forEach((classifBrowse) => {
+        ClassificationBrowse.updateIdentifierTypesAPI(
+          classifBrowse.id,
+          classifBrowse.algorithm,
+          [],
+        );
+      });
+      createdRecordIDs.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C468182 Browse for classifications of the same type which exist in 1 Instance using all browse options (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C468182'] },
+      () => {
+        InventorySearchAndFilter.selectBrowseOption(defaultClassificationBrowseNames[0]);
+        InventorySearchAndFilter.browseSearch(testData.classificationValue1);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationValue1);
+        BrowseClassifications.checkNumberOfTitlesInRow(testData.classificationValue1, '1');
+        InventorySearchAndFilter.verifySearchResult(testData.classificationValue2);
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.classificationValue1);
+        InventorySearchAndFilter.verifySearchOptionAndQuery(
+          testData.querySearchOption,
+          `classifications.classificationNumber=="${testData.classificationValue1}"`,
+        );
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
+        InventorySearchAndFilter.switchToBrowseTab();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationValue1);
+        InventorySearchAndFilter.verifySearchResult(testData.classificationValue2);
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          defaultClassificationBrowseNames[1],
+        );
+        InventorySearchAndFilter.browseSearch(testData.classificationValue2);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationValue2);
+        BrowseClassifications.checkNumberOfTitlesInRow(testData.classificationValue2, '1');
+        InventorySearchAndFilter.verifySearchResult(testData.classificationValue1);
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.classificationValue2);
+        InventorySearchAndFilter.verifySearchOptionAndQuery(
+          testData.querySearchOption,
+          `classifications.classificationNumber=="${testData.classificationValue2}"`,
+        );
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
+        InventorySearchAndFilter.switchToBrowseTab();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationValue2);
+        InventorySearchAndFilter.verifySearchResult(testData.classificationValue1);
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          defaultClassificationBrowseNames[2],
+        );
+        InventorySearchAndFilter.browseSearch(testData.absentClassificationValue);
+        InventorySearchAndFilter.verifySearchResult(
+          `${testData.absentClassificationValue}would be here`,
+        );
+        InventorySearchAndFilter.verifySearchResult(testData.classificationValue1);
+        InventorySearchAndFilter.verifySearchResult(testData.classificationValue2);
+      },
+    );
+  });
+});
+
+describe('Inventory', () => {
+  describe('Instance classification browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const randomLetters = getRandomLetters(5);
+    const testData = {
+      instanceTitle1: `AT_C468181_FolioInstance_${randomPostfix}_1`,
+      instanceTitle2: `AT_C468181_FolioInstance_${randomPostfix}_2`,
+      classificationValueDewey: `468.1811 ${randomLetters}`,
+      classificationValueLc: `QL468.C18 E11 ${randomLetters}`,
+      querySearchOption: 'Query search',
+      identifierTypesToSet: [
+        [],
+        [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+        [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY, CLASSIFICATION_IDENTIFIER_TYPES.LC],
+      ],
+    };
+    const createdRecordIDs = [];
+    let user;
+
+    before('Create user, test data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C468181');
+
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+        (createdUserProperties) => {
+          user = createdUserProperties;
+
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            testData.instanceTypeId = instanceTypes[0].id;
+
+            cy.then(() => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: testData.instanceTypeId,
+                  title: testData.instanceTitle1,
+                  classifications: [
+                    {
+                      classificationNumber: testData.classificationValueDewey,
+                      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+                    },
+                    {
+                      classificationNumber: testData.classificationValueLc,
+                      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+                    },
+                  ],
+                },
+              }).then((instance) => {
+                createdRecordIDs.push(instance.instanceId);
+              });
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: testData.instanceTypeId,
+                  title: testData.instanceTitle2,
+                  classifications: [
+                    {
+                      classificationNumber: testData.classificationValueDewey,
+                      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+                    },
+                  ],
+                },
+              }).then((instance) => {
+                createdRecordIDs.push(instance.instanceId);
+              });
+            }).then(() => {
+              cy.getAdminToken();
+              defaultClassificationBrowseIdsAlgorithms.forEach((classifBrowse, index) => {
+                ClassificationBrowse.updateIdentifierTypesAPI(
+                  classifBrowse.id,
+                  classifBrowse.algorithm,
+                  testData.identifierTypesToSet[index],
+                );
+              });
+
+              cy.login(user.username, user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              InventorySearchAndFilter.switchToBrowseTab();
+              InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+              InventorySearchAndFilter.verifyCallNumberBrowsePane();
+              BrowseClassifications.waitForClassificationNumberToAppear(
+                testData.classificationValueDewey,
+              );
+            });
+          });
+        },
+      );
+    });
+
+    after('Delete user, test data', () => {
+      cy.getAdminToken();
+      defaultClassificationBrowseIdsAlgorithms.forEach((classifBrowse) => {
+        ClassificationBrowse.updateIdentifierTypesAPI(
+          classifBrowse.id,
+          classifBrowse.algorithm,
+          [],
+        );
+      });
+      createdRecordIDs.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C468181 Browse for classification which exists in more than 1 Instances using all browse options (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C468181'] },
+      () => {
+        InventorySearchAndFilter.selectBrowseOption(defaultClassificationBrowseNames[0]);
+        InventorySearchAndFilter.browseSearch(testData.classificationValueDewey);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(
+          testData.classificationValueDewey,
+        );
+        BrowseClassifications.checkNumberOfTitlesInRow(testData.classificationValueDewey, '2');
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.classificationValueDewey);
+        InventorySearchAndFilter.verifySearchOptionAndQuery(
+          testData.querySearchOption,
+          `classifications.classificationNumber=="${testData.classificationValueDewey}"`,
+        );
+        InventorySearchAndFilter.verifySearchResult(testData.instanceTitle1);
+        InventorySearchAndFilter.verifySearchResult(testData.instanceTitle2);
+        InventoryInstances.checkSearchResultCount(/2 records found/);
+        InventorySearchAndFilter.switchToBrowseTab();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(
+          testData.classificationValueDewey,
+        );
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          defaultClassificationBrowseNames[1],
+        );
+        InventorySearchAndFilter.browseSearch(testData.classificationValueDewey);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(
+          testData.classificationValueDewey,
+        );
+        BrowseClassifications.checkNumberOfTitlesInRow(testData.classificationValueDewey, '2');
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.classificationValueDewey);
+        InventorySearchAndFilter.verifySearchOptionAndQuery(
+          testData.querySearchOption,
+          `classifications.classificationNumber=="${testData.classificationValueDewey}"`,
+        );
+        InventorySearchAndFilter.verifySearchResult(testData.instanceTitle1);
+        InventorySearchAndFilter.verifySearchResult(testData.instanceTitle2);
+        InventoryInstances.checkSearchResultCount(/2 records found/);
+        InventorySearchAndFilter.switchToBrowseTab();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(
+          testData.classificationValueDewey,
+        );
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          defaultClassificationBrowseNames[2],
+        );
+        InventorySearchAndFilter.browseSearch(testData.classificationValueDewey);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(
+          testData.classificationValueDewey,
+        );
+        BrowseClassifications.checkNumberOfTitlesInRow(testData.classificationValueDewey, '2');
       },
     );
   });
