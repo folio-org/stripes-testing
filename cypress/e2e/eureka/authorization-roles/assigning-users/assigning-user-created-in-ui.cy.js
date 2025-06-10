@@ -65,7 +65,7 @@ describe('Eureka', () => {
           Users.deleteViaApi(testData.tempUser.userId);
           Users.deleteViaApi(testData.userId);
           cy.deleteAuthorizationRoleApi(testData.roleId);
-          cy.deleteUserGroupApi(testData.userGroup.id);
+          cy.deleteUserGroupApi(testData.userGroup.id, true);
         });
 
         it(
