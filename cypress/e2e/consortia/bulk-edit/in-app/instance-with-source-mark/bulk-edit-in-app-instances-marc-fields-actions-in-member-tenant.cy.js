@@ -273,50 +273,57 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const assertionsOnMarcFileContent = [
-            (record) => expect(record.leader).to.exist,
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => expect(record.get('005')).to.not.be.empty,
-            (record) => expect(record.get('008')).to.not.be.empty,
+            {
+              uuid: marcInstance.uuid,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => expect(record.get('001')).to.not.be.empty,
+                (record) => expect(record.get('005')).to.not.be.empty,
+                (record) => expect(record.get('008')).to.not.be.empty,
 
-            (record) => expect(record.get('901')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('901')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('901')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('901')[0].subf[0][1]).to.eq(notes.addedLocal),
-            (record) => expect(record.get('901')[0].subf[1][0]).to.eq('3'),
-            (record) => expect(record.get('901')[0].subf[1][1]).to.eq('v.5'),
+                (record) => expect(record.get('901')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('901')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('901')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('901')[0].subf[0][1]).to.eq(notes.addedLocal),
+                (record) => expect(record.get('901')[0].subf[1][0]).to.eq('3'),
+                (record) => expect(record.get('901')[0].subf[1][1]).to.eq('v.5'),
 
-            (record) => expect(record.get('902')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('902')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('902')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('902')[0].subf[0][1]).to.eq(notes.local),
-            (record) => expect(record.get('902')[0].subf[1][0]).to.eq('c'),
-            (record) => expect(record.get('902')[0].subf[1][1]).to.eq(notes.appendedLocal),
+                (record) => expect(record.get('902')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('902')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('902')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('902')[0].subf[0][1]).to.eq(notes.local),
+                (record) => expect(record.get('902')[0].subf[1][0]).to.eq('c'),
+                (record) => expect(record.get('902')[0].subf[1][1]).to.eq(notes.appendedLocal),
 
-            (record) => expect(record.get('570')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('570')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('570')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('570')[0].subf[0][1]).to.eq(notes.field570),
+                (record) => expect(record.get('570')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('570')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('570')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('570')[0].subf[0][1]).to.eq(notes.field570),
 
-            (record) => expect(record.get('536')).to.be.empty,
+                (record) => expect(record.get('536')).to.be.empty,
 
-            (record) => expect(record.get('545')[0].ind1).to.eq('0'),
-            (record) => expect(record.get('545')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('545')[0].subf[0][0]).to.eq('a'),
-            (record) => {
-              expect(record.get('545')[0].subf[0][1]).to.eq(notes.biographicalOrHistoricalReplaced);
+                (record) => expect(record.get('545')[0].ind1).to.eq('0'),
+                (record) => expect(record.get('545')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('545')[0].subf[0][0]).to.eq('a'),
+                (record) => {
+                  expect(record.get('545')[0].subf[0][1]).to.eq(
+                    notes.biographicalOrHistoricalReplaced,
+                  );
+                },
+                (record) => expect(record.get('545')[0].subf[1][0]).to.eq('u'),
+                (record) => expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/'),
+                (record) => expect(record.get('545')[0].subf[2][0]).to.eq('u'),
+                (record) => expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/'),
+
+                (record) => expect(record.get('584')).to.be.empty,
+
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              ],
             },
-            (record) => expect(record.get('545')[0].subf[1][0]).to.eq('u'),
-            (record) => expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/'),
-            (record) => expect(record.get('545')[0].subf[2][0]).to.eq('u'),
-            (record) => expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/'),
-
-            (record) => expect(record.get('584')).to.be.empty,
-
-            (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-            (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
           ];
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyValueInRowByUUID(
@@ -345,12 +352,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(
-            changedRecordsFileNameMrc,
-            0,
-            assertionsOnMarcFileContent,
-            1,
-          );
+          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyValueInRowByUUID(

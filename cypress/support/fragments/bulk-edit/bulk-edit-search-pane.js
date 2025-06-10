@@ -1121,6 +1121,9 @@ export default {
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS))
         .has({ checked: true }),
       DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION))
+        .has({ checked: false }),
+      DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION))
         .has({ checked: false }),
       DropdownMenu()
