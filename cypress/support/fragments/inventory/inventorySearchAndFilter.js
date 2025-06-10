@@ -1398,4 +1398,12 @@ export default {
       ]);
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
   },
+
+  verifyCheckboxesWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(Checkbox({ label: matching(/.+\d+$/) }))
+        .exists(),
+    );
+  },
 };
