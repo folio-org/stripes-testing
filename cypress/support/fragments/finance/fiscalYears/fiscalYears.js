@@ -14,6 +14,7 @@ import {
   HTML,
   including,
   SearchField,
+  Modal,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
@@ -85,6 +86,7 @@ export default {
 
   createDefaultFiscalYear(fiscalYear) {
     cy.do([
+      cy.wait(4000),
       newButton.click(),
       TextField('Name*').fillIn(fiscalYear.name),
       TextField('Code*').fillIn(fiscalYear.code),
@@ -131,9 +133,9 @@ export default {
   },
 
   editFiscalYearDetails: () => {
-    cy.wait(7000);
+    cy.wait(4000);
     cy.do([actionsButton.focus(), actionsButton.click()]);
-    cy.wait(7000);
+    cy.wait(4000);
     cy.do(editButton.click());
   },
 
@@ -212,7 +214,7 @@ export default {
     cy.do([
       actionsButton.click(),
       deleteButton.click(),
-      Button('Delete', { id: 'clickable-fiscal-year-remove-confirmation-confirm' }).click(),
+      Modal({ id: 'fiscal-year-remove-confirmation' }).find(deleteButton).click(),
     ]);
   },
 
