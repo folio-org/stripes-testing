@@ -69,7 +69,7 @@ describe(
   },
   () => {
     describe('In-app approach', () => {
-      before('create test data', () => {
+      beforeEach('create test data', () => {
         holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
         matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
         previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
@@ -135,7 +135,7 @@ describe(
         );
       });
 
-      after('delete test data', () => {
+      afterEach('delete test data', () => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
         Users.deleteViaApi(user.userId);
