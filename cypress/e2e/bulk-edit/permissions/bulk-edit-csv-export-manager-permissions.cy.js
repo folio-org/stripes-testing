@@ -14,9 +14,9 @@ let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe(
-    'permissions',
+    'Permissions',
     {
       retries: {
         runMode: 1,

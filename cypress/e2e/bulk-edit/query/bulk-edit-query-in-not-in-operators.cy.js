@@ -17,8 +17,8 @@ const secondItem = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([

@@ -20,7 +20,7 @@ const holdingsToggleButton = Button('Holdings');
 const itemToggleButton = Button('Item');
 const resultsList = selectInstanceModal.find(HTML({ id: 'list-plugin-find-records' }));
 const searchOptionSelect = Select('Search field index');
-const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
+const defaultSearchOption = including('Keyword (title, contributor, identifier, HRID, UUID');
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
@@ -55,7 +55,7 @@ const searchHoldingsOptions = [
   'Query search',
 ];
 const searchItemsOptions = [
-  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
   'Barcode',
   'ISBN',
   'ISSN',

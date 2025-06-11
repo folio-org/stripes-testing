@@ -26,6 +26,10 @@ describe('eHoldings', () => {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          EHoldingsTitlesSearch.waitLoading();
+        });
       });
     });
 
@@ -46,9 +50,9 @@ describe('eHoldings', () => {
           EHoldingsPackageView.waitLoading();
           EHoldingsPackageView.verifyPackageName(testData.customPackageName);
           EHoldingsPackageView.verifyPackageType('Custom');
-          EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
           EHoldingsPackageView.close();
           EHoldingSearch.switchToPackages();
+          EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true, 60);
           EHoldingsPackagesSearch.byName(testData.customPackageName);
           EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
         });

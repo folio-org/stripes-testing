@@ -68,7 +68,7 @@ const changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
   true,
 );
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
@@ -172,36 +172,47 @@ describe('bulk-edit', () => {
         const currentTimestampUpToMinutesOneMinuteAfter =
           DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
         const assertionsOnMarcFileContent = [
-          (record) => expect(record.leader).to.exist,
-          (record) => expect(record.get('001')).to.not.be.empty,
-          (record) => expect(record.get('005')).to.not.be.empty,
-          (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-          (record) => {
-            expect(
-              record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                record.get('005')[0].value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-            ).to.be.true;
-          },
-          (record) => expect(record.get('008')).to.not.be.empty,
+          {
+            uuid: marcInstance.uuid,
+            assertions: [
+              (record) => expect(record.leader).to.exist,
+              (record) => expect(record.get('001')).to.not.be.empty,
+              (record) => expect(record.get('005')).to.not.be.empty,
+              (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
+              (record) => {
+                expect(
+                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
+                    record
+                      .get('005')[0]
+                      .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
+                ).to.be.true;
+              },
+              (record) => expect(record.get('008')).to.not.be.empty,
 
-          (record) => expect(record.get('700')).to.be.empty,
+              (record) => expect(record.get('700')).to.be.empty,
 
-          (record) => expect(record.get('710')[0].ind1).to.eq('2'),
-          (record) => expect(record.get('710')[0].ind2).to.eq(' '),
-          (record) => expect(record.get('710')[0].subf[0][0]).to.eq('a'),
-          (record) => {
-            expect(record.get('710')[0].subf[0][1]).to.eq(newValueOfContributorsField.subfieldA);
-          },
-          (record) => expect(record.get('710')[0].subf[1][0]).to.eq('5'),
-          (record) => {
-            expect(record.get('710')[0].subf[1][1]).to.eq(newValueOfContributorsField.subfield5);
-          },
+              (record) => expect(record.get('710')[0].ind1).to.eq('2'),
+              (record) => expect(record.get('710')[0].ind2).to.eq(' '),
+              (record) => expect(record.get('710')[0].subf[0][0]).to.eq('a'),
+              (record) => {
+                expect(record.get('710')[0].subf[0][1]).to.eq(
+                  newValueOfContributorsField.subfieldA,
+                );
+              },
+              (record) => expect(record.get('710')[0].subf[1][0]).to.eq('5'),
+              (record) => {
+                expect(record.get('710')[0].subf[1][1]).to.eq(
+                  newValueOfContributorsField.subfield5,
+                );
+              },
 
-          (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-          (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+              (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+            ],
+          },
         ];
 
-        parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(

@@ -73,6 +73,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(testData.tag245RowIndex, tagValue);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(testData.tag245RowIndex, testData.calloutTagMessage);
+            QuickMarcEditor.closeAllCallouts();
           });
         },
       );

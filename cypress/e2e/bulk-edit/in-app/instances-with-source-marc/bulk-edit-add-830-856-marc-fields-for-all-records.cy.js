@@ -16,6 +16,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
+  BULK_EDIT_FORMS,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
@@ -36,7 +37,8 @@ const postfix = getRandomPostfix();
 const marcInstance = {
   title: `AT_C663269_MarcInstance_${postfix}`,
 };
-const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
+const electronicAccessTableHeaders =
+  'URL relationshipURILink textMaterials specifiedURL public note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const electronicAccessFields = {
@@ -100,7 +102,7 @@ const marcInstanceFields = [
 const seriesStatement = 'United States congressional serial set.';
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
@@ -193,7 +195,10 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
           '',
         );
-        BulkEditSearchPane.verifyElectronicAccessColumnHeaders();
+        BulkEditSearchPane.verifyElectronicAccessColumnHeadersInForm(
+          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
+          marcInstance.hrid,
+        );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
@@ -240,7 +245,10 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
           seriesStatement,
         );
-        BulkEditSearchPane.verifyElectronicAccessColumnHeaders();
+        BulkEditSearchPane.verifyElectronicAccessColumnHeadersInForm(
+          BULK_EDIT_FORMS.ARE_YOU_SURE,
+          marcInstance.hrid,
+        );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
@@ -261,37 +269,46 @@ describe('bulk-edit', () => {
         const currentTimestampUpToMinutesOneMinuteAfter =
           DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
         const assertionsOnMarcFileContent = [
-          (record) => expect(record.leader).to.exist,
-          (record) => expect(record.get('001')).to.not.be.empty,
-          (record) => expect(record.get('005')).to.not.be.empty,
-          (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-          (record) => {
-            expect(
-              record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                record.get('005')[0].value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-            ).to.be.true;
+          {
+            uuid: marcInstance.uuid,
+            assertions: [
+              (record) => expect(record.leader).to.exist,
+              (record) => expect(record.get('001')).to.not.be.empty,
+              (record) => expect(record.get('005')).to.not.be.empty,
+              (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
+              (record) => {
+                expect(
+                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
+                    record
+                      .get('005')[0]
+                      .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
+                ).to.be.true;
+              },
+              (record) => expect(record.get('008')).to.not.be.empty,
+
+              (record) => expect(record.get('830')[0].ind1).to.eq('0'),
+              (record) => expect(record.get('830')[0].ind2).to.eq(' '),
+              (record) => expect(record.get('830')[0].subf[0][0]).to.eq('a'),
+              (record) => expect(record.get('830')[0].subf[0][1]).to.eq(seriesStatement),
+
+              (record) => expect(record.get('856')[0].ind1).to.eq('4'),
+              (record) => expect(record.get('856')[0].ind2).to.eq('0'),
+              (record) => expect(record.get('856')[0].subf[0][0]).to.eq('u'),
+              (record) => expect(record.get('856')[0].subf[0][1]).to.eq(electronicAccessFields.uri),
+              (record) => expect(record.get('856')[0].subf[1][0]).to.eq('z'),
+              (record) => {
+                expect(record.get('856')[0].subf[1][1]).to.eq(
+                  electronicAccessFields.newUrlPublicNote,
+                );
+              },
+
+              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+              (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+            ],
           },
-          (record) => expect(record.get('008')).to.not.be.empty,
-
-          (record) => expect(record.get('830')[0].ind1).to.eq('0'),
-          (record) => expect(record.get('830')[0].ind2).to.eq(' '),
-          (record) => expect(record.get('830')[0].subf[0][0]).to.eq('a'),
-          (record) => expect(record.get('830')[0].subf[0][1]).to.eq(seriesStatement),
-
-          (record) => expect(record.get('856')[0].ind1).to.eq('4'),
-          (record) => expect(record.get('856')[0].ind2).to.eq('0'),
-          (record) => expect(record.get('856')[0].subf[0][0]).to.eq('u'),
-          (record) => expect(record.get('856')[0].subf[0][1]).to.eq(electronicAccessFields.uri),
-          (record) => expect(record.get('856')[0].subf[1][0]).to.eq('z'),
-          (record) => {
-            expect(record.get('856')[0].subf[1][1]).to.eq(electronicAccessFields.newUrlPublicNote);
-          },
-
-          (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-          (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
         ];
 
-        parseMrcFileContentAndVerify(previewQueryFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(previewQueryFileNameMrc, assertionsOnMarcFileContent, 1);
 
         const updatedHoldingElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccessFields.uri};-;-;${electronicAccessFields.newUrlPublicNote}`;
 
@@ -331,7 +348,6 @@ describe('bulk-edit', () => {
 
         parseMrcFileContentAndVerify(
           changedRecordsQueryFileNameMrc,
-          0,
           assertionsOnMarcFileContent,
           1,
         );

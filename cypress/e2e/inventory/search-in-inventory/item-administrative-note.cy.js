@@ -4,8 +4,6 @@ import { Permissions } from '../../../support/dictionary';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import { Locations } from '../../../support/fragments/settings/tenant/location-setup';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -13,7 +11,6 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
-      servicePoint: ServicePoints.getDefaultServicePoint(),
     };
     const admNote1 = 'Original, restore this Item 07-15-2022';
     const admNote2 = 'Original, replace this Item 07-16-2022';
@@ -33,11 +30,7 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      ServicePoints.createViaApi(testData.servicePoint);
-      testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
-      }).location;
-      Locations.createViaApi(testData.defaultLocation).then((location) => {
+      cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then((location) => {
         InventoryInstances.createFolioInstancesViaApi({
           folioInstances: testData.folioInstances,
           location,
@@ -74,13 +67,10 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      testData.folioInstances.forEach((instance) => InventoryInstances.deleteInstanceViaApi({
-        instance,
-        servicePoint: testData.servicePoint,
-        shouldCheckIn: true,
-      }));
-      Locations.deleteViaApi(testData.defaultLocation);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItemData.barcodes[0]);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        secondItemData.barcodes[0],
+      );
       Users.deleteViaApi(testData.user.userId);
     });
 

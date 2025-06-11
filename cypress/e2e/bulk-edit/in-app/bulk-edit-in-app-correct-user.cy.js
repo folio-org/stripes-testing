@@ -19,8 +19,8 @@ const item = {
 
 // TODO: identify how to stabilize flaky test
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
         [permissions.bulkEditView.gui, permissions.bulkEditEdit.gui, permissions.inventoryAll.gui],

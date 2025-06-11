@@ -17,7 +17,7 @@ import {
   MultiColumnListRow,
   Headline,
 } from '../../../../interactors';
-import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
 
 const previewOfRecordsMatchedFormName = 'Preview of records matched';
@@ -52,6 +52,18 @@ const getScrollableElementInForm = (formName) => {
     .contains(formName)
     .closest('[class^=previewAccordion-]')
     .find('div[class^="mclScrollable"]');
+};
+const electronicAccessTableHeaders = [
+  'URL relationship',
+  'URI',
+  'Link text',
+  'Materials specified',
+  'URL public note',
+];
+const formMap = {
+  [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED]: matchedAccordion,
+  [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED]: changesAccordion,
+  [BULK_EDIT_FORMS.ARE_YOU_SURE]: areYouSureForm,
 };
 export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCESSIBILITY_NOTE,
@@ -593,8 +605,12 @@ export default {
     cy.expect(errorsAccordion.absent());
   },
 
-  matchedAccordionIsAbsent() {
-    cy.expect(matchedAccordion.absent());
+  matchedAccordionIsAbsent(isAbsent = true) {
+    if (isAbsent) {
+      cy.expect(matchedAccordion.absent());
+    } else {
+      cy.expect(matchedAccordion.exists());
+    }
   },
 
   verifyUserBarcodesResultAccordion() {
@@ -1105,6 +1121,9 @@ export default {
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS))
         .has({ checked: true }),
       DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION))
+        .has({ checked: false }),
+      DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION))
         .has({ checked: false }),
       DropdownMenu()
@@ -1339,24 +1358,50 @@ export default {
       .should('have.text', expectedText);
   },
 
-  verifyElectronicAccessColumnHeaders() {
-    cy.get('[class^="EmbeddedTable-"]')
-      .find('tr')
-      .eq(0)
-      .then((headerRow) => {
-        const headerCells = headerRow.find('th');
-        const expectedHeaders = [
-          'Relationship',
-          'URI',
-          'Link text',
-          'Materials specified',
-          'Public note',
-        ];
+  verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
 
-        expectedHeaders.forEach((header, index) => {
-          expect(headerCells.eq(index).text()).to.equal(header);
-        });
-      });
+            electronicAccessTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
+  verifyElectronicAccessTableInForm(
+    formType,
+    instanceIdentifier,
+    relationship,
+    uri,
+    linkText,
+    materialsSpecified,
+    publicNote,
+    miniRowIndex = 1,
+  ) {
+    this.verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [relationship, uri, linkText, materialsSpecified, publicNote];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
   },
 
   verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {

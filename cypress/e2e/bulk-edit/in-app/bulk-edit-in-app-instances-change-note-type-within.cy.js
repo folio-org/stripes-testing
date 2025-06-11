@@ -50,7 +50,7 @@ const marcInstanceFields = [
 ];
 const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe(
     'in-app approach',
     {

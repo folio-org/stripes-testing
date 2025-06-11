@@ -19,7 +19,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Edit item level request', () => {
+describe('Retrieval service point', () => {
   let userData = {};
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
@@ -37,7 +37,7 @@ describe('Edit item level request', () => {
     fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
   };
 
-  before('Create New Item and New User', () => {
+  before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
         ServicePoints.createViaApi(servicePoint);
@@ -113,7 +113,7 @@ describe('Edit item level request', () => {
       });
   });
 
-  after('Delete New Service point, Item and User', () => {
+  after('Delete test data', () => {
     cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,

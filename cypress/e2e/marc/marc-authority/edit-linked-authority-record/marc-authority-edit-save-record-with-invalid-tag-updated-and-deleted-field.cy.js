@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -75,6 +76,9 @@ describe('MARC', () => {
               InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.byShared('No');
+            });
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIconByIndex(testData.tag600RowIndex);
@@ -128,6 +132,10 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C375171'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
 
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag040NewValue);

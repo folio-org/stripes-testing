@@ -17,9 +17,9 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      centralRoleName: `C422010 Autotest Role Central ${randomPostfix}`,
-      collegeRoleName: `C422010 Autotest Role College ${randomPostfix}`,
-      universityRoleName: `C422010 Autotest Role University ${randomPostfix}`,
+      centralRoleName: `AT_C422010_AuthPolicy_Central_${randomPostfix}`,
+      collegeRoleName: `AT_C422010_AuthPolicy_College_${randomPostfix}`,
+      universityRoleName: `AT_C422010_AuthPolicy_University_${randomPostfix}`,
     };
     const capabSetsToAssignCentral = [
       {

@@ -9,8 +9,6 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('Finance: Funds', () => {
@@ -31,7 +29,6 @@ describe('Finance: Funds', () => {
     allocated: 100,
   };
   let user;
-  let servicePointId;
   let location;
 
   before(() => {
@@ -52,14 +49,9 @@ describe('Finance: Funds', () => {
       });
     });
 
-    cy.getAdminToken();
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
+    cy.getLocations({ limit: 1 }).then((res) => {
+      location = res;
     });
-
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
     });

@@ -1,22 +1,25 @@
-import permissions from '../../../../support/dictionary/permissions';
-import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import permissions from '../../../../../support/dictionary/permissions';
+import BulkEditActions from '../../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../../../support/fragments/bulk-edit/bulk-edit-files';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import FileManager from '../../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../../../support/constants';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcFileContent';
 
 let user;
 const marcInstance = {
@@ -270,50 +273,57 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const assertionsOnMarcFileContent = [
-            (record) => expect(record.leader).to.exist,
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => expect(record.get('005')).to.not.be.empty,
-            (record) => expect(record.get('008')).to.not.be.empty,
+            {
+              uuid: marcInstance.uuid,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => expect(record.get('001')).to.not.be.empty,
+                (record) => expect(record.get('005')).to.not.be.empty,
+                (record) => expect(record.get('008')).to.not.be.empty,
 
-            (record) => expect(record.get('901')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('901')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('901')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('901')[0].subf[0][1]).to.eq(notes.addedLocal),
-            (record) => expect(record.get('901')[0].subf[1][0]).to.eq('3'),
-            (record) => expect(record.get('901')[0].subf[1][1]).to.eq('v.5'),
+                (record) => expect(record.get('901')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('901')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('901')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('901')[0].subf[0][1]).to.eq(notes.addedLocal),
+                (record) => expect(record.get('901')[0].subf[1][0]).to.eq('3'),
+                (record) => expect(record.get('901')[0].subf[1][1]).to.eq('v.5'),
 
-            (record) => expect(record.get('902')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('902')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('902')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('902')[0].subf[0][1]).to.eq(notes.local),
-            (record) => expect(record.get('902')[0].subf[1][0]).to.eq('c'),
-            (record) => expect(record.get('902')[0].subf[1][1]).to.eq(notes.appendedLocal),
+                (record) => expect(record.get('902')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('902')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('902')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('902')[0].subf[0][1]).to.eq(notes.local),
+                (record) => expect(record.get('902')[0].subf[1][0]).to.eq('c'),
+                (record) => expect(record.get('902')[0].subf[1][1]).to.eq(notes.appendedLocal),
 
-            (record) => expect(record.get('570')[0].ind1).to.eq(' '),
-            (record) => expect(record.get('570')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('570')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('570')[0].subf[0][1]).to.eq(notes.field570),
+                (record) => expect(record.get('570')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('570')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('570')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('570')[0].subf[0][1]).to.eq(notes.field570),
 
-            (record) => expect(record.get('536')).to.be.empty,
+                (record) => expect(record.get('536')).to.be.empty,
 
-            (record) => expect(record.get('545')[0].ind1).to.eq('0'),
-            (record) => expect(record.get('545')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('545')[0].subf[0][0]).to.eq('a'),
-            (record) => {
-              expect(record.get('545')[0].subf[0][1]).to.eq(notes.biographicalOrHistoricalReplaced);
+                (record) => expect(record.get('545')[0].ind1).to.eq('0'),
+                (record) => expect(record.get('545')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('545')[0].subf[0][0]).to.eq('a'),
+                (record) => {
+                  expect(record.get('545')[0].subf[0][1]).to.eq(
+                    notes.biographicalOrHistoricalReplaced,
+                  );
+                },
+                (record) => expect(record.get('545')[0].subf[1][0]).to.eq('u'),
+                (record) => expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/'),
+                (record) => expect(record.get('545')[0].subf[2][0]).to.eq('u'),
+                (record) => expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/'),
+
+                (record) => expect(record.get('584')).to.be.empty,
+
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              ],
             },
-            (record) => expect(record.get('545')[0].subf[1][0]).to.eq('u'),
-            (record) => expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/'),
-            (record) => expect(record.get('545')[0].subf[2][0]).to.eq('u'),
-            (record) => expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/'),
-
-            (record) => expect(record.get('584')).to.be.empty,
-
-            (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-            (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
           ];
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyValueInRowByUUID(
@@ -342,12 +352,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(
-            changedRecordsFileNameMrc,
-            0,
-            assertionsOnMarcFileContent,
-            1,
-          );
+          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyValueInRowByUUID(
@@ -388,12 +393,12 @@ describe('Bulk-edit', () => {
             `$a ${notes.local} $c ${notes.appendedLocal}`,
           );
           InventoryViewSource.verifyFieldInMARCBibSource('570', `$a ${notes.field570}`);
-          InventoryViewSource.notContains('536');
+          InventoryViewSource.notContains('536\t');
           InventoryViewSource.verifyFieldInMARCBibSource(
             '545',
             `$a ${notes.biographicalOrHistoricalReplaced} $u http://www.braudubon.org/ $u http://www.braudubon.com/`,
           );
-          InventoryViewSource.notContains('584');
+          InventoryViewSource.notContains('584\t');
         },
       );
     });

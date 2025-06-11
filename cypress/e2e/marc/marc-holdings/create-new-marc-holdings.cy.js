@@ -188,6 +188,8 @@ describe('MARC', () => {
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
+        QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
+        QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
         QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
         QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
         QuickMarcEditor.verifySaveAndCloseButtonEnabled();
@@ -218,8 +220,6 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
-        QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
-        QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
         QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
         QuickMarcEditor.checkReadOnlyHoldingsTags();
         QuickMarcEditor.verifyHoldingsDefault008BoxesValues(testData.default008BoxesValues);

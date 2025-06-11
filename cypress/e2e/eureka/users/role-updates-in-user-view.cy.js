@@ -12,9 +12,9 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      roleAName: `Auto Role A C464315 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C464315 ${getRandomPostfix()}`,
-      roleCName: `Auto Role C C464315 ${getRandomPostfix()}`,
+      roleAName: `AT_C464315_UserRole_A_${getRandomPostfix()}`,
+      roleBName: `AT_C464315_UserRole_B_${getRandomPostfix()}`,
+      roleCName: `AT_C464315_UserRole_C_${getRandomPostfix()}`,
     };
 
     const capabSetsToAssign = [

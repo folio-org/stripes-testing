@@ -256,6 +256,10 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        });
       });
     });
 

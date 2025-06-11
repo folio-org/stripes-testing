@@ -43,10 +43,8 @@ describe('Invoices', () => {
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
-      Invoices.addFundDistributionToLine(invoiceLine, fund);
-      cy.getAdminToken();
       Approvals.setApprovePayValue(false);
-      cy.wait(4000);
+      Invoices.addFundDistributionToLine(invoiceLine, fund);
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');
@@ -68,8 +66,8 @@ describe('Invoices', () => {
       // pay invoice
       TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
       Approvals.setApprovePayValue(false);
+      Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();
       // check transactions after payment
       TopMenuNavigation.openAppFromDropdown('Finance');

@@ -530,7 +530,7 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  saveAndCloseWithValidationWarnings() {
+  saveAndCloseWithValidationWarnings({ acceptLinkedBibModal = false } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
@@ -542,9 +542,24 @@ export default {
       'saveRecordRequest',
     );
     cy.do(saveAndCloseButton.click());
+
+    if (acceptLinkedBibModal) {
+      cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+      cy.do(saveButton.click());
+    }
+
     cy.wait('@saveRecordRequest', { timeout: 5_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
+  },
+
+  saveAndKeepEditingWithValidationWarnings() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
+    cy.do(saveAndKeepEditingBtn.click());
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    this.closeAllCallouts();
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: false }));
+    cy.do(saveAndKeepEditingBtn.click());
   },
 
   pressSaveAndKeepEditing(calloutMsg) {
@@ -1344,8 +1359,13 @@ export default {
     this.selectFieldsDropdownOption('008', 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
   },
 
-  update008TextFields(dropdownLabel, value) {
-    cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
+  update008TextFields(dropdownLabel, value, typeSlowly = false) {
+    if (typeSlowly) {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).exists());
+      cy.get(`input[aria-label="${dropdownLabel}"][data-testid="fixed-field-String"]`)
+        .clear()
+        .type(value, { delay: 50 });
+    } else cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
   },
 
   verify008TextFields(dropdownLabel, value) {
@@ -1947,9 +1967,7 @@ export default {
   },
 
   checkRecordStatusNew() {
-    cy.expect(
-      Pane(matching(/Create a new .*MARC authority record/)).has({ subtitle: 'Status:New' }),
-    );
+    cy.expect(Pane(matching(/New .*MARC authority record/)).has({ subtitle: 'Status:New' }));
   },
 
   verifyPaneheaderWithContentAbsent(text) {

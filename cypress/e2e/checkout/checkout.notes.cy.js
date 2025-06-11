@@ -12,6 +12,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../support/constants';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Check out', () => {
   let testData;
@@ -48,7 +49,14 @@ describe('Check out', () => {
         createdUserProperties.userId,
         instanceData.servicePoint.id,
       );
-      cy.login(testData.username, testData.password);
+      cy.login(testData.username, testData.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
+      cy.waitForAuthRefresh(() => {
+        cy.reload();
+        UsersSearchPane.waitLoading();
+      });
     });
   });
 

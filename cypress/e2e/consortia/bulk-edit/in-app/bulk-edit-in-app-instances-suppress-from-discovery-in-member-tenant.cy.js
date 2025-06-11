@@ -170,8 +170,8 @@ describe('Bulk-edit', () => {
         { tags: ['smokeECS', 'firebird', 'C566119'] },
         () => {
           const suppressFromDiscoveryParams = [
-            { initialValue: 'false', action: 'Set true', newValue: 'true' },
-            { initialValue: 'true', action: 'Set false', newValue: 'false' },
+            { initialValue: 'false', action: 'Set true', newValue: 'true', newValueInFile: true },
+            { initialValue: 'true', action: 'Set false', newValue: 'false', newValueInFile: false },
           ];
 
           suppressFromDiscoveryParams.forEach((suppressFromDiscoveryParam) => {
@@ -251,7 +251,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
                 instanceHrid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                suppressFromDiscoveryParam.newValue,
+                suppressFromDiscoveryParam.newValueInFile,
               );
             });
 
@@ -278,7 +278,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
                 instanceHrid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                suppressFromDiscoveryParam.newValue,
+                suppressFromDiscoveryParam.newValueInFile,
               );
             });
             instances.forEach((instance) => {

@@ -371,6 +371,10 @@ export default {
     cy.wait(4000);
   },
 
+  checkSelectedDayInIntegration(day, isChecked) {
+    cy.expect(Checkbox(day).has({ disabled: true, checked: isChecked }));
+  },
+
   checkIsaDonor: (organization) => {
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: false }));

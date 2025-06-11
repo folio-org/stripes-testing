@@ -754,7 +754,7 @@ const QueryBuilder = {
             cy.expect(MultiColumnListCell(including(value)).exists());
             break;
           default:
-            cy.log('not implemented yet');
+            // cy.log('not implemented yet');
             break;
         }
       });

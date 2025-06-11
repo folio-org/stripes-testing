@@ -165,7 +165,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.staff_suppress != "True") AND (instance.title starts with "C566118_${postfix}")`,
+              `(instance.staff_suppress != true) AND (instance.title starts with C566118_${postfix})`,
             );
 
             instances.forEach((instance) => {
@@ -203,7 +203,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                 instance.uuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'false',
+                false,
               );
             });
 
@@ -239,7 +239,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                 instance.uuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'true',
+                true,
               );
             });
 
@@ -263,7 +263,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                 instance.uuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'true',
+                true,
               );
             });
 
@@ -338,7 +338,7 @@ describe('Bulk-edit', () => {
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                     instance.uuid,
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                    'false',
+                    false,
                   );
                 });
 
@@ -362,7 +362,7 @@ describe('Bulk-edit', () => {
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
                     instance.uuid,
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                    'false',
+                    false,
                   );
                 });
 

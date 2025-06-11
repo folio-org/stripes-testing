@@ -10,7 +10,7 @@ describe('fse-sso - UI', () => {
 
   it(
     `TC195393 - verify that SSO button is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'sso', 'sanity'] },
+    { tags: ['fse', 'ui', 'sso'] },
     () => {
       // for okapi check API request to get configuration
       if (!isEureka) {
@@ -26,8 +26,6 @@ describe('fse-sso - UI', () => {
           }
         });
       } else {
-        // for eureka just check button placement, assuming that it should be present by default
-        // TBD: update with getting configuration from the keycloak
         cy.checkSsoButton(isEureka);
       }
     },

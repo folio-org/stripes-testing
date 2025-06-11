@@ -924,6 +924,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     INDEX_TITLE: 'Index title',
     SERIES_STATEMENT: 'Series statements',
     CONTRIBUTORS: 'Contributors',
+    PUBLICATION: 'Publication',
     EDITION: 'Edition',
     PHYSICAL_DESCRIPTION: 'Physical description',
     RESOURCE_TYPE: 'Resource type',
@@ -1153,4 +1154,10 @@ export const ADVANCED_SEARCH_MODIFIERS = {
   STARTS_WITH: 'Starts with',
   EXACT_PHRASE: 'Exact phrase',
   CONTAINS_ANY: 'Contains any',
+};
+
+export const BULK_EDIT_FORMS = {
+  PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
+  ARE_YOU_SURE: 'Are you sure',
+  PREVIEW_OF_RECORDS_CHANGED: 'Preview of records changed',
 };

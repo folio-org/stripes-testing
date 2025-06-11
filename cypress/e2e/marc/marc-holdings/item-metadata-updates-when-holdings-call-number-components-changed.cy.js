@@ -1,12 +1,7 @@
 import uuid from 'uuid';
-import {
-  DEFAULT_JOB_PROFILE_NAMES,
-  JOB_STATUS_NAMES,
-  LOCATION_NAMES,
-} from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -65,8 +60,9 @@ describe('MARC', () => {
           marcFiles[0].fileName,
           marcFiles[0].jobProfileToRun,
         ).then((response) => {
-          response.forEach((record) => {
-            testData.instanceHrid = record.instance.hrid;
+          testData.createdRecordIDs.push(response[0].instance.id);
+          cy.getInstanceById(testData.createdRecordIDs[0]).then((instance) => {
+            testData.instanceHrid = instance.hrid;
 
             // edit marc file adding instance hrid
             DataImport.editMarcFile(
@@ -76,49 +72,42 @@ describe('MARC', () => {
               [testData.instanceHrid],
             );
           });
-        });
-      });
-      DataImport.uploadFileViaApi(
-        marcFiles[1].editedFileName,
-        marcFiles[1].fileName,
-        marcFiles[1].jobProfileToRun,
-      );
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-
-      Logs.waitFileIsImported(marcFiles[1].fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFiles[1].fileName);
-      Logs.getCreatedItemsID().then((link) => {
-        testData.createdRecordIDs.push(link.split('/')[5]);
-
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${testData.createdRecordIDs[0]}"`,
-        }).then((holdings) => {
-          testData.holdingsId = holdings[0].id;
-        });
-      });
-      cy.logout();
-      cy.getAdminToken().then(() => {
-        cy.createTempUser([
-          Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-          Permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
-          ItemRecordNew.createViaApi({
-            holdingsId: testData.holdingsId,
-            itemBarcode: testData.itemBarcode,
-            materialTypeId: testData.materialTypeId,
-            permanentLoanTypeId: testData.loanTypeId,
-          }).then((res) => {
-            testData.createdItemData = res;
+          DataImport.uploadFileViaApi(
+            marcFiles[1].editedFileName,
+            marcFiles[1].fileName,
+            marcFiles[1].jobProfileToRun,
+          ).then(() => {
+            cy.getHoldings({
+              limit: 1,
+              query: `"instanceId"="${testData.createdRecordIDs[0]}"`,
+            }).then((holdings) => {
+              testData.holdingsId = holdings[0].id;
+            });
           });
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+
+          cy.getAdminToken().then(() => {
+            cy.createTempUser([
+              Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+              Permissions.inventoryAll.gui,
+            ]).then((userProperties) => {
+              testData.user = userProperties;
+              ItemRecordNew.createViaApi({
+                holdingsId: testData.holdingsId,
+                itemBarcode: testData.itemBarcode,
+                materialTypeId: testData.materialTypeId,
+                permanentLoanTypeId: testData.loanTypeId,
+              }).then((res) => {
+                testData.createdItemData = res;
+
+                cy.login(testData.user.username, testData.user.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+                InventoryInstances.selectInstance();
+              });
+            });
           });
-          InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
         });
       });
     });

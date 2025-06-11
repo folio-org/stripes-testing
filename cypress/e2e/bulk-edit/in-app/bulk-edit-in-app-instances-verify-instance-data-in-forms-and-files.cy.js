@@ -32,8 +32,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceH
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceHRIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

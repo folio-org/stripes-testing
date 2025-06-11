@@ -7,7 +7,7 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Original role C554635 ${getRandomPostfix()}`,
+        roleName: `AT_C554635_UserRole_${getRandomPostfix()}`,
         calloutText: 'error while duplicating',
       };
 

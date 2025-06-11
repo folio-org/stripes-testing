@@ -208,9 +208,6 @@ describe('MARC', () => {
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
 
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
-              });
               linkingTagAndValues.forEach((linking) => {
                 QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
                 MarcAuthorities.switchToSearch();
@@ -227,6 +224,9 @@ describe('MARC', () => {
         });
 
         beforeEach('Login to the application', () => {
+          linkableFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
+          });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -281,16 +281,16 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(79);
             QuickMarcEditor.deleteField(78);
             QuickMarcEditor.afterDeleteNotification('700');
-
             QuickMarcEditor.clickLinkHeadingsButton();
-            cy.wait(1000);
-            QuickMarcEditor.checkCallout(
-              'Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).',
-            );
-            cy.wait(1000);
-            QuickMarcEditor.checkCallout(
-              'Field 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
-            );
+            const successCalloutText =
+              'Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).';
+            QuickMarcEditor.checkCallout(successCalloutText);
+            QuickMarcEditor.closeCallout(successCalloutText);
+            const manualLinkingCalloutText =
+              'Field 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.';
+            QuickMarcEditor.checkCallout(manualLinkingCalloutText);
+            QuickMarcEditor.closeCallout(manualLinkingCalloutText);
+
             QuickMarcEditor.checkLinkHeadingsButton();
             QuickMarcEditor.afterDeleteNotification('700');
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -318,9 +318,8 @@ describe('MARC', () => {
                 `records[${matchs.rowIndex}].content`,
               );
             });
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               78,
@@ -337,17 +336,20 @@ describe('MARC', () => {
               '700',
               '1',
               '\\',
-              '$a C388536 Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262',
+              '$a C388536 Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262C388536',
             );
 
             QuickMarcEditor.clickLinkHeadingsButton();
-            cy.wait(1000);
-            QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
-            cy.wait(1000);
-            QuickMarcEditor.checkCallout(
-              'Field 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
-            );
-            QuickMarcEditor.verifyTagWithNaturalIdExistance(79, '700', 'n2014052262');
+
+            const successCalloutText2 = 'Field 700 has been linked to MARC authority record(s).';
+            QuickMarcEditor.checkCallout(successCalloutText2);
+            QuickMarcEditor.closeCallout(successCalloutText2);
+            const manualLinkingCalloutText2 =
+              'Field 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.';
+            QuickMarcEditor.checkCallout(manualLinkingCalloutText2);
+            QuickMarcEditor.closeCallout(manualLinkingCalloutText2);
+
+            QuickMarcEditor.verifyTagWithNaturalIdExistance(79, '700', 'n2014052262C388536');
             notMatchingNaturalIds.forEach((matchs) => {
               QuickMarcEditor.verifyTagWithNaturalIdExistance(
                 matchs.rowIndex,
@@ -357,9 +359,7 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.checkLinkHeadingsButton();
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               78,
               '700',

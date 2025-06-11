@@ -268,7 +268,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      selectLocationsModal.find(MultiColumnListCell(institutionId)).click(),
+      selectLocationsModal
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded

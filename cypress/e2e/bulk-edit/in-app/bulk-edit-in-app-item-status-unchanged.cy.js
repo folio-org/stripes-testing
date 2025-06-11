@@ -22,8 +22,8 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,

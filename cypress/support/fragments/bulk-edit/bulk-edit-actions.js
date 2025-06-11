@@ -883,7 +883,7 @@ export default {
   },
 
   urlRelationshipReplaceWith(oldValue, newValue, rowIndex = 0) {
-    this.selectOption('URL Relationship');
+    this.selectOption('URL relationship');
     this.selectSecondAction('Find (full field search)');
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
@@ -1280,7 +1280,7 @@ export default {
       SelectionOption('Materials specified').exists(),
       SelectionOption('URI').exists(),
       SelectionOption('URL public note').exists(),
-      SelectionOption('URL Relationship').exists(),
+      SelectionOption('URL relationship').exists(),
       SelectionOption('Permanent holdings location').exists(),
       SelectionOption('Temporary holdings location').exists(),
       SelectionOption('Action note').exists(),
@@ -1400,6 +1400,17 @@ export default {
     cy.expect(
       areYouSureForm.find(MessageBanner()).has({
         textContent: `${numberOfRecords} records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.`,
+      }),
+    );
+  },
+
+  verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(
+    numberOfSupportedInstances,
+    numberOfUnsupportedInstances,
+  ) {
+    cy.expect(
+      areYouSureForm.find(MessageBanner()).has({
+        textContent: `${numberOfSupportedInstances} records will be changed when the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving. ${numberOfUnsupportedInstances} instances have source that is not supported by MARC records bulk edit and cannot be updated.`,
       }),
     );
   },

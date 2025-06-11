@@ -11,7 +11,7 @@ import BulkEditLogs from '../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,

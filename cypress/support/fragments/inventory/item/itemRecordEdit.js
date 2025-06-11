@@ -1,27 +1,27 @@
 import {
   Accordion,
-  TextField,
   Button,
-  TextArea,
-  Select,
+  Checkbox,
   HTML,
   including,
   matching,
+  Modal,
   Pane,
+  Select,
   SelectionList,
   SelectionOption,
-  Checkbox,
-  Modal,
+  TextArea,
+  TextField,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
-import InstanceStates from '../instanceStates';
 import getRandomPostfix from '../../../utils/stringTools';
+import InstanceStates from '../instanceStates';
 
 const itemEditForm = HTML({ className: including('paneset-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
 
-const cancelBtn = itemEditForm.find(Button({ id: 'cancel-item-edit' }));
-const saveAndCloseBtn = itemEditForm.find(Button({ id: 'clickable-save-item' }));
+const cancelBtn = Button({ id: 'cancel-item-edit' });
+const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
 
 const adminDataFields = {
   barcode: administrativeDataSection.find(TextField('Barcode')),
