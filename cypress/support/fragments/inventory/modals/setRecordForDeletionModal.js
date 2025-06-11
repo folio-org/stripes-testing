@@ -28,6 +28,10 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickConfirm() {
+    cy.do(confirmButton.click());
+  },
+
   isNotDisplayed() {
     cy.expect(setRecordForDeletionModal.absent());
   },
