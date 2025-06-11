@@ -240,7 +240,7 @@ export default {
     cy.wait(2000);
     cy.do([
       effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
-      MultiSelectOption(including(values ?? 'Main Library')).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).clickSegment(),
     ]);
     cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
