@@ -240,7 +240,7 @@ export default {
     cy.wait(2000);
     cy.do([
       effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
-      MultiSelectOption(including(values ?? 'Main Library')).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).clickSegment(),
     ]);
     cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
@@ -474,6 +474,11 @@ export default {
       expectedUUIDs.push(elem.id);
     });
     return expectedUUIDs;
+  },
+
+  getInstanceUUIDFromRequest(req) {
+    const expectedUUID = req.response.body.id;
+    return expectedUUID;
   },
 
   verifySelectedRecords(selected) {

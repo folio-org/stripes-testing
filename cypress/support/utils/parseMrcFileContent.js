@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { Marc } from 'marcjs';
 import { Readable } from 'stream';
 
