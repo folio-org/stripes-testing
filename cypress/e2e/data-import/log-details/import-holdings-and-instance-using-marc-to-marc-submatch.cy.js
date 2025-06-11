@@ -176,6 +176,7 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name,
         );
         NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
       });
     });
 
