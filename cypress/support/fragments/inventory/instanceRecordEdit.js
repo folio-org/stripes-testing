@@ -34,6 +34,7 @@ const deleteButton = Button({ icon: 'trash' });
 const supressFromDiscoveryCheckbox = Checkbox({ name: 'discoverySuppress' });
 const staffSuppressCheckbox = Checkbox({ name: 'staffSuppress' });
 const previoslyHeldCheckbox = Checkbox({ name: 'previouslyHeld' });
+const setForDeletionChecbox = Checkbox({ name: 'deleted' });
 const instanceStatusTerm = Select('Instance status term');
 const addStatisticalCodeButton = Button('Add statistical code');
 const addNatureOfContentButton = Button('Add nature of content');
@@ -486,5 +487,10 @@ export default {
   removeClassificationNumber(classificationValue) {
     cy.do(RepeatableFieldItem({ inputValue: classificationValue }).find(deleteButton).click());
     cy.expect(RepeatableFieldItem({ inputValue: classificationValue }).absent());
+  },
+
+  clickSetForDeletionCheckbox(isChecked) {
+    cy.do(setForDeletionChecbox.click());
+    cy.expect(setForDeletionChecbox.has({ checked: isChecked }));
   },
 };

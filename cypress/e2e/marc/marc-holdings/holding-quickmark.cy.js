@@ -71,9 +71,6 @@ describe('MARC', () => {
       });
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
       InventorySearchAndFilter.selectViewHoldings();
-      // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-      HoldingsRecordView.close();
-      InventoryInstance.openHoldingView();
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.waitLoading();
     });
@@ -107,9 +104,6 @@ describe('MARC', () => {
         );
         QuickMarcEditor.pressSaveAndClose();
         HoldingsRecordView.waitLoading();
-        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(expectedInSourceRow);
       },
@@ -123,9 +117,6 @@ describe('MARC', () => {
 
         const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
         HoldingsRecordView.waitLoading();
-        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(changed008TagValue);
         InventoryViewSource.close();

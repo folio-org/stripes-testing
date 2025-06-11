@@ -59,8 +59,8 @@ describe('Data Export', () => {
         ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-        cy.wait('@getInfo', getLongDelay()).then((interception) => {
-          const job = interception.response.body.jobExecutions[0];
+        cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+          const job = response.body.jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
           const resultFileName = job.exportedFiles[0].fileName;
           const recordsCount = job.progress.total;
           const jobId = job.hrId;
