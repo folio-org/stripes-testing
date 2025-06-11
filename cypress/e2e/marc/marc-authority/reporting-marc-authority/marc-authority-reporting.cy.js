@@ -123,10 +123,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(value.marcValue);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            InventoryInstance.waitLoading();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
           });
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
