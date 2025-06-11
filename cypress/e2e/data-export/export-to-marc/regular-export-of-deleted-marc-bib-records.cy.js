@@ -96,9 +96,7 @@ describe('Data Export', () => {
           AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
           AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.D,
         );
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         InstanceRecordView.verifyInstanceIsSetForDeletion();
         InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchInstanceByTitle(marcInstances[2].title);
@@ -145,7 +143,6 @@ describe('Data Export', () => {
             (record) => expect(record.get('999')[0].subf[1][0]).to.eq('s'),
             (record) => expect(record.get('999')[0].subf[1][1]).to.be.a('string'),
           ];
-
           const recordsToVerify = marcInstances.map((instance) => ({
             uuid: instance.uuid,
             assertions: commonAssertions(instance),
