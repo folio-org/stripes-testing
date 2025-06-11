@@ -106,7 +106,7 @@ export default {
   getUsers: (searchParams) => {
     return cy
       .okapiRequest({
-        path: '/users',
+        path: 'users',
         searchParams,
         isDefaultSearchParamsRequired: false,
       })

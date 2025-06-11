@@ -32,7 +32,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
+    OKAPI_HOST: 'https://folio-snapshot-okapi.dev.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
@@ -48,9 +48,11 @@ module.exports = defineConfig({
     grepOmitFiltered: true,
     rtrAuth: true,
     ecsEnabled: false,
-    eureka: true,
+    eureka: false,
     runAsAdmin: false,
     systemRoleName: 'adminRole',
+    // turn on for testing selected scenarios after migration to Eureka - see cypress/support/migrationData.js
+    migrationTest: true,
   },
   reporterOptions: reportportalOptions,
   e2e: {
@@ -151,7 +153,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: 'https://folio-snapshot.dev.folio.org',
     testIsolation: false,
   },
 });

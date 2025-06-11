@@ -5,6 +5,7 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import Users from '../../../../support/fragments/users/users';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import DateTools from '../../../../support/utils/dateTools';
+import MigrationData from '../../../../support/migrationData';
 
 describe('Permissions -> Circulation', () => {
   const userData = {};
@@ -33,18 +34,31 @@ describe('Permissions -> Circulation', () => {
 
   before('Prepare test data', () => {
     cy.getAdminToken().then(() => {
-      cy.createTempUser([Permissions.uiCirculationViewCreateEditDeleteFixedDueDateSchedules.gui])
-        .then((userProperties) => {
-          userData.username = userProperties.username;
-          userData.password = userProperties.password;
-          userData.userId = userProperties.userId;
-        })
-        .then(() => {
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationFixedDueDateSchedulesPath,
-            waiter: FixedDueDateSchedules.waitLoading,
+      cy.log(`migrationTest: ${Cypress.env('migrationTest')}`);
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C1213')}"`,
+          }).then((users) => {
+            userData.username = users[0].username;
+            userData.password = MigrationData.password;
           });
+        } else {
+          cy.createTempUser([
+            Permissions.uiCirculationViewCreateEditDeleteFixedDueDateSchedules.gui,
+          ]).then((userProperties) => {
+            userData.username = userProperties.username;
+            userData.password = userProperties.password;
+            userData.userId = userProperties.userId;
+          });
+        }
+      }).then(() => {
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationFixedDueDateSchedulesPath,
+          waiter: FixedDueDateSchedules.waitLoading,
         });
+      });
     });
   });
 
