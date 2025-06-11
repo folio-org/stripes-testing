@@ -269,13 +269,13 @@ describe('Data Import', () => {
           InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
           InventorySearchAndFilter.selectResultCheckboxes(1);
-          InventorySearchAndFilter.saveUUIDs();
-          // need to create a new file with instance UUID because tests are runing in multiple threads
-          cy.intercept('/search/instances/ids**').as('getIds');
-          cy.wait('@getIds', getLongDelay()).then((req) => {
-            const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+          cy.intercept('/inventory/instances/*').as('getId');
+          cy.wait('@getId', getLongDelay()).then((req) => {
+            InventorySearchAndFilter.saveUUIDs();
+            // need to create a new file with instance UUID because tests are runing in multiple threads
+            const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
 
-            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID[0]);
+            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
           });
 
           // download exported marc file
