@@ -1,5 +1,5 @@
-import { HTML, including } from '@interactors/html';
-import { Button, Section, TableRow } from '../../../../interactors';
+import { HTML, including, or } from '@interactors/html';
+import { Button, Section, TableRow, PaneHeader, Tooltip, Spinner } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const instanceTitle = 'MARC bibliographic record';
@@ -8,11 +8,13 @@ const rootSection = Section({ id: 'marc-view-pane' });
 const closeButton = rootSection.find(Button({ icon: 'times' }));
 const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
 const versionHistoryButton = Button({ icon: 'clock' });
+const versionHistoryToolTipText = 'Version history';
+const actionsButton = rootSection.find(Button('Actions', { disabled: or(true, false) }));
 
 const close = () => cy.do(closeButton.click());
 const editMarcBibRecord = () => {
   cy.wait(1000);
-  cy.do(rootSection.find(Button('Actions')).click());
+  cy.do(actionsButton.click());
   cy.wait(1500);
   cy.do(Button({ id: 'edit-marc' }).click());
 };
@@ -137,6 +139,22 @@ export default {
     this.waitLoading();
     cy.expect(versionHistoryButton.exists());
     cy.do(versionHistoryButton.click());
+    cy.expect(Spinner().exists());
+    cy.expect(Spinner().absent());
+    this.checkActionsButtonEnabled(false);
+  },
+
+  verifyVersionHistoryButtonShown(isShown = true) {
+    const targetButton = PaneHeader().find(versionHistoryButton);
+    if (isShown) {
+      cy.expect(targetButton.exists());
+      cy.do(targetButton.hoverMouse());
+      cy.expect(Tooltip().has({ text: versionHistoryToolTipText }));
+    } else cy.expect(targetButton.absent());
+  },
+
+  checkActionsButtonEnabled(isEnabled = true) {
+    cy.expect(actionsButton.is({ disabled: !isEnabled }));
   },
 
   verifyVersionHistoryIcon({ isPresent = true }) {
