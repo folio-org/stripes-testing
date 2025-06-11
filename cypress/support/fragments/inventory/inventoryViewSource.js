@@ -4,8 +4,8 @@ import DateTools from '../../utils/dateTools';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
-const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'marc-view-pane' });
+const closeButton = rootSection.find(Button({ icon: 'times' }));
 const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
 const versionHistoryButton = Button({ icon: 'clock' });
 const versionHistoryToolTipText = 'Version history';
@@ -136,6 +136,8 @@ export default {
   },
 
   clickVersionHistoryButton() {
+    this.waitLoading();
+    cy.expect(versionHistoryButton.exists());
     cy.do(versionHistoryButton.click());
     cy.expect(Spinner().exists());
     cy.expect(Spinner().absent());
@@ -153,5 +155,13 @@ export default {
 
   checkActionsButtonEnabled(isEnabled = true) {
     cy.expect(actionsButton.is({ disabled: !isEnabled }));
+  },
+
+  verifyVersionHistoryIcon({ isPresent = true }) {
+    if (isPresent) {
+      cy.expect(versionHistoryButton.exists());
+    } else {
+      cy.expect(versionHistoryButton.absent());
+    }
   },
 };

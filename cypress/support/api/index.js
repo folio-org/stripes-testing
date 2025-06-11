@@ -42,3 +42,4 @@ import './bulk-edit';
 import './locate';
 import './sso';
 import './reporting';
+import './version-history';

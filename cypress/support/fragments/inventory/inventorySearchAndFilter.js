@@ -269,6 +269,7 @@ export default {
     } else {
       cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
     }
+    cy.wait(1000);
   },
 
   byKeywords(kw = '*') {
@@ -1218,6 +1219,8 @@ export default {
   },
 
   clearFilter(accordionName) {
+    cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
+    cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.do(
       Button({
         ariaLabel: or(
@@ -1226,6 +1229,7 @@ export default {
         ),
       }).click(),
     );
+    cy.wait(['@getInstances', '@getFacets']);
   },
 
   checkSharedInstancesInResultList() {

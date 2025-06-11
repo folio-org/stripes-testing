@@ -39,7 +39,20 @@ export default {
   },
 
   verifyVersionsCount(count) {
-    cy.expect(paneHeader.has({ text: including(`${count} version`) }));
+    cy.expect(
+      paneHeader.has({ text: including(`${count} ${count === 1 ? 'version' : 'versions'}`) }),
+    );
+  },
+
+  getVersionHistoryValue() {
+    this.waitLoading();
+    return cy
+      .get('[data-test-pane-header-sub="true"] span')
+      .invoke('text')
+      .then((text) => {
+        const match = text.match(/\d+/);
+        return match ? parseInt(match[0], 10) : null;
+      });
   },
 
   clickCloseButton() {
