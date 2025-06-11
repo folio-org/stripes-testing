@@ -379,9 +379,9 @@ describe('Data Import', () => {
         // download .csv file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchByParameter('Subject', subject);
-        InstanceRecordView.verifyInstancePaneExists();
         cy.intercept('/inventory/instances/*').as('getId');
         cy.wait('@getId', getLongDelay()).then((req) => {
+          InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.saveUUIDs();
           // need to create a new file with instance UUID because tests are runing in multiple threads
           const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
