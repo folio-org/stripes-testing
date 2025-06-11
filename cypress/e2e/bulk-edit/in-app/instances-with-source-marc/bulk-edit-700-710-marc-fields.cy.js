@@ -236,7 +236,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedMarc();
 
-        parseMrcFileContentAndVerify(changedRecordsFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
@@ -283,7 +283,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
-        parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyValueInRowByUUID(
@@ -295,7 +295,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 
-        parseMrcFileContentAndVerify(changedRecordsFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);

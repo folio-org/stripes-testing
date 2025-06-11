@@ -22,10 +22,7 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+
         item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
           (instance) => {
@@ -33,6 +30,11 @@ describe('Bulk-edit', () => {
             FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, instance.hrid);
           },
         );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
