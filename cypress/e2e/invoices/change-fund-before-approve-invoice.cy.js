@@ -131,6 +131,7 @@ describe('Invoices', () => {
       OrderLines.addPOLine();
       OrderLines.fillInPOLineInfoWithFund(firstFund);
       OrderLines.backToEditingOrder();
+      Orders.approveOrderbyActions();
       Orders.openOrder();
       Orders.closeThirdPane();
       Orders.resetFilters();

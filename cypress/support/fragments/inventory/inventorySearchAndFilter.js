@@ -240,7 +240,7 @@ export default {
     cy.wait(2000);
     cy.do([
       effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
-      MultiSelectOption(including(values ?? 'Main Library')).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).clickSegment(),
     ]);
     cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
@@ -269,6 +269,7 @@ export default {
     } else {
       cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
     }
+    cy.wait(1000);
   },
 
   byKeywords(kw = '*') {
@@ -474,6 +475,11 @@ export default {
       expectedUUIDs.push(elem.id);
     });
     return expectedUUIDs;
+  },
+
+  getInstanceUUIDFromRequest(req) {
+    const expectedUUID = req.response.body.id;
+    return expectedUUID;
   },
 
   verifySelectedRecords(selected) {
@@ -1213,6 +1219,8 @@ export default {
   },
 
   clearFilter(accordionName) {
+    cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
+    cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.do(
       Button({
         ariaLabel: or(
@@ -1221,6 +1229,7 @@ export default {
         ),
       }).click(),
     );
+    cy.wait(['@getInstances', '@getFacets']);
   },
 
   checkSharedInstancesInResultList() {

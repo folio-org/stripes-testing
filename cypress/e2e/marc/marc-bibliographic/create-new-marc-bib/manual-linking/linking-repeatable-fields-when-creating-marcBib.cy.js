@@ -166,9 +166,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.moveFieldUp(5);
             QuickMarcEditor.deleteField(6);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
