@@ -135,21 +135,26 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const assertionsOnMarcFileContent = [
-            (record) => expect(record.leader).to.exist,
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => expect(record.get('005')).to.not.be.empty,
-            (record) => expect(record.get('008')).to.not.be.empty,
+            {
+              uuid: marcInstance.uuid,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => expect(record.get('001')).to.not.be.empty,
+                (record) => expect(record.get('005')).to.not.be.empty,
+                (record) => expect(record.get('008')).to.not.be.empty,
 
-            (record) => expect(record.get('583')[0].ind1).to.eq('0'),
-            (record) => expect(record.get('583')[0].ind2).to.eq(' '),
-            (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('583')[0].subf[0][1]).to.eq(actionNote),
+                (record) => expect(record.get('583')[0].ind1).to.eq('0'),
+                (record) => expect(record.get('583')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('583')[0].subf[0][1]).to.eq(actionNote),
 
-            (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-            (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              ],
+            },
           ];
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyValueInRowByUUID(

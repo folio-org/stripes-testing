@@ -669,3 +669,16 @@ Cypress.Commands.add('getSingleImportProfilesViaAPI', () => {
     return body.profiles;
   });
 });
+
+Cypress.Commands.add('getSubjectTypesViaApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'subject-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      Cypress.env('subjectTypes', body.subjectTypes);
+      return body.subjectTypes;
+    });
+});

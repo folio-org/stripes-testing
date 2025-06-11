@@ -102,18 +102,23 @@ describe('Data Export', () => {
             cy.expect(exportedFileName).to.include('deleted-authority-records');
 
             const assertionsOnFileContent = [
-              (record) => expect(record.leader).to.exist,
-              (record) => expect(record.get('001')).to.not.be.empty,
-              (record) => expect(record.get('005')).to.not.be.empty,
-              (record) => expect(record.get('008')).to.not.be.empty,
-              (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
-              (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
-              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
-              (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
-              (record) => expect(record.get('999')[0].subf[1][1]).to.eq(createdAuthorityId),
+              {
+                uuid: createdAuthorityId,
+                assertions: [
+                  (record) => expect(record.leader).to.exist,
+                  (record) => expect(record.get('001')).to.not.be.empty,
+                  (record) => expect(record.get('005')).to.not.be.empty,
+                  (record) => expect(record.get('008')).to.not.be.empty,
+                  (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
+                  (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
+                  (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
+                  (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
+                  (record) => expect(record.get('999')[0].subf[1][1]).to.eq(createdAuthorityId),
+                ],
+              },
             ];
 
-            parseMrcFileContentAndVerify(exportedFileName, 0, assertionsOnFileContent, 1);
+            parseMrcFileContentAndVerify(exportedFileName, assertionsOnFileContent, 1, true);
           });
         });
       },

@@ -51,7 +51,8 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
-  describe('End to end scenarios',
+  describe(
+    'End to end scenarios',
     {
       retries: {
         runMode: 1,
@@ -176,9 +177,11 @@ describe('Data Import', () => {
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         cy.getAdminToken().then(() => {
-          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              Orders.deleteOrderViaApi(orderId[0].id);
+            },
+          );
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
             (initialInstance) => {
               cy.deleteItemViaApi(initialInstance.items[0].id);
@@ -362,5 +365,6 @@ describe('Data Import', () => {
           InventoryViewSource.verifyBarcodeInMARCBibSource(itemBarcode);
         },
       );
-    });
+    },
+  );
 });

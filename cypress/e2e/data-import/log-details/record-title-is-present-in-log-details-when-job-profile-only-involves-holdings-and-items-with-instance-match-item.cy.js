@@ -314,16 +314,16 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHrid);
-        InstanceRecordView.verifyInstancePaneExists();
-        InventorySearchAndFilter.selectResultCheckboxes(1);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        InventorySearchAndFilter.saveUUIDs();
-        // need to create a new file with instance UUID because tests are runing in multiple threads
-        cy.intercept('/search/instances/ids**').as('getIds');
-        cy.wait('@getIds', getLongDelay()).then((req) => {
-          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+        cy.intercept('/inventory/instances/*').as('getId');
+        cy.wait('@getId', getLongDelay()).then((req) => {
+          InstanceRecordView.verifyInstancePaneExists();
+          InventorySearchAndFilter.selectResultCheckboxes(1);
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+          InventorySearchAndFilter.saveUUIDs();
+          // need to create a new file with instance UUID because tests are runing in multiple threads
+          const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
 
-          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID);
         });
 
         // download exported marc file

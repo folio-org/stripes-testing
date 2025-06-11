@@ -102,10 +102,6 @@ describe('Eureka', () => {
 
     after('Delete roles, users', () => {
       cy.getAdminToken();
-      cy.deleteCapabilitiesFromRoleApi(testData.roleAId);
-      cy.deleteCapabilitiesFromRoleApi(testData.roleBId);
-      cy.deleteCapabilitySetsFromRoleApi(testData.roleAId);
-      cy.deleteCapabilitySetsFromRoleApi(testData.roleCId);
       cy.deleteAuthorizationRoleApi(testData.roleAId);
       cy.deleteAuthorizationRoleApi(testData.roleBId);
       cy.deleteAuthorizationRoleApi(testData.roleCId);
@@ -190,20 +186,13 @@ describe('Eureka', () => {
         UserEdit.verifyUserRolesRowsCount(2);
         UserEdit.unassignAllRoles();
         UserEdit.verifyUserRolesAccordionEmpty();
-        UserEdit.saveAndClose();
-        UsersCard.waitLoading();
-
-        // revert the workaround after UIU-3179 is done
-        UsersCard.close();
-        UsersSearchPane.resetAllFilters();
         cy.intercept('GET', '/roles/users*').as('rolesCall');
-        UsersSearchPane.searchByKeywords(testData.userA.username);
-        cy.wait(2000);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
+        UserEdit.saveUserEditForm();
         cy.wait('@rolesCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);
           expect(call.response.body.userRoles).to.have.lengthOf(0);
         });
+        UsersCard.waitLoading();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitLoading();

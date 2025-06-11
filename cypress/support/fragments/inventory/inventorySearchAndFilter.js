@@ -476,6 +476,11 @@ export default {
     return expectedUUIDs;
   },
 
+  getInstanceUUIDFromRequest(req) {
+    const expectedUUID = req.response.body.id;
+    return expectedUUID;
+  },
+
   verifySelectedRecords(selected) {
     if (selected === 1) {
       cy.expect(
@@ -1397,5 +1402,22 @@ export default {
         multiSelect.has({ optionsCount: foundCount }),
       ]);
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
+  },
+
+  verifyCheckboxesWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(Checkbox({ label: matching(/.+\d+$/) }))
+        .exists(),
+    );
+  },
+
+  verifyOptionAvailableMultiselect(accordionName, optionName, isShown = true) {
+    const accordion = paneFilterSection.find(Accordion(accordionName));
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const option = accordion.find(MultiSelectOption(matching(escapedValue)));
+    cy.do(accordion.find(MultiSelect()).open());
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
   },
 };
