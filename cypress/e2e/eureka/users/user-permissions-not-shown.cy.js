@@ -41,7 +41,7 @@ describe('Eureka', () => {
         });
       });
       Users.deleteViaApi(testData.tempUser.userId);
-      cy.deleteUserGroupApi(testData.userGroup.id);
+      cy.deleteUserGroupApi(testData.userGroup.id, true);
     });
 
     it(
