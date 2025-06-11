@@ -40,4 +40,13 @@ export default {
   selectz3950ProfilesNoInteractors() {
     cy.xpath("//a[contains(@href, '/settings/inventory/targetProfiles')]").click();
   },
+
+  validateSettingsTab({ name, isPresent }) {
+    cy.expect(inventoryPane.exists());
+    if (isPresent) {
+      cy.expect(inventoryPane.find(NavListItem(name)).exists());
+    } else {
+      cy.expect(inventoryPane.find(NavListItem(name)).absent());
+    }
+  },
 };

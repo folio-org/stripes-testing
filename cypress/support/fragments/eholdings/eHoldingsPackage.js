@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   Checkbox,
@@ -248,11 +249,55 @@ export default {
   verifyTitleFound(title) {
     cy.expect(titlesSection.find(MultiColumnListCell(title)).exists());
   },
+
   verifyTitlesSearchQuery(query) {
     cy.expect(titlesSearchField.has({ value: query }));
   },
   toggleTitlesAccordion(isOpen = true) {
     cy.do(titlesSection.toggle());
     cy.expect(titlesSection.is({ expanded: isOpen }));
+  },
+
+  /**
+   * Waits until the title with the given name in the specified package
+   * has its visibilityData.isHidden property matching the isHidden parameter.
+   *
+   * @param {Object} params
+   * @param {string} params.packageId - The package ID (e.g., '123355-1000196955')
+   * @param {string} params.titleName - The title name to look for
+   * @param {boolean} params.isHidden - The expected hidden state
+   */
+  waitForTitlesState({ packageId, titleName, isHidden } = {}) {
+    const path = `eholdings/packages/${packageId}/resources`;
+    const searchParams = {
+      searchfield: 'title',
+      count: 100,
+      page: 1,
+    };
+
+    return recurse(
+      () => cy.okapiRequest({
+        path,
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      }),
+      (response) => {
+        if (response.status !== 200) return false;
+        const found = response.body.data.find((item) => {
+          return (
+            item.attributes &&
+            item.attributes.name === titleName &&
+            item.attributes.visibilityData &&
+            item.attributes.visibilityData.isHidden === isHidden
+          );
+        });
+        return Boolean(found);
+      },
+      {
+        delay: 2000,
+        timeout: 30_000,
+      },
+    );
   },
 };

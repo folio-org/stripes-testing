@@ -98,6 +98,43 @@ export default {
       })
       .then(({ body }) => body);
   },
+
+  createEHoldingTitleVIaApi({ packageId, titleName = `AT_Title_${getRandomPostfix()}` }) {
+    const payload = {
+      data: {
+        type: 'titles',
+        attributes: {
+          contributors: [],
+          description: '',
+          edition: '',
+          identifiers: [],
+          isPeerReviewed: false,
+          name: titleName,
+          publicationType: 'Unspecified',
+          publisherName: '',
+        },
+      },
+      included: [
+        {
+          type: 'resource',
+          attributes: {
+            packageId,
+          },
+        },
+      ],
+    };
+
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'eholdings/titles',
+        body: payload,
+        contentTypeHeader: 'application/vnd.api+json',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.data);
+  },
+
   getEHoldingsTitlesByTitleNameViaApi({ titleName, include = 'resources' }) {
     return this.getEHoldingsTitlesViaApi({ 'filter[name]': titleName, include });
   },

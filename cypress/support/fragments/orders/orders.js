@@ -345,6 +345,7 @@ export default {
       cy.do(Checkbox({ name: 'reEncumber' }).click());
     }
     cy.do(saveAndClose.click());
+    cy.wait(4000);
     return cy.wait('@newOrder', getLongDelay()).then(({ response }) => {
       return response.body;
     });

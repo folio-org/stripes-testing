@@ -10,6 +10,7 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MessageBanner,
   Pane,
   Section,
   Tooltip,
@@ -607,7 +608,16 @@ export default {
   },
 
   setRecordForDeletion: () => {
-    cy.do(Button({ id: 'quick-export-trigger' }).click());
+    cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
+  },
+
+  verifyInstanceIsSetForDeletion: () => {
+    cy.expect(
+      MessageBanner().has({
+        textContent:
+          'Warning: Instance is set for deletion, suppressed from discovery, and staff suppressed',
+      }),
+    );
   },
 
   markAsDeletedViaApi: (id) => {
