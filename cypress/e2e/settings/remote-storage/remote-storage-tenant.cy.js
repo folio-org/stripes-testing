@@ -68,17 +68,14 @@ describe('remote-storage-configuration', () => {
 
       // creating location
       CreateLocations.fillFolioName(locationName);
-      cy.wait(1000);
       CreateLocations.fillCode();
-      cy.wait(1000);
       CreateLocations.fillDiscoveryDisplayName();
-      cy.wait(1000);
       CreateLocations.selectRemoteStorage();
-      cy.wait(1000);
       CreateLocations.selectServicePoint();
-      cy.wait(1000);
+      cy.wait(2000);
       CreateLocations.saveAndClose();
-      cy.wait(1000);
+      cy.wait(2000);
+      cy.reload();
 
       Locations.verifyRemoteStorageValue();
       cy.intercept('DELETE', '/locations/*').as('deleteLocation');
