@@ -525,6 +525,13 @@ export default {
     )}${padWithZero(initialCurrentDate.getDate())}`;
   },
 
+  getCurrentDateYYYYMMDD() {
+    const initialCurrentDate = new Date();
+    return `${initialCurrentDate.getFullYear().toString()}${padWithZero(
+      initialCurrentDate.getMonth() + 1,
+    )}${padWithZero(initialCurrentDate.getDate())}`;
+  },
+
   editFromDateRange() {
     return `${(currentStartDate.getMonth() + 1).toString().padStart(2, '0')}
                       ${currentStartDate.getDate().toString().padStart(2, '0')}/
