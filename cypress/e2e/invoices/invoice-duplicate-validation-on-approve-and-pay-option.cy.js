@@ -111,8 +111,8 @@ describe('Invoices', () => {
                         accountingCode: organization.erpCode,
                         releaseEncumbrance: true,
                         subTotal: 1,
-                      }).then((invoiceRescponse) => {
-                        testData.firstInvoice = invoiceRescponse;
+                      }).then((firstInvoiceRescponse) => {
+                        testData.firstInvoice = firstInvoiceRescponse;
                       });
 
                       // create the second order and open invoice
@@ -150,11 +150,11 @@ describe('Invoices', () => {
                         accountingCode: organization.erpCode,
                         releaseEncumbrance: true,
                         subTotal: 1,
-                      }).then((invoiceRescponse) => {
-                        testData.secondInvoice = invoiceRescponse;
+                      }).then((secondInvoiceRescponse) => {
+                        testData.secondInvoice = secondInvoiceRescponse;
 
                         Invoices.updateInvoiceViaApi({
-                          ...invoiceRescponse,
+                          ...secondInvoiceRescponse,
                           vendorInvoiceNo: testData.firstInvoice.vendorInvoiceNo,
                         });
                       });
@@ -179,6 +179,7 @@ describe('Invoices', () => {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
       });
+      console.log(testData.firstInvoice, testData.secondInvoice);
       setApprovePayValue(isApprovePayEnabled);
       Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
     });
