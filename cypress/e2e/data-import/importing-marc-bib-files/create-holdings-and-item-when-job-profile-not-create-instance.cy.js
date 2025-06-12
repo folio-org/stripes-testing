@@ -120,6 +120,13 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -129,13 +136,6 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
         Users.deleteViaApi(user.userId);
       });
     });
