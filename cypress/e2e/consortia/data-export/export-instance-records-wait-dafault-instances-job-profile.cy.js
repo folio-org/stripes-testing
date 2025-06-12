@@ -10,7 +10,6 @@ import FileManager from '../../../support/utils/fileManager';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
@@ -28,55 +27,68 @@ const userPermissions = [
   permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
 ];
 const recordsCount = 6;
-const instances = {
-  localFolioInstance: {
+const instances = [
+  {
     title: `AT_C405556_Local_FolioInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.College,
+    type: 'folio',
   },
-  sharedFolioInstance: {
+  {
     title: `AT_C405556_Shared_FolioInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
+    type: 'folio',
   },
-  sharedFolioInstanceWithHolding: {
+  {
     title: `AT_C405556_Shared_FolioInstance_WithHolding_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
+    type: 'folio',
+    withHolding: true,
   },
-  localMarcInstance: {
+  {
     title: `AT_C405556_Local_MarcInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.College,
+    type: 'marc',
   },
-  sharedMarcInstance: {
+  {
     title: `AT_C405556_Shared_MarcInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
+    type: 'marc',
   },
-  sharedMarcInstanceWithHolding: {
+  {
     title: `AT_C405556_Shared_MarcInstance_WithHolding_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
+    type: 'marc',
+    withHolding: true,
   },
-};
-const arrayOfInstances = Object.values(instances);
+];
 const instanceUUIDsFileName = `AT_C405556_instanceUUIdsFile_${getRandomPostfix()}.csv`;
 
-function createFolioInstance(instance) {
-  return cy.withinTenant(instance.affiliation, () => {
-    InventoryInstances.createFolioInstanceViaApi({
-      instance: { instanceTypeId, title: instance.title },
-    }).then((folioInstance) => {
-      instance.uuid = folioInstance.instanceId;
-      cy.getInstanceById(folioInstance.instanceId).then((instanceData) => {
+function createInstance(instance) {
+  cy.withinTenant(instance.affiliation, () => {
+    const create =
+      instance.type === 'folio'
+        ? cy.createInstance({
+          instance: { instanceTypeId, title: instance.title },
+        })
+        : cy.createSimpleMarcBibViaAPI(instance.title);
+
+    create.then((instanceId) => {
+      cy.getInstanceById(instanceId).then((instanceData) => {
+        instance.uuid = instanceId;
         instance.hrid = instanceData.hrid;
       });
     });
   });
 }
 
-function createMarcInstance(instance) {
-  return cy.withinTenant(instance.affiliation, () => {
-    cy.createSimpleMarcBibViaAPI(instance.title).then((marcInstanceId) => {
-      instance.uuid = marcInstanceId;
-      cy.getInstanceById(marcInstanceId).then((instanceData) => {
-        instance.hrid = instanceData.hrid;
-      });
+function createHolding(instance) {
+  cy.withinTenant(Affiliations.College, () => {
+    InventoryHoldings.createHoldingRecordViaApi({
+      instanceId: instance.uuid,
+      permanentLocationId: locationId,
+      sourceId,
+    }).then((holding) => {
+      instance.holdingId = holding.id;
     });
   });
 }
@@ -89,73 +101,40 @@ describe('Data Export', () => {
 
       cy.createTempUser(userPermissions).then((userProperties) => {
         user = userProperties;
-
         cy.assignAffiliationToUser(Affiliations.College, user.userId);
 
         cy.withinTenant(Affiliations.College, () => {
           cy.assignPermissionsToExistingUser(user.userId, userPermissions);
-
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
         })
           .then(() => {
-            // create local instance with source FOLIO
-            createFolioInstance(instances.localFolioInstance);
-          })
-          .then(() => {
-            // create local instances with source MARC
-            createMarcInstance(instances.localMarcInstance);
-          })
-          .then(() => {
-            // create shared instances with source FOLIO
-            createFolioInstance(instances.sharedFolioInstance);
-          })
-          .then(() => {
-            // create shared instances with source MARC  records
-            createMarcInstance(instances.sharedMarcInstance);
-          })
-          .then(() => {
-            // create shared instances with source FOLIO with associated Holding
-            createFolioInstance(instances.sharedFolioInstanceWithHolding).then(() => {
-              cy.withinTenant(Affiliations.College, () => {
-                cy.getLocations({ limit: 1 }).then((res) => {
-                  locationId = res.id;
-                });
-                InventoryHoldings.getHoldingsFolioSource()
-                  .then((folioSource) => {
-                    sourceId = folioSource.id;
-                  })
-                  .then(() => {
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instances.sharedFolioInstanceWithHolding.uuid,
-                      permanentLocationId: locationId,
-                      sourceId,
-                    }).then((holding) => {
-                      instances.sharedFolioInstanceWithHolding.holdingId = holding.id;
-                    });
-                  });
-              });
+            // create all instances
+            instances.forEach((instance) => {
+              createInstance(instance);
             });
           })
           .then(() => {
-            // shared instances with source MARC with associated Holding
-            createMarcInstance(instances.sharedMarcInstanceWithHolding).then(() => {
-              cy.withinTenant(Affiliations.College, () => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instances.sharedMarcInstanceWithHolding.uuid,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instances.sharedMarcInstanceWithHolding.holdingId = holding.id;
+            cy.withinTenant(Affiliations.College, () => {
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
+                InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                  sourceId = folioSource.id;
                 });
               });
             });
           })
           .then(() => {
-            const uuids = Object.values(instances)
-              .map((instance) => instance.uuid)
-              .join('\n');
+            // create holdings in College
+            instances.forEach((instance) => {
+              if (instance.withHolding) {
+                createHolding(instance);
+              }
+            });
+          })
+          .then(() => {
+            const uuids = instances.map((instance) => instance.uuid).join('\n');
 
             FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, uuids);
           });
@@ -170,18 +149,24 @@ describe('Data Export', () => {
 
     after('delete test data', () => {
       cy.withinTenant(Affiliations.College, () => {
-        arrayOfInstances.forEach((instance) => {
+        instances.forEach((instance) => {
           if (instance.holdingId) {
             cy.deleteHoldingRecordViaApi(instance.holdingId);
           }
         });
-        InventoryInstance.deleteInstanceViaApi(instances.localFolioInstance.uuid);
-        InventoryInstance.deleteInstanceViaApi(instances.localMarcInstance.uuid);
+
+        const localInstances = instances.filter(
+          (instance) => instance.affiliation === Affiliations.College,
+        );
+
+        localInstances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.uuid);
+        });
       });
 
-      const sharedInstances = arrayOfInstances.filter((instance) => {
-        return instance.title.includes('Shared');
-      });
+      const sharedInstances = instances.filter(
+        (instance) => instance.affiliation === Affiliations.Consortia,
+      );
 
       sharedInstances.forEach((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.uuid);
@@ -237,7 +222,7 @@ describe('Data Export', () => {
             (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
             (record) => expect(record.get('999')[0].subf[0][1]).to.eq(instance.uuid),
           ];
-          const recordsToVerify = arrayOfInstances.map((instance) => ({
+          const recordsToVerify = instances.map((instance) => ({
             uuid: instance.uuid,
             assertions: commonAssertions(instance),
           }));
