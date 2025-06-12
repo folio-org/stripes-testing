@@ -70,7 +70,7 @@ describe('Permissions', () => {
 
     it(
       'C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'C375072'] },
       () => {
         cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
         cy.visit(TopMenu.inventoryPath);
@@ -88,7 +88,7 @@ describe('Permissions', () => {
 
     it(
       'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'C375077'] },
       () => {
         cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
         cy.visit(TopMenu.inventoryPath);

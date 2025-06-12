@@ -16,6 +16,7 @@ describe('Inventory', () => {
     const newMaterialTypeName = `C505 autoTestMaterialType.${getRandomPostfix()}`;
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
       cy.then(() => {
         if (Cypress.env('migrationTest')) {
           Users.getUsers({
