@@ -21,12 +21,12 @@ let exportedFileName;
 let instanceTypeId;
 let locationId;
 let sourceId;
+const recordsCount = 6;
 const userPermissions = [
   permissions.dataExportUploadExportDownloadFileViewLogs.gui,
   permissions.inventoryAll.gui,
   permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
 ];
-const recordsCount = 6;
 const instances = [
   {
     title: `AT_C405556_Local_FolioInstance_${getRandomPostfix()}`,
