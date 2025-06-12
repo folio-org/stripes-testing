@@ -17,6 +17,8 @@ describe('Users', () => {
       user: {},
       patronGroup: {
         name: `group name${getRandomPostfix()}`,
+        currentDate: moment(new Date()).format('M/D/YYYY'),
+        userName: 'ADMINISTRATOR, Diku_admin',
       },
       isButtonDisabled: false,
       errorMessage: 'Please fill this in to continue',
