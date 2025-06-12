@@ -142,6 +142,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToItem();
           cy.wait(1000);
           FilterItems.toggleItemStatusAccordion();
+          cy.wait(1000);
           FilterItems.toggleStatus(itemStatus);
           InventorySearchAndFilter.resetAll();
 
