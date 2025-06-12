@@ -8,6 +8,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import MigrationData from '../../support/migrationData';
 
 describe('Permissions', () => {
   describe('Permissions', () => {
@@ -22,11 +23,28 @@ describe('Permissions', () => {
               servicePointId = servicePoints[0].id;
             },
           );
-          cy.createTempUser([
-            permissions.uiUserLostItemRequiringActualCost.gui,
-            permissions.uiUserCanAssignUnassignPermissions.gui,
-          ]).then((userProperties) => {
-            userData = userProperties;
+
+          cy.then(() => {
+            if (Cypress.env('migrationTest')) {
+              Users.getUsers({
+                limit: 500,
+                query: `username="${MigrationData.getUsername('C359587')}"`,
+              }).then((users) => {
+                userData = {
+                  username: users[0].username,
+                  password: MigrationData.password,
+                  userId: users[0].id,
+                };
+              });
+            } else {
+              cy.createTempUser([
+                permissions.uiUserLostItemRequiringActualCost.gui,
+                permissions.uiUserCanAssignUnassignPermissions.gui,
+              ]).then((userProperties) => {
+                userData = userProperties;
+              });
+            }
+          }).then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
             cy.login(userData.username, userData.password, {
               path: TopMenu.usersPath,
@@ -38,7 +56,8 @@ describe('Permissions', () => {
 
       after('Deleting created entities', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(userData.userId);
+        UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
+        if (!Cypress.env('migrationTest')) Users.deleteViaApi(userData.userId);
       });
 
       it(
@@ -48,22 +67,26 @@ describe('Permissions', () => {
           UsersSearchPane.openLostItemsRequiringActualCostPane();
           LostItemsRequiringActualCostPage.waitLoading();
 
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-          UsersSearchPane.waitLoading();
-          UsersSearchPane.searchByUsername(userData.username);
-          UsersSearchPane.waitLoading();
-          UserEdit.addPermissions([permissions.uiUserLostItemRequiringActualCost.gui]);
-          UserEdit.saveAndClose();
-          UsersCard.verifyPermissionsNotExist([permissions.uiUserLostItemRequiringActualCost.gui]);
+          if (!Cypress.env('migrationTest') && !Cypress.env('eureka')) {
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+            UsersSearchPane.waitLoading();
+            UsersSearchPane.searchByUsername(userData.username);
+            UsersSearchPane.waitLoading();
+            UserEdit.addPermissions([permissions.uiUserLostItemRequiringActualCost.gui]);
+            UserEdit.saveAndClose();
+            UsersCard.verifyPermissionsNotExist([
+              permissions.uiUserLostItemRequiringActualCost.gui,
+            ]);
 
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchPane.waitLoading,
-          });
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.usersPath,
+              waiter: UsersSearchPane.waitLoading,
+            });
 
-          UsersSearchPane.verifyLostItemsRequiringActualCostOptionNotDisplayed();
-          cy.visit(TopMenu.lostItemsRequiringActualCost);
-          LostItemsRequiringActualCostPage.verifyUserNotHavePermissionToAccess();
+            UsersSearchPane.verifyLostItemsRequiringActualCostOptionNotDisplayed();
+            cy.visit(TopMenu.lostItemsRequiringActualCost);
+            LostItemsRequiringActualCostPage.verifyUserNotHavePermissionToAccess();
+          }
         },
       );
     });

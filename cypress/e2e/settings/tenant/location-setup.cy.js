@@ -8,6 +8,7 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -17,8 +18,22 @@ describe('Settings: Tenant', () => {
   };
 
   before('Create test data', () => {
-    cy.createTempUser([Permissions.settingsTenantViewLocation.gui]).then((userProperties) => {
-      testData.user = userProperties;
+    cy.getAdminToken();
+    cy.then(() => {
+      if (Cypress.env('migrationTest')) {
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C365628')}"`,
+        }).then((users) => {
+          testData.user.username = users[0].username;
+          testData.user.password = MigrationData.password;
+        });
+      } else {
+        cy.createTempUser([Permissions.settingsTenantViewLocation.gui]).then((userProperties) => {
+          testData.user = userProperties;
+        });
+      }
+    }).then(() => {
       cy.getAdminToken().then(() => {
         testData.institution = Institutions.getDefaultInstitution({
           id: uuid(),

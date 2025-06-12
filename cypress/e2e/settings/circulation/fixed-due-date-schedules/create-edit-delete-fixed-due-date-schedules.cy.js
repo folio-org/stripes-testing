@@ -34,7 +34,6 @@ describe('Permissions -> Circulation', () => {
 
   before('Prepare test data', () => {
     cy.getAdminToken().then(() => {
-      cy.log(`migrationTest: ${Cypress.env('migrationTest')}`);
       cy.then(() => {
         if (Cypress.env('migrationTest')) {
           Users.getUsers({

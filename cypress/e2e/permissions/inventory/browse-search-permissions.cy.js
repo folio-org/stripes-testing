@@ -4,6 +4,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Permissions', () => {
   describe('Permissions --> Inventory', () => {
@@ -33,12 +34,31 @@ describe('Permissions', () => {
         item.itemCallNumber,
       );
 
-      cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-        userWithOnlyViewPermissions = userProperties;
-      });
-      cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
-        userWithAllPermissions = userProperties;
-      });
+      if (Cypress.env('migrationTest')) {
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C375072')}"`,
+        }).then((users) => {
+          userWithOnlyViewPermissions = {};
+          userWithOnlyViewPermissions.username = users[0].username;
+          userWithOnlyViewPermissions.password = MigrationData.password;
+        });
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C375077')}"`,
+        }).then((users) => {
+          userWithAllPermissions = {};
+          userWithAllPermissions.username = users[0].username;
+          userWithAllPermissions.password = MigrationData.password;
+        });
+      } else {
+        cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+          userWithOnlyViewPermissions = userProperties;
+        });
+        cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+          userWithAllPermissions = userProperties;
+        });
+      }
     });
 
     after('Deleting data', () => {

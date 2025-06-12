@@ -84,11 +84,12 @@ export default {
       })
       .then((response) => response.body);
   },
-  deletePermissionSetViaApi(permSetId) {
+  deletePermissionSetViaApi(permSetId, ignoreErrors = false) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `perms/permissions/${permSetId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 };

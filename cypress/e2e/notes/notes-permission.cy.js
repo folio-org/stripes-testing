@@ -2,6 +2,7 @@ import Permissions from '../../support/dictionary/permissions';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import MigrationData from '../../support/migrationData';
 
 describe('Notes', () => {
   const testData = {};
@@ -12,22 +13,45 @@ describe('Notes', () => {
   };
 
   before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.uiNotesItemView.gui,
-      Permissions.moduleeHoldingsEnabled.gui,
-    ]).then((createdUserProperties) => {
-      testData.viewUserProperties = createdUserProperties;
-    });
+    cy.getAdminToken();
+    cy.then(() => {
+      if (Cypress.env('migrationTest')) {
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C526')}"`,
+        }).then((users) => {
+          testData.userProperties = {};
+          testData.userProperties.username = users[0].username;
+          testData.userProperties.password = MigrationData.password;
+        });
 
-    cy.createTempUser([
-      Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
-      Permissions.uiNotesItemDelete.gui,
-      Permissions.moduleeHoldingsEnabled.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C1245')}"`,
+        }).then((users) => {
+          testData.viewUserProperties = {};
+          testData.viewUserProperties.username = users[0].username;
+          testData.viewUserProperties.password = MigrationData.password;
+        });
+      } else {
+        cy.createTempUser([
+          Permissions.uiNotesItemView.gui,
+          Permissions.moduleeHoldingsEnabled.gui,
+        ]).then((createdUserProperties) => {
+          testData.viewUserProperties = createdUserProperties;
+        });
 
+        cy.createTempUser([
+          Permissions.uiNotesItemCreate.gui,
+          Permissions.uiNotesItemView.gui,
+          Permissions.uiNotesItemEdit.gui,
+          Permissions.uiNotesItemDelete.gui,
+          Permissions.moduleeHoldingsEnabled.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
+        });
+      }
+    }).then(() => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,

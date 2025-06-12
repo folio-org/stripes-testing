@@ -4,6 +4,7 @@ import LoanPolicy from '../../../support/fragments/circulation/loan-policy';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Permissions -> Circulation', () => {
   const userData = {};
@@ -41,18 +42,28 @@ describe('Permissions -> Circulation', () => {
 
   before('Prepare test data', () => {
     cy.getAdminToken().then(() => {
-      cy.createTempUser([Permissions.settingsLoanPoliciesAll.gui])
-        .then((userProperties) => {
-          userData.username = userProperties.username;
-          userData.password = userProperties.password;
-          userData.userId = userProperties.userId;
-        })
-        .then(() => {
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationLoanPoliciesPath,
-            waiter: LoanPolicy.waitLoading,
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C1214')}"`,
+          }).then((users) => {
+            userData.username = users[0].username;
+            userData.password = MigrationData.password;
           });
+        } else {
+          cy.createTempUser([Permissions.settingsLoanPoliciesAll.gui]).then((userProperties) => {
+            userData.username = userProperties.username;
+            userData.password = userProperties.password;
+            userData.userId = userProperties.userId;
+          });
+        }
+      }).then(() => {
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationLoanPoliciesPath,
+          waiter: LoanPolicy.waitLoading,
         });
+      });
     });
   });
 

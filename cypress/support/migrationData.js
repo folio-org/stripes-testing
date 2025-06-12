@@ -13,6 +13,7 @@ export default {
   getUsername: (caseId) => `migration_username_${caseId.toLowerCase()}`,
   getFirstName: (caseId) => `Migration_FirstName_${caseId.toLowerCase()}`,
   getLastName: (caseId) => `Migration_LastName_${caseId.toLowerCase()}`,
+  getBarcode: (caseId) => `migration_barcode_${caseId.toLowerCase()}`,
 };
 
 export const migrationUsers = [
@@ -92,13 +93,6 @@ export const migrationUsers = [
     ],
   },
   { caseId: 'c1205', permissions: [Permissions.uiNotesSettingsEdit.internal] },
-  {
-    caseId: 'c208822',
-    permissions: [
-      Permissions.uiUserEdit.internal,
-      Permissions.uiUserCanAssignUnassignPermissions.internal,
-    ],
-  },
   { caseId: 'c365628', permissions: [Permissions.settingsTenantViewLocation.internal] },
   { caseId: 'c409487', permissions: [Permissions.settingsTenantView.internal] },
   { caseId: 'c410753', permissions: [Permissions.settingsTenantView.internal] },

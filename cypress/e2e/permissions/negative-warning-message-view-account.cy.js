@@ -6,6 +6,7 @@ import Users from '../../support/fragments/users/users';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
+import MigrationData from '../../support/migrationData';
 
 let userData;
 const testData = {
@@ -59,8 +60,24 @@ describe('Permissions', () => {
           });
         });
       });
-      cy.createTempUser([Permissions.uiOrdersView.gui]).then((userProperties) => {
-        userData = userProperties;
+
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C353617')}"`,
+          }).then((users) => {
+            userData = {
+              username: users[0].username,
+              password: MigrationData.password,
+            };
+          });
+        } else {
+          cy.createTempUser([Permissions.uiOrdersView.gui]).then((userProperties) => {
+            userData = userProperties;
+          });
+        }
+      }).then(() => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.orderLinesPath,
           waiter: OrderLines.waitLoading,

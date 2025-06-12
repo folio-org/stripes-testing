@@ -16,6 +16,7 @@ import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import MigrationData from '../../support/migrationData';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -61,34 +62,47 @@ describe('Permissions', () => {
             });
           });
 
-        cy.createTempUser([permissions.checkoutCirculatingItems.gui])
-          .then((userProperties) => {
-            userData.username = userProperties.username;
-            userData.password = userProperties.password;
-            userData.userId = userProperties.userId;
-            userData.barcode = userProperties.barcode;
-            userData.firstName = userProperties.firstName;
-          })
-          .then(() => {
-            UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
-            cy.getAdminSourceRecord().then((adminSourceRecord) => {
-              feeFineAccount = {
-                id: uuid(),
-                ownerId: ownerData.id,
-                feeFineId: feeFineType.id,
-                amount: 9,
-                userId: userData.userId,
-                feeFineType: feeFineType.name,
-                feeFineOwner: ownerData.name,
-                createdAt: servicePoint.id,
-                dateAction: moment.utc().format(),
-                source: adminSourceRecord,
-              };
-              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-              });
+        cy.then(() => {
+          if (Cypress.env('migrationTest')) {
+            Users.getUsers({
+              limit: 500,
+              query: `username="${MigrationData.getUsername('C388525')}"`,
+            }).then((users) => {
+              userData.username = users[0].username;
+              userData.password = MigrationData.password;
+              userData.userId = users[0].id;
+              userData.barcode = users[0].barcode;
+              userData.firstName = MigrationData.getFirstName('C388525');
+            });
+          } else {
+            cy.createTempUser([permissions.checkoutCirculatingItems.gui]).then((userProperties) => {
+              userData.username = userProperties.username;
+              userData.password = userProperties.password;
+              userData.userId = userProperties.userId;
+              userData.barcode = userProperties.barcode;
+              userData.firstName = userProperties.firstName;
+            });
+          }
+        }).then(() => {
+          UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
+          cy.getAdminSourceRecord().then((adminSourceRecord) => {
+            feeFineAccount = {
+              id: uuid(),
+              ownerId: ownerData.id,
+              feeFineId: feeFineType.id,
+              amount: 9,
+              userId: userData.userId,
+              feeFineType: feeFineType.name,
+              feeFineOwner: ownerData.name,
+              createdAt: servicePoint.id,
+              dateAction: moment.utc().format(),
+              source: adminSourceRecord,
+            };
+            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+              feeFineAccount.id = feeFineAccountId;
             });
           });
+        });
       });
 
       after('UserOwner is removed', () => {
@@ -110,7 +124,9 @@ describe('Permissions', () => {
         PaymentMethods.deleteViaApi(paymentMethod.id);
         NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
         UsersOwners.deleteViaApi(ownerData.id);
-        Users.deleteViaApi(userData.userId);
+        UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
+        ServicePoints.deleteViaApi(servicePoint.id);
+        if (!Cypress.env('migrationTest')) Users.deleteViaApi(userData.userId);
       });
 
       it(

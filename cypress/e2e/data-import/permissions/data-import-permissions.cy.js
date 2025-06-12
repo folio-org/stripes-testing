@@ -16,6 +16,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Data Import', () => {
   describe('Permissions', () => {
@@ -24,23 +25,37 @@ describe('Data Import', () => {
     const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-
+      cy.getAdminToken();
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C492')}"`,
+          }).then((users) => {
+            user = {};
+            user.username = users[0].username;
+            user.password = MigrationData.password;
+          });
+        } else {
+          cy.createTempUser([
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.settingsDataImportEnabled.gui,
+          ]).then((userProperties) => {
+            user = userProperties;
+          });
+        }
+      }).then(() => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
           DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
           instanceId = response[0].instance.id;
-        });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
+          cy.login(user.username, user.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
         });
       });
     });

@@ -7,26 +7,41 @@ import SettingsInventory, {
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Inventory', () => {
   describe('Permissions', () => {
-    let userId;
+    const userData = {};
     const materialTypeName = `C505 autoTestMaterialType.${getRandomPostfix()}`;
     const newMaterialTypeName = `C505 autoTestMaterialType.${getRandomPostfix()}`;
 
     before('Create test user and login', () => {
-      cy.createTempUser([Permissions.uiCreateEditDeleteMaterialTypes.gui]).then(
-        (userProperties) => {
-          userId = userProperties.userId;
-
-          cy.login(userProperties.username, userProperties.password);
-        },
-      );
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C505')}"`,
+          }).then((users) => {
+            userData.username = users[0].username;
+            userData.password = MigrationData.password;
+          });
+        } else {
+          cy.createTempUser([Permissions.uiCreateEditDeleteMaterialTypes.gui]).then(
+            (userProperties) => {
+              userData.username = userProperties.username;
+              userData.password = userProperties.password;
+              userData.userId = userProperties.userId;
+            },
+          );
+        }
+      }).then(() => {
+        cy.login(userData.username, userData.password);
+      });
     });
 
     after('Delete user', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(userId);
+      Users.deleteViaApi(userData.userId);
     });
 
     it(

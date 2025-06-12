@@ -6,6 +6,7 @@ import StaffSlips from '../../../support/fragments/settings/circulation/staffSli
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Permissions -> Circulation', () => {
   const userData = {};
@@ -13,18 +14,30 @@ describe('Permissions -> Circulation', () => {
 
   before('Prepare test data', () => {
     cy.getAdminToken().then(() => {
-      cy.createTempUser([Permissions.uiCirculationCreateEditRemoveStaffSlips.gui])
-        .then((userProperties) => {
-          userData.username = userProperties.username;
-          userData.password = userProperties.password;
-          userData.userId = userProperties.userId;
-        })
-        .then(() => {
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationStaffSlipsPath,
-            waiter: EditStaffClips.waitLoading,
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C1219')}"`,
+          }).then((users) => {
+            userData.username = users[0].username;
+            userData.password = MigrationData.password;
           });
+        } else {
+          cy.createTempUser([Permissions.uiCirculationCreateEditRemoveStaffSlips.gui]).then(
+            (userProperties) => {
+              userData.username = userProperties.username;
+              userData.password = userProperties.password;
+              userData.userId = userProperties.userId;
+            },
+          );
+        }
+      }).then(() => {
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationStaffSlipsPath,
+          waiter: EditStaffClips.waitLoading,
         });
+      });
     });
   });
 

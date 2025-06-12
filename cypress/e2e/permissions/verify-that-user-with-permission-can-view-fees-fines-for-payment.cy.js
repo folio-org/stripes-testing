@@ -24,6 +24,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
+import MigrationData from '../../support/migrationData';
 
 describe('Permissions', () => {
   describe('Permissions', () => {
@@ -165,18 +166,36 @@ describe('Permissions', () => {
 
         PatronGroups.createViaApi(testData.patronGroup.name).then((res) => {
           testData.patronGroup.id = res;
-          cy.createTempUser(
-            [
-              permissions.uiFeeFinesActions.gui,
-              permissions.uiUsersManualPay.gui,
-              permissions.uiUsersfeefinesCRUD.gui,
-              permissions.uiUsersfeefinesView.gui,
-              permissions.uiUsersDeclareItemLost.gui,
-              permissions.loansView.gui,
-            ],
-            testData.patronGroup.name,
-          ).then((userProperties) => {
-            userData = userProperties;
+
+          cy.then(() => {
+            if (Cypress.env('migrationTest')) {
+              Users.getUsers({
+                limit: 500,
+                query: `username="${MigrationData.getUsername('C380503')}"`,
+              }).then((users) => {
+                userData = {
+                  username: users[0].username,
+                  password: MigrationData.password,
+                  userId: users[0].id,
+                  barcode: users[0].barcode,
+                };
+              });
+            } else {
+              cy.createTempUser(
+                [
+                  permissions.uiFeeFinesActions.gui,
+                  permissions.uiUsersManualPay.gui,
+                  permissions.uiUsersfeefinesCRUD.gui,
+                  permissions.uiUsersfeefinesView.gui,
+                  permissions.uiUsersDeclareItemLost.gui,
+                  permissions.loansView.gui,
+                ],
+                testData.patronGroup.name,
+              ).then((userProperties) => {
+                userData = userProperties;
+              });
+            }
+          }).then(() => {
             UserEdit.addServicePointViaApi(
               testData.userServicePoint.id,
               userData.userId,
@@ -205,11 +224,9 @@ describe('Permissions', () => {
         CirculationRules.deleteRuleViaApi(testData.addedRule);
         cy.deleteLoanPolicy(loanPolicyBody.id);
         LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-        UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
-          testData.userServicePoint.id,
-        ]);
+        UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
         ServicePoints.deleteViaApi(testData.userServicePoint.id);
-        Users.deleteViaApi(userData.userId);
+        if (!Cypress.env('migrationTest')) Users.deleteViaApi(userData.userId);
         PatronGroups.deleteViaApi(testData.patronGroup.id);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           instanceData.itemBarcode,

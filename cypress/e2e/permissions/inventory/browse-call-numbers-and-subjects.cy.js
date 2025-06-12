@@ -4,10 +4,11 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Permissions', () => {
   describe('Permissions --> Inventory', () => {
-    let userId;
+    const userData = {};
     const testData = {};
     before('create tests data', () => {
       testData.instanceTitle = `autoTestInstanceTitle ${getRandomPostfix()}`;
@@ -29,20 +30,35 @@ describe('Permissions', () => {
           testData.instanceId = instance.instanceId;
         });
 
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-        (userProperties) => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+      cy.then(() => {
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C375076')}"`,
+          }).then((users) => {
+            userData.username = users[0].username;
+            userData.password = MigrationData.password;
           });
-        },
-      );
+        } else {
+          cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+            (userProperties) => {
+              userData.username = userProperties.username;
+              userData.password = userProperties.password;
+              userData.userId = userProperties.userId;
+            },
+          );
+        }
+      }).then(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+      });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(userId);
+      Users.deleteViaApi(userData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
     });
 

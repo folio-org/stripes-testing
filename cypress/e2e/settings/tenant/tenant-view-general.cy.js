@@ -8,6 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import MigrationData from '../../../support/migrationData';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -28,8 +29,25 @@ describe('Settings: Tenant', () => {
     testData.institution = institution;
     testData.location = location;
     Locations.createViaApi(testData.location);
-    cy.createTempUser([Permissions.settingsTenantView.gui]).then((userProperties) => {
-      testData.user = userProperties;
+
+    cy.getAdminToken();
+    cy.then(() => {
+      if (Cypress.env('migrationTest')) {
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C410753')}"`,
+        }).then((users) => {
+          testData.user = {
+            password: MigrationData.password,
+            username: users[0].username,
+          };
+        });
+      } else {
+        cy.createTempUser([Permissions.settingsTenantView.gui]).then((userProperties) => {
+          testData.user = userProperties;
+        });
+      }
+    }).then(() => {
       Addresses.setAddress(testData.newAddress).then((address) => {
         addressId = address.id;
       });

@@ -12,6 +12,23 @@ import MigrationData, { migrationUsers } from '../support/migrationData';
 
 let patronGroupId;
 
+function deleteAllMigrationSetsAndUsers() {
+  cy.getAdminToken();
+  cy.getPermissionsApi({ limit: 500, query: 'displayName="migration_permission_set*"' }).then(
+    ({ body }) => {
+      body.permissions.forEach((permissionSet) => {
+        PermissionSets.deletePermissionSetViaApi(permissionSet.id);
+      });
+    },
+  );
+  Users.getUsers({ limit: 500, query: 'username="migration_username*"' }).then((users) => {
+    users.forEach((user) => {
+      Users.deleteViaApi(user.id);
+    });
+  });
+  cy.wait(3000);
+}
+
 describe('Create or delete users for migration from Okapi to Eureka', () => {
   before('Get user group', () => {
     cy.getAdminToken();
@@ -21,26 +38,15 @@ describe('Create or delete users for migration from Okapi to Eureka', () => {
   });
 
   it('Delete all migration permission sets and users', { tags: ['deleteMigrationUsers'] }, () => {
-    cy.getAdminToken();
-    cy.getPermissionsApi({ limit: 500, query: 'displayName="migration_permission_set*"' }).then(
-      ({ body }) => {
-        body.permissions.forEach((permissionSet) => {
-          PermissionSets.deletePermissionSetViaApi(permissionSet.id);
-        });
-      },
-    );
-    Users.getUsers({ limit: 500, query: 'username="migration_username*"' }).then((users) => {
-      users.forEach((user) => {
-        Users.deleteViaApi(user.id);
-      });
-    });
-    cy.wait(3000);
+    deleteAllMigrationSetsAndUsers();
   });
 
   it(
     'Create permission sets and users for migration from Okapi to Eureka',
     { tags: ['createMigrationUsers'] },
     () => {
+      deleteAllMigrationSetsAndUsers();
+
       cy.getAdminToken();
       migrationUsers.forEach((user) => {
         const permissionSetBody = {
@@ -53,6 +59,7 @@ describe('Create or delete users for migration from Okapi to Eureka', () => {
 
         const userBody = {
           type: 'staff',
+          barcode: MigrationData.getBarcode(user.caseId),
           active: true,
           username: MigrationData.getUsername(user.caseId),
           patronGroup: patronGroupId,

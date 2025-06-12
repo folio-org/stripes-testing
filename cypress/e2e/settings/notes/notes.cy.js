@@ -4,6 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import MigrationData from '../../../support/migrationData';
 
 describe('Notes', () => {
   let user;
@@ -13,8 +14,24 @@ describe('Notes', () => {
   const getCalloutMessage = (note) => `The note type ${note} was successfully deleted`;
 
   before('Creating data', () => {
-    cy.createTempUser([Permissions.uiNotesSettingsEdit.gui]).then((userProperties) => {
-      user = userProperties;
+    cy.getAdminToken();
+    cy.then(() => {
+      if (Cypress.env('migrationTest')) {
+        Users.getUsers({
+          limit: 500,
+          query: `username="${MigrationData.getUsername('C1205')}"`,
+        }).then((users) => {
+          user = {
+            username: users[0].username,
+            password: MigrationData.password,
+          };
+        });
+      } else {
+        cy.createTempUser([Permissions.uiNotesSettingsEdit.gui]).then((userProperties) => {
+          user = userProperties;
+        });
+      }
+    }).then(() => {
       cy.login(user.username, user.password, {
         path: TopMenu.notesPath,
         waiter: NoteTypes.waitLoading,

@@ -20,6 +20,7 @@ import ManualCharges from '../../support/fragments/settings/users/manualCharges'
 import CommentRequired from '../../support/fragments/settings/users/comment-required';
 import Conditions from '../../support/fragments/settings/users/conditions';
 import PatronBlockTemplates from '../../support/fragments/settings/users/patronBlockTemplates';
+import MigrationData from '../../support/migrationData';
 
 describe('Permissions', () => {
   describe('Permissions', () => {
@@ -80,17 +81,37 @@ describe('Permissions', () => {
           PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
             patronGroup.id = patronGroupResponse;
           });
-          cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then(
-            (userProperties) => {
-              userData = userProperties;
-              UserEdit.addServicePointViaApi(
-                testData.userServicePoint.id,
-                userData.userId,
-                testData.userServicePoint.id,
+
+          cy.then(() => {
+            if (Cypress.env('migrationTest')) {
+              Users.getUsers({
+                limit: 500,
+                query: `username="${MigrationData.getUsername('C396393')}"`,
+              }).then((users) => {
+                userData = {
+                  username: users[0].username,
+                  password: MigrationData.password,
+                  userId: users[0].id,
+                };
+              });
+            } else {
+              cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then(
+                (userProperties) => {
+                  userData = userProperties;
+                },
               );
+            }
+          }).then(() => {
+            UserEdit.addServicePointViaApi(
+              testData.userServicePoint.id,
+              userData.userId,
+              testData.userServicePoint.id,
+            );
+            cy.waitForAuthRefresh(() => {
               cy.login(userData.username, userData.password);
-            },
-          );
+              cy.reload();
+            }, 30_000);
+          });
         });
       });
 
@@ -98,13 +119,11 @@ describe('Permissions', () => {
         cy.getAdminToken();
         PatronBlockTemplates.deleteViaApi(testData.patronBlockTemplateId);
         if (permissionSetBody) {
-          PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
+          PermissionSets.deletePermissionSetViaApi(permissionSetBody.id, true);
         }
-        UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
-          testData.userServicePoint.id,
-        ]);
+        UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
         ServicePoints.deleteViaApi(testData.userServicePoint.id);
-        Users.deleteViaApi(userData.userId);
+        if (!Cypress.env('migrationTest')) Users.deleteViaApi(userData.userId);
         PatronGroups.deleteViaApi(patronGroup.id);
         Departments.deleteViaApi(departmentBody.id);
         RefundReasons.deleteViaApi(refundReason.id);

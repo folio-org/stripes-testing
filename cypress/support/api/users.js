@@ -242,7 +242,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
         // cy.log('Initial permissions=' + permissions);
         // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
         cy.getPermissionsApi({
-          query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+          query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}")"`,
         }).then((permissionsResponse) => {
           cy.addPermissionsToNewUserApi({
             userId: userProperties.userId,

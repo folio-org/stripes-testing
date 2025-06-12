@@ -2,26 +2,42 @@ import { Permissions } from '../../../support/dictionary';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import MigrationData from '../../../support/migrationData';
 
 describe('Permissions', () => {
   describe('Permissions --> Inventory', () => {
-    let userId;
+    const userData = {};
     const targetProfileName = 'OCLC WorldCat';
 
     before('Create user and login', () => {
-      cy.createTempUser([Permissions.uiInventorySettingsConfigureSingleRecordImport.gui]).then(
-        (userProperties) => {
-          userId = userProperties.userId;
-
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(SettingsMenu.targetProfilesPath);
-        },
-      );
+      cy.then(() => {
+        cy.getAdminToken();
+        if (Cypress.env('migrationTest')) {
+          Users.getUsers({
+            limit: 500,
+            query: `username="${MigrationData.getUsername('C494347')}"`,
+          }).then((users) => {
+            userData.username = users[0].username;
+            userData.password = MigrationData.password;
+          });
+        } else {
+          cy.createTempUser([Permissions.uiInventorySettingsConfigureSingleRecordImport.gui]).then(
+            (userProperties) => {
+              userData.username = userProperties.username;
+              userData.password = userProperties.password;
+              userData.userId = userProperties.userId;
+            },
+          );
+        }
+      }).then(() => {
+        cy.login(userData.username, userData.password);
+        cy.visit(SettingsMenu.targetProfilesPath);
+      });
     });
 
     after('Delete user', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(userId);
+      Users.deleteViaApi(userData.userId);
     });
 
     it(

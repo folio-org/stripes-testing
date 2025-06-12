@@ -1050,4 +1050,23 @@ export default {
     cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
     this.checkSelectedRolesAffiliation(affiliation);
   },
+
+  deleteServicePointPreferenceViaApi: (userId) => cy
+    .okapiRequest({
+      method: 'GET',
+      path: `service-points-users?query="userId"="${userId}"`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    })
+    .then((servicePointsUsers) => {
+      if (servicePointsUsers.body.servicePointsUsers.length === 0) {
+        return;
+      }
+      cy.okapiRequest({
+        method: 'DELETE',
+        path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      });
+    }),
 };
