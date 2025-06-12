@@ -579,7 +579,10 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  saveAndCloseWithValidationWarnings({ acceptLinkedBibModal = false } = {}) {
+  saveAndCloseWithValidationWarnings({
+    acceptLinkedBibModal = false,
+    acceptDeleteModal = false,
+  } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
@@ -595,6 +598,10 @@ export default {
     if (acceptLinkedBibModal) {
       cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
       cy.do(saveButton.click());
+    }
+    if (acceptDeleteModal) {
+      this.deleteConfirmationPresented();
+      this.confirmDelete();
     }
 
     cy.wait('@saveRecordRequest', { timeout: 5_000 })
