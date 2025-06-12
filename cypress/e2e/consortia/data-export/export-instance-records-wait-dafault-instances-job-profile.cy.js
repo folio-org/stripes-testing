@@ -31,33 +31,50 @@ const recordsCount = 6;
 const instances = {
   localFolioInstance: {
     title: `AT_C405556_Local_FolioInstance_${getRandomPostfix()}`,
+    affiliation: Affiliations.College,
   },
   sharedFolioInstance: {
     title: `AT_C405556_Shared_FolioInstance_${getRandomPostfix()}`,
+    affiliation: Affiliations.Consortia,
   },
   sharedFolioInstanceWithHolding: {
     title: `AT_C405556_Shared_FolioInstance_WithHolding_${getRandomPostfix()}`,
+    affiliation: Affiliations.Consortia,
   },
   localMarcInstance: {
     title: `AT_C405556_Local_MarcInstance_${getRandomPostfix()}`,
+    affiliation: Affiliations.College,
   },
   sharedMarcInstance: {
     title: `AT_C405556_Shared_MarcInstance_${getRandomPostfix()}`,
+    affiliation: Affiliations.Consortia,
   },
   sharedMarcInstanceWithHolding: {
     title: `AT_C405556_Shared_MarcInstance_WithHolding_${getRandomPostfix()}`,
+    affiliation: Affiliations.Consortia,
   },
 };
 const arrayOfInstances = Object.values(instances);
 const instanceUUIDsFileName = `AT_C405556_instanceUUIdsFile_${getRandomPostfix()}.csv`;
 
-function createFolioInstance(instance, tenant) {
-  return cy.withinTenant(tenant, () => {
+function createFolioInstance(instance) {
+  return cy.withinTenant(instance.affiliation, () => {
     InventoryInstances.createFolioInstanceViaApi({
       instance: { instanceTypeId, title: instance.title },
     }).then((folioInstance) => {
+      instance.uuid = folioInstance.instanceId;
       cy.getInstanceById(folioInstance.instanceId).then((instanceData) => {
-        instance.uuid = folioInstance.instanceId;
+        instance.hrid = instanceData.hrid;
+      });
+    });
+  });
+}
+
+function createMarcInstance(instance) {
+  return cy.withinTenant(instance.affiliation, () => {
+    cy.createSimpleMarcBibViaAPI(instance.title).then((marcInstanceId) => {
+      instance.uuid = marcInstanceId;
+      cy.getInstanceById(marcInstanceId).then((instanceData) => {
         instance.hrid = instanceData.hrid;
       });
     });
@@ -78,105 +95,61 @@ describe('Data Export', () => {
         cy.withinTenant(Affiliations.College, () => {
           cy.assignPermissionsToExistingUser(user.userId, userPermissions);
 
-          cy.getInstanceTypes({ limit: 1 })
-            .then((instanceTypes) => {
-              instanceTypeId = instanceTypes[0].id;
-            })
-            .then(() => {
-              // create local instance with source FOLIO
-              createFolioInstance(instances.localFolioInstance, Affiliations.College);
-            })
-            .then(() => {
-              // create local instances with source MARC
-              cy.createSimpleMarcBibViaAPI(instances.localMarcInstance.title).then(
-                (marcInstanceId) => {
-                  instances.localMarcInstance.uuid = marcInstanceId;
-
-                  cy.getInstanceById(instances.localMarcInstance.uuid).then((instanceData) => {
-                    instances.localMarcInstance.hrid = instanceData.hrid;
-                  });
-                },
-              );
-            });
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
+          });
         })
           .then(() => {
+            // create local instance with source FOLIO
+            createFolioInstance(instances.localFolioInstance);
+          })
+          .then(() => {
+            // create local instances with source MARC
+            createMarcInstance(instances.localMarcInstance);
+          })
+          .then(() => {
             // create shared instances with source FOLIO
-            createFolioInstance(instances.sharedFolioInstance, Affiliations.Consortia);
+            createFolioInstance(instances.sharedFolioInstance);
           })
           .then(() => {
             // create shared instances with source MARC  records
-            cy.createSimpleMarcBibViaAPI(instances.sharedMarcInstance.title).then(
-              (marcInstanceId) => {
-                instances.sharedMarcInstance.uuid = marcInstanceId;
-
-                cy.getInstanceById(instances.sharedMarcInstance.uuid).then((instanceData) => {
-                  instances.sharedMarcInstance.hrid = instanceData.hrid;
-                });
-              },
-            );
+            createMarcInstance(instances.sharedMarcInstance);
           })
           .then(() => {
             // create shared instances with source FOLIO with associated Holding
-            cy.withinTenant(Affiliations.Consortia, () => {
-              InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId,
-                  title: instances.sharedFolioInstanceWithHolding.title,
-                },
-              }).then((folioInstance) => {
-                instances.sharedFolioInstanceWithHolding.uuid = folioInstance.instanceId;
-
-                cy.getInstanceById(instances.sharedFolioInstanceWithHolding.uuid).then(
-                  (instanceData) => {
-                    instances.sharedFolioInstanceWithHolding.hrid = instanceData.hrid;
-                  },
-                );
-
-                cy.withinTenant(Affiliations.College, () => {
-                  cy.getLocations({ limit: 1 }).then((res) => {
-                    locationId = res.id;
-                  });
-                  InventoryHoldings.getHoldingsFolioSource()
-                    .then((folioSource) => {
-                      sourceId = folioSource.id;
-                    })
-                    .then(() => {
-                      InventoryHoldings.createHoldingRecordViaApi({
-                        instanceId: instances.sharedFolioInstanceWithHolding.uuid,
-                        permanentLocationId: locationId,
-                        sourceId,
-                      }).then((holding) => {
-                        instances.sharedFolioInstanceWithHolding.holdingId = holding.id;
-                      });
-                    });
+            createFolioInstance(instances.sharedFolioInstanceWithHolding).then(() => {
+              cy.withinTenant(Affiliations.College, () => {
+                cy.getLocations({ limit: 1 }).then((res) => {
+                  locationId = res.id;
                 });
+                InventoryHoldings.getHoldingsFolioSource()
+                  .then((folioSource) => {
+                    sourceId = folioSource.id;
+                  })
+                  .then(() => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instances.sharedFolioInstanceWithHolding.uuid,
+                      permanentLocationId: locationId,
+                      sourceId,
+                    }).then((holding) => {
+                      instances.sharedFolioInstanceWithHolding.holdingId = holding.id;
+                    });
+                  });
               });
             });
           })
           .then(() => {
-            // shared instances with source MARC with associated Holdings records
-            cy.withinTenant(Affiliations.Consortia, () => {
-              cy.createSimpleMarcBibViaAPI(instances.sharedMarcInstanceWithHolding.title).then(
-                (marcInstanceId) => {
-                  instances.sharedMarcInstanceWithHolding.uuid = marcInstanceId;
-
-                  cy.getInstanceById(instances.sharedMarcInstanceWithHolding.uuid).then(
-                    (instanceData) => {
-                      instances.sharedMarcInstanceWithHolding.hrid = instanceData.hrid;
-                    },
-                  );
-
-                  cy.withinTenant(Affiliations.College, () => {
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instances.sharedMarcInstanceWithHolding.uuid,
-                      permanentLocationId: locationId,
-                      sourceId,
-                    }).then((holding) => {
-                      instances.sharedMarcInstanceWithHolding.holdingId = holding.id;
-                    });
-                  });
-                },
-              );
+            // shared instances with source MARC with associated Holding
+            createMarcInstance(instances.sharedMarcInstanceWithHolding).then(() => {
+              cy.withinTenant(Affiliations.College, () => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instances.sharedMarcInstanceWithHolding.uuid,
+                  permanentLocationId: locationId,
+                  sourceId,
+                }).then((holding) => {
+                  instances.sharedMarcInstanceWithHolding.holdingId = holding.id;
+                });
+              });
             });
           })
           .then(() => {
