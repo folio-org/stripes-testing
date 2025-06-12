@@ -313,8 +313,8 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileWithMatch.profileName);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHrid);
         cy.intercept('/inventory/instances/*').as('getId');
+        InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHrid);
         cy.wait('@getId', getLongDelay()).then((req) => {
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.selectResultCheckboxes(1);
