@@ -324,7 +324,6 @@ describe('Data Import', () => {
           const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
 
           FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID);
-          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID);
         });
 
         // download exported marc file
