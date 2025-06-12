@@ -93,6 +93,7 @@ describe('Permissions', () => {
                   password: MigrationData.password,
                   userId: users[0].id,
                 };
+                UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
               });
             } else {
               cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then(

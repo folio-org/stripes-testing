@@ -5,6 +5,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import MigrationData from '../../../support/migrationData';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Permissions', () => {
   describe('Permissions --> Inventory', () => {
@@ -76,6 +77,7 @@ describe('Permissions', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
         InventorySearchAndFilter.browseSearch(item.itemCallNumber);
         InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
         cy.visit(TopMenu.inventoryPath);
@@ -94,6 +96,7 @@ describe('Permissions', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
         InventorySearchAndFilter.browseSearch(item.itemCallNumber);
         InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
         cy.visit(TopMenu.inventoryPath);

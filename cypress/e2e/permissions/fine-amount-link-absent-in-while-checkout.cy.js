@@ -73,6 +73,7 @@ describe('Permissions', () => {
               userData.userId = users[0].id;
               userData.barcode = users[0].barcode;
               userData.firstName = MigrationData.getFirstName('C388525');
+              UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
             });
           } else {
             cy.createTempUser([permissions.checkoutCirculatingItems.gui]).then((userProperties) => {

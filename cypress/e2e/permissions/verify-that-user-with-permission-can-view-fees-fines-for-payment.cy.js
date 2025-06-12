@@ -179,6 +179,7 @@ describe('Permissions', () => {
                   userId: users[0].id,
                   barcode: users[0].barcode,
                 };
+                UserEdit.deleteServicePointPreferenceViaApi(userData.userId);
               });
             } else {
               cy.createTempUser(
