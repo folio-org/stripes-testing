@@ -306,8 +306,8 @@ describe('Data Import', () => {
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         cy.intercept('/inventory/instances/*').as('getId');
+        InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         cy.wait('@getId', getLongDelay()).then((req) => {
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.selectResultCheckboxes(1);
