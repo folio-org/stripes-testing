@@ -14,7 +14,6 @@ import {
   Option,
   including,
 } from '../../../../../interactors';
-import { Configurations } from '.';
 import Mappings from './mappings';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -226,8 +225,8 @@ export default {
       const configs = body.remoteStorageConfigurations || body.configurations || body;
       const exists = configs.some((cfg) => cfg.name === name);
       if (!exists) {
-        Configurations.openConfigurationsTabFromSettings();
-        Configurations.configurations.CaiaSoft.create(name);
+        configurations.openConfigurationsTabFromSettings();
+        configurations.CaiaSoft.create(name);
       }
     });
   },
