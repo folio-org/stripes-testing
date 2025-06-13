@@ -15,6 +15,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import { Locations } from '../../../../support/fragments/settings/tenant/location-setup';
 import { CALL_NUMBER_TYPE_NAMES } from '../../../../support/constants';
+import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
@@ -269,11 +270,14 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         folioInstancesShared.forEach((instance) => {
+          const itemCallNumberValue = instance.items[0].itemLevelCallNumber;
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup('Call numbers (all)');
-          InventorySearchAndFilter.browseSearch(instance.items[0].itemLevelCallNumber);
-          InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-            records: [{ callNumber: instance.items[0].itemLevelCallNumber }],
-          });
+          InventorySearchAndFilter.browseSearch(itemCallNumberValue);
+          BrowseCallNumber.valueInResultTableIsHighlighted(itemCallNumberValue);
+          BrowseCallNumber.checkNumberOfTitlesForRow(
+            itemCallNumberValue,
+            2, // 2 titles for each call number include "Shared" and "Local" instances
+          );
           InventorySearchAndFilter.clickResetAllButton();
         });
 
@@ -290,17 +294,27 @@ describe('Inventory', () => {
             InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(browseOption);
             cy.wait(500);
             InventorySearchAndFilter.browseSearch(itemCallNumberValue);
+
             if (
               itemCallNumberType &&
               callNumberTypesSettings
                 .getAssignedCallNumberTypes(browseOption)
                 .includes(itemCallNumberType)
             ) {
-              InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-                records: [{ callNumber: itemCallNumberValue }],
-              });
+              BrowseCallNumber.valueInResultTableIsHighlighted(itemCallNumberValue);
+              BrowseCallNumber.checkNumberOfTitlesForRow(
+                itemCallNumberValue,
+                2, // 2 titles for each call number include "Shared" and "Local" instances
+              );
+              BrowseCallNumber.SharedAccordion.byShared('Yes');
+              BrowseCallNumber.checkNumberOfTitlesForRow(itemCallNumberValue, 1); // 1 title for call number include "Shared" instance
+
+              BrowseCallNumber.SharedAccordion.reset();
+              BrowseCallNumber.SharedAccordion.byShared('No');
+              cy.wait(2_000); // wait for the result table to be updated
+              BrowseCallNumber.checkNumberOfTitlesForRow(itemCallNumberValue, 1); // 1 title for call number include "Local" instance
             } else {
-              InventorySearchAndFilter.verifySearchResult(`${itemCallNumberValue}would be here`);
+              BrowseCallNumber.checkNonExactSearchResult(`${itemCallNumberValue}`);
             }
             InventorySearchAndFilter.clickResetAllButton();
           });
