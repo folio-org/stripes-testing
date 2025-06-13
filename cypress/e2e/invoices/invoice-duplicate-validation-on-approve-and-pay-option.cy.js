@@ -111,8 +111,8 @@ describe('Invoices', () => {
                         accountingCode: organization.erpCode,
                         releaseEncumbrance: true,
                         subTotal: 1,
-                      }).then((invoiceRescponse) => {
-                        testData.firstInvoice = invoiceRescponse;
+                      }).then((firstInvoiceResponse) => {
+                        testData.firstInvoice = firstInvoiceResponse;
                       });
 
                       // create the second order and open invoice
@@ -150,11 +150,11 @@ describe('Invoices', () => {
                         accountingCode: organization.erpCode,
                         releaseEncumbrance: true,
                         subTotal: 1,
-                      }).then((invoiceRescponse) => {
-                        testData.secondInvoice = invoiceRescponse;
+                      }).then((secondInvoiceResponse) => {
+                        testData.secondInvoice = secondInvoiceResponse;
 
                         Invoices.updateInvoiceViaApi({
-                          ...invoiceRescponse,
+                          ...secondInvoiceResponse,
                           vendorInvoiceNo: testData.firstInvoice.vendorInvoiceNo,
                         });
                       });

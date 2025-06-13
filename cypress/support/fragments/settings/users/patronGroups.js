@@ -149,18 +149,20 @@ export default {
     cy.expect(cannotDeleteModal.absent());
   },
   createViaApi(patronGroup = defaultPatronGroup.group, description = 'Patron_group_description') {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'groups',
-      isDefaultSearchParamsRequired: false,
-      body: {
-        group: patronGroup,
-        desc: description,
-        expirationOffsetInDays: '10',
-      },
-    }).then((response) => {
-      return response.body.id;
-    });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'groups',
+        isDefaultSearchParamsRequired: false,
+        body: {
+          group: patronGroup,
+          desc: description,
+          expirationOffsetInDays: '10',
+        },
+      })
+      .then((response) => {
+        return response.body.id;
+      });
   },
   deleteViaApi: (patronGroupId) => {
     cy.okapiRequest({
@@ -291,8 +293,13 @@ export default {
         .find('input[placeholder="expirationOffsetInDays"]')
         .should('be.enabled');
       cy.get(`[data-row-index="${row}"]`)
-        .find(`input[value="${including(`${patronGroup.date} by ${patronGroup.userName}`)}"]`)
-        .should('be.disabled');
+        .find('div[class*="lastUpdated-"]')
+        .should('contain.text', patronGroup.currentDate)
+        .find('a')
+        .invoke('text')
+        .then((text) => {
+          expect(text.trim()).to.equal(patronGroup.userName);
+        });
       cy.get(`[data-row-index="${row}"]`)
         .find('[id*="clickable-cancel-patrongroups"]')
         .should('be.enabled');

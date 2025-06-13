@@ -5,6 +5,8 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   Section,
+  Accordion,
+  Checkbox,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
@@ -14,8 +16,46 @@ const resultList = MultiColumnList({ id: including('browse-results-list-') });
 const nextButton = Button({ id: including('-next-paging-button') });
 const previousButton = Button({ id: including('-prev-paging-button') });
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
+const sharedAccordion = Accordion({ id: 'callNumbersShared' });
+const yesCheckbox = sharedAccordion.find(
+  Checkbox({ id: 'clickable-filter-callNumbersShared-true' }),
+);
+const noCheckbox = sharedAccordion.find(
+  Checkbox({ id: 'clickable-filter-callNumbersShared-false' }),
+);
+const sharedAccResetButton = sharedAccordion.find(Button({ className: including('iconButton-') }));
+
+const SharedAccordion = {
+  open() {
+    cy.get('#callNumbersShared')
+      .find('[class^=content-region]')
+      .invoke('attr', 'class')
+      .then((className) => {
+        if (!className.includes('expanded-')) {
+          cy.do(sharedAccordion.clickHeader());
+        }
+      });
+  },
+
+  byShared(condititon) {
+    this.open();
+    if (condititon === 'Yes') {
+      cy.expect(yesCheckbox.exists());
+      cy.do(yesCheckbox.click());
+    } else {
+      cy.expect(noCheckbox.exists());
+      cy.do(noCheckbox.click());
+    }
+  },
+
+  reset() {
+    cy.expect(sharedAccResetButton.exists());
+    cy.do(sharedAccResetButton.click());
+  },
+};
 
 export default {
+  SharedAccordion,
   clickOnResult(searchQuery) {
     cy.do(
       MultiColumnListCell(`${searchQuery}`)
@@ -102,7 +142,7 @@ export default {
     cy.do(
       MultiColumnListCell(callNumber).perform((element) => {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
-        cy.expect(MultiColumnListCell(numberOfTitles, { row: rowNumber }).exists());
+        cy.expect(MultiColumnListCell(String(numberOfTitles), { row: rowNumber }).exists());
       }),
     );
   },

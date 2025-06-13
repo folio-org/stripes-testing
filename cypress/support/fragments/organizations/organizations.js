@@ -817,12 +817,29 @@ export default {
   },
 
   selectOrganization: (organizationName) => {
-    cy.wait(4000);
-    cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
-    cy.wait(3000);
-    OrganizationDetails.waitLoading();
-
-    return OrganizationDetails;
+    const trySelect = () => {
+      return cy
+        .get('#organizations-list')
+        .find('a')
+        .then(($links) => {
+          const el = Array.from($links).find((li) => li.textContent.trim() === organizationName);
+          if (el) {
+            return cy
+              .wrap(el)
+              .click()
+              .then(() => OrganizationDetails.waitLoading());
+          }
+          return cy
+            .get('div[class^="prevNextPaginationContainer-"]', { timeout: 10000 })
+            .within(() => {
+              cy.contains('button', 'Next').then(($btn) => {
+                cy.wrap($btn).click();
+              });
+            })
+            .then(() => trySelect());
+        });
+    };
+    return trySelect();
   },
 
   organizationIsAbsent: (organizationName) => {
