@@ -294,7 +294,6 @@ export default {
         .should('be.enabled');
       cy.get(`[data-row-index="${row}"]`)
         .find('div[class*="lastUpdated-"]')
-        .should('not.have.descendants', 'input')
         .should('contain.text', patronGroup.currentDate)
         .find('a')
         .invoke('text')

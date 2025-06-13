@@ -18,7 +18,7 @@ describe('Users', () => {
       patronGroup: {
         name: `group name${getRandomPostfix()}`,
         currentDate: moment(new Date()).format('M/D/YYYY'),
-        userName: 'ADMINISTRATOR, Diku_admin',
+        userName: '',
       },
       isButtonDisabled: false,
       errorMessage: 'Please fill this in to continue',
@@ -32,6 +32,9 @@ describe('Users', () => {
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      cy.getAdminSourceRecord().then((sourceRecord) => {
+        testData.patronGroup.userName = sourceRecord;
+      });
       PatronGroups.createViaApi(testData.patronGroup.name).then(() => {
         PatronGroups.getGroupViaApi({ query: `group="${testData.patronGroup.name}"` }).then(
           (resp) => {
