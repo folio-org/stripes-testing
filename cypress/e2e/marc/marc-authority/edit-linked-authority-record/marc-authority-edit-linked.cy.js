@@ -81,9 +81,7 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -107,7 +105,8 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire', 'C376596'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
-          MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
+          MarcAuthorities.selectFirst(marcFiles[1].authorityHeading);
+          cy.wait(1500);
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(`$a ${marcFiles[1].authority010FieldValue}`, 4);
           QuickMarcEditor.updateExistingField(
