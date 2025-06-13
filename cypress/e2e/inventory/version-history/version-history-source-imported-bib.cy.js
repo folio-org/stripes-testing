@@ -16,8 +16,6 @@ describe('Inventory', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
         instanceTitle: 'AT_C692070_MarcBibInstance',
-        tag245: '245',
-        valid245IndicatorValue: '1',
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
       };
       const permissions = [
