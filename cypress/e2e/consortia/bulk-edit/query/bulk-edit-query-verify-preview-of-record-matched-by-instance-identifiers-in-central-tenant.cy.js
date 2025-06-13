@@ -63,7 +63,6 @@ describe('Bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          BulkEditSearchPane.openQuerySearch();
         });
       });
 
@@ -83,130 +82,105 @@ describe('Bulk-edit', () => {
         'C503012 Query - Verify "Preview of record matched" when querying by valid Instance identifiers in Central tenant (consortia) (firebird)',
         { tags: ['criticalPathECS', 'firebird', 'C503012'] },
         () => {
-          const [firstInstance, secondInstance, thirdInstance] = instances;
+          const parameters = [
+            {
+              queryField: instanceFieldValues.instanceId,
+              operator: QUERY_OPERATIONS.IN,
+              value: `${instances[0].uuid},${instances[1].uuid}`,
+              expectedCount: 2,
+              expectedInstances: [instances[0], instances[1]],
+              queryAreaContent: `(instance.id in (${instances[0].uuid}, ${instances[1].uuid}))`,
+            },
+            {
+              queryField: instanceFieldValues.instanceHrid,
+              operator: QUERY_OPERATIONS.EQUAL,
+              value: instances[2].hrid,
+              expectedCount: 1,
+              expectedInstances: [instances[2]],
+              queryAreaContent: `(instance.hrid == ${instances[2].hrid})`,
+            },
+          ];
 
-          BulkEditSearchPane.checkInstanceRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
+          parameters.forEach(
+            ({
+              queryField,
+              operator,
+              value,
+              expectedCount,
+              expectedInstances,
+              queryAreaContent,
+            }) => {
+              BulkEditSearchPane.clickToBulkEditMainButton();
+              BulkEditSearchPane.openQuerySearch();
+              BulkEditSearchPane.checkInstanceRadio();
+              BulkEditSearchPane.clickBuildQueryButton();
+              QueryModal.verify();
+              QueryModal.selectField(queryField);
+              QueryModal.verifySelectedField(queryField);
+              QueryModal.selectOperator(operator);
+              QueryModal.fillInValueTextfield(value);
+              QueryModal.verifyQueryAreaContent(queryAreaContent);
 
-          QueryModal.selectField(instanceFieldValues.instanceId);
-          QueryModal.verifySelectedField(instanceFieldValues.instanceId);
-          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-          QueryModal.fillInValueTextfield(`${firstInstance.uuid},${secondInstance.uuid}`);
-          QueryModal.verifyQueryAreaContent(
-            `(instance.id in (${firstInstance.uuid}, ${secondInstance.uuid}))`,
+              cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
+              cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
+              QueryModal.clickTestQuery();
+              QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
+              QueryModal.verifyNumberOfMatchedRecords(expectedCount);
+
+              expectedInstances.forEach((instance) => {
+                QueryModal.verifyMatchedRecordsByIdentifier(
+                  queryField === instanceFieldValues.instanceId ? instance.uuid : instance.hrid,
+                  queryField,
+                  queryField === instanceFieldValues.instanceId ? instance.uuid : instance.hrid,
+                );
+              });
+
+              QueryModal.clickRunQuery();
+              QueryModal.verifyClosed();
+
+              cy.wait('@getPreview', getLongDelay()).then((interception) => {
+                const interceptedUuid = interception.request.url.match(
+                  /bulk-operations\/([a-f0-9-]+)\/preview/,
+                )[1];
+                matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
+
+                BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+                BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(
+                  `${expectedCount} instance`,
+                );
+                BulkEditSearchPane.verifyQueryHeadLine(queryAreaContent);
+
+                expectedInstances.forEach((instance) => {
+                  BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+                    instance.hrid,
+                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
+                    instance.title,
+                  );
+                });
+
+                BulkEditSearchPane.verifyPaginatorInMatchedRecords(expectedCount);
+                BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+                BulkEditActions.openActions();
+                BulkEditActions.downloadMatchedResults();
+                BulkEditFiles.verifyCSVFileRowsRecordsNumber(
+                  matchedRecordsQueryFileName,
+                  expectedCount,
+                );
+
+                expectedInstances.forEach((instance) => {
+                  BulkEditFiles.verifyValueInRowByUUID(
+                    matchedRecordsQueryFileName,
+                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+                    instance.uuid,
+                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
+                    instance.hrid,
+                  );
+                });
+
+                FileManager.deleteFileFromDownloadsByMask(matchedRecordsQueryFileName);
+              });
+            },
           );
-
-          cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
-          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
-          QueryModal.clickTestQuery();
-          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
-          QueryModal.verifyNumberOfMatchedRecords(2);
-          QueryModal.verifyMatchedRecordsByIdentifier(
-            firstInstance.uuid,
-            instanceFieldValues.instanceId,
-            firstInstance.uuid,
-          );
-          QueryModal.verifyMatchedRecordsByIdentifier(
-            secondInstance.uuid,
-            instanceFieldValues.instanceId,
-            secondInstance.uuid,
-          );
-
-          QueryModal.clickRunQuery();
-          QueryModal.verifyClosed();
-          cy.wait('@getPreview', getLongDelay()).then((interception) => {
-            const interceptedUuid = interception.request.url.match(
-              /bulk-operations\/([a-f0-9-]+)\/preview/,
-            )[1];
-            matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
-
-            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
-            BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.id in (${firstInstance.uuid}, ${secondInstance.uuid}))`,
-            );
-
-            [firstInstance, secondInstance].forEach((instance) => {
-              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                instance.hrid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
-                instance.title,
-              );
-            });
-
-            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
-            BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-            BulkEditActions.openActions();
-            BulkEditActions.downloadMatchedResults();
-            BulkEditFiles.verifyCSVFileRowsRecordsNumber(matchedRecordsQueryFileName, 2);
-
-            [firstInstance, secondInstance].forEach((instance) => {
-              BulkEditFiles.verifyValueInRowByUUID(
-                matchedRecordsQueryFileName,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-                instance.uuid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
-                instance.hrid,
-              );
-            });
-
-            // remove earlier downloaded file
-            FileManager.deleteFileFromDownloadsByMask(matchedRecordsQueryFileName);
-          });
-
-          BulkEditSearchPane.clickToBulkEditMainButton();
-          BulkEditSearchPane.openQuerySearch();
-
-          BulkEditSearchPane.checkInstanceRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
-          QueryModal.selectField(instanceFieldValues.instanceHrid);
-          QueryModal.verifySelectedField(instanceFieldValues.instanceHrid);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.fillInValueTextfield(thirdInstance.hrid);
-          QueryModal.verifyQueryAreaContent(`(instance.hrid == ${thirdInstance.hrid})`);
-          cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
-          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
-          QueryModal.clickTestQuery();
-          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
-          QueryModal.verifyNumberOfMatchedRecords(1);
-          QueryModal.verifyMatchedRecordsByIdentifier(
-            thirdInstance.hrid,
-            instanceFieldValues.instanceHrid,
-            thirdInstance.hrid,
-          );
-          QueryModal.clickRunQuery();
-          QueryModal.verifyClosed();
-
-          cy.wait('@getPreview', getLongDelay()).then((interception) => {
-            const interceptedUuid = interception.request.url.match(
-              /bulk-operations\/([a-f0-9-]+)\/preview/,
-            )[1];
-            matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
-
-            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 instance');
-            BulkEditSearchPane.verifyQueryHeadLine(`(instance.hrid == ${thirdInstance.hrid})`);
-
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-              thirdInstance.hrid,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
-              thirdInstance.title,
-            );
-            BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);
-            BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-            BulkEditActions.openActions();
-            BulkEditActions.downloadMatchedResults();
-            BulkEditFiles.verifyCSVFileRowsRecordsNumber(matchedRecordsQueryFileName, 1);
-            BulkEditFiles.verifyValueInRowByUUID(
-              matchedRecordsQueryFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-              thirdInstance.uuid,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
-              thirdInstance.hrid,
-            );
-          });
         },
       );
     });
