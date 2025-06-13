@@ -593,6 +593,7 @@ export default {
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
 
     if (acceptLinkedBibModal) {
@@ -2251,18 +2252,13 @@ export default {
   },
 
   closeAllCallouts() {
-    cy.get('body').then(($body) => {
-      const callouts = $body.find('[class^=calloutBase-]');
-      if (callouts.length > 0) {
-        callouts.each((_, callout) => {
-          const calloutId = callout.getAttribute('id');
-          if (calloutId) {
-            cy.do(Callout({ id: calloutId }).dismiss());
-          }
-        });
-        cy.expect(Callout().absent());
+    cy.get('[class^=calloutBase-]').each((callout) => {
+      const calloutId = callout.attr('id');
+      if (calloutId) {
+        cy.do(Callout({ id: calloutId }).dismiss());
       }
     });
+    cy.expect(Callout().absent());
   },
 
   verifyInvalidLDRCalloutLink() {

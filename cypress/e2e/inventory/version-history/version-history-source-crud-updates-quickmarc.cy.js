@@ -35,7 +35,7 @@ describe('Inventory', () => {
           updatedField: { tag: '110', content: ['\\', '\\', '$a California $b Bear.'] },
           deletedField: { index: 19 },
         },
-        recordEditorPath: '/records-editor/records*',
+        recordsEditorPath: '/records-editor/records*',
         ldrRegExp: /^\d{5}[a-zA-Z]{3}.{1}[a-zA-Z0-9]{8}.{3}4500$/,
       };
       const versionHistoryCardsData = [
@@ -158,11 +158,11 @@ describe('Inventory', () => {
       let editorCallsCount = 0;
 
       function withWaitForEditor(callback) {
-        cy.intercept({ method: 'GET', url: testData.recordEditorPath }).as(
+        cy.intercept({ method: 'GET', url: testData.recordsEditorPath }).as(
           `getRecord${editorCallsCount}`,
         );
-        QuickMarcEditor.closeAllCallouts();
         callback();
+        QuickMarcEditor.closeAllCallouts();
         cy.wait(`@getRecord${editorCallsCount}`, { timeout: 5000 })
           .its('response.statusCode')
           .should('eq', 200);
