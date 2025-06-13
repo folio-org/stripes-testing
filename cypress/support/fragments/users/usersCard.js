@@ -72,7 +72,7 @@ const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-co
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
 const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
-const createRequestButton = Button('Create request');
+const createRequestButton = Button('New request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
 const userRolesAccordion = rootSection.find(Accordion('User roles'));
@@ -554,7 +554,7 @@ export default {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
   },
   startRequestAdding() {
-    cy.do(requestsAccordion.find(Button('Create request')).click());
+    cy.do(requestsAccordion.find(createRequestButton).click());
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
