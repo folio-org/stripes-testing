@@ -371,6 +371,7 @@ export default {
 
   verifyUserProxyDetails(username) {
     const proxyUser = ProxyUser(including(username));
+    cy.do(Select('Notifications sent to').choose('Proxy'));
     cy.expect([
       proxyUser.exists(),
       proxyUser.find(Select('Relationship Status')).has({ checkedOptionText: 'Active' }),
