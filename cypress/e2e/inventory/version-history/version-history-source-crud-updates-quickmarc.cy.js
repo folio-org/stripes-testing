@@ -195,6 +195,7 @@ describe('Inventory', () => {
             },
           );
 
+          cy.getAdminToken();
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
