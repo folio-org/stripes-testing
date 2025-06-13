@@ -152,7 +152,7 @@ describe('Inventory', () => {
       ];
       const marcFile = {
         marc: 'marcBibFileC692071.mrc',
-        fileName: `testMarcFileC692071${randomPostfix}.mrc`,
+        fileName: `testMarcFileC692071_${randomPostfix}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       };
       let editorCallsCount = 0;
