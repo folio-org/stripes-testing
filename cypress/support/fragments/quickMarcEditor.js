@@ -2251,13 +2251,18 @@ export default {
   },
 
   closeAllCallouts() {
-    cy.get('[class^=calloutBase-]').each((callout) => {
-      const calloutId = callout.attr('id');
-      if (calloutId) {
-        cy.do(Callout({ id: calloutId }).dismiss());
+    cy.get('body').then(($body) => {
+      const callouts = $body.find('[class^=calloutBase-]');
+      if (callouts.length > 0) {
+        callouts.each((_, callout) => {
+          const calloutId = callout.getAttribute('id');
+          if (calloutId) {
+            cy.do(Callout({ id: calloutId }).dismiss());
+          }
+        });
+        cy.expect(Callout().absent());
       }
     });
-    cy.expect(Callout().absent());
   },
 
   verifyInvalidLDRCalloutLink() {
