@@ -54,6 +54,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -285,8 +286,11 @@ describe('Data Import', () => {
 
     const openOrder = (number) => {
       Orders.clearSearchField();
+      cy.intercept('/organizations/organizations*').as('getOrganizations');
       Orders.searchByParameter('PO number', number);
-      Orders.selectFromResultsList(number);
+      cy.wait('@getOrganizations', getLongDelay()).then(() => {
+        Orders.selectFromResultsList(number);
+      });
       OrderDetails.openOrder();
     };
 

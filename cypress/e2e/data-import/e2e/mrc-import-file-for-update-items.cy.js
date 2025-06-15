@@ -386,8 +386,8 @@ describe('Data Import', () => {
 
           // download .csv file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.intercept('/inventory/instances/*').as('getId');
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.wait('@getId', getLongDelay()).then((req) => {
             InventorySearchAndFilter.saveUUIDs();
             // need to create a new file with instance UUID because tests are runing in multiple threads
