@@ -71,12 +71,13 @@ describe('Inventory', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
           InventoryInstance.searchResults(testData.contributorName);
-          InventoryInstance.selectRecord();
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag010,
             `$a ${marcFiles[1].naturalId}`,
           );
+          cy.wait(2000);
           InventoryInstance.clickLinkButton();
+          cy.wait(2000);
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
