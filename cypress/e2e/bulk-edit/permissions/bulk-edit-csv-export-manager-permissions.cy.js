@@ -14,7 +14,7 @@ let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 
-// Test is absolete after bulk edit refactoring - no Export manager usage anymore
+// Test is obsolete after bulk edit refactoring - no Export manager usage anymore
 describe.skip('Bulk-edit', () => {
   describe(
     'Permissions',
@@ -61,7 +61,7 @@ describe.skip('Bulk-edit', () => {
 
       it(
         'C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C353969'] },
+        { tags: [] },
         () => {
           ExportManagerSearchPane.waitLoading();
           ExportManagerSearchPane.searchByBulkEdit();
