@@ -3,6 +3,8 @@ import {
   Button,
   Modal,
   MultiColumnList,
+  MultiColumnListRow,
+  MultiColumnListCell,
   MultiSelect,
   MultiSelectOption,
   RepeatableFieldItem,
@@ -32,6 +34,7 @@ export const holdingsFieldValues = {
   permanentLocation: 'Permanent location — Name',
 };
 export const instanceFieldValues = {
+  instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
@@ -401,5 +404,29 @@ export default {
       });
     }
     checkResponse();
+  },
+
+  verifyNumberOfMatchedRecords(numberOfMatchedRecords) {
+    cy.wait(3000);
+    cy.get('[class^="col-xs-10"]').then(($element) => {
+      cy.wrap($element)
+        .invoke('text')
+        .then((text) => {
+          expect(text).to.equal(
+            `Query would return ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+          );
+        });
+    });
+  },
+
+  verifyMatchedRecordsByIdentifier(identifier, columnName, value) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        buildQueryModal
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
   },
 };
