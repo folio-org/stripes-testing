@@ -51,7 +51,6 @@ describe(
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-          BulkEditSearchPane.waitLoading();
 
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
           cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
@@ -135,7 +134,7 @@ describe(
           BulkEditActions.downloadChangedCSV();
 
           ExportFile.verifyFileIncludes(changedRecordsFileName, [
-            'Date Of Birth',
+            'Date of birth',
             userColumns,
             newName,
           ]);
@@ -166,7 +165,7 @@ describe(
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
           ExportFile.verifyFileIncludes(updatedRecordsFileName, [
-            'Date Of Birth',
+            'Date of birth',
             userColumns,
             newName,
           ]);

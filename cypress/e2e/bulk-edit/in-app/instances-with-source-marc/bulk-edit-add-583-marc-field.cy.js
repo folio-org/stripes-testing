@@ -26,15 +26,15 @@ let changedRecordsFileNameMrc;
 let changedRecordsFileNameCsv;
 const actionNote = 'Action note text';
 
-describe('Bulk-edit', () => {
-  describe(
-    'In-app approach',
-    {
-      retries: {
-        runMode: 1,
-      },
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
     },
-    () => {
+  },
+  () => {
+    describe('In-app approach', () => {
       beforeEach('create test data', () => {
         marcInstance = {
           title: `AT_C503070_MarcInstance_${getRandomPostfix()}`,
@@ -263,6 +263,6 @@ describe('Bulk-edit', () => {
           InventoryViewSource.verifyFieldContent(3, updateDate);
         },
       );
-    },
-  );
-});
+    });
+  },
+);

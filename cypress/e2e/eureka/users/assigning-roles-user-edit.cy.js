@@ -36,6 +36,7 @@ describe('Eureka', () => {
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;
       });
+      cy.getAdminToken();
       cy.createAuthorizationRoleApi(testData.roleAName).then((roleA) => {
         testData.roleAId = roleA.id;
         cy.createAuthorizationRoleApi(testData.roleBName).then((roleB) => {
@@ -75,9 +76,6 @@ describe('Eureka', () => {
 
     after('Delete roles, users', () => {
       cy.getAdminToken();
-      cy.deleteCapabilitiesFromRoleApi(testData.roleAId);
-      cy.deleteCapabilitiesFromRoleApi(testData.roleBId);
-      cy.deleteCapabilitySetsFromRoleApi(testData.roleAId);
       cy.deleteAuthorizationRoleApi(testData.roleAId);
       cy.deleteAuthorizationRoleApi(testData.roleBId);
       cy.deleteAuthorizationRoleApi(testData.roleCId);
