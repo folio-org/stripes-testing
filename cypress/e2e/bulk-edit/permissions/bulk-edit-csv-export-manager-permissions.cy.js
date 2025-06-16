@@ -10,22 +10,21 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
-let userUUIDsFileName;
-let matchedRecordsFileName;
 
-describe(
-  'Bulk-edit',
-  {
-    retries: {
-      runMode: 1,
+const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
+
+// Test is absolete after bulk edit refactoring - no Export manager usage anymore
+describe.skip('Bulk-edit', () => {
+  describe(
+    'Permissions',
+    {
+      retries: {
+        runMode: 1,
+      },
     },
-  },
-  () => {
-    describe('Permissions', () => {
+    () => {
       beforeEach('create test data', () => {
-        userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-        matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
-
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,
@@ -77,6 +76,6 @@ describe(
           );
         },
       );
-    });
-  },
-);
+    },
+  );
+});

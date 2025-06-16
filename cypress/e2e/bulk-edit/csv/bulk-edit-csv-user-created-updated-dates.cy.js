@@ -134,7 +134,7 @@ describe(
           BulkEditActions.downloadChangedCSV();
 
           ExportFile.verifyFileIncludes(changedRecordsFileName, [
-            'Date Of Birth',
+            'Date of birth',
             userColumns,
             newName,
           ]);
@@ -165,7 +165,7 @@ describe(
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
           ExportFile.verifyFileIncludes(updatedRecordsFileName, [
-            'Date Of Birth',
+            'Date of birth',
             userColumns,
             newName,
           ]);

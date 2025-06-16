@@ -8,7 +8,12 @@ import {
   Link,
   List,
   ListItem,
+  Modal,
+  MultiColumnList,
+  MultiColumnListRow,
+  MultiColumnListCell,
 } from '../../../../interactors';
+import UsersCard from '../users/usersCard';
 
 const rootSection = Pane({ title: 'Version history' });
 const paneHeader = rootSection.find(PaneHeader());
@@ -19,6 +24,9 @@ const fieldActions = {
   REMOVED: 'Removed',
   EDITED: 'Edited',
 };
+const closeModalButton = Button('Close');
+const changesModalColumns = ['Action', 'Field', 'Changed from', 'Changed to'];
+const changesModalHeaderDefaultRegexp = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2} (AM|PM).*/;
 
 export default {
   fieldActions,
@@ -82,9 +90,10 @@ export default {
     isCurrent = false,
   ) {
     let dateTime;
+    let source = '';
     if (!date) dateTime = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2} (AM|PM)/;
     else dateTime = new RegExp(`${date.replace('/', '\\/')}, \\d{1,2}:\\d{1,2} (AM|PM)`);
-    const source = `Source: ${lastName}, ${firstName}`;
+    if (lastName && firstName) source = `Source: ${lastName}, ${firstName}`;
     const targetCard = rootSection.find(Card({ index }));
     cy.expect([
       targetCard.has({ headerStart: matching(dateTime) }),
@@ -93,7 +102,7 @@ export default {
     if (isOriginal) {
       cy.expect(targetCard.has({ innerHTML: including('<b><i>Original version</i></b>') }));
     } else {
-      cy.expect(targetCard.find(Link('Changed')).exists());
+      cy.expect(targetCard.find(Button('Changed')).exists());
       if (isCurrent) {
         cy.expect(targetCard.has({ innerHTML: including('<b><i>Current version</i></b>') }));
       }
@@ -109,6 +118,59 @@ export default {
 
   checkChangesCountForCard(index, changesCount) {
     const targetCard = rootSection.find(Card({ index }));
-    cy.expect(targetCard.find(List().has({ count: changesCount })));
+    cy.expect(targetCard.find(List()).has({ count: changesCount }));
+  },
+
+  openChangesForCard(index = 0) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.do(targetCard.find(Button('Changed')).click());
+    cy.expect(Modal().exists());
+  },
+
+  verifyChangesModal(date, firstName, lastName) {
+    let headerRegexp;
+    let source = '';
+    if (!date) headerRegexp = changesModalHeaderDefaultRegexp;
+    else headerRegexp = new RegExp(`${date.replace('/', '\\/')}, \\d{1,2}:\\d{1,2} (AM|PM).*`);
+    if (lastName && firstName) source = `Source: ${lastName}, ${firstName}`;
+    const targetModal = Modal(matching(headerRegexp));
+    cy.expect([
+      targetModal.exists(),
+      targetModal.has({ header: including(source) }),
+      targetModal.find(closeButton).exists(),
+      targetModal.find(closeModalButton).exists(),
+      targetModal.find(MultiColumnList({ columns: changesModalColumns })).exists(),
+    ]);
+  },
+
+  checkChangeInModal(action, field, from = 'No value set-', to = 'No value set-', isShown = true) {
+    const content = [action, field, from, to].join('');
+    const targetModal = Modal(matching(changesModalHeaderDefaultRegexp));
+    if (from instanceof RegExp && to instanceof RegExp) {
+      cy.expect([
+        targetModal.find(MultiColumnListRow({ content: including(`${action}${field}`) })).exists(),
+        targetModal.find(MultiColumnListCell({ content: matching(from), columnIndex: 2 })).exists(),
+        targetModal.find(MultiColumnListCell({ content: matching(to), columnIndex: 3 })).exists(),
+      ]);
+    } else if (isShown) cy.expect(targetModal.find(MultiColumnListRow({ content })).exists());
+    else cy.expect(targetModal.find(MultiColumnListRow({ content })).absent());
+  },
+
+  checkChangesCountInModal(changesCount) {
+    const targetModal = Modal(matching(changesModalHeaderDefaultRegexp));
+    cy.expect(targetModal.find(MultiColumnList()).has({ rowCount: changesCount }));
+  },
+
+  closeChangesModal(withIcon = false) {
+    const targetModal = Modal(matching(changesModalHeaderDefaultRegexp));
+    if (withIcon) cy.do(targetModal.find(closeButton).click());
+    else cy.do(targetModal.find(closeModalButton).click());
+    cy.expect(targetModal.absent());
+  },
+
+  clickOnSourceLinkInCard(index = 0) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.do(targetCard.find(Link({ href: including('/users/preview/') })).click());
+    UsersCard.waitLoading();
   },
 };
