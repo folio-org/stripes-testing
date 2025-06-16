@@ -14,7 +14,8 @@ let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 
-describe('Bulk-edit', () => {
+// Test is absolete after bulk edit refactoring - no Export manager usage anymore
+describe.skip('Bulk-edit', () => {
   describe(
     'Permissions',
     {
