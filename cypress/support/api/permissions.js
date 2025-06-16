@@ -49,7 +49,7 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = true) => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = true) => {
   const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
@@ -346,10 +346,11 @@ Cypress.Commands.add('updateCapabilitySetsForRoleApi', (roleId, capabilitySetIds
   });
 });
 
-Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId) => {
+Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId, searchParams = { limit: 100 }) => {
   cy.okapiRequest({
     path: `roles/${roleId}/capabilities`,
     isDefaultSearchParamsRequired: false,
+    searchParams,
   });
 });
 
@@ -360,9 +361,10 @@ Cypress.Commands.add('getCapabilitySetsForRoleApi', (roleId) => {
   });
 });
 
-Cypress.Commands.add('getAuthorizationRoles', () => {
+Cypress.Commands.add('getAuthorizationRoles', (searchParams = { limit: 500 }) => {
   cy.okapiRequest({
-    path: 'roles?limit=500',
+    path: 'roles',
+    searchParams,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     cy.wrap(body.roles).as('roles');
