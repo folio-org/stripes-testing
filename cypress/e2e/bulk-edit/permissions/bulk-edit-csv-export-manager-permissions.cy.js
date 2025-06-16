@@ -10,20 +10,22 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
+let userUUIDsFileName;
+let matchedRecordsFileName;
 
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
-
-describe('Bulk-edit', () => {
-  describe(
-    'Permissions',
-    {
-      retries: {
-        runMode: 1,
-      },
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
     },
-    () => {
+  },
+  () => {
+    describe('Permissions', () => {
       beforeEach('create test data', () => {
+        userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+        matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
+
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,
@@ -75,6 +77,6 @@ describe('Bulk-edit', () => {
           );
         },
       );
-    },
-  );
-});
+    });
+  },
+);

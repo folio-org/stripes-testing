@@ -7,8 +7,8 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import TopMenu from '../../../support/fragments/topMenu';
 
 let user;
-const invalidUserBarcode = getRandomPostfix();
-const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
+let invalidUserBarcode;
+let invalidUserBarcodesFileName;
 
 describe(
   'Bulk-edit',
@@ -20,6 +20,9 @@ describe(
   () => {
     describe('Csv approach', () => {
       beforeEach('create test data', () => {
+        invalidUserBarcode = getRandomPostfix();
+        invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
+
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,
