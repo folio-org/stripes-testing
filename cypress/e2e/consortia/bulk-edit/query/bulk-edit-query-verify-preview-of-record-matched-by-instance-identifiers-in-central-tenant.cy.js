@@ -74,8 +74,6 @@ describe('Bulk-edit', () => {
         instances.forEach((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
-
-        FileManager.deleteFileFromDownloadsByMask(matchedRecordsQueryFileName);
       });
 
       it(

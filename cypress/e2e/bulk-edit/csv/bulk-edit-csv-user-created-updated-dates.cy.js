@@ -51,7 +51,6 @@ describe(
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-          BulkEditSearchPane.waitLoading();
 
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
           cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
