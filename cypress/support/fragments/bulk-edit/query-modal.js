@@ -412,9 +412,14 @@ export default {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
-          expect(text).to.equal(
-            `Query would return ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
-          );
+          if (numberOfMatchedRecords) {
+            expect(text).to.equal(
+              `Query would return ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+            );
+          } else {
+            expect(text).to.equal('Query returns no records.');
+            cy.get('[class^="emptyMessage--"]').should('have.text', 'The list contains no items');
+          }
         });
     });
   },
