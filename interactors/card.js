@@ -13,4 +13,6 @@ export default HTML.extend('card')
     headerStart: (el) => el.querySelector('[class^=headerStart-]').textContent,
     headerEnd: (el) => el.querySelector('[class^=headerEnd-]').textContent,
     style: (el) => cardStyles.keys().filter((s) => el.className.includes(s))[0],
+    index: (el) => [...el.parentElement.children].indexOf(el),
+    innerHTML: (el) => el.innerHTML,
   });

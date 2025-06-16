@@ -46,6 +46,7 @@ export default {
     method: 'DELETE',
     path: `instance-statuses/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   verifyListOfStatusTypesIsIdenticalToListInInstance(statusesFromInstance) {

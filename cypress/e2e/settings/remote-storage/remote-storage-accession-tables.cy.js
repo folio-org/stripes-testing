@@ -22,12 +22,14 @@ describe('remote-storage-configuration', () => {
     'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (volaris)',
     { tags: ['criticalPath', 'volaris', 'C343219'] },
     () => {
-      Configurations.deleteRemoteStorage('RS2');
+      Configurations.ensureRemoteStorageExists('RS2');
+      Configurations.deleteAllRemoteStoragesViaAPIExceptOf('RS2');
 
+      Configurations.deleteRemoteStorage('RS2');
       AccessionTables.openTabAccessionTablesFromSettings();
       Configurations.verifyCaiaSoftWarning();
 
-      // returning remote storage conf
+      // returning remote storage configuration
       Configurations.openConfigurationsTabFromSettings();
       rs.create('RS2');
     },

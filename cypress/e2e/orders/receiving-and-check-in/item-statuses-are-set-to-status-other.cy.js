@@ -226,7 +226,7 @@ describe('Orders', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
+    //     // TODO: Need to find solution to delete all data, because now i cant delete location and user
 
     it(
       'C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)',

@@ -71,15 +71,14 @@ describe('Inventory', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
           InventoryInstance.searchResults(testData.contributorName);
+          InventoryInstance.selectRecord();
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag010,
             `$a ${marcFiles[1].naturalId}`,
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
         cy.waitForAuthRefresh(() => {

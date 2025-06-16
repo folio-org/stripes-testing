@@ -29,6 +29,7 @@ import QueryModal, {
   instanceFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let locationId;
@@ -138,7 +139,7 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.statisticalCodeNames, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS_ANY, 1);
-          QueryModal.fillInValueMultiselect(statisticalCode.name, 1);
+          QueryModal.chooseFromValueMultiselect(statisticalCode.name, 1);
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 2);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 2);
@@ -231,6 +232,24 @@ describe('Bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
+            value: 'true',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+            value: 'true',
+          },
+        ];
+        const editedHeaderValuesInFile = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+            value: administrativeNoteText,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
             value: true,
           },
           {
@@ -255,7 +274,7 @@ describe('Bulk-edit', () => {
           previewQueryFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
-          editedHeaderValues,
+          editedHeaderValuesInFile,
         );
         BulkEditActions.downloadPreviewInMarcFormat();
 
@@ -298,7 +317,7 @@ describe('Bulk-edit', () => {
           changedRecordsQueryFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
-          editedHeaderValues,
+          editedHeaderValuesInFile,
         );
         BulkEditActions.downloadChangedMarc();
 
@@ -348,7 +367,7 @@ describe('Bulk-edit', () => {
         BulkEditLogs.clickActionsRunBy(user.username);
         BulkEditLogs.verifyLogsRowActionWhenCompletedWithQuery(true);
         BulkEditLogs.downloadQueryIdentifiers();
-        BulkEditFiles.verifyCSVFileRows(identifiersQueryFilename, [marcInstance.uuid]);
+        ExportFile.verifyFileIncludes(identifiersQueryFilename, [marcInstance.uuid]);
         BulkEditFiles.verifyCSVFileRecordsNumber(identifiersQueryFilename, 1);
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
@@ -363,7 +382,7 @@ describe('Bulk-edit', () => {
           previewQueryFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
-          editedHeaderValues,
+          editedHeaderValuesInFile,
         );
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
@@ -374,7 +393,7 @@ describe('Bulk-edit', () => {
           changedRecordsQueryFileNameCsv,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
-          editedHeaderValues,
+          editedHeaderValuesInFile,
         );
         BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 

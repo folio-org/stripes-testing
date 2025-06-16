@@ -7,10 +7,10 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 
 let user;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const invalidUserUUID = getRandomPostfix();
-const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
-const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+let userUUIDsFileName;
+let invalidUserUUID;
+let matchedRecordsFileName;
+let editedFileName;
 
 describe('Bulk-edit', () => {
   describe(
@@ -22,6 +22,11 @@ describe('Bulk-edit', () => {
     },
     () => {
       beforeEach('create test data', () => {
+        userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+        invalidUserUUID = getRandomPostfix();
+        matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
+        editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,

@@ -18,16 +18,16 @@ import {
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 let user;
+let instance;
+let holdingUUIDsFileName;
+let matchedRecordsFileName;
+let changedRecordsFileName;
 const notes = {
   administrative: 'C430210 Administrative\n note text',
   electronicBookplate: 'C430210 Electronic bookplate note text',
   provenance: 'C430210 Provenance note text',
   reproduction: 'C430210 Reproduction note text',
   binding: "C430210 test binding note:~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,;",
-};
-const instance = {
-  instanceName: `C430210 instance-${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
 };
 const actionsToSelect = {
   addNote: 'Add note',
@@ -70,9 +70,6 @@ const editedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE, notes.provenance],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, notes.reproduction],
 ];
-const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.addNewBulkEditFilterString();
@@ -86,16 +83,24 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.verifyConfirmButtonDisabled(false);
 }
 
-describe('Bulk-edit', () => {
-  describe(
-    'In-app approach',
-    {
-      retries: {
-        runMode: 1,
-      },
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
     },
-    () => {
+  },
+  () => {
+    describe('In-app approach', () => {
       beforeEach('create test data', () => {
+        instance = {
+          instanceName: `AT_C430210_FolioInstance_${getRandomPostfix()}`,
+          itemBarcode: getRandomPostfix(),
+        };
+        holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
+        matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+        changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
+
         cy.clearLocalStorage();
         cy.createTempUser([
           permissions.bulkEditView.gui,
@@ -222,6 +227,6 @@ describe('Bulk-edit', () => {
           );
         },
       );
-    },
-  );
-});
+    });
+  },
+);

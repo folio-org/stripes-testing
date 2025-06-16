@@ -17,33 +17,41 @@ import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFile
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
-const marcInstance = {
-  title: `AT_C503070_MarcInstance_${getRandomPostfix()}`,
-};
+let marcInstance;
+let instanceUUIDsFileName;
+let matchedRecordsFileName;
+let previewFileNameMrc;
+let previewFileNameCsv;
+let changedRecordsFileNameMrc;
+let changedRecordsFileNameCsv;
 const actionNote = 'Action note text';
-const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
-const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
-const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
-const changedRecordsFileNameMrc = BulkEditFiles.getChangedRecordsMarcFileName(
-  instanceUUIDsFileName,
-  true,
-);
-const changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
-  instanceUUIDsFileName,
-  true,
-);
 
-describe('Bulk-edit', () => {
-  describe(
-    'In-app approach',
-    {
-      retries: {
-        runMode: 1,
-      },
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
     },
-    () => {
+  },
+  () => {
+    describe('In-app approach', () => {
       beforeEach('create test data', () => {
+        marcInstance = {
+          title: `AT_C503070_MarcInstance_${getRandomPostfix()}`,
+        };
+        instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
+        matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+        previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
+        previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+        changedRecordsFileNameMrc = BulkEditFiles.getChangedRecordsMarcFileName(
+          instanceUUIDsFileName,
+          true,
+        );
+        changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
+          instanceUUIDsFileName,
+          true,
+        );
+
         cy.clearLocalStorage();
         cy.getAdminToken();
         cy.createTempUser([
@@ -178,12 +186,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(
-            changedRecordsFileNameMrc,
-            0,
-            assertionsOnMarcFileContent,
-            1,
-          );
+          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyValueInRowByUUID(
@@ -230,7 +233,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditLogs.downloadFileWithProposedChangesMarc();
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, 0, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
           BulkEditFiles.verifyValueInRowByUUID(
@@ -242,12 +245,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 
-          parseMrcFileContentAndVerify(
-            changedRecordsFileNameMrc,
-            0,
-            assertionsOnMarcFileContent,
-            1,
-          );
+          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
@@ -265,6 +263,6 @@ describe('Bulk-edit', () => {
           InventoryViewSource.verifyFieldContent(3, updateDate);
         },
       );
-    },
-  );
-});
+    });
+  },
+);

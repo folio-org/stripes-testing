@@ -1,4 +1,24 @@
 export default {
+  auditConfigGroupsCollectionGet: {
+    internal: 'audit.config.groups.collection.get',
+    gui: 'Audit Configuration - get settings groups',
+  },
+  auditConfigGroupsSettingsCollectionGet: {
+    internal: 'audit.config.groups.settings.collection.get',
+    gui: 'Audit Configuration - get settings for a group',
+  },
+  auditConfigGroupsSettingsAuditInventoryCollectionGet: {
+    internal: 'audit.config.groups.settings.audit.inventory.collection.get',
+    gui: 'Audit Configuration - get settings for a audit inventory group',
+  },
+  auditConfigGroupsSettingsItemPut: {
+    internal: 'audit.config.groups.settings.item.put',
+    gui: 'Audit Configuration - update setting for a group',
+  },
+  auditConfigGroupsSettingsAuditInventoryEnabledItemPut: {
+    internal: 'audit.config.groups.settings.audit.inventory.enabled.item.put',
+    gui: 'Audit Configuration - enable/disable audit inventory records',
+  },
   // bulk edit
   bulkEditView: {
     internal: 'ui-bulk-edit.inventory.view',
@@ -403,7 +423,10 @@ export default {
   },
   uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create and edit users' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
-  uiUserProxies: { internal: 'ui-users.proxies.all', gui: 'Users: Can create, edit and remove proxies' },
+  uiUserProxies: {
+    internal: 'ui-users.proxies.all',
+    gui: 'Users: Can create, edit and remove proxies',
+  },
   uiUsersDelete: {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',

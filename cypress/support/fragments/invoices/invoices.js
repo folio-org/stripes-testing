@@ -609,6 +609,7 @@ export default {
   },
 
   checkCreatedInvoice(invoice, vendorPrimaryAddress) {
+    cy.wait(3000);
     cy.expect(invoiceDetailsPane.exists());
 
     if (vendorPrimaryAddress) {

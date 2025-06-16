@@ -450,6 +450,55 @@ const defaultValid008HoldingsValues = {
   'Spec ret': ['\\', '\\', '\\'],
 };
 const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
+const authoritySubfieldsDefault = [
+  {
+    ruleId: '8',
+    ruleSubfields: [
+      'a',
+      'b',
+      'c',
+      'd',
+      'g',
+      'j',
+      'q',
+      'f',
+      'h',
+      'k',
+      'l',
+      'm',
+      'n',
+      'o',
+      'p',
+      'r',
+      's',
+      't',
+    ],
+  },
+  {
+    ruleId: '9',
+    ruleSubfields: ['a', 'b', 'c', 'd', 'g', 'f', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+  },
+  {
+    ruleId: '10',
+    ruleSubfields: ['a', 'c', 'e', 'q', 'f', 'h', 'k', 'l', 'p', 's', 't', 'd', 'g', 'n'],
+  },
+  {
+    ruleId: '11',
+    ruleSubfields: ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+  },
+  {
+    ruleId: '12',
+    ruleSubfields: ['a', 'b', 'g'],
+  },
+  {
+    ruleId: '13',
+    ruleSubfields: ['a', 'g'],
+  },
+  {
+    ruleId: '14',
+    ruleSubfields: ['a'],
+  },
+];
 
 export default {
   defaultValidLdr,
@@ -530,7 +579,10 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  saveAndCloseWithValidationWarnings({ acceptLinkedBibModal = false } = {}) {
+  saveAndCloseWithValidationWarnings({
+    acceptLinkedBibModal = false,
+    acceptDeleteModal = false,
+  } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
@@ -541,11 +593,16 @@ export default {
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
 
     if (acceptLinkedBibModal) {
       cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
       cy.do(saveButton.click());
+    }
+    if (acceptDeleteModal) {
+      this.deleteConfirmationPresented();
+      this.confirmDelete();
     }
 
     cy.wait('@saveRecordRequest', { timeout: 5_000 })
@@ -700,6 +757,16 @@ export default {
           cy.setRulesForFieldViaApi(ruleId, isEnabled);
         });
       });
+  },
+
+  setAuthoritySubfieldsViaApi(ruleId, ruleSubfields) {
+    cy.setAuthoritySubfieldsViaApi(ruleId, ruleSubfields);
+  },
+
+  setAuthoritySubfieldsDefault() {
+    authoritySubfieldsDefault.forEach((tag) => {
+      cy.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
+    });
   },
 
   checkAbsenceOfLinkHeadingsButton() {

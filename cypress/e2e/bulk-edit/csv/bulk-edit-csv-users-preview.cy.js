@@ -10,22 +10,28 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
-const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const invalidUserUUID = getRandomPostfix();
-const matchedRecordsFile = `*Matched-Records-${userUUIDsFileName}`;
-const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+let newFirstName;
+let userUUIDsFileName;
+let invalidUserUUID;
+let matchedRecordsFile;
+let editedFileName;
 
-describe('Bulk-edit', () => {
-  describe(
-    'csv approach',
-    {
-      retries: {
-        runMode: 1,
-      },
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
     },
-    () => {
+  },
+  () => {
+    describe('csv approach', () => {
       beforeEach('create test data', () => {
+        newFirstName = `testNewFirstName_${getRandomPostfix()}`;
+        userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+        invalidUserUUID = getRandomPostfix();
+        matchedRecordsFile = `*Matched-Records-${userUUIDsFileName}`;
+        editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+
         cy.createTempUser([permissions.bulkEditCsvEdit.gui, permissions.uiUserEdit.gui]).then(
           (userProperties) => {
             user = userProperties;
@@ -90,6 +96,6 @@ describe('Bulk-edit', () => {
           Users.verifyFirstNameOnUserDetailsPane(newFirstName);
         },
       );
-    },
-  );
-});
+    });
+  },
+);
