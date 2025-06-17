@@ -119,24 +119,29 @@ describe('Eureka', () => {
         ],
         newCapabilitySet: {
           table: 'Data',
-          resource: 'UI-Users Loans-Renew',
+          resource: 'UI-Tags',
           action: 'Create',
         },
         newCapabilitiesInSet: [
           {
             table: 'Data',
-            resource: 'Inventory-Storage Location-Units Libraries Collection',
+            resource: 'Tags Collection',
             action: 'View',
           },
           {
-            table: 'Procedural',
-            resource: 'Circulation Renew-By-Barcode',
-            action: 'Execute',
+            table: 'Data',
+            resource: 'Tags Item',
+            action: 'Create',
           },
           {
             table: 'Data',
-            resource: 'UI-Users Loans-Renew',
+            resource: 'UI-Tags',
             action: 'Create',
+          },
+          {
+            table: 'Settings',
+            resource: 'Module Tags Enabled',
+            action: 'View',
           },
         ],
         newCapabilities: [
@@ -152,9 +157,8 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Settings: 2,
+            Settings: 3,
             Data: 10,
-            Procedural: 1,
           },
         },
         absentCapabilitySetTables: ['Procedural'],
