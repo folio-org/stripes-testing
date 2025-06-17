@@ -11,6 +11,7 @@ import {
   Pane,
   TextField,
 } from '../../../../../../interactors';
+import { tenantNames } from '../../../../dictionary/affiliations';
 import DateTools from '../../../../utils/dateTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
@@ -205,7 +206,7 @@ export default {
     cy.expect([confirmMemberLibrariesModal.absent(), rootPane.exists()]);
     InteractorsTools.checkCalloutMessage(
       including(
-        `${subjectTypeName} was successfully created for ${libraries[0]}, ${libraries[1]}, ${libraries[2]} libraries.`,
+        `${subjectTypeName} was successfully created for ${libraries[1]}, ${libraries[0]}, ${libraries[2]} libraries.`,
       ),
     );
   },
@@ -260,6 +261,37 @@ export default {
     cy.do(deleteButtonInDeleteModal.click());
     cy.expect([deleteSubjectTypeModal.absent(), rootPane.exists()]);
     InteractorsTools.checkCalloutMessage(`The subject type ${name} was successfully deleted.`);
+  },
+
+  createSharedSubjectTypeViaApi(typeId, subjectTypeName, consortiaId) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `consortia/${consortiaId}/sharing/settings`,
+      body: {
+        url: '/subject-types',
+        settingId: typeId,
+        payload: {
+          source: 'local',
+          name: subjectTypeName,
+          id: typeId,
+        },
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  deleteSharedSubjectTypeViaApi(consortiaId, id, subjectTypeName) {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `consortia/${consortiaId}/sharing/settings/${id}`,
+      body: {
+        url: '/subject-types',
+        settingId: id,
+        payload: { id, name: subjectTypeName, source: 'consortium' },
+      },
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
   },
 
   verifyShareToAllMembersModal(subjectTypeName, libraries) {
@@ -332,6 +364,8 @@ export default {
 
   verifyCreatedSubjectTypes(subjectType, user) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const allowedTypes = [tenantNames.central, tenantNames.college, tenantNames.university];
+    const regex = new RegExp(`^(${allowedTypes.join('|')})$`);
 
     getRowIndexesByUserName(user).then((rowIndexes) => {
       expect(rowIndexes).to.have.length(3);
@@ -359,7 +393,7 @@ export default {
             .find(
               MultiColumnListCell({
                 columnIndex: 3,
-                content: matching(/^(Central Office|College|University)$/),
+                content: matching(regex),
               }),
             )
             .exists(),
@@ -408,7 +442,10 @@ export default {
     cy.expect([newButton.has({ disabled: false }), selectMembersButton.has({ disabled: false })]);
   },
 
-  verifySubjectTypeExists(subjectTypeName, tenantName) {
+  verifySubjectTypeExists(subjectTypeName, tenantName, source = 'local', options = {}) {
+    const { actions = [] } = options;
+    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+
     cy.do(
       MultiColumnListCell({ content: subjectTypeName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
@@ -420,8 +457,21 @@ export default {
             .has({ content: subjectTypeName }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: source }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 3 }))
             .has({ content: tenantName }),
         ]);
+        Object.values(reasonsActions).forEach((action) => {
+          const buttonSelector = EditableListRow({ index: rowIndex })
+            .find(actionsCell)
+            .find(Button({ icon: action }));
+          if (actions.includes(action)) {
+            cy.expect(buttonSelector.exists());
+          } else {
+            cy.expect(buttonSelector.absent());
+          }
+        });
       }),
     );
   },
