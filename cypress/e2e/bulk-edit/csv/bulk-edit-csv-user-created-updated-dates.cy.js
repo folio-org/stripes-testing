@@ -8,18 +8,16 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DateTools from '../../../support/utils/dateTools';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenu from '../../../support/fragments/topMenu';
 
 let user;
 let updatedDate;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(userUUIDsFileName);
-const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
+let userUUIDsFileName;
+let editedFileName;
+let matchedRecordsFileName;
+let changedRecordsFileName;
+let previewOfProposedChangesFileName;
+let updatedRecordsFileName;
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe(
@@ -32,6 +30,14 @@ describe(
   () => {
     describe('Csv approach', () => {
       beforeEach('create test data', () => {
+        userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+        editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+        matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userUUIDsFileName);
+        changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
+        previewOfProposedChangesFileName =
+          BulkEditFiles.getPreviewOfProposedChangesFileName(userUUIDsFileName);
+        updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
+
         cy.clearLocalStorage();
         cy.createTempUser([
           permissions.bulkEditLogsView.gui,
@@ -41,10 +47,10 @@ describe(
           user = userProperties;
           cy.wait(3000);
 
-          cy.login(user.username, user.password);
-          cy.wait(15000);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-          BulkEditSearchPane.waitLoading();
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
 
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
           cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
@@ -128,7 +134,7 @@ describe(
           BulkEditActions.downloadChangedCSV();
 
           ExportFile.verifyFileIncludes(changedRecordsFileName, [
-            'Date Of Birth',
+            'Date of birth',
             userColumns,
             newName,
           ]);
@@ -159,7 +165,7 @@ describe(
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
           ExportFile.verifyFileIncludes(updatedRecordsFileName, [
-            'Date Of Birth',
+            'Date of birth',
             userColumns,
             newName,
           ]);

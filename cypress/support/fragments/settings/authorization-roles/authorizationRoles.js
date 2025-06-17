@@ -948,4 +948,12 @@ export default {
   verifyRoleType: (roleName, roleType) => {
     cy.expect(Pane(roleName).find(typeKeyValue).has({ value: roleType }));
   },
+
+  checkApplicationShownInModal: (appName, isShown = true) => {
+    const targetCheckbox = selectApplicationModal
+      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
+      .find(Checkbox());
+    if (isShown) cy.expect(targetCheckbox.exists());
+    else cy.expect(targetCheckbox.absent());
+  },
 };

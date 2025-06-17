@@ -180,9 +180,9 @@ describe('Orders', () => {
                 InventoryItems.closeItem();
               });
 
-              TopMenuNavigation.navigateToApp('Check in');
-              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint.name);
+              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint);
               SwitchServicePoint.checkIsServicePointSwitched(circ2LocationServicePoint.name);
+              TopMenuNavigation.navigateToApp('Check in');
               // Need to wait,while Checkin page will be loaded in same location
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(2000);
@@ -191,8 +191,9 @@ describe('Orders', () => {
               cy.wait(6000);
               CheckInActions.checkInItemGui(barcodeForSecondItem);
               cy.wait(6000);
-              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
+              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint);
               SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
+              TopMenuNavigation.navigateToApp('Check in');
               // Need to wait,while Checkin page will be loaded in same location
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(2000);
@@ -226,7 +227,8 @@ describe('Orders', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
+    //     // TODO: Need to find solution to delete all data, because now i cant delete location and user
+    //     // TODO: also need to delete service points
 
     it(
       'C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)',
