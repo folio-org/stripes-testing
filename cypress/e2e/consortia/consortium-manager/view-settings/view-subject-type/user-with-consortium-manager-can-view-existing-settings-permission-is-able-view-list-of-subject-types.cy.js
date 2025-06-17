@@ -18,11 +18,11 @@ describe('Consortia', () => {
       describe('Manage shared Subject types', () => {
         let user;
         let consortiaId;
-        const typeId = uuid();
         const sharedSubjectType = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibrares: 'All',
+          id: uuid(),
         };
         const localSubjectTypeOnCentral = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
@@ -47,7 +47,7 @@ describe('Consortia', () => {
             consortiaId = id;
 
             SubjectTypesConsortiumManager.createSharedSubjectTypeViaApi(
-              typeId,
+              sharedSubjectType.id,
               sharedSubjectType.name,
               consortiaId,
             );
@@ -98,7 +98,7 @@ describe('Consortia', () => {
           Users.deleteViaApi(user.userId);
           SubjectTypesConsortiumManager.deleteSharedSubjectTypeViaApi(
             consortiaId,
-            typeId,
+            sharedSubjectType.id,
             sharedSubjectType.name,
           );
           SubjectTypes.deleteViaApi(localSubjectTypeOnCentral.id);

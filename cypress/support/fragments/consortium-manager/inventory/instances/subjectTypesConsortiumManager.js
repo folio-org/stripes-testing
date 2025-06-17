@@ -11,6 +11,7 @@ import {
   Pane,
   TextField,
 } from '../../../../../../interactors';
+import { tenantNames } from '../../../../dictionary/affiliations';
 import DateTools from '../../../../utils/dateTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
@@ -333,6 +334,8 @@ export default {
 
   verifyCreatedSubjectTypes(subjectType, user) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const allowedTypes = [tenantNames.central, tenantNames.college, tenantNames.university];
+    const regex = new RegExp(`^(${allowedTypes.join('|')})$`);
 
     getRowIndexesByUserName(user).then((rowIndexes) => {
       expect(rowIndexes).to.have.length(3);
@@ -360,7 +363,7 @@ export default {
             .find(
               MultiColumnListCell({
                 columnIndex: 3,
-                content: matching(/^(Consortium|College|University)$/),
+                content: matching(regex),
               }),
             )
             .exists(),
