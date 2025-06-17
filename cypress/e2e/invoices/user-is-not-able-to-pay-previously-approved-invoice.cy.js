@@ -18,6 +18,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -40,10 +41,12 @@ describe('Invoices', () => {
   let orderNumber;
   let servicePointId;
   let location;
+  const isApprovePayDisabled = false;
 
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
+    Approvals.setApprovePayValue(isApprovePayDisabled);
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
