@@ -57,9 +57,7 @@ describe('Users', () => {
         UserEdit.verifyButtonsStateForProfilePicture([{ value: 'Delete' }]);
         UserEdit.deleteProfilePicture(testData.userB);
         UserEdit.verifyPictureIsRemoved(testData.externalPictureUrl);
-        UserEdit.cancelEdit();
-        UserEdit.verifyAreYouSureForm(true);
-        UserEdit.clickCloseWithoutSavingButton();
+        UserEdit.cancelChanges();
         UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
       },
     );
