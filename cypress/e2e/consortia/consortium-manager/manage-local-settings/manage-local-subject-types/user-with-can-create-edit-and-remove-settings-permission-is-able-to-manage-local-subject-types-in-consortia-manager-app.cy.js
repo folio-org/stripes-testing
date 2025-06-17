@@ -129,7 +129,7 @@ describe('Consortia', () => {
             SubjectTypesConsortiumManager.createNewSubjectType(subjectType.nameForKeepEdit);
             SubjectTypesConsortiumManager.clickKeepEditingInConfirmModal();
             SubjectTypesConsortiumManager.clickCancelInActionsColumn();
-            SubjectTypesConsortiumManager.verifySourceTypeAbsent(subjectType.nameForKeepEdit);
+            SubjectTypesConsortiumManager.verifySubjectTypeAbsent(subjectType.nameForKeepEdit);
 
             SubjectTypesConsortiumManager.createNewSubjectType(subjectType.name, false);
             SubjectTypesConsortiumManager.clickCancelInActionsColumn();
@@ -152,7 +152,7 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySourceTypeAbsent(subjectType.name);
+            SubjectTypes.verifySubjectTypeAbsent(subjectType.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);

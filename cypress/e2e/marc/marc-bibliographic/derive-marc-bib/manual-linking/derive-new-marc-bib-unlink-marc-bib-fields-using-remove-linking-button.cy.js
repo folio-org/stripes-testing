@@ -159,10 +159,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[0].rowIndex);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.secondTag700Values);
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[1].rowIndex);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndCloseDerive();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           InventoryInstance.verifyContributor(2, 1, linkingTagAndValues[0].value);
           InventoryInstance.checkMarcAppIconAbsent(2);
           InventoryInstance.verifyContributor(3, 1, linkingTagAndValues[1].value);

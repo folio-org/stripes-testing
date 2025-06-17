@@ -71,7 +71,6 @@ describe('Inventory', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
           InventoryInstance.searchResults(testData.contributorName);
-          InventoryInstance.selectRecord();
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag010,
             `$a ${marcFiles[1].naturalId}`,
