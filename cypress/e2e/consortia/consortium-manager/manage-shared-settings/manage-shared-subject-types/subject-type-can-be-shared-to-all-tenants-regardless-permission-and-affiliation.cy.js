@@ -64,8 +64,7 @@ describe('Consortia', () => {
           cy.resetTenant();
         });
 
-        after('Delete users data', () => {
-          SubjectTypesConsortiumManager.deleteSubjectType(subjectTypeNames[0], userB, 'consortium');
+        after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(userA.userId);

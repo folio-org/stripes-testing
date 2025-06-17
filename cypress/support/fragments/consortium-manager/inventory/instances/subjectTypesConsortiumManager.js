@@ -467,7 +467,7 @@ export default {
             .has({ content: 'consortium' }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: `${date} by SystemConsortia  ` }),
+            .has({ content: `${date} by System, System user - mod-consortia-keycloak ` }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 3 }))
             .has({ content: 'All' }),
