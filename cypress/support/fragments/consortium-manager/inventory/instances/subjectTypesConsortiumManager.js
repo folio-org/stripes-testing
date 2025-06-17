@@ -30,6 +30,11 @@ const cancelButtonInConfirmModal = confirmMemberLibrariesModal.find(Button('Canc
 const cancelButtonInDeleteModal = deleteSubjectTypeModal.find(Button('Cancel'));
 const deleteButtonInDeleteModal = deleteSubjectTypeModal.find(Button('Delete'));
 
+export const reasonsActions = {
+  edit: 'edit',
+  trash: 'trash',
+};
+
 function clickNewButton() {
   cy.do(newButton.click());
 }
@@ -198,7 +203,7 @@ export default {
     cy.expect([confirmMemberLibrariesModal.absent(), rootPane.exists()]);
     InteractorsTools.checkCalloutMessage(
       including(
-        `${subjectTypeName} was successfully created for ${libraries[0]}, ${libraries[1]}, ${libraries[2]} libraries.`,
+        `${subjectTypeName} was successfully created for ${libraries[1]}, ${libraries[0]}, ${libraries[2]} libraries.`,
       ),
     );
   },
@@ -236,6 +241,37 @@ export default {
     cy.do(deleteButtonInDeleteModal.click());
     cy.expect([deleteSubjectTypeModal.absent(), rootPane.exists()]);
     InteractorsTools.checkCalloutMessage(`The subject type ${name} was successfully deleted.`);
+  },
+
+  createSharedSubjectTypeViaApi(typeId, subjectTypeName, consortiaId) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `consortia/${consortiaId}/sharing/settings`,
+      body: {
+        url: '/subject-types',
+        settingId: typeId,
+        payload: {
+          source: 'local',
+          name: subjectTypeName,
+          id: typeId,
+        },
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  deleteSharedSubjectTypeViaApi(consortiaId, id, subjectTypeName) {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `consortia/${consortiaId}/sharing/settings/${id}`,
+      body: {
+        url: '/subject-types',
+        settingId: id,
+        payload: { id, name: subjectTypeName, source: 'consortium' },
+      },
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
   },
 
   verifyShareToAllModal(subjectTypeName, libraries) {
@@ -324,7 +360,7 @@ export default {
             .find(
               MultiColumnListCell({
                 columnIndex: 3,
-                content: matching(/^(Central Office|College|University)$/),
+                content: matching(/^(Consortium|College|University)$/),
               }),
             )
             .exists(),
@@ -373,20 +409,36 @@ export default {
     cy.expect([newButton.has({ disabled: false }), selectMembersButton.has({ disabled: false })]);
   },
 
-  verifySourceTypeExists(subjectSourceName, tenantName) {
+  verifySubjectTypeExists(subjectTypeName, tenantName, source = 'local', options = {}) {
+    const { actions = [] } = options;
+    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+
     cy.do(
-      MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
+      MultiColumnListCell({ content: subjectTypeName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const rowIndex = Number(rowNumber.slice(4));
 
         cy.expect([
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectSourceName }),
+            .has({ content: subjectTypeName }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: source }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 3 }))
             .has({ content: tenantName }),
         ]);
+        Object.values(reasonsActions).forEach((action) => {
+          const buttonSelector = EditableListRow({ index: rowIndex })
+            .find(actionsCell)
+            .find(Button({ icon: action }));
+          if (actions.includes(action)) {
+            cy.expect(buttonSelector.exists());
+          } else {
+            cy.expect(buttonSelector.absent());
+          }
+        });
       }),
     );
   },
