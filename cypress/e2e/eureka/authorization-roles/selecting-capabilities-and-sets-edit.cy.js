@@ -69,11 +69,11 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Licenses Contacts',
-            action: 'View',
+            resource: 'Calendar',
+            action: 'Create',
           },
         ],
-        numberOfCapabilitiesInAdditionalSets: 8,
+        numberOfCapabilitiesInAdditionalSets: 7,
       };
 
       const capabilitiesInSetSelected = testData.capabilitiesInSet.filter(

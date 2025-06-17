@@ -49,7 +49,7 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = true) => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = true) => {
   const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
