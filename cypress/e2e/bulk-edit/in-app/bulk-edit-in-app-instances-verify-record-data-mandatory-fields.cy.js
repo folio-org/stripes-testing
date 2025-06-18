@@ -16,7 +16,7 @@ let user;
 let instanceTypeId;
 let instanceTypeName;
 const instance = {
-  title: `C423674 instance-${getRandomPostfix()}`,
+  title: `AT_C423674_FolioInstance_${getRandomPostfix()}`,
 };
 const staffSuppressOption = 'Staff suppress';
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
@@ -93,53 +93,103 @@ describe('Bulk-edit', () => {
         );
 
         const checkedColumnHeadersWithValues = [
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID, instance.id],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY, 'false'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS, 'false'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD, 'false'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID, instance.hrid],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE, 'FOLIO'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CATALOGED_DATE, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_STATUS_TERM, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE, instance.title],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE, instanceTypeName],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.NATURE_OF_CONTENT, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGES, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY, ''],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE, ''],
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+            value: instance.id,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+            value: 'false',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
+            value: 'false',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD,
+            value: 'false',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
+            value: instance.hrid,
+          },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE, value: 'FOLIO' },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CATALOGED_DATE, value: '' },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_STATUS_TERM,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
+            value: instance.title,
+          },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE, value: '' },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
+            value: '',
+          },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS, value: '' },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION, value: '' },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION, value: '' },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
+            value: instanceTypeName,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.NATURE_OF_CONTENT,
+            value: '',
+          },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS, value: '' },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGES, value: '' },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE,
+            value: '',
+          },
         ];
-        const checkedColumnHeaders = checkedColumnHeadersWithValues.map(
-          (headerValuePair) => headerValuePair[0],
-        );
 
         BulkEditActions.openActions();
 
-        checkedColumnHeadersWithValues.forEach((checkedColumnHeader) => {
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(checkedColumnHeader[0]);
+        checkedColumnHeadersWithValues.forEach(({ header }) => {
+          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(header);
         });
 
         cy.wait(1000);
         BulkEditSearchPane.verifyCheckedCheckboxesPresentInTheTable();
 
-        checkedColumnHeadersWithValues.forEach((checkedColumnHeaderWithValue) => {
-          BulkEditSearchPane.verifyResultsUnderColumns(...checkedColumnHeaderWithValue);
+        checkedColumnHeadersWithValues.forEach(({ header, value }) => {
+          BulkEditSearchPane.verifyResultsUnderColumns(header, value);
         });
+
+        const checkedColumnHeaders = checkedColumnHeadersWithValues.map(
+          (headerValuePair) => headerValuePair.header,
+        );
 
         BulkEditSearchPane.verifyColumnsInTableInExactOrder(checkedColumnHeaders);
         BulkEditActions.openActions();
 
         const stringOfHeaders = checkedColumnHeaders.join(',');
         const stringOfValues = checkedColumnHeadersWithValues
-          .map((headerValuePair) => headerValuePair[1])
+          .map((checkedColumnHeader) => checkedColumnHeader.value)
           .join(',');
 
         BulkEditActions.downloadMatchedResults();
@@ -157,21 +207,19 @@ describe('Bulk-edit', () => {
         );
 
         const checkedColumnHeadersWithEditedValues = checkedColumnHeadersWithValues.map((item) => {
-          if (item[0] === BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS) {
-            return [item[0], 'true'];
+          if (item.header === BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS) {
+            item.value = 'true';
           }
           return item;
         });
         const stringOfEditedValues = checkedColumnHeadersWithEditedValues
-          .map((headerValuePair) => headerValuePair[1])
+          .map((checkedColumnHeadersWithEditedValue) => checkedColumnHeadersWithEditedValue.value)
           .join(',');
 
-        checkedColumnHeadersWithEditedValues.forEach((checkedColumnHeaderWithEditedValue) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-            ...checkedColumnHeaderWithEditedValue,
-          );
-        });
-
+        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+          instance.id,
+          checkedColumnHeadersWithEditedValues,
+        );
         BulkEditSearchPane.verifyColumnsInAreYouSureFormInExactOrder(checkedColumnHeaders);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [stringOfHeaders, stringOfEditedValues]);
@@ -184,13 +232,10 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
           'true',
         );
-
-        checkedColumnHeadersWithEditedValues.forEach((checkedColumnHeaderWithEditedValue) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
-            ...checkedColumnHeaderWithEditedValue,
-          );
-        });
-
+        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+          instance.id,
+          checkedColumnHeadersWithEditedValues,
+        );
         BulkEditSearchPane.verifyColumnsInTableInExactOrder(checkedColumnHeaders);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
