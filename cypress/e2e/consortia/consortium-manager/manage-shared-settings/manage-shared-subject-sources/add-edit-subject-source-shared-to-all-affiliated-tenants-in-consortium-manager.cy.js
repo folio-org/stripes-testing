@@ -1,4 +1,3 @@
-// import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -13,8 +12,7 @@ import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-// import Users from '../../../../../support/fragments/users/users';
-// import InteractorsTools from '../../../../../support/utils/interactorsTools';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -27,9 +25,8 @@ describe('Consortia', () => {
           newSubjectSourseName: `autotestSubjectSourceName${getRandomPostfix()}`,
           editedSubjectSourseName: `autotestSubjectSourceNameEdited${getRandomPostfix()}`,
         };
-        // const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
-        before('Create users data', () => {
+        before('Create userand login', () => {
           cy.clearCookies({ domain: null });
           cy.getAdminToken();
           cy.createTempUser([
@@ -50,17 +47,11 @@ describe('Consortia', () => {
           });
         });
 
-        // after('Delete users data', () => {
-        //   cy.resetTenant();
-        //   cy.getAdminToken();
-        //   Users.deleteViaApi(userA.userId);
-        //   Users.deleteViaApi(userB.userId);
-        //   SubjectSourcesConsortiumManager.getSourceSubjectIdViaApi(subjectSourceNames[0]).then(
-        //     (id) => {
-        //       SubjectSourcesConsortiumManager.deleteViaApi(id, subjectSourceNames[0]);
-        //     },
-        //   );
-        // });
+        after('Delete test data', () => {
+          cy.resetTenant();
+          cy.getAdminToken();
+          Users.deleteViaApi(user.userId);
+        });
 
         it(
           'C594428 User with "Consortium manager: Can share settings to all members" permission is able to add/edit subject source shared to all affiliated tenants in "Consortium manager" app (consortia) (folijet)',
@@ -72,22 +63,22 @@ describe('Consortia', () => {
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
             ConsortiumManagerApp.clickSelectMembers();
             SelectMembers.verifyStatusOfSelectMembersModal(2, 2, true);
-            SelectMembers.selectMember(tenantNames.college);
-            SelectMembers.verifyStatusOfSelectMembersModal(1, 2, false);
+            SelectMembers.checkMember(tenantNames.college, false);
+            SelectMembers.verifyStatusOfSelectMembersModal(2, 1, false);
+            SelectMembers.saveAndClose();
 
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             SubjectSourcesConsortiumManager.choose();
-            SettingsInventory.selectTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSourcesConsortiumManager.verifySubjectSourcesList();
-            SubjectSourcesConsortiumManager.clickNewSubjectSourceButton();
-            SubjectSourcesConsortiumManager.fillNameField(subjectSourceNames.newSubjectSourseName);
-            SubjectSourcesConsortiumManager.clickShareWithAllAffiliatedTenantsCheckbox();
-            SubjectSourcesConsortiumManager.clickSaveAndCloseButton();
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SubjectSourcesConsortiumManager.createNewSubjectSource(
+              subjectSourceNames.newSubjectSourseName,
+            );
             SubjectSourcesConsortiumManager.confirmSharing(subjectSourceNames.newSubjectSourseName);
             SubjectSourcesConsortiumManager.verifyCreatedSubjectSource({
               name: subjectSourceNames.newSubjectSourseName,
               actions: ['edit', 'trash'],
             });
+
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
@@ -116,26 +107,46 @@ describe('Consortia', () => {
             ConsortiumManagerApp.waitLoading();
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             SubjectSourcesConsortiumManager.choose();
-            SettingsInventory.selectTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
             SubjectSourcesConsortiumManager.editSubjectSource(
               subjectSourceNames.newSubjectSourseName,
               subjectSourceNames.editedSubjectSourseName,
-              user.username,
+              user,
               tenantNames.central,
-            );
-            SubjectSourcesConsortiumManager.confirmSharing(
-              subjectSourceNames.editedSubjectSourseName,
             );
             SubjectSources.verifyCreatedSubjectSource({
               name: subjectSourceNames.editedSubjectSourseName,
             });
 
             ConsortiumManagerApp.clickSelectMembers();
-            SelectMembers.verifyStatusOfSelectMembersModal(1, 2, false);
-            SelectMembers.selectMember(tenantNames.central);
-            SelectMembers.verifyStatusOfSelectMembersModal(0, 2, false);
+            SelectMembers.verifyStatusOfSelectMembersModal(2, 1, false);
+            SelectMembers.checkMember(tenantNames.central, false);
+            SelectMembers.verifyStatusOfSelectMembersModal(2, 0, false);
+            SelectMembers.saveAndClose();
+            ConsortiumManagerApp.verifySelectedSettingIsDisplayed(settingsItems.inventory);
+            ConsortiumManagerApp.verifyStatusOfConsortiumManager(0);
+            SubjectSourcesConsortiumManager.verifySubjectSourcesListIsEmpty();
 
-            // step 19 checks
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SubjectSources.verifyCreatedSubjectSource({
+              name: subjectSourceNames.editedSubjectSourseName,
+            });
+
+            cy.resetTenant();
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SubjectSources.verifyCreatedSubjectSource({
+              name: subjectSourceNames.editedSubjectSourseName,
+            });
           },
         );
       });
