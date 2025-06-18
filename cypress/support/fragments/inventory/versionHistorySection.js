@@ -31,7 +31,12 @@ const changesModalHeaderDefaultRegexp = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2
 export default {
   fieldActions,
   waitLoading() {
-    cy.expect(rootSection.exists());
+    this.checkPaneShown();
+  },
+
+  checkPaneShown(isShown = true) {
+    if (isShown) cy.expect(rootSection.exists());
+    else cy.expect(rootSection.absent());
   },
 
   verifyListOfChanges(listOfChanges) {
