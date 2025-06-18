@@ -9,13 +9,16 @@ import {
   QuickMarcEditorRow,
   Section,
   Select,
+  Spinner,
   TableCell,
   TableRow,
   TextArea,
   TextField,
+  Tooltip,
   including,
   matching,
   not,
+  or,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
@@ -41,6 +44,9 @@ const closeButton = Button({ icon: 'times' });
 const sourceFileSelect = QuickMarcEditorRow({ tagValue: '001' }).find(
   Select('Authority file name'),
 );
+const versionHistoryButton = Button({ icon: 'clock' });
+const versionHistoryToolTipText = 'Version history';
+const actionsButton = rootSection.find(Button('Actions', { disabled: or(true, false) }));
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -105,12 +111,12 @@ export default {
   defaultUpdateJobProfile,
   waitLoading: () => cy.expect(rootSection.exists()),
   edit: () => {
-    cy.do(rootSection.find(Button('Actions')).click());
+    cy.do(actionsButton.click());
     cy.do(Button('Edit').click());
     QuickMarcEditorWindow.waitLoading();
   },
   delete: () => {
-    cy.do(rootSection.find(Button('Actions')).click());
+    cy.do(actionsButton.click());
     cy.do(Button('Delete').click());
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
@@ -351,7 +357,7 @@ export default {
   checkActionDropdownContent() {
     const actualResArray = [];
     const expectedContent = ['Edit', 'Export (MARC)', 'Print', 'Delete'];
-    cy.do(rootSection.find(Button('Actions')).click());
+    cy.do(actionsButton.click());
     cy.expect([
       Button('Edit').has({ svgClass: including('edit') }),
       Button('Export (MARC)').has({ svgClass: including('download') }),
@@ -445,5 +451,27 @@ export default {
 
   verifySourceFileSelected: (sourceFileName) => {
     cy.expect(sourceFileSelect.has({ checkedOptionText: sourceFileName }));
+  },
+
+  verifyVersionHistoryButtonShown(isShown = true) {
+    const targetButton = rootHeader.find(versionHistoryButton);
+    if (isShown) {
+      cy.expect(targetButton.exists());
+      cy.do(targetButton.hoverMouse());
+      cy.expect(Tooltip().has({ text: versionHistoryToolTipText }));
+    } else cy.expect(targetButton.absent());
+  },
+
+  clickVersionHistoryButton() {
+    this.waitLoading();
+    cy.expect(versionHistoryButton.exists());
+    cy.do(versionHistoryButton.click());
+    cy.expect(Spinner().exists());
+    cy.expect(Spinner().absent());
+    this.checkActionsButtonEnabled(false);
+  },
+
+  checkActionsButtonEnabled(isEnabled = true) {
+    cy.expect(actionsButton.is({ disabled: !isEnabled }));
   },
 };
