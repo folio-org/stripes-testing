@@ -167,12 +167,14 @@ describe('Bulk-edit', () => {
         'C651549 ECS | Bulk edit marc fields (100, 250, 300) for part of the records in Member tenant (MARC) (consortia) (firebird)',
         { tags: ['criticalPathECS', 'firebird', 'C651549'] },
         () => {
-          BulkEditActions.openActions();
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          const columnsToShow = [
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
-          );
+          ];
+
+          BulkEditActions.openActions();
+          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(...columnsToShow);
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
             marcInstanceWithFields.hrid,
             [
@@ -210,16 +212,8 @@ describe('Bulk-edit', () => {
             marcInstanceWithoutFields.hrid,
             headerValuesInInstanceWithoutFields,
           );
-          BulkEditSearchPane.changeShowColumnCheckbox(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
-          );
-          BulkEditSearchPane.verifyResultColumnTitlesDoNotIncludeTitles(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
-          );
+          BulkEditSearchPane.changeShowColumnCheckbox(...columnsToShow);
+          BulkEditSearchPane.verifyResultColumnTitlesDoNotIncludeTitles(...columnsToShow);
           BulkEditActions.openStartBulkEditMarcInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditMarcFieldsForm(
             instanceUUIDsFileName,
