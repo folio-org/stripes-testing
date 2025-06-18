@@ -47,7 +47,7 @@ export default {
 
   setNoteValue(value, field) {
     cy.wait(1000);
-    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div/input`)
       .focus()
       .should('not.be.disabled')
       .clear()
