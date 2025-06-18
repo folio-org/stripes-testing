@@ -62,7 +62,7 @@ describe('Users', () => {
         UsersCard.waitLoading();
         UserEdit.openEdit();
         UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
-        UserEdit.cancelChanges();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
         UsersCard.waitLoading();
 
         cy.wait(2000);
