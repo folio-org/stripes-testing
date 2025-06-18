@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
 import ConsortiumManager, {
@@ -39,7 +40,7 @@ describe('Consortia', () => {
       'C397335 User with "Consortium manager: Can share settings to all members" permission and active affiliations in "Central" and "Member" tenants has access to "Consortium manager" app (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
-        TopMenuNavigation.navigateToApp('Consortium manager');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.clickSelectMembers();
         SelectMembers.verifyStatusOfSelectMembersModal();
@@ -88,7 +89,7 @@ describe('Consortia', () => {
 
         cy.logout();
         cy.login(userData.username, userData.password);
-        TopMenuNavigation.navigateToApp('Consortium manager');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager(1);
         ConsortiumManager.clickSelectMembers();
         SelectMembers.verifyStatusOfSelectMembersModal(2, 1);

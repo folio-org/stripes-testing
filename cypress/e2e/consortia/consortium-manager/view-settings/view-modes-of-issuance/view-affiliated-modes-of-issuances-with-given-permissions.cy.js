@@ -1,18 +1,19 @@
 import uuid from 'uuid';
-import permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import permissions from '../../../../../support/dictionary/permissions';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ModesOfIssuanceConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/modesOfIssuanceConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
-import ModesOfIssuanceConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/modesOfIssuanceConsortiumManager';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 const testData = {
   centralSharedModes: {
@@ -139,7 +140,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user939.username, testData.user939.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
