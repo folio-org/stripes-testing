@@ -807,7 +807,7 @@ export default {
     );
   },
 
-  verifyErrorsAccordionIncludesNumberOfIdentifiers(expectedErrorsCount, arrayIfIdentifiers) {
+  verifyErrorsAccordionIncludesNumberOfIdentifiers(expectedErrorsCount, arrayOfIdentifiers) {
     cy.then(() => {
       errorsAccordion
         .find(MultiColumnList())
@@ -824,7 +824,7 @@ export default {
           .find(MultiColumnListCell({ column: 'Record identifier' }))
           .content()
           .then((identifier) => {
-            expect(arrayIfIdentifiers).to.include(identifier);
+            expect(arrayOfIdentifiers).to.include(identifier);
           });
       }
     });
