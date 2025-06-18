@@ -66,7 +66,7 @@ describe('Users', () => {
           { value: 'External URL' },
           { value: 'Delete' },
         ]);
-        UserEdit.cancelChanges();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
         UsersCard.waitLoading();
 
         UsersSearchPane.searchByUsername(testData.userC.username);
