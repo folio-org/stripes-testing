@@ -2371,7 +2371,7 @@ export default {
 
   checkErrorToastMessage: (message) => {
     cy.wait(4000);
-    InteractorsTools.checkCalloutErrorMessage(message);
+    InteractorsTools.checkOneOfCalloutsContainsErrorMessage(message);
   },
 
   checkPhysicalQuantityInLocation: (quantity) => {
