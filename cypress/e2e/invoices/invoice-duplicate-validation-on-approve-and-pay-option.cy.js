@@ -204,7 +204,7 @@ describe('Invoices', () => {
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
       });
       Invoices.closeInvoiceDetailsPane();
-      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 1);
+      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 0);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
       });

@@ -55,7 +55,6 @@ describe('Inventory', () => {
           { index: 74, tag: '655' },
           { index: 75, tag: '655' },
         ],
-        recordsEditorPath: '/records-editor/records*',
         ldrRegExp: /^\d{5}[a-zA-Z]{3}.{1}[a-zA-Z0-9]{8}.{3}4500$/,
       };
       const versionHistorySourceCardsData = [

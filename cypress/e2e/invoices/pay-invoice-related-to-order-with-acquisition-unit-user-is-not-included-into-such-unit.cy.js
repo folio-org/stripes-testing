@@ -29,6 +29,7 @@ describe('Invoices', () => {
     allocated: 101,
   };
   const isApprovePayEnabled = true;
+  const isApprovePayDisabled = false;
   const testData = {
     acqUnit: AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true }),
     user: {},
@@ -117,6 +118,7 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
+    Approvals.setApprovePayValue(isApprovePayDisabled);
     AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
     Users.deleteViaApi(testData.user.userId);
