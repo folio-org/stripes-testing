@@ -41,53 +41,6 @@ function fillNameField(value) {
   cy.do(nameField.fillIn(value));
 }
 
-function getRowIndexesByUserName(user) {
-  const rowIndexes = [];
-
-  return cy
-    .get('#editList-subjecttypes')
-    .find('[data-row-index]')
-    .each(($row) => {
-      const trimmedText = $row.find('[class*="mclCell-"]:nth-child(3)').first().text().trim();
-
-      if (trimmedText.includes(user.lastName)) {
-        const rowIndex = $row.attr('data-row-index');
-        rowIndexes.push(rowIndex.replace(/^row-/, '') || '');
-      }
-    })
-    .then(() => rowIndexes);
-}
-
-function verifyColumnAndClickEdit(rowIndexes, searchValue) {
-  let foundRowIndex;
-
-  return cy
-    .wrap(rowIndexes)
-    .each((rowIndex) => {
-      cy.get(`#editList-subjecttypes [data-row-index="row-${rowIndex}"]`)
-        .find('[class*="mclCell-"]:nth-child(4)')
-        .invoke('text')
-        .then((text) => {
-          const trimmedText = text.trim();
-
-          if (trimmedText === searchValue) {
-            foundRowIndex = rowIndex;
-
-            cy.get(`#editList-subjecttypes [data-row-index="row-${rowIndex}"]`)
-              .find('[class*="mclCell-"]:nth-child(5) button[icon="edit"]')
-              .click();
-          }
-        });
-    })
-    .then(() => {
-      return foundRowIndex;
-    });
-}
-
-function clickSaveButtonInActionsColumn() {
-  cy.do(saveButton.click());
-}
-
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
@@ -198,20 +151,6 @@ export default {
       },
       isDefaultSearchParamsRequired: false,
     });
-  },
-
-  editSubjectSource(name, newName, user, tenantName) {
-    getRowIndexesByUserName(user).then((rowIndexes) => {
-      verifyColumnAndClickEdit(rowIndexes, tenantName).then((index) => {
-        this.verifyEditRowForSubjectTypeInTheList(name, user, index);
-        fillNameField(newName, index);
-      });
-    });
-    cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
-    clickSaveButtonInActionsColumn();
-    InteractorsTools.checkCalloutMessage(
-      `${newName} was successfully updated for ${tenantName} library.`,
-    );
   },
 
   verifyNewRowForSubjectSourceInTheList() {
