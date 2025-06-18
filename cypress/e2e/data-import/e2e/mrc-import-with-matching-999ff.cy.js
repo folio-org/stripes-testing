@@ -167,8 +167,8 @@ describe('Data Import', () => {
 
           // download .csv file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.intercept('/inventory/instances/*').as('getId');
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.wait('@getId', getLongDelay()).then((req) => {
             InstanceRecordView.verifyInstancePaneExists();
             InventorySearchAndFilter.saveUUIDs();
