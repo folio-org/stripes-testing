@@ -45,7 +45,14 @@ export default {
   },
 
   selectGroup(groupName) {
-    cy.do(NavListItem(groupName).click());
+    if (groupName) cy.do(NavListItem(groupName).click());
+    else {
+      cy.do(
+        Pane('Limits')
+          .find(NavListItem({ index: 0 }))
+          .click(),
+      );
+    }
   },
 
   setLimit(limitName, number) {

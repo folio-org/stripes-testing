@@ -198,7 +198,7 @@ describe('Permissions', () => {
 
           cy.visit(SettingsMenu.limitsPath);
           cy.wait(waitTimeout);
-          Limits.selectGroup('undergrad');
+          Limits.selectGroup();
           Limits.verifyLimitsCantBeChanged();
 
           cy.visit(SettingsMenu.patronBlockTemplates);

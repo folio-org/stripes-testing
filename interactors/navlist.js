@@ -24,6 +24,7 @@ export const NavListItem = HTML.extend('Nav List Item')
       const img = el.querySelector('img');
       return img ? img.getAttribute('alt') : '';
     },
+    index: (el) => [...el.parentElement.children].indexOf(el),
   });
 
 export const NavItemList = HTML.extend('Nav Item List')
