@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiumManagerApp, {
@@ -134,7 +135,7 @@ describe('Consortia', () => {
           () => {
             cy.login(user.username, user.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);

@@ -60,7 +60,7 @@ describe('Consortia', () => {
         after('Delete users data', () => {
           cy.resetTenant();
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           ConsortiumManagerApp.waitLoading();
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           SubjectTypesConsortiumManager.choose();
@@ -82,7 +82,7 @@ describe('Consortia', () => {
           'C594411 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local subject types of selected affiliated tenants in "Consortium manager" app (folijet)',
           { tags: ['criticalPathECS', 'folijet', 'C594411'] },
           () => {
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);

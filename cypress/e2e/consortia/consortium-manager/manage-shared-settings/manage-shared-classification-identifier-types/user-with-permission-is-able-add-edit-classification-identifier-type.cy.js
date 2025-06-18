@@ -1,22 +1,23 @@
 import moment from 'moment';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
+import ConsortiaControlledVocabularyPaneset, {
+  actionIcons,
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import Permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
-import ConsortiaControlledVocabularyPaneset, {
-  actionIcons,
-} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ClassificationIdentifierTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/classificationIdentifierTypesConsortiumManager';
+import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ClassificationTypes from '../../../../../support/fragments/settings/inventory/classification-types/classificationTypes';
+import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -73,7 +74,7 @@ describe('Consortia', () => {
           'C410901 User with "Consortium manager: Can share settings to all members" permission is able to add/edit classification identifier type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
@@ -116,7 +117,7 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             ClassificationIdentifierTypesConsortiumManager.choose();
             ConsortiaControlledVocabularyPaneset.performAction(

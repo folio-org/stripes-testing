@@ -1,21 +1,22 @@
 import moment from 'moment';
-import Permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
-import ConsortiumManagerApp, {
-  settingsItems,
-} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiumManagerApp, {
+  settingsItems,
+} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import PatronGroupsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/patronGroupsConsortiumManager';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import PatronGroups from '../../../../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -91,7 +92,7 @@ describe('Consortia', () => {
           'C411703 Delete shared setting is successful in some of the selected member libraries (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
