@@ -2952,4 +2952,20 @@ export default {
   checkDerivePaneheader() {
     this.checkPaneheaderContains(derivePaneHeaderText);
   },
+
+  fillInTextBoxInField(tag, boxLabel, value) {
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextField({ label: boxLabel }))
+        .fillIn(value),
+    );
+  },
+
+  verifyTextBoxValueInField(tag, boxLabel, value) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextField({ label: boxLabel }))
+        .has({ value }),
+    );
+  },
 };

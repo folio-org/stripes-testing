@@ -17,6 +17,8 @@ import {
   Selection,
   Keyboard,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
   MessageBanner,
   Option,
   or,
@@ -67,6 +69,7 @@ const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
 const selectActionForMarcInstanceDropdown = Select({ name: 'action', required: true });
+const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -126,7 +129,8 @@ export default {
 
   selectOption(optionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(bulkPageSelections.valueType)
         .choose(optionName),
     );
@@ -161,7 +165,8 @@ export default {
 
   selectSecondAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-1' }))
         .choose(actionName),
     );
@@ -836,9 +841,32 @@ export default {
 
   fillInSecondTextArea(newItem, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .fillIn(newItem),
+    );
+  },
+
+  fillInStatisticaCodeValue(value, rowIndex = 0) {
+    cy.do([
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(statisticalCodeSelection)
+        .open(),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(statisticalCodeSelection)
+        .fillIn(value),
+    ]);
+  },
+
+  selectStatisticalCodeValue(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(MultiSelect({ id: 'statisticalCodes' }))
+        .select(value),
     );
   },
 
@@ -1531,6 +1559,13 @@ export default {
         });
     });
   },
+  verifyFilteredMultiSelectOptionsListIncludesOptionsWithText(value) {
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      options.forEach((option) => {
+        expect(option.toLowerCase()).to.include(value.toLowerCase());
+      });
+    });
+  },
 
   verifyNoMatchingOptionsInFilterOptionsList() {
     cy.get('ul[class^="selectionList-"] li').should('have.text', '-List is empty-');
@@ -1897,23 +1932,48 @@ export default {
     ]);
   },
 
-  fillInSubfieldInSubRow(value, rowIndex = 0) {
+  fillInSubfieldInSubRow(value, rowIndex = 0, subRowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(HTML({ className: including('subRow-') }))
-        .find(subField)
-        .fillIn(value),
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('input[name="subfield"]')
+            .clear()
+            .type(value);
+        }),
     );
   },
 
-  fillInDataInSubRow(value, rowIndex = 0) {
+  fillInDataInSubRow(value, rowIndex = 0, subRowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(HTML({ className: including('subRow-') }))
-        .find(dataField)
-        .fillIn(value),
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('textarea[name="value"]')
+            .clear()
+            .type(value);
+        }),
+    );
+  },
+
+  selectActionInSubRow(action, rowIndex = 0, subRowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('select[name="action"]')
+            .eq(1)
+            .select(action);
+        }),
     );
   },
 
@@ -2021,5 +2081,10 @@ export default {
     this.fillInSecondSubfield(subfieldToAppend, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.fillInSecondDataTextAreaForMarcInstance(subfieldValueToAppend, rowIndex);
+  },
+
+  addSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
+    this.selectActionForMarcInstance('Add', rowIndex);
+    this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
   },
 };
