@@ -1161,3 +1161,67 @@ export const BULK_EDIT_FORMS = {
   ARE_YOU_SURE: 'Are you sure',
   PREVIEW_OF_RECORDS_CHANGED: 'Preview of records changed',
 };
+
+export const INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES = {
+  TYPE: 'Type',
+  AUDN: 'Audn',
+  FORM: 'Form',
+  FILE: 'File',
+  GPUB: 'GPub',
+};
+
+export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
+  TYPE: 'Type',
+  SMD: 'SMD',
+  COLOR: 'Color',
+  MPPF: 'MPPF',
+  SOMOS: 'SoMoS',
+  MFS: 'MfS',
+  DIMENTIONS: 'Dimensions',
+  CoPC: 'CoPC',
+  PRODEL: 'ProdEl',
+  PNASPECT: 'P/N aspect',
+  GENERATION: 'Generation',
+  BOF: 'BoF',
+  RCOC: 'RCoC',
+  KOCSOP: 'KoCSop',
+  DETST: 'DetSt',
+  COMPL: 'Compl',
+  FID: 'FID',
+};
+
+export const INVENTORY_006_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Language material',
+  C: 'c - Notated music',
+  D: 'd - Manuscript notated music',
+  E: 'e - Cartographic material',
+  F: 'f - Manuscript cartographic material',
+  G: 'g - Projected medium',
+  I: 'i - Nonmusical sound recording',
+  J: 'j - Musical sound recording',
+  K: 'k - Two-dimensional nonprojectable  graphic',
+  M: 'm - Computer file',
+  O: 'o - Kit',
+  P: 'p - Mixed materials',
+  R: 'r - Three-dimensional artifact or naturally occurring object',
+  S: 's - Serial/Integrating resource',
+  T: 't - Manuscript language material',
+};
+
+export const INVENTORY_007_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Map',
+  C: 'c - Electronic resource',
+  D: 'd - Globe',
+  F: 'f - Tactile material',
+  G: 'g - Projected graphic',
+  H: 'h - Microform',
+  K: 'k - Nonprojected graphic',
+  M: 'm - Motion picture',
+  O: 'o - Kit',
+  Q: 'q - Notated music',
+  R: 'r - Remote-sensing image',
+  S: 's - Sound recording',
+  T: 't - Text',
+  V: 'v - Videorecording',
+  Z: 'z - Unspecified',
+};
