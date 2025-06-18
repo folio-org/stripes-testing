@@ -25,6 +25,7 @@ import {
   SearchField,
   Section,
   Select,
+  Spinner,
   TextArea,
   TextField,
   and,
@@ -50,7 +51,7 @@ import ItemRecordView from './item/itemRecordView';
 import NewOrderModal from './modals/newOrderModal';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
-const actionsButton = instanceDetailsSection.find(Button('Actions'));
+const actionsButton = instanceDetailsSection.find(Button('Actions', { disabled: or(true, false) }));
 const shareInstanceModal = Modal(including('Are you sure you want to share this instance?'));
 const identifiers = MultiColumnList({ id: 'list-identifiers' });
 const editMARCBibRecordButton = Button({ id: 'edit-instance-marc' });
@@ -156,6 +157,7 @@ const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings
 const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
+const versionHistoryButton = Button({ icon: 'clock' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -1861,5 +1863,12 @@ export default {
     );
     if (isPresent) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
+  },
+
+  clickVersionHistoryButton() {
+    this.waitLoading();
+    cy.do(versionHistoryButton.click());
+    cy.expect(Spinner().exists());
+    cy.expect(Spinner().absent());
   },
 };
