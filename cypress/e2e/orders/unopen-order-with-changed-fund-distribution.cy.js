@@ -228,8 +228,9 @@ describe('orders: Unopen order', () => {
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
+      InteractorsTools.closeAllVisibleCallouts();
       Funds.closeTransactionDetails();
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       Funds.closeBudgetDetails();
       Funds.closeFundDetails();
       TopMenuNavigation.navigateToApp('Invoices');
