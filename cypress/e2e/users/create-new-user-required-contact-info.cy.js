@@ -49,6 +49,7 @@ describe('Users', () => {
         userWithSameName.id = id;
       });
       UsersSearchPane.waitLoading();
+      UsersSearchPane.closeUserDetailsPane();
       Users.createViaUiIncomplete(userWithSameBarcode);
       cy.wait(10000);
       InteractorsTools.checkTextFieldError('Barcode', 'This barcode has already been taken');
