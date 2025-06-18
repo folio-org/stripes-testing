@@ -1,9 +1,10 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
 import ConsortiumManager from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
+import Users from '../../../support/fragments/users/users';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -46,7 +47,7 @@ describe('Consortia', () => {
       'C398014 User created in central tenant is able to view the list of permission sets of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
-        TopMenuNavigation.navigateToApp('Consortium manager');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.clickSelectMembers();
         SelectMembers.checkMember(tenantNames.central, false);
