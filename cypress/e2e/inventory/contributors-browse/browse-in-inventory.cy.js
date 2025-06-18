@@ -84,7 +84,9 @@ describe('Inventory', () => {
             InventoryInstance.closeDetailsView();
             InventoryInstance.closeFindAuthorityModal();
           });
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitLoading();
         });
       });
