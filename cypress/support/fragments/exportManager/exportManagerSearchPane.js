@@ -267,6 +267,10 @@ export default {
     cy.expect(MultiColumnListCell(including(content)).exists());
   },
 
+  verifyNoResultsFound() {
+    cy.expect(jobsDetailsPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
   verifyThirdPaneExportJobExist() {
     cy.wait(10000);
     cy.expect(PaneHeader('Export job ').exists());
