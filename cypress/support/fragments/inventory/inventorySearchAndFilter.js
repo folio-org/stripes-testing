@@ -1219,7 +1219,7 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.intercept('GET', '/search/instances?*').as('getInstances');
+    cy.intercept('GET', /\/search\/instances(\/facets)?\?.*/).as('getData');
     cy.do(
       Button({
         ariaLabel: or(
@@ -1228,7 +1228,7 @@ export default {
         ),
       }).click(),
     );
-    cy.wait(['@getInstances']);
+    cy.wait('@getData');
   },
 
   checkSharedInstancesInResultList() {
