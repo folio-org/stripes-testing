@@ -77,7 +77,7 @@ describe('Consortia', () => {
           () => {
             cy.login(userA.username, userA.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);

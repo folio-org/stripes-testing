@@ -105,4 +105,7 @@ export default {
         .click(),
     );
   },
+  closeUserDetailsPane: () => {
+    cy.do(Button({ ariaLabel: 'Close ' }).click());
+  },
 };
