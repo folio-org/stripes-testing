@@ -20,7 +20,8 @@ const item = {
 const itemBarcodesFileName = `itemBarcodesFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 
-describe('Bulk-edit', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Bulk-edit', () => {
   describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([

@@ -20,7 +20,8 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('Export Manager', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
@@ -62,7 +63,7 @@ describe('Export Manager', () => {
 
   it(
     'C365104 Verify hyperlink on the "JobID" column -- Holdings in app approach (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C365104'] },
+    { tags: [] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
