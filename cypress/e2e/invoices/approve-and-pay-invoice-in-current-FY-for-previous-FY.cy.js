@@ -47,9 +47,9 @@ describe('Invoices', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.get3DaysAfterTomorrowDateForFiscalYear();
-  const periodStartForSecondFY = DateTools.get4DaysAfterTomorrowDateForFiscalYear();
+  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get5DaysAfterTomorrowDateForFiscalYear();
   let user;
   let orderNumber;
