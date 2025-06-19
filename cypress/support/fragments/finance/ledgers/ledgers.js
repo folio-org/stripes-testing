@@ -627,6 +627,7 @@ export default {
   selectLedger: (ledgerName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+    LedgerDetails.waitLoading();
     cy.wait(4000);
     return LedgerDetails;
   },
