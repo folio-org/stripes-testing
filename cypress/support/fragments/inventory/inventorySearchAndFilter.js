@@ -1219,7 +1219,6 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.do(
       Button({
@@ -1229,7 +1228,7 @@ export default {
         ),
       }).click(),
     );
-    cy.wait(['@getInstances', '@getFacets']);
+    cy.wait(['@getInstances']);
   },
 
   checkSharedInstancesInResultList() {
