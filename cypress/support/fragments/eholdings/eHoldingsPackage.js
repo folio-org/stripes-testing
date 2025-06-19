@@ -69,12 +69,17 @@ export default {
   },
 
   verifyHoldingStatus: (expectedStatus = FILTER_STATUSES.SELECTED) => {
+    waitTitlesLoading().then(() => {
+      cy.expect(titlesSection.exists());
+      cy.expect(Spinner().absent());
+    });
+    cy.reload();
     cy.url().then((url) => {
       const packageId = url.split('?')[0].split('/').at(-1);
       cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
-      cy.reload();
-      cy.wait('@getTitles', getLongDelay());
-      cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+      cy.wait('@getTitles', getLongDelay()).then(() => {
+        cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+      });
     });
   },
 

@@ -403,7 +403,7 @@ export default {
   },
 
   close: () => {
-    cy.do(Button({ icon: 'times' }).click());
+    cy.do(paneHeader.find(Button({ icon: 'times' })).click());
   },
 
   verifyMultipleHoldingsStatus: (expectedArray, expectedQuantity, rowNumber = 0) => {

@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -118,7 +119,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user909.username, testData.user909.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
@@ -201,7 +202,7 @@ describe('Consortium manager', () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user910.username, testData.user910.password);
           // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.clickSelectMembers();
