@@ -27,6 +27,7 @@ import {
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -35,9 +36,10 @@ describe('MARC', () => {
       const testData = {
         instanceTitle: 'AT_C692124_MarcBibInstance',
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
-        modifiedMarcFile: 'preUpdatedMarcFileC692124.mrc',
+        preUpdatedMarcFile: 'preUpdatedMarcFileC692124.mrc',
+        modifiedMarcFile: `modifiedMarcFileC692124${randomPostfix}.mrc`,
         uploadModifiedMarcFile: `testUpdatedMarcFileC692124_${randomPostfix}.mrc`,
-        jobProfileName: `C692124 Update MARC Bib records matching by 010 a ${randomPostfix}`,
+        jobProfileName: `C692124 Update MARC Bib records matching by 001 ${randomPostfix}`,
         ldrRegExp: /^\d{5}[a-zA-Z]{3}.{1}[a-zA-Z0-9]{8}.{3}4500$/,
       };
       const versionHistoryCardsData = [
@@ -53,6 +55,7 @@ describe('MARC', () => {
             { text: 'Field 650', action: VersionHistorySection.fieldActions.REMOVED },
             { text: 'Field 655', action: VersionHistorySection.fieldActions.REMOVED },
             { text: 'Field 651', action: VersionHistorySection.fieldActions.REMOVED },
+            { text: 'Field 035', action: VersionHistorySection.fieldActions.REMOVED },
           ],
         },
         { isOriginal: true, isCurrent: false },
@@ -154,6 +157,12 @@ describe('MARC', () => {
           from: ' 7 $a Satire. $2 lcsh',
           to: undefined,
         },
+        {
+          action: VersionHistorySection.fieldActions.REMOVED,
+          field: '035',
+          from: '   $a 1233775',
+          to: undefined,
+        },
       ];
       const permissions = [
         Permissions.uiInventoryViewInstances.gui,
@@ -176,16 +185,16 @@ describe('MARC', () => {
       const matchProfile = {
         profileName: testData.jobProfileName,
         incomingRecordFields: {
-          field: '010',
+          field: '001',
           in1: '',
           in2: '',
-          subfield: 'a',
+          subfield: '',
         },
         existingRecordFields: {
-          field: '010',
+          field: '001',
           in1: '',
           in2: '',
-          subfield: 'a',
+          subfield: '',
         },
         recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
       };
@@ -224,6 +233,13 @@ describe('MARC', () => {
             marcFile.jobProfileToRun,
           ).then((response) => {
             testData.createdRecordId = response[0].instance.id;
+
+            DataImport.editMarcFile(
+              testData.preUpdatedMarcFile,
+              testData.modifiedMarcFile,
+              ['xx00000000'],
+              [response[0].instance.hrid],
+            );
 
             // create Field mapping profile
             NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile)
@@ -274,6 +290,7 @@ describe('MARC', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
       });
 
       it(
