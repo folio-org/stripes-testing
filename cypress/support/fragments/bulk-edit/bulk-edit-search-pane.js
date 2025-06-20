@@ -26,6 +26,7 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
 const changesAccordion = Accordion(previewOfRecordsChangedFormName);
 const errorsAccordion = Accordion('Errors & warnings');
+const showWarningsCheckbox = Checkbox({ labelText: 'Show warnings' });
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -836,6 +837,10 @@ export default {
         .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
         .exists(),
     );
+  },
+
+  clickShowWarningsCheckbox() {
+    cy.do(errorsAccordion.find(showWarningsCheckbox).click());
   },
 
   verifyReasonForError(errorText) {

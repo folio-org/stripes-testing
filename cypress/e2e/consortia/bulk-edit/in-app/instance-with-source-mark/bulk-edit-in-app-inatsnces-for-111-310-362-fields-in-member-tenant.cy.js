@@ -41,12 +41,14 @@ const fieldsToEdit = {
   initialValues: {
     contributorsFieldValue: "Expo '70 (Osaka, Japan)",
     publicationFrequencyFieldValue: 'Monthly',
-    publicationRangeFieldValue: 'Vol. 1 (Mar. 1980)-',
+    publicationRangeFirstFieldValue: 'Vol. 1 (Mar. 1980)-',
+    publicationRangeSecondFieldValue: '1962-1965',
+    publicationRangeFieldValue: 'Vol. 1 (Mar. 1980)- | 1962-1965',
   },
   editedValues: {
     contributorsFieldValue: '',
-    publicationFrequencyFieldValue: '',
-    publicationRangeFieldValue: '',
+    publicationFrequencyFieldValue: 'Monthly 1958-',
+    publicationRangeFieldValue: '1962-1965',
   },
 };
 const marcInstanceFields = [
@@ -66,21 +68,23 @@ const marcInstanceFields = [
   },
   {
     tag: '310',
-    content: '$a Monthly',
+    content: `$a ${fieldsToEdit.initialValues.publicationFrequencyFieldValue}`,
     indicators: ['\\', '\\'],
   },
   {
     tag: '362',
-    content: '$a Vol. 1 (Mar. 1980)-',
+    content: `$a ${fieldsToEdit.initialValues.publicationRangeFirstFieldValue}`,
     indicators: ['0', '\\'],
   },
   {
     tag: '362',
-    content: '$a 1962-1965.',
+    content: `$a ${fieldsToEdit.initialValues.publicationRangeSecondFieldValue}`,
     indicators: ['1', '\\'],
   },
 ];
 const warningMessage = 'No change in MARC fields required';
+const errorMessage =
+  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
 const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
@@ -132,36 +136,41 @@ describe('Bulk-edit', () => {
               cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
                 folioInstanceWithFields.instanceTypeId = instanceTypes[0].id;
 
-                BrowseContributors.getContributorTypes().then((contributorTypeData) => {
-                  // instance.contributorTypeId = contributorTypeData[0].id;
-                  // instance.contributorTypeName = contributorTypeData[0].name;
-                  cy.log(contributorTypeData);
-                });
-
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId: folioInstanceWithFields.instanceTypeId,
-                    title: folioInstanceWithFields.title,
-                    publicationFrequency: ['Monthly'],
-                    publicationRange: ['Vol. 1 (Mar. 1980)-'],
-                    contributors: [
-                      {
-                        name: fieldsToEdit.initialValues.contributorsFieldValue,
-                        contributorNameTypeId: '',
-                        primary: false,
-                      },
-                    ],
+                BrowseContributors.getContributorNameTypes({
+                  searchParams: {
+                    query: 'name=="Meeting name"',
                   },
-                }).then((instanceData) => {
-                  folioInstanceWithFields.uuid = instanceData.instanceId;
+                }).then((contributorNameTypes) => {
+                  InventoryInstances.createFolioInstanceViaApi({
+                    instance: {
+                      instanceTypeId: folioInstanceWithFields.instanceTypeId,
+                      title: folioInstanceWithFields.title,
+                      publicationFrequency: [
+                        fieldsToEdit.initialValues.publicationFrequencyFieldValue,
+                      ],
+                      publicationRange: [
+                        fieldsToEdit.initialValues.publicationRangeFirstFieldValue,
+                        fieldsToEdit.initialValues.publicationRangeSecondFieldValue,
+                      ],
+                      contributors: [
+                        {
+                          name: fieldsToEdit.initialValues.contributorsFieldValue,
+                          contributorNameTypeId: contributorNameTypes[0].id,
+                          primary: false,
+                        },
+                      ],
+                    },
+                  }).then((instanceData) => {
+                    folioInstanceWithFields.uuid = instanceData.instanceId;
 
-                  cy.getInstanceById(instanceData.instanceId).then((folioInstanceData) => {
-                    folioInstanceWithFields.hrid = folioInstanceData.hrid;
+                    cy.getInstanceById(instanceData.instanceId).then((folioInstanceData) => {
+                      folioInstanceWithFields.hrid = folioInstanceData.hrid;
 
-                    FileManager.createFile(
-                      `cypress/fixtures/${instanceUUIDsFileName}`,
-                      `${marcInstanceWithFields.uuid}\n${marcInstanceWithoutFields.uuid}`,
-                    );
+                      FileManager.createFile(
+                        `cypress/fixtures/${instanceUUIDsFileName}`,
+                        `${marcInstanceWithFields.uuid}\n${marcInstanceWithoutFields.uuid}\n${folioInstanceWithFields.uuid}`,
+                      );
+                    });
                   });
                 });
               });
@@ -213,44 +222,47 @@ describe('Bulk-edit', () => {
         () => {
           const columnsToShow = [
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE,
           ];
-
-          BulkEditActions.openActions();
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(...columnsToShow);
-          BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
-            marcInstanceWithFields.hrid,
-            [
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-                value: fieldsToEdit.initialValues.contributorsFieldValue,
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
-                value: fieldsToEdit.initialValues.editionFieldValue,
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
-                value: fieldsToEdit.initialValues.physicalDescriptionFieldValue,
-              },
-            ],
-          );
-
+          const headerValueInInstanceWithFields = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+              value: fieldsToEdit.initialValues.contributorsFieldValue,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY,
+              value: fieldsToEdit.initialValues.publicationFrequencyFieldValue,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE,
+              value: fieldsToEdit.initialValues.publicationRangeFieldValue,
+            },
+          ];
           const headerValuesInInstanceWithoutFields = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
               value: '',
             },
             {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY,
               value: '',
             },
             {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE,
               value: '',
             },
           ];
+
+          BulkEditActions.openActions();
+          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(...columnsToShow);
+
+          [marcInstanceWithFields, folioInstanceWithFields].forEach((instance) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
+              instance.hrid,
+              headerValueInInstanceWithFields,
+            );
+          });
 
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
             marcInstanceWithoutFields.hrid,
@@ -261,21 +273,21 @@ describe('Bulk-edit', () => {
           BulkEditActions.openStartBulkEditMarcInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditMarcFieldsForm(
             instanceUUIDsFileName,
-            '2 instance',
+            '3 instance',
           );
-          BulkEditActions.fillInTagAndIndicatorsAndSubfield('100', '1', '\\', 'a');
-          BulkEditActions.findAndAppendActionForMarc('Gresham', 'q', '(Geoffrey Austin)');
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('111', '2', '\\', 'c');
+          BulkEditActions.findAndRemoveFieldActionForMarc('Osaka');
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
-          BulkEditActions.fillInTagAndIndicatorsAndSubfield('250', '\\', '\\', 'a', 1);
-          BulkEditActions.findAndReplaceWithActionForMarc('ed', 'edition', 1);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('310', '\\', '\\', 'a', 1);
+          BulkEditActions.findAndAppendActionForMarc('Month', 'b', '1958-', 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
-          BulkEditActions.fillInTagAndIndicatorsAndSubfield('300', '\\', '\\', 'b', 2);
-          BulkEditActions.findAndRemoveSubfieldActionForMarc('ill', 2);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('362', '0', '\\', 'a', 2);
+          BulkEditActions.selectActionForMarcInstance('Remove all', 2);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
-          BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
+          BulkEditActions.verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(2, 1);
 
           const editedHeaderValuesInInstanceWithFields = [
             {
@@ -283,12 +295,12 @@ describe('Bulk-edit', () => {
               value: fieldsToEdit.editedValues.contributorsFieldValue,
             },
             {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION,
-              value: fieldsToEdit.editedValues.editionFieldValue,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY,
+              value: fieldsToEdit.editedValues.publicationFrequencyFieldValue,
             },
             {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
-              value: fieldsToEdit.editedValues.physicalDescriptionFieldValue,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE,
+              value: fieldsToEdit.editedValues.publicationRangeFieldValue,
             },
           ];
 
@@ -312,34 +324,32 @@ describe('Bulk-edit', () => {
                 (record) => expect(record.leader).to.exist,
                 (record) => expect(record.get('001')).to.not.be.empty,
                 (record) => expect(record.get('005')).to.not.be.empty,
+                (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
                 (record) => expect(record.get('008')).to.not.be.empty,
 
-                (record) => expect(record.get('100')[0].ind1).to.eq('1'),
-                (record) => expect(record.get('100')[0].ind2).to.eq(' '),
-                (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('111')).to.be.empty,
+
+                (record) => expect(record.get('310')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('310')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('310')[0].subf[0][0]).to.eq('a'),
                 (record) => {
-                  expect(record.get('100')[0].subf[0][1]).to.eq(
-                    fieldsToEdit.initialValues.contributorsFieldValue,
+                  expect(record.get('310')[0].subf[0][1]).to.eq(
+                    fieldsToEdit.initialValues.publicationFrequencyFieldValue,
                   );
                 },
-                (record) => expect(record.get('100')[0].subf[1][0]).to.eq('q'),
-                (record) => expect(record.get('100')[0].subf[1][1]).to.eq('(Geoffrey Austin)'),
-
-                (record) => expect(record.get('250')[0].ind1).to.eq(' '),
-                (record) => expect(record.get('250')[0].ind2).to.eq(' '),
-                (record) => expect(record.get('250')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('310')[0].subf[1][0]).to.eq('b'),
                 (record) => {
-                  expect(record.get('250')[0].subf[0][1]).to.eq(
-                    fieldsToEdit.editedValues.editionFieldValue,
-                  );
+                  expect(record.get('310')[0].subf[1][1]).to.eq('1958-');
                 },
 
-                (record) => expect(record.get('300')[0].ind1).to.eq(' '),
-                (record) => expect(record.get('300')[0].ind2).to.eq(' '),
-                (record) => expect(record.get('300')[0].subf[0][0]).to.eq('a'),
-                (record) => expect(record.get('300')[0].subf[0][1]).to.eq('104 p. :'),
-                (record) => expect(record.get('300')[0].subf[1][0]).to.eq('c'),
-                (record) => expect(record.get('300')[0].subf[1][1]).to.eq('20 cm'),
+                (record) => expect(record.get('362')[0].ind1).to.eq('1'),
+                (record) => expect(record.get('362')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('362')[0].subf[0][0]).to.eq('a'),
+                (record) => {
+                  expect(record.get('362')[0].subf[0][1]).to.eq(
+                    fieldsToEdit.editedValues.publicationRangeFieldValue,
+                  );
+                },
 
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => {
@@ -354,9 +364,9 @@ describe('Bulk-edit', () => {
                 (record) => expect(record.get('001')).to.not.be.empty,
                 (record) => expect(record.get('005')).to.not.be.empty,
                 (record) => expect(record.get('008')).to.not.be.empty,
-                (record) => expect(record.get('100')).to.be.empty,
-                (record) => expect(record.get('250')).to.be.empty,
-                (record) => expect(record.get('300')).to.be.empty,
+                (record) => expect(record.get('111')).to.be.empty,
+                (record) => expect(record.get('310')).to.be.empty,
+                (record) => expect(record.get('362')).to.be.empty,
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => {
                   expect(record.get('999')[0].subf[0][1]).to.eq(marcInstanceWithoutFields.uuid);
@@ -374,6 +384,12 @@ describe('Bulk-edit', () => {
             marcInstanceWithFields.hrid,
             editedHeaderValuesInInstanceWithFields,
           );
+          BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+            previewFileNameCsv,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
+            marcInstanceWithoutFields.hrid,
+            headerValuesInInstanceWithoutFields,
+          );
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(1);
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
@@ -381,7 +397,9 @@ describe('Bulk-edit', () => {
             editedHeaderValuesInInstanceWithFields,
           );
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
+          BulkEditSearchPane.clickShowWarningsCheckbox();
           BulkEditSearchPane.verifyError(marcInstanceWithoutFields.uuid, warningMessage, 'Warning');
+          BulkEditSearchPane.verifyError(folioInstanceWithFields.uuid, errorMessage);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -402,6 +420,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadErrors();
           BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
             `WARNING,${marcInstanceWithoutFields.uuid},${warningMessage}`,
+            `ERROR,${folioInstanceWithFields.uuid},${errorMessage}`,
           ]);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -409,21 +428,40 @@ describe('Bulk-edit', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
-          InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(
-            0,
-            fieldsToEdit.editedValues.contributorsFieldValue,
+          InstanceRecordView.verifyContributorAccordionIsEmpty();
+          InstanceRecordView.verifyPublicationFrequency(
+            fieldsToEdit.editedValues.publicationFrequencyFieldValue,
           );
-          InstanceRecordView.verifyEdition(fieldsToEdit.editedValues.editionFieldValue);
+          InstanceRecordView.verifyPublicationRange(
+            fieldsToEdit.editedValues.publicationRangeFieldValue,
+          );
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
-            '100',
-            `$a ${fieldsToEdit.initialValues.contributorsFieldValue} $q (Geoffrey Austin)`,
+            '310',
+            `$a ${fieldsToEdit.initialValues.publicationFrequencyFieldValue} $b 1958-`,
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
-            '250',
-            `$a ${fieldsToEdit.editedValues.editionFieldValue}`,
+            '362',
+            `$a ${fieldsToEdit.editedValues.publicationRangeFieldValue}`,
           );
-          InventoryViewSource.verifyFieldInMARCBibSource('300', '$a 104 p. : $c 20 cm');
+          InventoryViewSource.verifyAbsenceOfValue(
+            fieldsToEdit.initialValues.publicationRangeFirstFieldValue,
+          );
+          InventoryViewSource.close();
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.searchInstanceByTitle(folioInstanceWithFields.title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(
+            0,
+            fieldsToEdit.initialValues.contributorsFieldValue,
+          );
+          InstanceRecordView.verifyPublicationFrequency(
+            fieldsToEdit.initialValues.publicationFrequencyFieldValue,
+          );
+          InstanceRecordView.verifyPublicationRange(
+            `${fieldsToEdit.initialValues.publicationRangeFirstFieldValue}${fieldsToEdit.initialValues.publicationRangeSecondFieldValue}`,
+          );
         },
       );
     });
