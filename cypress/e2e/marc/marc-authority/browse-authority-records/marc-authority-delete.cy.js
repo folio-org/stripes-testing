@@ -45,6 +45,9 @@ describe('MARC', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+        });
       });
 
       after('Deleting created user', () => {
