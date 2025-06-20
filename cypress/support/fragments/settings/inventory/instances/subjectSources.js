@@ -1,6 +1,6 @@
+import { including } from '@interactors/html';
 import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
-import DateTools from '../../../../utils/dateTools';
 
 export const reasonsActions = {
   edit: 'edit',
@@ -29,7 +29,6 @@ export default {
   },
 
   verifyCreatedSubjectSource({ name: subjectSourceName, actions = [] }) {
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
 
     cy.do(
@@ -46,7 +45,7 @@ export default {
             .has({ content: 'consortium' }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: `${date} by SystemConsortia` }),
+            .has({ content: including('by System, System user - mod-consortia-keycloak') }),
         ]);
         Object.values(reasonsActions).forEach((action) => {
           const buttonSelector = EditableListRow({ index: rowIndex })
