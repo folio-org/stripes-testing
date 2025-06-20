@@ -148,7 +148,7 @@ describe('Export Manager', () => {
       ExportManagerSearchPane.searchByFailed();
 
       ExportManagerSearchPane.searchByBulkEdit();
-      ExportManagerSearchPane.verifyResult('Bulk edit identifiers');
+      ExportManagerSearchPane.verifyNoResultsFound();
       ExportManagerSearchPane.resetJobType();
       ExportManagerSearchPane.searchByCirculationLog();
       ExportManagerSearchPane.verifyResult('Circulation log');

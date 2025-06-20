@@ -211,21 +211,21 @@ export default {
     );
   },
 
-  confirmSharing(subjectSourceName) {
-    this.verifyShareToAllModal(subjectSourceName);
+  confirmSharing(subjectTypeName) {
+    this.verifyShareToAllModal(subjectTypeName);
     cy.do(shareToAllModal.find(Button('Confirm')).click());
     cy.expect([shareToAllModal.absent(), rootPane.exists()]);
     InteractorsTools.checkCalloutMessage(
-      `${subjectSourceName} was successfully created for All libraries.`,
+      `${subjectTypeName} was successfully created for All libraries.`,
     );
   },
 
-  createAndCancelRecord(subjectSourceName) {
+  createAndCancelRecord(subjectTypeName) {
     clickNewButton();
-    fillNameField(subjectSourceName);
+    fillNameField(subjectTypeName);
     clickSaveButtonInActionsColumn();
     cy.wait(1500);
-    cy.expect(rootPane.find(MultiColumnListCell({ content: subjectSourceName })).absent());
+    cy.expect(rootPane.find(MultiColumnListCell({ content: subjectTypeName })).absent());
   },
 
   editSubjectType(name, newName, user, tenantName) {
