@@ -19,7 +19,8 @@ const jobTypeAccordionOptions = [
   'Edifact orders export',
 ];
 
-describe('Bulk-edit', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Bulk-edit', () => {
   describe('Permissions', () => {
     before('Create test data', () => {
       cy.createTempUser([
@@ -52,7 +53,7 @@ describe('Bulk-edit', () => {
 
     it(
       'C366546 Verify filter for bulk edit jobs in Export Manager (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C366546'] },
+      { tags: [] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.waitLoading();
