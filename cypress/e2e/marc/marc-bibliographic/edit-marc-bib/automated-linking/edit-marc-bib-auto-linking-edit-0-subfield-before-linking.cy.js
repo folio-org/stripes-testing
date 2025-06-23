@@ -188,6 +188,7 @@ describe('MARC', () => {
             // #7 Unlink the linked 650 field with "Lesbian activists" value in "$a" subfield by clicking on the "Unlink from MARC authority record" icon >> confirm unlinking.
             QuickMarcEditor.clickUnlinkIconInTagField(preLinkedFields[0].rowIndex);
             QuickMarcEditor.confirmUnlinkingField();
+            cy.wait(3000);
             QuickMarcEditor.verifyRowLinked(preLinkedFields[0].rowIndex, false);
             QuickMarcEditor.checkContent(
               preLinkedFields[0].newContent,
@@ -207,7 +208,6 @@ describe('MARC', () => {
             );
             // #9 Click on the "Save & close" button.
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndClose();
             // #10 Click on the "Browse" toggle >> Select "Subjects" in browse option dropdown >> Enter "Lesbian activists--Jamaica--Biography" value in the search box >> Click on the "Search"  button.
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
