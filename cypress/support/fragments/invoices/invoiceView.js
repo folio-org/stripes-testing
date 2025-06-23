@@ -228,6 +228,7 @@ export default {
   },
   clickApproveAndPayInvoice({ isApprovePayEnabled = false } = {}) {
     cy.do([
+      cy.wait(2000),
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button(isApprovePayEnabled ? 'Approve & pay' : 'Approve').click(),
     ]);

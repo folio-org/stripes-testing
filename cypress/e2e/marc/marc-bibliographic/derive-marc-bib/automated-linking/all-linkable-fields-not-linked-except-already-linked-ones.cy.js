@@ -274,8 +274,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
-            cy.wait(3000);
-
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.viewSource();
             linkingTagAndValues.forEach((field) => {
               InventoryViewSource.contains(`${marcAuthIcon}\n\t${field.tag}`);

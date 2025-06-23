@@ -149,11 +149,12 @@ Cypress.Commands.add('createModesOfIssuans', (specialMode) => {
   });
 });
 
-Cypress.Commands.add('deleteModesOfIssuans', (id) => {
+Cypress.Commands.add('deleteModesOfIssuans', (id, ignoreErrors = true) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `modes-of-issuance/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
@@ -681,4 +682,13 @@ Cypress.Commands.add('getSubjectTypesViaApi', (searchParams) => {
       Cypress.env('subjectTypes', body.subjectTypes);
       return body.subjectTypes;
     });
+});
+
+Cypress.Commands.add('getAllModesOfIssuance', (searchParams) => {
+  cy.okapiRequest({
+    path: 'modes-of-issuance',
+    searchParams,
+  }).then(({ body }) => {
+    return body.issuanceModes;
+  });
 });

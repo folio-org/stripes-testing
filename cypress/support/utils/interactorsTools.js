@@ -113,11 +113,13 @@ export default {
       .click(),
   ),
   closeAllVisibleCallouts: () => {
-    cy.get('[class^=calloutBase-]').then(($callouts) => {
-      if (!$callouts.length) return;
-      for (let i = 0; i < $callouts.length; i++) {
+    cy.document().then((doc) => {
+      const callouts = doc.querySelectorAll('[class^=calloutBase-]');
+      if (!callouts.length) return;
+
+      for (let i = 0; i < callouts.length; i++) {
         cy.do(
-          Callout({ id: $callouts[i].id })
+          Callout({ id: callouts[i].id })
             .find(Button({ icon: 'times' }))
             .click(),
         );
