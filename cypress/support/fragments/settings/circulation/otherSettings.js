@@ -1,8 +1,9 @@
 import uuid from 'uuid';
-import { Checkbox, Form, Label, Pane, TextField } from '../../../../../interactors';
+import { Button, Checkbox, Form, Label, Pane, TextField } from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
+const userCustomFieldsCheckbox = Checkbox({ id: 'useCustomFieldsAsIdentifiers' });
 
 export default {
   waitLoading() {
@@ -11,6 +12,19 @@ export default {
       checkoutForm.exists(),
       checkoutForm.find(Label('Patron id(s) for checkout scanning*')).exists(),
     ]);
+    cy.wait(2000);
+  },
+
+  verifyUserCustomFieldsCheckboxIsSelected(selected = true) {
+    cy.expect(userCustomFieldsCheckbox.has({ checked: selected }));
+  },
+
+  selectUserCustomFieldsCheckbox(select = true) {
+    if (select) {
+      cy.do(userCustomFieldsCheckbox.checkIfNotSelected());
+    } else {
+      cy.do(userCustomFieldsCheckbox.uncheckIfSelected());
+    }
   },
 
   verifyCheckboxIsChecked(checkBoxId, alias) {
@@ -24,6 +38,10 @@ export default {
           cy.get('@checkbox').check();
         }
       });
+  },
+
+  saveOtherSettings() {
+    cy.do(Button('Save').click());
   },
 
   selectPatronIdsForCheckoutScanning(optionsNames, checkoutTimeoutDuration) {
@@ -54,13 +72,27 @@ export default {
     });
   },
 
+  verifyOtherSettingsContainsParams(params) {
+    this.getOtherSettingsViaApi().then((response) => {
+      const otherSettings = JSON.parse(response.body.configs[0].value);
+      Object.keys(params).forEach((key) => {
+        expect(otherSettings[key]).to.equal(params[key]);
+      });
+    });
+  },
+
+  getOtherSettingsViaApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      return response;
+    });
+  },
+
   setOtherSettingsViaApi(params) {
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
-        isDefaultSearchParamsRequired: false,
-      })
+    return this.getOtherSettingsViaApi()
       .then((otherSettingsResp) => {
         let config = otherSettingsResp.body.configs[0];
 
