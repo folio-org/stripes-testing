@@ -54,6 +54,7 @@ const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const versionHistoryButton = Button({ icon: 'clock' });
+const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -838,5 +839,14 @@ export default {
 
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
+  },
+
+  verifyInstanceFormat(category, term, code, source) {
+    let matchingString = category;
+    if (!term) matchingString += 'No value set-';
+    else matchingString += `  ${term}`;
+    if (code) matchingString += code;
+    if (source) matchingString += source;
+    cy.expect(formatsList.find(MultiColumnListRow(including(matchingString))).exists());
   },
 };
