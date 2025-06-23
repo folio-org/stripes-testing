@@ -114,10 +114,14 @@ describe('MARC', () => {
             });
           });
 
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             InventoryInstances.searchByTitle(testData.createdAuthorityID[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -129,9 +133,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -160,10 +162,7 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
 
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading2);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);
@@ -172,10 +171,7 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
           MarcAuthority.delete();
           QuickMarcEditor.confirmDeletingRecord();
 
