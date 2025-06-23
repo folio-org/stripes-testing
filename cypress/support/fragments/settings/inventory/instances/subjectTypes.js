@@ -49,7 +49,7 @@ export default {
     });
   },
 
-  verifySourceTypeAbsent(name) {
+  verifySubjectTypeAbsent(name) {
     cy.get('#editList-subjecttypes, #editList-subject-types') // Selects either if present
       .should('exist') // Ensures at least one exists before proceeding
       .as('subjectTypesList');
@@ -61,25 +61,65 @@ export default {
       });
   },
 
-  verifyCreatedSubjectType({ name: subjectSourceName, user, actions = [] }) {
+  verifyCreatedSubjectType({ name: subjectSubjectName, user, actions = [] }) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
 
     cy.do(
-      MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
+      MultiColumnListCell({ content: subjectSubjectName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const rowIndex = Number(rowNumber.slice(4));
 
         cy.expect([
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectSourceName }),
+            .has({ content: subjectSubjectName }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 1 }))
             .has({ content: 'local' }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 2 }))
             .has({ content: including(`${date} by ${user.lastName},`) }),
+        ]);
+        Object.values(reasonsActions).forEach((action) => {
+          const buttonSelector = EditableListRow({ index: rowIndex })
+            .find(actionsCell)
+            .find(Button({ icon: action }));
+          if (actions.includes(action)) {
+            cy.expect(buttonSelector.exists());
+          } else {
+            cy.expect(buttonSelector.absent());
+          }
+        });
+      }),
+    );
+  },
+
+  verifySubjectTypeExists(
+    subjectTypeName,
+    source = 'local',
+    user = 'System, System user - mod-consortia-keycloak',
+    options = {},
+  ) {
+    const { actions = [] } = options;
+    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+
+    cy.do(
+      MultiColumnListCell({ content: subjectTypeName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        const rowIndex = Number(rowNumber.slice(4));
+
+        cy.expect([
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: subjectTypeName }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: source }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: `${date} by ${user}` }),
         ]);
         Object.values(reasonsActions).forEach((action) => {
           const buttonSelector = EditableListRow({ index: rowIndex })
