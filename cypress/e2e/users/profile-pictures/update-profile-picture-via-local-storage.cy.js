@@ -57,7 +57,7 @@ describe('Users', () => {
         // steps 10-11 we can't automate
         UserEdit.setPictureFromExternalUrl(testData.externalPictureUrl);
         UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
-        cy.wait(1000);
+        cy.wait(3000);
         UserEdit.saveAndClose();
         UsersCard.waitLoading();
         // UsersCard.verifyProfilePictureIsPresent(testData.externalPictureUrl);
