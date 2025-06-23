@@ -618,6 +618,7 @@ describe('Inventory', () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });
+        cy.wait(2000);
         BrowseClassifications.waitForClassificationNumberToAppear('598.0994');
         testData.marcRecordsTitlesAndClassifications.forEach((marcInstance) => {
           if (marcInstance.classificationValue === '598.0994') {

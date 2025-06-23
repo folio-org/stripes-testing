@@ -304,6 +304,11 @@ export default {
         return item.authorityId && item.authorityId !== '';
       });
     };
+    const hasNotLinkedItem = (items) => {
+      return items.some((item) => {
+        return !item.authorityId || item.authorityId === '';
+      });
+    };
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -324,7 +329,7 @@ export default {
           if (isLinked) {
             return hasLinkedItem(foundContributors);
           } else {
-            return foundContributors.length > 0 && !hasLinkedItem(foundContributors);
+            return hasNotLinkedItem(foundContributors);
           }
         } else {
           return foundContributors.length === 0;

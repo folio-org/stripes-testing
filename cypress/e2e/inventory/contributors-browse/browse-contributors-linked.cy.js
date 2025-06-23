@@ -88,6 +88,7 @@ describe('Inventory', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             InventoryInstance.searchResultsWithOption('Identifier (all)', tag.authNaturalId);
+            InventoryInstance.selectRecord();
             InventoryInstance.clickLinkButton();
             InventoryInstance.closeDetailsView();
             InventoryInstance.closeFindAuthorityModal();

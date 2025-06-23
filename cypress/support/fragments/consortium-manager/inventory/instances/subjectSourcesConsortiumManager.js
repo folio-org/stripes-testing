@@ -4,15 +4,17 @@ import {
   Checkbox,
   EditableListRow,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
   Pane,
   TextField,
 } from '../../../../../../interactors';
-import DateTools from '../../../../utils/dateTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
+const subjectSourcesList = MultiColumnList({ id: 'editList-subjectsources' });
 const newButton = Button('+ New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
@@ -20,13 +22,15 @@ const nameField = TextField({ name: 'items[0].name' });
 const shareToAllModal = Modal({ id: 'share-controlled-vocab-entry-confirmation' });
 const confirmButton = shareToAllModal.find(Button('Confirm'));
 const rootPane = Pane({ id: 'consortia-controlled-vocabulary-pane' });
+const shareCheckbox = Checkbox('Share');
+const selectMembersButton = Button('Select members');
 
 function clickNewButton() {
   cy.do(newButton.click());
 }
 
 function enableShareCheckbox() {
-  cy.do(Checkbox('Share').click());
+  cy.do(shareCheckbox.click());
 }
 
 function clickSaveButton() {
@@ -37,8 +41,29 @@ function clickCancelButton() {
   cy.do(cancelButton.click());
 }
 
-function fillNameField(value) {
-  cy.do(nameField.fillIn(value));
+function fillNameField(value, rowIndex = 0) {
+  cy.do(TextField({ name: `items[${rowIndex}].name` }).fillIn(value));
+}
+
+function getRowIndexesBySubjectSourceName(name) {
+  let rowIndex = '';
+
+  return cy
+    .get('#editList-subjectsources')
+    .find('[data-row-index]')
+    .each(($row) => {
+      const firstCellText = $row.find('[class*="mclCell-"]:nth-child(1)').first().text().trim();
+
+      if (firstCellText === name) {
+        const dataIndex = $row.attr('data-row-index');
+        rowIndex = dataIndex.replace(/^row-/, '');
+      }
+    })
+    .then(() => rowIndex);
+}
+
+function clickSaveButtonInActionsColumn() {
+  cy.do(saveButton.click());
 }
 
 export const reasonsActions = {
@@ -80,13 +105,19 @@ export default {
     }
   },
 
-  confirmSharing(subjectSourceName) {
+  confirmSharing(subjectSourceName, status = 'created') {
     this.verifyShareToAllModal(subjectSourceName);
     cy.do(confirmButton.click());
     cy.expect([shareToAllModal.absent(), rootPane.exists()]);
-    InteractorsTools.checkCalloutMessage(
-      `${subjectSourceName} was successfully created for All libraries.`,
-    );
+    if (status === 'updated') {
+      InteractorsTools.checkCalloutMessage(
+        `${subjectSourceName} was successfully updated for All libraries.`,
+      );
+    } else {
+      InteractorsTools.checkCalloutMessage(
+        `${subjectSourceName} was successfully created for All libraries.`,
+      );
+    }
   },
 
   createAndCancelRecord(subjectSourceName) {
@@ -94,6 +125,14 @@ export default {
     fillNameField(subjectSourceName);
     clickCancelButton();
     cy.expect(rootPane.find(MultiColumnListCell({ content: subjectSourceName })).absent());
+  },
+
+  createNewSubjectSource(subjectSourceName) {
+    clickNewButton();
+    this.verifyNewRowForSubjectSourceInTheList();
+    fillNameField(subjectSourceName);
+    enableShareCheckbox();
+    clickSaveButton();
   },
 
   getSourceSubjectIdViaApi(name) {
@@ -153,10 +192,44 @@ export default {
     });
   },
 
+  editSubjectSource(name, newName) {
+    getRowIndexesBySubjectSourceName(name).then((rowIndex) => {
+      cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex}"]`)
+        .find('[class*="mclCell-"]:nth-child(6) button[icon="edit"]')
+        .click();
+      this.verifyEditRowForSubjectSourceInTheList(name, rowIndex);
+      fillNameField(newName, rowIndex);
+    });
+    cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
+    clickSaveButtonInActionsColumn();
+    this.verifyShareToAllModal(newName);
+    this.confirmSharing(newName, 'updated');
+    InteractorsTools.checkCalloutMessage(`${newName} was successfully updated for All libraries.`);
+  },
+
+  verifyEditRowForSubjectSourceInTheList(name, rowIndex) {
+    cy.expect([
+      TextField({ name: `items[${rowIndex}].name` }).has({ value: name, disabled: false }),
+      subjectSourcesList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: 'consortium' }),
+      subjectSourcesList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .has({ content: including('System, System user - mod-consortia-keycloak ') }),
+      shareCheckbox.has({ disabled: true }),
+      cancelButton.has({ disabled: false }),
+      saveButton.has({ disabled: true }),
+      newButton.has({ disabled: true }),
+      selectMembersButton.has({ disabled: true }),
+    ]);
+  },
+
   verifyNewRowForSubjectSourceInTheList() {
     cy.expect([
       newButton.has({ disabled: true }),
-      Button('Select members').has({ disabled: true }),
+      selectMembersButton.has({ disabled: true }),
       TextField({ name: 'items[0].name' }).has({ placeholder: 'name', disabled: false }),
       EditableListRow({ index: 0 })
         .find(MultiColumnListCell({ columnIndex: 2 }))
@@ -164,7 +237,7 @@ export default {
       EditableListRow({ index: 0 })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .has({ content: 'No value set-' }),
-      Checkbox('Share').has({ checked: false }),
+      shareCheckbox.has({ checked: false }),
       Button('Cancel').has({ disabled: false }),
       Button('Save').has({ disabled: false }),
     ]);
@@ -182,7 +255,6 @@ export default {
   },
 
   verifyCreatedSubjectSource({ name: subjectSourceName, actions = [] }) {
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const actionsCell = MultiColumnListCell({ columnIndex: 5 });
 
     cy.do(
@@ -199,7 +271,7 @@ export default {
             .has({ content: 'consortium' }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: `${date} by SystemConsortia  ` }),
+            .has({ content: including('System, System user - mod-consortia-keycloak ') }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 4 }))
             .has({ content: 'All' }),
@@ -216,5 +288,46 @@ export default {
         });
       }),
     );
+  },
+
+  verifySubjectSourceExists(subjectSourceName, tenantName, source = 'local', options = {}) {
+    const { actions = [] } = options;
+    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+
+    cy.do(
+      MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        const rowIndex = Number(rowNumber.slice(4));
+
+        cy.expect([
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: subjectSourceName }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: source }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: tenantName }),
+        ]);
+        Object.values(reasonsActions).forEach((action) => {
+          const buttonSelector = EditableListRow({ index: rowIndex })
+            .find(actionsCell)
+            .find(Button({ icon: action }));
+          if (actions.includes(action)) {
+            cy.expect(buttonSelector.exists());
+          } else {
+            cy.expect(buttonSelector.absent());
+          }
+        });
+      }),
+    );
+  },
+
+  verifySubjectSourcesListIsEmpty() {
+    cy.expect([
+      rootPane.has({ text: including('The list contains no items') }),
+      rootPane.find(newButton).absent(),
+    ]);
   },
 };
