@@ -254,7 +254,7 @@ describe('Finance: Transactions', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.verifyTransactionWithAmountExist('Pending payment', '$15.00');
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       BudgetDetails.checkBudgetDetails({
         summary: [
           { key: 'Initial allocation', value: '$100.00' },

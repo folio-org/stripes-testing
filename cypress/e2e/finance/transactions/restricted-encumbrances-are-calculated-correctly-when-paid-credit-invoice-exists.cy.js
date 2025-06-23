@@ -257,7 +257,7 @@ describe('Finance: Transactions', () => {
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
       Funds.closeTransactionDetails();
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       BudgetDetails.checkBudgetDetails({
         summary: [
           { key: 'Initial allocation', value: '$100.00' },
