@@ -27,6 +27,7 @@ export default {
     method: 'DELETE',
     path: `holdings-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   verifyConsortiumHoldingsTypeInTheList({ name, source = 'consortium', actions = [] }) {
