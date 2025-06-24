@@ -1,26 +1,33 @@
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiumManager from // settingsItems,
-  '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-// import SubjectTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectSourcesConsortiumManager';
+import ConsortiumManager, {
+  settingsItems,
+} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
 import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManagerSettings from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-// import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
+import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-// import Users from '../../../../../support/fragments/users/users';
-// import getRandomPostfix from '../../../../../support/utils/stringTools';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
       describe('Manage shared Subject types', () => {
         let user;
-        // const subjectTypeName = `SubjectType_${getRandomPostfix()}`;
-        // const updatedSubjectTypeName = `Updated_${getRandomPostfix()}`;
+        const subjectType = {
+          name: `C594405 subjectType_${getRandomPostfix()}`,
+          editedName: `C594405 subjectType_${getRandomPostfix()} edited`,
+          source: 'consortium',
+          memberLibraries: 'All',
+          shareToAll: true,
+          consortiaUser: 'System, System user - mod-consortia-keycloak ',
+        };
 
         before('Create user and login', () => {
           cy.clearCookies({ domain: null });
@@ -43,6 +50,12 @@ describe('Consortia', () => {
           });
         });
 
+        after('Delete test data', () => {
+          cy.resetTenant();
+          cy.getAdminToken();
+          Users.deleteViaApi(user.userId);
+        });
+
         it(
           'C594405 User with "Consortium manager: Can share settings to all members" permission is able to add/edit subject type shared to all affiliated tenants in "Consortium manager" app (consortia) (folijet)',
           { tags: ['criticalPathECS', 'folijet', 'C594405'] },
@@ -61,12 +74,88 @@ describe('Consortia', () => {
             ConsortiumManager.verifySelectMembersButton();
             ConsortiumManager.verifyChooseSettingsIsDisplayed();
 
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumSubjectTypes.choose();
+            ConsortiumSubjectTypes.createNewShared(subjectType.name);
+            ConsortiumSubjectTypes.confirmSharingToAll(subjectType.name);
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
+              subjectType.name,
+              subjectType.memberLibraries,
+              subjectType.source,
+              { actions: ['edit', 'trash'] },
+            );
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            // SubjectTypes.
+            SubjectTypes.verifySubjectTypeExists(subjectType.name, subjectType.source);
+
+            cy.resetTenant();
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.central,
+              tenantNames.college,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.college);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
+            SubjectTypes.verifySubjectTypeExists(subjectType.name, subjectType.source);
+
+            cy.resetTenant();
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.college,
+              tenantNames.central,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+            ConsortiumManager.waitLoading();
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumSubjectTypes.choose();
+            ConsortiumSubjectTypes.editSharedToAllRecord(
+              subjectType.name,
+              subjectType.editedName,
+              subjectType.consortiaUser,
+              subjectType.source,
+            );
+            ConsortiumSubjectTypes.confirmSharing(subjectType.editedName, 'updated');
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
+              subjectType.editedName,
+              subjectType.memberLibraries,
+              subjectType.source,
+              { actions: ['edit', 'trash'] },
+            );
+
+            ConsortiumManager.clickSelectMembers();
+            SelectMembersModal.verifyStatusOfSelectMembersModal(2, 1, false);
+            SelectMembersModal.checkMember(tenantNames.central, false);
+            SelectMembersModal.verifyStatusOfSelectMembersModal(2, 0, false);
+            SelectMembersModal.saveAndClose();
+            ConsortiumManager.verifyMembersSelected(0);
+            ConsortiumManager.verifyListIsEmpty();
+            ConsortiumManager.verifyButtonsState();
+
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
+            SubjectTypes.verifySubjectTypeExists(subjectType.editedName, subjectType.source);
+
+            cy.resetTenant();
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.central,
+              tenantNames.college,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.college);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
+            SubjectTypes.verifySubjectTypeExists(subjectType.editedName, subjectType.source);
           },
         );
       });
