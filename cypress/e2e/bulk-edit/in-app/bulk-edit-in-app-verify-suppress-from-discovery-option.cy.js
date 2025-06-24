@@ -21,8 +21,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(instanceHRIDFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
