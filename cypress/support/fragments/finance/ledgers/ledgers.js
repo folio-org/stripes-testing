@@ -169,6 +169,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.wait(6000);
+    InteractorsTools.closeAllVisibleCallouts();
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
@@ -627,7 +628,7 @@ export default {
     cy.wait(4000);
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
     LedgerDetails.waitLoading();
-
+    cy.wait(4000);
     return LedgerDetails;
   },
 

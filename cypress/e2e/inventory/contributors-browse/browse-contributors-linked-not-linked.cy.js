@@ -109,6 +109,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         BrowseContributors.select();
         BrowseContributors.waitForContributorToAppear(testData.contributorName, true, true);
+        BrowseContributors.waitForContributorToAppear(testData.contributorName, true, false);
         BrowseContributors.browse(testData.contributorName);
         BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.contributorName);
         BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.contributorName);

@@ -4,6 +4,7 @@ const rootModal = Modal({ id: 'waive-modal' });
 const confirmModal = Modal({ title: 'Confirm fee/fine waive' });
 const amountField = TextField({ name: 'amount' });
 const submitButton = Button({ id: 'submit-button' });
+const confirmButton = confirmModal.find(Button('Confirm'));
 
 export default {
   waitLoading: () => {
@@ -52,7 +53,7 @@ export default {
   },
   selectWaiveReason: (waiveReason) => cy.do(Select({ name: 'method' }).choose(waiveReason)),
   setWaiveAmount: (amount) => {
-    cy.do(amountField.fillIn(amount));
+    cy.get('input[name="amount"]').clear().wait(500).type(amount);
   },
   waiveAmountHasError: (errorMessage) => {
     cy.expect(amountField.has({ error: errorMessage }));
@@ -60,8 +61,8 @@ export default {
   isConfirmDisabled: (isDisabled) => cy.expect(submitButton.is({ disabled: isDisabled })),
   submitWaive: () => cy.do(submitButton.click()),
   confirm: () => {
-    cy.do(submitButton.click());
-    cy.do(Button('Confirm').click());
+    cy.do([submitButton.click(), confirmButton.click()]);
+    cy.wait(1000);
   },
   cancel: () => cy.do(Button({ id: 'cancel-button' }).click()),
   waiveFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({

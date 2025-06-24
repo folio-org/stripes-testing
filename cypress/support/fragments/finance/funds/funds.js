@@ -960,6 +960,7 @@ export default {
   },
 
   selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
+    cy.wait(4000);
     cy.do([
       Section({ id: 'previousBudgets' })
         .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
