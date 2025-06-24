@@ -36,29 +36,42 @@ const folioInstance = {
 const folioInstanceWithStatisticalCode = {
   title: `C663252_FolioInstance_${getRandomPostfix()}`,
 };
+let instanceUuids;
 const warningMessage = 'No change in administrative data required';
 const errorMessage =
   'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
-const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsMarcFileName(
-  instanceUUIDsFileName,
-  true,
-);
-const changedRecordsFileNameMrc = BulkEditFiles.getChangedRecordsMarcFileName(
-  instanceUUIDsFileName,
-  true,
-);
-const changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
-  instanceUUIDsFileName,
-  true,
-);
-const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
-  instanceUUIDsFileName,
-  true,
-);
+const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+
+function createInstance({ title, type = 'folio', statisticalCodeId }) {
+  if (type === 'marc') {
+    return cy.createSimpleMarcBibViaAPI(title).then((instanceId) => {
+      return cy.getInstanceById(instanceId).then((instanceData) => {
+        if (statisticalCodeId) {
+          instanceData.statisticalCodeIds = [statisticalCodeId];
+          return cy.updateInstance(instanceData).then(() => ({
+            uuid: instanceId,
+            hrid: instanceData.hrid,
+          }));
+        }
+        return { uuid: instanceId, hrid: instanceData.hrid };
+      });
+    });
+  } else {
+    return InventoryInstances.createFolioInstanceViaApi({
+      instance: {
+        instanceTypeId,
+        title,
+        ...(statisticalCodeId && { statisticalCodeIds: [statisticalCodeId] }),
+      },
+    }).then((folioInstanceData) => {
+      return cy.getInstanceById(folioInstanceData.instanceId).then((instanceData) => ({
+        uuid: folioInstanceData.instanceId,
+        hrid: instanceData.hrid,
+      }));
+    });
+  }
+}
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -84,66 +97,49 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
-              // create marc instance
-              cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                marcInstance.uuid = instanceId;
-
-                cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-                  marcInstance.hrid = instanceData.hrid;
-                });
+              createInstance({ title: marcInstance.title, type: 'marc' }).then(({ uuid, hrid }) => {
+                marcInstance.uuid = uuid;
+                marcInstance.hrid = hrid;
               });
-              // create marc instance with statistical code
-              cy.createSimpleMarcBibViaAPI(marcInstanceWithStatisticalCode.title).then(
-                (instanceId) => {
-                  marcInstanceWithStatisticalCode.uuid = instanceId;
-
-                  cy.getInstanceById(marcInstanceWithStatisticalCode.uuid).then((instanceData) => {
-                    marcInstanceWithStatisticalCode.hrid = instanceData.hrid;
-
-                    instanceData.statisticalCodeIds = [statisticalCode.id];
-
-                    cy.updateInstance(instanceData);
-                  });
-                },
-              );
+              createInstance({
+                title: marcInstanceWithStatisticalCode.title,
+                type: 'marc',
+                statisticalCodeId: statisticalCode.id,
+              }).then(({ uuid, hrid }) => {
+                marcInstanceWithStatisticalCode.uuid = uuid;
+                marcInstanceWithStatisticalCode.hrid = hrid;
+              });
             })
             .then(() => {
               cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
                 instanceTypeId = instanceTypes[0].id;
 
-                // create FOLIO instance
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstance.title,
+                createInstance({ title: folioInstance.title, type: 'folio' }).then(
+                  ({ uuid, hrid }) => {
+                    folioInstance.uuid = uuid;
+                    folioInstance.hrid = hrid;
                   },
-                }).then((folioInstanceData) => {
-                  folioInstance.uuid = folioInstanceData.instanceId;
-
-                  cy.getInstanceById(folioInstance.uuid).then((instanceData) => {
-                    folioInstance.hrid = instanceData.hrid;
-                  });
-                });
-                // create FOLIO instance with statistical code
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstanceWithStatisticalCode.title,
-                    statisticalCodeIds: [statisticalCode.id],
-                  },
-                }).then((folioInstanceData) => {
-                  folioInstanceWithStatisticalCode.uuid = folioInstanceData.instanceId;
-
-                  cy.getInstanceById(folioInstanceWithStatisticalCode.uuid).then((instanceData) => {
-                    folioInstanceWithStatisticalCode.hrid = instanceData.hrid;
-                  });
+                );
+                createInstance({
+                  title: folioInstanceWithStatisticalCode.title,
+                  type: 'folio',
+                  statisticalCodeId: statisticalCode.id,
+                }).then(({ uuid, hrid }) => {
+                  folioInstanceWithStatisticalCode.uuid = uuid;
+                  folioInstanceWithStatisticalCode.hrid = hrid;
                 });
               });
             })
             .then(() => {
+              instanceUuids = [
+                marcInstance.uuid,
+                marcInstanceWithStatisticalCode.uuid,
+                folioInstance.uuid,
+                folioInstanceWithStatisticalCode.uuid,
+              ];
               FileManager.createFile(
                 `cypress/fixtures/${instanceUUIDsFileName}`,
-                `${marcInstance.uuid}\n${marcInstanceWithStatisticalCode.uuid}\n${folioInstance.uuid}\n${folioInstanceWithStatisticalCode.uuid}`,
+                instanceUuids.join('\n'),
               );
             });
 
@@ -168,24 +164,12 @@ describe('Bulk-edit', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
 
-        [
-          marcInstance,
-          marcInstanceWithStatisticalCode,
-          folioInstance,
-          folioInstanceWithStatisticalCode,
-        ].forEach((instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.uuid);
+        instanceUuids.forEach((uuid) => {
+          InventoryInstance.deleteInstanceViaApi(uuid);
         });
 
         FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(
-          previewFileNameMrc,
-          previewFileNameCsv,
-          changedRecordsFileNameMrc,
-          changedRecordsFileNameCsv,
-          matchedRecordsFileName,
-          errorsFromCommittingFileName,
-        );
+        BulkEditFiles.deleteAllDownloadedFiles(fileNames);
       });
 
       it(
@@ -207,7 +191,7 @@ describe('Bulk-edit', () => {
 
           instancesWithStatisticalCode.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
-              matchedRecordsFileName,
+              fileNames.matchedRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
               instance.uuid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
@@ -216,7 +200,7 @@ describe('Bulk-edit', () => {
           });
           instancesWithoutStatisticalCode.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
-              matchedRecordsFileName,
+              fileNames.matchedRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
               instance.uuid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
@@ -265,13 +249,13 @@ describe('Bulk-edit', () => {
             assertions: commonAssertions(instance),
           }));
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, recordsToVerify, 2);
+          parseMrcFileContentAndVerify(fileNames.previewMarc, recordsToVerify, 2);
 
           BulkEditActions.downloadPreview();
 
           marcInstances.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
-              previewFileNameCsv,
+              fileNames.previewCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               instance.hrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
@@ -287,26 +271,26 @@ describe('Bulk-edit', () => {
             '',
           );
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
-          // BulkEditSearchPane.clickShowWarningsCheckbox();
+          BulkEditSearchPane.clickShowWarningsCheckbox();
           BulkEditSearchPane.verifyError(marcInstance.uuid, warningMessage, 'Warning');
           BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
           BulkEditSearchPane.verifyError(folioInstanceWithStatisticalCode.uuid, errorMessage);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(changedRecordsFileName, [recordsToVerify[1]], 1);
+          parseMrcFileContentAndVerify(fileNames.changedRecordsMarc, [recordsToVerify[1]], 1);
 
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileNameCsv,
+            fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstanceWithStatisticalCode.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
             '',
           );
-          BulkEditFiles.verifyCSVFileRowsRecordsNumber(changedRecordsFileNameCsv, 1);
+          BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.changedRecordsCSV, 1);
           BulkEditActions.downloadErrors();
-          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
             `ERROR,${folioInstance.uuid},${errorMessage}`,
             `ERROR,${folioInstanceWithStatisticalCode.uuid},${errorMessage}`,
             `WARNING,${marcInstance.uuid},${warningMessage}`,
