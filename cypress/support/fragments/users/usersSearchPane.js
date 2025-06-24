@@ -108,7 +108,7 @@ export default {
   closeUserDetailsPane: () => {
     cy.get(
       Pane({ id: 'pane-userdetails' })
-        .find(Button({ ariaLabel: 'Close' }))
+        .find(Button({ ariaLabel: 'Close ' }))
         .click(),
     );
   },
