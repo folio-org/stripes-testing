@@ -257,6 +257,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.verifySaveAndCloseButtonDisabled();
+            cy.wait(1000);
             linkingTagAndValues.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(
                 field.rowIndex,
