@@ -24,6 +24,7 @@ import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcF
 let user;
 let instanceTypeId;
 let statisticalCode;
+let instanceUuids;
 const marcInstance = {
   title: `C663252_MarcInstance_${getRandomPostfix()}`,
 };
@@ -36,7 +37,6 @@ const folioInstance = {
 const folioInstanceWithStatisticalCode = {
   title: `C663252_FolioInstance_${getRandomPostfix()}`,
 };
-let instanceUuids;
 const warningMessage = 'No change in administrative data required';
 const errorMessage =
   'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
