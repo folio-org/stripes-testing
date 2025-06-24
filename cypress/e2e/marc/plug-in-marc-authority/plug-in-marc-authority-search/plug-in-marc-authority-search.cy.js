@@ -653,7 +653,9 @@ describe('MARC', () => {
 
       after('Deleting created user', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(testData.userProperties.userId);
+        if (testData.userProperties && testData.userProperties.userId) {
+          Users.deleteViaApi(testData.userProperties.userId);
+        }
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         createdAuthorityIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id, true);
@@ -664,46 +666,51 @@ describe('MARC', () => {
         'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C380566'] },
         () => {
-          const validSearchResults = [
-            'UXPROD-4394C380566 Personal name 100 Elizabeth',
-            'UXPROD-4394C380566 Personal name 400 Elizabeth,',
-            'UXPROD-4394C380566 Personal name 500 Windsor',
-          ];
-          const unvalidSearchResults = [
-            'UXPROD-4394C380566 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq subk Musical settings Literary style Stage history 1950- England',
-            'UXPROD-4394C380566 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk subv subx suby subz',
-            'Family UXPROD-4394C380566 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
-          ];
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+          cy.then(() => {
+            const validSearchResults = [
+              'UXPROD-4394C380566 Personal name 100 Elizabeth',
+              'UXPROD-4394C380566 Personal name 400 Elizabeth,',
+              'UXPROD-4394C380566 Personal name 500 Windsor',
+            ];
+            const unvalidSearchResults = [
+              'UXPROD-4394C380566 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq subk Musical settings Literary style Stage history 1950- England',
+              'UXPROD-4394C380566 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk subv subx suby subz',
+              'Family UXPROD-4394C380566 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+            ];
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon('700');
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySearchOptions();
+            MarcAuthorities.searchByParameter(
+              testData.forC380566.searchOption,
+              'UXPROD-4394C380566',
+            );
+            validSearchResults.forEach((result) => {
+              MarcAuthorities.checkRowByContent(result);
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
-          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon('700');
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySearchOptions();
-          MarcAuthorities.searchByParameter(testData.forC380566.searchOption, 'UXPROD-4394C380566');
-          validSearchResults.forEach((result) => {
-            MarcAuthorities.checkRowByContent(result);
-          });
-          MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(
-            'UXPROD-4394C380566 Personal name 100 Elizabeth',
-          );
-          MarcAuthorities.closeMarcViewPane();
-          validSearchResults.forEach((result) => {
-            MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
-            MarcAuthorities.verifyViewPaneContent(result);
-          });
-          unvalidSearchResults.forEach((result) => {
-            MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
-            MarcAuthoritiesDelete.checkEmptySearchResults(result);
+            MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
+            MarcAuthorities.checkRecordDetailPageMarkedValue(
+              'UXPROD-4394C380566 Personal name 100 Elizabeth',
+            );
+            MarcAuthorities.closeMarcViewPane();
+            validSearchResults.forEach((result) => {
+              MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
+              MarcAuthorities.verifyViewPaneContent(result);
+            });
+            unvalidSearchResults.forEach((result) => {
+              MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
+              MarcAuthoritiesDelete.checkEmptySearchResults(result);
+            });
           });
         },
       );
