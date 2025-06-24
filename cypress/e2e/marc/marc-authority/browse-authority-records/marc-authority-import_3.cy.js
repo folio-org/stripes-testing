@@ -74,7 +74,7 @@ describe('MARC', () => {
             Logs.checkJobStatus(fileName, 'Completed');
             Logs.openFileDetails(fileName);
             Logs.goToTitleLink('Case Reports');
-            cy.wait(1000);
+            cy.wait(1500);
             Logs.checkAuthorityLogJSON([
               '"sourceFileId":',
               '"6ddf21a6-bc2f-4cb0-ad96-473e1f82da23"',
