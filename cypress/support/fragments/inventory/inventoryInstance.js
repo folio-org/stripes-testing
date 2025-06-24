@@ -1287,7 +1287,7 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content: including(content) }).exists());
   },
-  openHoldingItem({ name, barcode, shouldOpen = true }) {
+  openHoldingItem({ name = '', barcode = 'No barcode', shouldOpen = true }) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
