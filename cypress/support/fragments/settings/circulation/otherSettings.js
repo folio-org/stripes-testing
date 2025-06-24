@@ -82,56 +82,57 @@ export default {
   },
 
   getOtherSettingsViaApi() {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      return response;
-    });
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response;
+      });
   },
 
   setOtherSettingsViaApi(params) {
-    return this.getOtherSettingsViaApi()
-      .then((otherSettingsResp) => {
-        let config = otherSettingsResp.body.configs[0];
+    return this.getOtherSettingsViaApi().then((otherSettingsResp) => {
+      let config = otherSettingsResp.body.configs[0];
 
-        if (otherSettingsResp.body.configs.length === 0) {
-          config = {
-            value:
-              '{"audioAlertsEnabled":false,"audioTheme":"classic","checkoutTimeout":true,"checkoutTimeoutDuration":3,"prefPatronIdentifier":"barcode,username","useCustomFieldsAsIdentifiers":false,"wildcardLookupEnabled":false}',
-            module: 'CHECKOUT',
-            configName: 'other_settings',
-            id: uuid(),
-          };
+      if (otherSettingsResp.body.configs.length === 0) {
+        config = {
+          value:
+            '{"audioAlertsEnabled":false,"audioTheme":"classic","checkoutTimeout":true,"checkoutTimeoutDuration":3,"prefPatronIdentifier":"barcode,username","useCustomFieldsAsIdentifiers":false,"wildcardLookupEnabled":false}',
+          module: 'CHECKOUT',
+          configName: 'other_settings',
+          id: uuid(),
+        };
 
-          const newValue = { ...JSON.parse(config.value), ...params };
-          config.value = JSON.stringify(newValue);
+        const newValue = { ...JSON.parse(config.value), ...params };
+        config.value = JSON.stringify(newValue);
 
-          cy.okapiRequest({
-            method: 'POST',
-            path: 'configurations/entries',
-            isDefaultSearchParamsRequired: false,
-            failOnStatusCode: false,
-            body: config,
-          });
-        } else {
-          const newValue = { ...JSON.parse(config.value), ...params };
-          config.value = JSON.stringify(newValue);
+        cy.okapiRequest({
+          method: 'POST',
+          path: 'configurations/entries',
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+          body: config,
+        });
+      } else {
+        const newValue = { ...JSON.parse(config.value), ...params };
+        config.value = JSON.stringify(newValue);
 
-          cy.okapiRequest({
-            method: 'PUT',
-            path: `configurations/entries/${config.id}`,
-            body: {
-              id: config.id,
-              module: config.module,
-              configName: config.configName,
-              enabled: config.enabled,
-              value: config.value,
-            },
-            isDefaultSearchParamsRequired: false,
-          });
-        }
-      });
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `configurations/entries/${config.id}`,
+          body: {
+            id: config.id,
+            module: config.module,
+            configName: config.configName,
+            enabled: config.enabled,
+            value: config.value,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      }
+    });
   },
 };

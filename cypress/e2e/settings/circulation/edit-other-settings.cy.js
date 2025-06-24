@@ -9,9 +9,7 @@ describe('Permissions -> Circulation', () => {
 
   before('Prepare test data', () => {
     cy.getAdminToken();
-    cy.createTempUser([
-      Permissions.uiCirculationSettingsOtherSettings.gui
-    ]).then(userProps => {
+    cy.createTempUser([Permissions.uiCirculationSettingsOtherSettings.gui]).then((userProps) => {
       testUser = userProps;
     });
     // Ensure useCustomFieldsAsIdentifiers is false before test
@@ -25,12 +23,13 @@ describe('Permissions -> Circulation', () => {
     Users.deleteViaApi(testUser.userId);
   });
 
-  it('C1216 Settings (Circ): Can create, edit and remove other settings (vega)',
+  it(
+    'C1216 Settings (Circ): Can create, edit and remove other settings (vega)',
     { tags: ['extendedPath', 'vega', 'C1216'] },
     () => {
       cy.login(testUser.username, testUser.password, {
         path: SettingsMenu.circulationOtherSettingsPath,
-        waiter: OtherSettings.waitLoading
+        waiter: OtherSettings.waitLoading,
       });
 
       OtherSettings.verifyUserCustomFieldsCheckboxIsSelected(false);
@@ -42,5 +41,6 @@ describe('Permissions -> Circulation', () => {
         // Verify useCustomFieldsAsIdentifiers is true via API
         OtherSettings.verifyOtherSettingsContainsParams({ useCustomFieldsAsIdentifiers: true });
       });
-    });
+    },
+  );
 });
