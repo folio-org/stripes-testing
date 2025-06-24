@@ -1,15 +1,15 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesDelete from '../../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
@@ -26,7 +26,7 @@ describe('MARC', () => {
           fieldContents: {
             tag245Content: 'New title',
           },
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `testMarcFileC422144.${getRandomPostfix()}.mrc`,
         };
 
         const newFields = [
@@ -39,19 +39,19 @@ describe('MARC', () => {
             boxSixth: '$0 http://id.loc.gov/authorities/names/n9903410883C410883',
             boxSeventh: '',
             searchOption: 'Keyword',
-            marcValue: 'C410883 Roma Council (2nd : 1962-1965 : Basilica di San Pietro in Roma)',
+            marcValue: 'C410883 Abraham, Angela, 1958- C410883 Hosanna Bible',
           },
           {
             rowIndex: 5,
             tag: '711',
             content: '$j something $0 n7908410883C410883 $2 fast',
             boxFourth:
-              '$a C410883 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd :',
+              '$a C410883 Roma Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Roma)',
             boxFifth: '$j something',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n7908410883C410883',
             boxSeventh: '$2 fast',
             searchOption: 'Keyword',
-            marcValue: 'C410883 Abraham, Angela, 1958- C410883 Hosanna Bible',
+            marcValue: 'C410883 Roma Council (2nd : 1962-1965 : Basilica di San Pietro in Roma)',
           },
         ];
 
@@ -62,13 +62,14 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcAuthFileForC410883.mrc',
-            fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+            fileName: `testMarcFileC422144.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 2,
           },
         ];
 
         const createdAuthorityIDs = [];
+        let createdInstanceID;
 
         before(() => {
           cy.getAdminToken();
@@ -108,17 +109,16 @@ describe('MARC', () => {
         after('Deleting created users, Instances', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          for (let i = 0; i < 2; i++) {
-            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i], true);
-          }
-          InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
+          createdAuthorityIDs.forEach((id) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
+          InventoryInstance.deleteInstanceViaApi(createdInstanceID);
         });
 
         it(
           'C422144 Auto-linking to deleted and re-imported "MARC authority" record when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['criticalPathBroken', 'spitfire', 'C422144'] },
+          { tags: ['criticalPath', 'spitfire', 'C422144'] },
           () => {
-            cy.visit(TopMenu.marcAuthorities);
             newFields.forEach((newField) => {
               MarcAuthoritiesSearch.searchBy(newField.searchOption, newField.marcValue);
               MarcAuthorities.selectItem(newField.marcValue);
@@ -127,26 +127,24 @@ describe('MARC', () => {
               MarcAuthoritiesDelete.checkDeleteModal();
               MarcAuthoritiesDelete.confirmDelete();
               MarcAuthoritiesDelete.checkDelete(newField.marcValue);
+              QuickMarcEditor.closeAllCallouts();
+              MarcAuthorities.clickResetAndCheck();
             });
 
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, testData.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(testData.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(testData.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                testData.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
                 });
-              }
+              });
             });
 
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
@@ -184,10 +182,10 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             // wait for the changes to be completed.
             cy.wait(2000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
-              createdAuthorityIDs.push(id);
+              createdInstanceID = id;
             });
 
             InventoryInstance.viewSource();
@@ -195,7 +193,7 @@ describe('MARC', () => {
               'Linked to MARC authority\n\t240\t   \t$a C410883 Hosanna Bible $0 http://id.loc.gov/authorities/names/n9903410883C410883 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t711\t   \t$a C410883 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $j something $0 http://id.loc.gov/authorities/names/n7908410883C410883 $9',
+              'Linked to MARC authority\n\t711\t   \t$a C410883 Roma Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Roma) $j something $0 http://id.loc.gov/authorities/names/n7908410883C410883 $9',
             );
             QuickMarcEditor.closeEditorPane();
 

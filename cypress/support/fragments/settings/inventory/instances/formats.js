@@ -16,7 +16,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'POST',
-        path: 'formats',
+        path: 'instance-formats',
         body,
         isDefaultSearchParamsRequired: false,
       })
@@ -26,8 +26,9 @@ export default {
   },
   deleteViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
-    path: `formats/${id}`,
+    path: `instance-formats/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
   getViaApi: (searchParams = { limit: 1 }) => {
     return cy

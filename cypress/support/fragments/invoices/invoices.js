@@ -1200,6 +1200,7 @@ export default {
         .find(Section({ id: 'status' }))
         .find(Button({ ariaLabel: 'Status filter list' }))
         .click(),
+      cy.wait(1000),
       Checkbox(status).click(),
     ]);
   },

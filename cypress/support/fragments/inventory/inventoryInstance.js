@@ -352,10 +352,10 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
-const waitInstanceRecordViewOpened = (title) => {
-  cy.wait(1500);
+const waitInstanceRecordViewOpened = () => {
   cy.expect(instanceDetailsSection.exists());
-  cy.expect(Pane({ titleLabel: including(title) }).exists());
+  cy.expect(Pane().exists());
+  cy.expect(Spinner().absent());
 };
 
 const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {

@@ -155,7 +155,7 @@ describe('Orders', () => {
       // Click "Actions" button, Select "Edit" option
       const OrderEditForm = OrderDetails.openOrderEditForm();
       OrderEditForm.checkOngoingOrderInformationSection([
-        { label: 'subscription', conditions: { checked: true } },
+        { label: 'subscription', conditions: { checked: true, disabled: true }, checkbox: true },
         { label: 'renewalDate', conditions: { value: '' } },
       ]);
 
@@ -174,7 +174,7 @@ describe('Orders', () => {
       // Click "Actions" button on "Purchase order - <Order number>" pane and select "Edit" option
       OrderDetails.openOrderEditForm();
       OrderEditForm.checkOngoingOrderInformationSection([
-        { label: 'subscription', conditions: { checked: true } },
+        { label: 'subscription', conditions: { checked: true, disabled: true }, checkbox: true },
         { label: 'renewalDate', conditions: { value: testData.tomorrow } },
       ]);
 
