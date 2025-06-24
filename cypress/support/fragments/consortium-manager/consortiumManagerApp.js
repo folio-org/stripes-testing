@@ -75,6 +75,11 @@ export default {
     cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
   },
 
+  verifyButtonsState(isEnabled = true) {
+    cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
+    cy.expect(Button('+ New').absent());
+  },
+
   verifyPaneIncludesSettings(settingsList) {
     cy.get('#settings-nav-pane-content a').then(($elements) => {
       const availableSettings = [];

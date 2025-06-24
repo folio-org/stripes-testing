@@ -22,8 +22,7 @@ const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid =
   BulkEditFiles.getMatchedRecordsFileName(itemHRIDsFileName);
 const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(itemHRIDsFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(itemHRIDsFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName);
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName);
 const errorsFromCommittingFileName =
   BulkEditFiles.getErrorsFromCommittingFileName(itemHRIDsFileName);
