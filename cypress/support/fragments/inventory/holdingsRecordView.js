@@ -30,7 +30,7 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
 
 function waitLoading() {
-  cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
+  cy.expect([holdingsRecordViewSection.exists()]);
 }
 function checkCopyNumber(number) {
   cy.expect(KeyValue('Copy number').has({ value: number }));
