@@ -45,14 +45,6 @@ export default {
     }
   },
 
-  getPreviewOfProposedChangesFileName(fileName, isDateIncluded = false) {
-    if (isDateIncluded) {
-      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
-    } else {
-      return `*-Updates-Preview-CSV-${fileName}`;
-    }
-  },
-
   getErrorsFromCommittingFileName(fileName, isDateIncluded = false) {
     if (isDateIncluded) {
       return `${todayDate}-Committing-changes-Errors-${fileName}`;
@@ -67,6 +59,26 @@ export default {
     } else {
       return `*-Matching-Records-Errors-${fileName}`;
     }
+  },
+
+  getAllDownloadedFileNames(fileName, isDateIncluded = false) {
+    return {
+      matchedRecordsCSV: this.getMatchedRecordsFileName(fileName, isDateIncluded),
+      previewCSV: this.getPreviewFileName(fileName, isDateIncluded),
+      previewMarc: this.getPreviewMarcFileName(fileName, isDateIncluded),
+      changedRecordsCSV: this.getChangedRecordsFileName(fileName, isDateIncluded),
+      changedRecordsMarc: this.getChangedRecordsMarcFileName(fileName, isDateIncluded),
+      errorsFromCommitting: this.getErrorsFromCommittingFileName(fileName, isDateIncluded),
+      errorsFromMatching: this.getErrorsFromMatchingFileName(fileName, isDateIncluded),
+    };
+  },
+
+  deleteAllDownloadedFiles(fileNames) {
+    const fileNamesList = Object.values(fileNames);
+
+    fileNamesList.forEach((fileName) => {
+      FileManager.deleteFileFromDownloadsByMask(fileName);
+    });
   },
 
   verifyMatchedResultFileContent(
