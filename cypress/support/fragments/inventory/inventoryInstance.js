@@ -1451,8 +1451,8 @@ export default {
         }),
         (response) => response.body.sharingInstances[0].status === 'COMPLETE',
         {
-          limit: 20,
-          delay: 1000,
+          limit: 30,
+          delay: 2000,
         },
       );
     });
