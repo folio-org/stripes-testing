@@ -26,6 +26,7 @@ export default {
     cy.expect(budgetPane.exists());
   },
   checkBudgetDetails({ summary = [], information = [], balance = {}, expenseClass } = {}) {
+    cy.wait(4000);
     summary.forEach(({ key, value }) => {
       cy.expect(
         summarySection

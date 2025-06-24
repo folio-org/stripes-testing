@@ -54,6 +54,7 @@ const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const versionHistoryButton = Button({ icon: 'clock' });
+const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
 
 const verifyResourceTitle = (value) => {
@@ -447,6 +448,14 @@ export default {
     cy.expect(KeyValue('Edition').has({ value }));
   },
 
+  verifyPublicationFrequency(value) {
+    cy.expect(KeyValue('Publication frequency').has({ value }));
+  },
+
+  verifyPublicationRange(value) {
+    cy.expect(KeyValue('Publication range').has({ value }));
+  },
+
   verifyNotMarkAsStaffSuppressed() {
     cy.wait(1000);
     cy.expect(
@@ -537,7 +546,7 @@ export default {
 
   verifyContributorWithMarcAppLink: (indexRow, indexColumn, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnList({ id: 'list-contributors' }))
         .find(MultiColumnListRow({ index: indexRow }))
         .find(MultiColumnListCell({ columnIndex: indexColumn }))
@@ -547,7 +556,7 @@ export default {
 
   verifyContributorNameWithMarcAppIcon: (indexRow, indexColumn, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnListRow({ index: indexRow }))
         .find(
           MultiColumnListCell({
@@ -561,10 +570,29 @@ export default {
 
   verifyContributorNameWithoutMarcAppIcon: (row, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnListCell({ row, content: including(value) }))
         .has({ content: not(including('Linked to MARC authority')) }),
     );
+  },
+
+  expandContributorAccordion() {
+    cy.do(contributorAccordion.clickHeader());
+  },
+
+  verifyContributorAccordionIsEmpty() {
+    this.expandContributorAccordion();
+
+    const columns = ['Name type', 'Name', 'Type', 'Free text', 'Primary'];
+
+    columns.forEach((column) => {
+      cy.expect(
+        contributorAccordion
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ column, content: 'No value set-' }))
+          .exists(),
+      );
+    });
   },
 
   verifyInstanceAdministrativeNote: (note) => {
