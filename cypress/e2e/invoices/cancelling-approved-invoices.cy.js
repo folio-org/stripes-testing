@@ -180,13 +180,13 @@ describe('Invoices', () => {
         `${defaultFund.name} (${defaultFund.code})`,
       );
       Funds.closeTransactionDetails();
-      Funds.closeMenu();
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(defaultInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(defaultInvoice.vendorInvoiceNo);
       Invoices.cancelInvoice();
       TopMenuNavigation.navigateToApp('Finance');
+      Funds.closeBudgetDetails();
       Helper.selectFundsNavigation();
       Helper.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

@@ -43,7 +43,7 @@ describe('Citation: create work', () => {
       EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       EditResource.checkAlarmDisplayed(false);
-      EditResource.setValueForTheField(testData.summaryNote, 'Summary note');
+      EditResource.setNoteValue(testData.summaryNote, 'Summary note');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
       LinkedDataEditor.waitLoading();

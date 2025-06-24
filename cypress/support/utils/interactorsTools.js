@@ -112,6 +112,20 @@ export default {
       .find(Button({ icon: 'times' }))
       .click(),
   ),
+  closeAllVisibleCallouts: () => {
+    cy.document().then((doc) => {
+      const callouts = doc.querySelectorAll('[class^=calloutBase-]');
+      if (!callouts.length) return;
+
+      for (let i = 0; i < callouts.length; i++) {
+        cy.do(
+          Callout({ id: callouts[i].id })
+            .find(Button({ icon: 'times' }))
+            .click(),
+        );
+      }
+    });
+  },
   checkCalloutErrorMessage: (text, calloutType = calloutTypes.error) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   },

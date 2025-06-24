@@ -1,16 +1,17 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SubjectTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -46,7 +47,7 @@ describe('Consortia', () => {
           cy.getConsortiaId().then((id) => {
             consortiaId = id;
 
-            SubjectTypesConsortiumManager.createSharedSubjectTypeViaApi(
+            ConsortiumSubjectTypes.createSharedSubjectTypeViaApi(
               sharedSubjectType.id,
               sharedSubjectType.name,
               consortiaId,
@@ -96,7 +97,7 @@ describe('Consortia', () => {
         after('Delete users data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(user.userId);
-          SubjectTypesConsortiumManager.deleteSharedSubjectTypeViaApi(
+          ConsortiumSubjectTypes.deleteSharedSubjectTypeViaApi(
             consortiaId,
             sharedSubjectType.id,
             sharedSubjectType.name,
@@ -113,13 +114,13 @@ describe('Consortia', () => {
         });
 
         const verifyFoundMembersAndTotalSelected = (members, total, tenants) => {
-          SelectMembers.verifyMembersFound(members);
-          SelectMembers.verifyTotalSelected(total);
-          SelectMembers.verifyAvailableTenants(tenants);
+          SelectMembersModal.verifyMembersFound(members);
+          SelectMembersModal.verifyTotalSelected(total);
+          SelectMembersModal.verifyAvailableTenants(tenants);
         };
 
         const verifyConsortiumManagerAfterSelectMembersSave = (setting, members) => {
-          SelectMembers.saveAndClose();
+          SelectMembersModal.saveAndClose();
           ConsortiumManagerApp.waitLoading();
           ConsortiumManagerApp.verifySettingPaneIsDisplayed();
           ConsortiumManagerApp.verifyPaneIncludesSettings(setting);
@@ -134,29 +135,30 @@ describe('Consortia', () => {
           () => {
             cy.login(user.username, user.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
+            SelectMembersModal.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            SubjectTypesConsortiumManager.choose();
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.choose();
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.memberLibrares,
               sharedSubjectType.source,
             );
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibrares,
               localSubjectTypeOnCentral.source,
               { actions: ['edit', 'trash'] },
             );
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibrares,
               localSubjectTypeOnCollege.source,
               { actions: ['edit', 'trash'] },
             );
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibrares,
               localSubjectTypeOnUniversity.source,
@@ -164,25 +166,25 @@ describe('Consortia', () => {
             );
 
             ConsortiumManagerApp.clickSelectMembers();
-            SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
-            SelectMembers.selectMembers(tenantNames.central);
+            SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
+            SelectMembersModal.selectMembers(tenantNames.central);
             verifyFoundMembersAndTotalSelected(3, 2, [tenantNames.college, tenantNames.university]);
-            SelectMembers.verifyMemberIsSelected(tenantNames.college, true);
-            SelectMembers.verifyMemberIsSelected(tenantNames.university, true);
+            SelectMembersModal.verifyMemberIsSelected(tenantNames.college, true);
+            SelectMembersModal.verifyMemberIsSelected(tenantNames.university, true);
             verifyConsortiumManagerAfterSelectMembersSave(settingsList, 2);
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.memberLibrares,
               sharedSubjectType.source,
             );
-            SubjectTypesConsortiumManager.verifySourceTypeAbsent(localSubjectTypeOnCentral.name);
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCentral.name);
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibrares,
               localSubjectTypeOnCollege.source,
               { actions: ['edit', 'trash'] },
             );
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibrares,
               localSubjectTypeOnUniversity.source,

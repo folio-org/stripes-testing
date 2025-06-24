@@ -414,6 +414,14 @@ export default {
     internal: 'ui-circulation.settings.fixed-due-date-schedules',
     gui: 'Settings (Circulation): Can create, edit and remove fixed due date schedules',
   },
+  uiCirculationViewLoanHistory: {
+    internal: 'ui-circulation.settings.loan-history',
+    gui: 'Settings (Circulation): Can view loan history',
+  },
+  uiCirculationEditLoanHistory: {
+    internal: 'ui-circulation.settings.edit-loan-history',
+    gui: 'Settings (Circulation): Can edit loan history',
+  },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },

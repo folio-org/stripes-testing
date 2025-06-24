@@ -90,10 +90,14 @@ describe('MARC', () => {
             });
           });
 
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             // wait for detail view to be fully loaded
@@ -109,9 +113,7 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -166,20 +168,13 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();
-          // Waiter needed for the whole page to be loaded.
-          cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(4000);
-          QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
+          cy.wait(2000);
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           cy.wait(2000);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-          cy.wait(2000);
-          QuickMarcEditor.confirmUpdateLinkedBibs(1);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
 
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[2].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[2].authorityHeading);
@@ -188,9 +183,7 @@ describe('MARC', () => {
           // Waiter needed for the whole page to be loaded.
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag111, testData.updatedTag111Value);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedFirstUpdateData);
           MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(

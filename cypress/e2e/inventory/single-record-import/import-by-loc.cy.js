@@ -47,6 +47,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.getAdminToken();
       cy.toggleLocSingleImportProfileViaAPI();
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,

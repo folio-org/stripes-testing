@@ -5,9 +5,10 @@ import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SubjectTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
+import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
@@ -77,27 +78,27 @@ describe('Consortia', () => {
           () => {
             cy.login(userA.username, userA.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
-            SelectMembers.selectAllMembers();
+            SelectMembersModal.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            SubjectTypesConsortiumManager.choose();
+            ConsortiumSubjectTypes.choose();
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
-            SubjectTypesConsortiumManager.clickNewButton();
+            ConsortiumSubjectTypes.clickNewButton();
             [
               { name: '', isUnique: true },
               { name: 'Chronological term', isUnique: false },
               { name: subjectTypeNames[0], isUnique: true },
             ].forEach((value) => {
-              SubjectTypesConsortiumManager.validateNameFieldConditions(value.name, value.isUnique);
+              ConsortiumSubjectTypes.validateNameFieldConditions(value.name, value.isUnique);
             });
-            SubjectTypesConsortiumManager.confirmSharing(subjectTypeNames[0]);
-            SubjectTypesConsortiumManager.verifyCreatedSubjectType({
+            ConsortiumSubjectTypes.confirmSharingToAll(subjectTypeNames[0]);
+            ConsortiumSubjectTypes.verifyCreatedSubjectType({
               name: subjectTypeNames[0],
               actions: ['edit', 'trash'],
             });
-            SubjectTypesConsortiumManager.createAndCancelRecord(subjectTypeNames[1]);
+            ConsortiumSubjectTypes.createNewAndCancel(subjectTypeNames[1]);
 
             cy.login(userB.username, userB.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
@@ -106,10 +107,7 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
-              subjectTypeNames[0],
-              'consortium',
-            );
+            SubjectTypes.verifySubjectTypeExists(subjectTypeNames[0], 'consortium');
 
             cy.resetTenant();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -119,10 +117,7 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
-              subjectTypeNames[0],
-              'consortium',
-            );
+            SubjectTypes.verifySubjectTypeExists(subjectTypeNames[0], 'consortium');
 
             cy.resetTenant();
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
@@ -132,10 +127,7 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypesConsortiumManager.verifySubjectTypeExists(
-              subjectTypeNames[0],
-              'consortium',
-            );
+            SubjectTypes.verifySubjectTypeExists(subjectTypeNames[0], 'consortium');
           },
         );
       });
