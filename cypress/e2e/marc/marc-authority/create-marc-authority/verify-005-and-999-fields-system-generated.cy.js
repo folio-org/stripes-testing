@@ -15,7 +15,7 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomPostfix = getRandomPostfix();
       const todayDate = moment(new Date()).format('YYYYMMDD');
-      const headerText = 'Create a new MARC authority record';
+      const headerText = /New .*MARC authority record/;
       const localAuthFile = {
         name: `C423500 auth source file active ${randomPostfix}`,
         prefix: `${getRandomLetters(4)}`,

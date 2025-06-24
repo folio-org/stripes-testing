@@ -1,6 +1,8 @@
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances, {
+  searchItemsOptions,
+} from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -12,8 +14,9 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Case-insensitive checks', () => {
       const testData = {
-        allOption: 'All',
-        barcodeOption: 'Barcode',
+        keywordOption: searchItemsOptions[0],
+        barcodeOption: searchItemsOptions[1],
+        allOption: searchItemsOptions[11],
         instances: [
           {
             title: "C466081 Instance 1, Item's barcode lower case",
@@ -111,6 +114,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
 
+          testData.searchValues.forEach((value) => {
+            search(testData.keywordOption, value);
+          });
           testData.searchValues.forEach((value) => {
             search(testData.barcodeOption, value);
           });

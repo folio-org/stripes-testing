@@ -12,8 +12,8 @@ const invalidUserUUID = getRandomPostfix();
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,

@@ -24,11 +24,10 @@ const item = {
   locationId: LOCATION_IDS.ANNEX,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(itemBarcodesFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,

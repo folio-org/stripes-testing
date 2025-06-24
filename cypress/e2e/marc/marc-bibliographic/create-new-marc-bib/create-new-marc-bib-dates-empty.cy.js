@@ -88,7 +88,7 @@ describe('MARC', () => {
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
             INVENTORY_008_FIELD_LITF_DROPDOWN.I,
           );
-          QuickMarcEditor.verifyDropdownInvalidValueHighlighted(
+          QuickMarcEditor.checkDropdownMarkedAsInvalid(
             tag008,
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
           );

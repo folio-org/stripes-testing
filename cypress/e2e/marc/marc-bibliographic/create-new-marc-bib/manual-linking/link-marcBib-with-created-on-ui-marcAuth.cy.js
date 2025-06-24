@@ -21,7 +21,7 @@ describe('MARC', () => {
             tag245Content: 'Test: linking with created MARC authority',
           },
           marcAuthIcon: 'Linked to MARC authority',
-          newAuthorityHeaderText: 'Create a new MARC authority record',
+          newAuthorityHeaderText: /New .*MARC authority record/,
           sourceName: 'LC Name Authority file (LCNAF)',
           markedValue: 'John Doe',
           accordionContributor: 'Contributor',

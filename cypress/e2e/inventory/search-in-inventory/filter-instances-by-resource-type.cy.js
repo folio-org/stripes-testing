@@ -85,7 +85,7 @@ describe('Inventory', () => {
               instances1.response.body.totalRecords,
             );
             InventoryInstances.checkSearchResultCount(
-              instances1.response.body.totalRecords.toLocaleString('en-US'),
+              '^' + instances1.response.body.totalRecords.toLocaleString('en-US') + ' record',
             );
             InventoryInstances.selectInstance();
             InventoryInstance.waitInventoryLoading();
@@ -106,7 +106,7 @@ describe('Inventory', () => {
             );
             cy.wait('@getInstances2', { timeout: 10_000 }).then((instances2) => {
               InventoryInstances.checkSearchResultCount(
-                instances2.response.body.totalRecords.toLocaleString('en-US'),
+                '^' + instances2.response.body.totalRecords.toLocaleString('en-US') + ' record',
               );
               InventoryInstances.selectInstance(1);
               InventoryInstance.waitInventoryLoading();
@@ -135,7 +135,7 @@ describe('Inventory', () => {
                   instances3.response.body.totalRecords,
                 );
                 InventoryInstances.checkSearchResultCount(
-                  instances3.response.body.totalRecords.toLocaleString('en-US'),
+                  '^' + instances3.response.body.totalRecords.toLocaleString('en-US') + ' record',
                 );
                 InventoryInstances.selectInstance();
                 InventoryInstance.waitInventoryLoading();
@@ -163,7 +163,7 @@ describe('Inventory', () => {
                     instances4.response.body.totalRecords,
                   );
                   InventoryInstances.checkSearchResultCount(
-                    instances4.response.body.totalRecords.toLocaleString('en-US'),
+                    '^' + instances4.response.body.totalRecords.toLocaleString('en-US') + ' record',
                   );
                   InventoryInstances.selectInstance();
                   InventoryInstance.waitInventoryLoading();
@@ -190,7 +190,9 @@ describe('Inventory', () => {
                   );
                   cy.wait('@getInstances5', { timeout: 10_000 }).then((instances5) => {
                     InventoryInstances.checkSearchResultCount(
-                      instances5.response.body.totalRecords.toLocaleString('en-US'),
+                      '^' +
+                        instances5.response.body.totalRecords.toLocaleString('en-US') +
+                        ' record',
                     );
                   });
                 });

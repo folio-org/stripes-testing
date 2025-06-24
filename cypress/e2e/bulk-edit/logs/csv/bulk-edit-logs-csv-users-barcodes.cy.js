@@ -24,9 +24,9 @@ const previewOfProposedChangesFileName = {
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserBarcodesFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserBarcodesFileName}`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('Csv approach', () => {
       before('create test data', () => {
         cy.createTempUser([]).then((userProperties) => {
           userWithoutPermissions = userProperties;

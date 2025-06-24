@@ -45,6 +45,9 @@ describe('Inventory', () => {
     const createdAuthorityIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388531');
+      InventoryInstances.deleteInstanceByTitleViaApi(testData.contributorName);
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -84,20 +87,20 @@ describe('Inventory', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          InventoryInstance.waitLoading();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
       });
     });
 
     beforeEach('Login to the application', () => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       cy.waitForAuthRefresh(() => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
         cy.reload();
         InventoryInstances.waitContentLoading();
-      }, 20_000);
+      });
     });
 
     after('Deleting created user and data', () => {

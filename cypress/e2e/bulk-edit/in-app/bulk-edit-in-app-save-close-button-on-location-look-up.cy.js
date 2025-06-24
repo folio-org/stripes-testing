@@ -23,8 +23,8 @@ const testData = {
   servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.servicePoint);

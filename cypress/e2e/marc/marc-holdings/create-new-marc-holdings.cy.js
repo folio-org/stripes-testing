@@ -31,7 +31,7 @@ describe('MARC', () => {
       tag866: '866',
       tag999: '999',
       tag866Value: 'Test',
-      headerTitle: 'Create a new MARC Holdings record',
+      headerTitle: /New .*MARC holdings record/,
       headerSubtitle: 'New',
       tagLDRValueInSourceMask: /LEADER\s\d{5}[c,d,n][u,v,x,y]\s{3}22\d{5}[1,2,3,4,5,m,u,z].\s4500/,
       tag001ValueInSourceMask: /[a-z]+\d+/,
@@ -144,6 +144,7 @@ describe('MARC', () => {
         QuickMarcEditor.deleteFieldAndCheck(4, '008');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkDelete008Callout();
+        QuickMarcEditor.verifyValidationCallout(0, 1);
         QuickMarcEditor.undoDelete();
         QuickMarcEditor.updateExistingTagValue(4, '008');
         QuickMarcEditor.checkSubfieldsPresenceInTag008();
@@ -187,6 +188,8 @@ describe('MARC', () => {
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
+        QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
+        QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
         QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
         QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
         QuickMarcEditor.verifySaveAndCloseButtonEnabled();
@@ -217,8 +220,6 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
-        QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
-        QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
         QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
         QuickMarcEditor.checkReadOnlyHoldingsTags();
         QuickMarcEditor.verifyHoldingsDefault008BoxesValues(testData.default008BoxesValues);
@@ -301,6 +302,7 @@ describe('MARC', () => {
         QuickMarcEditor.afterDeleteNotification('85');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.tag852callout);
+        QuickMarcEditor.verifyValidationCallout(0, 1);
       },
     );
   });

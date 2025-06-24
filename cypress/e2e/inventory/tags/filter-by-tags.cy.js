@@ -9,7 +9,7 @@ import PatronGroups from '../../../support/fragments/settings/users/patronGroups
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -90,7 +90,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.filterHoldingsByTag(tagName);
         InventorySearchAndFilter.checkRowsCount(1);
       },
     );
@@ -110,7 +110,7 @@ describe('Inventory', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.filterItemsByTag(tagName);
         InventorySearchAndFilter.checkRowsCount(1);
       },
     );

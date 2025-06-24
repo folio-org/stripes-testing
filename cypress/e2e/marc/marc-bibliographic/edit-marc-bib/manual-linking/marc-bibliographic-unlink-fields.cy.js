@@ -139,7 +139,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
               linkedField.tag,
@@ -165,7 +165,7 @@ describe('MARC', () => {
               unlinkedField.content,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(0, 1, contributors.firstName);

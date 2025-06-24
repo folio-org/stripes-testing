@@ -13,7 +13,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import {
   APPLICATION_NAMES,
   electronicAccessRelationshipId,
-  electronicAccessRelationshipName,
+  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
 } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
@@ -37,8 +37,8 @@ const electronicAccess = [
 ];
 const newUri = 'testuri2.com/uri';
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
@@ -89,18 +89,18 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
-        BulkEditSearchPane.checkboxWithTextAbsent('Relationship');
+        BulkEditSearchPane.checkboxWithTextAbsent('URL relationship');
         BulkEditSearchPane.checkboxWithTextAbsent('URI');
         BulkEditSearchPane.checkboxWithTextAbsent('Link text');
         BulkEditSearchPane.checkboxWithTextAbsent('Materials specified');
-        BulkEditSearchPane.checkboxWithTextAbsent('Public note');
+        BulkEditSearchPane.checkboxWithTextAbsent('URL public note');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
@@ -111,8 +111,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.urlRelationshipReplaceWith(
-          electronicAccessRelationshipName.RESOURCE,
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         );
         BulkEditActions.addNewBulkEditFilterString();
 
@@ -120,7 +120,7 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
@@ -130,13 +130,13 @@ describe('bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.downloadPreview();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
@@ -147,7 +147,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -157,7 +157,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.verifyElectronicAccessByElementIndex(
           0,
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         );
         HoldingsRecordView.verifyElectronicAccessByElementIndex(1, newUri);
         HoldingsRecordView.verifyElectronicAccessByElementIndex(2, electronicAccess[0].linkText);

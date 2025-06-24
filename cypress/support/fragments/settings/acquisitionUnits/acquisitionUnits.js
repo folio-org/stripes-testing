@@ -54,8 +54,8 @@ export default {
     cy.do(Button('New').click());
   },
 
-  fillInInfo(name) {
-    cy.do([nameTextField.fillIn(name), viewCheckbox.click(), saveAUButton.click()]);
+  fillInInfo(AUName) {
+    cy.do([nameTextField.fillIn(AUName), viewCheckbox.click(), saveAUButton.click()]);
     this.assignAdmin();
     cy.wait(4000);
   },
@@ -97,7 +97,7 @@ export default {
       .parent('div[class*="mclRow-"]')
       .find('button[icon="trash"]')
       .click();
-    cy.wait(1500);
+    cy.wait(2000);
   },
 
   unAssignAdmin: (AUName) => {

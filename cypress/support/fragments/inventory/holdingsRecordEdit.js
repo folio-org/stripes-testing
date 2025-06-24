@@ -24,6 +24,9 @@ import InteractorsTools from '../../utils/interactorsTools';
 import InstanceStates from './instanceStates';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
+const footerPane = HTML({ className: including('paneFooter-') });
+const saveAndCloseButton = footerPane.find(Button('Save & close'));
+const cancelButton = footerPane.find(Button('Cancel'));
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
 const sourceSelect = rootForm.find(Select({ name: 'sourceId' }));
 const readonlyFields = [holdingsHrId, sourceSelect];
@@ -43,7 +46,7 @@ const uriTextarea = TextArea({ ariaLabel: 'URI' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
-    cy.do(rootForm.find(Button('Save & close')).click());
+    cy.do(saveAndCloseButton.click());
 
     if (holdingSaved) {
       InteractorsTools.checkCalloutMessage(
@@ -57,7 +60,7 @@ export default {
     cy.expect(callNumberField.exists());
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
-  closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
+  closeWithoutSave: () => cy.do(cancelButton.click()),
   fillHoldingFields({ permanentLocation, callNumber, holdingsNote, holdingType } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);
@@ -211,7 +214,7 @@ export default {
       addElectronicAccessButton.click(),
       relationshipSelectDropdown.choose(type),
       uriTextarea.fillIn(type),
-      Button('Save & close').click(),
+      saveAndCloseButton.click(),
     ]);
   },
   getRelationshipsFromHoldings: () => {

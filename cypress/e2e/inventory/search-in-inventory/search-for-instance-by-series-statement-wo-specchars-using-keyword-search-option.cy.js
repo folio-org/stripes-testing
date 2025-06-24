@@ -101,7 +101,7 @@ describe('Inventory', () => {
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
           });
           InventorySearchAndFilter.checkRowsCount(3);
@@ -118,7 +118,7 @@ describe('Inventory', () => {
         });
 
         InventoryInstances.searchByTitle('Philippine Question Books No 10 in catalog');
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
         InventorySearchAndFilter.checkRowsCount(1);

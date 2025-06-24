@@ -10,28 +10,26 @@ import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Orders from '../../../../support/fragments/orders/orders';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../../support/fragments/organizations/organizations';
-import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_2_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
   const thirdFiscalYear = {
     name: `autotest_3_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get2DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodStart: `${DateTools.get5DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get7DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -80,7 +78,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
-  let servicePointId;
   let location;
   let thirdOrderNumber;
 
@@ -122,11 +119,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         });
       });
 
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-          location = res;
-        });
+      cy.getLocations({ limit: 1 }).then((res) => {
+        location = res;
       });
 
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {

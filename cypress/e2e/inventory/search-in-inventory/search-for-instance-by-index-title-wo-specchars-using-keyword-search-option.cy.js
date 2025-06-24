@@ -101,7 +101,7 @@ describe('Inventory', () => {
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
           });
           InventorySearchAndFilter.checkRowsCount(3);

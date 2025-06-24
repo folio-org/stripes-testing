@@ -10,9 +10,9 @@ import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           Permissions.bulkEditCsvView.gui,

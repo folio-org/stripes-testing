@@ -30,6 +30,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -39,13 +40,15 @@ describe('Data Import', () => {
       'org.folio.rest.core.exceptions.HttpException: User is not a member of the specified acquisitions group - operation is restricted';
     const filePathForCreateOrder = 'marcBibFileForC385666.mrc';
     const marcFileName = `C385666 autotestFileName${getRandomPostfix()}.mrc`;
+    const assignedAcqUnit = AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true });
+    const notAssignedAcqUnit = AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true });
     const mappingProfile = {
       name: `C385666 Check acquisitions unit.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       orderStatus: ORDER_STATUSES.OPEN,
       approved: true,
       vendor: VENDOR_NAMES.GOBI,
-      acquisitionsUnits: 'main',
+      acquisitionsUnits: notAssignedAcqUnit.name,
       title: '245$a',
       acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
       orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
@@ -63,12 +66,18 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      AcquisitionUnits.createAcquisitionUnitViaApi(assignedAcqUnit);
+      AcquisitionUnits.createAcquisitionUnitViaApi(notAssignedAcqUnit);
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        AcquisitionUnits.assignUserViaApi(user.userId, assignedAcqUnit.id);
 
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -79,6 +88,8 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        AcquisitionUnits.deleteAcquisitionUnitViaApi(assignedAcqUnit.id);
+        AcquisitionUnits.deleteAcquisitionUnitViaApi(notAssignedAcqUnit.id);
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

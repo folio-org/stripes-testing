@@ -20,8 +20,8 @@ const invalidUserUUIDsFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName =
   BulkEditFiles.getErrorsFromMatchingFileName(invalidUserUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
         [permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui],

@@ -73,7 +73,7 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.preconditionUserId);
       Users.deleteViaApi(user.userId);
       createdAuthorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
+        MarcAuthority.deleteViaAPI(id, true);
       });
     });
 

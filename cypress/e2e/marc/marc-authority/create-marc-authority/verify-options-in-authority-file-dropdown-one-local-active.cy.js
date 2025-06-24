@@ -12,7 +12,7 @@ describe('MARC', () => {
       const users = {};
       const localAuthFilesIds = [];
       const randomPostfix = getRandomPostfix();
-      const paneHeaderCreateNewSharedMarcAuthorityRecord = 'Create a new MARC authority record';
+      const paneHeaderCreateNewMarcAuthorityRecord = /New .*MARC authority record/;
       const localAuthFiles = [
         {
           name: `C422243 auth source file active ${randomPostfix}`,
@@ -73,7 +73,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire', 'C422243'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewSharedMarcAuthorityRecord);
+          QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewMarcAuthorityRecord);
           MarcAuthority.checkSourceFileSelectShown();
           localAuthFiles.forEach((localAuthFile) => {
             MarcAuthority.verifySourceFileOptionPresent(localAuthFile.name, localAuthFile.isActive);

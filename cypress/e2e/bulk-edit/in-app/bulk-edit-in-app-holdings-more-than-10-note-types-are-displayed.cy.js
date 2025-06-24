@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
@@ -19,7 +19,7 @@ import {
 let user;
 const createdNoteTypeIds = [];
 const instance = {
-  instanceName: `C440089 instance-${getRandomPostfix()}`,
+  instanceName: `AT_C440089_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
 const actionsToSelect = {
@@ -34,11 +34,11 @@ const numberOfNotes = 12;
 const createdNoteTypes = [];
 
 for (let i = 1; i <= numberOfNotes; i++) {
-  createdNoteTypes.push(`C440089 Note type ${i} ${getRandomPostfix()}`);
+  createdNoteTypes.push(`AT_C440089_NoteType_${i}_${randomFourDigitNumber()}`);
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();
@@ -215,7 +215,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.checkNotesByType(
-          0,
+          11,
           HOLDING_NOTE_TYPES.ACTION_NOTE,
           generatedNotes[0].note,
         );

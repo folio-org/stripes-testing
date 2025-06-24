@@ -23,8 +23,9 @@ const item = {
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const itemMatchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
@@ -75,7 +76,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C353972'] },
+      { tags: [] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

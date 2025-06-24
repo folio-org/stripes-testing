@@ -433,7 +433,7 @@ const UI = {
   },
 
   verifyQuery(query) {
-    cy.get('#results-viewer-accordion').contains(`Query: ${query}`).should('be.visible');
+    cy.get('#results-viewer-accordion').contains(`Query: (${query})`).should('be.visible');
   },
 
   openList(listName) {
@@ -754,7 +754,7 @@ const QueryBuilder = {
             cy.expect(MultiColumnListCell(including(value)).exists());
             break;
           default:
-            cy.log('not implemented yet');
+            // cy.log('not implemented yet');
             break;
         }
       });

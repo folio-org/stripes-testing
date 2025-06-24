@@ -25,6 +25,7 @@ import {
   SearchField,
   Section,
   Select,
+  Spinner,
   TextArea,
   TextField,
   and,
@@ -50,7 +51,7 @@ import ItemRecordView from './item/itemRecordView';
 import NewOrderModal from './modals/newOrderModal';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
-const actionsButton = instanceDetailsSection.find(Button('Actions'));
+const actionsButton = instanceDetailsSection.find(Button('Actions', { disabled: or(true, false) }));
 const shareInstanceModal = Modal(including('Are you sure you want to share this instance?'));
 const identifiers = MultiColumnList({ id: 'list-identifiers' });
 const editMARCBibRecordButton = Button({ id: 'edit-instance-marc' });
@@ -155,6 +156,8 @@ const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' 
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
+const importTypeSelect = Select({ name: 'externalIdentifierType' });
+const versionHistoryButton = Button({ icon: 'clock' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -349,10 +352,10 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
-const waitInstanceRecordViewOpened = (title) => {
-  cy.wait(1500);
+const waitInstanceRecordViewOpened = () => {
   cy.expect(instanceDetailsSection.exists());
-  cy.expect(Pane({ titleLabel: including(title) }).exists());
+  cy.expect(Pane().exists());
+  cy.expect(Spinner().absent());
 };
 
 const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {
@@ -1426,8 +1429,33 @@ export default {
     cy.wait(1500);
   },
 
-  shareInstance() {
+  clickShareInstance() {
     cy.do(shareInstanceModal.find(Button('Share')).click());
+  },
+
+  shareInstance() {
+    cy.intercept('POST', '/consortia/*/sharing/instances').as('postSharingInstances');
+    this.clickShareLocalInstanceButton();
+    this.clickShareInstance();
+    cy.wait('@postSharingInstances', { timeout: 60000 }).then((interception) => {
+      const sharingInstanceId = interception.response.body.instanceIdentifier;
+      const consortiaId = interception.request.url.split('/consortia/')[1].split('/')[0];
+      return cy.recurse(
+        () => cy.okapiRequest({
+          path: `consortia/${consortiaId}/sharing/instances`,
+          searchParams: {
+            instanceIdentifier: sharingInstanceId,
+          },
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        }),
+        (response) => response.body.sharingInstances[0].status === 'COMPLETE',
+        {
+          limit: 20,
+          delay: 1000,
+        },
+      );
+    });
   },
 
   verifyCalloutMessage(message) {
@@ -1445,13 +1473,18 @@ export default {
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
   overlayWithOclc: (oclc) => {
-    cy.do(
-      Select({ name: 'selectedJobProfileId' }).choose(
-        'Inventory Single Record - Default Update Instance (Default)',
-      ),
-    );
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
+    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose('OCLC WorldCat'));
+      }
+      cy.do(
+        Select({ name: 'selectedJobProfileId' }).choose(
+          'Inventory Single Record - Default Update Instance (Default)',
+        ),
+      );
+      cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+      cy.do(singleRecordImportModal.find(Button('Import')).click());
+    });
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1830,5 +1863,12 @@ export default {
     );
     if (isPresent) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
+  },
+
+  clickVersionHistoryButton() {
+    this.waitLoading();
+    cy.do(versionHistoryButton.click());
+    cy.expect(Spinner().exists());
+    cy.expect(Spinner().absent());
   },
 };

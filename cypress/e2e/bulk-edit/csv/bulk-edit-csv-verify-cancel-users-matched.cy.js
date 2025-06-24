@@ -15,8 +15,8 @@ const userUUIDsFileName = `userUUIds_${getRandomPostfix()}.csv`;
 const matchedRecordsFile = `*Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

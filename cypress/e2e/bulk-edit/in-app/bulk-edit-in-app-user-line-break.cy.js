@@ -23,8 +23,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarco
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       for (let i = 0; i < 10; i++) {
         cy.createTempUser([], 'staff').then((userProperties) => {
@@ -47,7 +47,8 @@ describe('bulk-edit', () => {
             waiter: CustomFields.waitLoading,
           });
           CustomFields.addTextAreaCustomField(customFieldName);
-          cy.visit(TopMenu.usersPath);
+          CustomFields.verifyCustomFieldExists(customFieldName);
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByKeywords(testUsersBarcodes[0]);
           UserEdit.addCustomField(customFieldName, customFieldText);
 

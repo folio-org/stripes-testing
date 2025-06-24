@@ -43,7 +43,7 @@ describe('MARC', () => {
             '$0 http://id.loc.gov/authorities/names/nr94436825',
             '',
           ],
-          [6, '240', '\\', '\\', '$a Works. $k Selections', '', '$0 2018019878', ''],
+          [6, '240', '\\', '\\', '$a Works. $k Selections', '', '$0 2018436825', ''],
           [
             7,
             '655',
@@ -51,7 +51,7 @@ describe('MARC', () => {
             '\\',
             '$a C436825 Action and adventure fiction',
             '',
-            '$0 https://vocabularyserver.com/gsafd/gsafd2014026217',
+            '$0 https://vocabularyserver.com/gsafd/gsafd2014436825',
             '$2 lcgft',
           ],
           [
@@ -61,7 +61,7 @@ describe('MARC', () => {
             '\\',
             '$a C436825 Tate Britain (Gallery)',
             '$e organizer, $e host institution.',
-            '$0 http://linking.com/automated/tests/protocolhttp/os000208089',
+            '$0 http://linking.com/automated/tests/protocolhttp/os000436825',
             '',
           ],
           [
@@ -71,7 +71,7 @@ describe('MARC', () => {
             '\\',
             '$a C436825 St. Louis Art Museum',
             '$e host institution.',
-            '$0 https://linking.com/automated/tests/protocolhttps/osw790055919',
+            '$0 https://linking.com/automated/tests/protocolhttps/osw790436825',
             '',
           ],
         ];
@@ -113,25 +113,25 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '240',
-            content: '$a C436825 Works. $0 https://notspecifiedsource/2018019878',
+            content: '$a C436825 Works. $0 https://notspecifiedsource/2018436825',
           },
           {
             rowIndex: 6,
             tag: '655',
             content:
-              '$a C436825 Adventire $2 lcgft $0 https://vocabularyserver.com/gsafd/gsafd2014026217',
+              '$a C436825 Adventire $2 lcgft $0 https://vocabularyserver.com/gsafd/gsafd2014436825',
           },
           {
             rowIndex: 7,
             tag: '710',
             content:
-              '$a C436825 Tate Britain (Gallery), $e organizer, $e host institution. $0 https://linking.com/os000208089',
+              '$a C436825 Tate Britain (Gallery), $e organizer, $e host institution. $0 https://linking.com/os000436825',
           },
           {
             rowIndex: 8,
             tag: '710',
             content:
-              '$a C436825 St. Louis Art Museum, $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919',
+              '$a C436825 St. Louis Art Museum, $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790436825',
           },
         ];
 
@@ -154,18 +154,7 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            testData.searchAuthorityQueries.forEach((query) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 100,
-                query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-              }).then((authorities) => {
-                if (authorities) {
-                  authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id);
-                  });
-                }
-              });
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C436825');
 
             newMarcAuthoritySources.forEach((source) => {
               cy.createAuthoritySourceFileUsingAPI(
@@ -181,10 +170,6 @@ describe('MARC', () => {
               });
             });
 
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-
             cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -196,6 +181,11 @@ describe('MARC', () => {
                   createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
+            });
+
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
             });
 
             cy.login(userData.username, userData.password, {
@@ -223,7 +213,7 @@ describe('MARC', () => {
           { tags: ['criticalPath', 'spitfire', 'C436825'] },
           () => {
             InventoryInstance.newMarcBibRecord();
-            QuickMarcEditor.checkPaneheaderContains('Create a new MARC bib record');
+            QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
             QuickMarcEditor.updateLDR06And07Positions();
             cy.wait(500);
@@ -251,16 +241,16 @@ describe('MARC', () => {
               `${testData.marcAuthIcon}\n\t100\t   \t$a C436825 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94436825 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t240\t   \t$a Works. $k Selections $0 2018019878 $9`,
+              `${testData.marcAuthIcon}\n\t240\t   \t$a Works. $k Selections $0 2018436825 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t655\t   \t$a C436825 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
+              `${testData.marcAuthIcon}\n\t655\t   \t$a C436825 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014436825 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t   \t$a C436825 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
+              `${testData.marcAuthIcon}\n\t710\t   \t$a C436825 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000436825 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t   \t$a C436825 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
+              `${testData.marcAuthIcon}\n\t710\t   \t$a C436825 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790436825 $9`,
             );
           },
         );

@@ -23,8 +23,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarco
 const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
         [

@@ -17,7 +17,7 @@ import {
   MultiColumnListRow,
   Headline,
 } from '../../../../interactors';
-import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
 
 const previewOfRecordsMatchedFormName = 'Preview of records matched';
@@ -26,6 +26,7 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
 const changesAccordion = Accordion(previewOfRecordsChangedFormName);
 const errorsAccordion = Accordion('Errors & warnings');
+const showWarningsCheckbox = Checkbox({ labelText: 'Show warnings' });
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -53,6 +54,74 @@ const getScrollableElementInForm = (formName) => {
     .closest('[class^=previewAccordion-]')
     .find('div[class^="mclScrollable"]');
 };
+const electronicAccessTableHeaders = [
+  'URL relationship',
+  'URI',
+  'Link text',
+  'Materials specified',
+  'URL public note',
+];
+const formMap = {
+  [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED]: matchedAccordion,
+  [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED]: changesAccordion,
+  [BULK_EDIT_FORMS.ARE_YOU_SURE]: areYouSureForm,
+};
+export const subjectsTableHeaders = ['Subject headings', 'Subject source', 'Subject type'];
+export const instanceNotesColumnNames = [
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCESSIBILITY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACTION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADDITIONAL_PHYSICAL_FORM_AVAILABLE_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.AWARDS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIBLIOGRAPHY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BINDING_INFORMATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CARTOGRAPHIC_MATHEMATICAL_DATA,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CASE_FILE_CHARACTERISTICS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CITATION_REFERENCES_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.COPY_VERSION_IDENTIFICATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CREATION_PRODUCTION_CREDITS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CUMULATIVE_INDEX_FINDING_AIDES_NOTES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATE_TIME_PLACE_EVENT_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ENTITY_ATTRIBUTE_INFORMATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EXHIBITIONS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMER_TITLE_COMPLEXITY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FUNDING_INFORMATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GEOGRAPHIC_COVERAGE_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.IMMEDIATE_SOURCE_ACQUISITION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INFORMATION_ABOUT_DOCUMENTATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INFORMATION_RELATED_COPYRIGHT_STATUS,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ISSUING_BODY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGE_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LINKING_ENTRY_COMPLEXITY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LOCAL_NOTES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LOCATION_ORIGINALS_DUPLICATES_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LOCATION_OTHER_ARCHIVAL_MATERIALS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.METHODOLOGY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.NUMBERING_PECULIARITIES_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ORIGINAL_VERSION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.OWNERSHIP_CUSTODIAL_HISTORY_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PARTICIPANT_PERFORMER_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREFERRED_CITATION_DESCRIBED_MATERIALS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATIONS_ABOUT_DESCRIBED_MATERIALS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESTRICTIONS_ACCESS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SCALE_NOTE_GRAPHIC_MATERIAL,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE_DESCRIPTION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STUDY_PROGRAM_INFORMATION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUMMARY,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPLEMENT_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SYSTEM_DETAILS_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.TARGET_AUDIENCE_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.TERMS_GOVERNING_USE_REPRODUCTION_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.TYPE_COMPUTER_FILE_DATA_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.TYPE_REPORT_PERIOD_COVERED_NOTE,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.WITH_NOTE,
+];
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -538,8 +607,12 @@ export default {
     cy.expect(errorsAccordion.absent());
   },
 
-  matchedAccordionIsAbsent() {
-    cy.expect(matchedAccordion.absent());
+  matchedAccordionIsAbsent(isAbsent = true) {
+    if (isAbsent) {
+      cy.expect(matchedAccordion.absent());
+    } else {
+      cy.expect(matchedAccordion.exists());
+    }
   },
 
   verifyUserBarcodesResultAccordion() {
@@ -735,12 +808,39 @@ export default {
     );
   },
 
+  verifyErrorsAccordionIncludesNumberOfIdentifiers(expectedErrorsCount, arrayOfIdentifiers) {
+    cy.then(() => {
+      errorsAccordion
+        .find(MultiColumnList())
+        .rowCount()
+        .then((count) => {
+          expect(count).to.equal(expectedErrorsCount);
+        });
+    });
+    cy.then(() => {
+      for (let i = 0; i < expectedErrorsCount; i++) {
+        errorsAccordion
+          .find(MultiColumnList())
+          .find(MultiColumnListRow({ indexRow: `row-${i}` }))
+          .find(MultiColumnListCell({ column: 'Record identifier' }))
+          .content()
+          .then((identifier) => {
+            expect(arrayOfIdentifiers).to.include(identifier);
+          });
+      }
+    });
+  },
+
   verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
       errorsAccordion
         .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
         .exists(),
     );
+  },
+
+  clickShowWarningsCheckbox() {
+    cy.do(errorsAccordion.find(showWarningsCheckbox).click());
   },
 
   verifyReasonForError(errorText) {
@@ -1050,6 +1150,9 @@ export default {
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS))
         .has({ checked: true }),
       DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION))
+        .has({ checked: false }),
+      DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION))
         .has({ checked: false }),
       DropdownMenu()
@@ -1072,6 +1175,15 @@ export default {
         .has({ checked: false }),
       DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUBJECT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION))
         .has({ checked: false }),
     ]);
   },
@@ -1267,12 +1379,102 @@ export default {
   },
 
   verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
-    cy.get('[class^="ElectronicAccess"]')
+    cy.get('[class^="EmbeddedTable-"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')
       .eq(elementIndex)
       .should('have.text', expectedText);
+  },
+
+  verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            electronicAccessTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
+  verifySubjectColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            subjectsTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
+  verifyElectronicAccessTableInForm(
+    formType,
+    instanceIdentifier,
+    relationship,
+    uri,
+    linkText,
+    materialsSpecified,
+    publicNote,
+    miniRowIndex = 1,
+  ) {
+    this.verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [relationship, uri, linkText, materialsSpecified, publicNote];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
+  },
+
+  verifySubjectTableInForm(
+    formType,
+    instanceIdentifier,
+    subjectHeadingValue,
+    subjectValue,
+    subjectTypeValue,
+    miniRowIndex = 1,
+  ) {
+    this.verifySubjectColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [subjectHeadingValue, subjectValue, subjectTypeValue];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
   },
 
   verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
@@ -1360,6 +1562,7 @@ export default {
       changesAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
     cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .first()
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);
@@ -1375,6 +1578,7 @@ export default {
       // get an array of instance note column name
       const noteColumnNames = columnNames.slice(
         columnNames.findIndex((item) => item === 'Publication range') + 1,
+        columnNames.findIndex((item) => item === 'With note') + 1,
       );
       const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort();
 

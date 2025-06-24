@@ -6,8 +6,8 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 
 let userWithInAppViewPermission;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test users', () => {
       cy.createTempUser([permissions.bulkEditView.gui]).then((userProperties) => {
         userWithInAppViewPermission = userProperties;

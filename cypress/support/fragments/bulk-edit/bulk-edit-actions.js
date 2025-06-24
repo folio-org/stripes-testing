@@ -17,6 +17,8 @@ import {
   Selection,
   Keyboard,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
   MessageBanner,
   Option,
   or,
@@ -30,6 +32,7 @@ const actionsBtn = Button('Actions');
 const bulkEditsAccordion = Accordion('Bulk edits');
 const bulkEditsAdministrativeDataAccordion = Accordion('Bulk edits for administrative data');
 const bulkEditsMarcInstancesAccordion = Accordion('Bulk edits for instances with source MARC');
+const bulkEditsAccordions = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
@@ -66,6 +69,7 @@ const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
 const selectActionForMarcInstanceDropdown = Select({ name: 'action', required: true });
+const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -91,6 +95,10 @@ export default {
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
+  },
+
+  verifyStartBulkEditOptions() {
+    cy.expect([startBulkEditInstanceButton.exists(), startBulkEditMarcInstanceButton.exists()]);
   },
 
   verifyOptionsLength(optionsLength, count) {
@@ -121,7 +129,8 @@ export default {
 
   selectOption(optionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(bulkPageSelections.valueType)
         .choose(optionName),
     );
@@ -130,7 +139,8 @@ export default {
 
   verifyOptionSelected(optionName, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(bulkPageSelections.valueType)
         .has({ singleValue: optionName }),
     );
@@ -155,7 +165,8 @@ export default {
 
   selectSecondAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-1' }))
         .choose(actionName),
     );
@@ -164,7 +175,8 @@ export default {
 
   verifySecondActionSelected(option, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-1' }))
         .has({ checkedOptionText: option }),
     );
@@ -547,7 +559,7 @@ export default {
 
   addNewBulkEditFilterString() {
     cy.wait(1000);
-    cy.do(plusBtn.click());
+    cy.do(bulkEditsAccordions.find(plusBtn).click());
     cy.wait(1000);
   },
 
@@ -565,14 +577,22 @@ export default {
 
   verifyNewBulkEditRow(rowIndex = 1) {
     cy.expect([
-      RepeatableFieldItem({ index: rowIndex - 1 })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex - 1 }))
         .find(plusBtn)
         .absent(),
-      RepeatableFieldItem({ index: rowIndex - 1 })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex - 1 }))
         .find(deleteBtn)
         .has({ disabled: false }),
-      RepeatableFieldItem({ index: rowIndex }).find(plusBtn).exists(),
-      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).exists(),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(plusBtn)
+        .exists(),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(deleteBtn)
+        .exists(),
       confirmChangesButton.has({ disabled: true }),
     ]);
   },
@@ -771,8 +791,10 @@ export default {
 
   verifyTheActionOptions(expectedOptions, rowIndex = 0) {
     cy.then(() => {
+      cy.wait(1000);
       cy.do(
-        RepeatableFieldItem({ index: rowIndex })
+        bulkEditsAccordions
+          .find(RepeatableFieldItem({ index: rowIndex }))
           .find(Select('Actions select'))
           .allOptionsText()
           .then((actualOptions) => {
@@ -819,15 +841,39 @@ export default {
 
   fillInSecondTextArea(newItem, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .fillIn(newItem),
     );
   },
 
+  fillInStatisticaCodeValue(value, rowIndex = 0) {
+    cy.do([
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(statisticalCodeSelection)
+        .open(),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(statisticalCodeSelection)
+        .fillIn(value),
+    ]);
+  },
+
+  selectStatisticalCodeValue(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(MultiSelect({ id: 'statisticalCodes' }))
+        .select(value),
+    );
+  },
+
   verifyValueInSecondTextArea(value, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .has({ value }),
     );
@@ -865,7 +911,7 @@ export default {
   },
 
   urlRelationshipReplaceWith(oldValue, newValue, rowIndex = 0) {
-    this.selectOption('URL Relationship');
+    this.selectOption('URL relationship');
     this.selectSecondAction('Find (full field search)');
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
@@ -892,9 +938,18 @@ export default {
 
   addItemNote(type, value, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Add note'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.valueType)
+        .choose(type),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.action)
+        .choose('Add note'),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea())
+        .fillIn(value),
     ]);
   },
 
@@ -1253,7 +1308,7 @@ export default {
       SelectionOption('Materials specified').exists(),
       SelectionOption('URI').exists(),
       SelectionOption('URL public note').exists(),
-      SelectionOption('URL Relationship').exists(),
+      SelectionOption('URL relationship').exists(),
       SelectionOption('Permanent holdings location').exists(),
       SelectionOption('Temporary holdings location').exists(),
       SelectionOption('Action note').exists(),
@@ -1377,6 +1432,17 @@ export default {
     );
   },
 
+  verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(
+    numberOfSupportedInstances,
+    numberOfUnsupportedInstances,
+  ) {
+    cy.expect(
+      areYouSureForm.find(MessageBanner()).has({
+        textContent: `${numberOfSupportedInstances} records will be changed when the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving. ${numberOfUnsupportedInstances} instances have source that is not supported by MARC records bulk edit and cannot be updated.`,
+      }),
+    );
+  },
+
   verifyActionsColumnIsNotPopulated() {
     cy.expect(bulkEditsAccordion.find(Select({ dataTestID: 'select-actions-1' })).absent());
   },
@@ -1493,6 +1559,13 @@ export default {
         });
     });
   },
+  verifyFilteredMultiSelectOptionsListIncludesOptionsWithText(value) {
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      options.forEach((option) => {
+        expect(option.toLowerCase()).to.include(value.toLowerCase());
+      });
+    });
+  },
 
   verifyNoMatchingOptionsInFilterOptionsList() {
     cy.get('ul[class^="selectionList-"] li').should('have.text', '-List is empty-');
@@ -1595,6 +1668,16 @@ export default {
     this.verifyBulkEditsAccordionExists();
     this.verifyOptionsDropdown();
     this.verifyRowIcons();
+    this.verifyCancelButtonDisabled(false);
+    this.verifyConfirmButtonDisabled(true);
+  },
+
+  verifyInitialStateBulkEditsFormForMarcInstance() {
+    cy.expect([
+      bulkEditsAdministrativeDataAccordion.has({ open: true }),
+      bulkEditsMarcInstancesAccordion.has({ open: true }),
+      Button({ icon: 'times', disabled: false }).exists(),
+    ]);
     this.verifyCancelButtonDisabled(false);
     this.verifyConfirmButtonDisabled(true);
   },
@@ -1849,23 +1932,48 @@ export default {
     ]);
   },
 
-  fillInSubfieldInSubRow(value, rowIndex = 0) {
+  fillInSubfieldInSubRow(value, rowIndex = 0, subRowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(HTML({ className: including('subRow-') }))
-        .find(subField)
-        .fillIn(value),
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('input[name="subfield"]')
+            .clear()
+            .type(value);
+        }),
     );
   },
 
-  fillInDataInSubRow(value, rowIndex = 0) {
+  fillInDataInSubRow(value, rowIndex = 0, subRowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(HTML({ className: including('subRow-') }))
-        .find(dataField)
-        .fillIn(value),
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('textarea[name="value"]')
+            .clear()
+            .type(value);
+        }),
+    );
+  },
+
+  selectActionInSubRow(action, rowIndex = 0, subRowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('select[name="action"]')
+            .eq(1)
+            .select(action);
+        }),
     );
   },
 
@@ -1973,5 +2081,10 @@ export default {
     this.fillInSecondSubfield(subfieldToAppend, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.fillInSecondDataTextAreaForMarcInstance(subfieldValueToAppend, rowIndex);
+  },
+
+  addSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
+    this.selectActionForMarcInstance('Add', rowIndex);
+    this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
   },
 };

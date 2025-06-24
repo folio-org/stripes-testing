@@ -52,7 +52,7 @@ describe('Data Import', () => {
         '0',
         '0',
         '$a C624349 Black Panther UPDATED using 999 ff s match $c (Fictitious character)',
-        '',
+        '$v Comic books, strips, etc.',
         '$0 http://id.loc.gov/authorities/names/n2016243491',
         '',
       ],
@@ -182,65 +182,68 @@ describe('Data Import', () => {
           );
         });
 
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+      cy.then(() => {
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
           });
         });
-      });
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
       }).then(() => {
-        InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        linkingTagAndValues.forEach((linkingTagAndValue) => {
-          InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.searchResults(linkingTagAndValue.value);
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-            linkingTagAndValue.tag,
-            linkingTagAndValue.rowIndex,
-          );
-          cy.wait(200);
-        });
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-        cy.wait(4000);
-      });
-
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.uiInventoryViewInstances.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          linkingTagAndValues.forEach((linkingTagAndValue) => {
+            InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.searchResults(linkingTagAndValue.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              linkingTagAndValue.tag,
+              linkingTagAndValue.rowIndex,
+            );
+            cy.wait(200);
           });
-          cy.reload();
-        }, 20_000);
-        MarcAuthorities.waitLoading();
-        MarcAuthorities.verifyDisabledSearchButton();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+          cy.wait(4000);
+        });
+
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.moduleDataImportEnabled.gui,
+          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+          Permissions.uiInventoryViewInstances.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          MarcAuthorities.waitLoading();
+          MarcAuthorities.verifyDisabledSearchButton();
+        });
       });
     });
 

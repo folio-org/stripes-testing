@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   Checkbox,
@@ -10,6 +11,7 @@ import {
   TextField,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
+import Configs from '../configs';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
@@ -99,10 +101,42 @@ export default {
     this.fillRequiredFields(preffixInfo);
   },
 
+  createPrefixViaApi(prefixName) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/configuration/prefixes',
+        body: {
+          name: prefixName,
+          description: 'Test prefix',
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.id;
+      });
+  },
+
   createSuffix(suffixInfo) {
     cy.wait(6000);
     cy.do(Button({ id: 'clickable-add-suffixes' }).click());
     this.fillRequiredFields(suffixInfo);
+  },
+
+  createSuffixViaApi(suffixName) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/configuration/suffixes',
+        body: {
+          name: suffixName,
+          description: 'Test suffix',
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.id;
+      });
   },
 
   deletePrefix: (preffixInfo) => {
@@ -116,6 +150,14 @@ export default {
     InteractorsTools.checkCalloutMessage(`The prefix ${preffixInfo.name} was successfully deleted`);
   },
 
+  deletePrefixViaApi(prefixId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/configuration/prefixes/${prefixId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   deleteSuffix: (suffixInfo) => {
     cy.wait(6000);
     cy.do(
@@ -125,6 +167,41 @@ export default {
       }),
     );
     InteractorsTools.checkCalloutMessage(`The suffix ${suffixInfo.name} was successfully deleted`);
+  },
+
+  deleteSuffixViaApi(suffixId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/configuration/suffixes/${suffixId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  generateUserCanEditPONumberConfig(canUserEditOrderNumber = false) {
+    return {
+      value: JSON.stringify({ canUserEditOrderNumber }),
+      module: 'ORDERS',
+      configName: 'orderNumber',
+      id: uuid(),
+    };
+  },
+
+  getUserCanEditPONumberViaApi() {
+    return Configs.getConfigViaApi({ query: '(module==ORDERS and configName==orderNumber)' });
+  },
+
+  setUserCanEditPONumberViaApi(canUserEditOrderNumber) {
+    this.getUserCanEditPONumberViaApi().then((configs) => {
+      if (configs[0]) {
+        Configs.updateConfigViaApi({
+          ...configs[0],
+          value: JSON.stringify({ canUserEditOrderNumber }),
+        });
+      } else {
+        const config = this.generateUserCanEditPONumberConfig(canUserEditOrderNumber);
+        Configs.createConfigViaApi(config);
+      }
+    });
   },
 
   selectInstanceStatus(status) {

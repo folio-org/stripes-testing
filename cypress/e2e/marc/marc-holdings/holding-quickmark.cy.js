@@ -40,6 +40,10 @@ describe('MARC', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            DataImport.waitLoading();
+          });
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
@@ -52,8 +56,6 @@ describe('MARC', () => {
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventorySteps.addMarcHoldingRecord();
-          //  wait for holding record to be created
-          cy.wait(5000);
         });
       });
     });
@@ -63,12 +65,14 @@ describe('MARC', () => {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
       });
+      cy.waitForAuthRefresh(() => {
+        cy.reload();
+        InventorySearchAndFilter.waitLoading();
+      });
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
       InventorySearchAndFilter.selectViewHoldings();
-      // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-      HoldingsRecordView.close();
-      InventoryInstance.openHoldingView();
       HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.waitLoading();
     });
 
     after(() => {
@@ -100,9 +104,6 @@ describe('MARC', () => {
         );
         QuickMarcEditor.pressSaveAndClose();
         HoldingsRecordView.waitLoading();
-        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(expectedInSourceRow);
       },
@@ -112,15 +113,10 @@ describe('MARC', () => {
       'C345398 Edit MARC 008 (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C345398'] },
       () => {
-        // Wait until the page to be loaded fully.
-        cy.wait(1000);
         QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
         const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
         HoldingsRecordView.waitLoading();
-        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(changed008TagValue);
         InventoryViewSource.close();
@@ -149,6 +145,7 @@ describe('MARC', () => {
             'Record cannot be saved. An 852 is required.',
             calloutTypes.error,
           );
+          QuickMarcEditor.verifyValidationCallout(0, 1);
           QuickMarcEditor.pressCancel();
           QuickMarcEditor.closeWithoutSavingInEditConformation();
           HoldingsRecordView.viewSource();

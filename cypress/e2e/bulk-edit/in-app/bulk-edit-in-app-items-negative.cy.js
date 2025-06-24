@@ -9,8 +9,8 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 
 let user;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
         // try to upload empty file
         BulkEditSearchPane.uploadFile('empty.csv');
         InteractorsTools.checkCalloutMessage(
-          'File uploading failed : Cannot upload a file. Reason: file is empty.',
+          'The uploaded file is empty.',
           calloutTypes.error,
         );
         InteractorsTools.closeCalloutMessage();

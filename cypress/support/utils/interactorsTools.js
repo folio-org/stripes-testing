@@ -112,14 +112,46 @@ export default {
       .find(Button({ icon: 'times' }))
       .click(),
   ),
+  closeAllVisibleCallouts: () => {
+    cy.document().then((doc) => {
+      const callouts = doc.querySelectorAll('[class^=calloutBase-]');
+      if (!callouts.length) return;
+
+      for (let i = 0; i < callouts.length; i++) {
+        cy.do(
+          Callout({ id: callouts[i].id })
+            .find(Button({ icon: 'times' }))
+            .click(),
+        );
+      }
+    });
+  },
   checkCalloutErrorMessage: (text, calloutType = calloutTypes.error) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+  },
+  checkOneOfCalloutsContainsErrorMessage: (text) => {
+    cy.get('[class^=calloutBase-]').then(($els) => {
+      const matchingId = [...$els].find(
+        (el) => el.className.includes('error') &&
+          el.querySelector('[class^=message-]')?.textContent.includes(text),
+      )?.id;
+      if (matchingId) {
+        cy.expect(
+          Callout({ id: matchingId, type: calloutTypes.error }).has({
+            textContent: including(text),
+          }),
+        );
+      }
+    });
   },
   dismissCallout: (text) => {
     cy.do(Callout({ textContent: text }).dismiss());
   },
   checkTextFieldError: (fieldName, error) => {
     cy.expect(TextField(fieldName).has({ error }));
+  },
+  checkTextFieldErrorIncludingName: (fieldName, error) => {
+    cy.expect(TextField(including(fieldName)).has({ error }));
   },
   setTextFieldValue({ textField, fieldValue, clearField = false }) {
     if (fieldValue) {

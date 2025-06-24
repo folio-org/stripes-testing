@@ -8,7 +8,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('ui-finance: Orders', () => {
+describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -17,21 +17,14 @@ describe('ui-finance: Orders', () => {
   let orderId;
 
   before(() => {
+    cy.getAdminToken();
     cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersManageAcquisitionUnits.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersDelete.gui,
-      permissions.uiExportOrders.gui,
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
-      permissions.uiOrdersCancelOrderLines.gui,
-      permissions.uiOrdersCancelPurchaseOrders.gui,
-      permissions.uiOrdersManageAcquisitionUnits.gui,
-      permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiOrdersShowAllHiddenFields.gui,
-      permissions.uiOrdersUnopenpurchaseorders.gui,
-      permissions.uiOrdersUpdateEncumbrances.gui,
     ]).then((userProperties) => {
       user = userProperties;
     });
@@ -46,15 +39,12 @@ describe('ui-finance: Orders', () => {
     cy.getAdminToken();
     Orders.deleteOrderViaApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
-    });
-
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
     Users.deleteViaApi(user.userId);
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+    });
   });
 
   it(

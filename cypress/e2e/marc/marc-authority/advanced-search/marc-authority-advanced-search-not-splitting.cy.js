@@ -71,13 +71,13 @@ describe('MARC', () => {
       ];
 
       const searchResults = [
-        ['Judaismsplitauto and literature--Unitedsplitauto States--History--20th century'],
-        ['Rhetoric--Political aspects--or Unitedsplitauto States--History--20th century'],
-        ['Liberalism or not--Unitedsplitauto States--History--20th century'],
+        ['Judaismsplitauto and literature Unitedsplitauto States History 20th century'],
+        ['Rhetoric Political aspects or Unitedsplitauto States History 20th century'],
+        ['Liberalism or not Unitedsplitauto States History 20th century'],
         [
-          'Judaismsplitauto and literature--Unitedsplitauto States--History--20th century',
-          'Liberalism or not--Unitedsplitauto States--History--20th century',
-          'Rhetoric--Political aspects--or Unitedsplitauto States--History--20th century',
+          'Judaismsplitauto and literature Unitedsplitauto States History 20th century',
+          'Liberalism or not Unitedsplitauto States History 20th century',
+          'Rhetoric Political aspects or Unitedsplitauto States History 20th century',
         ],
       ];
 

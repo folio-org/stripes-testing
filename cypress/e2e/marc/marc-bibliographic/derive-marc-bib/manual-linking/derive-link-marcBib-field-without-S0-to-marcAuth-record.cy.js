@@ -10,7 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import FileManager from '../../../../../support/utils/fileManager';
-import getRandomStringCode from '../../../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../../../support/utils/generateTextCode';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('MARC', () => {

@@ -7,8 +7,8 @@ import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
     before('create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditLogsView.gui,

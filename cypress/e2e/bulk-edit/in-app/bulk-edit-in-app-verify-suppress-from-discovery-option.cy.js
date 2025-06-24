@@ -21,11 +21,10 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(instanceHRIDFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,

@@ -3,8 +3,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import Users from '../../../support/fragments/users/users';
-import { APPLICATION_NAMES } from '../../../support/constants';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
@@ -42,8 +41,14 @@ describe('Inventory', () => {
 
       cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
         testData.user = resUserProperties;
-        cy.login(resUserProperties.username, resUserProperties.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.login(resUserProperties.username, resUserProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          InventorySearchAndFilter.waitLoading();
+        });
       });
     });
 
@@ -63,6 +68,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyBrowseOptions();
         BrowseContributors.select();
         BrowseContributors.checkSearch();
+
+        BrowseContributors.waitForContributorToAppear(instanceA.contributors[0].name);
         BrowseContributors.browse(instanceA.contributors[0].name);
         BrowseContributors.checkSearchResultsTable();
         BrowseContributors.checkExactSearchResult(

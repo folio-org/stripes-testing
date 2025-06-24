@@ -14,7 +14,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
-import Approvals from '../../support/fragments/settings/invoices/approvals';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
@@ -109,7 +108,6 @@ describe('Invoices', () => {
       permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      Approvals.setApprovePayValue(false);
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
@@ -147,8 +145,7 @@ describe('Invoices', () => {
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.approveInvoice();
-      Invoices.payInvoice();
+      Invoices.approveAndPayInvoice();
     },
   );
 });

@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
@@ -20,7 +20,7 @@ import {
 let user;
 let actionNoteTypeId;
 let newNoteTypeId;
-const newNoteType = `C422220 New note type ${getRandomPostfix()}`;
+const newNoteType = `AT_C422220_NoteType_${randomFourDigitNumber()}`;
 const notesText = {
   actionNote: 'Action note text',
   actionNoteNew: 'One more Action note text',
@@ -28,7 +28,7 @@ const notesText = {
 with line break`,
 };
 const instance = {
-  instanceName: `C422220 instance-${getRandomPostfix()}`,
+  instanceName: `AT_C422220_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
 const actionsToSelect = {
@@ -50,19 +50,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUU
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
-function verifyFileContent(fileName, headerValuePairs) {
-  headerValuePairs.forEach((pair) => {
-    BulkEditFiles.verifyValueInRowByUUID(
-      fileName,
-      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-      instance.holdingsUUID,
-      ...pair,
-    );
-  });
-}
-
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();
@@ -155,13 +144,26 @@ describe('bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
-        verifyFileContent(matchedRecordsFileName, initialValueSets);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+          instance.holdingsUUID,
+          [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE,
+              value: notesText.actionNote,
+            },
+            {
+              header: newNoteType,
+              value: '',
+            },
+          ],
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ACTION_NOTE);
-        cy.wait(1000);
         BulkEditActions.selectSecondAction(actionsToSelect.add);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.add);
         BulkEditActions.fillInSecondTextArea(notesText.actionNoteNew);
@@ -226,19 +228,19 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
+        HoldingsRecordView.checkNotesByType(0, newNoteType, notesText.newNoteText);
         HoldingsRecordView.checkNotesByType(
-          0,
+          1,
           HOLDING_NOTE_TYPES.ACTION_NOTE,
           notesText.actionNote,
         );
         HoldingsRecordView.checkNotesByType(
-          0,
+          1,
           HOLDING_NOTE_TYPES.ACTION_NOTE,
           notesText.actionNoteNew,
           'No',
           1,
         );
-        HoldingsRecordView.checkNotesByType(1, newNoteType, notesText.newNoteText);
       },
     );
   });

@@ -9,6 +9,7 @@ import {
   KeyValue,
   List,
   ListItem,
+  MessageBanner,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -37,7 +38,7 @@ const contactInformationAccordion = Accordion('Contact information');
 const customFieldsAccordion = Accordion('Custom fields');
 const userPermissionsAccordion = Accordion('User permissions');
 const createRequestActionsButton = Button('Create request');
-const createFeeFineActionsButton = Button('Create fee/fine');
+const createFeeFineActionsButton = Button('New fee/fine');
 const createPatronBlockActionsButton = Button('Create block');
 const userInformationAccordion = Accordion('User information');
 const rootSection = Section({ id: 'pane-userdetails' });
@@ -60,7 +61,7 @@ const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclos
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
-  patronHasBlocksInPlace: 'Patron has block(s) in place',
+  patronHasBlocksInPlace: 'Patron has block in place.',
 };
 const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
 const newNoteButton = notesSection.find(Button({ id: 'note-create-button' }));
@@ -71,7 +72,7 @@ const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-co
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
 const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
-const createRequestButton = Button('Create request');
+const createRequestButton = Button('New request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
 const userRolesAccordion = rootSection.find(Accordion('User roles'));
@@ -497,7 +498,7 @@ export default {
   startFeeFine: () => {
     cy.wait(500);
     cy.do(actionsButton.click());
-    cy.do(Button('Create fee/fine').click());
+    cy.do(Button('New fee/fine').click());
     cy.wait(500);
   },
 
@@ -508,7 +509,7 @@ export default {
 
   startBlock: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('Create block').click());
+    cy.do(Button('New block').click());
   },
 
   openTagsPane: () => {
@@ -547,13 +548,13 @@ export default {
   },
 
   hasSaveError(errorMessage) {
-    cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
+    cy.expect(rootSection.find(MessageBanner()).has({ textContent: errorMessage }));
   },
   startFeeFineAdding() {
-    cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
+    cy.do(feesFinesAccordion.find(Button('New fee/fine')).click());
   },
   startRequestAdding() {
-    cy.do(requestsAccordion.find(Button('Create request')).click());
+    cy.do(requestsAccordion.find(createRequestButton).click());
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());

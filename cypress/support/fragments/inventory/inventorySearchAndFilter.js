@@ -240,7 +240,7 @@ export default {
     cy.wait(2000);
     cy.do([
       effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
-      MultiSelectOption(including(values ?? 'Main Library')).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).clickSegment(),
     ]);
     cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
@@ -269,6 +269,7 @@ export default {
     } else {
       cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
     }
+    cy.wait(1000);
   },
 
   byKeywords(kw = '*') {
@@ -474,6 +475,11 @@ export default {
       expectedUUIDs.push(elem.id);
     });
     return expectedUUIDs;
+  },
+
+  getInstanceUUIDFromRequest(req) {
+    const expectedUUID = req.response.body.id;
+    return expectedUUID;
   },
 
   verifySelectedRecords(selected) {
@@ -708,6 +714,26 @@ export default {
     cy.do(tagsAccordionButton.click());
     cy.wait(500);
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
+  },
+
+  filterHoldingsByTag(tag) {
+    cy.wait(500);
+    cy.do(tagsAccordionButton.click());
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'holdingsTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
+  },
+
+  filterItemsByTag(tag) {
+    cy.wait(500);
+    cy.do(tagsAccordionButton.click());
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'itemsTags-multiselect' }).toggle());
     cy.wait(500);
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
@@ -1193,6 +1219,7 @@ export default {
   },
 
   clearFilter(accordionName) {
+    cy.intercept('GET', /\/search\/instances(\/facets)?\?.*/).as('getData');
     cy.do(
       Button({
         ariaLabel: or(
@@ -1201,6 +1228,7 @@ export default {
         ),
       }).click(),
     );
+    cy.wait('@getData');
   },
 
   checkSharedInstancesInResultList() {
@@ -1377,5 +1405,22 @@ export default {
         multiSelect.has({ optionsCount: foundCount }),
       ]);
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
+  },
+
+  verifyCheckboxesWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(Checkbox({ label: matching(/.+\d+$/) }))
+        .exists(),
+    );
+  },
+
+  verifyOptionAvailableMultiselect(accordionName, optionName, isShown = true) {
+    const accordion = paneFilterSection.find(Accordion(accordionName));
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const option = accordion.find(MultiSelectOption(matching(escapedValue)));
+    cy.do(accordion.find(MultiSelect()).open());
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
   },
 };

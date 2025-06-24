@@ -24,22 +24,22 @@ describe('Inventory', () => {
     const searchData = [
       {
         row: 0,
-        query: 'NY, New-York, Street',
+        query: 'NYauto, Newauto-Yorkauto, Street',
         matchOption: 'Exact phrase',
       },
       {
         row: 0,
-        query: 'NY, New-York, 13th Street',
+        query: 'NYauto, Newauto-Yorkauto, 13thauto Street',
         matchOption: 'Contains all',
       },
       {
         row: 0,
-        query: 'NY, New-York',
+        query: 'NYauto, Newauto-Yorkauto',
         matchOption: 'Starts with',
       },
       {
         row: 0,
-        query: 'New-York, 13th',
+        query: 'Newauto-Yorkauto, 13thauto',
         matchOption: 'Contains any',
       },
     ];
@@ -47,24 +47,24 @@ describe('Inventory', () => {
     const searchDataWithOperator = [
       {
         row: 1,
-        query: 'NY, New-York, Street',
+        query: 'NYauto, Newauto-Yorkauto, Street',
         matchOption: 'Exact phrase',
       },
       {
         row: 2,
-        query: 'New-York, 13th',
+        query: 'Newauto-Yorkauto, 13thauto',
         matchOption: 'Contains any',
         operator: 'OR',
       },
       {
         row: 3,
-        query: 'ny',
+        query: 'nyauto',
         matchOption: 'Starts with',
         operator: 'AND',
       },
       {
         row: 4,
-        query: 'Street, Bronx',
+        query: 'Street, Bronxauto',
         matchOption: 'Contains all',
         operator: 'NOT',
       },

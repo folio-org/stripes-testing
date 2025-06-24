@@ -5,7 +5,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-organizations: Organizations', () => {
+describe('Organizations', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
   let user;
@@ -19,8 +19,6 @@ describe('ui-organizations: Organizations', () => {
       permissions.uiOrganizationsInterfaceUsernamesAndPasswordsView.gui,
       permissions.uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete.gui,
       permissions.uiOrganizationsManageAcquisitionUnits.gui,
-      permissions.uiOrganizationsView.gui,
-      permissions.uiOrganizationsViewEdit.gui,
       permissions.uiOrganizationsViewEditCreate.gui,
       permissions.uiOrganizationsViewEditDelete.gui,
       permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
@@ -30,17 +28,16 @@ describe('ui-organizations: Organizations', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-    Organizations.deleteOrganization();
-
-    cy.visit(SettingsMenu.acquisitionUnitsPath);
-
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
+    cy.getAdminToken();
+    Organizations.getOrganizationViaApi({ query: `name=${organization.name}` }).then((response) => {
+      Organizations.deleteOrganizationViaApi(response.id);
+    });
     Users.deleteViaApi(user.userId);
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+    });
   });
 
   it(
@@ -57,6 +54,7 @@ describe('ui-organizations: Organizations', () => {
       cy.wait(2000);
       AcquisitionUnits.assignUser(user.username);
       cy.logout();
+
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import getRandomStringCode from './genereteTextCode';
+import getRandomStringCode from './generateTextCode';
 
 const padWithZero = (value) => String(value).padStart(2, '0');
 const currentStartDate = new Date();
@@ -141,6 +141,14 @@ export default {
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 3);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate(),
+    )}/${currentDate.getFullYear()}`;
+  },
+
+  get4DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 5);
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
       currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
@@ -517,6 +525,13 @@ export default {
     )}${padWithZero(initialCurrentDate.getDate())}`;
   },
 
+  getCurrentDateYYYYMMDD() {
+    const initialCurrentDate = new Date();
+    return `${initialCurrentDate.getFullYear().toString()}${padWithZero(
+      initialCurrentDate.getMonth() + 1,
+    )}${padWithZero(initialCurrentDate.getDate())}`;
+  },
+
   editFromDateRange() {
     return `${(currentStartDate.getMonth() + 1).toString().padStart(2, '0')}
                       ${currentStartDate.getDate().toString().padStart(2, '0')}/
@@ -540,5 +555,17 @@ export default {
 
     const dateObject = new Date(year, month, day, hours, minutes, seconds, milliseconds);
     return dateObject;
+  },
+
+  getCurrentISO8601TimestampUpToMinutesUTC(offsetMinutes = 0) {
+    // Formats date as yyyymmddhhmm
+    const now = new Date(Date.now() + offsetMinutes * 60 * 1000);
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+
+    return `${year}${month}${day}${hours}${minutes}`;
   },
 };

@@ -8,7 +8,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -30,20 +30,20 @@ const collegeHoldingHrids = [];
 const universityHoldingIds = [];
 const universityHoldingHrids = [];
 const folioInstance = {
-  title: `C494091 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C494091_FolioInstance_${getRandomPostfix()}`,
 };
 const marcInstance = {
-  title: `C494091 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C494091_MarcInstance_${getRandomPostfix()}`,
 };
 const sharedNoteText = 'Shared note text';
 const collegeLocalNoteText = 'College note text';
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `C494091 shared note type ${getRandomPostfix()}`,
+    name: `C494091 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const collegeHoldingNoteType = {
-  name: `C494091 College NoteType ${getRandomPostfix()}`,
+  name: `C494091 College NoteType ${randomFourDigitNumber()}`,
 };
 const collegeHoldingNoteTypeNameWithAffiliation = `${collegeHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];

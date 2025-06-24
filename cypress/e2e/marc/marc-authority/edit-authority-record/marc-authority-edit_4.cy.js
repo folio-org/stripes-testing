@@ -101,10 +101,8 @@ describe('MARC', () => {
           newFieldsArr.forEach((field) => {
             MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
           });
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3_000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+
           cy.getAdminToken();
           protectedMARCFields.forEach((marcFieldProtectionRule) => {
             MarcFieldProtection.createViaApi({

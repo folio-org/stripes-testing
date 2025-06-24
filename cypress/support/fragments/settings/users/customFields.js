@@ -7,6 +7,7 @@ import {
   MultiColumnListRow,
   NavListItem,
   Pane,
+  Section,
   TextField,
 } from '../../../../../interactors';
 
@@ -26,6 +27,10 @@ export default {
 
   waitLoading() {
     cy.expect(customFieldsPane.exists());
+  },
+
+  verifyCustomFieldExists(name) {
+    cy.expect(customFieldsPane.find(Section({ label: including(name) })).exists());
   },
 
   addMultiSelectCustomField(data) {
@@ -61,9 +66,12 @@ export default {
       Accordion({ label: including(name), isWrapper: false })
         .find(Button({ icon: 'trash' }))
         .click(),
-      saveAndCloseButton.click(),
-      saveLoseDataButton.click(),
     ]);
+    cy.wait(500);
+    cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
+    cy.do(saveLoseDataButton.click());
+    cy.wait(3000);
   },
 
   addCustomTextField(data) {

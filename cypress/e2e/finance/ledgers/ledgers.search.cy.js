@@ -8,7 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe(
-  'ui-finance: Ledgers',
+  'Ledgers',
   {
     retries: {
       runMode: 1,
@@ -18,6 +18,9 @@ describe(
     let aUnit;
     let user;
     let ledger;
+    let isAUnitCreated = false;
+
+    const aUnitName = `E2E AcqUnit ${getRandomPostfix()}`;
 
     beforeEach(() => {
       ledger = {
@@ -35,9 +38,17 @@ describe(
 
       cy.getAdminToken();
 
-      cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
-        ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-        aUnit = body.acquisitionsUnits[0];
+      cy.getAcqUnitsApi({ query: 'name="main"' }).then(({ body }) => {
+        if (body.acquisitionsUnits.length === 0) {
+          cy.createAcqUnitApi(aUnitName).then((response) => {
+            ledger.acqUnitIds = [response.body.id];
+            aUnit = response.body;
+            isAUnitCreated = true;
+          });
+        } else {
+          ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
+          aUnit = body.acquisitionsUnits[0];
+        }
       });
 
       cy.getFiscalYearsApi({ limit: 1 }).then(({ body }) => {
@@ -57,6 +68,7 @@ describe(
       cy.getAdminToken();
       cy.deleteLedgerApi(ledger.id);
       Users.deleteViaApi(user.userId);
+      if (isAUnitCreated) cy.deleteAcqUnitApi(aUnit.id);
     });
 
     it(

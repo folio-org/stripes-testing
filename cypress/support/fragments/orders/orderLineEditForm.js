@@ -200,6 +200,7 @@ export default {
   },
   searchLocationByName({ name, open = true, checkOptions = true }) {
     this.filterDropDownValue({ label: 'Name (code)', option: name, open });
+    cy.wait(2000);
 
     if (checkOptions) {
       cy.then(() => SelectionList().optionList()).then((options) => {

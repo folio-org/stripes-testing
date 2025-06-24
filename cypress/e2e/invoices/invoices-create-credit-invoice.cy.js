@@ -6,7 +6,6 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
-import DateTools from '../../support/utils/dateTools';
 import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
@@ -33,7 +32,6 @@ describe('Invoices', () => {
     });
     Funds.createFundViaUI(fund).then(() => {
       Funds.addBudget(100);
-      Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
     });
     invoiceLine.subTotal = -subtotalValue;
     TopMenuNavigation.openAppFromDropdown('Invoices');
@@ -45,10 +43,8 @@ describe('Invoices', () => {
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
-      Invoices.addFundDistributionToLine(invoiceLine, fund);
-      cy.getAdminToken();
       Approvals.setApprovePayValue(false);
-      cy.wait(4000);
+      Invoices.addFundDistributionToLine(invoiceLine, fund);
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');
@@ -56,7 +52,7 @@ describe('Invoices', () => {
       Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);
-      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
       Funds.varifyDetailsInTransaction(
@@ -70,8 +66,8 @@ describe('Invoices', () => {
       // pay invoice
       TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
       Approvals.setApprovePayValue(false);
+      Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();
       // check transactions after payment
       TopMenuNavigation.openAppFromDropdown('Finance');

@@ -130,11 +130,12 @@ Cypress.Commands.add('createInstanceType', (specialInstanceType) => {
   });
 });
 
-Cypress.Commands.add('deleteInstanceType', (id) => {
+Cypress.Commands.add('deleteInstanceType', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `instance-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
@@ -148,11 +149,12 @@ Cypress.Commands.add('createModesOfIssuans', (specialMode) => {
   });
 });
 
-Cypress.Commands.add('deleteModesOfIssuans', (id) => {
+Cypress.Commands.add('deleteModesOfIssuans', (id, ignoreErrors = true) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `modes-of-issuance/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
@@ -657,5 +659,36 @@ Cypress.Commands.add('getStatisticalCodeTypes', (searchParams) => {
     searchParams,
   }).then(({ body }) => {
     return body.statisticalCodeTypes;
+  });
+});
+
+Cypress.Commands.add('getSingleImportProfilesViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'copycat/profiles',
+  }).then(({ body }) => {
+    return body.profiles;
+  });
+});
+
+Cypress.Commands.add('getSubjectTypesViaApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'subject-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      Cypress.env('subjectTypes', body.subjectTypes);
+      return body.subjectTypes;
+    });
+});
+
+Cypress.Commands.add('getAllModesOfIssuance', (searchParams) => {
+  cy.okapiRequest({
+    path: 'modes-of-issuance',
+    searchParams,
+  }).then(({ body }) => {
+    return body.issuanceModes;
   });
 });

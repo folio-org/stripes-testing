@@ -11,7 +11,7 @@ describe('Eureka', () => {
         const userIds = [];
         const userBodies = [];
         const testData = {
-          roleName: `Auto Role C627404 ${randomPostfix}`,
+          roleName: `AT_C627404_UserRole_${randomPostfix}`,
           promotePath: '/users-keycloak/auth-users',
         };
 
@@ -28,12 +28,12 @@ describe('Eureka', () => {
               userBodies.push({
                 type: 'staff',
                 active: true,
-                username: `user${i}c627404${randomPostfix}`,
+                username: `at_c627404_username_${i}_${randomPostfix}`,
                 patronGroup: Cypress.env('userGroups')[i - 1].id,
                 personal: {
-                  lastName: `First ${i} c627404${randomPostfix}`,
-                  firstName: `Last ${i} c627404${randomPostfix}`,
-                  email: 'testuser@test.org',
+                  lastName: `AT_C627404_LastName_${i}_${randomPostfix}`,
+                  firstName: `AT_C627404_FirstName_${i}_${randomPostfix}`,
+                  email: 'AT_C627404@test.com',
                   preferredContactTypeId: '002',
                 },
               });

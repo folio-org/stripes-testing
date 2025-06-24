@@ -3,11 +3,13 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import NewPreffixSuffix from '../../support/fragments/settings/orders/newPreffixSuffix';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import { randomFourDigitNumber } from '../../support/utils/stringTools';
+import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
@@ -16,20 +18,31 @@ describe('Export Manager', () => {
         ...NewOrganization.defaultUiOrganizations,
         paymentMethod: 'EFT',
       };
+      const poNumberPrefix = { ...NewPreffixSuffix.defaultPreffix };
+      const poNumberSuffix = { ...NewPreffixSuffix.defaultSuffix };
       const order = {
         ...NewOrder.defaultOneTimeOrder,
-        poNumberPrefix: 'pref',
-        poNumberSuffix: 'suf',
-        poNumber: `pref${generateItemBarcode()}suf`,
+        poNumberPrefix: poNumberPrefix.name,
+        poNumberSuffix: poNumberSuffix.name,
+        poNumber: `${poNumberPrefix.name}${randomFourDigitNumber()}${poNumberSuffix.name}`,
         manualPo: false,
         approved: true,
       };
       let orderNumber;
       let user;
       let orderID;
+      let orderPrefixId;
+      let orderSuffixId;
 
       before(() => {
         cy.getAdminToken();
+
+        SettingsOrders.createPrefixViaApi(order.poNumberPrefix).then((prefixId) => {
+          orderPrefixId = prefixId;
+        });
+        SettingsOrders.createSuffixViaApi(order.poNumberSuffix).then((suffixId) => {
+          orderSuffixId = suffixId;
+        });
 
         Organizations.createOrganizationViaApi(organization).then((response) => {
           organization.id = response;
@@ -57,6 +70,8 @@ describe('Export Manager', () => {
         cy.getAdminToken();
         Orders.deleteOrderViaApi(orderID);
         Organizations.deleteOrganizationViaApi(organization.id);
+        SettingsOrders.deletePrefixViaApi(orderPrefixId);
+        SettingsOrders.deleteSuffixViaApi(orderSuffixId);
         Users.deleteViaApi(user.userId);
       });
 

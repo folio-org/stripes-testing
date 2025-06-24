@@ -9,8 +9,8 @@ describe('Eureka', () => {
         type: 'staff',
         active: true,
         personal: {
-          lastName: `User C627444 ${getRandomPostfix()}`,
-          email: 'testuser@test.org',
+          lastName: `AT_C627444_LastName_${getRandomPostfix()}`,
+          email: 'AT_C627444@test.com',
           preferredContactTypeId: '002',
         },
       },
@@ -21,10 +21,10 @@ describe('Eureka', () => {
     const userC = { ...testData.userBody };
     const userD = { ...testData.userBody };
     const userE = { ...testData.userBody };
-    userA.username = `userac627444${getRandomPostfix()}`;
-    userB.username = `userbc627444${getRandomPostfix()}`;
-    userD.username = `userdc627444${getRandomPostfix()}`;
-    userE.username = `userec627444${getRandomPostfix()}`;
+    userA.username = `at_c627444_username_a_${getRandomPostfix()}`;
+    userB.username = `at_c627444_username_b_${getRandomPostfix()}`;
+    userD.username = `at_c627444_username_d_${getRandomPostfix()}`;
+    userE.username = `at_c627444_username_e_${getRandomPostfix()}`;
 
     before('Create data', () => {
       cy.getAdminToken();

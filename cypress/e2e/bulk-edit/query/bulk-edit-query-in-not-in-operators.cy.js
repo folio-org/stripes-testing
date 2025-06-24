@@ -17,8 +17,8 @@ const secondItem = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
@@ -73,15 +73,13 @@ describe('bulk-edit', () => {
         QueryModal.fillInValueTextfield(`${item.itemId},`);
         QueryModal.fillInValueTextfield(`${item.itemId},${secondItem.itemId}`);
         QueryModal.verifyQueryAreaContent(
-          `(items.id not in ("${item.itemId}","${secondItem.itemId}"))`,
+          `(items.id not in (${item.itemId}, ${secondItem.itemId}))`,
         );
         QueryModal.selectOperator('in');
         QueryModal.fillInValueTextfield(item.itemId);
         QueryModal.fillInValueTextfield(`${item.itemId},`);
         QueryModal.fillInValueTextfield(`${item.itemId},${secondItem.itemId}`);
-        QueryModal.verifyQueryAreaContent(
-          `(items.id in ("${item.itemId}","${secondItem.itemId}"))`,
-        );
+        QueryModal.verifyQueryAreaContent(`(items.id in (${item.itemId}, ${secondItem.itemId}))`);
         QueryModal.clickTestQuery();
         QueryModal.verifyPreviewOfRecordsMatched();
         QueryModal.clickRunQuery();

@@ -1,16 +1,16 @@
+import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import { getRandomLetters } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Case-insensitive checks', () => {
+      const randomLetters = getRandomLetters(7);
       const testData = {
         callNumberNotNormalizedOption: 'Call number, not normalized',
         callNumbeNormalizedOption: 'Call number, normalized',
@@ -18,33 +18,32 @@ describe('Inventory', () => {
         instances: [
           {
             title: 'C466078 Instance 1, Holdings call number lower case',
-            callNumber: 'case sensitive check h',
-            barcode: `466078${randomFourDigitNumber()}`,
+            callNumber: `case sensitive check h ${randomLetters}`,
+            barcode: `466078${uuid()}`,
           },
           {
             title: 'C466078 Instance 2, Holdings call number UPPER case',
-            callNumber: 'CASE SENSITIVE CHECK H',
-            barcode: `466078${randomFourDigitNumber()}`,
+            callNumber: `CASE SENSITIVE CHECK H ${randomLetters.toUpperCase()}`,
+            barcode: `466078${uuid()}`,
           },
         ],
-        userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       };
 
       before(() => {
         cy.getAdminToken().then(() => {
-          ServicePoints.createViaApi(testData.userServicePoint);
-          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-          Location.createViaApi(testData.defaultLocation);
+          cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then(
+            (location) => {
+              testData.locationId = location.id;
+            },
+          );
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
           });
           cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
             testData.holdingTypeId = holdingTypes[0].id;
           });
-          cy.createLoanType({
-            name: getTestEntityValue('type'),
-          }).then((loanType) => {
-            testData.loanTypeId = loanType.id;
+          cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
+            testData.loanTypeId = loanTypes[0].id;
           });
           cy.getMaterialTypes({ limit: 1 })
             .then((materialTypes) => {
@@ -60,7 +59,7 @@ describe('Inventory', () => {
                 holdings: [
                   {
                     holdingsTypeId: testData.holdingTypeId,
-                    permanentLocationId: testData.defaultLocation.id,
+                    permanentLocationId: testData.locationId,
                     callNumber: testData.instances[0].callNumber,
                   },
                 ],
@@ -83,7 +82,7 @@ describe('Inventory', () => {
                 holdings: [
                   {
                     holdingsTypeId: testData.holdingTypeId,
-                    permanentLocationId: testData.defaultLocation.id,
+                    permanentLocationId: testData.locationId,
                     callNumber: testData.instances[1].callNumber,
                   },
                 ],
@@ -113,10 +112,7 @@ describe('Inventory', () => {
         testData.instances.forEach((instance) => {
           InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.barcode);
         });
-        ServicePoints.deleteViaApi(testData.userServicePoint.id);
-        Locations.deleteViaApi(testData.defaultLocation);
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteLoanType(testData.loanTypeId);
       });
 
       it(

@@ -6,12 +6,9 @@ import BulkEditSearchPane, {
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
-import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -20,7 +17,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
-const items = [];
+const instances = [];
 const itemBarcodes = [];
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
@@ -28,14 +25,14 @@ const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarco
 const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 const note = 'Line-1\nLine-2\n\nLine-3';
 for (let i = 0; i < 5; i++) {
-  items.push({
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instances.push({
+    instanceName: `AT_C399086_FolioInstance_${getRandomPostfix()}`,
     itemBarcode: `barcode_${getRandomPostfix()}`,
   });
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -44,33 +41,36 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        items.forEach((item) => {
-          item.secondBarcode = 'secondBarcode_' + item.itemBarcode;
-          itemBarcodes.push(item.itemBarcode, item.secondBarcode);
+        instances.forEach((instance) => {
+          instance.secondBarcode = 'secondBarcode_' + instance.itemBarcode;
+          itemBarcodes.push(instance.itemBarcode, instance.secondBarcode);
+
           FileManager.appendFile(
             `cypress/fixtures/${itemBarcodesFileName}`,
-            `${item.itemBarcode}\n${item.secondBarcode}\n`,
+            `${instance.itemBarcode}\n${instance.secondBarcode}\n`,
           );
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          InventoryInstances.createInstanceViaApi(instance.instanceName, instance.itemBarcode);
+
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${instance.itemBarcode}"`,
+          }).then((res) => {
+            const itemData = res;
+            itemData.administrativeNotes = [note];
+            cy.updateItemViaApi(itemData);
+          });
         });
         cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
-        InventorySearchAndFilter.byKeywords(items[0].instanceName);
-        InventoryInstance.openHoldings(['']);
-        InventoryInstance.openItemByBarcode(`secondBarcode_${items[0].itemBarcode}`);
-        ItemRecordView.waitLoading();
-        InventoryItems.edit();
-        ItemRecordEdit.addAdministrativeNote(note);
-        ItemRecordEdit.saveAndClose({ itemSaved: true });
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      items.forEach((item) => {
+      instances.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });
       Users.deleteViaApi(user.userId);
@@ -115,8 +115,10 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [note]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        cy.reload();
-        ItemRecordView.checkBarcode(`secondBarcode_${items[0].itemBarcode}`);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', instances[0].itemBarcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkBarcode(instances[0].itemBarcode);
         ItemRecordView.verifyTemporaryLocation(location);
         InstanceRecordView.verifyAdministrativeNote(note);
       },

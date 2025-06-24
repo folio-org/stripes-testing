@@ -1,75 +1,40 @@
-import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Users', () => {
-  const patronGroup = {
-    name: getTestEntityValue('GroupUser'),
+  const testData = {
+    user: Users.generateUserModel(),
   };
-  let userData = {
-    password: getTestEntityValue('Password'),
-    username: getTestEntityValue('cypresstestuser'),
-  };
-  const testData = {};
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        testData.servicePointId = servicePoints[0].id;
-      });
-      PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
-        patronGroup.id = patronGroupResponse;
-      });
-      cy.getPermissionsApi({
-        query: `(${'displayName'}=="${[
-          permissions.checkoutAll.gui,
-          permissions.uiUsersView.gui,
-        ].join(`")or(${'displayName'}=="`)}"))"`,
-      }).then((permissionsResponse) => {
-        Users.createViaApi({
-          active: true,
-          patronGroup: patronGroup.id,
-          username: userData.username,
-          barcode: uuid(),
-          personal: {
-            preferredContactTypeId: '002',
-            firstName: getTestEntityValue('testPermFirst'),
-            middleName: getTestEntityValue('testMiddleName'),
-            lastName: getTestEntityValue('testLastName'),
-            email: 'test@folio.org',
-          },
-          type: 'staff',
-        }).then((newUserProperties) => {
-          userData = { ...userData, ...newUserProperties };
-          cy.setUserPassword(userData);
-          cy.addPermissionsToNewUserApi({
-            userId: userData.id,
-            permissions: [
-              ...permissionsResponse.body.permissions.map(
-                (permission) => permission.permissionName,
-              ),
-            ],
-          });
-          cy.overrideLocalSettings(userData.id);
+      cy.createTempUserParameterized(testData.user,
+        [permissions.checkoutAll.gui, permissions.uiUsersView.gui],
+        { userType: 'patron' }).then((userProperties) => {
+        testData.user = userProperties;
+        testData.user = { ...testData.user, ...userProperties };
+      }).then(() => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+          testData.servicePointId = servicePoints[0].id;
+        }).then(() => {
           UserEdit.addServicePointViaApi(
             testData.servicePointId,
-            userData.id,
+            testData.user.userId,
             testData.servicePointId,
           );
-        });
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+        }).then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -77,21 +42,20 @@ describe('Users', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePointId]);
-    Users.deleteViaApi(userData.id);
-    PatronGroups.deleteViaApi(patronGroup.id);
+    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePointId]);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C389464 Search by middle name (volaris)',
     { tags: ['criticalPath', 'volaris', 'C389464', 'eurekaPhase1'] },
     () => {
-      UsersSearchPane.searchByKeywords(userData.middleName);
-      Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
+      UsersSearchPane.searchByKeywords(testData.user.personal.middleName);
+      Users.verifyMiddleNameOnUserDetailsPane(testData.user.personal.middleName);
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
-      CheckOutActions.addPatron(userData.middleName);
+      CheckOutActions.addPatron(testData.user.personal.middleName);
     },
   );
 });

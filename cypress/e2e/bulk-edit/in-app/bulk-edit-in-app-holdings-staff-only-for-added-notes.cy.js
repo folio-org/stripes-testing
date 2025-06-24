@@ -15,7 +15,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   electronicAccessRelationshipId,
-  electronicAccessRelationshipName,
+  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
   LOCATION_IDS,
   LOCATION_NAMES,
   HOLDING_NOTES,
@@ -52,8 +52,8 @@ const notes = {
   reproduction: 'reproductionNote',
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
@@ -115,14 +115,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
 
-        const contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        const contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
 
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
@@ -192,7 +192,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
@@ -231,7 +231,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
@@ -301,7 +301,7 @@ describe('bulk-edit', () => {
           },
           {
             [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS]:
-              `${electronicAccessTableHeadersInFile}${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}`,
+              `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}`,
           },
         ];
 
@@ -323,7 +323,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
@@ -358,7 +358,7 @@ describe('bulk-edit', () => {
         HoldingsRecordView.checkAdministrativeNote(notes.admin);
         HoldingsRecordView.verifyElectronicAccessByElementIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         HoldingsRecordView.verifyElectronicAccessByElementIndex(1, electronicAccess[0].uri);
         HoldingsRecordView.verifyElectronicAccessByElementIndex(2, '-');

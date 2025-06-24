@@ -1,27 +1,27 @@
 import {
   Accordion,
-  TextField,
   Button,
-  TextArea,
-  Select,
+  Checkbox,
   HTML,
   including,
   matching,
-  PaneHeader,
+  Modal,
+  Pane,
+  Select,
   SelectionList,
   SelectionOption,
-  Checkbox,
-  Modal,
+  TextArea,
+  TextField,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
-import InstanceStates from '../instanceStates';
 import getRandomPostfix from '../../../utils/stringTools';
+import InstanceStates from '../instanceStates';
 
-const itemEditForm = HTML({ className: including('itemForm-') });
+const itemEditForm = HTML({ className: including('paneset-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
 
-const cancelBtn = itemEditForm.find(Button({ id: 'cancel-item-edit' }));
-const saveAndCloseBtn = itemEditForm.find(Button({ id: 'clickable-save-item' }));
+const cancelBtn = Button({ id: 'cancel-item-edit' });
+const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
 
 const adminDataFields = {
   barcode: administrativeDataSection.find(TextField('Barcode')),
@@ -45,9 +45,11 @@ const permanentLocationList = SelectionList({ id: 'sl-container-additem_permanen
 
 export default {
   waitLoading: (itemTitle) => {
-    cy.expect(itemEditForm.find(PaneHeader(including(itemTitle))).exists());
-    cy.expect(cancelBtn.has({ disabled: false }));
-    cy.expect(saveAndCloseBtn.has({ disabled: true }));
+    cy.expect([
+      Pane(including(itemTitle)).exists(),
+      cancelBtn.has({ disabled: false }),
+      saveAndCloseBtn.has({ disabled: true }),
+    ]);
   },
   addBarcode: (barcode) => {
     cy.do(adminDataFields.barcode.fillIn(barcode));
@@ -86,7 +88,6 @@ export default {
   },
   saveAndClose({ itemSaved = false } = {}) {
     cy.do(saveAndCloseBtn.click());
-    cy.expect(itemEditForm.absent());
 
     if (itemSaved) {
       InteractorsTools.checkCalloutMessage(

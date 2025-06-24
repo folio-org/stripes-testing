@@ -112,7 +112,7 @@ const calloutMarcTagWrongLength = Callout(
   'Record cannot be saved. A MARC tag must contain three characters.',
 );
 const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
-const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
+const calloutNo245MarcTag = Callout('Field 245 is required.');
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
 const calloutMultiple010MarcTags = Callout('Record cannot be saved with more than one 010 field');
@@ -141,6 +141,10 @@ const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confi
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
 });
+const validationCalloutMainText =
+  'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
+const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
+const derivePaneHeaderText = /Derive a new .*MARC bib record/;
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -446,6 +450,55 @@ const defaultValid008HoldingsValues = {
   'Spec ret': ['\\', '\\', '\\'],
 };
 const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
+const authoritySubfieldsDefault = [
+  {
+    ruleId: '8',
+    ruleSubfields: [
+      'a',
+      'b',
+      'c',
+      'd',
+      'g',
+      'j',
+      'q',
+      'f',
+      'h',
+      'k',
+      'l',
+      'm',
+      'n',
+      'o',
+      'p',
+      'r',
+      's',
+      't',
+    ],
+  },
+  {
+    ruleId: '9',
+    ruleSubfields: ['a', 'b', 'c', 'd', 'g', 'f', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+  },
+  {
+    ruleId: '10',
+    ruleSubfields: ['a', 'c', 'e', 'q', 'f', 'h', 'k', 'l', 'p', 's', 't', 'd', 'g', 'n'],
+  },
+  {
+    ruleId: '11',
+    ruleSubfields: ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+  },
+  {
+    ruleId: '12',
+    ruleSubfields: ['a', 'b', 'g'],
+  },
+  {
+    ruleId: '13',
+    ruleSubfields: ['a', 'g'],
+  },
+  {
+    ruleId: '14',
+    ruleSubfields: ['a'],
+  },
+];
 
 export default {
   defaultValidLdr,
@@ -526,13 +579,44 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  saveAndCloseWithValidationWarnings() {
+  saveAndCloseWithValidationWarnings({
+    acceptLinkedBibModal = false,
+    acceptDeleteModal = false,
+  } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
-    cy.wait('@validateRequest');
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+
+    this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.wait(2000);
+
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
+
+    if (acceptLinkedBibModal) {
+      cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+      cy.do(saveButton.click());
+    }
+    if (acceptDeleteModal) {
+      this.deleteConfirmationPresented();
+      this.confirmDelete();
+    }
+
+    cy.wait('@saveRecordRequest', { timeout: 5_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
+  },
+
+  saveAndKeepEditingWithValidationWarnings() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
+    cy.do(saveAndKeepEditingBtn.click());
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    this.closeAllCallouts();
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: false }));
+    cy.do(saveAndKeepEditingBtn.click());
   },
 
   pressSaveAndKeepEditing(calloutMsg) {
@@ -673,6 +757,16 @@ export default {
           cy.setRulesForFieldViaApi(ruleId, isEnabled);
         });
       });
+  },
+
+  setAuthoritySubfieldsViaApi(ruleId, ruleSubfields) {
+    cy.setAuthoritySubfieldsViaApi(ruleId, ruleSubfields);
+  },
+
+  setAuthoritySubfieldsDefault() {
+    authoritySubfieldsDefault.forEach((tag) => {
+      cy.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
+    });
   },
 
   checkAbsenceOfLinkHeadingsButton() {
@@ -1332,8 +1426,13 @@ export default {
     this.selectFieldsDropdownOption('008', 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
   },
 
-  update008TextFields(dropdownLabel, value) {
-    cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
+  update008TextFields(dropdownLabel, value, typeSlowly = false) {
+    if (typeSlowly) {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).exists());
+      cy.get(`input[aria-label="${dropdownLabel}"][data-testid="fixed-field-String"]`)
+        .clear()
+        .type(value, { delay: 50 });
+    } else cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
   },
 
   verify008TextFields(dropdownLabel, value) {
@@ -1935,9 +2034,7 @@ export default {
   },
 
   checkRecordStatusNew() {
-    cy.expect(
-      Pane(matching(/Create a new .*MARC authority record/)).has({ subtitle: 'Status:New' }),
-    );
+    cy.expect(Pane(matching(/New .*MARC authority record/)).has({ subtitle: 'Status:New' }));
   },
 
   verifyPaneheaderWithContentAbsent(text) {
@@ -2161,6 +2258,7 @@ export default {
         cy.do(Callout({ id: calloutId }).dismiss());
       }
     });
+    cy.expect(Callout().absent());
   },
 
   verifyInvalidLDRCalloutLink() {
@@ -2823,11 +2921,51 @@ export default {
     cy.expect(Modal().absent());
   },
 
-  verifyDropdownInvalidValueHighlighted(tag, dropdownLabel, isValid = false) {
+  verifyValidationCallout(warningCount, failCount = 0) {
+    const matchers = [including(validationCalloutMainText)];
+    if (warningCount) {
+      matchers.push(including(`Warn errors: ${warningCount}`));
+    }
+    if (failCount) {
+      matchers.push(including(`Fail errors: ${failCount}`));
+      matchers.push(including(validationFailErrorMessage));
+    }
+    cy.expect(Callout(and(...matchers)).exists());
+  },
+
+  checkErrorMessageForFieldByTag(tagValue, errorMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue })
+        .find(TextArea({ error: errorMessage }))
+        .exists(),
+    );
+  },
+
+  checkWarningMessageForFieldByTag(tagValue, warningMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue })
+        .find(TextArea({ warning: warningMessage }))
+        .exists(),
+    );
+  },
+
+  checkDerivePaneheader() {
+    this.checkPaneheaderContains(derivePaneHeaderText);
+  },
+
+  fillInTextBoxInField(tag, boxLabel, value) {
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextField({ label: boxLabel }))
+        .fillIn(value),
+    );
+  },
+
+  verifyTextBoxValueInField(tag, boxLabel, value) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
-        .has({ valid: isValid }),
+        .find(TextField({ label: boxLabel }))
+        .has({ value }),
     );
   },
 };

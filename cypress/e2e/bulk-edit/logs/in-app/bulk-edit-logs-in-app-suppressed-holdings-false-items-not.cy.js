@@ -25,9 +25,9 @@ const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${instanceHRIDFileName}`;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.inventoryAll.gui,

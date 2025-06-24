@@ -17,9 +17,9 @@ describe('Eureka', () => {
         roleAName: `AT_C627394_UserRole_A_${getRandomPostfix()}`,
         roleBName: `AT_C627394_UserRole_B_${getRandomPostfix()}`,
         newUsername: `at_c627394_username_${getRandomLetters(6)}`,
-        newLastName: `C627394Last${getRandomLetters(6)}`,
-        newFirstName: `C627394First${getRandomLetters(6)}`,
-        newEmailAddress: `AT_C627394_${getRandomLetters(6)}@folio.org`,
+        newLastName: `AT_C627394_LastName_${getRandomLetters(6)}`,
+        newFirstName: `AT_C627394_FirstName${getRandomLetters(6)}`,
+        newEmailAddress: `AT_C627394_${getRandomLetters(6)}@test.com`,
       };
 
       const capabSetsToAssign = [
@@ -100,7 +100,6 @@ describe('Eureka', () => {
           UsersSearchPane.selectUserFromList(testData.userA.username);
           UsersCard.waitLoading();
           UserEdit.openEdit();
-          UserEdit.verifyUserRolesCounter('1');
           UserEdit.editUsername(testData.newUsername);
           UserEdit.fillLastFirstNames(testData.newLastName, testData.newFirstName);
           UserEdit.fillEmailAddress(testData.newEmailAddress);

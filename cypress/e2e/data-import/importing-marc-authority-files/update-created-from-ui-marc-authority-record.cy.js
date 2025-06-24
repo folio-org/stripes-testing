@@ -37,7 +37,7 @@ describe('Data Import', () => {
     const searchOption = 'Keyword';
     const searchValue = 'aat423564';
     const recordTitle = 'C423564 John Doe Sir, 1909-1965';
-    const headerText = 'Create a new MARC authority record';
+    const headerText = /New .*MARC authority record/;
     const newFields = [
       { previousFieldTag: '008', tag: '010', content: '$a aat423564' },
       {

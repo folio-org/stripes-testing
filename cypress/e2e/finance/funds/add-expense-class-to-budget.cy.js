@@ -1,15 +1,14 @@
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
-import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
+import { ExpenseClasses } from '../../../support/fragments/settings/finance';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -18,12 +17,13 @@ describe('ui-finance: Funds', () => {
     ...Budgets.getDefaultBudget(),
     allocated: 100,
   };
-  before(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
+  let budgetId;
 
+  before(() => {
+    cy.getAdminToken();
+    NewExpenseClass.createViaApi(firstExpenseClass).then((expenseClassId) => {
+      firstExpenseClass.id = expenseClassId;
+    });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultBudget.fiscalYearId = firstFiscalYearResponse.id;
@@ -35,39 +35,36 @@ describe('ui-finance: Funds', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
           defaultBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(defaultBudget);
+          Budgets.createViaApi(defaultBudget).then((budgetResponse) => {
+            budgetId = budgetResponse.id;
+          });
         });
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     cy.getAdminToken();
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.editBudget();
-    Funds.deleteExpensesClass();
-    Funds.deleteBudgetViaActions();
-    InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    Funds.checkIsBudgetDeleted();
-
-    Funds.deleteFundViaApi(defaultFund.id);
-
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.deleteExpenseClass(firstExpenseClass);
-
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
-
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    Budgets.getBudgetByIdViaApi(budgetId).then((budgetResp) => {
+      delete budgetResp.statusExpenseClasses;
+      Budgets.updateBudgetViaApi({
+        ...budgetResp,
+      });
+    });
+    Budgets.deleteBudgetWithFundLedgerAndFYViaApi({
+      id: budgetId,
+      fundId: defaultFund.id,
+      ledgerId: defaultLedger.id,
+      fiscalYearId: defaultFiscalYear.id,
+    });
+    ExpenseClasses.deleteExpenseClassViaApi(firstExpenseClass.id);
   });
 
   it(
     'C15858 Add expense class to budget (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.visit(TopMenu.fundPath);
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();

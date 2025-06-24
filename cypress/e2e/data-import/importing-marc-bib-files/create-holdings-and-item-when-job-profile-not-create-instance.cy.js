@@ -120,6 +120,13 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -129,20 +136,13 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
         Users.deleteViaApi(user.userId);
       });
     });
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C368009'] },
+      { tags: ['criticalPath', 'folijet', 'C368009'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

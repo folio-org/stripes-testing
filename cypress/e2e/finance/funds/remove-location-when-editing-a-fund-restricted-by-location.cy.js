@@ -3,17 +3,15 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultFund = { ...Funds.defaultUiFund, restrictByLocations: true, locations: [] };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   let user;
-  let servicePointId;
   let firstLocation;
   let secondLocation;
 
@@ -21,45 +19,33 @@ describe('ui-finance: Funds', () => {
     cy.getAdminToken();
 
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
-          (firstLocationResponse) => {
-            firstLocation = firstLocationResponse;
-            defaultFund.locations.push({ locationId: firstLocation.id });
-
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
-              (secondLocationResponse) => {
-                secondLocation = secondLocationResponse;
-                defaultFund.locations.push({ locationId: secondLocation.id });
-
-                defaultFiscalYear.id = response.id;
-                defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
-                Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-                  defaultLedger.id = ledgerResponse.id;
-                  defaultFund.ledgerId = defaultLedger.id;
-
-                  Funds.createViaApi(defaultFund).then((fundResponse) => {
-                    defaultFund.id = fundResponse.fund.id;
-                  });
-                });
-              },
-            );
-          },
-        );
-
-        cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
-          (userProperties) => {
-            user = userProperties;
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.fundPath,
-              waiter: Funds.waitLoading,
-            });
-          },
-        );
+      InventoryInstances.getLocations({ limit: 2 }).then((res) => {
+        [firstLocation, secondLocation] = res;
+        defaultFund.locations.push({ locationId: firstLocation.id });
+        defaultFund.locations.push({ locationId: secondLocation.id });
       });
+
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
+
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
+        });
+      });
+
+      cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.fundPath,
+            waiter: Funds.waitLoading,
+          });
+        },
+      );
     });
   });
 

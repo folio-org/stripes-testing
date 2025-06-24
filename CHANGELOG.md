@@ -2,6 +2,8 @@
 
 ## 5.1.0 IN PROGRESS
 * Export the Applist interactor.
+* Removed alerts and reporting codes. Refs MODORDERS-1269.
+* Use MessageBanner stripes component for user patron blocks warning. Update its message. Refs UITEST-136.
 
 ## [5.0.0](https://github.com/folio-org/stripes-testing/tree/v5.0.0) (2025-02-24)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.8.0...v5.0.0)

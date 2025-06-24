@@ -46,6 +46,7 @@ export default {
     method: 'DELETE',
     path: `instance-statuses/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   verifyListOfStatusTypesIsIdenticalToListInInstance(statusesFromInstance) {
@@ -109,9 +110,11 @@ export default {
       Button('Delete').click(),
     ]);
   },
+
   choose() {
     cy.do([NavListItem('Instance status types').click(), Pane('Instance status types').exists()]);
   },
+
   createViaApi: (body) => {
     return cy
       .okapiRequest({

@@ -59,8 +59,8 @@ const marcInstanceFields = [
 ];
 const reasonForError = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,

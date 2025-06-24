@@ -15,8 +15,8 @@ let user;
 let userForBuildQuery;
 let numberOfRecordsAfterRunQuery;
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
@@ -49,6 +49,7 @@ describe('bulk-edit', () => {
         QueryModal.clickTestQuery();
         QueryModal.clickRunQuery();
         QueryModal.verifyClosed();
+        BulkEditSearchPane.matchedAccordionIsAbsent(false);
         BulkEditSearchPane.getNumberMatchedRecordsFromPaneHeader().then((numberOfRecords) => {
           numberOfRecordsAfterRunQuery = numberOfRecords;
         });

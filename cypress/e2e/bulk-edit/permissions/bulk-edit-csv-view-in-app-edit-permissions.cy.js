@@ -10,8 +10,8 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 let user;
 const userBarcodesFileName = `userBarcodes-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test users', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,

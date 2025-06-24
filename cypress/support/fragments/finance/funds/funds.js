@@ -1,35 +1,35 @@
+import { HTML, including } from '@interactors/html';
 import uuid from 'uuid';
 import {
-  Button,
-  TextField,
-  Selection,
-  SelectionList,
   Accordion,
-  Modal,
+  Button,
   Checkbox,
+  KeyValue,
+  Link,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
   MultiSelect,
+  MultiSelectOption,
+  Pane,
+  PaneHeader,
   SearchField,
   Section,
-  HTML,
-  including,
-  KeyValue,
-  Pane,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  SelectionOption,
-  Link,
-  MultiColumnList,
-  MultiSelectOption,
-  PaneHeader,
   Select,
+  Selection,
+  SelectionList,
+  SelectionOption,
+  TextField,
 } from '../../../../../interactors';
-import FundDetails from './fundDetails';
-import FundEditForm from './fundEditForm';
-import FinanceHelp from '../financeHelper';
-import TopMenu from '../../topMenu';
-import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
+import getRandomPostfix from '../../../utils/stringTools';
+import TopMenu from '../../topMenu';
+import FinanceHelp from '../financeHelper';
+import FiscalYears from '../fiscalYears/fiscalYears';
+import FundDetails from './fundDetails';
+import FundEditForm from './fundEditForm';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -73,6 +73,7 @@ const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
+const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 
 export default {
   defaultUiFund: {
@@ -456,25 +457,35 @@ export default {
     );
   },
 
-  checkOrderInTransactionList: (fundCode, amount) => {
-    cy.expect([
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: 'Encumbrance' }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: `${amount}` }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .has({ content: `${fundCode}` }),
-      transactionList
-        .find(MultiColumnListRow({ index: 1 }))
-        .find(MultiColumnListCell({ columnIndex: 5 }))
-        .has({ content: 'PO line' }),
-    ]);
+  findResultRowIndexByContent(content) {
+    return cy
+      .get('*[class^="mclCell"]')
+      .contains(content)
+      .parent()
+      .invoke('attr', 'data-row-inner');
+  },
+
+  checkOrderInTransactionList(fundCode, amount) {
+    this.findResultRowIndexByContent('PO line').then((rowIndex) => {
+      cy.expect([
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: 'Encumbrance' }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: `${amount}` }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 3 }))
+          .has({ content: `${fundCode}` }),
+        transactionList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+          .find(MultiColumnListCell({ columnIndex: 5 }))
+          .has({ content: 'PO line' }),
+      ]);
+    });
   },
 
   selectTransactionInList: (transactionType) => {
@@ -868,27 +879,23 @@ export default {
       currency: 'USD',
       restrictEncumbrance: false,
       restrictExpenditures: false,
-      acqUnitIds: '',
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
-      ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-      cy.getFiscalYearsApi({ limit: 1 }).then((response) => {
-        ledger.fiscalYearOneId = response.body.fiscalYears[0].id;
-        cy.createLedgerApi({
-          ...ledger,
-        });
-        fund.ledgerName = ledger.name;
-        cy.loginAsAdmin({
-          path: TopMenu.fundPath,
-          waiter: this.waitLoading,
-        });
-        this.createFund(fund);
-        this.checkCreatedFund(fund.name);
-        cy.wrap(ledger).as('createdLedger');
-        return cy.get('@createdLedger');
+    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
+      ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
+      cy.createLedgerApi({
+        ...ledger,
       });
+      fund.ledgerName = ledger.name;
+      cy.loginAsAdmin({
+        path: TopMenu.fundPath,
+        waiter: this.waitLoading,
+      });
+      this.createFund(fund);
+      this.checkCreatedFund(fund.name);
+      cy.wrap(ledger).as('createdLedger');
+      return cy.get('@createdLedger');
     });
     return cy.get('@createdLedger');
   },
@@ -953,6 +960,7 @@ export default {
   },
 
   selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
+    cy.wait(4000);
     cy.do([
       Section({ id: 'previousBudgets' })
         .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
@@ -1085,18 +1093,11 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.open(),
-      SelectionList().select(ledger.name),
     ]);
-    // Need wait, while data is loading
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do([SelectionList().select(ledger.name), fundAcqUnitsSelection.select(AUName)]);
     cy.wait(4000);
-    cy.do([
-      MultiSelect({ id: 'fund-acq-units' })
-        .find(Button({ ariaLabel: 'open menu' }))
-        .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do(saveAndCloseButton.click());
     this.waitForFundDetailsLoading();
   },
 
@@ -1140,7 +1141,15 @@ export default {
   },
 
   closeMenu: () => {
-    cy.do(Button({ icon: 'times' }).click());
+    cy.do(
+      PaneHeader()
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closePaneHeader: () => {
+    cy.get('[data-test-pane-header] [class^=iconButton]').first().click();
   },
 
   closeTransactionDetails: () => {
@@ -1169,17 +1178,13 @@ export default {
 
   addAUToFund: (AUName) => {
     cy.do([actionsButton.click(), editButton.click()]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(4000);
-    cy.do([
-      MultiSelect({ id: 'fund-acq-units' })
-        .find(Button({ ariaLabel: 'open menu' }))
-        .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
-    ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(4000);
+    FundEditForm.waitLoading();
+    cy.wait(6000);
+    cy.expect(fundAcqUnitsSelection.exists());
+    cy.do([fundAcqUnitsSelection.fillIn(AUName), MultiSelectOption(AUName).click()]);
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    cy.wait(3000);
   },
 
   varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {

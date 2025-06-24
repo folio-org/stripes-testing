@@ -14,7 +14,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import {
   APPLICATION_NAMES,
   electronicAccessRelationshipId,
-  electronicAccessRelationshipName,
+  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
 } from '../../../support/constants';
 
 let user;
@@ -22,13 +22,14 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
+const optionToSelect = 'URL relationship';
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -88,60 +89,60 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         ]);
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
-        BulkEditActions.selectOption('URL Relationship');
+        BulkEditActions.selectOption(optionToSelect);
         let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.verifyOptionAbsentInNewRow('URL Relationship');
+        BulkEditActions.verifyOptionAbsentInNewRow(optionToSelect);
         BulkEditActions.deleteRow(1);
-        BulkEditActions.selectOption('URL Relationship');
+        BulkEditActions.selectOption(optionToSelect);
         BulkEditActions.selectSecondAction('Find (full field search)');
         BulkEditActions.verifyActionSelected('Find (full field search)');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Remove');
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.selectType(electronicAccessRelationshipName.RESOURCE, 0, 0);
+        BulkEditActions.selectType(ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE, 0, 0);
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditActions.checkTypeNotExist(electronicAccessRelationshipName.RESOURCE, 0, 1);
-        BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 1);
+        BulkEditActions.checkTypeNotExist(ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE, 0, 1);
+        BulkEditActions.selectType(ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE, 0, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
-        BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 0);
+        BulkEditActions.selectType(ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE, 0, 0);
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 0);
+        BulkEditActions.selectType(ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE, 0, 0);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
         BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         ]);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Electronic access',
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         ]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -150,7 +151,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.verifyElectronicAccess(
-          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         );
       },
     );

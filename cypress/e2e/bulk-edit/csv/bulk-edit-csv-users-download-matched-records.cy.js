@@ -15,8 +15,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarco
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName, true);
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,

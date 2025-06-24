@@ -179,6 +179,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              });
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -195,9 +199,7 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(4000);
-              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
             cy.waitForAuthRefresh(() => {
@@ -255,6 +257,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.verifySaveAndCloseButtonDisabled();
+            cy.wait(1000);
             linkingTagAndValues.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(
                 field.rowIndex,
@@ -270,12 +273,9 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingFieldContent(fields[0].rowIndex, fields[0].newContent);
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
-            cy.wait(3000);
-
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.viewSource();
             linkingTagAndValues.forEach((field) => {
               InventoryViewSource.contains(`${marcAuthIcon}\n\t${field.tag}`);

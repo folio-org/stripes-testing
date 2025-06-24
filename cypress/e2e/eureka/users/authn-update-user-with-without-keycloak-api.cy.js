@@ -21,11 +21,11 @@ describe('Eureka', () => {
           userBodies.push({
             type: 'staff',
             active: true,
-            username: `user${i}c594518${randomPostfix}`,
+            username: `at_c594518_${i}_${randomPostfix}`,
             patronGroup: Cypress.env('userGroups')[0].id,
             personal: {
-              lastName: `Last ${i} c594518${randomPostfix}`,
-              email: 'testuser@test.org',
+              lastName: `AT_C594518_LastName_${i}_${randomPostfix}`,
+              email: 'AT_C594518@test.com',
               preferredContactTypeId: '002',
             },
           });

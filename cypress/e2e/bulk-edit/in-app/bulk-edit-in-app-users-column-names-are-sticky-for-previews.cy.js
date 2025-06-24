@@ -48,8 +48,8 @@ const columnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.PREFFERED_EMAIL_COMMUNICATIONS,
 ];
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.then(() => {
@@ -98,15 +98,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(recordsNumber);
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
-
-        const top10InvalidUUIDs = [...invalidUserUUIDs]
-          .sort((a, b) => a.localeCompare(b))
-          .slice(0, 10);
-
-        top10InvalidUUIDs.forEach((invalidUserUUID) => {
-          BulkEditSearchPane.verifyErrorByIdentifier(invalidUserUUID, 'No match found');
-        });
-
+        BulkEditSearchPane.verifyErrorsAccordionIncludesNumberOfIdentifiers(10, invalidUserUUIDs);
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyUsersActionShowColumns();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(...columnNames);

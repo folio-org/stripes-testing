@@ -14,6 +14,7 @@ import {
   HTML,
   including,
   SearchField,
+  Modal,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
@@ -52,7 +53,7 @@ export default {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get2DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FYTA',
   },
@@ -85,6 +86,7 @@ export default {
 
   createDefaultFiscalYear(fiscalYear) {
     cy.do([
+      cy.wait(4000),
       newButton.click(),
       TextField('Name*').fillIn(fiscalYear.name),
       TextField('Code*').fillIn(fiscalYear.code),
@@ -131,9 +133,8 @@ export default {
   },
 
   editFiscalYearDetails: () => {
-    cy.wait(7000);
+    cy.wait(4000);
     cy.do([actionsButton.focus(), actionsButton.click()]);
-    cy.wait(7000);
     cy.do(editButton.click());
   },
 
@@ -212,7 +213,7 @@ export default {
     cy.do([
       actionsButton.click(),
       deleteButton.click(),
-      Button('Delete', { id: 'clickable-fiscal-year-remove-confirmation-confirm' }).click(),
+      Modal({ id: 'fiscal-year-remove-confirmation' }).find(deleteButton).click(),
     ]);
   },
 

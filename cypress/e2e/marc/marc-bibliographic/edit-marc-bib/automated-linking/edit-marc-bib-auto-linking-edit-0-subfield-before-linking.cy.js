@@ -28,15 +28,14 @@ describe('MARC', () => {
             tag: '650',
             value: 'Lesbian authors',
             rowIndex: 30,
-            newContent:
-              '$a Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
+            newContent: '$a Lesbian authors $0 http://id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
             value: 'Lesbian activists',
             rowIndex: 31,
             newContent:
-              '$a Lesbian activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh960075325555',
+              '$a Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
         ];
         const authority = {
@@ -91,7 +90,7 @@ describe('MARC', () => {
                 query: `naturalId="${id}*" and authRefType=="Authorized"`,
               }).then((records) => {
                 records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 });
               });
             });
@@ -135,19 +134,17 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
               });
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(4000);
-              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
               cy.reload();
               InventoryInstances.waitContentLoading();
-            }, 20_000);
+            });
           });
         });
 
@@ -156,7 +153,7 @@ describe('MARC', () => {
             Users.deleteViaApi(userData.userId);
             createdRecordIDs.forEach((id, index) => {
               if (index === 0) InventoryInstance.deleteInstanceViaApi(id);
-              else MarcAuthority.deleteViaAPI(id);
+              else MarcAuthority.deleteViaAPI(id, true);
             });
           });
         });
@@ -191,6 +188,7 @@ describe('MARC', () => {
             // #7 Unlink the linked 650 field with "Lesbian activists" value in "$a" subfield by clicking on the "Unlink from MARC authority record" icon >> confirm unlinking.
             QuickMarcEditor.clickUnlinkIconInTagField(preLinkedFields[0].rowIndex);
             QuickMarcEditor.confirmUnlinkingField();
+            cy.wait(3000);
             QuickMarcEditor.verifyRowLinked(preLinkedFields[0].rowIndex, false);
             QuickMarcEditor.checkContent(
               preLinkedFields[0].newContent,
@@ -209,11 +207,8 @@ describe('MARC', () => {
               '',
             );
             // #9 Click on the "Save & close" button.
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
-            // #10 Click on the "Browse" toggle >> Select "Subjects" in browse option dropdown >> Enter "Lesbian activists--Jamaica--Biography" value in the search box >> Click on the "Search"  button.
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            // #10 Click on the "Browse" toggle >> Select "Subjects" in browse option dropdown >> Enter "Lesbian activists--Jamaica--Biography" value in the search box >> Click on the "Search" button.
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();

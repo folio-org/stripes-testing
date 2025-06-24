@@ -49,7 +49,7 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = true) => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = true) => {
   const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
@@ -176,7 +176,7 @@ Cypress.Commands.add('deleteCapabilitySetsFromRoleApi', (roleId) => {
 Cypress.Commands.add(
   'createAuthorizationRoleApi',
   (
-    name = `Test_Auto_Role_${getRandomPostfix()}`,
+    name = `AT_UserRole_${getRandomPostfix()}`,
     description = `Test_Auto_Description_${getRandomPostfix()}`,
   ) => {
     cy.okapiRequest({

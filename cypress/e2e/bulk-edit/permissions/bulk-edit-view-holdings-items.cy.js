@@ -18,8 +18,8 @@ const itemUUIDsMatchedRecordsFileName = `*Matched-Records-${itemUUIDsFileName}`;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const holdingsUUIDsMatchedRecordsFileName = `*Matched-Records-${holdingUUIDsFileName}`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,

@@ -3,6 +3,7 @@ import permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -18,6 +19,8 @@ import SwitchServicePoint from '../../../support/fragments/settings/tenant/servi
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
@@ -42,6 +45,9 @@ describe('Orders', () => {
         },
       ],
     };
+    const instance = {
+      title: `AT_C367972_folio instance-${getRandomPostfix()}`,
+    };
     const barcodeForFirstItem = `1${Helper.getRandomBarcode()}`;
     const barcodeForSecondItem = `2${Helper.getRandomBarcode()}`;
     const barcodeForThirdItem = `3${Helper.getRandomBarcode()}`;
@@ -50,6 +56,7 @@ describe('Orders', () => {
     const barcodeForSixthItem = `6${Helper.getRandomBarcode()}`;
     const barcodeForSeventhItem = `7${Helper.getRandomBarcode()}`;
 
+    let user;
     let orderNumber;
     let circ2LocationServicePoint;
     let circ1LocationServicePoint;
@@ -58,7 +65,7 @@ describe('Orders', () => {
     before(() => {
       cy.getAdminToken();
 
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' }).then((servicePoints) => {
         circ2LocationServicePoint = servicePoints[0];
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
           (servicePointsResponse) => {
@@ -72,6 +79,21 @@ describe('Orders', () => {
                 order.vendor = organizationsResponse;
               });
 
+              cy.getInstanceTypes({ limit: 1 })
+                .then((instanceTypeData) => {
+                  instance.instanceTypeId = instanceTypeData[0].id;
+                })
+                .then(() => {
+                  cy.createInstance({
+                    instance: {
+                      instanceTypeId: instance.instanceTypeId,
+                      title: instance.title,
+                    },
+                  }).then((instanceId) => {
+                    instance.id = instanceId;
+                  });
+                });
+
               cy.loginAsAdmin();
               TopMenuNavigation.openAppFromDropdown('Orders');
               Orders.selectOrdersPane();
@@ -80,7 +102,7 @@ describe('Orders', () => {
                 Orders.searchByParameter('PO number', orderNumber);
                 Orders.selectFromResultsList(orderNumber);
                 Orders.createPOLineViaActions();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+                OrderLines.selectRandomInstanceInTitleLookUP(instance.title, 0);
                 OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
                   'Purchase',
                   locationResponse.name,
@@ -158,9 +180,9 @@ describe('Orders', () => {
                 InventoryItems.closeItem();
               });
 
-              TopMenuNavigation.navigateToApp('Check in');
-              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint.name);
+              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint);
               SwitchServicePoint.checkIsServicePointSwitched(circ2LocationServicePoint.name);
+              TopMenuNavigation.navigateToApp('Check in');
               // Need to wait,while Checkin page will be loaded in same location
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(2000);
@@ -169,15 +191,18 @@ describe('Orders', () => {
               cy.wait(6000);
               CheckInActions.checkInItemGui(barcodeForSecondItem);
               cy.wait(6000);
-              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
+              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint);
               SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
+              TopMenuNavigation.navigateToApp('Check in');
               // Need to wait,while Checkin page will be loaded in same location
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(2000);
               CheckInActions.checkInItemGui(barcodeForThirdItem);
               // eslint-disable-next-line cypress/no-unnecessary-waiting
+              ConfirmItemInModal.confirmInTransitModal();
               cy.wait(6000);
               CheckInActions.checkInItemGui(barcodeForFourItem);
+              ConfirmItemInModal.confirmInTransitModal();
               cy.wait(6000);
             });
           },
@@ -188,6 +213,7 @@ describe('Orders', () => {
         permissions.uiInventoryViewInstances.gui,
         permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
+        user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.receivingPath,
           waiter: Receiving.waitLoading,
@@ -195,14 +221,21 @@ describe('Orders', () => {
       });
     });
 
-    //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
+    after(() => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    //     // TODO: Need to find solution to delete all data, because now i cant delete location and user
+    //     // TODO: also need to delete service points
 
     it(
       'C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        Orders.searchByParameter('PO number', orderNumber);
-        Receiving.selectLinkFromResultsList();
+        Receiving.searchByParameter({ parameter: 'Keyword', value: instance.title });
+        Receiving.selectFromResultsList(instance.title);
         Receiving.receiveFromExpectedSection();
         Receiving.receiveAll();
         Receiving.clickOnInstance();
@@ -227,7 +260,7 @@ describe('Orders', () => {
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForThirdItem,
-          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Circ Desk 2`,
+          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Online`,
         );
         InventoryItems.closeItem();
         InventoryInstance.openHoldingsAccordion(location.name);
@@ -235,7 +268,7 @@ describe('Orders', () => {
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForFourItem,
-          ITEM_STATUS_NAMES.IN_PROCESS,
+          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Online`,
         );
         InventoryItems.closeItem();
         InventoryInstance.openHoldingsAccordion(location.name);

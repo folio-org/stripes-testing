@@ -1,19 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultfund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   let user;
-  let servicePointId;
   let firstLocation;
   let secondLocation;
   let thirdLocation;
@@ -29,24 +26,11 @@ describe('ui-finance: Funds', () => {
         defaultfund.ledgerName = ledgerResponse.name;
       });
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        firstLocation = res;
-      });
+
+    InventoryInstances.getLocations({ limit: 3 }).then((res) => {
+      [firstLocation, secondLocation, thirdLocation] = res;
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        secondLocation = res;
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        thirdLocation = res;
-      });
-    });
+
     cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
       (userProperties) => {
         user = userProperties;
@@ -59,30 +43,12 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-    Funds.deleteFundViaActions();
+    cy.getAdminToken();
+    Funds.getFundsViaApi({ query: `code="${defaultfund.code}"` }).then((body) => {
+      Funds.deleteFundViaApi(body.funds[0].id);
+    });
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      firstLocation.institutionId,
-      firstLocation.campusId,
-      firstLocation.libraryId,
-      firstLocation.id,
-    );
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      secondLocation.institutionId,
-      secondLocation.campusId,
-      secondLocation.libraryId,
-      secondLocation.id,
-    );
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      thirdLocation.institutionId,
-      thirdLocation.campusId,
-      thirdLocation.libraryId,
-      thirdLocation.id,
-    );
     Users.deleteViaApi(user.userId);
   });
 

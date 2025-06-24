@@ -71,6 +71,7 @@ describe('Bulk-edit', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
+        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditItems.gui,
@@ -236,7 +237,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.status_name in ("Available","Checked out")) AND (instances.title starts with "C496144_${postfix}")`,
+              `(items.status_name in [Available, Checked out]) AND (instances.title starts with C496144_${postfix})`,
             );
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {

@@ -3,7 +3,7 @@ import { REQUEST_METHOD } from '../../../constants';
 
 export default {
   defaultUiBatchGroup: {
-    name: `test_class_${getRandomPostfix()}`,
+    name: `AT_Class_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNumber: getRandomPostfix(),
   },

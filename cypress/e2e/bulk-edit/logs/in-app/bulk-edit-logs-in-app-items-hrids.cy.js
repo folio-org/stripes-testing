@@ -22,8 +22,7 @@ const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid =
   BulkEditFiles.getMatchedRecordsFileName(itemHRIDsFileName);
 const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(itemHRIDsFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(itemHRIDsFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName);
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName);
 const errorsFromCommittingFileName =
   BulkEditFiles.getErrorsFromCommittingFileName(itemHRIDsFileName);
@@ -51,9 +50,9 @@ const item2 = {
   id: '',
 };
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditView.gui,

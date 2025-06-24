@@ -18,9 +18,9 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleNameCentral: `AT_C552443_Role_Central_${randomPostfix}`,
-      roleNameCollege: `AT_C552443_Role_College_${randomPostfix}`,
-      roleNameUniversity: `AT_C552443_Role_University_${randomPostfix}`,
+      roleNameCentral: `AT_C552443_UserRole_Central_${randomPostfix}`,
+      roleNameCollege: `AT_C552443_UserRole_College_${randomPostfix}`,
+      roleNameUniversity: `AT_C552443_UserRole_University_${randomPostfix}`,
       capabilitiesForRoleCentral: [
         {
           table: CAPABILITY_TYPES.PROCEDURAL,
@@ -229,6 +229,9 @@ describe('Eureka', () => {
         SelectMembers.checkMember(tenantNames.university, false);
         SelectMembers.saveAndClose();
         ConsortiumManagerApp.verifyMembersSelected(2);
+        CompareRoles.selectMember(tenantNames.central, 0);
+        CompareRoles.selectRole(testData.roleNameCentral, 0);
+        CompareRoles.verifyNoCapabilitySetsFound(0);
         CompareRoles.checkAvailableTenants([tenantNames.central, tenantNames.college].sort(), 1);
 
         CompareRoles.selectMember(tenantNames.college, 1);

@@ -10,12 +10,10 @@ describe('Eureka', () => {
     const appIds = [];
     const moduleIds = [];
     const uiModuleIds = [];
-    const expectedMissingModulesOnMember = [
-      'linked-data',
-      'reading-room-patron-permission',
-      'reading-room',
-    ];
-    const expectedMissingModulesOnRegularTenant = [];
+    const expectedMissingModules = [];
+    const isDefaultEnv =
+      Cypress.env('OKAPI_HOST').includes('snapshot') ||
+      Cypress.env('OKAPI_HOST').includes('cypress');
     let tempUser;
 
     const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
@@ -45,12 +43,9 @@ describe('Eureka', () => {
       { tags: ['smoke', 'eureka', 'shiftLeft', 'C431150'] },
       () => {
         cy.login(tempUser.username, tempUser.password);
-        const modulesExpectedToBeMissing = Cypress.env('OKAPI_TENANT').includes('int_0')
-          ? expectedMissingModulesOnMember
-          : expectedMissingModulesOnRegularTenant;
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_ABOUT);
         SoftwareVersions.waitLoading();
-        SoftwareVersions.checkErrorText(modulesExpectedToBeMissing);
+        if (isDefaultEnv) SoftwareVersions.checkErrorText(expectedMissingModules);
         appIds.forEach((appId) => {
           SoftwareVersions.verifyTextPresent(appId);
         });

@@ -9,8 +9,8 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     let userData = {};
     const instanceData = {
       instanceName: `C353652 testBulkEdit_${getRandomPostfix()}`,

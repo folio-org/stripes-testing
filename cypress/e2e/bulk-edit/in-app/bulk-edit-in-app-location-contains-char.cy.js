@@ -18,8 +18,8 @@ import Users from '../../../support/fragments/users/users';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     };

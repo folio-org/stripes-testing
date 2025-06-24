@@ -64,8 +64,6 @@ describe('Orders', () => {
       'C353989 A user can select existing order when creating an order from instance record (Thunderjet)(TaaS)',
       { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
-
         InventorySearchAndFilter.byKeywords(testData.instanceName);
         InventoryInstance.checkInstanceTitle(testData.instanceName);
         InventoryInstance.openCreateNewOrderModal();

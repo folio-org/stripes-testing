@@ -26,12 +26,11 @@ const customFieldData = {
   label2: `label2;${getRandomPostfix()}`,
 };
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(userBarcodesFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,

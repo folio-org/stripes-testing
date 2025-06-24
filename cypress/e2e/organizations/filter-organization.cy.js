@@ -4,7 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import { Permissions } from '../../support/dictionary';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-organizations: Filtering organization', () => {
+describe('Organizations', () => {
   const organization = {
     ...NewOrganization.specialOrganization,
     status: 'Pending',

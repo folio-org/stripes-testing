@@ -65,8 +65,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUU
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {

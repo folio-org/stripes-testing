@@ -5,7 +5,7 @@ import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-sear
 
 let user;
 
-describe('bulk-edit', () => {
+describe('Bulk-edit', () => {
   before('Create test data', () => {
     cy.createTempUser([
       Permissions.bulkEditEdit.gui,

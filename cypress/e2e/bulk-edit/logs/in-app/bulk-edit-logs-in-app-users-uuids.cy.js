@@ -21,7 +21,7 @@ const matchedRecordsFileNameInvalidAndValid = BulkEditFiles.getMatchedRecordsFil
 const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
   invalidAndValidUserUUIDsFileName,
 );
-const previewOfProposedChangesFileName = BulkEditFiles.getPreviewOfProposedChangesFileName(
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(
   invalidAndValidUserUUIDsFileName,
 );
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
@@ -31,9 +31,9 @@ const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileNa
   invalidAndValidUserUUIDsFileName,
 );
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([], 'faculty').then((userProperties) => {
           userWithoutPermissions = userProperties;

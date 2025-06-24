@@ -11,11 +11,18 @@ import {
 const sectionName = 'Call number types';
 
 export const CALL_NUMBER_TYPES_DEFAULT = {
-  deweyDecimalclassification: 'Dewey Decimal classification',
-  libraryOfCongressClassification: 'Library of Congress Classification',
-  nationalLibraryOfMedicineClassification: 'National Library of Medicine Classification',
-  otherScheme: 'Other scheme',
-  superintendentOfDocumentsClassification: 'Superintendent of Documents classification',
+  DEWEY_DECIMAL_CLASSIFICATION: 'Dewey Decimal classification',
+  LIBRARY_OF_CONGRESS_CLASSIFICATION: 'Library of Congress classification',
+  NATIONAL_LIBRARY_OF_MEDICINE_CLASSIFICATION: 'National Library of Medicine classification',
+  OTHER_SCHEME: 'Other scheme',
+  SUPERINTENDENT_OF_DOCUMENTS_CLASSIFICATION: 'Superintendent of Documents classification',
+  UDC: 'UDC',
+  LC_MODIFIED: 'LC Modified',
+  MOYS: 'MOYS',
+  SHELVED_SEPARATELY: 'Shelved separately',
+  SHELVING_CONTROL_NUMBER: 'Shelving control number',
+  SOURCE_SPECIFIED_IN_SUBFIELD_2: 'Source specified in subfield $2',
+  TITLE: 'Title',
 };
 
 const elements = {

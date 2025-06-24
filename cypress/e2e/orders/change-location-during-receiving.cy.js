@@ -6,14 +6,12 @@ import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder, approved: true };
@@ -22,70 +20,55 @@ describe('orders: Receive piece from Order', () => {
   let user;
   let orderNumber;
   let firstLocation;
-  let servicePointId;
   let secondLocation;
 
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        firstLocation = res;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
-          (secondRes) => {
-            secondLocation = secondRes;
+    InventoryInstances.getLocations({ limit: 2 }).then((res) => {
+      [firstLocation, secondLocation] = res;
 
-            MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
-              (mtypes) => {
-                cy.getAcquisitionMethodsApi({
-                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                }).then((params) => {
-                  // Prepare 2 Open Orders for Rollover
-                  Organizations.createOrganizationViaApi(organization).then(
-                    (responseOrganizations) => {
-                      organization.id = responseOrganizations;
-                      order.vendor = organization.id;
-                      const orderLine = {
-                        ...BasicOrderLine.defaultOrderLine,
-                        id: uuid(),
-                        cost: {
-                          listUnitPrice: 200.0,
-                          currency: 'USD',
-                          discountType: 'percentage',
-                          quantityPhysical: 1,
-                          poLineEstimatedPrice: 200.0,
-                        },
-                        fundDistribution: [],
-                        locations: [
-                          { locationId: firstLocation.id, quantity: 1, quantityPhysical: 1 },
-                        ],
-                        acquisitionMethod: params.body.acquisitionMethods[0].id,
-                        physical: {
-                          createInventory: 'Instance, Holding, Item',
-                          materialType: mtypes.body.id,
-                          materialSupplier: responseOrganizations,
-                          volumes: [],
-                        },
-                      };
-                      Orders.createOrderViaApi(order).then((orderResponse) => {
-                        order.id = orderResponse.id;
-                        orderNumber = orderResponse.poNumber;
-                        orderLine.purchaseOrderId = orderResponse.id;
-                        orderLineUI = orderLine;
-                        OrderLines.createOrderLineViaApi(orderLine);
-                        Orders.updateOrderViaApi({
-                          ...orderResponse,
-                          workflowStatus: ORDER_STATUSES.OPEN,
-                        });
-                      });
-                    },
-                  );
-                });
+      cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }).then((params) => {
+          // Prepare 2 Open Orders for Rollover
+          Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+            organization.id = responseOrganizations;
+            order.vendor = organization.id;
+            const orderLine = {
+              ...BasicOrderLine.defaultOrderLine,
+              id: uuid(),
+              cost: {
+                listUnitPrice: 200.0,
+                currency: 'USD',
+                discountType: 'percentage',
+                quantityPhysical: 1,
+                poLineEstimatedPrice: 200.0,
               },
-            );
-          },
-        );
+              fundDistribution: [],
+              locations: [{ locationId: firstLocation.id, quantity: 1, quantityPhysical: 1 }],
+              acquisitionMethod: params.body.acquisitionMethods[0].id,
+              physical: {
+                createInventory: 'Instance, Holding, Item',
+                materialType: mtype.id,
+                materialSupplier: responseOrganizations,
+                volumes: [],
+              },
+            };
+            Orders.createOrderViaApi(order).then((orderResponse) => {
+              order.id = orderResponse.id;
+              orderNumber = orderResponse.poNumber;
+              orderLine.purchaseOrderId = orderResponse.id;
+              orderLineUI = orderLine;
+              OrderLines.createOrderLineViaApi(orderLine);
+              Orders.updateOrderViaApi({
+                ...orderResponse,
+                workflowStatus: ORDER_STATUSES.OPEN,
+              });
+            });
+          });
+        });
       });
     });
 
@@ -108,18 +91,6 @@ describe('orders: Receive piece from Order', () => {
     cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      firstLocation.institutionId,
-      firstLocation.campusId,
-      firstLocation.libraryId,
-      firstLocation.id,
-    );
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      secondLocation.institutionId,
-      secondLocation.campusId,
-      secondLocation.libraryId,
-      secondLocation.id,
-    );
     Users.deleteViaApi(user.userId);
   });
 

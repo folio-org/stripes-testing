@@ -74,13 +74,20 @@ const Assertions = {
     );
   },
 
-  validateCallNumberBrowseRowInTable(itemName, callNumberTypes) {
+  validateCallNumberBrowseRowInTable(itemName, callNumberTypes, isTypePresent = true) {
     const targetRow = elements.getTargetRowByName(itemName);
+    const typeAssertion = isTypePresent
+      ? targetRow.find(MultiColumnListCell(callNumberTypes)).exists()
+      : targetRow.find(MultiColumnListCell(including(callNumberTypes))).absent();
     cy.expect([
       targetRow.find(MultiColumnListCell(itemName)).exists(),
-      targetRow.find(MultiColumnListCell(callNumberTypes)).exists(),
+      typeAssertion,
       targetRow.find(elements.editButton).exists(),
     ]);
+  },
+
+  validateAvailableCallNumberTypeOption(optionName) {
+    cy.expect(MultiSelectMenu().find(MultiSelectOption(optionName)).exists());
   },
 };
 
@@ -105,7 +112,7 @@ const Actions = {
   },
 
   selectCallNumberTypeDropdownOption(optionName) {
-    cy.do(MultiSelectMenu().find(MultiSelectOption(optionName)).click());
+    cy.do(MultiSelectMenu().find(MultiSelectOption(optionName)).clickSegment());
   },
 
   setCallNumberTypeOptions(itemName, optionNames) {
@@ -117,6 +124,11 @@ const Actions = {
       this.selectCallNumberTypeDropdownOption(optionName);
     });
     this.clickSaveButtonForItem(itemName);
+  },
+
+  clickCancelButtonForItem(optionName) {
+    const targetRow = elements.getTargetRowByName(optionName);
+    cy.do(targetRow.find(elements.cancelButton).click());
   },
 };
 

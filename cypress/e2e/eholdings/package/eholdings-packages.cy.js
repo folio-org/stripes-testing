@@ -6,6 +6,7 @@ import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldi
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -51,7 +52,9 @@ describe('eHoldings', () => {
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
             const addedTag2 = EHoldingsPackage.addTag();
+            EHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
             EHoldingsPackage.closePackage();
+            EHoldingSearch.waitLoading();
             EHoldingsPackagesSearch.byName(selectedPackage);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
@@ -168,11 +171,6 @@ describe('eHoldings', () => {
       Users.deleteViaApi(userId);
     });
 
-    after(() => {
-      cy.getAdminToken();
-      EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
-    });
-
     it(
       'C699 Add or edit package custom coverage (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C699'] },
@@ -204,6 +202,8 @@ describe('eHoldings', () => {
               yesterdayPaddingZero,
               todayWithoutPaddingZero,
             );
+            cy.getAdminToken();
+            EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
           });
         });
       },
@@ -239,26 +239,51 @@ describe('eHoldings', () => {
       'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C703'] },
       () => {
+        let titleName;
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsPackages.waitLoading,
-          });
+          EHoldingsPackages.createPackageViaAPI().then(({ data: { id } }) => {
+            eHoldingsTitles
+              .createEHoldingTitleVIaApi({
+                packageId: id,
+              })
+              .then((title) => {
+                titleName = title.attributes.name;
+              })
+              .then(() => {
+                cy.login(userProperties.username, userProperties.password, {
+                  path: TopMenu.eholdingsPath,
+                  waiter: EHoldingsPackages.waitLoading,
+                });
 
-          EHoldingSearch.switchToPackages();
-          // wait until package is created via API
-          cy.wait(10000);
-          UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
-          EHoldingsPackagesSearch.bySelectionStatus('Selected');
-          EHoldingsPackages.openPackage();
-          EHoldingsPackage.editProxyActions();
-          EHoldingsPackageView.patronRadioButton('No');
-          EHoldingsPackage.saveAndClose();
-          EHoldingsPackageView.verifyAlternativeRadio('No');
+                EHoldingSearch.switchToPackages();
+                // wait until package is created via API
+                cy.wait(15000);
+                UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+                EHoldingsPackagesSearch.bySelectionStatus('Selected');
+                EHoldingsPackages.openPackage();
+                EHoldingsPackage.editProxyActions();
+                EHoldingsPackageView.patronRadioButton('No');
+                EHoldingsPackage.saveAndClose();
+                EHoldingsPackageView.waitLoading();
+                EHoldingsPackage.waitForTitlesState({
+                  packageId: id,
+                  titleName,
+                  isHidden: true,
+                });
+                cy.waitForAuthRefresh(() => {
+                  cy.reload();
+                });
+                EHoldingsPackage.verifyTitleFound(titleName);
+                EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
+                EHoldingsPackageView.verifyAlternativeRadio('No');
+                cy.getAdminToken();
+                EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
+              });
+          });
         });
       },
     );

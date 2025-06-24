@@ -3,6 +3,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   instanceIdentifiers,
+  instanceNotesColumnNames,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -33,8 +34,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceU
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([
@@ -99,12 +100,7 @@ describe('bulk-edit', () => {
           instance.title,
         );
         BulkEditActions.openActions();
-
-        const instanceNoteColumnNames = Object.values(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES,
-        ).slice(23);
-
-        BulkEditSearchPane.verifyInstanceNoteColumns(instanceNoteColumnNames);
+        BulkEditSearchPane.verifyInstanceNoteColumns(instanceNotesColumnNames);
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyValueInRowByUUID(
@@ -126,7 +122,7 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
         ];
 
-        instanceNoteColumnNames.forEach((instanceNoteColumnName) => {
+        instanceNotesColumnNames.forEach((instanceNoteColumnName) => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(instanceNoteColumnName);
         });
         optionsOutsideInstanceNoteGroup.forEach((option) => {
@@ -140,7 +136,7 @@ describe('bulk-edit', () => {
         BulkEditActions.typeInFilterOptionsList(filterOtions.instance);
         BulkEditActions.verifyValueInInputOfFilterOptionsList(filterOtions.instance);
 
-        instanceNoteColumnNames.forEach((instanceNoteColumnName) => {
+        instanceNotesColumnNames.forEach((instanceNoteColumnName) => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(instanceNoteColumnName);
         });
 
@@ -150,7 +146,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clearFilterOptionsListByClickingBackspace();
         BulkEditActions.verifyValueInInputOfFilterOptionsList('');
 
-        instanceNoteColumnNames.forEach((instanceNoteColumnName) => {
+        instanceNotesColumnNames.forEach((instanceNoteColumnName) => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(instanceNoteColumnName);
         });
         optionsOutsideInstanceNoteGroup.forEach((option) => {

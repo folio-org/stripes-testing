@@ -8,7 +8,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultfund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
@@ -25,6 +25,7 @@ describe('ui-finance: Funds', () => {
         defaultLedger.id = ledgerResponse.id;
       });
     });
+
     cy.createTempUser([
       Permissions.uiFinanceViewEditCreateFundAndBudget.gui,
       Permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
@@ -34,20 +35,16 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-    Funds.deleteFundViaActions();
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.checkZeroSearchResultsHeader();
+    cy.getAdminToken();
+    Funds.deleteFundsByLedgerIdViaApi(defaultLedger.id, true);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    cy.visit(SettingsMenu.acquisitionUnitsPath);
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
     Users.deleteViaApi(userA.userId);
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+    });
   });
 
   it(

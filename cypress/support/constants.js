@@ -804,7 +804,7 @@ export const electronicAccessRelationshipId = {
   RESOURCE: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
 };
 
-export const electronicAccessRelationshipName = {
+export const ELECTRONIC_ACCESS_RELATIONSHIP_NAME = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
 };
@@ -924,6 +924,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     INDEX_TITLE: 'Index title',
     SERIES_STATEMENT: 'Series statements',
     CONTRIBUTORS: 'Contributors',
+    PUBLICATION: 'Publication',
     EDITION: 'Edition',
     PHYSICAL_DESCRIPTION: 'Physical description',
     RESOURCE_TYPE: 'Resource type',
@@ -985,6 +986,9 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     TYPE_COMPUTER_FILE_DATA_NOTE: 'Type of computer file or data note',
     TYPE_REPORT_PERIOD_COVERED_NOTE: 'Type of report and period covered note',
     WITH_NOTE: 'With note',
+    ELECTRONIC_ACCESS: 'Electronic access',
+    SUBJECT: 'Subject',
+    CLASSIFICATION: 'Classification',
   },
   INVENTORY_ITEMS: {
     BARCODE: 'Barcode',
@@ -1143,4 +1147,81 @@ export const AUTHORIZATION_ROLE_TYPES = {
   REGULAR: 'Regular',
   CONSORTIUM: 'Consortium',
   DEFAULT: 'Default',
+};
+
+export const ADVANCED_SEARCH_MODIFIERS = {
+  CONTAINS_ALL: 'Contains all',
+  STARTS_WITH: 'Starts with',
+  EXACT_PHRASE: 'Exact phrase',
+  CONTAINS_ANY: 'Contains any',
+};
+
+export const BULK_EDIT_FORMS = {
+  PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
+  ARE_YOU_SURE: 'Are you sure',
+  PREVIEW_OF_RECORDS_CHANGED: 'Preview of records changed',
+};
+
+export const INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES = {
+  TYPE: 'Type',
+  AUDN: 'Audn',
+  FORM: 'Form',
+  FILE: 'File',
+  GPUB: 'GPub',
+};
+
+export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
+  TYPE: 'Type',
+  SMD: 'SMD',
+  COLOR: 'Color',
+  MPPF: 'MPPF',
+  SOMOS: 'SoMoS',
+  MFS: 'MfS',
+  DIMENTIONS: 'Dimensions',
+  CoPC: 'CoPC',
+  PRODEL: 'ProdEl',
+  PNASPECT: 'P/N aspect',
+  GENERATION: 'Generation',
+  BOF: 'BoF',
+  RCOC: 'RCoC',
+  KOCSOP: 'KoCSop',
+  DETST: 'DetSt',
+  COMPL: 'Compl',
+  FID: 'FID',
+};
+
+export const INVENTORY_006_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Language material',
+  C: 'c - Notated music',
+  D: 'd - Manuscript notated music',
+  E: 'e - Cartographic material',
+  F: 'f - Manuscript cartographic material',
+  G: 'g - Projected medium',
+  I: 'i - Nonmusical sound recording',
+  J: 'j - Musical sound recording',
+  K: 'k - Two-dimensional nonprojectable  graphic',
+  M: 'm - Computer file',
+  O: 'o - Kit',
+  P: 'p - Mixed materials',
+  R: 'r - Three-dimensional artifact or naturally occurring object',
+  S: 's - Serial/Integrating resource',
+  T: 't - Manuscript language material',
+};
+
+export const INVENTORY_007_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Map',
+  C: 'c - Electronic resource',
+  D: 'd - Globe',
+  F: 'f - Tactile material',
+  G: 'g - Projected graphic',
+  H: 'h - Microform',
+  K: 'k - Nonprojected graphic',
+  M: 'm - Motion picture',
+  O: 'o - Kit',
+  Q: 'q - Notated music',
+  R: 'r - Remote-sensing image',
+  S: 's - Sound recording',
+  T: 't - Text',
+  V: 'v - Videorecording',
+  Z: 'z - Unspecified',
 };

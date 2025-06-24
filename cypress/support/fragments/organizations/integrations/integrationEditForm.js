@@ -66,4 +66,16 @@ export default {
     // wait for changes to be applied
     cy.wait(timeOut);
   },
+
+  selectSchedulingDay(day) {
+    cy.do(
+      schedulingSection
+        .find(
+          Checkbox({
+            name: `exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.weekDays[${day}]`,
+          }),
+        )
+        .click(),
+    );
+  },
 };

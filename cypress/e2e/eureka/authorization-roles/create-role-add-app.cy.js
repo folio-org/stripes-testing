@@ -8,9 +8,9 @@ describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C496128 ${getRandomPostfix()}`,
+        roleName: `AT_C496128_UserRole_${getRandomPostfix()}`,
         originalApplication: 'app-platform-minimal',
-        newApplication: 'app-platform-complete',
+        newApplication: 'app-agreements',
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
@@ -50,12 +50,12 @@ describe('Eureka', () => {
         newCapabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Accounts Item',
+            resource: 'Erm Agreements',
             action: CAPABILITY_ACTIONS.EDIT,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Accounts Collection',
+            resource: 'Erm Agreements Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],

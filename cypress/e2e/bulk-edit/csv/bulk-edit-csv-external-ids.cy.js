@@ -13,8 +13,8 @@ const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userExternalIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,

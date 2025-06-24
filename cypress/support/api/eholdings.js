@@ -34,3 +34,33 @@ Cypress.Commands.add('getEholdingsProxiesViaAPI', () => {
     });
   });
 });
+
+Cypress.Commands.add('getKbsViaAPI', () => {
+  cy.okapiRequest({
+    path: 'eholdings/kb-credentials',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.data;
+  });
+});
+
+Cypress.Commands.add('getEHoldingsCustomLabelsForKbViaAPI', (credentialsId) => {
+  cy.okapiRequest({
+    path: `eholdings/kb-credentials/${credentialsId}/custom-labels`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.data;
+  });
+});
+
+Cypress.Commands.add('updateEHoldingsCustomLabelsForKbViaAPI', (credentialsId, labelsData) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `eholdings/kb-credentials/${credentialsId}/custom-labels`,
+    body: { data: labelsData },
+    additionalHeaders: {
+      'Content-Type': 'application/vnd.api+json',
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});

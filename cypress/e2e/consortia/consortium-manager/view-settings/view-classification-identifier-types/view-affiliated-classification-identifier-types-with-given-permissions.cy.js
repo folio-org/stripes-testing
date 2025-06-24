@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -139,7 +140,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user885.username, testData.user885.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           ConsortiumManagerApp.waitLoading();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);

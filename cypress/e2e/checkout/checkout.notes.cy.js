@@ -12,6 +12,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../support/constants';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Check out', () => {
   let testData;
@@ -22,6 +23,7 @@ describe('Check out', () => {
   };
   const note1 = { title: 'Note 1', details: 'This is Note 1' };
   const note2 = { title: 'Note 2', details: 'This is Note 2' };
+  const noteToCheck = { title: 'Note ', details: 'This is Note ' };
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -47,7 +49,14 @@ describe('Check out', () => {
         createdUserProperties.userId,
         instanceData.servicePoint.id,
       );
-      cy.login(testData.username, testData.password);
+      cy.login(testData.username, testData.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
+      cy.waitForAuthRefresh(() => {
+        cy.reload();
+        UsersSearchPane.waitLoading();
+      });
     });
   });
 
@@ -89,11 +98,11 @@ describe('Check out', () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
       // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(note1);
+      CheckOutActions.checkUserNote(noteToCheck);
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
       // Modal window "Note for patron" with the Note 2 is displayed
-      CheckOutActions.checkUserNote(note2);
+      CheckOutActions.checkUserNote(noteToCheck);
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
       // Open user Details
@@ -118,11 +127,11 @@ describe('Check out', () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
       // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(note1);
+      CheckOutActions.checkUserNote(noteToCheck);
       // Click on the "Close" button.
       CheckOutActions.closeNote();
       // Modal window "Note for patron" with the Note 2 is displayed.
-      CheckOutActions.checkUserNote(note2);
+      CheckOutActions.checkUserNote(noteToCheck);
       // Click on the "Close" button.
       CheckOutActions.closeNote();
       // Input any valid item barcode in input field at "Scan items" pane → Click "Enter" button

@@ -26,13 +26,21 @@ describe('eHoldings', () => {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          EHoldingsTitlesSearch.waitLoading();
+        });
       });
     });
 
     after('Deleting user, data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
-      EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
+      EHoldingsPackages.getPackageViaApi(testData.customPackageName).then(({ body }) => {
+        if (body.data && body.data[0]) {
+          EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
+        }
+      });
     });
 
     it(
@@ -46,9 +54,9 @@ describe('eHoldings', () => {
           EHoldingsPackageView.waitLoading();
           EHoldingsPackageView.verifyPackageName(testData.customPackageName);
           EHoldingsPackageView.verifyPackageType('Custom');
-          EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
           EHoldingsPackageView.close();
           EHoldingSearch.switchToPackages();
+          EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true, 60);
           EHoldingsPackagesSearch.byName(testData.customPackageName);
           EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
         });

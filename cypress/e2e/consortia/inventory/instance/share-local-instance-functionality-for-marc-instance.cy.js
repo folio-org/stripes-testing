@@ -74,7 +74,7 @@ describe('Inventory', () => {
         InventoryInstance.verifyShareInstanceModal(marcFile.title);
         InventoryInstance.closeShareInstanceModal();
         InventoryInstance.clickShareLocalInstanceButton();
-        InventoryInstance.shareInstance();
+        InventoryInstance.clickShareInstance();
         InventoryInstance.verifyCalloutMessage(
           `Local instance ${marcFile.title} has been successfully shared`,
         );

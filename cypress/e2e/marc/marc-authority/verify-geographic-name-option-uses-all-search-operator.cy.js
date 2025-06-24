@@ -12,7 +12,7 @@ describe('MARC', () => {
     const testData = {
       searchOptions: ['Keyword', 'Geographic name'],
       recordType: 'Authorized',
-      marcValue: 'C584445 Greenwich Village (New York, N.Y.)--Maps',
+      marcValue: 'C584445 Greenwich Village (New York, N.Y.) Maps',
       searchQueries: [
         'Greenwich Village (New York, N.Y.) Maps',
         'Maps Greenwich New York Village (N.Y.)',
@@ -82,6 +82,7 @@ describe('MARC', () => {
       { tags: ['criticalPath', 'spitfire', 'C584445'] },
       () => {
         // execute search by "Keyword" option
+        MarcAuthorities.switchToSearch();
         testData.searchOptions.forEach((option) => {
           testData.searchQueries.forEach((query) => {
             MarcAuthorities.searchByParameter(option, query);

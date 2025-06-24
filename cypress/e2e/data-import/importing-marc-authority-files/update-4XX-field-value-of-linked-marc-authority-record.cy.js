@@ -159,14 +159,14 @@ describe('Data Import', () => {
           });
         });
       });
-      cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      }).then(() => {
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+          InventoryInstances.waitContentLoading();
         });
-        cy.reload();
-        InventoryInstances.waitContentLoading();
-      }, 20_000).then(() => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -179,9 +179,7 @@ describe('Data Import', () => {
           linkingTagAndValue.tag,
           linkingTagAndValue.rowIndex,
         );
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
 
@@ -196,15 +194,14 @@ describe('Data Import', () => {
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
           cy.reload();
           MarcAuthorities.waitLoading();
-        }, 20_000);
-        MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
+        });
       });
     });
 
@@ -229,7 +226,7 @@ describe('Data Import', () => {
       'C374187 Update "4XX" field value (edit not controlling field) of linked "MARC Authority" record. (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C374187'] },
       () => {
-        cy.wait(1000);
+        MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.selectAllRecords();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record selected');
         MarcAuthorities.exportSelected();

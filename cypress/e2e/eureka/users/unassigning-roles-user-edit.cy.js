@@ -5,7 +5,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -13,10 +12,10 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      roleAName: `Auto Role A C627439 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C627439 ${getRandomPostfix()}`,
-      roleCName: `Auto Role C C627439 ${getRandomPostfix()}`,
-      roleDName: `Auto Role D C627439 ${getRandomPostfix()}`,
+      roleAName: `AT_C627439_UserRole_A_${getRandomPostfix()}`,
+      roleBName: `AT_C627439_UserRole_B_${getRandomPostfix()}`,
+      roleCName: `AT_C627439_UserRole_C_${getRandomPostfix()}`,
+      roleDName: `AT_C627439_UserRole_D_${getRandomPostfix()}`,
     };
 
     const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
@@ -88,18 +87,21 @@ describe('Eureka', () => {
           testData.roleDId,
         ]);
       }
-      cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-        waiter: UsersCard.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.tempUser.username, testData.tempUser.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        Users.waitLoading();
+        cy.reload();
+        Users.waitLoading();
+      }, 20_000);
+      UsersSearchPane.searchByUsername(testData.userA.username);
+      cy.wait(2000);
+      UsersSearchPane.selectUserFromList(testData.userA.username);
+      UsersCard.waitLoading();
     });
 
     after('Delete roles, users', () => {
       cy.getAdminToken();
-      cy.deleteCapabilitiesFromRoleApi(testData.roleAId);
-      cy.deleteCapabilitiesFromRoleApi(testData.roleBId);
-      cy.deleteCapabilitySetsFromRoleApi(testData.roleAId);
-      cy.deleteCapabilitySetsFromRoleApi(testData.roleCId);
       cy.deleteAuthorizationRoleApi(testData.roleAId);
       cy.deleteAuthorizationRoleApi(testData.roleBId);
       cy.deleteAuthorizationRoleApi(testData.roleCId);
@@ -135,7 +137,9 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNamesOrdered([testData.roleAName, testData.roleCName]);
         UserEdit.saveAndClose();
         UserEdit.checkUserEditPaneOpened(false);
+        UsersCard.waitLoading();
         UsersCard.close();
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(testData.userA.username);
         UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('2');
@@ -169,7 +173,9 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        UsersSearchPane.searchByKeywords(testData.userA.userId);
+        UsersCard.close();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchPane.searchByKeywords(testData.userA.username);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('2');
         UserEdit.openEdit();
@@ -180,18 +186,13 @@ describe('Eureka', () => {
         UserEdit.verifyUserRolesRowsCount(2);
         UserEdit.unassignAllRoles();
         UserEdit.verifyUserRolesAccordionEmpty();
-        UserEdit.saveAndClose();
-
-        // revert the workaround after UIU-3179 is done
-        UsersSearchPane.resetAllFilters();
         cy.intercept('GET', '/roles/users*').as('rolesCall');
-        UsersSearchPane.searchByKeywords(testData.userA.username);
-        cy.wait(2000);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
+        UserEdit.saveUserEditForm();
         cy.wait('@rolesCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);
           expect(call.response.body.userRoles).to.have.lengthOf(0);
         });
+        UsersCard.waitLoading();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitLoading();

@@ -16,8 +16,8 @@ const item = {
   barcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyValueColumn();
         QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
         QueryModal.verifyQueryAreaContent(
-          `(temporary_location.name == "${LOCATION_NAMES.ONLINE_UI}")`,
+          `(temporary_location.name == ${LOCATION_NAMES.ONLINE_UI})`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

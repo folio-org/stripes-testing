@@ -12,7 +12,7 @@ describe('Fees&Fines', () => {
         UsersOwners.createViaApi({ owner: uuid() }).then(({ id }) => {
           specialOwnerId = id;
         });
-        cy.visit(SettingsMenu.paymentsPath);
+        cy.loginAsAdmin({ path: SettingsMenu.paymentsPath, waiter: () => cy.wait(5000) });
       });
     });
     after(() => {

@@ -17,10 +17,10 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      centralRoleName: `C503005 Autotest Role ${randomPostfix} CentralOne`,
-      centralRoleName2: `C503005 Autotest Role ${randomPostfix} CentralTwo`,
-      collegeRoleName: `C503005 Autotest Role ${randomPostfix} CollegeOne`,
-      collegeRoleName2: `C503005 Autotest Role ${randomPostfix} CollegeTwo`,
+      centralRoleName: `AT_C503005_UserRole_${randomPostfix} CentralOne`,
+      centralRoleName2: `AT_C503005_UserRole_${randomPostfix} CentralTwo`,
+      collegeRoleName: `AT_C503005_UserRole_${randomPostfix} CollegeOne`,
+      collegeRoleName2: `AT_C503005_UserRole_${randomPostfix} CollegeTwo`,
       queryPostfix: '#$%',
       queryPrefix: '#$%*',
       queryMiddlePart: '$%*&^',

@@ -19,63 +19,63 @@ describe('Inventory', () => {
       searchItem: [
         {
           searchOption: 'Place of publication',
-          searchValue: 'Burlington, Massachusetts',
+          searchValue: 'Burlingtonautotwo, Massachusettsautotwo',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Burlington',
+          searchValue: 'Burlingtonautotwo',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Massachusetts',
+          searchValue: 'Massachusettsautotwo',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Burlington Massachusetts',
+          searchValue: 'Burlingtonautotwo Massachusettsautotwo',
         },
         {
           searchOption: 'Place of publication',
-          searchValue: 'Massachusetts, Burlington',
+          searchValue: 'Massachusettsautotwo, Burlingtonautotwo',
         },
         {
           searchOption: 'All',
-          searchValue: 'Burlington, Massachusetts',
+          searchValue: 'Burlingtonautotwo, Massachusettsautotwo',
         },
         {
           searchOption: 'All',
-          searchValue: 'Burlington',
+          searchValue: 'Burlingtonautotwo',
         },
         {
           searchOption: 'All',
-          searchValue: 'Massachusetts',
+          searchValue: 'Massachusettsautotwo',
         },
         {
           searchOption: 'All',
-          searchValue: 'Burlington Massachusetts',
+          searchValue: 'Burlingtonautotwo Massachusettsautotwo',
         },
         {
           searchOption: 'All',
-          searchValue: 'Massachusetts, Burlington',
+          searchValue: 'Massachusettsautotwo, Burlingtonautotwo',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Massachusetts, Burlington',
+          searchValue: 'publication.place=Massachusettsautotwo, Burlingtonautotwo',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Burlington',
+          searchValue: 'publication.place=Burlingtonautotwo',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Massachusetts',
+          searchValue: 'publication.place=Massachusettsautotwo',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Burlington Massachusetts',
+          searchValue: 'publication.place=Burlingtonautotwo Massachusettsautotwo',
         },
         {
           searchOption: 'Query search',
-          searchValue: 'publication.place=Massachusetts, Burlington',
+          searchValue: 'publication.place=Massachusettsautotwo, Burlingtonautotwo',
         },
       ],
       searchResult: 'C496185 Tabletop game design for video game designers',

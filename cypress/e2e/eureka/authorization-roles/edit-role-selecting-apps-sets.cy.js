@@ -8,10 +8,10 @@ describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C430262 ${getRandomPostfix()}`,
+        roleName: `AT_C430262_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
         originalApplications: ['app-platform-minimal', 'app-dcb'],
-        newApplication: 'app-erm-usage',
+        newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
@@ -59,40 +59,60 @@ describe('Eureka', () => {
           },
         ],
         newCapabilitySet: {
-          table: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Module Erm-Usage Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
+          table: CAPABILITY_TYPES.PROCEDURAL,
+          resource: 'UI-Finance',
+          action: CAPABILITY_ACTIONS.EXECUTE,
         },
         newCapabilitiesInSet: [
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Erm-Usage Enabled',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Budgets-Expense-Classes-Totals Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Expense-Classes Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Fiscal-Years Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Fiscal-Years Item',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Fund-Types Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         newCapabilities: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Aggregatorsettings Item',
-            action: CAPABILITY_ACTIONS.EDIT,
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Module Finance Enabled',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Ermusageharvester Periodic',
+            resource: 'Invoice Item Cancel',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 1,
+            Procedural: 1,
           },
           capabilities: {
             Settings: 1,
-            Procedural: 2,
-            Data: 4,
+            Procedural: 3,
+            Data: 5,
           },
         },
-        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.PROCEDURAL],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
         capabSetIds: [],
         capabIds: [],
       };

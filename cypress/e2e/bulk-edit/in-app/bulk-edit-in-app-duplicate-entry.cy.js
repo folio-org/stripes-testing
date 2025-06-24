@@ -26,8 +26,8 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.bulkEditCsvView.gui, permissions.uiUsersView.gui]).then(
         (userProperties) => {

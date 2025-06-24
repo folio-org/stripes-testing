@@ -29,31 +29,7 @@ Cypress.Commands.add(
       cy.clearCookies({ domain: null }).then(() => {
         cy.visit(visitPath.path);
 
-        cy.get('img').then(() => {
-          cy.wait(1000).then(() => {
-            cy.get('body').then(($body) => {
-              if ($body.find('select').length > 0) {
-                cy.getAdminToken();
-                cy.getConsortiaStatus().then((consortiaData) => {
-                  const targetTenantId = Tenant.get();
-                  cy.setTenant(consortiaData.centralTenantId);
-                  cy.getAllTenants().then((userTenants) => {
-                    const targetTenant = userTenants.filter(
-                      (element) => element.id === targetTenantId,
-                    )[0];
-                    cy.setTenant(targetTenantId);
-                    cy.do(Select('Tenant/Library').choose(targetTenant.name));
-                    cy.wait(500);
-                    cy.do(Button('Continue').click());
-                    cy.wait(1000);
-                  });
-                });
-              } else {
-                cy.log('No tenant/library select found');
-              }
-            });
-          });
-        });
+        cy.selectTenantIfDropdown();
 
         cy.do([
           TextInput('Username').fillIn(username),
@@ -121,7 +97,10 @@ Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
 
 Cypress.Commands.add(
   'checkSsoButton',
-  (visitPath = { path: '/', waiter: () => cy.expect(Heading(including('Welcome')).exists()) }) => {
+  (
+    isEureka,
+    visitPath = { path: '/', waiter: () => cy.expect(Heading(including('Welcome')).exists()) },
+  ) => {
     // We use a behind-the-scenes method of ensuring we are logged
     // out, rather than using the UI, in accordance with the Best
     // Practices guidance at
@@ -130,7 +109,83 @@ Cypress.Commands.add(
 
     cy.visit(visitPath.path);
 
-    // Verify that SSO button displayed
-    cy.expect([Button('Log in via SSO').exists()]);
+    if (!isEureka) {
+      // Verify that SSO button displayed for okapi tenants
+      cy.expect([Button('Log in via SSO').exists()]);
+      // refresh page and check SSO again
+      cy.reload(true);
+      cy.expect([Button('Log in via SSO').exists()]);
+    } else {
+      // Verify that SSO button displayed for eureka tenants
+      cy.get('img').then(() => {
+        cy.wait(1000).then(() => {
+          cy.get('body').then(($body) => {
+            if ($body.find('select').length > 0) {
+              cy.getAdminToken();
+              cy.getConsortiaStatus().then((consortiaData) => {
+                const targetTenantId = Tenant.get();
+                cy.setTenant(consortiaData.centralTenantId);
+                cy.getAllTenants().then((userTenants) => {
+                  const targetTenant = userTenants.filter(
+                    (element) => element.id === targetTenantId,
+                  )[0];
+                  cy.setTenant(targetTenantId);
+                  cy.do(Select('Tenant/Library').choose(targetTenant.name));
+                  cy.wait(500);
+                  cy.do(Button('Continue').click());
+                  cy.wait(1000);
+                });
+              });
+            } else {
+              cy.log('No tenant/library select found');
+            }
+          });
+        });
+      });
+      // check the button
+      cy.xpath("//a[contains(@id, 'saml') or contains(@id, 'sso')]").should('be.visible');
+    }
   },
 );
+
+Cypress.Commands.add(
+  'openLocateUiPage',
+  (
+    visitPath = {
+      path: Cypress.env('LOCATE_HOST'),
+      waiter: () => cy.expect(
+        Heading(including('Choose a filter or enter a search query to show results.')).exists(),
+      ),
+    },
+  ) => {
+    cy.visit(visitPath.path);
+  },
+);
+
+Cypress.Commands.add('selectTenantIfDropdown', () => {
+  cy.get('img').then(() => {
+    cy.wait(1000).then(() => {
+      cy.get('body').then(($body) => {
+        if ($body.find('select').length > 0) {
+          cy.getAdminToken();
+          cy.getConsortiaStatus().then((consortiaData) => {
+            const targetTenantId = Tenant.get();
+            cy.setTenant(consortiaData.centralTenantId);
+            cy.getAllTenants().then((userTenants) => {
+              const targetTenant = userTenants.filter(
+                (element) => element.id === targetTenantId,
+              )[0];
+              cy.setTenant(targetTenantId);
+              cy.do(Select('Tenant/Library').choose(targetTenant.name));
+              cy.wait(500);
+              cy.do(Button('Continue').click());
+              cy.wait(1000);
+            });
+          });
+        } else {
+          cy.log('No tenant/library select found');
+        }
+      });
+    });
+  });
+});

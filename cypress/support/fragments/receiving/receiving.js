@@ -1,23 +1,23 @@
 import { HTML, including } from '@interactors/html';
 import {
-  Button,
   Accordion,
+  Button,
   Checkbox,
-  TextField,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  MultiColumnList,
-  Select,
-  Pane,
   Link,
-  Section,
   Modal,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
   PaneContent,
   SearchField,
+  Section,
+  Select,
+  TextField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
-import ReceivingDetails from './receivingDetails';
 import ExportSettingsModal from './modals/exportSettingsModal';
+import ReceivingDetails from './receivingDetails';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
@@ -268,7 +268,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      selectLocationsModal.find(MultiColumnListCell(institutionId)).click(),
+      selectLocationsModal
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded
@@ -325,7 +327,7 @@ export default {
   },
 
   checkIsPiecesCreated: (title) => {
-    filterOpenReceiving();
+    cy.wait(1000);
     cy.expect(
       Pane('Receiving')
         .find(MultiColumnList({ id: 'receivings-list' }))

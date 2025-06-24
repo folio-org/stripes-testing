@@ -39,7 +39,9 @@ describe('MARC', () => {
 
       after('Deleting data', () => {
         cy.getAdminToken();
-        MarcAuthority.deleteViaAPI(createdAuthorityID[0]);
+        createdAuthorityID.forEach((id) => {
+          MarcAuthority.deleteViaAPI(id);
+        });
         Users.deleteViaApi(user.userId);
       });
 
@@ -50,8 +52,8 @@ describe('MARC', () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
           MarcAuthorityBrowse.searchBy('Uniform title', 'Cartoons & Comics');
-          MarcAuthorities.checkCellValueIsExists(6, 2, 'Cartoons & Comics');
-          MarcAuthorities.checkHeadingReferenceColumnValueIsBold(6);
+          MarcAuthorities.checkCellValueIsExists(5, 2, 'Cartoons & Comics');
+          MarcAuthorities.checkHeadingReferenceColumnValueIsBold(5);
         },
       );
     });

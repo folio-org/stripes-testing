@@ -8,12 +8,12 @@ describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C430265 ${getRandomPostfix()}`,
+        roleName: `AT_C430265_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
+        updatedRoleName: `AT_C430265_UserRole_${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
         originalApplications: ['app-acquisitions', 'app-dcb'],
-        newApplication: 'app-erm-usage',
+        newApplication: 'app-platform-minimal',
         originalCapabilities: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,

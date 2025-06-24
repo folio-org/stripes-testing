@@ -25,7 +25,7 @@ const actionsButton = Button({ id: 'available-item-actions-button' });
 const checkOutNotesButton = Button('Check out notes');
 
 function addPatron(userName) {
-  cy.do(Button({ id: 'clickable-find-user' }).click());
+  cy.do(Button({ id: 'patronLookup' }).click());
   SelectUser.searchUser(userName);
   SelectUser.selectUserFromList(userName);
 }
@@ -259,9 +259,11 @@ export default {
   },
   deleteNote: () => {
     cy.do(Button('Delete note').click());
+    cy.wait(1000);
   },
   closeNote: () => {
     cy.do(Button('Close').click());
+    cy.wait(1000);
   },
   checkNoteModalNotDisplayed: () => {
     cy.expect(noteModal.absent());

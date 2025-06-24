@@ -66,7 +66,7 @@ describe('MARC', () => {
             testData.preconditionUserId = userProperties.userId;
 
             // make sure there are no duplicate authority records in the system
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380530*');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380530');
 
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -82,9 +82,13 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.waitContentLoading();
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin();
+              cy.visit(TopMenu.inventoryPath);
+              InventoryInstances.waitContentLoading();
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             // wait for detail view to be fully loaded

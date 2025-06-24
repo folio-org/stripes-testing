@@ -25,6 +25,11 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
+let identifiersQueryFileName;
+let matchedRecordsFileName;
+let previewFileName;
+let changedRecordsFileName;
+let errorsFromCommittingFileName;
 const randomNumberForTitles = getRandomPostfix();
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -111,8 +116,8 @@ const marcInstanceBody = {
   _actionType: 'create',
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
@@ -158,6 +163,13 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
       InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
+      FileManager.deleteFileFromDownloadsByMask(
+        identifiersQueryFileName,
+        matchedRecordsFileName,
+        previewFileName,
+        errorsFromCommittingFileName,
+        changedRecordsFileName,
+      );
     });
 
     it(
@@ -186,15 +198,15 @@ describe('bulk-edit', () => {
           const interceptedUuid = interception.request.url.match(
             /bulk-operations\/([a-f0-9-]+)\/preview/,
           )[1];
-          const identifiersQueryFilename = `*Query-${interceptedUuid}.csv`;
-          cy.wrap(identifiersQueryFilename).as('identifiersQueryFilename');
-          const matchedRecordsFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
+          identifiersQueryFileName = `*Query-${interceptedUuid}.csv`;
+          cy.wrap(identifiersQueryFileName).as('identifiersQueryFileName');
+          matchedRecordsFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
           cy.wrap(matchedRecordsFileName).as('matchedRecordsFileName');
-          const previewFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
+          previewFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
           cy.wrap(previewFileName).as('previewFileName');
-          const changedRecordsFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
+          changedRecordsFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
           cy.wrap(changedRecordsFileName).as('changedRecordsFileName');
-          const errorsFromCommittingFileName = `*-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
+          errorsFromCommittingFileName = `*-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
           cy.wrap(errorsFromCommittingFileName).as('errorsFromCommittingFileName');
         });
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
@@ -241,8 +253,8 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadPreview();
         cy.get('@previewFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [
-            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
-            `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true\n`,
+            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false`,
+            `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true`,
           ]);
         });
         BulkEditActions.commitChanges();
@@ -256,13 +268,13 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadErrors();
         cy.get('@changedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [
-            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
+            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false`,
           ]);
         });
         cy.get('@changedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(
             fileName,
-            [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`],
+            [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false`],
             false,
           );
         });
@@ -326,7 +338,7 @@ describe('bulk-edit', () => {
         BulkEditLogs.verifyLogsRowActionWithoutMatchingErrorWithCommittingErrorsQuery();
 
         BulkEditLogs.downloadQueryIdentifiers();
-        cy.get('@identifiersQueryFilename').then((fileName) => {
+        cy.get('@identifiersQueryFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
           FileManager.deleteFileFromDownloadsByMask(fileName);
         });
@@ -340,8 +352,8 @@ describe('bulk-edit', () => {
         BulkEditLogs.downloadFileWithProposedChanges();
         cy.get('@previewFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [
-            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
-            `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true\n`,
+            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false`,
+            `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true`,
           ]);
           FileManager.deleteFileFromDownloadsByMask(fileName);
         });
@@ -349,11 +361,11 @@ describe('bulk-edit', () => {
         BulkEditLogs.downloadFileWithUpdatedRecords();
         cy.get('@changedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [
-            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
+            `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false`,
           ]);
           ExportFile.verifyFileIncludes(
             fileName,
-            [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`],
+            [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false`],
             false,
           );
           FileManager.deleteFileFromDownloadsByMask(fileName);

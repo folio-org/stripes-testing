@@ -14,6 +14,7 @@ const team = {
   Thunderjet: 8,
   Vega: 9,
   Volaris: 13,
+  Citation: 18,
   Corsair: 19,
   Eureka: 21,
 };

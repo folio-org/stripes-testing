@@ -57,6 +57,7 @@ describe('Settings: Tenant', () => {
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.verifyPageTitle('Settings - FOLIO');
+      TenantPane.verifyIconInTenantOption();
       TenantPane.goToTenantTab();
       TenantPane.verifyLocationSetupItems();
       TenantPane.verifyGeneralItems(false);

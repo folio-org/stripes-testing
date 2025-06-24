@@ -15,51 +15,60 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 let user;
+let instanceUUIDsFileName;
+let matchedRecordsFileName;
+let previewFileName;
+let errorsFromCommittingFileName;
+let changedRecordsFileName;
+let folioItem;
+let marcInstance;
+let marcInstanceFields;
 const notes = {
   reproductionNote: 'Instance reproduction note',
   reproductionNoteStaffOnly: 'Instance reproduction note Staff only',
 };
-const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
-const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
-const errorsFromCommittingFileName =
-  BulkEditFiles.getErrorsFromCommittingFileName(instanceUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
-const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: `folioItem${getRandomPostfix()}`,
-};
-const marcInstance = {
-  title: `testBulkEdit_${getRandomPostfix()}`,
-};
-const marcInstanceFields = [
-  {
-    tag: '008',
-    content: QuickMarcEditor.defaultValid008Values,
-  },
-  {
-    tag: '245',
-    content: `$a ${marcInstance.title}`,
-    indicators: ['1', '0'],
-  },
-  {
-    tag: '533',
-    content: `$a ${notes.reproductionNote}`,
-    indicators: ['\\', '\\'],
-  },
-];
 const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
-describe('bulk-edit', () => {
-  describe(
-    'in-app approach',
-    {
-      retries: {
-        runMode: 1,
-      },
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
     },
-    () => {
+  },
+  () => {
+    describe('in-app approach', () => {
       beforeEach('create test data', () => {
+        instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
+        matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+        previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
+        errorsFromCommittingFileName =
+          BulkEditFiles.getErrorsFromCommittingFileName(instanceUUIDsFileName);
+        changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
+        folioItem = {
+          instanceName: `AT_C466315_FolioInstance_${getRandomPostfix()}`,
+          itemBarcode: `folioItem${getRandomPostfix()}`,
+        };
+        marcInstance = {
+          title: `AT_C466315_MarcInstance_${getRandomPostfix()}`,
+        };
+        marcInstanceFields = [
+          {
+            tag: '008',
+            content: QuickMarcEditor.defaultValid008Values,
+          },
+          {
+            tag: '245',
+            content: `$a ${marcInstance.title}`,
+            indicators: ['1', '0'],
+          },
+          {
+            tag: '533',
+            content: `$a ${notes.reproductionNote}`,
+            indicators: ['\\', '\\'],
+          },
+        ];
+
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
@@ -204,6 +213,6 @@ describe('bulk-edit', () => {
           InventoryInstance.checkInstanceNotes('Reproduction note', notes.reproductionNote);
         },
       );
-    },
-  );
-});
+    });
+  },
+);

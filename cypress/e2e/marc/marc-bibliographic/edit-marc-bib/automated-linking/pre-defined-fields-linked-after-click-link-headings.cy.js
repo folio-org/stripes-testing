@@ -185,6 +185,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -203,9 +207,8 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1000);
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -213,6 +216,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -284,9 +291,8 @@ describe('MARC', () => {
             cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
-            QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.closeAllCallouts();
             rowIndexOfLinkedFields.forEach((linkedField) => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkedField);
             });

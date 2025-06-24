@@ -6,7 +6,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
-describe('ui-organizations: EDI convention in Organization Integration', () => {
+describe('Organizations', () => {
   let userId;
   const organization = {
     ...newOrganization.defaultUiOrganizations,

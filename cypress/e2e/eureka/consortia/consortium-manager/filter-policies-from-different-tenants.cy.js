@@ -19,10 +19,10 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      centralPolicyName: `C514962 Autotest Policy ${randomPostfix} CentralOne`,
-      centralPolicyName2: `C514962 Autotest Policy ${randomPostfix} CentralTwo`,
-      collegePolicyName: `C514962 Autotest Policy ${randomPostfix} CollegeOne`,
-      collegePolicyName2: `C514962 Autotest Policy ${randomPostfix} CollegeTwo`,
+      centralPolicyName: `AT_C514962_AuthPolicy_${randomPostfix} CentralOne`,
+      centralPolicyName2: `AT_C514962_AuthPolicy_${randomPostfix} CentralTwo`,
+      collegePolicyName: `AT_C514962_AuthPolicy_${randomPostfix} CollegeOne`,
+      collegePolicyName2: `AT_C514962_AuthPolicy_${randomPostfix} CollegeTwo`,
       queryPostfix: '#$%',
       queryPrefix: '#$%*',
       queryMiddlePart: '$%*&^',

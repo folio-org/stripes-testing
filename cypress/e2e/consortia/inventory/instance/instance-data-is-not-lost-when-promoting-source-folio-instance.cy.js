@@ -158,7 +158,7 @@ describe('Inventory', () => {
         );
 
         InventoryInstance.clickShareLocalInstanceButton();
-        InventoryInstance.shareInstance();
+        InventoryInstance.clickShareInstance();
         InventoryInstance.verifyCalloutMessage(
           `Local instance ${instanceData.instanceTitle} has been successfully shared`,
         );

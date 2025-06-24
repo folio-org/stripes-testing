@@ -24,7 +24,7 @@ let fileContent = '';
 
 // Test cannot be automated after test case update
 describe.skip('bulk-edit', () => {
-  describe('in-app approach', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,

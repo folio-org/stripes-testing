@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
 
@@ -44,14 +45,6 @@ export default {
     }
   },
 
-  getPreviewOfProposedChangesFileName(fileName, isDateIncluded = false) {
-    if (isDateIncluded) {
-      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
-    } else {
-      return `*-Updates-Preview-CSV-${fileName}`;
-    }
-  },
-
   getErrorsFromCommittingFileName(fileName, isDateIncluded = false) {
     if (isDateIncluded) {
       return `${todayDate}-Committing-changes-Errors-${fileName}`;
@@ -66,6 +59,26 @@ export default {
     } else {
       return `*-Matching-Records-Errors-${fileName}`;
     }
+  },
+
+  getAllDownloadedFileNames(fileName, isDateIncluded = false) {
+    return {
+      matchedRecordsCSV: this.getMatchedRecordsFileName(fileName, isDateIncluded),
+      previewCSV: this.getPreviewFileName(fileName, isDateIncluded),
+      previewMarc: this.getPreviewMarcFileName(fileName, isDateIncluded),
+      changedRecordsCSV: this.getChangedRecordsFileName(fileName, isDateIncluded),
+      changedRecordsMarc: this.getChangedRecordsMarcFileName(fileName, isDateIncluded),
+      errorsFromCommitting: this.getErrorsFromCommittingFileName(fileName, isDateIncluded),
+      errorsFromMatching: this.getErrorsFromMatchingFileName(fileName, isDateIncluded),
+    };
+  },
+
+  deleteAllDownloadedFiles(fileNames) {
+    const fileNamesList = Object.values(fileNames);
+
+    fileNamesList.forEach((fileName) => {
+      FileManager.deleteFileFromDownloadsByMask(fileName);
+    });
   },
 
   verifyMatchedResultFileContent(
@@ -262,94 +275,38 @@ export default {
   },
 
   verifyCSVFileRowsRecordsNumber(fileName, recordsNumber) {
-    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
-      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
-        const values = this.getValuesFromValidCSVFile(actualContent);
-
-        expect(values).to.have.length(recordsNumber);
-      });
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
+      expect(jsonDataArray).to.have.length(recordsNumber);
     });
   },
 
   verifyValueInRowByUUID(filePath, uuidHeader, uuidValue, targetHeader, expectedValue) {
-    return FileManager.findDownloadedFilesByMask(filePath).then((downloadedFilenames) => {
-      FileManager.readFile(downloadedFilenames[0]).then((fileContent) => {
-        // Regular expression to split on commas that are not inside quotes
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-        const rows = fileContent.split('\n').filter((row) => row.trim() !== '');
-        const headers = rows
-          .shift()
-          .split(regex)
-          .map((h) => h.replace(/^"|"$/g, '').trim());
-        // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-        const uuidHeaderIndex = headers.indexOf(uuidHeader);
-        const targetHeaderIndex = headers.indexOf(targetHeader);
+    return FileManager.convertCsvToJson(filePath).then((jsonDataArray) => {
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
 
-        if (uuidHeaderIndex === -1) {
-          throw new Error(`UUID header "${uuidHeader}" not found in the file.`);
-        }
-        if (targetHeaderIndex === -1) {
-          throw new Error(`Target header "${targetHeader}" not found in the file.`);
-        }
+      const targetRow = jsonDataArray.find((row) => row[uuidHeader] === uuidValue);
 
-        // Find the target row by UUID
-        const targetRow = rows.find((row) => {
-          const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
-          return cells[uuidHeaderIndex] === uuidValue;
-        });
+      expect(targetRow).to.exist;
 
-        // eslint-disable-next-line no-unused-expressions
-        expect(targetRow).to.exist;
+      const actualValue = targetRow[targetHeader];
 
-        // Check the value under the specified header in the found row
-        const cells = targetRow.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
-        const actualValue = cells[targetHeaderIndex];
-
-        expect(actualValue).to.equal(expectedValue);
-      });
+      expect(actualValue).to.equal(expectedValue);
     });
   },
 
   verifyHeaderValueInRowByIdentifier(filePath, identifierHeader, identifierValue, targetValues) {
-    return FileManager.findDownloadedFilesByMask(filePath).then((downloadedFilenames) => {
-      FileManager.readFile(downloadedFilenames[0]).then((fileContent) => {
-        // Regular expression to split on commas that are not inside quotes
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-        const rows = fileContent.split('\n').filter((row) => row.trim() !== '');
-        const headers = rows
-          .shift()
-          .split(regex)
-          .map((h) => h.replace(/^"|"$/g, '').trim());
-        // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-        const identifierHeaderIndex = headers.indexOf(identifierHeader);
+    return FileManager.convertCsvToJson(filePath).then((jsonDataArray) => {
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
 
-        if (identifierHeaderIndex === -1) {
-          throw new Error(`Header "${identifierHeader}" not found in the file.`);
-        }
+      const targetRow = jsonDataArray.find((row) => row[identifierHeader] === identifierValue);
 
-        // Find the target row by UUID
-        const targetRow = rows.find((row) => {
-          const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
-          return cells[identifierHeaderIndex] === identifierValue;
-        });
+      expect(targetRow).to.exist;
 
-        // eslint-disable-next-line no-unused-expressions
-        expect(targetRow).to.exist;
+      targetValues.forEach((pair) => {
+        const actualValue = targetRow[pair.header];
 
-        // Split targetRow to cells to facilitate value extraction
-        const cells = targetRow.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
-
-        targetValues.forEach((pair) => {
-          const targetHeaderIndex = headers.indexOf(pair.header);
-
-          if (targetHeaderIndex === -1) {
-            throw new Error(`Target header "${pair.header}" not found in the file.`);
-          }
-
-          const actualValue = cells[targetHeaderIndex];
-
-          expect(actualValue).to.equal(pair.value);
-        });
+        expect(actualValue).to.equal(pair.value);
       });
     });
   },

@@ -19,54 +19,54 @@ describe('Inventory', () => {
         {
           instanceTitle: 'C466145 Search by Classification Instance 1 - Additional Dewey',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-          classificationValue: '598.099',
+          classificationValue: '598.099466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 2 - Canadian Classification',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.CANADIAN_CLASSIFICATION,
-          classificationValue: 'HT154',
+          classificationValue: 'HT154466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 6 - LC (local)',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
-          classificationValue: 'DD259.4 .B527 1973',
+          classificationValue: 'DD259.4 .B527 1973466145',
         },
         {
           instanceTitle:
             'C466145 Search by Classification Instance 7 - National Agricultural Library',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.NATIONAL_AGRICULTURAL_LIBRARY,
-          classificationValue: 'HD3492.H8',
+          classificationValue: 'HD3492.H8466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 9 - SUDOC',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.SUDOC,
-          classificationValue: 'L37.s:Oc1/2/991',
+          classificationValue: 'L37.s:Oc1/2/991466145',
         },
       ],
       marcRecordsTitlesAndClassifications: [
         {
           instanceTitle: 'C466145 Search by Classification Instance 3 - Dewey',
-          classificationValue: '598.0994',
+          classificationValue: '598.0994466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 4 - GDC',
-          classificationValue: 'HEU/G74.3C49',
+          classificationValue: 'HEU/G74.3C49466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 5 - LC',
-          classificationValue: 'QS 11 .GA1 E53 2005',
+          classificationValue: 'QS 11 .GA1 E53 2005466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 8 - NLM',
-          classificationValue: 'SB945.A5',
+          classificationValue: 'SB945.A5466145',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 10 - UDC ',
-          classificationValue: '631.321:631.411.3',
+          classificationValue: '631.321:631.411.3466145',
         },
       ],
       classificationOption: 'Classification, normalized',
-      localInstnaceClassificationValue: 'VP000321',
+      localInstnaceClassificationValue: 'VP000321466145',
       instanceTitleWithLocalClassification: 'C466145 Search by Classification Instance 11 - Local',
     };
     const marcFile = {

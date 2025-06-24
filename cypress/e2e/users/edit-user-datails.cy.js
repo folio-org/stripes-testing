@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import Permissions from '../../support/dictionary/permissions';
+import Modals from '../../support/fragments/modals';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -60,7 +61,7 @@ describe('Users', () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
     UserEdit.editUserDetails(testData.editUser);
-    UserEdit.confirmChangingUserType();
+    Modals.confirmModalIfAny();
     UserEdit.saveAndClose();
     UsersCard.openExtendedInformationAccordion();
     UsersCard.openContactInformationAccordion();

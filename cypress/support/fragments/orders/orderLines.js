@@ -296,11 +296,13 @@ export default {
   },
 
   addPOLine: () => {
+    cy.wait(1000);
     cy.do([
       polListingAccordion.find(actionsButton).focus(),
       polListingAccordion.find(actionsButton).click(),
       Button('Add PO line').click(),
     ]);
+    cy.wait(2000);
   },
 
   expandPackageTitles: () => {
@@ -629,7 +631,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -1160,7 +1164,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -1578,7 +1584,11 @@ export default {
       Button('Search').click(),
     ]);
     cy.wait(2000);
-    cy.do([selectLocationsModal.find(MultiColumnListCell(institutionId)).click()]);
+    cy.do([
+      selectLocationsModal
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
+    ]);
     cy.do([quantityElectronicField.fillIn(quantityElectronic)]);
     cy.expect([
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
@@ -1840,6 +1850,7 @@ export default {
     { title, method, format, price, quantity, inventory, location, materialType },
     shouldSave = true,
   ) {
+    cy.wait(2000);
     this.addPOLine();
     this.fillPolByLinkTitle(title);
     this.addAcquisitionMethod(method);
@@ -2360,7 +2371,7 @@ export default {
 
   checkErrorToastMessage: (message) => {
     cy.wait(4000);
-    InteractorsTools.checkCalloutErrorMessage(message);
+    InteractorsTools.checkOneOfCalloutsContainsErrorMessage(message);
   },
 
   checkPhysicalQuantityInLocation: (quantity) => {

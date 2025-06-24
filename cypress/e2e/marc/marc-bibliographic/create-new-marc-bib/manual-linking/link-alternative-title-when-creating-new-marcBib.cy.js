@@ -35,27 +35,27 @@ describe('MARC', () => {
             tag: '130',
             content: '',
             boxFourth:
-              '$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english',
+              '$a C422127 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFifth: '',
-            boxSixth: '$0 http://id.loc.gov/authorities/names/n84801249',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84801249422127',
             boxSeventh: '',
             searchOption: 'Uniform title',
             marcValue:
-              'C380727 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
+              'C422127 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
             valueAfterSave:
-              'C380727 Edinburgh tracts in mathematics and mathematical physics english',
+              'C422127 Edinburgh tracts in mathematics and mathematical physics english',
           },
           {
             rowIndex: 6,
             tag: '240',
             content: '$9 test123',
-            boxFourth: '$a C380727 Hosanna Bible',
+            boxFourth: '$a C422127 Hosanna Bible',
             boxFifth: '',
-            boxSixth: '$0 http://id.loc.gov/authorities/names/n99036055',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n99036055422127',
             boxSeventh: '',
             searchOption: 'Name-title',
-            marcValue: 'C380727 Abraham, Angela, 1958- C380727 Hosanna Bible',
-            valueAfterSave: 'C380727 Hosanna Bible',
+            marcValue: 'C422127 Abraham, Angela, 1958- C422127 Hosanna Bible',
+            valueAfterSave: 'C422127 Hosanna Bible',
           },
         ];
 
@@ -63,7 +63,7 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'marcAuthFileForC380727.mrc',
+            marc: 'marcAuthFileForC422127.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 3,
@@ -76,7 +76,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380727');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422127');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -190,10 +190,10 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $0 http://id.loc.gov/authorities/names/n84801249 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422127 Edinburgh tracts in mathematics and mathematical physics $l english $0 http://id.loc.gov/authorities/names/n84801249422127 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380727 Hosanna Bible $0 http://id.loc.gov/authorities/names/n99036055 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422127 Hosanna Bible $0 http://id.loc.gov/authorities/names/n99036055422127 $9`,
             );
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

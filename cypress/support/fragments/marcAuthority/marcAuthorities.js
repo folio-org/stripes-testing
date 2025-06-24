@@ -31,6 +31,8 @@ import {
   including,
   not,
   or,
+  matching,
+  MultiColumnListHeader,
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -62,9 +64,23 @@ const buttonExportSelected = authorityActionsDropDownMenu.find(
   Button('Export selected records (CSV/MARC)'),
 );
 const buttonNew = authorityActionsDropDownMenu.find(Button('New'));
-const marcAuthUpdatesCsvBtn = authorityActionsDropDownMenu.find(
-  Button('MARC authority headings updates (CSV)'),
+const marcAuthUpdatesCsvBtn = Button('MARC authority headings updates (CSV)');
+const actionsMenuSortBySection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Sort by' }),
 );
+const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Show columns' }),
+);
+const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
+const saveCqlButton = authorityActionsDropDownMenu.find(Button('Save authorities CQL query'));
+const saveUuidsButton = authorityActionsDropDownMenu.find(Button('Save authorities UUIDs'));
+const actionsShowColumnsOptions = [
+  'Authorized/Reference',
+  'Type of heading',
+  'Authority source',
+  'Number of titles',
+];
+const sortOptions = ['Relevance', 'Authorized/Reference', 'Heading/Reference', 'Type of heading'];
 
 // auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
@@ -81,7 +97,7 @@ const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
-const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
+const buttonResetAllInAdvancedModal = Button({ ariaLabel: 'Reset all' });
 const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
@@ -134,10 +150,18 @@ const default008FieldValues = {
   Undef_30: '\\',
   Undef_34: '\\\\\\\\',
 };
+const resultsPaneHeader = PaneHeader('MARC authority');
+const resultsListColumns = [
+  'Authorized/Reference',
+  'Heading/Reference',
+  'Type of heading',
+  'Authority source',
+  'Number of titles',
+];
 
 export default {
   waitLoading() {
-    cy.expect(PaneHeader('MARC authority').exists());
+    cy.expect(resultsPaneHeader.exists());
   },
   clickNewAuthorityButton() {
     cy.do(newAuthorityButton.click());
@@ -619,7 +643,9 @@ export default {
     const multiSelect = sourceFileAccordion.find(
       MultiSelect({ label: including('Authority source') }),
     );
-    cy.do([cy.wait(1000), multiSelect.select(including(option))]);
+    cy.wait(1000);
+    cy.do(multiSelect.select(including(option)));
+    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
@@ -665,14 +691,14 @@ export default {
   },
 
   actionsSortBy(value) {
-    cy.do(Select({ dataTestID: 'sort-by-selection' }).choose(value));
+    cy.do(sortBySelect.choose(value));
     // need to wait until content will be sorted
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
   },
 
   verifyActionsSortedBy(value) {
-    cy.expect(Select({ dataTestID: 'sort-by-selection', checkedOptionText: value }).exists());
+    cy.expect(sortBySelect.has({ checkedOptionText: value }));
   },
 
   actionsSelectCheckbox(value) {
@@ -763,8 +789,8 @@ export default {
     cy.expect(searchInput.has({ value }));
   },
 
-  clickCancelButton() {
-    cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
+  clickResetAllButtonInAdvSearchModal() {
+    cy.do(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).click());
   },
 
   checkAdvancedSearchModalAbsence() {
@@ -791,8 +817,8 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
-      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
-      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonResetAllInAdvancedModal).is({ disabled: or(true, false) }),
     ]);
     if (boolean) {
       cy.expect([
@@ -1659,6 +1685,34 @@ export default {
       if (isActive !== selectable) {
         cy.setActiveAuthoritySourceFileViaAPI(id, _version, isActive);
       }
+    });
+  },
+
+  closeAdvSearchModal() {
+    cy.do(modalAdvancedSearch.find(Button({ icon: 'times' })).click());
+    cy.expect(modalAdvancedSearch.absent());
+  },
+
+  verifyActionsMenu(saveUuidsEnabled = false, saveCqlEnabled = false, sortOption = sortOptions[0]) {
+    cy.expect([
+      saveUuidsButton.is({ disabled: !saveUuidsEnabled }),
+      saveCqlButton.is({ disabled: !saveCqlEnabled }),
+      actionsMenuSortBySection.find(sortBySelect).has({ checkedOptionText: sortOption }),
+      sortBySelect.has({ content: sortOptions.join('') }),
+    ]);
+    actionsShowColumnsOptions.forEach((option) => {
+      actionsMenuShowColumnsSection.find(Checkbox(option)).exists();
+    });
+  },
+
+  verifyResultsPane() {
+    cy.expect([
+      resultsPaneHeader.has({ subtitle: matching(/\d+ records? found/) }),
+      actionsButton.exists(),
+    ]);
+    resultsListColumns.forEach((column, index) => {
+      if (index < 3) rootSection.find(MultiColumnListHeader(column)).is({ sortable: true });
+      else rootSection.find(MultiColumnListHeader(column)).is({ sortable: false });
     });
   },
 };

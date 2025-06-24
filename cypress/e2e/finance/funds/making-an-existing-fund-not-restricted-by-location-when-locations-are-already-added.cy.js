@@ -5,38 +5,32 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultFund = { ...Funds.defaultUiFund, restrictByLocations: true, locations: [] };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   let user;
-  let servicePointId;
   let location;
 
   before(() => {
     cy.getAdminToken();
 
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-          location = res;
-          if (defaultFund.locations.length === 0) {
-            defaultFund.locations.push({});
-          }
-          defaultFund.locations[0].locationId = location.id;
-          defaultFiscalYear.id = response.id;
-          defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      cy.getLocations({ limit: 1 }).then((res) => {
+        location = res;
+        if (defaultFund.locations.length === 0) {
+          defaultFund.locations.push({});
+        }
+        defaultFund.locations[0].locationId = location.id;
+        defaultFiscalYear.id = response.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-          Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
-            Funds.createViaApi(defaultFund).then((fundResponse) => {
-              defaultFund.id = fundResponse.fund.id;
-            });
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
           });
         });
       });

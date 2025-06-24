@@ -13,8 +13,8 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
         (userProperties) => {

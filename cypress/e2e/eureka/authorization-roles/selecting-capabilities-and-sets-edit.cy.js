@@ -9,9 +9,9 @@ describe('Eureka', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
         capabIds: [],
-        roleName: `Auto Role C503019 ${randomPostfix}`,
+        roleName: `AT_C503019_UserRole_${randomPostfix}`,
         roleDescription: `Description C503019 ${randomPostfix}`,
-        updatedRoleName: `Auto Role C503019 ${randomPostfix} UPD`,
+        updatedRoleName: `AT_C503019_UserRole_${randomPostfix} UPD`,
         capabilitySet: {
           table: 'Data',
           resource: 'Acquisitions-Units Memberships',
@@ -69,11 +69,11 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Licenses Contacts',
-            action: 'View',
+            resource: 'Calendar',
+            action: 'Create',
           },
         ],
-        numberOfCapabilitiesInAdditionalSets: 8,
+        numberOfCapabilitiesInAdditionalSets: 7,
       };
 
       const capabilitiesInSetSelected = testData.capabilitiesInSet.filter(

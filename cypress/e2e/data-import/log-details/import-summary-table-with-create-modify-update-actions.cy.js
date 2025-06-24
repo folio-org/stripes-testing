@@ -56,7 +56,6 @@ describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceId;
-    let instanceHrid;
     const uniqueSubject = `Test update.${getRandomPostfix()}`;
     const filePathForCreate = 'marcBibFileForC430257.mrc';
     const filePathForUpdate = 'marcBibFileForC430257_1.mrc';
@@ -304,7 +303,6 @@ describe('Data Import', () => {
           jobProfileForCreate.name,
         ).then((response) => {
           instanceId = response[0].instance.id;
-          instanceHrid = response[0].instance.hrid;
         });
 
         cy.login(userProperties.username, userProperties.password, {
@@ -337,7 +335,7 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
           (instance) => {
             cy.deleteItemViaApi(instance.items[0].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);

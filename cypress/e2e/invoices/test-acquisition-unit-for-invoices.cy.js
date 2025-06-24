@@ -14,23 +14,7 @@ describe('Invoices', () => {
   let user;
 
   before(() => {
-    cy.createTempUser([
-      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.assignAcqUnitsToNewInvoice.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.invoiceSettingsAll.gui,
-      permissions.uiInvoicesCancelInvoices.gui,
-      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
-      permissions.uiInvoicesExportSearchResults.gui,
-      permissions.uiInvoicesManageAcquisitionUnits.gui,
-      permissions.uiInvoicesVoucherExport.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-    });
+    cy.getAdminToken();
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
         invoice.accountingCode = organization.erpCode;
@@ -43,18 +27,30 @@ describe('Invoices', () => {
     cy.getBatchGroups().then((batchGroup) => {
       invoice.batchGroup = batchGroup.name;
     });
+
+    cy.createTempUser([
+      permissions.invoiceSettingsAll.gui,
+      permissions.uiInvoicesCancelInvoices.gui,
+      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
+      permissions.uiInvoicesExportSearchResults.gui,
+      permissions.uiInvoicesManageAcquisitionUnits.gui,
+      permissions.uiInvoicesVoucherExport.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
-    });
-
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+    });
   });
 
   it(

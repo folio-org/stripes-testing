@@ -3,17 +3,15 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   let user;
-  let servicePointId;
   let firstLocation;
   let secondLocation;
 
@@ -31,17 +29,8 @@ describe('ui-finance: Funds', () => {
         });
       });
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        firstLocation = res;
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        secondLocation = res;
-      });
+    InventoryInstances.getLocations({ limit: 2 }).then((res) => {
+      [firstLocation, secondLocation] = res;
     });
     cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
       (userProperties) => {
@@ -61,18 +50,6 @@ describe('ui-finance: Funds', () => {
     Funds.deleteFundViaApi(defaultFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      firstLocation.institutionId,
-      firstLocation.campusId,
-      firstLocation.libraryId,
-      firstLocation.id,
-    );
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      secondLocation.institutionId,
-      secondLocation.campusId,
-      secondLocation.libraryId,
-      secondLocation.id,
-    );
     Users.deleteViaApi(user.userId);
   });
 

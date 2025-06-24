@@ -8,8 +8,8 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 let user;
 let userWithQueryView;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;

@@ -135,7 +135,7 @@ describe('Inventory', () => {
         cy.wrap([0, 1, 2, 3, 4, 5]).each((rowIndex) => {
           InventoryInstances.checkAdvSearchItemsModalFields(rowIndex);
         });
-        InventoryInstances.clickCancelBtnInAdvSearchModal();
+        InventoryInstances.clickCloseBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

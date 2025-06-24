@@ -38,6 +38,18 @@ function getListOfURLRelationship() {
 export default {
   getListOfURLRelationship,
 
+  getViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'electronic-access-relationships',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.electronicAccessRelationships;
+      });
+  },
+
   createViaApi(type) {
     return cy
       .okapiRequest({

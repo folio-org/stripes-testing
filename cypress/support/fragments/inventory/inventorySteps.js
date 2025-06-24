@@ -6,7 +6,9 @@ export default {
     InventoryInstance.goToMarcHoldingRecordAdding();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+    cy.intercept('POST', '/records-editor/records').as('getStatus');
     QuickMarcEditor.pressSaveAndClose();
+    cy.wait('@getStatus', { timeout: 5_000 }).its('response.statusCode').should('eq', 201);
   },
 
   verifyHiddenFieldValueIn008(recordID, fieldLabel, expectedValue) {

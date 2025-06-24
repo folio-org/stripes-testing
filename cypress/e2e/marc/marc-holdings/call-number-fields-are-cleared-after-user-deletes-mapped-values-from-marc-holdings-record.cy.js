@@ -15,16 +15,18 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
+    const randomLetters = getRandomLetters(8);
     const testData = {
       tag852: '852',
-      headerTitle: 'Create a new MARC Holdings record',
+      headerTitle: /New .*MARC holdings record/,
       location: QuickMarcEditor.getExistingLocation(),
       updatedIndicator: '0',
-      newTag852Content: '$b E $h call $i number $k prefix $l title $m suffix $t copy number',
+      newTag852Content: `$b E $h call $i number ${randomLetters} $k prefix $l title $m suffix $t copy number`,
       itemBarcode: uuid(),
       itemMaterialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
       itemLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
@@ -39,7 +41,7 @@ describe('MARC', () => {
       copyNumber: 'copy number',
       callNumberType: 'Library of Congress classification',
       callNumberPrefix: 'prefix',
-      callNumber: 'call number',
+      callNumber: `call number ${randomLetters}`,
       callNumberSuffix: 'suffix',
     };
     const callNumberValuesAfterDeletingSubfields = {
@@ -125,8 +127,11 @@ describe('MARC', () => {
         ItemRecordView.closeDetailView();
         InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(callNumberValues.callNumber, false);
         InventorySearchAndFilter.browseSearch(callNumberValues.callNumber);
-        InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane('call numberwould be here');
+        InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(
+          `${callNumberValues.callNumber}would be here`,
+        );
       },
     );
   });

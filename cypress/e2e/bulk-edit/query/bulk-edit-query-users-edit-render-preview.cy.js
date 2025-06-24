@@ -14,8 +14,8 @@ import FileManager from '../../../support/utils/fileManager';
 let user;
 const matchedRecordsFileName = '*-Matched-Records-Query-*';
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser(
@@ -61,7 +61,7 @@ describe('bulk-edit', () => {
         QueryModal.chooseValueSelect(patronGroupNames.STAFF);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent(`(groups.group == "${patronGroupNames.STAFF}")`);
+        QueryModal.verifyQueryAreaContent(`(groups.group == ${patronGroupNames.STAFF})`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();

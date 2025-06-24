@@ -40,7 +40,6 @@ const getDefaultOrderLine = ({
     instanceId,
     acquisitionMethod,
     automaticExport,
-    alerts: [],
     claims: [],
     contributors: [],
     cost: {
@@ -86,7 +85,6 @@ const getDefaultOrderLine = ({
     },
     purchaseOrderId,
     receiptStatus,
-    reportingCodes: [],
     renewalNote,
     source: 'User',
     titleOrPackage: title,
@@ -113,7 +111,6 @@ export default {
     id: uuid(),
     checkinItems: false,
     acquisitionMethod: '',
-    alerts: [],
     claims: [],
     contributors: [],
     cost: {
@@ -152,7 +149,6 @@ export default {
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
-    reportingCodes: [],
     source: 'User',
     titleOrPackage: `autotest_title_${getRandomPostfix()}`,
     vendorDetail: {

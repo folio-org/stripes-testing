@@ -3,6 +3,8 @@ import {
   Button,
   Modal,
   MultiColumnList,
+  MultiColumnListRow,
+  MultiColumnListCell,
   MultiSelect,
   MultiSelectOption,
   RepeatableFieldItem,
@@ -32,11 +34,15 @@ export const holdingsFieldValues = {
   permanentLocation: 'Permanent location — Name',
 };
 export const instanceFieldValues = {
+  instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
+  instanceSource: 'Instance — Source',
   staffSuppress: 'Instance — Staff suppress',
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
+  date1: 'Instance — Date 1',
+  statisticalCodeNames: 'Instance — Statistical code names',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
@@ -92,6 +98,7 @@ export const QUERY_OPERATIONS = {
   NOT_IN: 'not in',
   IS_NULL: 'is null/empty',
   CONTAINS: 'contains',
+  CONTAINS_ANY: 'contains any',
   START_WITH: 'starts with',
   GREATER_THAN: 'greater than',
   LESS_THAN: 'less than',
@@ -397,5 +404,34 @@ export default {
       });
     }
     checkResponse();
+  },
+
+  verifyNumberOfMatchedRecords(numberOfMatchedRecords) {
+    cy.wait(3000);
+    cy.get('[class^="col-xs-10"]').then(($element) => {
+      cy.wrap($element)
+        .invoke('text')
+        .then((text) => {
+          if (numberOfMatchedRecords) {
+            expect(text).to.equal(
+              `Query would return ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+            );
+          } else {
+            expect(text).to.equal('Query returns no records.');
+            cy.get('[class^="emptyMessage--"]').should('have.text', 'The list contains no items');
+          }
+        });
+    });
+  },
+
+  verifyMatchedRecordsByIdentifier(identifier, columnName, value) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        buildQueryModal
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
   },
 };

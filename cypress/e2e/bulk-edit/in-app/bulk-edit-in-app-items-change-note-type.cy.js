@@ -44,14 +44,11 @@ const electronicBookplateActionOptions = [
 ];
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName, true);
-const previewFileName = BulkEditFiles.getPreviewOfProposedChangesFileName(
-  itemBarcodesFileName,
-  true,
-);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName, true);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName, true);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

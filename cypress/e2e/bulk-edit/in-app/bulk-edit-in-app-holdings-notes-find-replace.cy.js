@@ -35,8 +35,8 @@ const holdingsHRIDFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingsHRIDFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryCRUDHoldings.gui]).then(

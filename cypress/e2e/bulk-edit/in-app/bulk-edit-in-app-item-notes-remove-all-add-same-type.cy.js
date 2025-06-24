@@ -34,8 +34,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemHRIDs
 const previewFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -51,6 +51,7 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
+            item.hrid = res.hrid;
             res.administrativeNotes = [notes.admin];
             res.materialType = {
               id: MATERIAL_TYPE_IDS.DVD,
@@ -103,8 +104,8 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           matchedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.barcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+          item.hrid,
           [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -176,8 +177,8 @@ describe('bulk-edit', () => {
 
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.barcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+          item.hrid,
           editedHeaderValues,
         );
         BulkEditActions.commitChanges();
@@ -196,8 +197,8 @@ describe('bulk-edit', () => {
 
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           changedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.barcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+          item.hrid,
           editedHeaderValues,
         );
 

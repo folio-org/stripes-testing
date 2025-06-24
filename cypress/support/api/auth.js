@@ -102,7 +102,7 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
   });
 });
 
-Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 10_000) => {
+Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
   cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
@@ -134,5 +134,18 @@ Cypress.Commands.add('ifConsortia', (condition, callback) => {
     } else if (condition === isConsortiaStatus) {
       return cy.wrap(callback());
     }
+  });
+});
+
+Cypress.Commands.add('getLocateGuestToken', () => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('LOCATE_OKAPI_HOST')}/opac-auth/guest-token`,
+    headers: {
+      'x-okapi-tenant': `${Cypress.env('LOCATE_TENANT')}`,
+      'Content-type': 'application/json',
+    },
+  }).then(({ headers }) => {
+    Cypress.env('locate_guest_token', headers['x-okapi-token']);
   });
 });

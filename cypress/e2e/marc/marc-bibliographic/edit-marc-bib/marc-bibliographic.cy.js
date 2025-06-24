@@ -24,7 +24,7 @@ describe('MARC', () => {
 
         beforeEach(() => {
           cy.getAdminToken().then(() => {
-            Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+            Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication, false);
           });
 
           cy.createTempUser([
@@ -48,6 +48,10 @@ describe('MARC', () => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
               });
               InventoryInstances.searchByTitle(testData.instanceID);
             });
@@ -176,11 +180,8 @@ describe('MARC', () => {
               testRecord.content,
               testRecord.tag,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
-            // Wait for the content to be loaded.
-            cy.wait(4000);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(expectedInSourceRow);
             InventoryViewSource.close();

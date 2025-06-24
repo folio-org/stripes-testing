@@ -49,6 +49,7 @@ describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
+        cy.clearLocalStorage();
         cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
@@ -159,7 +160,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.title starts with "C566125_${postfix}") AND (instance.created_at == "${todayDate}")`,
+              `(instance.title starts with C566125_${postfix}) AND (instance.created_at == ${todayDate})`,
             );
 
             instances.forEach((instance) => {

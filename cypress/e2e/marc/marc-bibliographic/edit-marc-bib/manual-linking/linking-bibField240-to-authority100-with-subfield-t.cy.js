@@ -79,6 +79,10 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          });
         });
 
         after('Deleting created user', () => {
@@ -124,9 +128,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n83130832',
               '',
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
@@ -154,9 +156,7 @@ describe('MARC', () => {
               '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 http://id.loc.gov/authorities/names/n83130832',
             );
             QuickMarcEditor.checkLinkButtonExist(testData.tag240);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

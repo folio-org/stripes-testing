@@ -82,8 +82,7 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
-            // wait for detail view to be fully loaded
-            cy.wait(1500);
+            InventoryInstance.waitLoading();
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon(testData.tag655);
             MarcAuthorities.switchToSearch();
@@ -95,9 +94,7 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
           cy.waitForAuthRefresh(() => {
@@ -127,7 +124,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
           MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);
           MarcAuthority.edit();
-          cy.wait(2000);
+          QuickMarcEditor.waitLoading();
           QuickMarcEditor.updateExistingField(
             testData.tag155,
             `$a ${testData.updated155FieldValue}`,
@@ -137,18 +134,17 @@ describe('MARC', () => {
             testData.tag010,
             `$a ${testData.updated010FieldValue}`,
           );
-          cy.wait(2000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-          QuickMarcEditor.confirmUpdateLinkedBibs(1);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
           MarcAuthorities.checkResultList([testData.updated155FieldValue]);
           MarcAuthorities.verifyNumberOfTitles(5, '1');
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
           InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
-          InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
+
+          const { lastName, firstName, middleName } = testData.userProperties.personal;
+          InventoryInstance.verifyRecordStatus(`${lastName}, ${firstName} ${middleName}`);
           InventoryInstance.verifyInstanceSubject(
             11,
             0,
@@ -159,9 +155,9 @@ describe('MARC', () => {
           );
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.checkPaneheaderContains(`Source: ${testData.autoUpdateUserName}`);
+          QuickMarcEditor.checkPaneheaderContains(`Source: ${lastName}, ${firstName}`);
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            52,
+            51,
             '655',
             '\\',
             '7',

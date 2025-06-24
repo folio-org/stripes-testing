@@ -20,8 +20,8 @@ const secondItem = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
@@ -68,11 +68,11 @@ describe('bulk-edit', () => {
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(stringStoresUuidButMillionOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(instances.id in (""))');
+        QueryModal.verifyQueryAreaContent('(instances.id in ())');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(`${firstItem.instanceId},${secondItem.instanceId}`);
         QueryModal.verifyQueryAreaContent(
-          `(instances.id in ("${firstItem.instanceId}","${secondItem.instanceId}"))`,
+          `(instances.id in (${firstItem.instanceId}, ${secondItem.instanceId}))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

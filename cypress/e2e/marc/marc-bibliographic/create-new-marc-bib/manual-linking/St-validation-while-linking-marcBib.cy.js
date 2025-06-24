@@ -38,7 +38,7 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '240',
-            content: '$a test123',
+            content: '$a test123 $t test123',
             marcValue: 'C380730 Jackson, Peter, 1950-2022 Inspector Banks series',
             searchOption: 'Personal name',
           },

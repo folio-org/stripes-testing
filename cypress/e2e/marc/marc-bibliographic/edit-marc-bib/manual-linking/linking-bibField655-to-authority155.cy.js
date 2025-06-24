@@ -19,7 +19,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag655: '655',
-          authorityValue: 'C380766 Drama--Genre',
+          authorityValue: 'C380766 Drama Genre',
           authorityHeading: 'C380766 Drama',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
@@ -158,7 +158,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag655, bib655FieldValues[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -194,7 +194,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib655AfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib655FieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

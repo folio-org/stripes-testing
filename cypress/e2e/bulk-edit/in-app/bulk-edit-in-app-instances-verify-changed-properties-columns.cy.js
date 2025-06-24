@@ -26,8 +26,8 @@ const actionsToSelect = {
 };
 const instanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([

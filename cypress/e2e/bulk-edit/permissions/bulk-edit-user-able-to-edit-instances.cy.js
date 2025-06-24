@@ -14,8 +14,8 @@ const item = {
 };
 const instanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,

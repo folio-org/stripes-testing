@@ -29,8 +29,8 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instancUU
 const previewFileName = BulkEditFiles.getPreviewFileName(instancUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instancUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([
@@ -136,6 +136,7 @@ describe('bulk-edit', () => {
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE, ''],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT, values.join(' | ')],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION, ''],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION, values.join(' | ')],
           [
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,

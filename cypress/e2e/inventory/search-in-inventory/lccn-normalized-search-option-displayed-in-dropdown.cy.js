@@ -10,6 +10,7 @@ describe('Inventory', () => {
       lccnOption: 'LCCN, normalized',
       containsAll: 'Contains all',
       defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
+      defaultSearchOptionItem: 'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
     };
 
     before(() => {
@@ -43,7 +44,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickSearchOptionSelect();
         InventorySearchAndFilter.verifySearchOptionIncluded(testData.lccnOption, false);
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.defaultSearchOption);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
+          testData.defaultSearchOptionItem,
+        );
         InventorySearchAndFilter.checkSearchQueryText('');
         InventorySearchAndFilter.verifyResultPaneEmpty();
         InventorySearchAndFilter.clickSearchOptionSelect();

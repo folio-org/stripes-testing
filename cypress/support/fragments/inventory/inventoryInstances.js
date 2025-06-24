@@ -39,7 +39,7 @@ import QuickMarcEditor from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
-const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
+const inventoriesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-find-records') });
 const resultsPaneContent = PaneContent({ id: 'pane-results-content' });
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
@@ -59,10 +59,10 @@ const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
 const buttonSearchInAdvSearchModal = advSearchModal.find(
-  Button({ ariaLabel: 'Search', disabled: false }),
+  Button({ ariaLabel: 'Search', disabled: or(false, true) }),
 );
-const buttonCancelInAdvSearchModal = advSearchModal.find(
-  Button({ ariaLabel: 'Cancel', disabled: false }),
+const buttonResetAllInAdvSearchModal = advSearchModal.find(
+  Button({ ariaLabel: 'Reset all', disabled: or(false, true) }),
 );
 const buttonCloseInAdvSearchModal = advSearchModal.find(
   Button({ id: 'advanced-search-modal-close-button' }),
@@ -97,7 +97,7 @@ export const searchInstancesOptions = [
   'Query search',
   'Advanced search',
 ];
-const searchHoldingsOptions = [
+export const searchHoldingsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'ISBN',
   'ISSN',
@@ -111,8 +111,8 @@ const searchHoldingsOptions = [
   'Query search',
   'Advanced search',
 ];
-const searchItemsOptions = [
-  'Keyword (title, contributor, identifier, HRID, UUID)',
+export const searchItemsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
   'Barcode',
   'ISBN',
   'ISSN',
@@ -179,8 +179,11 @@ const searchItemsOptionsValues = [
   'advancedSearch',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
+advSearchInstancesOptions[0] = 'Keyword (title, contributor)';
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
+advSearchHoldingsOptions[0] = 'Keyword (title, contributor)';
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
+advSearchItemsOptions[0] = 'Keyword (title, contributor)';
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 17);
@@ -193,6 +196,7 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
 
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
 const exportInstanceMarcButton = Button({ id: 'dropdown-clickable-export-marc' });
+const importTypeSelect = Select({ name: 'externalIdentifierType' });
 
 const defaultField008Values = {
   Alph: '\\',
@@ -599,7 +603,6 @@ export default {
   deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` }).then(
       (instance) => {
-        cy.wait(10000);
         cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
         cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -1164,12 +1167,17 @@ export default {
     cy.wait(1500);
     cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
     cy.expect(singleRecordImportModal.exists());
-    cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
-    cy.wait(1500);
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.wait(1500);
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
-    cy.wait(1500);
+    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose('OCLC WorldCat'));
+      }
+      cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
+      cy.wait(1500);
+      cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+      cy.wait(1500);
+      cy.do(singleRecordImportModal.find(Button('Import')).click());
+      cy.wait(1500);
+    });
   },
 
   verifyInstanceDetailsView() {
@@ -1180,7 +1188,7 @@ export default {
     cy.expect([
       AdvancedSearch({ rowCount: 6 }).exists(),
       buttonSearchInAdvSearchModal.exists(),
-      buttonCancelInAdvSearchModal.exists(),
+      buttonResetAllInAdvSearchModal.exists(),
     ]);
   },
   closeAdvancedSearchModal() {
@@ -1351,7 +1359,9 @@ export default {
         .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
       AdvancedSearchRow({ index: rowIndex })
         .find(advSearchOptionSelect)
-        .has({ value: advSearchItemsOptionsValues[searchItemsOptions.indexOf(option)] }),
+        .has({
+          value: advSearchItemsOptionsValues[advSearchItemsOptions.indexOf(option)],
+        }),
     ]);
     if (operator) {
       cy.expect(
@@ -1366,8 +1376,8 @@ export default {
     cy.do(buttonSearchInAdvSearchModal.click());
   },
 
-  clickCancelBtnInAdvSearchModal() {
-    cy.do(buttonCancelInAdvSearchModal.click());
+  clickResetAllBtnInAdvSearchModal() {
+    cy.do(buttonResetAllInAdvSearchModal.click());
   },
   closeAdvSearchModalUsingESC() {
     cy.get('#advanced-search-modal').type('{esc}');

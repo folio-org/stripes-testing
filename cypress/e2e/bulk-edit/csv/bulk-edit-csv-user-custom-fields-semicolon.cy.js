@@ -22,8 +22,8 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('csv approach', () => {
+describe('Bulk-edit', () => {
+  describe('Csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
@@ -52,8 +52,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      cy.loginAsAdmin();
-      cy.visit(SettingsMenu.customFieldsPath);
+      cy.loginAsAdmin({ path: SettingsMenu.customFieldsPath, waiter: CustomFields.waitLoading });
       CustomFields.deleteCustomField(customFieldData.fieldLabel);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);

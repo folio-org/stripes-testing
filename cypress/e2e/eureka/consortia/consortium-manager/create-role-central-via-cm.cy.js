@@ -18,9 +18,9 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleName: `AT_C523671_Role_${randomPostfix}`,
+      roleName: `AT_C523671_UserRole_${randomPostfix}`,
       roleDescription: `C523671 Autotest Description ${randomPostfix}`,
-      existingRoleName: `AT_C523671_Role_Existing_${randomPostfix}`,
+      existingRoleName: `AT_C523671_UserRole_Existing_${randomPostfix}`,
       applicationName: 'app-platform-minimal',
       filtername: 'Status',
       optionName: 'Active',

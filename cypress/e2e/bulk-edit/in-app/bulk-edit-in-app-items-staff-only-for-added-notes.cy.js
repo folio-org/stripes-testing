@@ -40,8 +40,8 @@ const notes = {
   checkOut: 'checkOutNote',
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
@@ -270,8 +270,8 @@ describe('bulk-edit', () => {
         ];
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          item.itemId,
           addedNoteHeaderValues,
         );
         BulkEditActions.commitChanges();
@@ -281,8 +281,8 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           changedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          item.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          item.itemId,
           addedNoteHeaderValues,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);

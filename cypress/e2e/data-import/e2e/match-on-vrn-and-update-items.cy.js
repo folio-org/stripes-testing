@@ -3,21 +3,15 @@ import uuid from 'uuid';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  EXISTING_RECORD_NAMES,
-  ORDER_STATUSES,
-  VENDOR_NAMES,
-  RECORD_STATUSES,
-  LOCATION_NAMES,
-  JOB_STATUS_NAMES,
   APPLICATION_NAMES,
+  EXISTING_RECORD_NAMES,
+  JOB_STATUS_NAMES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+  RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -32,14 +26,20 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -217,7 +217,7 @@ describe('Data Import', () => {
           Orders.openOrder();
           Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);
           OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-          OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
+          OrderDetails.checkIsItemsInInventoryCreated(item.title, LOCATION_NAMES.MAIN_LIBRARY_UI);
           // check receiving pieces are created
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
           Orders.resetFilters();

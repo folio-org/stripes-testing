@@ -42,8 +42,7 @@ describe('Data Import', () => {
       searchOption: 'Keyword',
       csvFile: `C624340 exportedCSVFile${getRandomPostfix()}.csv`,
       exportedMarcFile: `C624340 exportedMarcAuthFile${getRandomPostfix()}.mrc`,
-      marcFileForModify: 'marcAuthFileForC624340_preupdated.mrc',
-      modifiedMarcFile: `C624340 editedMarcFile${getRandomPostfix()}.mrc`,
+      modifiedMarcFile: 'marcAuthFileForC624340_preupdated.mrc',
       uploadModifiedMarcFile: `C624340 testMarcAuthFile${getRandomPostfix()}.mrc`,
       updated600Field: [
         46,
@@ -246,36 +245,6 @@ describe('Data Import', () => {
       },
     ];
 
-    function replace999SubfieldsInPreupdatedFile(
-      exportedFileName,
-      preUpdatedFileName,
-      finalFileName,
-    ) {
-      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-        const records = actualContent.split('');
-        records.forEach((record) => {
-          linkingTagAndValues.forEach((linkingTagAndValue, index) => {
-            if (record.includes(linkingTagAndValue.value)) {
-              const lines = record.split('');
-              linkingTagAndValues[index].field999data = lines[lines.length - 2];
-            }
-          });
-        });
-        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-          const content = updatedContent.split('\n');
-          let firstString = content[0].slice();
-          linkingTagAndValues.forEach((linkingTagAndValue) => {
-            firstString = firstString.replace(
-              `ffs00000000-0000-0000-0000-0000000000${linkingTagAndValue.uuidIndex}i00000000-0000-0000-0000-0000000000${linkingTagAndValue.uuidIndex}`,
-              linkingTagAndValue.field999data,
-            );
-          });
-          content[0] = firstString;
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
-      });
-    }
-
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
@@ -311,68 +280,70 @@ describe('Data Import', () => {
           );
         });
 
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+      cy.then(() => {
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
           });
         });
-      });
-
-      cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        cy.reload();
-        InventoryInstances.waitContentLoading();
-      }, 20_000);
-      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      linkingTagAndValues.forEach((linkingTagAndValue) => {
-        InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.searchResults(linkingTagAndValue.value);
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-          linkingTagAndValue.tag,
-          linkingTagAndValue.rowIndex,
-        );
-        cy.wait(200);
-      });
-      QuickMarcEditor.pressSaveAndClose();
-      cy.wait(4000);
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
-      cy.wait(4000);
-
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.uiInventoryViewInstances.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
+      }).then(() => {
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
           cy.reload();
+          InventoryInstances.waitContentLoading();
         }, 20_000);
-        MarcAuthorities.waitLoading();
-        MarcAuthorities.verifyDisabledSearchButton();
+        InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+        InventoryInstances.selectInstance();
+        InventoryInstance.editMarcBibliographicRecord();
+        linkingTagAndValues.forEach((linkingTagAndValue) => {
+          InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
+          InventoryInstance.verifySelectMarcAuthorityModal();
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.searchResults(linkingTagAndValue.value);
+          InventoryInstance.clickLinkButton();
+          QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+            linkingTagAndValue.tag,
+            linkingTagAndValue.rowIndex,
+          );
+          cy.wait(200);
+        });
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(4000);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(4000);
+
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.moduleDataImportEnabled.gui,
+          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+          Permissions.uiInventoryViewInstances.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          MarcAuthorities.waitLoading();
+          MarcAuthorities.verifyDisabledSearchButton();
+        });
       });
     });
 
@@ -388,7 +359,6 @@ describe('Data Import', () => {
         if (index) MarcAuthority.deleteViaAPI(id);
       });
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
     });
@@ -413,12 +383,6 @@ describe('Data Import', () => {
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
-        // change exported file
-        replace999SubfieldsInPreupdatedFile(
-          testData.exportedMarcFile,
-          testData.marcFileForModify,
-          testData.modifiedMarcFile,
-        );
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFileAndRetry(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();

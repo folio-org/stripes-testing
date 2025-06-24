@@ -6,7 +6,6 @@ export default {
     id: uuid(),
     checkinItems: false,
     acquisitionMethod: '',
-    alerts: [],
     claims: [],
     contributors: [
       {
@@ -60,7 +59,6 @@ export default {
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
-    reportingCodes: [],
     source: 'User',
     titleOrPackage: `autotest_line_${getRandomPostfix()}`,
     vendorDetail: {

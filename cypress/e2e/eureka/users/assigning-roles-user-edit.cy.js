@@ -13,9 +13,9 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      roleAName: `Auto Role A C633471 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C633471 ${getRandomPostfix()}`,
-      roleCName: `Auto Role C C633471 ${getRandomPostfix()}`,
+      roleAName: `AT_C633471_UserRole_A_${getRandomPostfix()}`,
+      roleBName: `AT_C633471_UserRole_B_${getRandomPostfix()}`,
+      roleCName: `AT_C633471_UserRole_C_${getRandomPostfix()}`,
     };
 
     const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
@@ -36,6 +36,7 @@ describe('Eureka', () => {
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;
       });
+      cy.getAdminToken();
       cy.createAuthorizationRoleApi(testData.roleAName).then((roleA) => {
         testData.roleAId = roleA.id;
         cy.createAuthorizationRoleApi(testData.roleBName).then((roleB) => {
@@ -75,9 +76,6 @@ describe('Eureka', () => {
 
     after('Delete roles, users', () => {
       cy.getAdminToken();
-      cy.deleteCapabilitiesFromRoleApi(testData.roleAId);
-      cy.deleteCapabilitiesFromRoleApi(testData.roleBId);
-      cy.deleteCapabilitySetsFromRoleApi(testData.roleAId);
       cy.deleteAuthorizationRoleApi(testData.roleAId);
       cy.deleteAuthorizationRoleApi(testData.roleBId);
       cy.deleteAuthorizationRoleApi(testData.roleCId);

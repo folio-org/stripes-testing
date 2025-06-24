@@ -3,8 +3,6 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -13,10 +11,11 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, HOLDING_NOTE_TYPES } from '../../../support/constants';
 
 let user;
-const items = [];
+let actionNoteTypeId;
+const instances = [];
 const holdingsHRIDs = [];
 const holdingsNote = 'Line-1\nLine-2\nLine-3\nLine-4';
 const holdingsHRIDFileName = `holdingsHRID_${getRandomPostfix()}.csv`;
@@ -25,15 +24,15 @@ const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingsH
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
 
 for (let i = 0; i < 3; i++) {
-  items.push({
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instances.push({
+    instanceName: `AT_C399093_FolioInstance_${getRandomPostfix()}`,
     itemBarcode: getRandomPostfix(),
     instanceId: '',
   });
 }
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -42,14 +41,31 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        items.forEach((item) => {
-          item.instanceId = InventoryInstances.createInstanceViaApi(
-            item.instanceName,
-            item.itemBarcode,
+        instances.forEach((instance) => {
+          instance.instanceId = InventoryInstances.createInstanceViaApi(
+            instance.instanceName,
+            instance.itemBarcode,
           );
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+          cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.instanceId}"` }).then(
             (holdings) => {
-              holdingsHRIDs.push(holdings[0].hrid);
+              cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.ACTION_NOTE).then(
+                (holdingNoteTypeId) => {
+                  actionNoteTypeId = holdingNoteTypeId;
+
+                  holdingsHRIDs.push(holdings[0].hrid);
+                  cy.updateHoldingRecord(holdings[0].id, {
+                    ...holdings[0],
+                    notes: [
+                      {
+                        holdingsNoteTypeId: actionNoteTypeId,
+                        note: holdingsNote,
+                        staffOnly: false,
+                      },
+                    ],
+                  });
+                },
+              );
+
               FileManager.appendFile(
                 `cypress/fixtures/${holdingsHRIDFileName}`,
                 `${holdings[0].hrid}\n`,
@@ -58,25 +74,15 @@ describe('bulk-edit', () => {
           );
         });
         cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
-        [items[0].instanceName, items[1].instanceName].forEach((instance) => {
-          InventorySearchAndFilter.switchToHoldings();
-          InventorySearchAndFilter.byKeywords(instance);
-          InventoryInstance.openHoldingView();
-          HoldingsRecordView.edit();
-          HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
-          HoldingsRecordEdit.saveAndClose(true);
-          InventoryInstance.closeHoldingsView();
-        });
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      items.forEach((item) => {
+      instances.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });
       Users.deleteViaApi(user.userId);
@@ -117,7 +123,7 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [holdingsNote]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        items.forEach((item) => {
+        instances.forEach((item) => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.byKeywords(item.instanceName);
           InventoryInstance.waitInventoryLoading();

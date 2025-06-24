@@ -7,13 +7,10 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Users from '../../../support/fragments/users/users';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 
@@ -42,7 +39,6 @@ describe('Finance: Transactions', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let user;
-  let servicePointId;
   let location;
   let firstOrderNumber;
 
@@ -62,109 +58,98 @@ describe('Finance: Transactions', () => {
           firstBudget.fundId = fundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
 
-          ServicePoints.getViaApi().then((servicePoint) => {
-            servicePointId = servicePoint[0].id;
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-              location = res;
+          cy.getLocations({ limit: 1 }).then((res) => {
+            location = res;
 
-              MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
-                (mtypes) => {
-                  cy.getAcquisitionMethodsApi({
-                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                  }).then((params) => {
-                    // Prepare 2 Open Orders for Rollover
-                    Organizations.createOrganizationViaApi(organization).then(
-                      (responseOrganizations) => {
-                        organization.id = responseOrganizations;
-                        firstOrder.vendor = organization.id;
-                        OrderLinesLimit.setPOLLimit(3);
-                        const firstOrderLine = {
-                          ...BasicOrderLine.defaultOrderLine,
-                          cost: {
-                            listUnitPrice: 95,
-                            currency: 'USD',
-                            discountType: 'percentage',
-                            quantityPhysical: 1,
-                            poLineEstimatedPrice: 95,
-                          },
-                          fundDistribution: [
-                            { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                          ],
-                          locations: [
-                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
-                          ],
-                          acquisitionMethod: params.body.acquisitionMethods[0].id,
-                          physical: {
-                            createInventory: 'Instance, Holding, Item',
-                            materialType: mtypes.body.id,
-                            materialSupplier: responseOrganizations,
-                            volumes: [],
-                          },
-                        };
-                        const secondOrderLine = {
-                          ...BasicOrderLine.defaultOrderLine,
-                          id: uuid(),
-                          cost: {
-                            listUnitPrice: 10.0,
-                            currency: 'USD',
-                            discountType: 'percentage',
-                            quantityPhysical: 1,
-                            poLineEstimatedPrice: 10.0,
-                          },
-                          fundDistribution: [
-                            { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                          ],
-                          locations: [
-                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
-                          ],
-                          acquisitionMethod: params.body.acquisitionMethods[0].id,
-                          physical: {
-                            createInventory: 'Instance, Holding, Item',
-                            materialType: mtypes.body.id,
-                            materialSupplier: responseOrganizations,
-                            volumes: [],
-                          },
-                        };
-                        const thirdOrderLine = {
-                          ...BasicOrderLine.defaultOrderLine,
-                          id: uuid(),
-                          cost: {
-                            listUnitPrice: 5.0,
-                            currency: 'USD',
-                            discountType: 'percentage',
-                            quantityPhysical: 1,
-                            poLineEstimatedPrice: 5.0,
-                          },
-                          fundDistribution: [
-                            { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                          ],
-                          locations: [
-                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
-                          ],
-                          acquisitionMethod: params.body.acquisitionMethods[0].id,
-                          physical: {
-                            createInventory: 'Instance, Holding, Item',
-                            materialType: mtypes.body.id,
-                            materialSupplier: responseOrganizations,
-                            volumes: [],
-                          },
-                        };
-                        Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                          firstOrder.id = firstOrderResponse.id;
-                          firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                          secondOrderLine.purchaseOrderId = firstOrderResponse.id;
-                          thirdOrderLine.purchaseOrderId = firstOrderResponse.id;
-                          firstOrderNumber = firstOrderResponse.poNumber;
-
-                          OrderLines.createOrderLineViaApi(firstOrderLine);
-                          OrderLines.createOrderLineViaApi(secondOrderLine);
-                          OrderLines.createOrderLineViaApi(thirdOrderLine);
-                        });
+            cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+              cy.getAcquisitionMethodsApi({
+                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+              }).then((params) => {
+                // Prepare 2 Open Orders for Rollover
+                Organizations.createOrganizationViaApi(organization).then(
+                  (responseOrganizations) => {
+                    organization.id = responseOrganizations;
+                    firstOrder.vendor = organization.id;
+                    OrderLinesLimit.setPOLLimit(3);
+                    const firstOrderLine = {
+                      ...BasicOrderLine.defaultOrderLine,
+                      cost: {
+                        listUnitPrice: 95,
+                        currency: 'USD',
+                        discountType: 'percentage',
+                        quantityPhysical: 1,
+                        poLineEstimatedPrice: 95,
                       },
-                    );
-                  });
-                },
-              );
+                      fundDistribution: [
+                        { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                      ],
+                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
+                      acquisitionMethod: params.body.acquisitionMethods[0].id,
+                      physical: {
+                        createInventory: 'Instance, Holding, Item',
+                        materialType: mtype.id,
+                        materialSupplier: responseOrganizations,
+                        volumes: [],
+                      },
+                    };
+                    const secondOrderLine = {
+                      ...BasicOrderLine.defaultOrderLine,
+                      id: uuid(),
+                      cost: {
+                        listUnitPrice: 10.0,
+                        currency: 'USD',
+                        discountType: 'percentage',
+                        quantityPhysical: 1,
+                        poLineEstimatedPrice: 10.0,
+                      },
+                      fundDistribution: [
+                        { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                      ],
+                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
+                      acquisitionMethod: params.body.acquisitionMethods[0].id,
+                      physical: {
+                        createInventory: 'Instance, Holding, Item',
+                        materialType: mtype.id,
+                        materialSupplier: responseOrganizations,
+                        volumes: [],
+                      },
+                    };
+                    const thirdOrderLine = {
+                      ...BasicOrderLine.defaultOrderLine,
+                      id: uuid(),
+                      cost: {
+                        listUnitPrice: 5.0,
+                        currency: 'USD',
+                        discountType: 'percentage',
+                        quantityPhysical: 1,
+                        poLineEstimatedPrice: 5.0,
+                      },
+                      fundDistribution: [
+                        { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                      ],
+                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
+                      acquisitionMethod: params.body.acquisitionMethods[0].id,
+                      physical: {
+                        createInventory: 'Instance, Holding, Item',
+                        materialType: mtype.id,
+                        materialSupplier: responseOrganizations,
+                        volumes: [],
+                      },
+                    };
+                    Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
+                      firstOrder.id = firstOrderResponse.id;
+                      firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+                      secondOrderLine.purchaseOrderId = firstOrderResponse.id;
+                      thirdOrderLine.purchaseOrderId = firstOrderResponse.id;
+                      firstOrderNumber = firstOrderResponse.poNumber;
+
+                      OrderLines.createOrderLineViaApi(firstOrderLine);
+                      OrderLines.createOrderLineViaApi(secondOrderLine);
+                      OrderLines.createOrderLineViaApi(thirdOrderLine);
+                    });
+                  },
+                );
+              });
             });
           });
         });

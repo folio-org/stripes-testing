@@ -30,7 +30,7 @@ export const tenantNames = {
   },
   sprint: {
     central: 'Central tenant',
-    college: 'College tenant',
+    college: 'Colleague tenant',
     university: 'University tenant',
     professional: 'Professional tenant',
     school: 'School tenant',

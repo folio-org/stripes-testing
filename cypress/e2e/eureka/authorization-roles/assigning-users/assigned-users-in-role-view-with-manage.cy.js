@@ -7,7 +7,7 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleName: `Auto Role C627248 ${getRandomPostfix()}`,
+        roleName: `AT_C627248_UserRole_${getRandomPostfix()}`,
       };
 
       const capabSetsToAssign = [

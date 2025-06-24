@@ -51,11 +51,11 @@ const sharedNoteText = 'New shared note';
 const localNoteText = 'New local note';
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `C477646 shared note type ${getRandomPostfix()}`,
+    name: `C477646 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const localHoldingNoteType = {
-  name: `C477646 college NoteType ${getRandomPostfix()}`,
+  name: `C477646 college NoteType ${randomFourDigitNumber()}`,
 };
 const localHoldingNoteTypeNameWithAffiliation = `${localHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
@@ -121,7 +121,7 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              // create local item note type in College
+              // create local holding note type in College
               HoldingsNoteTypes.createViaApi({
                 name: localHoldingNoteType.name,
                 source: 'local',
@@ -234,7 +234,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.call_number starts with "${callNumberStarts}")`,
+              `(holdings.call_number starts with ${callNumberStarts})`,
             );
 
             const holdingHrids = [...folioInstance.holdingHrids, ...marcInstance.holdingHrids];

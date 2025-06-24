@@ -18,22 +18,22 @@ describe('MARC', () => {
         tags: {
           tag700: '700',
         },
-        instanceTitle: 'The data C380548',
-        authTitle: 'Clovio, Giulio, 1498-1578',
-        markedTitle: 'Clovio, Giulio,',
+        instanceTitle: 'AT_C422103_MarcBibInstance',
+        authTitle: 'C422103 Clovio, Giulio, 1498-1578',
+        markedTitle: 'C422103 Clovio, Giulio,',
         instanceIDs: [],
         authorityIDs: [],
         marcFiles: [
           {
-            marc: 'marcBibC380548.mrc',
-            fileName: `testMarcFileBibC380548.${getRandomPostfix()}.mrc`,
+            marc: 'marcBibC422103.mrc',
+            fileName: `testMarcFileBibC422103.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numberOfRecords: 1,
             propertyName: 'instance',
           },
           {
-            marc: 'marcAuthC380548.mrc',
-            fileName: `testMarcFileAuthC380548.${randomFourDigitNumber()}.mrc`,
+            marc: 'marcAuthC422103.mrc',
+            fileName: `testMarcFileAuthC422103.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numberOfRecords: 1,
             propertyName: 'authority',
@@ -50,59 +50,42 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${testData.authTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-        });
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
-          .then(() => {
-            testData.marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  if (
-                    marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                  ) {
-                    testData.instanceIDs.push(record[marcFile.propertyName].id);
-                  } else {
-                    testData.authorityIDs.push(record[marcFile.propertyName].id);
-                  }
+          InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422103');
+
+          cy.getAdminToken()
+            .then(() => {
+              testData.marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    if (
+                      marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                    ) {
+                      testData.instanceIDs.push(record[marcFile.propertyName].id);
+                    } else {
+                      testData.authorityIDs.push(record[marcFile.propertyName].id);
+                    }
+                  });
                 });
               });
+            })
+            .then(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              InventoryInstances.searchByTitle(testData.instanceTitle);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
             });
-          })
-          .then(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventoryInstances.searchByTitle(testData.instanceTitle);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-          });
+        });
       });
 
       after('Deleting created user', () => {
@@ -126,6 +109,10 @@ describe('MARC', () => {
           MarcAuthorityBrowse.checkSearchOptions();
 
           MarcAuthorityBrowse.searchBy('Personal name', testData.authTitle);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.checkColumnExists('Link');
           MarcAuthorities.checkColumnExists('Authorized/Reference');

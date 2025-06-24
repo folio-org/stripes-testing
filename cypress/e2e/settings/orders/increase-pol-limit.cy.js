@@ -2,6 +2,7 @@ import permissions from '../../../support/dictionary/permissions';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
@@ -75,14 +76,9 @@ describe('Orders', () => {
     });
 
     after(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-      });
-      SettingsOrders.setPurchaseOrderLinesLimit(3);
-      SettingsOrders.setPurchaseOrderLinesLimit(1);
+      cy.getAdminToken();
+      OrderLinesLimit.setPOLLimit(1);
       Orders.deleteOrderViaApi(order.id);
-
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
@@ -90,7 +86,6 @@ describe('Orders', () => {
         location.libraryId,
         location.id,
       );
-
       Users.deleteViaApi(user.userId);
     });
 

@@ -32,8 +32,8 @@ const marcInstance = {
 const adminNote = 'Te;st: [administrative] no*te.csv';
 const editedAdminNote = 'Te;st:  no*te.csv';
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,

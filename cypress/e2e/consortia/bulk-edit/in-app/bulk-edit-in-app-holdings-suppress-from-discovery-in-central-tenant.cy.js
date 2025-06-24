@@ -247,7 +247,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-              'true',
+              true,
             );
           });
 
@@ -271,7 +271,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-              'true',
+              true,
             );
           });
 
@@ -331,7 +331,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-              'true',
+              true,
             );
           });
 
@@ -367,7 +367,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-              'false',
+              false,
             );
           });
 
@@ -391,7 +391,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-              'false',
+              false,
             );
           });
 

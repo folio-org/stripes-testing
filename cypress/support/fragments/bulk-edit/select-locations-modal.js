@@ -104,7 +104,7 @@ export default {
   },
 
   selectTenantInAffiliationDropdown(tenantName) {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(
       selectLocationsModal
         .find(Selection({ value: including('Select control') }))

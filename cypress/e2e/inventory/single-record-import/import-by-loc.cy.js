@@ -33,7 +33,6 @@ describe('Inventory', () => {
         Permissions.uiInventorySingleRecordImport.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.toggleLocSingleImportProfileViaAPI();
         InventoryInstances.getInstancesViaApi({
           limit: 100,
           query: `(title="${instanceTitlePartC490900}" or title="${instanceTitlePartC490902}")`,
@@ -48,6 +47,8 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.getAdminToken();
+      cy.toggleLocSingleImportProfileViaAPI();
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
@@ -60,7 +61,6 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      cy.toggleLocSingleImportProfileViaAPI(false);
       createdInstaceIds.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });

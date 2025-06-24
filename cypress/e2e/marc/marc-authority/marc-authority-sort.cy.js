@@ -3,6 +3,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -60,7 +61,6 @@ describe('MARC', () => {
 
     const createdAuthorityIDs = [];
 
-    const headingTypes = ['Corporate Name', 'Personal Name'];
     const marcAuthorities = {
       authorizedReferences: ['Authorized', 'Authorized', 'Reference'],
       headingReferences: [
@@ -162,11 +162,16 @@ describe('MARC', () => {
           waiter: MarcAuthorities.waitLoading,
         });
         MarcAuthorities.checkSearchOptions();
+        MarcAuthoritiesSearch.verifyDefaultSearchPaneState();
+        MarcAuthorities.clickActionsButton();
+        MarcAuthorities.verifyActionsMenu();
+
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
         cy.wait(2000);
-        MarcAuthorities.chooseTypeOfHeading(headingTypes);
-
+        MarcAuthorities.verifyResultsPane();
         MarcAuthorities.clickActionsButton();
+        MarcAuthorities.verifyActionsMenu(true, true);
+
         MarcAuthorities.actionsSortBy('Authorized/Reference');
         MarcAuthorities.checkRowsContent(marcAuthorities.authorizedReferences);
         MarcAuthorities.actionsSortBy('Heading/Reference');

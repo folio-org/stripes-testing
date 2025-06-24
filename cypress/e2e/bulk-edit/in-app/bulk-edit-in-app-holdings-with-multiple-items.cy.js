@@ -26,8 +26,8 @@ const item = {
 };
 const instanceDetailsToCheck = `${item.instanceName}. ${item.publisher}, ${item.dateOfPublication}`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,

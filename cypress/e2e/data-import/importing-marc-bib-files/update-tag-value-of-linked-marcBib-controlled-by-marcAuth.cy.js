@@ -139,6 +139,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374189*');
+      InventoryInstances.deleteInstanceByTitleViaApi('C374189*');
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -288,7 +289,8 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();

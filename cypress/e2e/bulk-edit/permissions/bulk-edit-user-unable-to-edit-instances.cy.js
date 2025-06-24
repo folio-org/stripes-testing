@@ -14,18 +14,15 @@ const item = {
 };
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  describe('permissions', () => {
+describe('Bulk-edit', () => {
+  describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+
         item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
           (instance) => {
@@ -33,6 +30,11 @@ describe('bulk-edit', () => {
             FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, instance.hrid);
           },
         );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 

@@ -11,9 +11,9 @@ describe('Eureka', () => {
       const testData = {
         startDateTime: `${new Date().getFullYear()}-01-01T00:00:00Z`,
         expiresDateTime: `${new Date().getFullYear() + 1}-12-01T00:00:00Z`,
-        policyAName: `Policy A C514991 ${getRandomPostfix()}`,
-        policyBName: `Policy B C514991 ${getRandomPostfix()}`,
-        policyBNewName: `Policy B C514991 New ${getRandomPostfix()}`,
+        policyAName: `AT_C514991_AuthPolicy_A_${getRandomPostfix()}`,
+        policyBName: `AT_C514991_AuthPolicy_B_${getRandomPostfix()}`,
+        policyBNewName: `AT_C514991_AuthPolicy_B_New_${getRandomPostfix()}`,
         noSourceErrorText: 'null value in column "source"',
       };
       const policyBody = {

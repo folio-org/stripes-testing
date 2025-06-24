@@ -8,9 +8,9 @@ describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C496128 ${getRandomPostfix()}`,
+        roleName: `AT_C496128_UserRole_${getRandomPostfix()}`,
         originalApplications: ['app-platform-minimal', 'app-dcb'],
-        newApplication: 'app-erm-usage',
+        newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
@@ -78,56 +78,60 @@ describe('Eureka', () => {
           },
         ],
         newCapabilitySet: {
-          table: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Module Erm-Usage Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
+          table: CAPABILITY_TYPES.PROCEDURAL,
+          resource: 'UI-Finance',
+          action: CAPABILITY_ACTIONS.EXECUTE,
         },
         newCapabilitiesInSet: [
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Erm-Usage Enabled',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Budgets-Expense-Classes-Totals Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Ermusageharvester Impl',
+            resource: 'Finance Expense-Classes Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Mod-Settings Entries Collection',
+            resource: 'Finance Fiscal-Years Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Tags Collection',
+            resource: 'Finance Fiscal-Years Item',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Finance Fund-Types Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         newCapabilities: [
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Erm-Comparisons Enabled',
+            resource: 'Module Finance Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Ermusageharvester Periodic',
+            resource: 'Invoice Item Cancel',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 1,
-            Procedural: 1,
+            Procedural: 2,
           },
           capabilities: {
-            Data: 9,
-            Settings: 3,
-            Procedural: 4,
+            Data: 11,
+            Settings: 2,
+            Procedural: 5,
           },
         },
-        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
         capabSetIds: [],
         capabIds: [],
       };

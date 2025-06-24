@@ -10,8 +10,6 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -32,7 +30,6 @@ describe('Finance', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   let user;
-  let servicePointId;
   let location;
 
   before(() => {
@@ -60,12 +57,10 @@ describe('Finance', () => {
       });
     });
     cy.getAdminToken();
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
+    cy.getLocations({ limit: 1 }).then((res) => {
+      location = res;
     });
+
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;

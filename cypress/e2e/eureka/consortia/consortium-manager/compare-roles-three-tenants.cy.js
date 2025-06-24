@@ -18,9 +18,9 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleNameCentral: `AT_C552363_Role_Central_${randomPostfix}`,
-      roleNameCollege: `AT_C552363_Role_College_${randomPostfix}`,
-      roleNameUniversity: `AT_C552363_Role_University_${randomPostfix}`,
+      roleNameCentral: `AT_C552363_UserRole_Central_${randomPostfix}`,
+      roleNameCollege: `AT_C552363_UserRole_College_${randomPostfix}`,
+      roleNameUniversity: `AT_C552363_UserRole_University_${randomPostfix}`,
       capabilitiesForRoleCentral: [
         {
           table: CAPABILITY_TYPES.PROCEDURAL,

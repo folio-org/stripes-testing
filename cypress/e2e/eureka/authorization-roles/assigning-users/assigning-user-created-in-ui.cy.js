@@ -14,10 +14,10 @@ describe('Eureka', () => {
       describe('Assigning users', () => {
         const randomString = generateItemBarcode();
         const testData = {
-          lastName: `TestC627399User${randomString}`,
-          userEmail: 'test@folio.org',
-          username: `userc627399${randomString}`,
-          roleName: `Auto Role C627399 ${randomString}`,
+          lastName: `AT_C627399_LastName_${randomString}`,
+          userEmail: 'AT_C627399@test.com',
+          username: `at_c627399_username_${randomString}`,
+          roleName: `AT_C627399_UserRole${randomString}`,
           promotePath: '/users-keycloak/auth-users',
           userType: 'Staff',
         };
@@ -65,6 +65,7 @@ describe('Eureka', () => {
           Users.deleteViaApi(testData.tempUser.userId);
           Users.deleteViaApi(testData.userId);
           cy.deleteAuthorizationRoleApi(testData.roleId);
+          cy.deleteUserGroupApi(testData.userGroup.id, true);
         });
 
         it(

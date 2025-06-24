@@ -21,7 +21,7 @@ let user;
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(validItemBarcodesFileName);
 const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(validItemBarcodesFileName);
+  BulkEditFiles.getPreviewFileName(validItemBarcodesFileName);
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validItemBarcodesFileName);
 
 const inventoryEntity = {
@@ -30,9 +30,9 @@ const inventoryEntity = {
   itemId: '',
 };
 
-describe('bulk-edit', () => {
-  describe('logs', () => {
-    describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('Logs', () => {
+    describe('In-app approach', () => {
       before('create test data', () => {
         cy.createTempUser([
           permissions.bulkEditView.gui,

@@ -133,7 +133,6 @@ export default {
   openOrder() {
     cy.wait(4000);
     expandActionsDropdown();
-    cy.wait(4000);
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
@@ -346,6 +345,7 @@ export default {
       cy.do(Checkbox({ name: 'reEncumber' }).click());
     }
     cy.do(saveAndClose.click());
+    cy.wait(4000);
     return cy.wait('@newOrder', getLongDelay()).then(({ response }) => {
       return response.body;
     });
@@ -530,11 +530,11 @@ export default {
   selectClosedStatusFilter: () => {
     cy.do(Checkbox('Closed').click());
   },
-  selectPrefixFilter: () => {
+  selectPrefixFilter: (prefix) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-poNumberPrefix' }).click(),
       Button({ id: 'poNumberPrefix-selection' }).click(),
-      SelectionOption('pref').click(),
+      SelectionOption(prefix).click(),
     ]);
   },
   selectApprovedFilter: () => {
@@ -607,7 +607,7 @@ export default {
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {
-    cy.wait(4000);
+    cy.wait(6000);
     cy.do([
       Accordion({ id: 'POListing' }).find(Button('Actions')).click(),
       Button('Add PO line').click(),

@@ -65,7 +65,7 @@ describe('MARC', () => {
       }).then((authorities) => {
         if (authorities) {
           authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
         }
       });
@@ -100,6 +100,10 @@ describe('MARC', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(testData.marcValue);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         MarcAuthoritiesSearch.selectExcludeReferencesFilter(
           REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
@@ -107,7 +111,7 @@ describe('MARC', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
@@ -147,6 +151,10 @@ describe('MARC', () => {
       () => {
         // Step 1: Input query in search input field that will return imported "MARC authority" record → Click "Search"
         MarcAuthorities.searchBy('Keyword', testData.marcValue);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthorities.checkAfterSearch(testData.authorizedTypes.AUTHORIZED, testData.marcValue);
         MarcAuthorities.verifyNumberOfTitles(5, '1');
 

@@ -1,4 +1,4 @@
-import { HTML, including, not } from '@interactors/html';
+import { HTML, including, not, or } from '@interactors/html';
 import {
   Accordion,
   Badge,
@@ -10,6 +10,7 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MessageBanner,
   Pane,
   Section,
   Tooltip,
@@ -22,6 +23,7 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -51,6 +53,9 @@ const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
+const versionHistoryButton = Button({ icon: 'clock' });
+const contributorAccordion = Accordion('Contributor');
+const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -136,6 +141,17 @@ const verifyStatisticalCode = (value) => {
       .find(MultiColumnListCell({ content: value }))
       .exists(),
   );
+};
+
+const verifyStatisticalCodeTypeAndName = (type, name) => {
+  cy.expect([
+    MultiColumnList({ id: 'list-statistical-codes' })
+      .find(MultiColumnListCell({ column: 'Statistical code type', content: type }))
+      .exists(),
+    MultiColumnList({ id: 'list-statistical-codes' })
+      .find(MultiColumnListCell({ column: 'Statistical code name', content: name }))
+      .exists(),
+  ]);
 };
 
 const verifyNatureOfContent = (value) => {
@@ -225,6 +241,7 @@ export default {
   verifyAdministrativeNote,
   verifyInstanceNote,
   verifyStatisticalCode,
+  verifyStatisticalCodeTypeAndName,
   verifyNatureOfContent,
   verifyInstanceSource,
   verifyInstanceRecordViewOpened,
@@ -431,6 +448,14 @@ export default {
     cy.expect(KeyValue('Edition').has({ value }));
   },
 
+  verifyPublicationFrequency(value) {
+    cy.expect(KeyValue('Publication frequency').has({ value }));
+  },
+
+  verifyPublicationRange(value) {
+    cy.expect(KeyValue('Publication range').has({ value }));
+  },
+
   verifyNotMarkAsStaffSuppressed() {
     cy.wait(1000);
     cy.expect(
@@ -521,7 +546,7 @@ export default {
 
   verifyContributorWithMarcAppLink: (indexRow, indexColumn, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnList({ id: 'list-contributors' }))
         .find(MultiColumnListRow({ index: indexRow }))
         .find(MultiColumnListCell({ columnIndex: indexColumn }))
@@ -531,7 +556,7 @@ export default {
 
   verifyContributorNameWithMarcAppIcon: (indexRow, indexColumn, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnListRow({ index: indexRow }))
         .find(
           MultiColumnListCell({
@@ -545,10 +570,29 @@ export default {
 
   verifyContributorNameWithoutMarcAppIcon: (row, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnListCell({ row, content: including(value) }))
         .has({ content: not(including('Linked to MARC authority')) }),
     );
+  },
+
+  expandContributorAccordion() {
+    cy.do(contributorAccordion.clickHeader());
+  },
+
+  verifyContributorAccordionIsEmpty() {
+    this.expandContributorAccordion();
+
+    const columns = ['Name type', 'Name', 'Type', 'Free text', 'Primary'];
+
+    columns.forEach((column) => {
+      cy.expect(
+        contributorAccordion
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ column, content: 'No value set-' }))
+          .exists(),
+      );
+    });
   },
 
   verifyInstanceAdministrativeNote: (note) => {
@@ -593,7 +637,16 @@ export default {
   },
 
   setRecordForDeletion: () => {
-    cy.do(Button({ id: 'quick-export-trigger' }).click());
+    cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
+  },
+
+  verifyInstanceIsSetForDeletion: () => {
+    cy.expect(
+      MessageBanner().has({
+        textContent:
+          'Warning: Instance is set for deletion, suppressed from discovery, and staff suppressed',
+      }),
+    );
   },
 
   markAsDeletedViaApi: (id) => {
@@ -768,10 +821,22 @@ export default {
     ]);
   },
 
-  verifyLastUpdatedDate(updatedDate) {
+  verifyRecentLastUpdatedDateAndTime() {
+    const currentDate = new Date();
+    const datePlusOneMinute = new Date(currentDate.getTime() + 60 * 1000);
+    const updatedDate = DateTools.getFormattedEndDateWithTimUTC(currentDate, true);
+    const nextMinuteDate = DateTools.getFormattedEndDateWithTimUTC(datePlusOneMinute, true);
+
     cy.expect(
       Accordion('Administrative data')
-        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .find(
+          HTML(
+            or(
+              including(`Record last updated: ${updatedDate}`),
+              including(`Record last updated: ${nextMinuteDate}`),
+            ),
+          ),
+        )
         .exists(),
     );
   },
@@ -798,5 +863,18 @@ export default {
       consortiaHoldingsAccordion.has({ open: isOpen }),
       Accordion({ id: including(memberId) }).exists(),
     ]);
+  },
+
+  clickVersionHistoryButton() {
+    cy.do(versionHistoryButton.click());
+  },
+
+  verifyInstanceFormat(category, term, code, source) {
+    let matchingString = category;
+    if (!term) matchingString += 'No value set-';
+    else matchingString += `  ${term}`;
+    if (code) matchingString += code;
+    if (source) matchingString += source;
+    cy.expect(formatsList.find(MultiColumnListRow(including(matchingString))).exists());
   },
 };

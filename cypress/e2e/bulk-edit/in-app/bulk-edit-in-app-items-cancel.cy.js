@@ -23,8 +23,8 @@ const item = {
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditLogsView.gui,
@@ -94,7 +94,9 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyAreYouSureForm(1, item.itemId);
         BulkEditActions.clickX();
         BulkEditActions.closeBulkEditInAppForm();
-        cy.reload();
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+        }, 20_000);
 
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();

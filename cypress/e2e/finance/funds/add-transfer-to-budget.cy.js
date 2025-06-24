@@ -2,6 +2,7 @@
 // In the future they want to change this.
 // For this reason I have already written a method for cleaning the data and I think it should be kept.
 import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
@@ -10,9 +11,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
-describe('ui-finance: Transactions', () => {
+describe('Transactions', () => {
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
     name: `autotest_fund2_${getRandomPostfix()}`,

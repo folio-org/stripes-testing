@@ -2,7 +2,7 @@ import Groups from '../../../support/fragments/finance/groups/groups';
 import NewGroup from '../../../support/fragments/finance/groups/newGroup';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('ui-finance: Groups', () => {
+describe('Groups', () => {
   const defaultGroup = { ...NewGroup.defaultGroup };
 
   before(() => {

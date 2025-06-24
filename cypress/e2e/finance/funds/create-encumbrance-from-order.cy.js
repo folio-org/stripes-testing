@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
@@ -12,9 +13,8 @@ import Organizations from '../../../support/fragments/organizations/organization
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
-describe('ui-finance: Transactions', () => {
+describe('Transactions', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };

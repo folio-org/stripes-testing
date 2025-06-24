@@ -7,7 +7,8 @@ import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
-    const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
+    const defaultSearchOptionHoldings = 'Keyword (title, contributor, identifier, HRID, UUID)';
+    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID, barcode)';
     let user;
 
     before('Create user, test data', () => {
@@ -40,7 +41,7 @@ describe('Inventory', () => {
         // 2 Click on the "Holdings" tab in "Instance|Holdings|Item" toggle
         InventorySearchAndFilter.switchToHoldings();
         cy.wait(1000);
-        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(defaultSearchOption);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(defaultSearchOptionHoldings);
         InventorySearchAndFilter.checkSearchQueryText('');
         InventorySearchAndFilter.verifyResultPaneEmpty();
 
@@ -50,7 +51,7 @@ describe('Inventory', () => {
         // 4 Click on the "Item" tab in "Instance|Holdings|Item" toggle
         InventorySearchAndFilter.switchToItem();
         cy.wait(1000);
-        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(defaultSearchOption);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(defaultSearchOptionItem);
         InventorySearchAndFilter.checkSearchQueryText('');
         InventorySearchAndFilter.verifyResultPaneEmpty();
 

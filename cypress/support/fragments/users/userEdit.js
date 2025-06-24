@@ -371,6 +371,7 @@ export default {
 
   verifyUserProxyDetails(username) {
     const proxyUser = ProxyUser(including(username));
+    cy.do(Select('Notifications sent to').choose('Proxy'));
     cy.expect([
       proxyUser.exists(),
       proxyUser.find(Select('Relationship Status')).has({ checkedOptionText: 'Active' }),
@@ -472,6 +473,15 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickCloseWithoutSavingIfModalExists() {
+    cy.do(cancelButton.click());
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
+  },
+
   saveAndClose() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
@@ -487,7 +497,7 @@ export default {
   },
 
   saveEditedUser() {
-    cy.intercept('PUT', '/users/*').as('updateUser');
+    cy.intercept('PUT', /\/users\/.+|\/users-keycloak\/users\/.+/).as('updateUser');
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
@@ -520,7 +530,9 @@ export default {
       failOnStatusCode: false,
     })
     .then((servicePointsUsers) => {
-      if (servicePointsUsers.body.servicePointsUsers.length === 0) { return; }
+      if (servicePointsUsers.body.servicePointsUsers.length === 0) {
+        return;
+      }
       cy.okapiRequest({
         method: 'PUT',
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,

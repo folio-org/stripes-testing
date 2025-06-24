@@ -20,7 +20,7 @@ describe('MARC', () => {
             tag245: '245',
           },
           fieldContents: {
-            tag245Content: 'Created MARC bib with linked field',
+            tag245Content: `AT_C422140_MarcBibInstance_${getRandomPostfix()}`,
           },
           marcAuthIcon: 'Linked to MARC authority',
           accordion: 'Contributor',
@@ -32,7 +32,7 @@ describe('MARC', () => {
           content: 'test123',
           boxFourth: '$a C417050 Chin, Staceyann, $d 1972-',
           boxFifth: '',
-          boxSixth: '$0 http://id.loc.gov/authorities/names/n2008052404',
+          boxSixth: '$0 http://id.loc.gov/authorities/names/n2008417050',
           boxSeventh: '',
           searchOption: 'Personal name',
           marcValue: 'C417050 Chin, Staceyann, 1972-',
@@ -53,7 +53,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417050*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417050');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -100,6 +100,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            });
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
@@ -126,9 +130,7 @@ describe('MARC', () => {
               `${newFields.boxSixth}`,
               `${newFields.boxSeventh}`,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -136,25 +138,30 @@ describe('MARC', () => {
             );
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
-            });
 
-            cy.login(testData.userBData.username, testData.userBData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+              cy.login(testData.userBData.username, testData.userBData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              });
+              InventoryInstances.searchByTitle(createdAuthorityIDs[1]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.waitInventoryLoading();
+              InventoryInstance.editMarcBibliographicRecord();
+              QuickMarcEditor.verifyTagFieldAfterLinking(
+                newFields.rowIndex,
+                newFields.tag,
+                '\\',
+                '\\',
+                `${newFields.boxFourth}`,
+                `${newFields.boxFifth}`,
+                `${newFields.boxSixth}`,
+                `${newFields.boxSeventh}`,
+              );
             });
-            InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.verifyTagFieldAfterLinking(
-              newFields.rowIndex,
-              newFields.tag,
-              '\\',
-              '\\',
-              `${newFields.boxFourth}`,
-              `${newFields.boxFifth}`,
-              `${newFields.boxSixth}`,
-              `${newFields.boxSeventh}`,
-            );
           },
         );
       });

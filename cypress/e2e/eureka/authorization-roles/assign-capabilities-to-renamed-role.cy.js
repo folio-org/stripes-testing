@@ -7,9 +7,9 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C431152 ${getRandomPostfix()}`,
+        roleName: `AT_C431152_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        updatedRoleName: `Auto Role C431152 ${getRandomPostfix()} UPD`,
+        updatedRoleName: `AT_C431152_UserRole_${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
         application: 'app-platform-full',
         originalCapabilities: [
@@ -50,21 +50,23 @@ describe('Eureka', () => {
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create role, user', () => {
-        cy.createTempUser([]).then((createdUserProperties) => {
-          testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
-          if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.createAuthorizationRoleApi().then((role) => {
-            testData.roleName = role.name;
-            testData.roleId = role.id;
-            testData.originalCapabilities.forEach((capability) => {
-              capability.type = capability.table;
-              cy.getCapabilityIdViaApi(capability).then((capabId) => {
-                testData.capabIds.push(capabId);
+        cy.getAdminToken().then(() => {
+          cy.createTempUser([]).then((createdUserProperties) => {
+            testData.user = createdUserProperties;
+            cy.assignCapabilitiesToExistingUser(
+              testData.user.userId,
+              capabsToAssign,
+              capabSetsToAssign,
+            );
+            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
+            cy.createAuthorizationRoleApi().then((role) => {
+              testData.roleName = role.name;
+              testData.roleId = role.id;
+              testData.originalCapabilities.forEach((capability) => {
+                capability.type = capability.table;
+                cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                  testData.capabIds.push(capabId);
+                });
               });
             });
           });

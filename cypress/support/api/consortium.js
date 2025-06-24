@@ -83,6 +83,7 @@ Cypress.Commands.add('waitForPrimaryAffiliationSetup', (consortiaId, targetUserI
           limit: 50,
         },
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       });
     },
     (response) => {

@@ -685,7 +685,7 @@ export default {
     const duplicatedTitleRegExp = new RegExp(
       `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
     );
-    this.clickActionsButton();
+    this.clickActionsButton(roleName);
     this.clickDuplicateButton();
     this.confirmDuplicateRole();
     InteractorsTools.checkCalloutMessage(duplicateCalloutSuccessText(roleName));
@@ -947,5 +947,13 @@ export default {
 
   verifyRoleType: (roleName, roleType) => {
     cy.expect(Pane(roleName).find(typeKeyValue).has({ value: roleType }));
+  },
+
+  checkApplicationShownInModal: (appName, isShown = true) => {
+    const targetCheckbox = selectApplicationModal
+      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
+      .find(Checkbox());
+    if (isShown) cy.expect(targetCheckbox.exists());
+    else cy.expect(targetCheckbox.absent());
   },
 };

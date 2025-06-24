@@ -12,7 +12,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   electronicAccessRelationshipId,
-  electronicAccessRelationshipName,
+  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
   LOCATION_IDS,
   LOCATION_NAMES,
 } from '../../../support/constants';
@@ -85,8 +85,8 @@ const verifyValuesInCsvFile = (
   });
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+describe('Bulk-edit', () => {
+  describe('In-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
@@ -163,7 +163,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
@@ -188,7 +188,7 @@ describe('bulk-edit', () => {
           secondItem.holdingsHRID,
         );
 
-        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
+        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
 
         verifyValuesInCsvFile(
           matchedRecordsFileName,
@@ -203,7 +203,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyAreYouSureForm(2, LOCATION_NAMES.MAIN_LIBRARY_UI);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
@@ -238,7 +238,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
-          electronicAccessRelationshipName.RESOURCE,
+          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);

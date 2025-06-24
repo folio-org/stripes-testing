@@ -237,7 +237,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.discovery_suppress != "True") AND (instances.title starts with "C496127_${postfix}")`,
+              `(items.discovery_suppress != true) AND (instances.title starts with C496127_${postfix})`,
             );
 
             instances.forEach((instance) => {
@@ -294,7 +294,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
                 instance.itemUuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-                'true',
+                true,
               );
             });
 
@@ -318,7 +318,7 @@ describe('Bulk-edit', () => {
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
                 instance.itemUuid,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-                'true',
+                true,
               );
             });
 
@@ -392,7 +392,7 @@ describe('Bulk-edit', () => {
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
                     instance.itemUuid,
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-                    'false',
+                    false,
                   );
                 });
 
@@ -416,7 +416,7 @@ describe('Bulk-edit', () => {
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
                     instance.itemUuid,
                     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-                    'false',
+                    false,
                   );
                 });
 

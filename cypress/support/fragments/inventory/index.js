@@ -6,3 +6,4 @@ export { default as InstanceRecordView } from './instanceRecordView';
 export { default as ItemRecordEdit } from './item/itemRecordEdit';
 export { default as ItemRecordView } from './item/itemRecordView';
 export { default as InventorySearchAndFilter } from './inventorySearchAndFilter';
+export { default as VersionHistorySection } from './versionHistorySection';

@@ -175,7 +175,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(permanent_location.name == "${locationInCollegeData.name}") AND (holdings.call_number_prefix == "${callNumberPrefix}")`,
+              `(permanent_location.name == ${locationInCollegeData.name}) AND (holdings.call_number_prefix == ${callNumberPrefix})`,
             );
 
             instances.forEach((instance) => {

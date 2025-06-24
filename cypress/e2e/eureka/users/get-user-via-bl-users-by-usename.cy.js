@@ -8,16 +8,16 @@ describe('Eureka', () => {
         type: 'staff',
         active: true,
         personal: {
-          lastName: `UserForBL ${getRandomPostfix()}`,
-          email: 'testuser@test.org',
+          lastName: `AT_C451589_LastName_${getRandomPostfix()}`,
+          email: 'AT_C451589@test.com',
           preferredContactTypeId: '002',
         },
       },
     };
     const userWithoutKeycloak = { ...testData.userBody };
     const userWithKeycloak = { ...testData.userBody };
-    userWithoutKeycloak.username = `usernokc${getRandomPostfix()}`;
-    userWithKeycloak.username = `userkc${getRandomPostfix()}`;
+    userWithoutKeycloak.username = `at_c451589_username_nokc_${getRandomPostfix()}`;
+    userWithKeycloak.username = `at_c451589_username_kc_${getRandomPostfix()}`;
 
     before('Create data', () => {
       Cypress.session.clearCurrentSessionData();

@@ -1,20 +1,22 @@
 import permissions from '../../../support/dictionary/permissions';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
-const item = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: generateItemBarcode(),
-};
+let instanceTypeId;
+const numberOfInstances = 10;
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
+const instances = [...Array(numberOfInstances)].map(() => ({
+  title: `AT_C9288_FolioInstance_${getRandomPostfix()}`,
+}));
 
 describe('Data Export', () => {
   describe('Export to MARC', () => {
@@ -24,37 +26,56 @@ describe('Data Export', () => {
         permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        const instanceID = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.dataExportPath);
+
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+          instanceTypeId = instanceTypeData[0].id;
+
+          instances.forEach((instance) => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId,
+                title: instance.title,
+              },
+            }).then((createdInstanceData) => {
+              instance.uuid = createdInstanceData.instanceId;
+
+              FileManager.appendFile(`cypress/fixtures/${fileName}`, `${instance.uuid}\n`);
+            });
+          });
+        });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+
+      instances.forEach((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.uuid);
+      });
+
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${fileName}`);
     });
 
     it(
       'C9288 Export small number of instance records - default instance mapping profile (firebird)',
-      { tags: ['smokeBroken', 'firebird', 'C9288'] },
+      { tags: ['smoke', 'firebird', 'C9288'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
-        // collect expected results and verify actual result
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-        cy.wait('@getInfo', getLongDelay()).then((interception) => {
-          const job = interception.response.body.jobExecutions[0];
-          const resultFileName = job.exportedFiles[0].fileName;
-          const recordsCount = job.progress.total;
-          const jobId = job.hrId;
+        cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+          const { jobExecutions } = response.body;
+          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+          const jobId = jobData.hrId;
+          const resultFileName = `${fileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
+          const recordsCount = numberOfInstances;
 
           DataExportResults.verifySuccessExportResultCells(
             resultFileName,

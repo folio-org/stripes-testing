@@ -42,7 +42,7 @@ describe('Circulation log', () => {
           servicePointId: testData.servicePoint.id,
           userBarcode: userData.barcode,
         });
-        cy.loginAsAdmin();
+        cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
       });
   });
 
@@ -67,7 +67,6 @@ describe('Circulation log', () => {
     'C15483 Select and open the Circulation log app (volaris)',
     { tags: ['smoke', 'volaris', 'shiftLeft', 'C15483'] },
     () => {
-      cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();
     },
   );

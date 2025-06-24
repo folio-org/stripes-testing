@@ -11,8 +11,8 @@ import QueryModal, {
 let user;
 const invalidBarcode = uuid();
 
-describe('bulk-edit', () => {
-  describe('query', () => {
+describe('Bulk-edit', () => {
+  describe('Query', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
@@ -51,16 +51,16 @@ describe('bulk-edit', () => {
         QueryModal.verifyQueryAreaContent('(users.barcode == )');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(invalidBarcode);
-        QueryModal.verifyQueryAreaContent(`(users.barcode == "${invalidBarcode}")`);
+        QueryModal.verifyQueryAreaContent(`(users.barcode == ${invalidBarcode})`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();
         QueryModal.exists();
-        QueryModal.verifyQueryAreaContent(`(users.barcode == "${invalidBarcode}")`);
+        QueryModal.verifyQueryAreaContent(`(users.barcode == ${invalidBarcode})`);
         QueryModal.verifyValueColumn();
         QueryModal.verifyOperatorColumn();
         QueryModal.testQueryDisabled(false);
-        BulkEditSearchPane.verifyInputLabel('Query would return 0 records.');
+        BulkEditSearchPane.verifyInputLabel('Query returns no records.');
         BulkEditSearchPane.verifyInputLabel('The list contains no items');
         QueryModal.cancelDisabled(false);
         QueryModal.runQueryDisabled();

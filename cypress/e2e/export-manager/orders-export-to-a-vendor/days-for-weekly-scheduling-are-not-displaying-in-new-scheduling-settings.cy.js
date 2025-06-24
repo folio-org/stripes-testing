@@ -1,12 +1,15 @@
+import moment from 'moment';
 import permissions from '../../../support/dictionary/permissions';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import Integrations from '../../../support/fragments/organizations/integrations/integrations';
+import IntegrationEditForm from '../../../support/fragments/organizations/integrations/integrationEditForm';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -27,13 +30,9 @@ describe('Export Manager', () => {
         },
       ],
     };
-    const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
-    const integartionDescription1 = 'Test Integation descripton1';
-    const vendorEDICodeFor1Integration = getRandomPostfix();
-    const libraryEDICodeFor1Integration = getRandomPostfix();
-    const UTCTime = DateTools.getUTCDateForScheduling();
-    const tomorrow = DateTools.getTomorrowDay();
-    const tomorrowDate = DateTools.getFormattedDate({ date: tomorrow }, 'MM/DD/YYYY');
+    const now = moment();
+    let integrationName;
+    let integration;
     let user;
     let location;
     let servicePointId;
@@ -50,22 +49,40 @@ describe('Export Manager', () => {
 
       Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
         organization.id = organizationsResponse;
-      });
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', organization.name);
-      Organizations.checkSearchResults(organization);
-      Organizations.selectOrganization(organization.name);
-      Organizations.addIntegration();
-      Organizations.fillIntegrationInformation(
-        integrationName1,
-        integartionDescription1,
-        vendorEDICodeFor1Integration,
-        libraryEDICodeFor1Integration,
-        organization.accounts[0].accountNo,
-        'Purchase',
-        UTCTime,
-      );
 
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
+        }).then(({ body: { acquisitionMethods } }) => {
+          const acqMethod = acquisitionMethods.find(
+            ({ value }) => value === ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE,
+          );
+
+          now.set('second', now.second() + 10);
+          integration = Integrations.getDefaultIntegration({
+            vendorId: organization.id,
+            acqMethodId: acqMethod.id,
+            ediSchedule: {
+              enableScheduledExport: true,
+              scheduleParameters: {
+                schedulePeriod: 'WEEK',
+                scheduleFrequency: 1,
+                scheduleTime: now.utc().format('HH:mm:ss'),
+                weekDays: ['SUNDAY'],
+              },
+            },
+            ediFtp: {
+              ftpFormat: 'SFTP',
+              serverAddress: 'sftp://ftp.ci.folio.org',
+              orderDirectory: '/ftp/files/orders',
+            },
+            scheduleTime: now.utc().format('HH:mm:ss'),
+            isDefaultConfig: true,
+          });
+          integrationName =
+            integration.exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
+          Integrations.createIntegrationViaApi(integration);
+        });
+      });
       cy.createTempUser([
         permissions.exportManagerAll.gui,
         permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
@@ -98,12 +115,15 @@ describe('Export Manager', () => {
         Organizations.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
-        Organizations.selectIntegration(integrationName1);
+        Organizations.selectIntegration(integrationName);
         Organizations.editIntegration();
-        Organizations.changeDayOnTommorowInIntegation(tomorrowDate);
+        IntegrationEditForm.selectSchedulingDay('SUNDAY');
+        IntegrationEditForm.selectSchedulingDay('MONDAY');
+        IntegrationEditForm.clickSaveButton();
         Organizations.closeIntegrationDetailsPane();
-        Organizations.selectIntegration(integrationName1);
-        Organizations.checkChangeDayOnTommorowInIntegation(tomorrowDate);
+        Organizations.selectIntegration(integrationName);
+        Organizations.checkSelectedDayInIntegration('Sunday', false);
+        Organizations.checkSelectedDayInIntegration('Monday', true);
       },
     );
   });

@@ -87,7 +87,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });
@@ -131,6 +131,10 @@ describe('MARC', () => {
           testData.searchOptions.IDENTIFIERS_ALL,
           testData.searchQueries.firstQuery.query,
         );
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthorities.checkRowsCount(1);
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,

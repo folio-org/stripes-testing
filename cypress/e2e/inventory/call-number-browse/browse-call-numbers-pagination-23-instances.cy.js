@@ -5,13 +5,13 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { getRandomLetters } from '../../../support/utils/stringTools';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
-      randomPostfix: randomFourDigitNumber(),
+      randomPostfix: getRandomLetters(8),
       servicePoint: ServicePoints.getDefaultServicePoint(),
       folioInstances: [],
       extraHoldings: [],
@@ -74,6 +74,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        for (let i = 1; i <= 23; i++) {
+          BrowseCallNumber.waitForCallNumberToAppear(`test ${testData.randomPostfix} ${300 + i}`);
+        }
         InventorySearchAndFilter.browseSearch(`test ${testData.randomPostfix} 305`);
         BrowseCallNumber.valueInResultTableIsHighlighted(`test ${testData.randomPostfix} 305`);
         for (let i = 1; i <= 23; i++) {

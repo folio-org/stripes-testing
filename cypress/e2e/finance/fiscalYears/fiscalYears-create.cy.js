@@ -4,7 +4,7 @@ import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFis
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('ui-finance: Fiscal Year', () => {
+describe('Fiscal Year', () => {
   before(() => {
     cy.loginAsAdmin({
       path: TopMenu.fiscalYearPath,
