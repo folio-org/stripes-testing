@@ -12,26 +12,31 @@ describe('Permissions -> Circulation', () => {
     cy.createTempUser([
       Permissions.uiCirculationViewLoanHistory.gui,
       Permissions.uiCirculationEditLoanHistory.gui,
-    ]).then(userProps => {
+    ]).then((userProps) => {
       testUser = userProps;
     });
     // Ensure loan is set to never before test
-    LoanAnonymization.setLoanAnonymizationsViaApi({ closingType: { loan: 'never', feeFine: null, loanExceptions: [] } });
+    LoanAnonymization.setLoanAnonymizationsViaApi({
+      closingType: { loan: 'never', feeFine: null, loanExceptions: [] },
+    });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
     // Reset loan is set to never after test
-    LoanAnonymization.setLoanAnonymizationsViaApi({ closingType: { loan: 'never', feeFine: null, loanExceptions: [] } });
+    LoanAnonymization.setLoanAnonymizationsViaApi({
+      closingType: { loan: 'never', feeFine: null, loanExceptions: [] },
+    });
     Users.deleteViaApi(testUser.userId);
   });
 
-  it('C3616 Settings (Circ): Can view loan history (vega)',
+  it(
+    'C3616 Settings (Circ): Can view loan history (vega)',
     { tags: ['extendedPath', 'vega', 'C3616'] },
     () => {
       cy.login(testUser.username, testUser.password, {
         path: SettingsMenu.circulationLoanHistoryPath,
-        waiter: LoanAnonymization.waitLoading
+        waiter: LoanAnonymization.waitLoading,
       });
 
       LoanAnonymization.selectImmediatelyAfterLoanClosesRadioButton();
@@ -42,5 +47,6 @@ describe('Permissions -> Circulation', () => {
         // Verify loan is set to immediately via API
         LoanAnonymization.verifyLoanAnonymizationsContainsParams({ loan: 'immediately' });
       });
-    });
+    },
+  );
 });
