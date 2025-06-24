@@ -87,7 +87,7 @@ describe('Inventory', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          InventoryInstance.waitLoading();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
       });
     });

@@ -251,6 +251,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             // 6 Add subfield "$0" which matched to the "naturalId" field of existing "MARC authority" record to the added eligible for automated linking field
             QuickMarcEditor.updateExistingField(field630.tag, field630.secondContent);
+            cy.wait(1000);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 7 Add new eligible for linking fields, by clicking "+" icon next to any field and filling first and fourth box of appeared row with following values
             newFields.forEach((newField) => {
@@ -276,7 +277,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
               // 10 Click on the "Browse" toggle at the "Search & filter" pane

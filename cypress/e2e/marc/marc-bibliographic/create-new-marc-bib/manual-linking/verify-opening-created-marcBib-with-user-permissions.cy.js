@@ -149,6 +149,7 @@ describe('MARC', () => {
               });
               InventoryInstances.searchByTitle(createdAuthorityIDs[1]);
               InventoryInstances.selectInstance();
+              InventoryInstance.waitInventoryLoading();
               InventoryInstance.editMarcBibliographicRecord();
               QuickMarcEditor.verifyTagFieldAfterLinking(
                 newFields.rowIndex,
