@@ -49,35 +49,33 @@ describe('MARC', () => {
 
       before(() => {
         cy.getAdminToken();
-        return cy
-          .createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-          ])
-          .then((createdUserProperties) => {
-            testUser = createdUserProperties;
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+        ]).then((createdUserProperties) => {
+          testUser = createdUserProperties;
 
-            cy.getAdminToken();
-            return DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            )
-              .then((response) => {
-                response.forEach((record) => {
-                  instanceId = record[marcFile.propertyName].id;
-                });
-              })
-              .then(() => cy.waitForAuthRefresh(() => {
-                cy.login(testUser.username, testUser.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000));
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              instanceId = record[marcFile.propertyName].id;
+            });
           });
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(testUser.username, testUser.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
+        });
       });
 
       after('Deleting created user, Instances', () => {

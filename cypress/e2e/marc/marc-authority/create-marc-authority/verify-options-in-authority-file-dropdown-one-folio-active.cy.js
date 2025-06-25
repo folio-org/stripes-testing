@@ -22,34 +22,34 @@ describe('MARC', () => {
       };
 
       before('Create users, data', () => {
-        cy.getAdminToken()
-          .then(() => cy.createTempUser([
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
-            Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
-          ]))
+        cy.getAdminToken();
+
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
+        ])
           .then((userProperties) => {
             users.userProperties = userProperties;
-            return cy.createAuthoritySourceFileUsingAPI(
+          })
+          .then(() => {
+            cy.createAuthoritySourceFileUsingAPI(
               localAuthFile.prefix,
               localAuthFile.startWithNumber,
               localAuthFile.name,
               localAuthFile.isActive,
-            );
-          })
-          .then((sourceId) => {
-            localAuthFile.fileId = sourceId;
-            return ManageAuthorityFiles.setAuthorityFileToActiveViaApi(
+            ).then((sourceId) => {
+              localAuthFile.fileId = sourceId;
+            });
+            ManageAuthorityFiles.setAuthorityFileToActiveViaApi(
               DEFAULT_FOLIO_AUTHORITY_FILES.LC_DEMOGRAPHIC_GROUP_TERMS,
             );
           })
           .then(() => {
-            return cy.login(users.userProperties.username, users.userProperties.password, {
+            cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-          })
-          .then(() => {
             cy.waitForAuthRefresh(() => {
               cy.reload();
               MarcAuthorities.waitLoading();
