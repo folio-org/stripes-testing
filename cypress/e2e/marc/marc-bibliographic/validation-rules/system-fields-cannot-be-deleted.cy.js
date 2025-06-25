@@ -31,7 +31,7 @@ describe('MARC Bibliographic Validation Rules - System Fields', () => {
     });
   });
 
-  it('Cannot delete a system MARC field (API)', () => {
+  it('Cannot delete a system MARC field (API)', { tags: ['smoke', 'C499835', 'spitfire'] }, () => {
     // Ensure token is set for the user before API calls
     cy.getUserToken(user.username, user.password);
     // 1. Get all fields for the MARC bib specification
