@@ -98,7 +98,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.edit(
               subjectType.name,
               subjectType.nameForEdit,
-              user,
+              user.lastName,
               tenantNames.university,
             );
             ConsortiumSubjectTypes.verifyEditedInList(subjectType.name, subjectType.nameForEdit);

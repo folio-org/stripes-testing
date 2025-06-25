@@ -134,11 +134,15 @@ export default {
     cy.do(filtersPane.find(fundButton).click());
   },
   selectFiscalYearsNavigation: () => {
-    cy.get('[data-test-finance-navigation-fiscalyear="true"]').click();
+    cy.get('[data-test-finance-navigation-fiscalyear="true"]')
+      .should('be.visible', { timeout: 10000 })
+      .click();
   },
 
   selectLedgersNavigation: () => {
-    cy.get('[data-test-finance-navigation-ledger="true"]').click();
+    cy.get('[data-test-finance-navigation-ledger="true"]')
+      .should('be.visible', { timeout: 10000 })
+      .click();
   },
 
   selectGroupsNavigation: () => {
