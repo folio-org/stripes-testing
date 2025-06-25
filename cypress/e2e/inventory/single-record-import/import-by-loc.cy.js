@@ -47,6 +47,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.getAdminToken();
       cy.toggleLocSingleImportProfileViaAPI();
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
@@ -71,7 +72,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C490900'] },
       () => {
         InventoryActions.importLoc(locC490900);
-        InstanceRecordView.waitLoading();
+        InventoryInstance.waitInventoryLoading();
         InventoryInstance.getId().then((id) => createdInstaceIds.push(id));
         InventoryInstance.editMarcBibliographicRecord();
         expectedFieldsC490900.forEach((field) => {

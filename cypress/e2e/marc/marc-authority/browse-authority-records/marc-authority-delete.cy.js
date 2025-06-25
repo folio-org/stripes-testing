@@ -41,10 +41,14 @@ describe('MARC', () => {
       });
 
       beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
+          cy.reload();
+          DataImport.waitLoading();
+        }, 20_000);
       });
 
       after('Deleting created user', () => {

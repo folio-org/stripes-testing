@@ -280,9 +280,7 @@ describe('Patron notices', () => {
 
         feeFineCreate('secondFeeFineId');
         cy.get('@secondFeeFineId').then((secondFeeFineId) => {
-          cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, secondFeeFineId));
-          FeeFineDetails.waitLoading();
-          FeeFineDetails.openActions();
+          openUserFeeFine(userData.userId, secondFeeFineId);
           FeeFineDetails.openErrorModal();
           FeeFineDetails.confirmFeeFineCancellation('AutoTestComment');
           checkNoticeIsSent([
