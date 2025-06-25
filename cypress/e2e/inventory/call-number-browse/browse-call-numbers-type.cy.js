@@ -106,7 +106,7 @@ describe('Inventory', () => {
         })
         .then(() => {
           folioInstances = generateInstances();
-          InventoryInstances.createFolioInstancesViaApi({
+          return InventoryInstances.createFolioInstancesViaApi({
             folioInstances,
             location: testData.defaultLocation,
           });
@@ -115,7 +115,7 @@ describe('Inventory', () => {
           marcInstances = generateInstances().map((_, i) => {
             return { ..._, instanceTitle: `AT_C414972 Marc Instance ${i + 1} ${rnd}` };
           });
-          InventoryInstances.createMarcInstancesViaApi({
+          return InventoryInstances.createMarcInstancesViaApi({
             marcInstances,
             location: testData.defaultLocation,
           });

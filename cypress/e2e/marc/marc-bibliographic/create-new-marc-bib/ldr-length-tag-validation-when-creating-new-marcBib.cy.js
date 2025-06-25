@@ -38,17 +38,18 @@ describe('MARC', () => {
       let createdInstanceRecordId;
 
       before(() => {
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-        ]).then((createdUserProperties) => {
-          userData = createdUserProperties;
-
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+        return cy
+          .createTempUser([
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
+          ])
+          .then((createdUserProperties) => {
+            userData = createdUserProperties;
+            return cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
-        });
       });
 
       after('Deleting created user and data', () => {

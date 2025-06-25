@@ -28,34 +28,38 @@ describe('MARC', () => {
     let user;
 
     before('Create user, test data', () => {
-      cy.getAdminToken();
-      // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466088*');
-
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      ]).then((createdUserProperties) => {
-        user = createdUserProperties;
-
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
-            });
+      cy.getAdminToken()
+        .then(() => {
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466088*');
+        })
+        .then(() => cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        ]))
+        .then((createdUserProperties) => {
+          user = createdUserProperties;
+          return Promise.all(
+            marcFiles.map((marcFile) => DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
+            })),
+          );
+        })
+        .then(() => {
+          return cy.login(user.username, user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
           });
+        })
+        .then(() => {
+          MarcAuthorities.switchToSearch();
         });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-        MarcAuthorities.switchToSearch();
-      });
     });
 
     after('Delete user, test data', () => {
