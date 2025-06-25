@@ -31,8 +31,8 @@ const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
-const editPieceModal = Modal('Edit piece');
 const selectLocationsModal = Modal('Select locations');
+const pieceDetailsSection = Section({ id: 'pieceDetails' });
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
@@ -143,10 +143,10 @@ export default {
 
   receiveDisplayOnHoldingPiece(displaySummary) {
     cy.do([
-      editPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
-      editPieceModal.find(Checkbox('Display on holding')).click(),
+      pieceDetailsSection.find(TextField('Display summary')).fillIn(displaySummary),
+      pieceDetailsSection.find(Checkbox('Display on holding')).click(),
     ]);
-    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
+    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
     this.openDropDownInEditPieceModal();
     cy.do(Button('Quick receive').click());
     cy.wait(1000);
@@ -154,16 +154,16 @@ export default {
   },
 
   editDisplayOnHoldingAndAddDisplayToPublicPiece() {
-    cy.do(editPieceModal.find(Checkbox('Display on holding')).click());
-    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
-    cy.do(editPieceModal.find(Checkbox('Display to public')).click());
+    cy.do(pieceDetailsSection.find(Checkbox('Display on holding')).click());
+    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
+    cy.do(pieceDetailsSection.find(Checkbox('Display to public')).click());
     cy.do(Button('Save & close').click());
     cy.wait(1000);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
   receiveWithoutDisplayOnHoldingPiece(displaySummary) {
-    cy.do(editPieceModal.find(TextField('Display summary')).fillIn(displaySummary));
+    cy.do(pieceDetailsSection.find(TextField('Display summary')).fillIn(displaySummary));
     this.openDropDownInEditPieceModal();
     cy.do(Button('Quick receive').click());
     cy.wait(1000);
