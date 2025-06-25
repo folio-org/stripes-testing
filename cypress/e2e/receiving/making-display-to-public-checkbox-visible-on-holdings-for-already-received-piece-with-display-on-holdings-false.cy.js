@@ -122,7 +122,6 @@ describe('Receiving', () => {
                           Receiving.selectLinkFromResultsList();
                           Receiving.selectRecordInExpectedList();
                           Receiving.receiveWithoutDisplayOnHoldingPiece(displayNameTitle);
-                          cy.logout();
                         });
                       },
                     );
