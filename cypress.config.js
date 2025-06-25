@@ -32,10 +32,10 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-snapshot-okapi.dev.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    OKAPI_HOST: 'https://kong-perm-test.int.aws.folio.org',
+    OKAPI_TENANT: 'fs09000000',
+    diku_login: 'folio',
+    diku_password: 'folio',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
@@ -48,7 +48,7 @@ module.exports = defineConfig({
     grepOmitFiltered: true,
     rtrAuth: true,
     ecsEnabled: false,
-    eureka: false,
+    eureka: true,
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     // turn on for testing selected scenarios after migration to Eureka - see cypress/support/migrationData.js
@@ -153,7 +153,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-snapshot.dev.folio.org',
+    baseUrl: 'https://perm-test.int.aws.folio.org',
     testIsolation: false,
   },
 });
