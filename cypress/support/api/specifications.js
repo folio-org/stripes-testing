@@ -25,3 +25,20 @@ Cypress.Commands.add('checkSpecificationStorageApi', () => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('deleteSpecificationField', (fieldId, failOnStatusCode = true) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `specification-storage/fields/${fieldId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
+  });
+});
+
+Cypress.Commands.add('getSpecificationFields', (specificationId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/specifications/${specificationId}/fields`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
