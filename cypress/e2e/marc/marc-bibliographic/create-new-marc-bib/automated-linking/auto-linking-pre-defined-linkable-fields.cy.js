@@ -163,6 +163,8 @@ describe('MARC', () => {
 
         before(() => {
           // making sure there are no duplicate records in the system before auto-linking
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489*');
+
           cy.getAdminToken().then(() => {
             queries.forEach((query) => {
               MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -292,8 +294,6 @@ describe('MARC', () => {
               // 11 Click on the highlighted in bold contributor in the browse result list.
               BrowseSubjects.selectInstanceWithAuthorityIcon('Lee, Stan, 1922-3894');
               // 12 Open detail view of created by user "Instance" record
-              InventoryInstances.selectInstanceById(createdInstanceID);
-              // Click on the "Actions" in the third pane >> Select "View source".
               InventoryInstance.viewSource();
               // "MARC authority" app icon is displayed next to each field auto linked at Step 8
               newFields.forEach((field) => {
