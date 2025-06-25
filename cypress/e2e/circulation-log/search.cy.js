@@ -127,7 +127,7 @@ describe('Circulation log', () => {
     'C17010 Filter circulation log by service points (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17010'] },
     () => {
-      SearchPane.searchByServicePoint('Circ Desk 2');
+      SearchPane.searchByServicePoint('Circ Desk 1');
       SearchPane.verifyResultCells();
       SearchPane.resetResults();
     },

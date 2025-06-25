@@ -226,6 +226,21 @@ export default {
     );
   },
 
+  confirmSharing(subjectTypeName, status = 'created') {
+    this.verifyShareToAllModal(subjectTypeName);
+    cy.do(confirmButton.click());
+    cy.expect([shareToAllModal.absent(), rootPane.exists()]);
+    if (status === 'updated') {
+      InteractorsTools.checkCalloutMessage(
+        `${subjectTypeName} was successfully updated for All libraries.`,
+      );
+    } else {
+      InteractorsTools.checkCalloutMessage(
+        `${subjectTypeName} was successfully created for All libraries.`,
+      );
+    }
+  },
+
   createNewAndCancel(subjectTypeName, isUnique = true) {
     clickNewButton();
     fillNameField(subjectTypeName);
@@ -258,6 +273,17 @@ export default {
       `${newName} was successfully updated for ${tenantName} library.`,
     );
   },
+
+  editSharedToAllRecord(name, newName, userName, source) {
+    this.getRowIndexesBySubjectTypeName(name).then((rowIndexes) => {
+      this.clickEditByName(name);
+      this.verifyEditRowInList(name, userName, rowIndexes[0], source);
+      fillNameField(newName, rowIndexes[0]);
+    });
+    cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
+    clickSaveButton();
+  },
+
   cancel() {
     cy.do(cancelButton.click());
     newButton.has({ disabled: true });
@@ -309,6 +335,17 @@ export default {
         subjectTypesList
           .find(MultiColumnListRow({ indexRow: `row-${rowIndexes[0]}` }))
           .find(Button({ icon: 'trash' }))
+          .click(),
+      );
+    });
+  },
+
+  clickEditByName(name) {
+    getRowIndexesBySubjectTypeName(name).then((rowIndexes) => {
+      cy.do(
+        subjectTypesList
+          .find(MultiColumnListRow({ indexRow: `row-${rowIndexes[0]}` }))
+          .find(Button({ icon: 'edit' }))
           .click(),
       );
     });
@@ -387,7 +424,7 @@ export default {
     ]);
   },
 
-  verifyEditRowInList(name, user, rowIndex) {
+  verifyEditRowInList(name, userLastName, rowIndex, source) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 
     cy.expect([
@@ -395,13 +432,13 @@ export default {
       subjectTypesList
         .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: 'local' }),
+        .has({ content: source || 'local' }),
       subjectTypesList
         .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
         .find(
           MultiColumnListCell({
             columnIndex: 2,
-            content: including(`${date} by ${user.lastName},`),
+            content: including(`${date} by ${userLastName}`),
           }),
         )
         .exists(),

@@ -16,6 +16,7 @@ import Locations from '../../../support/fragments/settings/tenant/location-setup
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Orders: Inventory interaction', () => {
   const barcodeForFirstItem = Helper.getRandomBarcode();
@@ -134,6 +135,7 @@ describe('Orders: Inventory interaction', () => {
       ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
       cy.wait(7000);
+      InteractorsTools.closeAllVisibleCallouts();
       InventoryItems.closeItem();
       InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
