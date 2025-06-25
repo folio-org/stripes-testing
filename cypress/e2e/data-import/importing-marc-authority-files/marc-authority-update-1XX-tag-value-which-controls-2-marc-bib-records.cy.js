@@ -48,13 +48,7 @@ describe('Data Import', () => {
       marcFileForModify: 'marcBibFileForC374167_1.mrc',
       modifiedMarcFile: `C374167 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C374167 testMarcFile${getRandomPostfix()}.mrc`,
-      updated700Field: [
-        64,
-        '700',
-        '1',
-        '\\',
-        '$a C374167 DiCaprio, Leonardo $e actor. $0 http://id.loc.gov/authorities/names/n94000330',
-      ],
+      updated700Field: [64, '700', '1', '\\', '$a C374167 DiCaprio, Leonardo, $e actor.'],
     };
     const mappingProfile = {
       name: `C374167 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
