@@ -28,12 +28,12 @@ function getListOfStatisticalCodesNames() {
 
 export default {
   getListOfStatisticalCodesNames,
-  createViaApi() {
+  createViaApi(body = defaultStatisticalCode) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'statistical-codes',
-        body: defaultStatisticalCode,
+        body,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {

@@ -26,7 +26,7 @@ describe('Consortia', () => {
           editedSubjectSourseName: `autotestSubjectSourceNameEdited${getRandomPostfix()}`,
         };
 
-        before('Create userand login', () => {
+        before('Create user and login', () => {
           cy.clearCookies({ domain: null });
           cy.getAdminToken();
           cy.createTempUser([

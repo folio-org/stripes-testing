@@ -928,4 +928,10 @@ export default {
   checkBankingInformationAddButtonIsDisabled: () => {
     cy.expect(Button({ id: 'bankingInformation-add-button' }).has({ disabled: true }));
   },
+
+  checkButtonsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(Button(label).has(conditions));
+    });
+  },
 };

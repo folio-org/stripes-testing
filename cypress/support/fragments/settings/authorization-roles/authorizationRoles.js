@@ -437,14 +437,23 @@ export default {
     cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
   },
 
-  confirmDeleteRole: (roleName) => {
+  confirmDeleteRole: (roleName, errorExpected = false) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
-    cy.expect([
-      Callout(successDeleteText).exists(),
-      deleteRoleModal.absent(),
-      Pane(roleName).absent(),
-      rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
-    ]);
+    if (!errorExpected) {
+      cy.expect([
+        Callout(successDeleteText).exists(),
+        deleteRoleModal.absent(),
+        Pane(roleName).absent(),
+        rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
+      ]);
+    } else {
+      cy.wait(2000);
+      cy.expect([
+        deleteRoleModal.exists(),
+        Pane(roleName).exists(),
+        rolesPane.find(HTML(roleName, { className: including('root') })).exists(),
+      ]);
+    }
   },
 
   clickOnUsersAccordion: (checkOpen = true) => {
