@@ -14,6 +14,92 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Automated linking', () => {
+        const authoritySubfieldsToUpdateViaApi = [
+          {
+            ruleId: '8',
+            ruleSubfields: [
+              'a',
+              'b',
+              'c',
+              'd',
+              'g',
+              'j',
+              'q',
+              'f',
+              'h',
+              'k',
+              'l',
+              'm',
+              'n',
+              'o',
+              'p',
+              'r',
+              's',
+              't',
+            ],
+          },
+          {
+            ruleId: '9',
+            ruleSubfields: [
+              'a',
+              'b',
+              'c',
+              'd',
+              'g',
+              'f',
+              'h',
+              'k',
+              'l',
+              'm',
+              'n',
+              'o',
+              'p',
+              'r',
+              's',
+              't',
+            ],
+          },
+          {
+            ruleId: '10',
+            ruleSubfields: [
+              'a',
+              'c',
+              'e',
+              'q',
+              'f',
+              'h',
+              'k',
+              'l',
+              'p',
+              's',
+              't',
+              'd',
+              'g',
+              'n',
+              'v',
+              'x',
+              'y',
+              'z',
+            ],
+          },
+          {
+            ruleId: '11',
+            ruleSubfields: ['a'],
+          },
+          {
+            ruleId: '12',
+            ruleSubfields: ['a', 'b', 'g', 'v', 'x', 'y', 'z'],
+          },
+          {
+            ruleId: '13',
+            ruleSubfields: ['a', 'g', 'v', 'x', 'y', 'z'],
+          },
+          {
+            ruleId: '14',
+            ruleSubfields: ['a'],
+          },
+        ];
+
         const testData = {
           successCalout:
             'Field 100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
@@ -45,8 +131,8 @@ describe('MARC', () => {
             '600',
             '0',
             '0',
-            '$a C569607 Black Panther $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-            '$i comics',
+            '$a C569607 Black Panther $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever',
+            '$i comics $v TestV $x TestX $y TestY $z TestZ',
             '$0 http://id.loc.gov/authorities/names/n2016004082569607',
             '$4 .prt $2 test',
           ],
@@ -55,7 +141,7 @@ describe('MARC', () => {
             '610',
             '\\',
             '\\',
-            '$a C569607 Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            '$a C569607 Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work',
             '',
             '$0 4510955569607',
             '',
@@ -75,7 +161,7 @@ describe('MARC', () => {
             '630',
             '\\',
             '\\',
-            '$a C569607 Marvel comics $d Date of treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            '$a C569607 Marvel comics',
             '',
             '$0 http://id.loc.gov/authorities/names/n80026955569607',
             '',
@@ -105,7 +191,7 @@ describe('MARC', () => {
             '655',
             '\\',
             '\\',
-            '$a C569607 Drama $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            '$a C569607 Drama',
             '',
             '$0 http://id.loc.gov/authorities/genreForms/gf2014026297569607',
             '',
@@ -215,6 +301,10 @@ describe('MARC', () => {
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C569607*');
 
+          authoritySubfieldsToUpdateViaApi.forEach((tag) => {
+            QuickMarcEditor.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
+          });
+
           cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
 
@@ -248,6 +338,7 @@ describe('MARC', () => {
 
         after('Deleting created users, Instances', () => {
           cy.getAdminToken();
+          QuickMarcEditor.setAuthoritySubfieldsDefault();
           Users.deleteViaApi(testData.preconditionUserId);
           Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
@@ -259,8 +350,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C740247 Link all linkable fields automatically when MARC authority 1XXs have all subfields (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C740247'] },
+          'C569607 Link all linkable fields automatically when MARC authority 1XXs have all subfields and different subfields selected as linkable in config (spitfire)',
+          { tags: ['criticalPath', 'spitfire', 'C569607'] },
           () => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
