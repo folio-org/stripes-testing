@@ -55,9 +55,6 @@ describe('Reading Room Access', () => {
     Users.deleteViaApi(testData.user.userId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePointId]);
     ServicePoints.deleteViaApi(testData.servicePointId);
-    // SettingsTenantPane.goToTenantTab();
-    // SettingsTenantPane.selectTenant(TENANTS.READING_ROOM_ACCESS);
-    // SettingsReadingRoom.delete(testData.readingRoomId);
   });
 
   it(
