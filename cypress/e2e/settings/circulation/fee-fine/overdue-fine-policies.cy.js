@@ -211,8 +211,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   });
 
   it(
-    'C5557 Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: ['vega', 'smoke', 'C5557'] },
+    'C5557 C3613 Verify that you can create/edit/delete overdue fine policies (vega)',
+    { tags: ['vega', 'smoke', 'C5557', 'C3613'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationOverdueFinePoliciesPath,

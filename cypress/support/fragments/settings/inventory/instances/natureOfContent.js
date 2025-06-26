@@ -32,10 +32,11 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
+  deleteViaApi: (id, ignoreErrors = true) => cy.okapiRequest({
     method: 'DELETE',
     path: `nature-of-content-terms/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }),
   verifyConsortiumNatureOfContentInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });

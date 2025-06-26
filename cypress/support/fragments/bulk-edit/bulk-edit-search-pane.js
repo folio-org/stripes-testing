@@ -26,6 +26,7 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
 const changesAccordion = Accordion(previewOfRecordsChangedFormName);
 const errorsAccordion = Accordion('Errors & warnings');
+const showWarningsCheckbox = Checkbox({ labelText: 'Show warnings' });
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -838,6 +839,10 @@ export default {
     );
   },
 
+  clickShowWarningsCheckbox() {
+    cy.do(errorsAccordion.find(showWarningsCheckbox).click());
+  },
+
   verifyReasonForError(errorText) {
     cy.expect(errorsAccordion.find(HTML(including(errorText))).exists());
   },
@@ -1524,6 +1529,7 @@ export default {
       matchedAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
     cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .eq(0)
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);
@@ -1624,6 +1630,11 @@ export default {
   verifyCellWithContentAbsentsInChangesAccordion(...cellContent) {
     cellContent.forEach((content) => {
       cy.expect(changesAccordion.find(MultiColumnListCell(content)).absent());
+    });
+  },
+  verifyCellWithContentAbsentsInAreYouSureForm(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(content)).absent());
     });
   },
 };

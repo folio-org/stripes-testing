@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -205,8 +205,10 @@ export default {
     cy.expect(HTML(including(text)).absent());
   },
 
-  verifyMaterialType: (type) => {
-    cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
+  verifyMaterialType: (type, orLogic = false) => {
+    let matcher = including(type);
+    if (orLogic) matcher = or(...type.map((el) => including(el)));
+    cy.expect(itemDataAccordion.find(HTML(matcher)).exists());
   },
 
   checkItemNote: (note, staffValue = 'Yes', value = 'Note') => {

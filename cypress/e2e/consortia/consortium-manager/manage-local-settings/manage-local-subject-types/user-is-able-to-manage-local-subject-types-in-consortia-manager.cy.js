@@ -1,12 +1,12 @@
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiumManagerApp, {
+import ConsortiumManager, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SubjectTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
+import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import SettingsConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
@@ -53,23 +53,22 @@ describe('Consortia', () => {
             cy.resetTenant();
 
             cy.login(user.username, user.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            SettingsConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           });
         });
 
         after('Delete users data', () => {
           cy.resetTenant();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-          ConsortiumManagerApp.waitLoading();
-          ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-          SubjectTypesConsortiumManager.choose();
-          SubjectTypesConsortiumManager.deleteSubjectType(
-            subjectType.name,
-            user,
+          SettingsConsortiumManager.switchActiveAffiliation(
+            tenantNames.university,
             tenantNames.central,
           );
-          SubjectTypesConsortiumManager.deleteSubjectType(
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+          ConsortiumManager.waitLoading();
+          ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
+          ConsortiumSubjectTypes.choose();
+          ConsortiumSubjectTypes.deleteByUserName(subjectType.name, user, tenantNames.central);
+          ConsortiumSubjectTypes.deleteByUserName(
             subjectType.nameForEdit,
             user,
             tenantNames.university,
@@ -83,56 +82,51 @@ describe('Consortia', () => {
           { tags: ['criticalPathECS', 'folijet', 'C594411'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-            ConsortiumManagerApp.waitLoading();
-            SelectMembers.selectAllMembers();
-            ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            SubjectTypesConsortiumManager.choose();
-            SubjectTypesConsortiumManager.createNewSubjectType(subjectType.name);
-            SubjectTypesConsortiumManager.confirmConfirmMemberLibraries(subjectType.name, [
+            ConsortiumManager.waitLoading();
+            SelectMembersModal.selectAllMembers();
+            ConsortiumManager.verifyStatusOfConsortiumManager(3);
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumSubjectTypes.choose();
+
+            ConsortiumSubjectTypes.createNewWithValidationOfNameField(subjectType.name, true, true);
+            ConsortiumSubjectTypes.clickConfirmInConfirmMemberLibraries(subjectType.name, [
               tenantNames.central,
               tenantNames.college,
               tenantNames.university,
             ]);
-            SubjectTypesConsortiumManager.verifyCreatedSubjectTypes(subjectType, user);
-            SubjectTypesConsortiumManager.editSubjectType(
+            ConsortiumSubjectTypes.verifyCreatedInList(subjectType, user);
+            ConsortiumSubjectTypes.edit(
               subjectType.name,
               subjectType.nameForEdit,
-              user,
+              user.lastName,
               tenantNames.university,
             );
-            SubjectTypesConsortiumManager.verifyEditedSubjectTypes(
-              subjectType.name,
+            ConsortiumSubjectTypes.verifyEditedInList(subjectType.name, subjectType.nameForEdit);
+            ConsortiumSubjectTypes.deleteByUserName(subjectType.name, user, tenantNames.college);
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               subjectType.nameForEdit,
+              tenantNames.university,
+              'local',
+              { actions: ['edit', 'trash'] },
             );
-            SubjectTypesConsortiumManager.deleteSubjectType(
+            ConsortiumSubjectTypes.verifySubjectTypeExists(
               subjectType.name,
-              user,
-              tenantNames.college,
+              tenantNames.central,
+              'local',
+              { actions: ['edit', 'trash'] },
             );
-            [
-              {
-                typeName: subjectType.nameForEdit,
-                tenantName: tenantNames.university,
-              },
-              {
-                typeName: subjectType.name,
-                tenantName: tenantNames.central,
-              },
-            ].forEach((elements) => {
-              SubjectTypesConsortiumManager.verifySourceTypeExists(
-                elements.typeName,
-                elements.tenantName,
-              );
-            });
 
-            SubjectTypesConsortiumManager.createNewSubjectType(subjectType.nameForKeepEdit);
-            SubjectTypesConsortiumManager.clickKeepEditingInConfirmModal();
-            SubjectTypesConsortiumManager.clickCancelInActionsColumn();
-            SubjectTypesConsortiumManager.verifySubjectTypeAbsent(subjectType.nameForKeepEdit);
+            ConsortiumSubjectTypes.createNewWithValidationOfNameField(
+              subjectType.nameForKeepEdit,
+              true,
+              true,
+            );
+            ConsortiumSubjectTypes.clickKeepEditingInConfirmMemberLibrariesModal();
+            ConsortiumSubjectTypes.cancel();
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(subjectType.nameForKeepEdit);
 
-            SubjectTypesConsortiumManager.createNewSubjectType(subjectType.name, false);
-            SubjectTypesConsortiumManager.clickCancelInActionsColumn();
+            ConsortiumSubjectTypes.createNewWithValidationOfNameField(subjectType.name, true, true);
+            ConsortiumSubjectTypes.cancel();
 
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
@@ -145,8 +139,11 @@ describe('Consortia', () => {
               actions: ['edit', 'trash'],
             });
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            SettingsConsortiumManager.switchActiveAffiliation(
+              tenantNames.central,
+              tenantNames.college,
+            );
+            SettingsConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
@@ -154,8 +151,11 @@ describe('Consortia', () => {
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
             SubjectTypes.verifySubjectTypeAbsent(subjectType.name);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+            SettingsConsortiumManager.switchActiveAffiliation(
+              tenantNames.college,
+              tenantNames.university,
+            );
+            SettingsConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,

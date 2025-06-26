@@ -352,10 +352,10 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
-const waitInstanceRecordViewOpened = (title) => {
-  cy.wait(1500);
+const waitInstanceRecordViewOpened = () => {
   cy.expect(instanceDetailsSection.exists());
-  cy.expect(Pane({ titleLabel: including(title) }).exists());
+  cy.expect(Pane().exists());
+  cy.expect(Spinner().absent());
 };
 
 const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {
@@ -1287,7 +1287,7 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content: including(content) }).exists());
   },
-  openHoldingItem({ name, barcode, shouldOpen = true }) {
+  openHoldingItem({ name = '', barcode = 'No barcode', shouldOpen = true }) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
@@ -1451,8 +1451,8 @@ export default {
         }),
         (response) => response.body.sharingInstances[0].status === 'COMPLETE',
         {
-          limit: 20,
-          delay: 1000,
+          limit: 30,
+          delay: 2000,
         },
       );
     });

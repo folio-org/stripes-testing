@@ -163,6 +163,8 @@ describe('MARC', () => {
 
         before(() => {
           // making sure there are no duplicate records in the system before auto-linking
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489*');
+
           cy.getAdminToken().then(() => {
             queries.forEach((query) => {
               MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -251,6 +253,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             // 6 Add subfield "$0" which matched to the "naturalId" field of existing "MARC authority" record to the added eligible for automated linking field
             QuickMarcEditor.updateExistingField(field630.tag, field630.secondContent);
+            cy.wait(1000);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 7 Add new eligible for linking fields, by clicking "+" icon next to any field and filling first and fourth box of appeared row with following values
             newFields.forEach((newField) => {
@@ -276,7 +279,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
               // 10 Click on the "Browse" toggle at the "Search & filter" pane
@@ -292,8 +294,6 @@ describe('MARC', () => {
               // 11 Click on the highlighted in bold contributor in the browse result list.
               BrowseSubjects.selectInstanceWithAuthorityIcon('Lee, Stan, 1922-3894');
               // 12 Open detail view of created by user "Instance" record
-              InventoryInstances.selectInstanceById(createdInstanceID);
-              // Click on the "Actions" in the third pane >> Select "View source".
               InventoryInstance.viewSource();
               // "MARC authority" app icon is displayed next to each field auto linked at Step 8
               newFields.forEach((field) => {

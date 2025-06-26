@@ -134,6 +134,7 @@ describe('Inventory', () => {
             marcFile.jobProfileToRun,
           ).then((response) => {
             testData.createdRecordId = response[0].instance.id;
+            cy.enableVersionHistoryFeature(true);
 
             cy.waitForAuthRefresh(() => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
