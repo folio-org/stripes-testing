@@ -1632,4 +1632,9 @@ export default {
       cy.expect(changesAccordion.find(MultiColumnListCell(content)).absent());
     });
   },
+  verifyCellWithContentAbsentsInAreYouSureForm(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(content)).absent());
+    });
+  },
 };
