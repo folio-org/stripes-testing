@@ -168,12 +168,11 @@ export default {
     if (isRoomCreated) {
       cy.do(
         MultiColumnListCell({ content: readingRoomName }).perform((element) => {
-          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
           cy.expect(
             readingRoomAccessAccordion
-              .find(MultiColumnListRow({ indexRow: rowNumber }))
-              .find(MultiColumnListCell({ content: status }))
+              .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+              .find(MultiColumnListCell({ innerText: status }))
               .exists(),
           );
         }),

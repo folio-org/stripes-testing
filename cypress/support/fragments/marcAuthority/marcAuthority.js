@@ -36,6 +36,7 @@ const continueWithSaveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
 );
 const buttonLink = Button({ icon: 'unlink' });
+const calloutCreatedRecordSuccess = Callout('Record created.');
 const calloutUpdatedRecordSuccess = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -408,6 +409,10 @@ export default {
 
   verifyAfterSaveAndClose() {
     cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
+  },
+
+  verifyCreatedRecordSuccess() {
+    cy.expect([calloutCreatedRecordSuccess.exists(), rootSection.exists()]);
   },
 
   getId() {
