@@ -28,7 +28,11 @@ describe('Reading Room Access', () => {
     });
 
     cy.createTempUser(
-      [Permissions.uiSettingsTenantReadingRoomAll.gui, Permissions.uiCanViewReadingRoomAccess.gui],
+      [
+        Permissions.uiSettingsTenantReadingRoomAll.gui,
+        Permissions.uiCanViewReadingRoomAccess.gui,
+        Permissions.uiSettingsTenantReadingRoom.gui,
+      ],
       'staff',
     ).then((userProperties) => {
       testData.user = userProperties;
@@ -51,6 +55,9 @@ describe('Reading Room Access', () => {
     Users.deleteViaApi(testData.user.userId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePointId]);
     ServicePoints.deleteViaApi(testData.servicePointId);
+    // SettingsTenantPane.goToTenantTab();
+    // SettingsTenantPane.selectTenant(TENANTS.READING_ROOM_ACCESS);
+    // SettingsReadingRoom.delete(testData.readingRoomId);
   });
 
   it(
