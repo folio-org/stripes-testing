@@ -152,7 +152,7 @@ describe('Data Import', () => {
 
     after(() => {
       cy.getAdminToken();
-      if (testData.userProperties && testData.userProperties.userId) {
+      if (testData?.userProperties?.userId) {
         Users.deleteViaApi(testData.userProperties.userId);
       }
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
