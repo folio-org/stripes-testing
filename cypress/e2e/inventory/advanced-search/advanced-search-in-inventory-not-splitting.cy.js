@@ -15,7 +15,7 @@ describe('Inventory', () => {
     const randomLetters = getRandomLetters(10);
     const testData = {
       advSearchOption: 'Advanced search',
-      keywordSearchOption: 'Keyword (title, contributor)',
+      keywordSearchOption: 'Keyword (title, contributor, identifier)',
       instanceTitles: [
         `Chile and Peru : two paths to social${randomLetters} justice / edited by Leila A. Bradfield. C466212`,
         `Consiliō et animīs : tracing a path to not social${randomLetters} justice through the classics / by Antoinette M. Ryan. C466212`,

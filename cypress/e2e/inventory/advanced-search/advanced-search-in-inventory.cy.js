@@ -126,13 +126,13 @@ describe('Inventory', () => {
           0,
           'The Beatles Adv search keyword',
           'Starts with',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'The Beatles Adv search keyword',
           'Starts with',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.fillAdvSearchRow(
           1,
@@ -244,13 +244,13 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
@@ -268,13 +268,13 @@ describe('Inventory', () => {
           0,
           'McOrmond, Steven Craig, 1971-',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'McOrmond, Steven Craig, 1971-',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
@@ -288,13 +288,13 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
@@ -313,13 +313,13 @@ describe('Inventory', () => {
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.checkAdvSearchModalValues(
           0,
           'queering the',
           'Exact phrase',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
