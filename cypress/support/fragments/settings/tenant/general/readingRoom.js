@@ -95,7 +95,11 @@ export default {
         .choose(readingRoom.servicePointName),
     );
     cy.wait(2000);
-    cy.do(readingRoomPane.find(Checkbox({ ariaLabel: 'Public 0' })).click());
+    cy.get('input[aria-label="Public 0"]').then(($checkbox) => {
+      if (!$checkbox.is(':checked')) {
+        cy.wrap($checkbox).click();
+      }
+    });
     cy.wait(2000);
     cy.do(
       readingRoomPane.find(Button({ id: 'clickable-save-reading-room-access-settings-0' })).click(),

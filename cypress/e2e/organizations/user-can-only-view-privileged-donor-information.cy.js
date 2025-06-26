@@ -33,7 +33,7 @@ describe('Organizations', () => {
     Organizations.saveOrganization();
     cy.createTempUser([
       permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewPrivilegedDonorInformation.gui,
+      permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
