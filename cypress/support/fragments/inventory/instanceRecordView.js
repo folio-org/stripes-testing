@@ -823,18 +823,19 @@ export default {
 
   verifyRecentLastUpdatedDateAndTime() {
     const currentDate = new Date();
-    const datePlusOneMinute = new Date(currentDate.getTime() + 60 * 1000);
-    const updatedDate = DateTools.getFormattedEndDateWithTimUTC(currentDate, true);
-    const nextMinuteDate = DateTools.getFormattedEndDateWithTimUTC(datePlusOneMinute, true);
+
+    // Generate three time points: one minute before, current, one minute after
+    const timePoints = [];
+    for (let i = -1; i <= 1; i++) {
+      const timePoint = new Date(currentDate.getTime() + i * 60 * 1000);
+      timePoints.push(DateTools.getFormattedEndDateWithTimUTC(timePoint, true));
+    }
 
     cy.expect(
       Accordion('Administrative data')
         .find(
           HTML(
-            or(
-              including(`Record last updated: ${updatedDate}`),
-              including(`Record last updated: ${nextMinuteDate}`),
-            ),
+            or(...timePoints.map((timePoint) => including(`Record last updated: ${timePoint}`))),
           ),
         )
         .exists(),
