@@ -66,11 +66,9 @@ describe('Orders', () => {
       cy.getAdminToken();
 
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' }).then((servicePoints) => {
-        console.log(servicePoints[0]);
         circ2LocationServicePoint = servicePoints[0];
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
           (servicePointsResponse) => {
-            console.log(servicePointsResponse[0]);
             circ1LocationServicePoint = servicePointsResponse[0];
             NewLocation.createViaApi(
               NewLocation.getDefaultLocation(circ2LocationServicePoint.id),
