@@ -177,7 +177,7 @@ describe('Inventory', () => {
               rowNumber,
               '',
               'Contains all',
-              'Keyword (title, contributor)',
+              'Keyword (title, contributor, identifier)',
               'AND',
             );
           });
