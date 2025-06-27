@@ -124,10 +124,14 @@ describe('MARC', () => {
             users.userAProperties.lastName,
           );
 
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userBProperties.username, users.userBProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
