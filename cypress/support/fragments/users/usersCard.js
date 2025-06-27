@@ -517,6 +517,14 @@ export default {
     cy.wait(2000);
   },
 
+  verifyTagsIconIsPresent: () => {
+    cy.expect(Button({ icon: 'tag' }).exists());
+  },
+
+  verifyTagsIconIsAbsent: () => {
+    cy.expect(Button({ icon: 'tag' }).absent());
+  },
+
   addTag: (tag) => {
     cy.do([
       MultiSelect({ id: 'input-tag' }).fillIn(tag),
@@ -685,6 +693,7 @@ export default {
   },
 
   close() {
+    this.verifyUserInformationPresence();
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
     cy.expect(rootSection.absent());
   },
