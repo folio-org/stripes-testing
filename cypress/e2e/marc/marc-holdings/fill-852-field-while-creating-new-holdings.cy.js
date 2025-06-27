@@ -5,15 +5,12 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
-    const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = {
       tag851: '851',
       tag852: '852',
@@ -35,11 +32,11 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
       ]).then((createdUserProperties) => {
-        ServicePoints.createViaApi(servicePoint);
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
-        testData.tag852_B_value = `$b ${defaultLocation.code}`;
-        testData.tag852_B_E_values = `$b ${defaultLocation.code} $e Test`;
-        Location.createViaApi(defaultLocation);
+        cy.getLocations({ query: '(name<>"AT_*" and name<>"*autotest*")' }).then((location) => {
+          testData.tag852_B_value = `$b ${location.code}`;
+          testData.tag852_B_E_values = `$b ${location.code} $e Test`;
+          defaultLocation = location;
+        });
         user = createdUserProperties;
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {

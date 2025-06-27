@@ -19,7 +19,7 @@ describe('MARC', () => {
         const testData = {
           tag651: '651',
           authorityMarkedValue: 'C375071 Clear Creek (Tex.)',
-          subjectValue: 'C375071 Clear Creek (Tex.)--Place in Texas',
+          subjectValue: 'C375071 Clear Creek (Tex.)--Place in Texas--Form',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Subject',
         };
@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag651,
           '\\',
           '0',
-          '$a C375071 Clear Creek (Tex.) $g Place in Texas $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
+          '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
         ];
         const bib651LinkedFieldValues = [
           20,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '\\',
           '0',
           '$a C375071 Clear Creek (Tex.) $g Place in Texas',
-          '',
+          '$v Form',
           '$0 http://id.loc.gov/authorities/names/n79041362',
           '$3 papers',
         ];
@@ -92,10 +92,14 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 

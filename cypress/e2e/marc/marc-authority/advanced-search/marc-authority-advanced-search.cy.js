@@ -38,6 +38,15 @@ describe('MARC', () => {
       const createdAuthorityID = [];
 
       before(() => {
+        cy.getAdminToken();
+        [
+          testData.titles.titlePersonalName,
+          testData.titles.titleCorporateName,
+          testData.titles.titleUniform,
+        ].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties) => {
             testData.userProperties = createdUserProperties;

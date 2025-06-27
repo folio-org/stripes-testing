@@ -619,9 +619,15 @@ export default {
   },
 
   chooseAuthoritySourceOption: (option) => {
+    const alias = `getItems${getRandomPostfix()}`;
     cy.wait(1000);
+    cy.intercept('GET', '/search/authorities?*').as(alias);
     cy.do(MultiSelect({ label: 'Authority source' }).select([including(option)]));
-    cy.wait(1000);
+    cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
+      const { totalRecords } = item.response.body;
+      cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+      cy.wait(1000);
+    });
   },
 
   verifyEmptyAuthorityField: () => {

@@ -122,7 +122,6 @@ describe('MARC', () => {
           MarcAuthorities.checkResultsExistance('Authorized');
           // #5 Click on any facet option. (Not "Not specified") and check results
           MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
-          MarcAuthorities.checkResultsListRecordsCount();
           MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.facetOptions.optionA]);
 
           // #6 Click on the "Authority source" accordion button at the "Search & filter" pane.
@@ -142,7 +141,6 @@ describe('MARC', () => {
 
           // #10 Click on the multiselect element titled "Authority source" placed in expanded "Authority source" accordion button and select any facet option. (Not "Not specified")
           MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionB);
-          MarcAuthorities.checkResultsListRecordsCount();
           MarcAuthorities.checkResultsSelectedByAuthoritySource([
             testData.facetOptions.optionA,
             testData.facetOptions.optionB,
@@ -161,7 +159,6 @@ describe('MARC', () => {
 
           // #15 Click on the "Not specified" facet option.
           MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionC);
-          MarcAuthorities.checkResultsListRecordsCount();
           MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.facetOptions.optionC]);
 
           // #16 Click on any "Heading/Reference" value from the search result pane.

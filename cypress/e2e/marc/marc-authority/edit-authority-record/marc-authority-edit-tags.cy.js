@@ -47,6 +47,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority.searchInput);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {

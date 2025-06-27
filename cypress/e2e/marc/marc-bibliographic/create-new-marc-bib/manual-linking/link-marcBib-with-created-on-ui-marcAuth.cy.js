@@ -52,7 +52,14 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423565');
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 200,
+            query: `naturalId="${testData.naturalId}" and authRefType=="Authorized"`,
+          }).then((records) => {
+            records.forEach((record) => {
+              MarcAuthority.deleteViaAPI(record.id, true);
+            });
+          });
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,

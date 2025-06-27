@@ -19,7 +19,7 @@ describe('MARC', () => {
         const testData = {
           tag630: '630',
           authorityMarkedValue: 'C375069 Marvel comics',
-          subjectValue: 'C375069 Marvel comics ComiCon',
+          subjectValue: 'C375069 Marvel comics ComiCon--Periodicals.--United States',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Subject',
         };
@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag630,
           '0',
           '7',
-          '$a C375069 Marvel comics $t ComiCon $w 830 $0 80026955 $2 fast',
+          '$a C375069 Marvel comics $t ComiCon $v Periodicals. $z United States $w 830 $0 80026955 $2 fast',
         ];
         const bib630LinkedFieldValues = [
           22,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '0',
           '7',
           '$a C375069 Marvel comics $t ComiCon',
-          '$w 830',
+          '$v Periodicals. $z United States $w 830',
           '$0 80026955',
           '$2 fast',
         ];

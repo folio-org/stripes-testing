@@ -47,7 +47,7 @@ describe('Data Import', () => {
         '1',
         '0',
         '$a C374189 Chin, Staceyann, $d 1972-',
-        '',
+        '$x Childhood and youth.',
         '$0 http://id.loc.gov/authorities/names/n2008052404',
         '',
       ],

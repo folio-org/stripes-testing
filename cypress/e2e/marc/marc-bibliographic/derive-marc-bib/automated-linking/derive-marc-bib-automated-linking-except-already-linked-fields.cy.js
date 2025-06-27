@@ -41,7 +41,7 @@ describe('MARC', () => {
           'Panther Photographic International',
           'Black Panther, Wakanda forever (Motion picture)',
           'Black Panther (Fictitious character)',
-          'Good and evil--History',
+          'Good and evil',
           'Africa',
           'Comics (Graphic works)',
         ];
@@ -217,7 +217,7 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(3000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -293,7 +293,7 @@ describe('MARC', () => {
             });
             // 4 Click on the "Save & close" button.
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
             // 5 Scroll down to the "Subject" accordion button. "MARC authority" app icon is displayed next to each linked subject name

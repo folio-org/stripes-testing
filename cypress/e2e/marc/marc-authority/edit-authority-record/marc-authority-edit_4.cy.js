@@ -44,6 +44,10 @@ describe('MARC', () => {
           marc: 'marcFileForC353533.mrc',
           fileName: `C353533 testMarcFile.${getRandomPostfix()}.mrc`,
         };
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C353533*');
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -51,18 +55,6 @@ describe('MARC', () => {
           Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-
-          // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="C353533"',
-          }).then((records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
-              }
-            });
-          });
 
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
