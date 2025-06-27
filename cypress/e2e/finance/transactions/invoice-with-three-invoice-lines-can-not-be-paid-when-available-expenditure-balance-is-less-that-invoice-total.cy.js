@@ -15,13 +15,11 @@ import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-// import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -89,11 +87,7 @@ describe('Finance: Transactions', () => {
                         cy.getBatchGroups().then((batchGroup) => {
                           invoice.batchGroup = batchGroup.name;
                         });
-                        cy.loginAsAdmin({
-                          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-                          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-                        });
-                        SettingsOrders.setPurchaseOrderLinesLimit(3);
+                        OrderLinesLimit.setPOLLimit(3);
                         const firstOrderLine = {
                           ...BasicOrderLine.defaultOrderLine,
                           cost: {
@@ -216,11 +210,9 @@ describe('Finance: Transactions', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-      waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-    });
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
+    cy.getAdminToken();
+
+    OrderLinesLimit.setPOLLimit(1);
     Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
@@ -236,10 +228,10 @@ describe('Finance: Transactions', () => {
       );
       Invoices.selectInvoiceLineByNumber('$95.00');
       Invoices.verifyCurrentEncumbrance('$95.00');
-      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.backToInvoiceDetailsView();
       Invoices.selectInvoiceLineByNumber('$10.00');
       Invoices.verifyCurrentEncumbrance('$10.00');
-      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.backToInvoiceDetailsView();
       Invoices.selectInvoiceLineByNumber('$5.00');
       Invoices.verifyCurrentEncumbrance('$5.00');
       InvoiceLineDetails.openFundDetailsPane(firstFund.name);

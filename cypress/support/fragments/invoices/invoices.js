@@ -1370,4 +1370,9 @@ export default {
         expect(rowCount).to.eq(1);
       });
   },
+
+  backToInvoiceDetailsView: () => {
+    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'arrow-left' })).click());
+    cy.wait(2000);
+  },
 };

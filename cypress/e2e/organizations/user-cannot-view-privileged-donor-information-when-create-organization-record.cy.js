@@ -10,9 +10,6 @@ describe('Organizations', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-    });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {

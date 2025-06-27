@@ -8,6 +8,7 @@ import {
   TextArea,
   TextField,
   matching,
+  Modal,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
@@ -22,6 +23,7 @@ const cancelButton = editPieceModal.find(Button('Cancel'));
 const deleteButton = Button('Delete');
 const quickReceiveButton = Button('Quick receive');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
+const deleteHoldingsModal = Modal('Delete Holdings');
 
 const editPieceFields = {
   Caption: editPieceModal.find(TextField({ name: 'displaySummary' })),
@@ -74,21 +76,26 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton() {
+  clickDeleteButton(POLineQuantity) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView();
+    DeletePieceModal.verifyModalView(POLineQuantity);
 
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
     cy.do(quickReceiveButton.click());
+    this.clickKeepHoldingsInDeleteHoldingsModal();
 
     if (peiceReceived) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(ReceivingStates.pieceReceivedSuccessfully)),
       );
     }
+  },
+  clickKeepHoldingsInDeleteHoldingsModal() {
+    cy.do(deleteHoldingsModal.find(Button('Keep Holdings')).click());
+    cy.expect(deleteHoldingsModal.absent());
   },
   clickSaveAndCloseButton({ pieceSaved = true } = {}) {
     cy.do(saveAndCloseButton.click());

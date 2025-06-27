@@ -19,12 +19,14 @@ import MaterialTypes from '../../support/fragments/settings/inventory/materialTy
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Receiving from '../../support/fragments/receiving/receiving';
+import DeletePieceModal from '../../support/fragments/receiving/modals/deletePieceModal';
 
 describe('Orders', () => {
   const testData = {
     organization: NewOrganization.getDefaultOrganization(),
     servicePoint: ServicePoints.getDefaultServicePoint(),
     materialType: MaterialTypes.getDefaultMaterialType(),
+    POLineQuantity: 2,
     order: {},
     orderLine: {},
     user: {},
@@ -54,78 +56,81 @@ describe('Orders', () => {
   });
 
   beforeEach('Create test order', () => {
-    const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
-      budget: { allocated: 100 },
-    });
+    cy.getAdminToken().then(() => {
+      const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+        budget: { allocated: 1000 },
+      });
 
-    testData.fiscalYear = fiscalYear;
-    testData.fund = fund;
-    testData.budget = budget;
+      testData.fiscalYear = fiscalYear;
+      testData.fund = fund;
+      testData.budget = budget;
 
-    testData.order = {
-      ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-      reEncumber: true,
-    };
-    testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-      checkinItems: false,
-      createInventory: 'Instance, Holding, Item',
-      specialLocationId: testData.location.id,
-      specialMaterialTypeId: testData.materialType.id,
-      listUnitPrice: 90,
-      fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
-    });
+      testData.order = {
+        ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+        reEncumber: true,
+      };
+      testData.orderLine = BasicOrderLine.getDefaultOrderLine({
+        quantity: 2,
+        checkinItems: false,
+        createInventory: 'Instance, Holding, Item',
+        specialLocationId: testData.location.id,
+        specialMaterialTypeId: testData.materialType.id,
+        listUnitPrice: 90,
+        fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
+      });
 
-    Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
-      testData.order = order;
+      Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+        testData.order = order;
 
-      Orders.updateOrderViaApi({ ...testData.order, workflowStatus: ORDER_STATUSES.OPEN });
+        Orders.updateOrderViaApi({ ...testData.order, workflowStatus: ORDER_STATUSES.OPEN });
 
-      Pieces.getOrderPiecesViaApi({ query: `poLineId=="${testData.orderLine.id}"` }).then(
-        ({ pieces }) => {
-          testData.barcode = uuid();
+        Pieces.getOrderPiecesViaApi({ query: `poLineId=="${testData.orderLine.id}"` }).then(
+          ({ pieces }) => {
+            testData.barcode = uuid();
 
-          const checkInConfig = CheckIn.getDefaultCheckInConfig({
-            poLineId: pieces[0].poLineId,
-            orderPieceId: pieces[0].id,
-            holdingId: pieces[0].holdingId,
-            barcode: testData.barcode,
-          });
-          CheckIn.createOrderCheckInViaApi(checkInConfig);
-        },
-      );
+            const checkInConfig = CheckIn.getDefaultCheckInConfig({
+              poLineId: pieces[0].poLineId,
+              orderPieceId: pieces[0].id,
+              holdingId: pieces[0].holdingId,
+              barcode: testData.barcode,
+            });
+            CheckIn.createOrderCheckInViaApi(checkInConfig);
+          },
+        );
 
-      OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` })
-        .then((orderLines) => {
-          testData.orderLine = orderLines[0];
+        OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` })
+          .then((orderLines) => {
+            testData.orderLine = orderLines[0];
 
-          Invoices.createInvoiceWithInvoiceLineViaApi({
-            vendorId: testData.organization.id,
-            fiscalYearId: testData.fiscalYear.id,
-            poLineId: testData.orderLine.id,
-            fundDistributions: testData.orderLine.fundDistribution,
-            accountingCode: testData.organization.erpCode,
-            subTotal: 25,
-            releaseEncumbrance: true,
-          }).then((invoice) => {
-            testData.invoice = invoice;
+            Invoices.createInvoiceWithInvoiceLineViaApi({
+              vendorId: testData.organization.id,
+              fiscalYearId: testData.fiscalYear.id,
+              poLineId: testData.orderLine.id,
+              fundDistributions: testData.orderLine.fundDistribution,
+              accountingCode: testData.organization.erpCode,
+              subTotal: 25,
+              releaseEncumbrance: true,
+            }).then((invoice) => {
+              testData.invoice = invoice;
 
-            Invoices.changeInvoiceStatusViaApi({
-              invoice: testData.invoice,
-              status: INVOICE_STATUSES.APPROVED,
+              Invoices.changeInvoiceStatusViaApi({
+                invoice: testData.invoice,
+                status: INVOICE_STATUSES.APPROVED,
+              });
+            });
+          })
+          .then(() => {
+            Orders.updateOrderViaApi({
+              ...testData.order,
+              workflowStatus: ORDER_STATUSES.CLOSED,
             });
           });
-        })
-        .then(() => {
-          Orders.updateOrderViaApi({
-            ...testData.order,
-            workflowStatus: ORDER_STATUSES.CLOSED,
-          });
-        });
-
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
       });
+    });
+
+    cy.login(testData.user.username, testData.user.password, {
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
     });
   });
 
@@ -160,7 +165,7 @@ describe('Orders', () => {
       const ReceivingDetails = Receivings.selectFromResultsList(testData.orderLine.titleOrPackage);
       ReceivingDetails.checkReceivingDetails({
         orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
-        expected: [],
+        expected: [{ copyNumber: 'No value set-', format: 'Physical' }],
         received: [{ barcode: testData.barcode, format: 'Physical' }],
       });
 
@@ -173,13 +178,13 @@ describe('Orders', () => {
 
       // Click "Delete" button
       Receiving.openDropDownInEditPieceModal();
-      const DeletePieceModal = EditPieceModal.clickDeleteButton();
+      EditPieceModal.clickDeleteButton(testData.POLineQuantity);
 
-      // Click "Delete item" button
-      DeletePieceModal.clickDeleteItemButton();
+      // Click "Confirm" button
+      DeletePieceModal.clickConfirmButton();
       ReceivingDetails.checkReceivingDetails({
         orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
-        expected: [],
+        expected: [{ copyNumber: 'No value set-', format: 'Physical' }],
         received: [],
       });
 
@@ -198,7 +203,7 @@ describe('Orders', () => {
           { key: 'Source', value: `${testData.order.poNumber}-1` },
           { key: 'Type', value: 'Encumbrance' },
           { key: 'From', value: testData.fund.name },
-          { key: 'Initial encumbrance', value: '$0.00' },
+          { key: 'Initial encumbrance', value: '$90.00' },
           { key: 'Awaiting payment', value: '$25.00' },
           { key: 'Expended', value: '$0.00' },
           { key: 'Status', value: 'Released' },
