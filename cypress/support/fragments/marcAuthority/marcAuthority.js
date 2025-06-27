@@ -207,10 +207,39 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent());
   },
   change008Field: (lang, kindrec, catrules) => {
+    const langOptions = {
+      '\\': '\\ - ui-quick-marc.record.fixedField.No information provided',
+      b: 'b - ui-quick-marc.record.fixedField.English and French',
+      e: 'e - ui-quick-marc.record.fixedField.English only',
+      f: 'f - ui-quick-marc.record.fixedField.French only',
+      '|': '| - No attempt to code',
+    };
+
+    const kindRecOptions = {
+      a: 'a - ui-quick-marc.record.fixedField.Established heading',
+      b: 'b - ui-quick-marc.record.fixedField.Untraced reference',
+      c: 'c - ui-quick-marc.record.fixedField.Traced reference',
+      d: 'd - ui-quick-marc.record.fixedField.Subdivision',
+      e: 'e - ui-quick-marc.record.fixedField.Node label',
+      f: 'f - ui-quick-marc.record.fixedField.Established heading and subdivision',
+      g: 'g - ui-quick-marc.record.fixedField.Reference and subdivision',
+      '|': '| - No attempt to code',
+    };
+
+    const catRulesOptions = {
+      a: 'a - ui-quick-marc.record.fixedField.Earlier rules',
+      b: 'b - ui-quick-marc.record.fixedField.AACR 1',
+      c: 'c - ui-quick-marc.record.fixedField.AACR 2',
+      d: 'd - ui-quick-marc.record.fixedField.AACR 2 compatible heading',
+      z: 'z - ui-quick-marc.record.fixedField.Other',
+      n: 'n - ui-quick-marc.record.fixedField.Not applicable',
+      '|': '| - No attempt to code',
+    };
+
     cy.do([
-      TextField('Lang').fillIn(lang),
-      TextField('Kind rec').fillIn(kindrec),
-      TextField('CatRules').fillIn(catrules),
+      Select('Lang').choose(langOptions[lang]),
+      Select('Kind rec').choose(kindRecOptions[kindrec]),
+      Select('CatRules').choose(catRulesOptions[catrules]),
     ]);
   },
   clickSaveAndCloseButton: () => {
