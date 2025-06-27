@@ -131,13 +131,11 @@ describe('Inventory', () => {
     }
 
     function searchAndCheckCallNumbers(type, searchValue) {
-      InventorySearchAndFilter.browseSearch(searchValue);
-      BrowseCallNumber.valueInResultTableIsHighlighted(searchValue);
       filterCNOfType(type).forEach((callNumber) => {
         BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-      });
-      filterCNOfType(type).forEach((callNumber) => {
+        InventorySearchAndFilter.browseSearch(searchValue);
         BrowseCallNumber.checkValuePresentInResults(callNumber);
+        BrowseCallNumber.valueInResultTableIsHighlighted(searchValue);
       });
     }
 
