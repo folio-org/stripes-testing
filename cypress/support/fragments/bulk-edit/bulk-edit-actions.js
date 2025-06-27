@@ -1821,6 +1821,15 @@ export default {
     );
   },
 
+  verifyInvalidValueInSecondSubfield(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextField({ name: 'value' }))
+        .has({ error: 'Please check your input.' }),
+    );
+  },
+
   selectActionForMarcInstance(action, rowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion

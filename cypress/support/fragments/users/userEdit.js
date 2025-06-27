@@ -37,6 +37,7 @@ const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
+const setExpirationDateButton = Button('Set');
 const actionsButton = Button('Actions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const userInformationAccordion = Accordion('User information');
@@ -487,6 +488,11 @@ export default {
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
     cy.wait(3000);
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
     cy.expect(rootPane.absent());
   },
 
@@ -795,20 +801,20 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi: (userData) => {
-    return cy
-      .do([
-        lastNameField.fillIn(userData.personal.lastName),
-        addressSelect.choose(userData.patronGroup),
-        barcodeField.fillIn(userData.barcode),
-        usernameField.fillIn(userData.username),
-        emailField.fillIn(userData.personal.email),
-        saveAndCloseBtn.click(),
-      ])
-      .then(() => {
-        cy.intercept('/users').as('user');
-        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
-      });
+  enterValidValueToCreateViaUi: (userData, patronGroup) => {
+    cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
+    cy.do([
+      lastNameField.fillIn(userData.personal.lastName),
+      barcodeField.fillIn(userData.barcode),
+      usernameField.fillIn(userData.username),
+      emailField.fillIn(userData.personal.email),
+      addressSelect.choose(patronGroup),
+      setExpirationDateButton.click(),
+      saveAndCloseBtn.click(),
+    ]);
+    return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   verifyUserPermissionsAccordion(isShown = false) {

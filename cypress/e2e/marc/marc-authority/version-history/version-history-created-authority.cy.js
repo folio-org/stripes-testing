@@ -76,7 +76,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
             QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            MarcAuthority.verifyAfterSaveAndClose();
+            MarcAuthority.verifyCreatedRecordSuccess();
             MarcAuthority.contains(testData.authorityHeading);
 
             cy.waitForAuthRefresh(() => {

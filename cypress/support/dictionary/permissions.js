@@ -379,6 +379,16 @@ export default {
     internal: 'inventory-storage.authorities.all',
     gui: 'inventory storage module - all authorities permissions',
   },
+
+  // Specification Storage
+  specificationStorageGetSpecificationFields: {
+    internal: 'specification-storage.specification.fields.collection.get',
+    gui: 'Specification Storage - Get specification field definition collection',
+  },
+  specificationStorageDeleteSpecificationField: {
+    internal: 'specification-storage.fields.item.delete',
+    gui: 'Specification Storage - Delete specification field definition',
+  },
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {

@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   EditableListRow,
   MultiColumnListCell,
   NavListItem,
@@ -10,6 +11,8 @@ import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
+const enableBankingInformationCheckbox = Checkbox('Enable banking information');
+const saveButton = Button('Save');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
@@ -52,6 +55,17 @@ export default {
 
   selectCategories: () => {
     cy.do(NavListItem('Categories').click());
+  },
+
+  selectBankingInformation: () => {
+    cy.do(NavListItem('Banking information').click());
+  },
+
+  enableBankingInformation: () => {
+    cy.do(enableBankingInformationCheckbox.click());
+    cy.wait(4000);
+    cy.do(saveButton.click());
+    cy.wait(4000);
   },
 
   editCategory(categoryName, oldCategoryName) {
