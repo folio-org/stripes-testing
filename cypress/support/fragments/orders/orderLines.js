@@ -79,7 +79,11 @@ const onlineLocationOption = SelectionOption('Online (E)');
 const quantityPhysicalLocationField = TextField({ name: 'locations[0].quantityPhysical' });
 const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
 const fundDistributionSelect = Button({ id: 'fundDistribution[0].fundId' });
+const fundDistributionExpenseClass = Button({ id: 'fundDistribution[0].expenseClassId' });
 const fundDistributionField = TextField({ name: 'fundDistribution[0].value' });
+const secondFundDistributionSelect = Button({ id: 'fundDistribution[1].fundId' });
+const secondFundDistributionExpenseClass = Button({ id: 'fundDistribution[1].expenseClassId' });
+const secondFundDistributionField = TextField({ name: 'fundDistribution[1].value' });
 const itemDetailsSection = Section({ id: 'ItemDetails' });
 const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
@@ -1313,21 +1317,20 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      cy.wait(2000),
+      fundDistributionExpenseClass.click(),
       SelectionOption(`${firstExpenseClass}`).click(),
       fundDistributionField.fillIn(firstPercentValue),
-      addFundDistributionButton.click(),
-      Button({ id: 'fundDistribution[1].fundId' }).click(),
-      SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
     cy.wait(2000);
     cy.do([
-      Button({ id: 'fundDistribution[1].expenseClassId' }).click(),
+      addFundDistributionButton.click(),
+      secondFundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      cy.wait(2000),
+      secondFundDistributionExpenseClass.click(),
       SelectionOption(`${secondExpenseClass}`).click(),
-      TextField({ name: 'fundDistribution[1].value' }).fillIn(secondPercentValue),
+      secondFundDistributionField.fillIn(secondPercentValue),
     ]);
     cy.wait(2000);
     cy.do([saveAndCloseButton.click()]);

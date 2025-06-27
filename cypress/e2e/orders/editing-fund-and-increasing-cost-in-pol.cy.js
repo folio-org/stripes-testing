@@ -198,7 +198,7 @@ describe('ui-orders: Orders', () => {
         `${secondFund.name} (${secondFund.code})`,
       );
       Funds.closeTransactionDetails();
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       Funds.closeBudgetDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
