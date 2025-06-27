@@ -31,6 +31,13 @@ describe('MARC Bibliographic Validation Rules - Standard Fields', () => {
     });
   });
 
+  after('Delete test user', () => {
+    if (user) {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    }
+  });
+
   it(
     'C499836 Cannot delete a standard MARC field (API)',
     { tags: ['smoke', 'C499836', 'spitfire'] },
@@ -61,11 +68,4 @@ describe('MARC Bibliographic Validation Rules - Standard Fields', () => {
       });
     },
   );
-
-  after('Delete test user', () => {
-    if (user) {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-    }
-  });
 });
