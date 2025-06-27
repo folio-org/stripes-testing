@@ -107,11 +107,10 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
 
+            InventoryInstance.waitInventoryLoading();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.waitLoading();
             QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);

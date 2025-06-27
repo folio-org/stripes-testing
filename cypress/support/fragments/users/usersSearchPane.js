@@ -106,6 +106,10 @@ export default {
     );
   },
   closeUserDetailsPane: () => {
-    cy.do(Button({ ariaLabel: 'Close ' }).click());
+    cy.get(
+      Pane({ id: 'pane-userdetails' })
+        .find(Button({ ariaLabel: 'Close ' }))
+        .click(),
+    );
   },
 };

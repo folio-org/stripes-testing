@@ -28,7 +28,11 @@ describe('Reading Room Access', () => {
     });
 
     cy.createTempUser(
-      [Permissions.uiSettingsTenantReadingRoomAll.gui, Permissions.uiCanViewReadingRoomAccess.gui],
+      [
+        Permissions.uiSettingsTenantReadingRoomAll.gui,
+        Permissions.uiCanViewReadingRoomAccess.gui,
+        Permissions.uiSettingsTenantReadingRoom.gui,
+      ],
       'staff',
     ).then((userProperties) => {
       testData.user = userProperties;

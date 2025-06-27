@@ -1,11 +1,10 @@
 import { Button, Modal, TextField, Select, Pane } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'transfer-modal' });
-const amountTextfield = rootModal.find(TextField({ id: 'amount' }));
 const ownerSelect = rootModal.find(Select({ id: 'ownerId' }));
 const transferAccountSelect = rootModal.find(Select({ name: 'method' }));
-const transferButton = rootModal.find(Button({ id: 'submit-button' }));
 const confirmModal = Modal('Confirm fee/fine transfer');
+const transferButton = rootModal.find(Button({ id: 'submit-button' }));
 const confirmButton = confirmModal.find(Button('Confirm'));
 const transferPane = Pane('Transfer criteria');
 
@@ -35,11 +34,15 @@ export default {
     cy.expect(TextField({ name: 'scheduleTime', value: time }).exists());
   },
 
-  setAmount: (amount) => cy.do(amountTextfield.fillIn(amount.toFixed(2))),
+  setAmount: (amount) => cy.wait(1000).then(() => {
+    cy.get('input[name="amount"]').clear().wait(500).type(amount.toFixed(2));
+  }),
+
   setOwner: (owner) => cy.do(ownerSelect.choose(owner)),
   setTransferAccount: (account) => cy.do(transferAccountSelect.choose(account)),
   transferAndConfirm: () => {
     cy.do([transferButton.click(), confirmButton.click()]);
+    cy.wait(1000);
   },
 
   transferFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({

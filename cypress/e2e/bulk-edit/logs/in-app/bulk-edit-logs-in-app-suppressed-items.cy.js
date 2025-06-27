@@ -21,7 +21,7 @@ let user;
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(validItemBarcodesFileName);
 const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(validItemBarcodesFileName);
+  BulkEditFiles.getPreviewFileName(validItemBarcodesFileName);
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validItemBarcodesFileName);
 
 const inventoryEntity = {

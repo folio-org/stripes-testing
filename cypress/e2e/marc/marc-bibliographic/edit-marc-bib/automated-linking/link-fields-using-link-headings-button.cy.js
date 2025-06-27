@@ -282,6 +282,7 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(78);
             QuickMarcEditor.afterDeleteNotification('700');
             QuickMarcEditor.clickLinkHeadingsButton();
+            cy.wait(1000);
             const successCalloutText =
               'Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).';
             QuickMarcEditor.checkCallout(successCalloutText);
@@ -340,7 +341,7 @@ describe('MARC', () => {
             );
 
             QuickMarcEditor.clickLinkHeadingsButton();
-
+            cy.wait(1000); // Give the UI time to show the callout
             const successCalloutText2 = 'Field 700 has been linked to MARC authority record(s).';
             QuickMarcEditor.checkCallout(successCalloutText2);
             QuickMarcEditor.closeCallout(successCalloutText2);

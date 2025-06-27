@@ -180,6 +180,7 @@ export default {
     InventorySearchAndFilter.selectBrowseSubjects();
     this.verifySearchTextFieldEmpty();
     InventorySearchAndFilter.browseSearch(searchString);
+    cy.wait(2000);
   },
 
   checkAuthorityIconAndValueDisplayedForRow(rowIndex, value) {

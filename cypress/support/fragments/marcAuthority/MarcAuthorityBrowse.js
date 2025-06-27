@@ -7,9 +7,11 @@ import {
   Section,
   HTML,
   including,
+  MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
   MultiSelect,
+  Pane,
 } from '../../../../interactors';
 
 const searchOptions = {
@@ -37,6 +39,7 @@ const resetButton = Button('Reset all');
 const sourceFieldAccordion = Section({ id: 'sourceFileId' });
 const referencesFilterAccordion = Section({ id: 'references' });
 const headingTypeAccordion = Section({ id: 'headingType' });
+const browseResultsPane = Pane({ id: 'authority-search-results-pane' });
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 0}`;
 
@@ -68,14 +71,21 @@ export default {
     cy.expect(rootPaneAuthoritiesFilters.find(Accordion('References')).exists());
   },
 
-  searchBy: (searchOption, value) => {
+  selectOptionAndQueryAndCheck: (searchOption, value) => {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
-    cy.get('#textarea-authorities-search-qindex').then((elem) => {
-      expect(elem.text()).to.include(searchOption);
+    cy.then(() => {
+      cy.get('#textarea-authorities-search-qindex').then((elem) => {
+        expect(elem.text()).to.include(searchOption);
+      });
+    }).then(() => {
+      cy.expect(enabledSearchButton.exists());
     });
-    cy.expect(enabledSearchButton.exists());
+  },
+
+  searchBy(searchOption, value) {
+    this.selectOptionAndQueryAndCheck(searchOption, value);
     cy.do(searchButton.click());
   },
 
@@ -136,11 +146,36 @@ export default {
     ]);
   },
 
-  checkResultWithValue(auth, value) {
-    cy.expect([
-      MultiColumnListCell({ content: auth }).exists(),
-      MultiColumnListCell({ content: value }).exists(),
-    ]);
+  checkResultWithValue(
+    auth,
+    value,
+    isShown = true,
+    checkHighlighted = false,
+    typeOfHeading = false,
+  ) {
+    if (isShown) {
+      let targetRowIndex;
+      cy.do(
+        browseResultsPane
+          .find(MultiColumnListCell(value, { column: 'Heading/Reference' }))
+          .perform((el) => {
+            targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
+          }),
+      );
+      cy.then(() => {
+        cy.expect(MultiColumnListCell({ content: auth, row: targetRowIndex }).exists());
+        if (checkHighlighted) {
+          cy.expect(
+            MultiColumnListCell({ content: value, row: targetRowIndex })
+              .find(HTML({ className: including('anchorLink') }))
+              .exists(),
+          );
+        }
+        if (typeOfHeading) cy.expect(MultiColumnListCell({ content: typeOfHeading, row: targetRowIndex }).exists());
+      });
+    } else {
+      cy.expect(MultiColumnListCell({ content: value }).absent());
+    }
   },
 
   checkResultWithValueA(valueA, auth, valueAuth, ref, valueRef) {
@@ -185,6 +220,28 @@ export default {
       sourceFieldAccordion.find(MultiSelect({ selectedCount: 0 })).exists(),
       referencesFilterAccordion.has({ expanded: false }),
       headingTypeAccordion.has({ expanded: false }),
+    ]);
+  },
+
+  checkAllRowsHaveOnlyExpectedValues(columnIndex, expectedValues) {
+    cy.expect(browseResultsPane.find(MultiColumnList()).exists());
+    cy.get('[data-row-index]').each(($row) => {
+      cy.wrap($row)
+        .find(`[class*=mclCell]:eq(${columnIndex})`)
+        .invoke('text')
+        .then((text) => {
+          const cellValue = text.trim();
+          expect([...expectedValues, '']).to.include(cellValue);
+        });
+    });
+  },
+
+  clickResetAllAndCheck: () => {
+    cy.do(resetButton.click());
+    cy.expect([
+      browseResultsPane.find(MultiColumnList()).absent(),
+      enabledSearchButton.absent(),
+      searchInput.has({ value: '' }),
     ]);
   },
 };

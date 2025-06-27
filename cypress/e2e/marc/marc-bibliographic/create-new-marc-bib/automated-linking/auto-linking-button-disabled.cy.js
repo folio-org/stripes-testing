@@ -157,11 +157,8 @@ describe('MARC', () => {
                 '',
               );
             });
-            QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
             });

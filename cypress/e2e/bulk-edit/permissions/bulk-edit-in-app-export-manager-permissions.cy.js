@@ -20,7 +20,8 @@ const item = {
 const itemBarcodesFileName = `itemBarcodesFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 
-describe('Bulk-edit', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Bulk-edit', () => {
   describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
@@ -63,7 +64,7 @@ describe('Bulk-edit', () => {
 
     it(
       'C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C353971'] },
+      { tags: [] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.searchByBulkEdit();

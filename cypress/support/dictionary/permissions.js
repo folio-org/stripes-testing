@@ -379,6 +379,16 @@ export default {
     internal: 'inventory-storage.authorities.all',
     gui: 'inventory storage module - all authorities permissions',
   },
+
+  // Specification Storage
+  specificationStorageGetSpecificationFields: {
+    internal: 'specification-storage.specification.fields.collection.get',
+    gui: 'Specification Storage - Get specification field definition collection',
+  },
+  specificationStorageDeleteSpecificationField: {
+    internal: 'specification-storage.fields.item.delete',
+    gui: 'Specification Storage - Delete specification field definition',
+  },
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
@@ -413,6 +423,14 @@ export default {
   uiCirculationViewCreateEditDeleteFixedDueDateSchedules: {
     internal: 'ui-circulation.settings.fixed-due-date-schedules',
     gui: 'Settings (Circulation): Can create, edit and remove fixed due date schedules',
+  },
+  uiCirculationViewLoanHistory: {
+    internal: 'ui-circulation.settings.loan-history',
+    gui: 'Settings (Circulation): Can view loan history',
+  },
+  uiCirculationEditLoanHistory: {
+    internal: 'ui-circulation.settings.edit-loan-history',
+    gui: 'Settings (Circulation): Can edit loan history',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },

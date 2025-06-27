@@ -236,11 +236,11 @@ describe('Inventory', () => {
                   callNumber: callNumbers[i].udc,
                 },
               ],
-            }).then((instanceIds) => {
-              instances[i].id = instanceIds.instanceId;
+            }).then((createdInstanceData) => {
+              instances[i].id = createdInstanceData.instanceId;
               for (let k = 0; k < callNumbers.length; k++) {
                 ItemRecordNew.createViaApi({
-                  holdingsId: instanceIds.holdingIds[k].id,
+                  holdingsId: createdInstanceData.holdingIds[k].id,
                   itemBarcode: uuid(),
                   materialTypeId: instances[0].materialTypeId,
                   permanentLoanTypeId: instances[0].loanTypeId,

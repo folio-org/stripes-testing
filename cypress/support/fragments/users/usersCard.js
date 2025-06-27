@@ -168,12 +168,11 @@ export default {
     if (isRoomCreated) {
       cy.do(
         MultiColumnListCell({ content: readingRoomName }).perform((element) => {
-          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
           cy.expect(
             readingRoomAccessAccordion
-              .find(MultiColumnListRow({ indexRow: rowNumber }))
-              .find(MultiColumnListCell({ content: status }))
+              .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+              .find(MultiColumnListCell({ innerText: status }))
               .exists(),
           );
         }),
@@ -551,7 +550,7 @@ export default {
     cy.expect(rootSection.find(MessageBanner()).has({ textContent: errorMessage }));
   },
   startFeeFineAdding() {
-    cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
+    cy.do(feesFinesAccordion.find(Button('New fee/fine')).click());
   },
   startRequestAdding() {
     cy.do(requestsAccordion.find(createRequestButton).click());
