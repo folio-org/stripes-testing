@@ -95,12 +95,8 @@ export default {
     );
   },
 
-  verifySubjectTypeExists(
-    subjectTypeName,
-    source = 'local',
-    user = 'System, System user - mod-consortia-keycloak',
-    options = {},
-  ) {
+  // using in C594406, C594405
+  verifySubjectTypeExists(subjectTypeName, source = 'local', user, options = {}) {
     const { actions = [] } = options;
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });

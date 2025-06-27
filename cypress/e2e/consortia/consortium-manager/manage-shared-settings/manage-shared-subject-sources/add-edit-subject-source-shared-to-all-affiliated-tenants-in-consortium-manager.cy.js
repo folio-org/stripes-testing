@@ -21,9 +21,15 @@ describe('Consortia', () => {
       describe('Manage shared Subject sources', () => {
         let user;
 
-        const subjectSourceNames = {
-          newSubjectSourseName: `autotestSubjectSourceName${getRandomPostfix()}`,
-          editedSubjectSourseName: `autotestSubjectSourceNameEdited${getRandomPostfix()}`,
+        const subjectSource = {
+          name: `C594428 autotestSubjectSourceName${getRandomPostfix()}`,
+          source: 'consortium',
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
+        };
+        const editedSubjectSource = {
+          name: `C594428 autotestSubjectSourceName${getRandomPostfix()} edited`,
+          source: 'consortium',
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
         };
 
         before('Create user and login', () => {
@@ -70,12 +76,10 @@ describe('Consortia', () => {
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             SubjectSourcesConsortiumManager.choose();
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSourcesConsortiumManager.createNewSubjectSource(
-              subjectSourceNames.newSubjectSourseName,
-            );
-            SubjectSourcesConsortiumManager.confirmSharing(subjectSourceNames.newSubjectSourseName);
-            SubjectSourcesConsortiumManager.verifyCreatedSubjectSource({
-              name: subjectSourceNames.newSubjectSourseName,
+            SubjectSourcesConsortiumManager.createNewSubjectSource(subjectSource.name);
+            SubjectSourcesConsortiumManager.confirmShareWithAllMembers(subjectSource.name);
+            SubjectSourcesConsortiumManager.verifySharedSubjectSourceExists({
+              name: subjectSource.name,
               actions: ['edit', 'trash'],
             });
 
@@ -84,8 +88,10 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({
-              name: subjectSourceNames.newSubjectSourseName,
+            SubjectSources.verifySubjectSourceExists({
+              name: subjectSource.name,
+              source: subjectSource.source,
+              user: subjectSource.consortiaUser,
             });
 
             cy.resetTenant();
@@ -96,8 +102,10 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({
-              name: subjectSourceNames.newSubjectSourseName,
+            SubjectSources.verifySubjectSourceExists({
+              name: subjectSource.name,
+              source: subjectSource.source,
+              user: subjectSource.consortiaUser,
             });
 
             cy.resetTenant();
@@ -109,13 +117,15 @@ describe('Consortia', () => {
             SubjectSourcesConsortiumManager.choose();
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
             SubjectSourcesConsortiumManager.editSubjectSource(
-              subjectSourceNames.newSubjectSourseName,
-              subjectSourceNames.editedSubjectSourseName,
+              subjectSource.name,
+              editedSubjectSource.name,
               user,
               tenantNames.central,
             );
-            SubjectSources.verifyCreatedSubjectSource({
-              name: subjectSourceNames.editedSubjectSourseName,
+            SubjectSources.verifySubjectSourceExists({
+              name: editedSubjectSource.name,
+              source: subjectSource.source,
+              user: subjectSource.consortiaUser,
             });
 
             ConsortiumManagerApp.clickSelectMembers();
@@ -132,8 +142,10 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({
-              name: subjectSourceNames.editedSubjectSourseName,
+            SubjectSources.verifySubjectSourceExists({
+              name: editedSubjectSource.name,
+              source: subjectSource.source,
+              user: subjectSource.consortiaUser,
             });
 
             cy.resetTenant();
@@ -144,8 +156,10 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({
-              name: subjectSourceNames.editedSubjectSourseName,
+            SubjectSources.verifySubjectSourceExists({
+              name: editedSubjectSource.name,
+              source: subjectSource.source,
+              user: subjectSource.consortiaUser,
             });
           },
         );

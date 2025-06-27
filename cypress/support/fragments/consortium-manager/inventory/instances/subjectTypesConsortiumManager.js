@@ -3,7 +3,6 @@ import {
   Button,
   Checkbox,
   EditableListRow,
-  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
@@ -15,6 +14,9 @@ import { tenantNames } from '../../../../dictionary/affiliations';
 import DateTools from '../../../../utils/dateTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConfirmCreateModal from '../../modal/confirm-create';
+import ConfirmShareModal from '../../modal/confirm-share';
+import DeleteCancelReason from '../../modal/delete-cancel-reason';
 
 const rootPane = Pane({ id: 'consortia-controlled-vocabulary-pane' });
 const subjectTypesList = MultiColumnList({ id: 'editList-subjecttypes' });
@@ -23,13 +25,15 @@ const selectMembersButton = Button('Select members');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
 const shareCheckbox = Checkbox('Share');
-const confirmButton = Button('Confirm');
-const keepEditingButton = Button('Keep editing');
-const deleteButton = Button('Delete');
 const nameField = TextField({ name: 'items[0].name' });
-const confirmMemberLibrariesModal = Modal('Confirm member libraries');
-const deleteSubjectTypeModal = Modal('Delete subject type');
-const shareToAllModal = Modal('Confirm share to all');
+
+const columnIndex = {
+  name: 0,
+  source: 1,
+  lastUpdated: 2,
+  memberLibraries: 3,
+  actions: 4,
+};
 
 export const reasonsActions = {
   edit: 'edit',
@@ -52,16 +56,20 @@ function fillNameField(value, rowIndex = 0) {
   cy.do(TextField({ name: `items[${rowIndex}].name` }).fillIn(value));
 }
 
-function getRowIndexesByUserName(user) {
+function getRowIndexesByUserName(userName) {
   const rowIndexes = [];
 
   return cy
     .get('#editList-subjecttypes')
     .find('[data-row-index]')
     .each(($row) => {
-      const trimmedText = $row.find('[class*="mclCell-"]:nth-child(3)').first().text().trim();
+      const trimmedText = $row
+        .find(`[class*="mclCell-"]:nth-child(${columnIndex.lastUpdated})`)
+        .first()
+        .text()
+        .trim();
 
-      if (trimmedText.includes(user.lastName)) {
+      if (trimmedText.includes(userName)) {
         const rowIndex = $row.attr('data-row-index');
         rowIndexes.push(rowIndex.replace(/^row-/, '') || '');
       }
@@ -76,7 +84,11 @@ function getRowIndexesBySubjectTypeName(name) {
     .get('#editList-subjecttypes')
     .find('[data-row-index]')
     .each(($row) => {
-      const firstCellText = $row.find('[class*="mclCell-"]:nth-child(1)').first().text().trim();
+      const firstCellText = $row
+        .find(`[class*="mclCell-"]:nth-child(${columnIndex.name})`)
+        .first()
+        .text()
+        .trim();
 
       if (firstCellText === name) {
         const rowIndex = $row.attr('data-row-index');
@@ -93,7 +105,7 @@ function verifyColumnAndClickEdit(rowIndexes, searchValue) {
     .wrap(rowIndexes)
     .each((rowIndex) => {
       cy.get(`#editList-subjecttypes [data-row-index="row-${rowIndex}"]`)
-        .find('[class*="mclCell-"]:nth-child(4)')
+        .find(`[class*="mclCell-"]:nth-child(${columnIndex.memberLibraries})`)
         .invoke('text')
         .then((text) => {
           const trimmedText = text.trim();
@@ -102,7 +114,7 @@ function verifyColumnAndClickEdit(rowIndexes, searchValue) {
             foundRowIndex = rowIndex;
 
             cy.get(`#editList-subjecttypes [data-row-index="row-${rowIndex}"]`)
-              .find('[class*="mclCell-"]:nth-child(5) button[icon="edit"]')
+              .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions}) button[icon="edit"]`)
               .click();
           }
         });
@@ -119,7 +131,7 @@ function verifyColumnAndClickDelete(rowIndexes, searchValue) {
     .wrap(rowIndexes)
     .each((rowIndex) => {
       cy.get(`#editList-subjecttypes [data-row-index="row-${rowIndex}"]`)
-        .find('[class*="mclCell-"]:nth-child(4)')
+        .find(`[class*="mclCell-"]:nth-child(${columnIndex.memberLibraries})`)
         .invoke('text')
         .then((text) => {
           const trimmedText = text.trim();
@@ -128,7 +140,7 @@ function verifyColumnAndClickDelete(rowIndexes, searchValue) {
             foundRowIndex = rowIndex;
 
             cy.get(`#editList-subjecttypes [data-row-index="row-${rowIndex}"]`)
-              .find('[class*="mclCell-"]:nth-child(5) button[icon="trash"]')
+              .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions}) button[icon="trash"]`)
               .click();
           }
         });
@@ -140,7 +152,7 @@ function verifyColumnAndClickDelete(rowIndexes, searchValue) {
 
 function verifySubjectTypeAbsent(name) {
   cy.get('#editList-subjecttypes')
-    .find('[class*="mclCell-"]:nth-child(1)')
+    .find(`[class*="mclCell-"]:nth-child(${columnIndex.name})`)
     .each(($cell) => {
       cy.wrap($cell).invoke('text').should('not.eq', name);
     });
@@ -163,74 +175,91 @@ export default {
     });
   },
 
-  createNewWithValidationOfNameField(name, isUnique = true, shareCheckboxChecked = false) {
-    clickNewButton();
-    this.verifyNewRowInList(shareCheckboxChecked);
-    fillNameField(name);
-    if (!isUnique) {
+  // using in C594406
+  createSharedWithAllMembersSubjectTypeWithValidationNameField(name, nameValidationState) {
+    enableShareCheckbox();
+    if (nameValidationState === 'empty') {
+      fillNameField(name);
       clickSaveButton();
-      cy.expect([
-        nameField.has({
-          error: 'Name is already in use at one or more member libraries.',
-        }),
-        cancelButton.has({ disabled: false }),
-        saveButton.has({ disabled: false }),
-      ]);
+      this.validateNameFieldOnEmptySave();
+    } else if (nameValidationState === 'duplicate') {
+      fillNameField(name);
+      clickSaveButton();
+      this.validateNameFieldOnDuplicateSave();
+    } else {
+      fillNameField(name);
+      cy.wait(1000);
+      clickSaveButton();
     }
-    clickSaveButton();
   },
 
-  createNewShared(name, shareCheckboxChecked = false) {
+  // using in C594404, C594405
+  createSubjectTypeSharedWithAllMembers(name) {
     clickNewButton();
-    this.verifyNewRowInList(shareCheckboxChecked);
+    this.verifyNewRecordRowBeforeFilling();
     fillNameField(name);
     enableShareCheckbox();
     cy.expect(shareCheckbox.has({ checked: true }));
     clickSaveButton();
   },
 
-  clickKeepEditingInConfirmMemberLibrariesModal() {
-    cy.do(confirmMemberLibrariesModal.find(keepEditingButton).click());
-    cy.expect(confirmMemberLibrariesModal.absent());
-    this.verifyNewRowInList();
+  // using in C594411
+  createLocalSubjectTypeSavedForMemberLibraries(name, isUniqueSubjectTypeName = true) {
+    clickNewButton();
+    this.verifyNewRecordRowBeforeFilling(true);
+    fillNameField(name);
+    if (!isUniqueSubjectTypeName) {
+      clickSaveButton();
+      this.validateNameFieldOnDuplicateSave();
+    }
+    cy.expect(shareCheckbox.has({ checked: false, disabled: true }));
+    clickSaveButton();
   },
 
-  clickKeepEditingInConfirmShareToAllModal(shareCheckboxChecked = false) {
-    cy.do(shareToAllModal.find(keepEditingButton).click());
-    cy.expect(shareToAllModal.absent());
-    this.verifyNewRowInList(shareCheckboxChecked);
+  // using in C594406
+  createSharedWithAllMembersSubjectTypeAndCancel(subjectTypeName, isUniqueSubjectTypeName = true) {
+    clickNewButton();
+    fillNameField(subjectTypeName);
+    enableShareCheckbox();
+    if (!isUniqueSubjectTypeName) {
+      clickSaveButton();
+      this.validateNameFieldOnDuplicateSave();
+    }
+    cy.do(cancelButton.click());
+    cy.wait(1500);
+    cy.expect(rootPane.exists());
+  },
+  // using in C594406, C594404
+  validateNameFieldOnEmptySave() {
+    cy.expect(nameField.has({ error: 'Please fill this in to continue' }));
+    saveButton.has({ disabled: false });
+    cancelButton.has({ disabled: false });
+    cy.wait(1000);
+  },
+  // using in C594406, C594404
+  validateNameFieldOnDuplicateSave() {
+    cy.expect(nameField.has({ error: 'Name is already in use at one or more member libraries.' }));
+    saveButton.has({ disabled: false });
+    cancelButton.has({ disabled: false });
+    cy.wait(1000);
   },
 
-  clickCancelInConfirmMemberLibrariesModal() {
-    cy.do(confirmMemberLibrariesModal.find(cancelButton).click());
-    this.verifyNewRowInList();
-  },
-
-  clickConfirmInConfirmMemberLibraries(subjectTypeName, libraries) {
-    this.verifyShareToMemberLibraresModal(subjectTypeName, libraries);
-    cy.do(confirmMemberLibrariesModal.find(confirmButton).click());
-    cy.expect([confirmMemberLibrariesModal.absent(), rootPane.exists()]);
+  // using in C594411
+  confirmSaveForMemberLibraries(subjectTypeName, firstTenant, secondTenant, thirdTenant) {
+    ConfirmCreateModal.waitLoadingConfirmCreate(subjectTypeName);
+    ConfirmCreateModal.clickConfirm();
     InteractorsTools.checkCalloutMessage(
-      including(
-        `${subjectTypeName} was successfully created for ${libraries[1]}, ${libraries[0]}, ${libraries[2]} libraries.`,
-      ),
+      `${subjectTypeName} was successfully created for ${firstTenant}, ${secondTenant}, ${thirdTenant} libraries.`,
     );
+    cy.expect(rootPane.exists());
   },
 
-  confirmSharingToAll(subjectTypeName) {
-    this.verifyShareToAllModal(subjectTypeName);
-    cy.do(shareToAllModal.find(confirmButton).click());
-    cy.expect([shareToAllModal.absent(), rootPane.exists()]);
-    InteractorsTools.checkCalloutMessage(
-      `${subjectTypeName} was successfully created for All libraries.`,
-    );
-  },
-
-  confirmSharing(subjectTypeName, status = 'created') {
-    this.verifyShareToAllModal(subjectTypeName);
-    cy.do(confirmButton.click());
-    cy.expect([shareToAllModal.absent(), rootPane.exists()]);
-    if (status === 'updated') {
+  // using in C594406, C594404, C594405
+  confirmShareWithAllMembers(subjectTypeName, subjectTypeState = 'created') {
+    ConfirmShareModal.waitLoadingConfirmShareToAll(subjectTypeName);
+    ConfirmShareModal.clickConfirm();
+    cy.expect(rootPane.exists());
+    if (subjectTypeState === 'updated') {
       InteractorsTools.checkCalloutMessage(
         `${subjectTypeName} was successfully updated for All libraries.`,
       );
@@ -241,26 +270,8 @@ export default {
     }
   },
 
-  createNewAndCancel(subjectTypeName, isUnique = true) {
-    clickNewButton();
-    fillNameField(subjectTypeName);
-    if (!isUnique) {
-      clickSaveButton();
-      cy.expect([
-        nameField.has({
-          error: 'Name is already in use at one or more member libraries.',
-        }),
-        cancelButton.has({ disabled: false }),
-        saveButton.has({ disabled: false }),
-      ]);
-    }
-    cy.do(cancelButton.click());
-    cy.wait(1500);
-    cy.expect(rootPane.exists());
-    this.verifyButtonStates();
-  },
-
-  edit(name, newName, user, tenantName) {
+  // using in C594411
+  editSubjectTypeByTenantName(name, newName, user, tenantName) {
     getRowIndexesByUserName(user).then((rowIndexes) => {
       verifyColumnAndClickEdit(rowIndexes, tenantName).then((index) => {
         this.verifyEditRowInList(name, user, index);
@@ -270,10 +281,11 @@ export default {
     cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
     clickSaveButton();
     InteractorsTools.checkCalloutMessage(
-      `${newName} was successfully updated for ${tenantName} library.`,
+      including(`${newName} was successfully updated for ${tenantName} library.`),
     );
   },
 
+  // using in C594405
   editSharedToAllRecord(name, newName, userName, source) {
     this.getRowIndexesBySubjectTypeName(name).then((rowIndexes) => {
       this.clickEditByName(name);
@@ -284,19 +296,16 @@ export default {
     clickSaveButton();
   },
 
+  // using in C594404, C594411
   cancel() {
     cy.do(cancelButton.click());
     newButton.has({ disabled: true });
     selectMembersButton.has({ disabled: true });
   },
 
-  cancelDeletion(name) {
-    this.verifyDelitionModal(name);
-    cy.do(deleteSubjectTypeModal.find(cancelButton).click());
-    cy.expect(deleteSubjectTypeModal.absent());
-  },
-
-  deleteByUserName(name, user, tenantName) {
+  // using in C594411
+  deleteSubjectTypeByUserAndTenantNames(name, user, tenantName) {
+    cy.wait(1500);
     getRowIndexesByUserName(user).then((rowIndexes) => {
       verifyColumnAndClickDelete(rowIndexes, tenantName).then((index) => {
         cy.do(
@@ -307,28 +316,21 @@ export default {
         );
       });
     });
-    cy.expect([
-      deleteSubjectTypeModal.exists(),
-      deleteSubjectTypeModal.find(cancelButton).has({ disabled: false }),
-      deleteSubjectTypeModal.find(deleteButton).has({ disabled: false }),
-    ]);
-    cy.do(deleteSubjectTypeModal.find(deleteButton).click());
-    cy.expect([deleteSubjectTypeModal.absent(), rootPane.exists()]);
+    DeleteCancelReason.waitLoadingDeleteModal('subject type', name);
+    DeleteCancelReason.clickDelete();
+    cy.expect(rootPane.exists());
     InteractorsTools.checkCalloutMessage(`The subject type ${name} was successfully deleted.`);
   },
-
+  // using in C594404
   deleteBySubjectTypeName(name) {
     this.clickDeleteByName(name);
-    cy.expect([
-      deleteSubjectTypeModal.exists(),
-      deleteSubjectTypeModal.find(cancelButton).has({ disabled: false }),
-      deleteSubjectTypeModal.find(deleteButton).has({ disabled: false }),
-    ]);
-    cy.do(deleteSubjectTypeModal.find(deleteButton).click());
-    cy.expect([deleteSubjectTypeModal.absent(), rootPane.exists()]);
+    DeleteCancelReason.waitLoadingDeleteModal('subject type', name);
+    DeleteCancelReason.clickDelete();
+    cy.expect(rootPane.exists());
     InteractorsTools.checkCalloutMessage(`The subject type ${name} was successfully deleted.`);
   },
 
+  // using in C594404
   clickDeleteByName(name) {
     getRowIndexesBySubjectTypeName(name).then((rowIndexes) => {
       cy.do(
@@ -340,6 +342,7 @@ export default {
     });
   },
 
+  // using in C594405
   clickEditByName(name) {
     getRowIndexesBySubjectTypeName(name).then((rowIndexes) => {
       cy.do(
@@ -350,7 +353,7 @@ export default {
       );
     });
   },
-
+  // using in C594397
   createSharedSubjectTypeViaApi(typeId, subjectTypeName, consortiaId) {
     return cy.okapiRequest({
       method: 'POST',
@@ -367,7 +370,7 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
-
+  // using in C594397
   deleteSharedSubjectTypeViaApi(consortiaId, id, subjectTypeName) {
     cy.okapiRequest({
       method: 'DELETE',
@@ -382,32 +385,8 @@ export default {
     });
   },
 
-  verifyShareToMemberLibraresModal(subjectTypeName, libraries) {
-    cy.expect([
-      confirmMemberLibrariesModal.exists(),
-      Modal({
-        content: including(`${subjectTypeName} will be saved for the member libraries:`),
-      }).exists(),
-      Modal({ content: including(`${libraries[0]}`) }).exists(),
-      Modal({ content: including(`${libraries[1]}`) }).exists(),
-      Modal({ content: including(`${libraries[2]}`) }).exists(),
-      confirmMemberLibrariesModal.find(keepEditingButton).has({ disabled: false }),
-      confirmMemberLibrariesModal.find(confirmButton).has({ disabled: false }),
-    ]);
-  },
-
-  verifyShareToAllModal(subjectTypeName) {
-    cy.expect([
-      shareToAllModal.exists(),
-      Modal({
-        content: including(`Are you sure you want to share ${subjectTypeName} with ALL members?`),
-      }).exists(),
-      shareToAllModal.find(keepEditingButton).has({ disabled: false }),
-      shareToAllModal.find(confirmButton).has({ disabled: false }),
-    ]);
-  },
-
-  verifyNewRowInList(shareCheckboxChecked = true) {
+  // using in C594406, C594411
+  verifyNewRecordRowBeforeFilling(isCheckboxDisabled = false) {
     cy.expect([
       newButton.has({ disabled: true }),
       selectMembersButton.has({ disabled: true }),
@@ -418,12 +397,33 @@ export default {
       EditableListRow({ index: 0 })
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: 'No value set-' }),
-      shareCheckbox.has({ disabled: shareCheckboxChecked }),
+      shareCheckbox.has({ checked: false, disabled: isCheckboxDisabled }),
       cancelButton.has({ disabled: false }),
       saveButton.has({ disabled: false }),
     ]);
   },
 
+  // using in C594404, C594411
+  verifyNewSubjectTypeRowIsInEditMode(
+    subjectTypeName,
+    isCheckboxChecked = true,
+    isCheckboxDisabled = false,
+  ) {
+    cy.expect([
+      TextField({ placeholder: 'name' }).has({ value: subjectTypeName }),
+      EditableListRow({ index: 0 })
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: 'local' }),
+      EditableListRow({ index: 0 })
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: 'No value set-' }),
+      shareCheckbox.has({ checked: isCheckboxChecked, disabled: isCheckboxDisabled }),
+      cancelButton.has({ disabled: false }),
+      saveButton.has({ disabled: false }),
+    ]);
+  },
+
+  // using in C594411
   verifyEditRowInList(name, userLastName, rowIndex, source) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 
@@ -450,7 +450,8 @@ export default {
     ]);
   },
 
-  verifyCreatedInList(subjectType, user) {
+  // using in C594411
+  verifyThreeLocalSubjectTypesExist(subjectTypeName, user) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const allowedTypes = [tenantNames.central, tenantNames.college, tenantNames.university];
     const regex = new RegExp(`^(${allowedTypes.join('|')})$`);
@@ -461,7 +462,7 @@ export default {
         cy.expect([
           subjectTypesList
             .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0, content: subjectType.name }))
+            .find(MultiColumnListCell({ columnIndex: 0, content: subjectTypeName }))
             .exists(),
           subjectTypesList
             .find(MultiColumnListRow({ indexRow: `row-${index}` }))
@@ -472,7 +473,7 @@ export default {
             .find(
               MultiColumnListCell({
                 columnIndex: 2,
-                content: including(`${date} by ${user.lastName},`),
+                content: including(`${date} by ${user},`),
               }),
             )
             .exists(),
@@ -498,7 +499,53 @@ export default {
     });
   },
 
-  verifyEditedInList(name, editedName) {
+  // using in C594406, C594404, C594405, C594397
+  verifySharedToAllMembersSubjectTypeExists(
+    subjectTypeName,
+    source,
+    userName,
+    memberLibrares,
+    options = {},
+  ) {
+    const { actions = [] } = options;
+    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+
+    cy.do(
+      MultiColumnListCell({ content: subjectTypeName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        const rowIndex = Number(rowNumber.slice(4));
+
+        cy.expect([
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: subjectTypeName }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: source }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: `${date} by ${userName} ` }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: memberLibrares }),
+        ]);
+        Object.values(reasonsActions).forEach((action) => {
+          const buttonSelector = EditableListRow({ index: rowIndex })
+            .find(actionsCell)
+            .find(Button({ icon: action }));
+          if (actions.includes(action)) {
+            cy.expect(buttonSelector.exists());
+          } else {
+            cy.expect(buttonSelector.absent());
+          }
+        });
+      }),
+    );
+  },
+
+  // using in C594411
+  verifyEditedLocalSubjectTypeExists(editedName) {
     getRowIndexesBySubjectTypeName(editedName).then((rowIndexes) => {
       expect(rowIndexes).to.have.length(1);
       cy.expect([
@@ -508,6 +555,10 @@ export default {
           .exists(),
       ]);
     });
+  },
+
+  // using in C594411
+  verifyLocalSubjectTypeNotEdited(name) {
     getRowIndexesBySubjectTypeName(name).then((rowIndexes) => {
       expect(rowIndexes).to.have.length(2);
       rowIndexes.forEach((index) => {
@@ -519,18 +570,10 @@ export default {
         ]);
       });
     });
-    cy.expect([newButton.has({ disabled: false }), selectMembersButton.has({ disabled: false })]);
   },
 
-  verifySubjectTypesAfterDeleting(user) {
-    getRowIndexesByUserName(user).then((rowIndexes) => {
-      // verify that list contains only two subject types created by current user
-      expect(rowIndexes).to.have.length(2);
-    });
-    cy.expect([newButton.has({ disabled: false }), selectMembersButton.has({ disabled: false })]);
-  },
-
-  verifySubjectTypeExists(subjectTypeName, tenantName, source = 'local', options = {}) {
+  // using in C594411, C594397
+  verifyLocalSubjectTypeExists(subjectTypeName, tenantName, source = 'local', options = {}) {
     const { actions = [] } = options;
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
 
@@ -564,79 +607,12 @@ export default {
     );
   },
 
-  validateNameFieldConditions(nameValue, isUnique) {
-    cy.expect(nameField.has({ placeholder: 'name' }));
-    fillNameField(nameValue);
-    enableShareCheckbox();
-
-    if (!nameValue) {
-      clickSaveButton();
-      cy.expect(nameField.has({ error: 'Please fill this in to continue' }));
-      saveButton.has({ disabled: false });
-      cy.wait(1500);
-    } else if (!isUnique) {
-      clickSaveButton();
-      cy.expect(
-        nameField.has({ error: 'Name is already in use at one or more member libraries.' }),
-      );
-      saveButton.has({ disabled: false });
-      cy.wait(1500);
-    } else {
-      clickSaveButton();
-      cy.wait(1500);
-    }
-  },
-
-  verifyCreatedSubjectType({ name: subjectTypeName, actions = [] }) {
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-
-    cy.do(
-      MultiColumnListCell({ content: subjectTypeName }).perform((element) => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
-
-        cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectTypeName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 1 }))
-            .has({ content: 'consortium' }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: `${date} by System, System user - mod-consortia-keycloak ` }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: 'All' }),
-        ]);
-        Object.values(reasonsActions).forEach((action) => {
-          const buttonSelector = EditableListRow({ index: rowIndex })
-            .find(actionsCell)
-            .find(Button({ icon: action }));
-          if (actions.includes(action)) {
-            cy.expect(buttonSelector.exists());
-          } else {
-            cy.expect(buttonSelector.absent());
-          }
-        });
-      }),
-    );
-  },
-
-  verifyButtonStates(newButtonDisabled = false, selectMembersButtonDisabled = false) {
+  // using in C594404, C594411
+  verifyNewAndSelectMembersButtonsState(
+    newButtonDisabled = false,
+    selectMembersButtonDisabled = false,
+  ) {
     cy.expect(newButton.has({ disabled: newButtonDisabled }));
     cy.expect(selectMembersButton.has({ disabled: selectMembersButtonDisabled }));
-  },
-
-  verifyDelitionModal(name) {
-    cy.expect([
-      deleteSubjectTypeModal.exists(),
-      deleteSubjectTypeModal.has({
-        content: including(`The subject type ${name} will be deleted.`),
-      }),
-      deleteSubjectTypeModal.find(cancelButton).has({ disabled: false }),
-      deleteSubjectTypeModal.find(deleteButton).has({ disabled: false }),
-    ]);
   },
 };
