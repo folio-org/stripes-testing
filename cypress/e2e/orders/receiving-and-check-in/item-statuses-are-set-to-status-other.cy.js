@@ -66,9 +66,11 @@ describe('Orders', () => {
       cy.getAdminToken();
 
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' }).then((servicePoints) => {
+        console.log(servicePoints[0]);
         circ2LocationServicePoint = servicePoints[0];
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
           (servicePointsResponse) => {
+            console.log(servicePointsResponse[0]);
             circ1LocationServicePoint = servicePointsResponse[0];
             NewLocation.createViaApi(
               NewLocation.getDefaultLocation(circ2LocationServicePoint.id),
@@ -180,7 +182,7 @@ describe('Orders', () => {
                 InventoryItems.closeItem();
               });
 
-              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint);
+              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint.name);
               SwitchServicePoint.checkIsServicePointSwitched(circ2LocationServicePoint.name);
               TopMenuNavigation.navigateToApp('Check in');
               // Need to wait,while Checkin page will be loaded in same location
@@ -191,7 +193,7 @@ describe('Orders', () => {
               cy.wait(6000);
               CheckInActions.checkInItemGui(barcodeForSecondItem);
               cy.wait(6000);
-              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint);
+              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
               SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
               TopMenuNavigation.navigateToApp('Check in');
               // Need to wait,while Checkin page will be loaded in same location
