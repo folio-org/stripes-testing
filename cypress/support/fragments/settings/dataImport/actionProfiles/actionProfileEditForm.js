@@ -1,3 +1,4 @@
+import { including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -8,12 +9,10 @@ import {
   Select,
   TextArea,
   TextField,
-  including,
-  matching,
 } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
-import Notifications from '../notifications';
 import SelectMappingProfile from '../modals/selectProfileModal';
+import Notifications from '../notifications';
 
 const actionProfileForm = Form({ id: 'action-profiles-form' });
 const summarySection = actionProfileForm.find(Accordion({ label: 'Summary' }));

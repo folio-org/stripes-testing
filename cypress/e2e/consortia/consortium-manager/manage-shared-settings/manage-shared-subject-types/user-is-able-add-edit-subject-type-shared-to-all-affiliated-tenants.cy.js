@@ -25,8 +25,7 @@ describe('Consortia', () => {
           editedName: `C594405 subjectType_${getRandomPostfix()} edited`,
           source: 'consortium',
           memberLibraries: 'All',
-          shareToAll: true,
-          consortiaUser: 'System, System user - mod-consortia-keycloak ',
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
         };
 
         before('Create user and login', () => {
@@ -64,7 +63,6 @@ describe('Consortia', () => {
             ConsortiumManager.waitLoading();
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(2);
-
             ConsortiumManager.clickSelectMembers();
             SelectMembersModal.verifyStatusOfSelectMembersModal(2, 2, true);
             SelectMembersModal.checkMember(tenantNames.college, false);
@@ -76,20 +74,26 @@ describe('Consortia', () => {
 
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
-            ConsortiumSubjectTypes.createNewShared(subjectType.name);
-            ConsortiumSubjectTypes.confirmSharingToAll(subjectType.name);
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.createSubjectTypeSharedWithAllMembers(subjectType.name);
+            ConsortiumSubjectTypes.confirmShareWithAllMembers(subjectType.name);
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               subjectType.name,
-              subjectType.memberLibraries,
               subjectType.source,
+              subjectType.consortiaUser,
+              subjectType.memberLibraries,
               { actions: ['edit', 'trash'] },
             );
+
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectType.name, subjectType.source);
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.name,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -102,7 +106,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectType.name, subjectType.source);
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.name,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -120,11 +128,12 @@ describe('Consortia', () => {
               subjectType.consortiaUser,
               subjectType.source,
             );
-            ConsortiumSubjectTypes.confirmSharing(subjectType.editedName, 'updated');
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.confirmShareWithAllMembers(subjectType.editedName, 'updated');
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               subjectType.editedName,
-              subjectType.memberLibraries,
               subjectType.source,
+              subjectType.consortiaUser,
+              subjectType.memberLibraries,
               { actions: ['edit', 'trash'] },
             );
 
@@ -142,7 +151,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectType.editedName, subjectType.source);
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.editedName,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -155,7 +168,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectType.editedName, subjectType.source);
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.editedName,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
           },
         );
       });
