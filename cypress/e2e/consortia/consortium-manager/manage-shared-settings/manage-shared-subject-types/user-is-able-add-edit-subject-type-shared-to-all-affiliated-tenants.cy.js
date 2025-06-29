@@ -89,11 +89,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              subjectType.name,
-              subjectType.source,
-              subjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.name,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -106,11 +106,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              subjectType.name,
-              subjectType.source,
-              subjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.name,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -151,11 +151,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              subjectType.editedName,
-              subjectType.source,
-              subjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.editedName,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -168,11 +168,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              subjectType.editedName,
-              subjectType.source,
-              subjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.editedName,
+              source: subjectType.source,
+              user: subjectType.consortiaUser,
+            });
           },
         );
       });

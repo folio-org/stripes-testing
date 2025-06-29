@@ -23,9 +23,9 @@ describe('Consortia', () => {
         let user;
         const subjectType = {
           name: `C594411 autotestSubjectTypeName${getRandomPostfix()}`,
+          editedName: `C594411 autotestSubjectTypeName${getRandomPostfix()} edited`,
           source: 'local',
         };
-        const subjectTypeNameForEdit = `C594411 autotestSubjectTypeName${getRandomPostfix()}`;
         const subjectTypeNameForKeepEdit = `C594411 autotestSubjectTypeName${getRandomPostfix()}`;
 
         before('Create users data', () => {
@@ -89,12 +89,12 @@ describe('Consortia', () => {
 
             ConsortiumSubjectTypes.editSubjectTypeByTenantName(
               subjectType.name,
-              subjectTypeNameForEdit,
+              subjectType.editedName,
               user.lastName,
               tenantNames.university,
             );
-            ConsortiumSubjectTypes.verifyEditedLocalSubjectTypeExists(subjectTypeNameForEdit);
-            ConsortiumSubjectTypes.verifyLocalSubjectTypeNotEdited(subjectType.name);
+            ConsortiumSubjectTypes.verifyEditedLocalSubjectTypeExists(subjectType.editedName);
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeNotEdited(subjectType.name, 2);
             ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
 
             ConsortiumSubjectTypes.deleteSubjectTypeByUserAndTenantNames(
@@ -103,7 +103,7 @@ describe('Consortia', () => {
               tenantNames.college,
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
-              subjectTypeNameForEdit,
+              subjectType.editedName,
               tenantNames.university,
               subjectType.source,
               { actions: ['edit', 'trash'] },
@@ -142,9 +142,9 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifyCreatedSubjectType({
+            SubjectTypes.verifySubjectTypeExists({
               name: subjectType.name,
-              user,
+              user: user.lastName,
               actions: ['edit', 'trash'],
             });
 
@@ -170,9 +170,9 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifyCreatedSubjectType({
-              name: subjectTypeNameForEdit,
-              user,
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.editedName,
+              user: user.lastName,
               actions: ['edit', 'trash'],
             });
           },

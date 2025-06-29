@@ -92,16 +92,18 @@ describe('Consortia', () => {
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectTypes.clickNewButton();
             ConsortiumSubjectTypes.verifyNewRecordRowBeforeFilling();
-            [
-              { name: '', validationState: 'empty' },
-              { name: 'Chronological term', validationState: 'duplicate' },
-              { name: firstSubjectType.name, validationState: 'unique' },
-            ].forEach((value) => {
-              ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
-                value.name,
-                value.validationState,
-              );
-            });
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
+              '',
+              'empty',
+            );
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
+              'Chronological term',
+              'duplicate',
+            );
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
+              firstSubjectType.name,
+              'valid',
+            );
             ConsortiumSubjectTypes.confirmShareWithAllMembers(firstSubjectType.name);
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
@@ -124,11 +126,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              firstSubjectType.name,
-              firstSubjectType.source,
-              firstSubjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: firstSubjectType.name,
+              source: firstSubjectType.source,
+              user: firstSubjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -141,11 +143,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              firstSubjectType.name,
-              firstSubjectType.source,
-              firstSubjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: firstSubjectType.name,
+              source: firstSubjectType.source,
+              user: firstSubjectType.consortiaUser,
+            });
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -158,11 +160,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(
-              firstSubjectType.name,
-              firstSubjectType.source,
-              firstSubjectType.consortiaUser,
-            );
+            SubjectTypes.verifySubjectTypeExists({
+              name: firstSubjectType.name,
+              source: firstSubjectType.source,
+              user: firstSubjectType.consortiaUser,
+            });
           },
         );
       });
