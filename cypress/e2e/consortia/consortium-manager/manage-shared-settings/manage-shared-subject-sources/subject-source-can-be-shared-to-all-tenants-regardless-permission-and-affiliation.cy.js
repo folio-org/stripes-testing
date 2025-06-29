@@ -94,17 +94,21 @@ describe('Consortia', () => {
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectSources.choose();
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
-            ConsortiumSubjectSources.clickNewButton();
-            [
-              { name: '', validationState: 'empty' },
-              { name: 'Chronological term', validationState: 'duplicate' },
-              { name: subjectSource.name, validationState: 'unique' },
-            ].forEach((value) => {
-              ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
-                value.name,
-                value.validationState,
-              );
-            });
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
+              '',
+              'empty',
+            );
+            cy.pause();
+            ConsortiumSubjectSources.clickCancelButton();
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
+              'Chronological term',
+              'duplicate',
+            );
+            ConsortiumSubjectSources.clickCancelButton();
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
+              subjectSource.name,
+              'unique',
+            );
             ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSource.name);
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
@@ -122,11 +126,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifySubjectSourceExists({
-              name: subjectSource.name,
-              source: subjectSource.source,
-              user: subjectSource.consortiaUser,
-            });
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              subjectSource.consortiaUser,
+            );
 
             cy.resetTenant();
             ConsortiumManagerSettings.switchActiveAffiliation(
@@ -139,11 +143,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifySubjectSourceExists({
-              name: subjectSource.name,
-              source: subjectSource.source,
-              user: subjectSource.consortiaUser,
-            });
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              subjectSource.consortiaUser,
+            );
 
             ConsortiumManagerSettings.switchActiveAffiliation(
               tenantNames.college,
@@ -155,11 +159,11 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifySubjectSourceExists({
-              name: subjectSource.name,
-              source: subjectSource.source,
-              user: subjectSource.consortiaUser,
-            });
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              subjectSource.consortiaUser,
+            );
           },
         );
       });

@@ -75,7 +75,9 @@ describe('Consortium manager', () => {
           ConsortiumSubjectSources.choose();
           InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
 
-          ConsortiumSubjectSources.createLocalSubjectSource(subjectSource.name);
+          ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
+            subjectSource.name,
+          );
           ConsortiumSubjectSources.confirmSaveForMemberLibraries(
             subjectSource.name,
             tenantNames.college,
@@ -90,6 +92,7 @@ describe('Consortium manager', () => {
           ConsortiumSubjectSources.editSubjectSourceByTenantName(
             subjectSource.name,
             editedSubjectSourceName,
+            subjectSource.source,
             user.lastName,
             tenantNames.university,
           );
@@ -119,12 +122,21 @@ describe('Consortium manager', () => {
             );
           });
 
-          ConsortiumSubjectSources.createLocalSubjectSource(canceledSubjectSourceName);
-          ConsortiumSubjectSources.clickKeepEditingAndVerifyEditMode(canceledSubjectSourceName);
+          ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
+            canceledSubjectSourceName,
+          );
+          ConsortiumSubjectSources.clickKeepEditingAndVerifyEditMode(
+            canceledSubjectSourceName,
+            subjectSource.source,
+            'No value set-',
+          );
           ConsortiumSubjectSources.clickCancelButton();
           ConsortiumSubjectSources.verifySubjectSourceAbsent(canceledSubjectSourceName);
 
-          ConsortiumSubjectSources.createLocalSubjectSource(subjectSource.name, 'duplicate');
+          ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
+            subjectSource.name,
+            'duplicate',
+          );
           ConsortiumSubjectSources.clickCancelButton();
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);

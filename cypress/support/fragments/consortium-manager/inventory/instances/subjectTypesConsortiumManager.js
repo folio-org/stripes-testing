@@ -482,17 +482,19 @@ export default {
           cy.expect([
             subjectTypesList
               .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-              .find(MultiColumnListCell({ columnIndex: 0, content: subjectTypeName }))
+              .find(
+                MultiColumnListCell({ columnIndex: columnIndex.name, content: subjectTypeName }),
+              )
               .exists(),
             subjectTypesList
               .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-              .find(MultiColumnListCell({ columnIndex: 1, content: 'local' }))
+              .find(MultiColumnListCell({ columnIndex: columnIndex.source, content: 'local' }))
               .exists(),
             subjectTypesList
               .find(MultiColumnListRow({ indexRow: `row-${index}` }))
               .find(
                 MultiColumnListCell({
-                  columnIndex: 2,
+                  columnIndex: columnIndex.lastUpdated,
                   content: including(`${date} by ${userName},`),
                 }),
               )
@@ -541,7 +543,7 @@ export default {
       cy.expect([
         subjectTypesList
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 0, content: name }))
+          .find(MultiColumnListCell({ columnIndex: columnIndex.name, content: name }))
           .exists(),
       ]);
     });
