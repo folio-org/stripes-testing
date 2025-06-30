@@ -25,7 +25,7 @@ const accumulationNote3 = 'Employee records';
 const accumulationNote5 = 'DLC';
 const accumulationNote6 = '100-01/Cyrl';
 const accumulationNote8 = '1.5\\a';
-const fullAccumulationNote = `${accumulationNoteA} ${accumulationNoteB} ${accumulationNote3} ${accumulationNote5} ${accumulationNote6} ${accumulationNote8}`;
+const fullAccumulationNoteInBulkEditForms = `${accumulationNoteA} ${accumulationNoteB} ${accumulationNote3} ${accumulationNote5}`;
 const marcInstance = {
   title: `AT_C506685_MarcInstance_${getRandomPostfix()}`,
 };
@@ -101,20 +101,20 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
-          fullAccumulationNote,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          fullAccumulationNoteInBulkEditForms,
         );
 
         // Step 2: Uncheck Accumulation and Frequency of Use note column
         BulkEditSearchPane.changeShowColumnCheckbox(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
         );
         BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
         );
 
         // Step 3: Open MARC bulk edit form
@@ -131,8 +131,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
-          `${accumulationNoteA} ${accumulationNote3} ${accumulationNote5} ${accumulationNote6} ${accumulationNote8}`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          '',
         );
         BulkEditActions.verifyAreYouSureForm(1);
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
@@ -162,18 +162,7 @@ describe('Bulk-edit', () => {
               },
               (record) => expect(record.get('008')).to.not.be.empty,
 
-              (record) => expect(record.get('584')[0].ind1).to.eq(' '),
-              (record) => expect(record.get('584')[0].ind2).to.eq(' '),
-              (record) => expect(record.get('584')[0].subf[0][0]).to.eq('a'),
-              (record) => expect(record.get('584')[0].subf[0][1]).to.eq(accumulationNoteA),
-              (record) => expect(record.get('584')[0].subf[1][0]).to.eq('3'),
-              (record) => expect(record.get('584')[0].subf[1][1]).to.eq(accumulationNote3),
-              (record) => expect(record.get('584')[0].subf[2][0]).to.eq('5'),
-              (record) => expect(record.get('584')[0].subf[2][1]).to.eq(accumulationNote5),
-              (record) => expect(record.get('584')[0].subf[3][0]).to.eq('6'),
-              (record) => expect(record.get('584')[0].subf[3][1]).to.eq(accumulationNote6),
-              (record) => expect(record.get('584')[0].subf[4][0]).to.eq('8'),
-              (record) => expect(record.get('584')[0].subf[4][1]).to.eq(accumulationNote8),
+              (record) => expect(record.get('584')).to.be.empty,
 
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -190,7 +179,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE};${accumulationNoteA} ${accumulationNote3} ${accumulationNote5} ${accumulationNote6} ${accumulationNote8};false`,
+          '',
         );
 
         // Step 10: Commit changes
@@ -198,8 +187,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
-          `${accumulationNoteA} ${accumulationNote3} ${accumulationNote5} ${accumulationNote6} ${accumulationNote8}`,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          '',
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
 
@@ -216,28 +205,21 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE};${accumulationNoteA} ${accumulationNote3} ${accumulationNote5} ${accumulationNote6} ${accumulationNote8};false`,
+          '',
         );
 
-        // Step 13: Verify changes in Inventory app
+        // Step 13: Verify that 'Accumulation and Frequency of Use note' is NOT present in Inventory app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-          0,
-          'No',
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_OF_USE_NOTE,
-          `${accumulationNoteA} ${accumulationNote3} ${accumulationNote5} ${accumulationNote6} ${accumulationNote8}`,
-        );
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(accumulationNoteA);
         InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
 
-        // Step 14: Verify changes in MARC source
+        // Step 14: Verify that 584 field is NOT present in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource(
-          '584',
-          `\t584\t   \t$a ${accumulationNoteA} $3 ${accumulationNote3} $5 ${accumulationNote5} $6 ${accumulationNote6} $8 ${accumulationNote8}`,
-        );
+        InventoryViewSource.notContains('584');
+        InventoryViewSource.notContains(accumulationNoteA);
         InventoryViewSource.verifyFieldContent(
           3,
           DateTools.getFormattedEndDateWithTimUTC(new Date()),
