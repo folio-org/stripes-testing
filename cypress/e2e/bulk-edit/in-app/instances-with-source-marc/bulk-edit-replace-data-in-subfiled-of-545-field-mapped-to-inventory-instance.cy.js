@@ -178,6 +178,7 @@ describe('Bulk-edit', () => {
                       .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
                 ).to.be.true;
               },
+
               (record) => {
                 expect(record.fields[4]).to.deep.eq([
                   '545',
