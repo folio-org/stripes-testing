@@ -86,7 +86,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyResultsUnderColumns(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-          '',
+          'false',
         );
         BulkEditSearchPane.verifyResultsUnderColumns(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SOURCE,
