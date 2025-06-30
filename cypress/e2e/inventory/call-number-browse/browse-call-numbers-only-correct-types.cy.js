@@ -130,6 +130,15 @@ describe('Inventory', () => {
         .flat();
     }
 
+    function searchAndCheckCallNumbers(type, searchValue) {
+      filterCNOfType(type).forEach((callNumber) => {
+        BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        InventorySearchAndFilter.browseSearch(searchValue);
+        BrowseCallNumber.checkValuePresentInResults(callNumber);
+        BrowseCallNumber.valueInResultTableIsHighlighted(searchValue);
+      });
+    }
+
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
@@ -285,63 +294,30 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        filterCNOfType(['dewey']).forEach((callNumber) => {
-          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-        });
-        InventorySearchAndFilter.browseSearch(callNumbers[1].dewey);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].dewey);
-        filterCNOfType(['dewey']).forEach((callNumber) => {
-          BrowseCallNumber.checkValuePresentInResults(callNumber);
-        });
+        searchAndCheckCallNumbers(['dewey'], callNumbers[1].dewey);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
-        filterCNOfType(['lc', 'local']).forEach((callNumber) => {
-          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-        });
-        InventorySearchAndFilter.browseSearch(callNumbers[1].local);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].local);
-        filterCNOfType(['lc', 'local']).forEach((callNumber) => {
-          BrowseCallNumber.checkValuePresentInResults(callNumber);
-        });
+        searchAndCheckCallNumbers(['lc'], callNumbers[1].lc);
+        searchAndCheckCallNumbers(['local'], callNumbers[1].local);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
-        filterCNOfType(['nlm', 'lc']).forEach((callNumber) => {
-          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-        });
-        InventorySearchAndFilter.browseSearch(callNumbers[0].nlm);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].nlm);
-        filterCNOfType(['nlm', 'lc']).forEach((callNumber) => {
-          BrowseCallNumber.checkValuePresentInResults(callNumber);
-        });
+        searchAndCheckCallNumbers(['nlm'], callNumbers[0].nlm);
+        searchAndCheckCallNumbers(['lc'], callNumbers[0].lc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
-
-        filterCNOfType(['other', 'udc']).forEach((callNumber) => {
-          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-        });
-        InventorySearchAndFilter.browseSearch(callNumbers[0].other);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].other);
-        filterCNOfType(['other', 'udc']).forEach((callNumber) => {
-          BrowseCallNumber.checkValuePresentInResults(callNumber);
-        });
+        searchAndCheckCallNumbers(['other'], callNumbers[0].other);
+        searchAndCheckCallNumbers(['udc'], callNumbers[0].udc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
-        filterCNOfType(['sudoc']).forEach((callNumber) => {
-          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-        });
-        InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
-        filterCNOfType(['sudoc']).forEach((callNumber) => {
-          BrowseCallNumber.checkValuePresentInResults(callNumber);
-        });
+        searchAndCheckCallNumbers(['sudoc'], callNumbers[4].sudoc);
       },
     );
   });
