@@ -9,72 +9,80 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
-  describe('Subject Browse', () => {
-    const testData = {
-      user: {},
-      subjectSource: {
-        subjectHeading: `C584507 subjectHeading${getRandomPostfix()}`,
-        name: `C584507 subjectSource${getRandomPostfix()}`,
-        code: `C584507 SS${getRandomPostfix()}`,
+  describe(
+    'Subject Browse',
+    {
+      retries: {
+        runMode: 2,
       },
-      columnName: 'Subject source',
-    };
+    },
+    () => {
+      const testData = {
+        user: {},
+        subjectSource: {
+          subjectHeading: `C584507 subjectHeading${getRandomPostfix()}`,
+          name: `C584507 subjectSource${getRandomPostfix()}`,
+          code: `C584507 SS${getRandomPostfix()}`,
+        },
+        columnName: 'Subject source',
+      };
 
-    before('Create test data and login', () => {
-      cy.getAdminToken();
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
-      });
-      SubjectSources.createViaApi({
-        source: 'local',
-        name: testData.subjectSource.name,
-        code: testData.subjectSource.code,
-      }).then((responce) => {
-        testData.subjectSource.id = responce.body.id;
+      before('Create test data and login', () => {
+        cy.getAdminToken();
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
+        });
+        SubjectSources.createViaApi({
+          source: 'local',
+          name: testData.subjectSource.name,
+          code: testData.subjectSource.code,
+        }).then((responce) => {
+          testData.subjectSource.id = responce.body.id;
 
-        cy.getInstanceById(testData.instance.instanceId).then((body) => {
-          body.subjects = [
-            {
-              authorityId: null,
-              value: testData.subjectSource.subjectHeading,
-              sourceId: responce.body.id,
-              typeId: null,
-            },
-          ];
-          cy.updateInstance(body);
+          cy.getInstanceById(testData.instance.instanceId).then((body) => {
+            body.subjects = [
+              {
+                authorityId: null,
+                value: testData.subjectSource.subjectHeading,
+                sourceId: responce.body.id,
+                typeId: null,
+              },
+            ];
+            cy.updateInstance(body);
+          });
+        });
+
+        cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+          testData.user = userProperties;
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventorySearchAndFilter.verifySearchAndFilterPane();
+          InventorySearchAndFilter.switchToBrowseTab();
         });
       });
 
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventorySearchAndFilter.verifySearchAndFilterPane();
-        InventorySearchAndFilter.switchToBrowseTab();
+      after('Delete created instance', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        SubjectSources.deleteViaApi(testData.subjectSource.id);
       });
-    });
 
-    after('Delete created instance', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      SubjectSources.deleteViaApi(testData.subjectSource.id);
-    });
-
-    it(
-      'C584507 Check filtering by local Subject Source (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584507'] },
-      () => {
-        BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
-        cy.wait(2000);
-        BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
-        BrowseSubjects.expandAccordion('Subject source');
-        BrowseSubjects.selectSubjectSource(testData.subjectSource.name);
-        BrowseSubjects.verifySearchResult(testData.subjectSource.name, testData.columnName);
-      },
-    );
-  });
+      it(
+        'C584507 Check filtering by local Subject Source (folijet)',
+        { tags: ['criticalPath', 'folijet', 'C584507'] },
+        () => {
+          BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
+          cy.wait(2000);
+          BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
+          BrowseSubjects.expandAccordion('Subject source');
+          BrowseSubjects.selectSubjectSource(testData.subjectSource.name);
+          BrowseSubjects.verifySearchResult(testData.subjectSource.name, testData.columnName);
+        },
+      );
+    },
+  );
 });

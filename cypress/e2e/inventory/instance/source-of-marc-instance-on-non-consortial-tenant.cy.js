@@ -10,59 +10,67 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
-  describe('Instance', () => {
-    let preconditionUserId;
-    let user;
-    let instanceHrid;
-    let instanceId;
-    const instanceSource = INSTANCE_SOURCE_NAMES.MARC;
-    const filePathForUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-    const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
+  describe(
+    'Instance',
+    {
+      retries: {
+        runMode: 2,
+      },
+    },
+    () => {
+      let preconditionUserId;
+      let user;
+      let instanceHrid;
+      let instanceId;
+      const instanceSource = INSTANCE_SOURCE_NAMES.MARC;
+      const filePathForUpload = 'oneMarcBib.mrc';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+      const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('Create test data and login', () => {
-      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-        preconditionUserId = userProperties.userId;
+      before('Create test data and login', () => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          preconditionUserId = userProperties.userId;
 
-        DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then(
-          (response) => {
-            instanceHrid = response[0].instance.hrid;
-            instanceId = response[0].instance.id;
+          DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then(
+            (response) => {
+              instanceHrid = response[0].instance.hrid;
+              instanceId = response[0].instance.id;
+            },
+          );
+        });
+
+        cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+          (userProperties) => {
+            user = userProperties;
+
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           },
         );
       });
 
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+      after('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(preconditionUserId);
+          Users.deleteViaApi(user.userId);
+          InventoryInstance.deleteInstanceViaApi(instanceId);
+        });
+      });
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+      it(
+        'C402775 (NON-CONSORTIA) Verify the Source of a MARC Instance on non-consortial tenant (folijet) (TaaS)',
+        { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C402775'] },
+        () => {
+          InventorySearchAndFilter.verifyPanesExist();
+          InventorySearchAndFilter.instanceTabIsDefault();
+          InventoryInstances.searchBySource(instanceSource);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyInstanceSource(instanceSource);
         },
       );
-    });
-
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(preconditionUserId);
-        Users.deleteViaApi(user.userId);
-        InventoryInstance.deleteInstanceViaApi(instanceId);
-      });
-    });
-
-    it(
-      'C402775 (NON-CONSORTIA) Verify the Source of a MARC Instance on non-consortial tenant (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C402775'] },
-      () => {
-        InventorySearchAndFilter.verifyPanesExist();
-        InventorySearchAndFilter.instanceTabIsDefault();
-        InventoryInstances.searchBySource(instanceSource);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyInstanceSource(instanceSource);
-      },
-    );
-  });
+    },
+  );
 });

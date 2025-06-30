@@ -227,13 +227,11 @@ describe('Data Import', () => {
         cy.wait(2000);
         JobProfileView.duplicate();
         NewJobProfile.fillProfileName(jobProfileNameForChanging);
-        cy.wait(3000);
-        NewJobProfile.unlinkProfile(1);
-        cy.wait(3000);
+        NewJobProfile.unlinkProfile(1, collectionOfMappingAndActionProfiles[1].actionProfile.name);
         NewJobProfile.saveAndClose();
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyJobProfileOpened();
-        cy.wait(7000);
+        cy.wait(2000);
         JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
       },
