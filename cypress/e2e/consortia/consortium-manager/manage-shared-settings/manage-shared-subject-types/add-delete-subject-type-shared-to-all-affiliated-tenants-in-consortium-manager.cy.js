@@ -5,6 +5,8 @@ import ConsortiumManager, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
+import ConfirmShareModal from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
+import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
 import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManagerSettings from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
@@ -21,13 +23,13 @@ describe('Consortia', () => {
       describe('Manage shared Subject types', () => {
         let user;
         const firstSubjectType = {
-          name: `autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594404 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
-          memberLibraries: 'All',
-          shareToAll: true,
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
+          memberLbrares: 'All',
         };
         const secondSubjectType = {
-          name: `autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594404 autotestSubjectTypeName${getRandomPostfix()}`,
         };
 
         before('Create userand login', () => {
@@ -74,34 +76,40 @@ describe('Consortia', () => {
             ConsortiumManager.verifyStatusOfConsortiumManager(3);
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
-            ConsortiumSubjectTypes.createNewShared(firstSubjectType.name);
-            ConsortiumSubjectTypes.confirmSharingToAll(firstSubjectType.name);
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+
+            ConsortiumSubjectTypes.createSubjectTypeSharedWithAllMembers(firstSubjectType.name);
+            ConsortiumSubjectTypes.confirmShareWithAllMembers(firstSubjectType.name);
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               firstSubjectType.name,
-              firstSubjectType.memberLibraries,
               firstSubjectType.source,
+              firstSubjectType.consortiaUser,
+              firstSubjectType.memberLbrares,
               { actions: ['edit', 'trash'] },
             );
 
-            ConsortiumSubjectTypes.createNewShared(secondSubjectType.name);
-            ConsortiumSubjectTypes.clickKeepEditingInConfirmShareToAllModal();
+            ConsortiumSubjectTypes.createSubjectTypeSharedWithAllMembers(secondSubjectType.name);
+            ConfirmShareModal.waitLoadingConfirmShareToAll(secondSubjectType.name);
+            ConfirmShareModal.clickKeepEditing();
+            ConsortiumSubjectTypes.verifyNewSubjectTypeRowIsInEditMode(secondSubjectType.name);
             ConsortiumSubjectTypes.cancel();
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(secondSubjectType.name);
-            ConsortiumSubjectTypes.verifyButtonStates();
+            ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
 
             const isUniqueSubjectTypeName = false;
-            ConsortiumSubjectTypes.createNewAndCancel(
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeAndCancel(
               firstSubjectType.name,
               isUniqueSubjectTypeName,
             );
+            ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
 
             ConsortiumSubjectTypes.clickDeleteByName(firstSubjectType.name);
-            ConsortiumSubjectTypes.cancelDeletion(firstSubjectType.name);
-            ConsortiumSubjectTypes.verifyButtonStates();
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            DeleteCancelReason.waitLoadingDeleteModal('subject type', firstSubjectType.name);
+            DeleteCancelReason.clickCancel();
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               firstSubjectType.name,
-              firstSubjectType.memberLibraries,
               firstSubjectType.source,
+              firstSubjectType.consortiaUser,
+              firstSubjectType.memberLbrares,
               { actions: ['edit', 'trash'] },
             );
 

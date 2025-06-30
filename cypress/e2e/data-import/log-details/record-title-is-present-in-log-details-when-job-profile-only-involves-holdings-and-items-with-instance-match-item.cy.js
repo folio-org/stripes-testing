@@ -328,6 +328,7 @@ describe('Data Import', () => {
 
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.getAdminToken();
         ExportFile.uploadFile(csvFileName);
         ExportFile.exportWithCreatedJobProfile(csvFileName, exportJobProfileName);
