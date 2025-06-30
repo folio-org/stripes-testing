@@ -35,7 +35,13 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
-    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+    const capabsToAssign = [
+      {
+        type: CAPABILITY_TYPES.SETTINGS,
+        resource: 'Settings Enabled',
+        action: CAPABILITY_ACTIONS.VIEW,
+      },
+    ];
     let userData;
 
     before('Create user, roles, and affiliations', () => {
