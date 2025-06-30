@@ -337,8 +337,10 @@ describe('Data Import', () => {
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
           // download exported marc file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
