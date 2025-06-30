@@ -98,7 +98,6 @@ describe('Consortia', () => {
               '',
               'empty',
             );
-            cy.pause();
             ConsortiumSubjectSources.clickCancelButton();
             ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
               'Chronological term',

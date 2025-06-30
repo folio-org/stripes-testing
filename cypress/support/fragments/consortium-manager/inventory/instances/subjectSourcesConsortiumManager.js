@@ -166,7 +166,6 @@ export default {
   ) {
     ConfirmCreateModal.waitLoadingConfirmCreate(name);
     ConfirmCreateModal.clickKeepEditing();
-    cy.pause();
     this.verifyNewSubjectSourceRowIsInEditMode(
       name,
       source,

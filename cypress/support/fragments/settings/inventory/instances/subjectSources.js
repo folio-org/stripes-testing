@@ -1,4 +1,9 @@
-import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import {
+  Button,
+  EditableListRow,
+  including,
+  MultiColumnListCell,
+} from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
@@ -47,7 +52,7 @@ export default {
             .has({ content: source }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: `${date} by ${user}` }),
+            .has({ content: including(`${date} by ${user}`) }),
         ]);
         Object.values(actionButtons).forEach((action) => {
           const buttonSelector = EditableListRow({ index: rowIndex })
