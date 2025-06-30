@@ -19,12 +19,13 @@ import DateTools from '../../../../support/utils/dateTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 let user;
-const note514a =
-  'The map layer that displays Special Feature Symbols shows the approximate location of small (less than 2 acres in size) areas of soils';
-const note514b1 = 'Estimated to be 98.5%.';
-const note514b2 = 'Approximately 95%';
+const note914a = 'Scale 1:500,000;';
+const note914b1 = '1 in. equals 8 miles.';
+const note914b2 = 'Perspective map not drawn to scale.';
+const note570a = '"Selected bibliography": v. 1, p. 351-358, v. 2, p. 234-236.';
+const note5705 = 'NjP';
 const marcInstance = {
-  title: `AT_C523598_MarcInstance_${getRandomPostfix()}`,
+  title: `AT_C523599_MarcInstance_${getRandomPostfix()}`,
 };
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
@@ -39,8 +40,13 @@ const marcInstanceFields = [
     indicators: ['1', '0'],
   },
   {
-    tag: '514',
-    content: `$a ${note514a} $b ${note514b1} $b ${note514b2}`,
+    tag: '914',
+    content: `$a ${note914a} $b ${note914b1} $b ${note914b2}`,
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '570',
+    content: `$a ${note570a} $5 ${note5705}`,
     indicators: ['\\', '\\'],
   },
 ];
@@ -93,64 +99,71 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C523598 Find and remove subfield from MARC field (514) mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C523598'] },
+      'C523599 Find and remove subfield from MARC field (914, 570) not mapped to Inventory Instance (MARC) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C523599'] },
       () => {
-        // Step 1: Show Source and Data quality note columns
+        // Step 1: Show Source, hide General note
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
+        );
+        BulkEditSearchPane.uncheckShowColumnCheckbox(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
         );
         BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
           true,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-          marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
-          `${note514a} ${note514b1} ${note514b2}`,
+        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+          false,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
           'MARC',
         );
-
-        // Step 2: Hide Data quality note column
-        BulkEditSearchPane.changeShowColumnCheckbox(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
-        );
         BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
         );
 
-        // Step 3: Open MARC bulk edit form
+        // Step 2: Open MARC bulk edit form
         BulkEditActions.openStartBulkEditMarcInstanceForm();
         BulkEditActions.verifyInitialStateBulkEditsFormForMarcInstance();
 
-        // Step 4-6: Find 514 and remove $a subfield
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('514', '\\', '\\', 'a');
-        BulkEditActions.findAndRemoveSubfieldActionForMarc(note514a);
+        // Step 3-5: Find 914 and remove subfield $a
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('914', '\\', '\\', 'a');
+        BulkEditActions.findAndRemoveSubfieldActionForMarc(note914a);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        // Step 7: Add new row
+        // Step 6: Add new row
         BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
         BulkEditActions.verifyConfirmButtonDisabled(true);
 
-        // Step 8: Find 514 $b (Approximately 95%)
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('514', '\\', '\\', 'b', 1);
-        BulkEditActions.findAndRemoveSubfieldActionForMarc(note514b2, 1);
+        // Step 7: Find 914 $b (1 in. equals 8 miles.)
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('914', '\\', '\\', 'b', 1);
+        BulkEditActions.findAndRemoveSubfieldActionForMarc(note914b1, 1);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
+
+        // Step 8: Add new row
+        BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('570', '\\', '\\', '5', 2);
+        BulkEditActions.findAndRemoveSubfieldActionForMarc(note5705, 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 9: Confirm changes
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
-          note514b1,
+        BulkEditSearchPane.verifyCellWithContentAbsentsInAreYouSureForm(
+          note914a,
+          note914b1,
+          note914b2,
+          note570a,
+          note5705,
+        );
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
         );
         BulkEditActions.verifyAreYouSureForm(1);
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
@@ -162,21 +175,31 @@ describe('Bulk-edit', () => {
         const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
         const currentTimestampUpToMinutesOneMinuteAfter =
           DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
+        const currentTimestampUpToMinutesTwoMinuteAfter =
+          DateTools.getCurrentISO8601TimestampUpToMinutesUTC(2);
         const assertionsOnMarcFileContent = [
           {
             uuid: marcInstance.uuid,
             assertions: [
-              (record) => {
-                expect(
-                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                    record
-                      .get('005')[0]
-                      .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-                ).to.be.true;
-              },
-              (record) => {
-                expect(record.fields[4]).to.deep.eq(['514', '  ', 'b', note514b1]);
-              },
+              (record) => expect(
+                [
+                  currentTimestampUpToMinutes,
+                  currentTimestampUpToMinutesOneMinuteAfter,
+                  currentTimestampUpToMinutesTwoMinuteAfter,
+                ].some((prefix) => record.get('005')[0].value.startsWith(prefix)),
+              ).to.be.true,
+
+              (record) => expect(record.get('914')[0].ind1).to.eq(' '),
+              (record) => expect(record.get('914')[0].ind2).to.eq(' '),
+              (record) => expect(record.get('914')[0].subf.length).to.eq(1),
+              (record) => expect(record.get('914')[0].subf[0][0]).to.eq('b'),
+              (record) => expect(record.get('914')[0].subf[0][1]).to.eq(note914b2),
+
+              (record) => expect(record.get('570')[0].ind1).to.eq(' '),
+              (record) => expect(record.get('570')[0].ind2).to.eq(' '),
+              (record) => expect(record.get('570')[0].subf.length).to.eq(1),
+              (record) => expect(record.get('570')[0].subf[0][0]).to.eq('a'),
+              (record) => expect(record.get('570')[0].subf[0][1]).to.eq(note570a),
 
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -193,16 +216,21 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE};${note514b1};false`,
+          '',
         );
 
         // Step 12: Commit changes
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-          marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
-          note514b1,
+        BulkEditSearchPane.verifyChangedColumnTitlesDoNotInclude(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+        );
+        BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(
+          note914a,
+          note914b1,
+          note914b2,
+          note570a,
+          note5705,
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
 
@@ -219,7 +247,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           'Notes',
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE};${note514b1};false`,
+          '',
         );
 
         // Step 15: Verify changes in Inventory app
@@ -227,17 +255,15 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-          0,
-          'No',
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
-          'Estimated to be 98.5%',
-        );
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note914a);
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note914b1);
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note5705);
         InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
 
         // Step 16: Verify changes in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('514', `\t514\t   \t$b ${note514b1}`);
+        InventoryViewSource.verifyFieldInMARCBibSource('914', `\t914\t   \t$b ${note914b2}`);
+        InventoryViewSource.verifyFieldInMARCBibSource('570', `\t570\t   \t$a ${note570a}`);
         InventoryViewSource.verifyFieldContent(
           3,
           DateTools.getFormattedEndDateWithTimUTC(new Date()),

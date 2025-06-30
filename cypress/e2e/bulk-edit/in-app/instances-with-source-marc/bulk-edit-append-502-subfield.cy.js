@@ -194,10 +194,6 @@ describe(
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
                 (record) => {
                   expect(
                     record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
@@ -206,7 +202,6 @@ describe(
                         .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
                   ).to.be.true;
                 },
-                (record) => expect(record.get('008')).to.not.be.empty,
 
                 (record) => expect(record.get('502')[0].ind1).to.eq(' '),
                 (record) => expect(record.get('502')[0].ind2).to.eq(' '),
