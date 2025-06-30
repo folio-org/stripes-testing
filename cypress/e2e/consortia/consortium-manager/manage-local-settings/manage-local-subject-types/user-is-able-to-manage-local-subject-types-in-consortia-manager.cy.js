@@ -5,6 +5,7 @@ import ConsortiumManager, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
+import ConfirmCreateModal from '../../../../../support/fragments/consortium-manager/modal/confirm-create';
 import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import SettingsConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
@@ -21,12 +22,11 @@ describe('Consortia', () => {
       describe('Manage local Subject types', () => {
         let user;
         const subjectType = {
-          name: `autotestSubjectTypeName${getRandomPostfix()}`,
-          nameForEdit: `autotestSubjectTypeName${getRandomPostfix()}`,
-          newName: `autotestSubjectTypeName${getRandomPostfix()}`,
-          nameForKeepEdit: `autotestSubjectTypeName${getRandomPostfix()}`,
-          nameForCancel: `autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594411 autotestSubjectTypeName${getRandomPostfix()}`,
+          editedName: `C594411 autotestSubjectTypeName${getRandomPostfix()} edited`,
+          source: 'local',
         };
+        const subjectTypeNameForKeepEdit = `C594411 autotestSubjectTypeName${getRandomPostfix()}`;
 
         before('Create users data', () => {
           cy.clearCookies({ domain: null });
@@ -59,20 +59,6 @@ describe('Consortia', () => {
 
         after('Delete users data', () => {
           cy.resetTenant();
-          SettingsConsortiumManager.switchActiveAffiliation(
-            tenantNames.university,
-            tenantNames.central,
-          );
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-          ConsortiumManager.waitLoading();
-          ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
-          ConsortiumSubjectTypes.choose();
-          ConsortiumSubjectTypes.deleteByUserName(subjectType.name, user, tenantNames.central);
-          ConsortiumSubjectTypes.deleteByUserName(
-            subjectType.nameForEdit,
-            user,
-            tenantNames.university,
-          );
           cy.getAdminToken();
           Users.deleteViaApi(user.userId);
         });
@@ -88,54 +74,77 @@ describe('Consortia', () => {
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
 
-            ConsortiumSubjectTypes.createNewWithValidationOfNameField(subjectType.name, true, true);
-            ConsortiumSubjectTypes.clickConfirmInConfirmMemberLibraries(subjectType.name, [
-              tenantNames.central,
-              tenantNames.college,
-              tenantNames.university,
-            ]);
-            ConsortiumSubjectTypes.verifyCreatedInList(subjectType, user);
-            ConsortiumSubjectTypes.edit(
+            ConsortiumSubjectTypes.createLocalSubjectTypeSavedForMemberLibraries(subjectType.name);
+            ConsortiumSubjectTypes.confirmSaveForMemberLibraries(
               subjectType.name,
-              subjectType.nameForEdit,
+              tenantNames.college,
+              tenantNames.central,
+              tenantNames.university,
+            );
+            ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
+            ConsortiumSubjectTypes.verifyThreeLocalSubjectTypesExist(
+              subjectType.name,
+              user.lastName,
+            );
+
+            ConsortiumSubjectTypes.editSubjectTypeByTenantName(
+              subjectType.name,
+              subjectType.editedName,
               user.lastName,
               tenantNames.university,
             );
-            ConsortiumSubjectTypes.verifyEditedInList(subjectType.name, subjectType.nameForEdit);
-            ConsortiumSubjectTypes.deleteByUserName(subjectType.name, user, tenantNames.college);
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
-              subjectType.nameForEdit,
+            ConsortiumSubjectTypes.verifyEditedLocalSubjectTypeExists(subjectType.editedName);
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeNotEdited(subjectType.name, 2);
+            ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
+
+            ConsortiumSubjectTypes.deleteSubjectTypeByUserAndTenantNames(
+              subjectType.name,
+              user.lastName,
+              tenantNames.college,
+            );
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
+              subjectType.editedName,
               tenantNames.university,
-              'local',
+              subjectType.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               subjectType.name,
               tenantNames.central,
-              'local',
+              subjectType.source,
               { actions: ['edit', 'trash'] },
             );
 
-            ConsortiumSubjectTypes.createNewWithValidationOfNameField(
-              subjectType.nameForKeepEdit,
-              true,
+            ConsortiumSubjectTypes.createLocalSubjectTypeSavedForMemberLibraries(
+              subjectTypeNameForKeepEdit,
+            );
+            ConfirmCreateModal.waitLoadingConfirmCreate(subjectTypeNameForKeepEdit);
+            ConfirmCreateModal.clickKeepEditing();
+            ConsortiumSubjectTypes.verifyNewSubjectTypeRowIsInEditMode(
+              subjectTypeNameForKeepEdit,
+              false,
               true,
             );
-            ConsortiumSubjectTypes.clickKeepEditingInConfirmMemberLibrariesModal();
             ConsortiumSubjectTypes.cancel();
-            ConsortiumSubjectTypes.verifySubjectTypeAbsent(subjectType.nameForKeepEdit);
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(subjectTypeNameForKeepEdit);
+            ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
 
-            ConsortiumSubjectTypes.createNewWithValidationOfNameField(subjectType.name, true, true);
+            const isUniqueSubjectTypeName = false;
+            ConsortiumSubjectTypes.createLocalSubjectTypeSavedForMemberLibraries(
+              subjectType.name,
+              isUniqueSubjectTypeName,
+            );
             ConsortiumSubjectTypes.cancel();
+            ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
 
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifyCreatedSubjectType({
+            SubjectTypes.verifySubjectTypeExists({
               name: subjectType.name,
-              user,
+              user: user.lastName,
               actions: ['edit', 'trash'],
             });
 
@@ -161,9 +170,9 @@ describe('Consortia', () => {
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifyCreatedSubjectType({
-              name: subjectType.nameForEdit,
-              user,
+            SubjectTypes.verifySubjectTypeExists({
+              name: subjectType.editedName,
+              user: user.lastName,
               actions: ['edit', 'trash'],
             });
           },
