@@ -1064,6 +1064,7 @@ export default {
   selectInvoice: (invoiceNumber) => {
     cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
+    cy.wait(4000);
   },
 
   selectInvoiceByIndex: (invoiceNumber, indexNumber) => {
