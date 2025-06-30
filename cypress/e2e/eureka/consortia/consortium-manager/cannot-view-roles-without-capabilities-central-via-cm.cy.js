@@ -35,13 +35,6 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
-    const capabsToAssign = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
     let userData;
 
     before('Create user, roles, and affiliations', () => {
@@ -49,11 +42,7 @@ describe('Eureka', () => {
       cy.createTempUser([])
         .then((userProperties) => {
           userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssign,
-            capabSetsToAssignCentral,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignCentral);
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, userData.userId);
@@ -62,21 +51,13 @@ describe('Eureka', () => {
             testData.roleCentralId = roleCentral.id;
           });
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssign,
-            capabSetsToAssignMember,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMember);
           cy.createAuthorizationRoleApi(testData.collegeRoleName).then((roleMember) => {
             testData.roleCollegeId = roleMember.id;
           });
           cy.setTenant(Affiliations.University);
           cy.wait(10_000);
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssign,
-            capabSetsToAssignMember,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMember);
           cy.createAuthorizationRoleApi(testData.universityRoleName).then((roleMember) => {
             testData.roleUniversityId = roleMember.id;
           });
@@ -116,7 +97,6 @@ describe('Eureka', () => {
         AuthorizationRoles.verifyAccessErrorShown();
         AuthorizationRoles.verifyRolesCount(0);
         // Step 4: Open member dropdown and verify only selected tenants are present
-        // (Dropdown is opened as part of selectMember, so just check options)
         ConsortiumManagerApp.verifyTenantsInDropdown([
           tenantNames.central,
           tenantNames.college,

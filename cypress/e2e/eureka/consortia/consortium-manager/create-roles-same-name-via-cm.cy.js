@@ -50,13 +50,6 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
-    const capabsToAssign = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
     let userData;
 
     before('Create user, assign affiliations and capabilities', () => {
@@ -64,28 +57,16 @@ describe('Eureka', () => {
       cy.createTempUser([])
         .then((userProperties) => {
           userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssign,
-            capabSetsToAssignCentral,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignCentral);
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, userData.userId);
           cy.assignAffiliationToUser(Affiliations.University, userData.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssign,
-            capabSetsToAssignMember,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMember);
           cy.setTenant(Affiliations.University);
           cy.wait(10_000);
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssign,
-            capabSetsToAssignMember,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMember);
         });
     });
 

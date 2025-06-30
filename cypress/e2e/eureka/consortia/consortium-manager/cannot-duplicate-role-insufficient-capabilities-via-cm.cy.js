@@ -57,13 +57,6 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.DELETE,
       },
     ];
-    const capabsToAssign = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
     let userData;
     let centralRoleId;
     let memberRoleId;
@@ -75,11 +68,7 @@ describe('Eureka', () => {
         cy.createTempUser([])
           .then((userProperties) => {
             userData = userProperties;
-            cy.assignCapabilitiesToExistingUser(
-              userData.userId,
-              capabsToAssign,
-              capabSetsToAssignCentral,
-            );
+            cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignCentral);
             cy.createAuthorizationRoleApi(centralRoleName).then((role) => {
               centralRoleId = role.id;
             });
@@ -87,11 +76,7 @@ describe('Eureka', () => {
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.College, userData.userId);
             cy.setTenant(Affiliations.College);
-            cy.assignCapabilitiesToExistingUser(
-              userData.userId,
-              capabsToAssign,
-              capabSetsToAssignMember,
-            );
+            cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMember);
             cy.createAuthorizationRoleApi(memberRoleName).then((role) => {
               memberRoleId = role.id;
             });
