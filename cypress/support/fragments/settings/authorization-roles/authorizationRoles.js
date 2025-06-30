@@ -508,18 +508,17 @@ export default {
     else cy.expect(userRow.absent());
   },
 
-  verifyAssignedUsersAccordion: (viewOnly = false) => {
+  verifyAssignedUsersAccordion: (viewOnly = false, userLink) => {
     cy.expect([
       usersAccordion.has({ open: true }),
       usersAccordion.find(MultiColumnListHeader('Name')).exists(),
       usersAccordion.find(MultiColumnListHeader('Patron group')).exists(),
     ]);
     if (viewOnly) {
-      cy.expect([
-        usersAccordion.find(assignUsersButton).absent(),
-        usersAccordion.find(Link()).absent(),
-      ]);
+      cy.expect(usersAccordion.find(assignUsersButton).absent());
     } else cy.expect(usersAccordion.find(assignUsersButton).exists());
+    if (userLink === false) cy.expect(usersAccordion.find(Link()).absent());
+    if (userLink === true) cy.expect(usersAccordion.find(Link()).exists());
   },
 
   verifyAssignedUsersAccordionEmpty: () => {

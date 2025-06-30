@@ -81,7 +81,11 @@ describe('Eureka', () => {
             testData.capabsCentral = capabs;
           });
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMembers);
+          cy.assignCapabilitiesToExistingUser(
+            userData.userId,
+            capabsToAssign,
+            capabSetsToAssignMembers,
+          );
           cy.createAuthorizationRoleApi(testData.collegeRoleName).then((roleCollege) => {
             testData.roleCollege = roleCollege;
           });
@@ -150,8 +154,8 @@ describe('Eureka', () => {
           testData.roleCentral.description,
         );
         AuthorizationRoles.checkActionsButtonShown(true, testData.roleCentral.name);
-        AuthorizationRoles.checkRoleCentrallyManaged(false);
-        AuthorizationRoles.verifyAssignedUsersAccordion(true);
+        AuthorizationRoles.checkRoleCentrallyManaged(testData.roleCentral.name, false);
+        AuthorizationRoles.verifyAssignedUsersAccordion(false, false);
         AuthorizationRoles.verifyAssignedUser(
           assignUserCentral.lastName,
           assignUserCentral.firstName,
@@ -159,16 +163,16 @@ describe('Eureka', () => {
         AuthorizationRoles.checkUsersAccordion(1);
 
         SelectMembers.selectMember(tenantNames.college);
-        AuthorizationRoles.waitContentLoading(true);
         AuthorizationRoles.searchRole(testData.roleCollege.name);
+        AuthorizationRoles.waitContentLoading(true);
         AuthorizationRoles.clickOnRoleName(testData.roleCollege.name);
         AuthorizationRoles.verifyRoleViewPane(
           testData.roleCollege.name,
           testData.roleCollege.description,
         );
         AuthorizationRoles.checkActionsButtonShown(true, testData.roleCollege.name);
-        AuthorizationRoles.checkRoleCentrallyManaged(false);
-        AuthorizationRoles.verifyAssignedUsersAccordion();
+        AuthorizationRoles.checkRoleCentrallyManaged(testData.roleCollege.name, false);
+        AuthorizationRoles.verifyAssignedUsersAccordion(false, false);
         AuthorizationRoles.verifyAssignedUser(
           assignUserCollege1.lastName,
           assignUserCollege1.firstName,
@@ -210,7 +214,7 @@ describe('Eureka', () => {
           testData.roleCollege.name,
           testData.updatedDescription,
         );
-        const updatedDate = DateTools.getFormattedEndDateWithTimUTC(new Date(), true);
+        const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
         ConsortiumManagerSettings.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
