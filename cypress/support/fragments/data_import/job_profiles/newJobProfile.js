@@ -615,14 +615,17 @@ export default {
       });
   },
 
-  unlinkProfile: (number) => {
-    cy.wait(2000);
+  unlinkProfile: (number, profileName) => {
+    waitLoading();
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
       .eq(number)
       .find('button[icon="unlink"]')
       .click();
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+    cy.get('[id*="accordion-match-ROOT-MATCH-MATCH-editable"]')
+      .eq(number)
+      .should('not.contain.text', profileName);
   },
 
   checkCalloutMessage: (message) => {
