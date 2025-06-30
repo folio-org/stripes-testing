@@ -43,7 +43,7 @@ describe('Data Import', () => {
     'Importing MARC Bib files',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -98,7 +98,7 @@ describe('Data Import', () => {
         acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       };
 
-      before('Create test user', () => {
+      beforeEach('Create test user', () => {
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.settingsDataImportEnabled.gui,
@@ -116,7 +116,7 @@ describe('Data Import', () => {
         });
       });
 
-      after('Delete user', () => {
+      afterEach('Delete user', () => {
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdate}`);
         cy.getAdminToken().then(() => {

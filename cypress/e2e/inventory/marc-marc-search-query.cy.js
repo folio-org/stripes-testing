@@ -11,7 +11,7 @@ describe(
   'Inventory',
   {
     retries: {
-      runMode: 2,
+      runMode: 1,
     },
   },
   () => {
@@ -21,7 +21,7 @@ describe(
       marcFileName: `C514901 createAutotestFile${getRandomPostfix()}.mrc`,
     };
 
-    before('Create test data and login', () => {
+    beforeEach('Create test data and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
 
@@ -44,7 +44,7 @@ describe(
       });
     });
 
-    after('Delete test data', () => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
         Users.deleteViaApi(testData.preconditionUserId);

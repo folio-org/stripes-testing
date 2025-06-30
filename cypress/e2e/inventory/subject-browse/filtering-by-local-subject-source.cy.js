@@ -13,7 +13,7 @@ describe('Inventory', () => {
     'Subject Browse',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -27,7 +27,7 @@ describe('Inventory', () => {
         columnName: 'Subject source',
       };
 
-      before('Create test data and login', () => {
+      beforeEach('Create test data and login', () => {
         cy.getAdminToken();
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = instanceData;
@@ -64,7 +64,7 @@ describe('Inventory', () => {
         });
       });
 
-      after('Delete created instance', () => {
+      afterEach('Delete created instance', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);

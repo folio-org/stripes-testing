@@ -52,7 +52,7 @@ describe('Data Import', () => {
     'Log details',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -148,7 +148,7 @@ describe('Data Import', () => {
         acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       };
 
-      before('Create test data and login', () => {
+      beforeEach('Create test data and login', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -217,7 +217,7 @@ describe('Data Import', () => {
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${csvFileName}`);
         FileManager.deleteFileFromDownloadsByMask('*C375109 marcFile*', '*SearchInstanceUUIDs*');

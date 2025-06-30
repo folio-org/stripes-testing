@@ -41,7 +41,7 @@ describe('Data Import', () => {
     'End to end scenarios',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -79,7 +79,7 @@ describe('Data Import', () => {
         acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       };
 
-      before('Create test user and login', () => {
+      beforeEach('Create test user and login', () => {
         cy.createTempUser([
           Permissions.dataImportUploadAll.gui,
           Permissions.moduleDataImportEnabled.gui,
@@ -96,7 +96,7 @@ describe('Data Import', () => {
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
         FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

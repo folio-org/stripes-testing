@@ -13,7 +13,7 @@ describe('Inventory', () => {
     'Subject Browse',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -25,7 +25,7 @@ describe('Inventory', () => {
         },
       };
 
-      before('Import file', () => {
+      beforeEach('Create test data and login', () => {
         cy.getAdminToken();
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = instanceData;
@@ -46,9 +46,6 @@ describe('Inventory', () => {
             cy.updateInstance(body);
           });
         });
-      });
-
-      beforeEach('Create user and login', () => {
         cy.getAdminToken();
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
@@ -62,7 +59,7 @@ describe('Inventory', () => {
         });
       });
 
-      after('Delete created instance', () => {
+      afterEach('Delete created instance', () => {
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         SubjectTypes.deleteViaApi(testData.subjectType.id);

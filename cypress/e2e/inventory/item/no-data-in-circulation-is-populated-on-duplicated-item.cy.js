@@ -25,7 +25,7 @@ describe('Inventory', () => {
     'Item',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -40,7 +40,7 @@ describe('Inventory', () => {
       const newItemBarcode = uuid();
       const todayDate = moment(new Date()).format('M/D/YYYY');
 
-      before('Create test data and login', () => {
+      beforeEach('Create test data and login', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -100,7 +100,7 @@ describe('Inventory', () => {
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         cy.getAdminToken().then(() => {
           CheckInActions.checkinItemViaApi({
             itemBarcode: itemData.barcode,

@@ -14,7 +14,7 @@ describe('Inventory', () => {
     'Instance',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -27,7 +27,7 @@ describe('Inventory', () => {
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
       const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
 
-      before('Create test data and login', () => {
+      beforeEach('Create test data and login', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           preconditionUserId = userProperties.userId;
 
@@ -51,7 +51,7 @@ describe('Inventory', () => {
         );
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(preconditionUserId);
           Users.deleteViaApi(user.userId);

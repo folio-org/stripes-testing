@@ -49,7 +49,7 @@ describe('Data Import', () => {
     'Importing MARC Bib files',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -148,7 +148,7 @@ describe('Data Import', () => {
         name: `C357552 Item HRID ${getRandomPostfix()}`,
       };
 
-      before('Create test data and login', () => {
+      beforeEach('Create test data and login', () => {
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.settingsDataImportEnabled.gui,
@@ -176,7 +176,7 @@ describe('Data Import', () => {
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

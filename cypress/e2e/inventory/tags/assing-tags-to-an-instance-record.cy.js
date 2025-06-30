@@ -11,7 +11,7 @@ describe('Inventory', () => {
     'Tags',
     {
       retries: {
-        runMode: 2,
+        runMode: 1,
       },
     },
     () => {
@@ -23,7 +23,7 @@ describe('Inventory', () => {
       };
       let instanceId;
 
-      before('Create test data and login', () => {
+      beforeEach('Create test data and login', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getInstanceTypes({ limit: 1 });
@@ -44,16 +44,14 @@ describe('Inventory', () => {
         cy.createTagApi(tag).then((tagId) => {
           tag.id = tagId;
         });
-      });
 
-      beforeEach('Login', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         cy.getAdminToken().then(() => {
           cy.deleteTagApi(tag.id);
           InventoryInstance.deleteInstanceViaApi(instanceId);
