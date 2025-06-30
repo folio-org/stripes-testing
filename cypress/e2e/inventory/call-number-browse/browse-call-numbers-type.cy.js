@@ -22,7 +22,7 @@ describe('Inventory', () => {
     const rnd = getRandomPostfix();
     const localCallNumberTypeName = `AT_C414972 Local CN type ${rnd}`;
     const callNumbers = [
-      { type: 'Dewey Decimal classification', value: `414.972${randomLetters}` },
+      { type: 'Dewey Decimal classification', value: `304 H981${randomLetters}` },
       { type: 'Library of Congress classification', value: `Z668.R360 1987${randomLetters}` },
       {
         type: 'National Library of Medicine classification',
@@ -34,7 +34,7 @@ describe('Inventory', () => {
         value: `T22.19:M54/2005${randomLetters}`,
       },
       { type: 'UDC', value: `338.48${randomLetters}` },
-      { type: localCallNumberTypeName, value: `localCallNumberTypeName${randomLetters}` },
+      { type: localCallNumberTypeName, value: `MyNr123465${randomLetters}` },
       { value: `Local.315${randomLetters}` },
     ];
     const callNumberTypesSettings = [

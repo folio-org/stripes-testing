@@ -145,11 +145,9 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.change008Field('x', 'x', 'x');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          MarcAuthority.clickSaveAndCloseButton();
-          MarcAuthority.contains('xxx');
+          MarcAuthority.change008Field('b', 'f', 'a');
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          MarcAuthority.contains('bfa');
         },
       );
 
