@@ -57,7 +57,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $x Genre',
+          '$a C380766 Drama',
           '',
           '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
           '$2 fast',
@@ -68,7 +68,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $x Genre $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
+          '$a C380766 Drama $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
         ];
 
         before('Creating user and data', () => {

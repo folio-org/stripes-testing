@@ -68,6 +68,10 @@ describe('MARC', () => {
     const createdRecordIDs = [];
 
     before('Creating user, importing record', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C409449');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360532');
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

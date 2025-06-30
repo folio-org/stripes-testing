@@ -63,6 +63,14 @@ describe('MARC', () => {
         querySearch.forEach((query) => {
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          limit: 200,
+          query: 'naturalId="n42008104" and authRefType=="Authorized"',
+        }).then((records) => {
+          records.forEach((record) => {
+            MarcAuthority.deleteViaAPI(record.id, true);
+          });
+        });
 
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,

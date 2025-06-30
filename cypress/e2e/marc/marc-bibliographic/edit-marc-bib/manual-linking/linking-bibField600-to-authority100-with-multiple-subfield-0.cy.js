@@ -23,7 +23,8 @@ describe('MARC', () => {
           markedValue: 'C380753 Black Panther',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
-          subjectValue: 'C380753 Black Panther (Fictitious character) Wakanda Forever',
+          subjectValue:
+            'C380753 Black Panther (Fictitious character) Wakanda Forever--Comic books, strips, etc',
           filterState: [
             'advancedSearch',
             'keyword exactPhrase C380753 Black Panther or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
@@ -33,7 +34,7 @@ describe('MARC', () => {
             '600',
             '0',
             '0',
-            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
+            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $v Comic books, strips, etc. $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
           ],
         };
 
@@ -69,7 +70,7 @@ describe('MARC', () => {
           '0',
           '0',
           '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever',
-          '$i comics',
+          '$v Comic books, strips, etc. $i comics',
           '$0 http://id.loc.gov/authorities/names/n2016004081',
           '$4 .prt $2 test',
         ];

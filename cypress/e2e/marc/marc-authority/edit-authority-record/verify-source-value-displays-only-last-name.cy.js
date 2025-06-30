@@ -52,6 +52,10 @@ describe('MARC', () => {
               );
             },
           );
+
+          cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority.searchInput);
+
           cy.login(testData.firstUser.username, testData.firstUser.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,

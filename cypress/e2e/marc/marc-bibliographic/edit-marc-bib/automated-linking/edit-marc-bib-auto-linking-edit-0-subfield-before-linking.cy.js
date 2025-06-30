@@ -136,7 +136,7 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(3000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -201,13 +201,13 @@ describe('MARC', () => {
               '\\',
               '0',
               `$a ${authority.titleWithLinkIcon}`,
-              '',
+              '$z Jamaica $v Biography.',
               '$0 http://id.loc.gov/authorities/subjects/sh96007532',
               '',
             );
             // #9 Click on the "Save & close" button.
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             // #10 Click on the "Browse" toggle >> Select "Subjects" in browse option dropdown >> Enter "Lesbian activists--Jamaica--Biography" value in the search box >> Click on the "Search"  button.

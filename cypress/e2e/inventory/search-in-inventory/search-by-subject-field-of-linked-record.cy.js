@@ -77,15 +77,8 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: testData.searchQueryBeforeTest,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
+      testData.instanceRecords.forEach((instance) => {
+        InventoryInstances.deleteInstanceByTitleViaApi(instance);
       });
       testData.searchAuthorityQueries.forEach((query) => {
         MarcAuthorities.getMarcAuthoritiesViaApi({

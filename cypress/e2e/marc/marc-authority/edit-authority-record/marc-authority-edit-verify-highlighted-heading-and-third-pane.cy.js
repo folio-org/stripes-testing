@@ -86,6 +86,10 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350911');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350946');
+
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
