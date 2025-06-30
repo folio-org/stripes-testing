@@ -454,6 +454,16 @@ export default {
     cy.expect(resetButton.is({ disabled: true }));
   },
 
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
+  },
+
   selectStatusInSearch: (orderStatus) => {
     cy.do(Accordion({ id: 'workflowStatus' }).clickHeader());
     switch (orderStatus) {
@@ -655,6 +665,7 @@ export default {
     cy.wait(4000);
     cy.do([
       buttonAcquisitionMethodFilter.click(),
+      MultiSelect({ id: 'acq-methods-filter' }).toggle(),
       MultiSelect({ id: 'acq-methods-filter' }).select([AUmethod]),
       buttonAcquisitionMethodFilter.click(),
     ]);
@@ -900,7 +911,7 @@ export default {
   openVendorFilterModal: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
-      Button('Organization look-up').click(),
+      Button({ id: 'filter-vendor-button' }).click(),
     ]);
     cy.expect(selectOrganizationModal.exists());
   },
