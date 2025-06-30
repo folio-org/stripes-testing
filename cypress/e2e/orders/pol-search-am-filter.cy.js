@@ -82,6 +82,7 @@ describe('Export Manager', () => {
             Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
               orderNumber = response[0].poNumber;
             });
+            cy.wait(4000);
           });
         });
 
@@ -119,6 +120,7 @@ describe('Export Manager', () => {
         { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
         () => {
           Orders.selectOrderLines();
+          Orders.resetFiltersIfActive();
           Orders.selectFilterAcquisitionMethod('Purchase');
           Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
           Orders.resetFilters();
