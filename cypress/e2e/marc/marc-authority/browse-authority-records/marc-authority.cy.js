@@ -201,7 +201,7 @@ describe('MARC', () => {
             AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN['\\'],
             '\\4500',
           );
-          MarcAuthority.check008Field();
+          MarcAuthority.check008Field('e');
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
