@@ -126,6 +126,7 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.waitForAuthRefresh(() => {
           cy.login(userData.username, userData.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           ConsortiumManagerApp.waitLoading();
           cy.reload();
