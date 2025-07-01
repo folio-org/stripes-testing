@@ -276,11 +276,6 @@ describe('Bulk-edit', () => {
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('008')).to.not.be.empty,
-
                 (record) => expect(record.get('901')[0].ind1).to.eq(' '),
                 (record) => expect(record.get('901')[0].ind2).to.eq(' '),
                 (record) => expect(record.get('901')[0].subf[0][0]).to.eq('a'),

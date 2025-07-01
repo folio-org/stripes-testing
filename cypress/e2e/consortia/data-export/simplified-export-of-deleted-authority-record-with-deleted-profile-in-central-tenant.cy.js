@@ -105,10 +105,6 @@ describe('Data Export', () => {
               {
                 uuid: createdAuthorityId,
                 assertions: [
-                  (record) => expect(record.leader).to.exist,
-                  (record) => expect(record.get('001')).to.not.be.empty,
-                  (record) => expect(record.get('005')).to.not.be.empty,
-                  (record) => expect(record.get('008')).to.not.be.empty,
                   (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
                   (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
                   (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
@@ -118,7 +114,7 @@ describe('Data Export', () => {
               },
             ];
 
-            parseMrcFileContentAndVerify(exportedFileName, assertionsOnFileContent, 1, true);
+            parseMrcFileContentAndVerify(exportedFileName, assertionsOnFileContent, 1, true, true);
           });
         });
       },
