@@ -33,161 +33,126 @@ let changedRecordsQueryFileNameMrc;
 let errorsFromCommittingFileName;
 let matchedRecordsQueryFileName;
 let identifiersQueryFilename;
-const postfix = getRandomPostfix();
-const marcInstance = {
-  title: `AT_C523610_MarcInstance_${postfix}`,
-};
-const marcInstanceWithoutFields = {
-  title: `AT_C523610_MarcInstance_${postfix}_wothoutFields`,
-};
 const dateToPick = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const todayDateInBulkEditForms = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+const postfix = getRandomPostfix();
+const commonMarcFields = [
+  {
+    tag: '008',
+    content: {
+      Type: 'a',
+      BLvl: 's',
+      DtSt: '|',
+      Date1: '\\\\\\\\',
+      Date2: '\\\\\\\\',
+      Ctry: '\\\\\\',
+      Audn: '\\',
+      Form: '\\',
+      Cont: ['\\', '\\', '\\'],
+      GPub: '\\',
+      Conf: '|',
+      Fest: '\\',
+      Indx: '\\',
+      LitF: '\\',
+      Biog: '\\',
+      Lang: 'eng',
+      MRec: '\\',
+      Srce: '\\',
+      Freq: '\\',
+      Orig: '\\',
+      'S/L': '|',
+      Regl: '|',
+      SrTp: '\\',
+      EntW: '\\',
+      Alph: '\\',
+    },
+  },
+  {
+    tag: '041',
+    content: '$a eng',
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '100',
+    content: '$a Contributor',
+    indicators: ['1', '\\'],
+  },
+  {
+    tag: '336',
+    content: '$a text $b txt',
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '337',
+    content: '$a unmediated $b n $2 rdamedia',
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '338',
+    content: '$a volume $b nc $2 rdacarrier',
+    indicators: ['\\', '\\'],
+  },
+];
+const marcInstance = {
+  title: `AT_C523610_MarcInstance_${postfix}`,
+  fields: [
+    ...commonMarcFields,
+    {
+      tag: '245',
+      content: `$a AT_C523610_MarcInstance_${postfix}`,
+      indicators: ['1', '0'],
+    },
+    {
+      tag: '505',
+      content:
+        '$a pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. $g (1:57) --',
+      indicators: ['0', '\\'],
+    },
+    {
+      tag: '505',
+      content: '$a "Table of statutes and regulations": p. xvii-xxv. $t Quatrain II',
+      indicators: ['0', '0'],
+    },
+    {
+      tag: '905',
+      content: '$a Numeric (Summary statistics). $g 1948',
+      indicators: ['0', '\\'],
+    },
+    {
+      tag: '905',
+      content: '$a Computer programs. $8 4\\c',
+      indicators: ['0', '0'],
+    },
+  ],
+};
+const marcInstanceWithoutFields = {
+  title: `AT_C523610_MarcInstance_${postfix}_wothoutFields`,
+  fields: [
+    ...commonMarcFields,
+    {
+      tag: '245',
+      content: `$a AT_C523610_MarcInstance_${postfix}_wothoutFields`,
+      indicators: ['1', '0'],
+    },
+  ],
+};
 const warningMessage = 'No change in MARC fields required';
-const marcInstanceFields = [
-  {
-    tag: '008',
-    content: {
-      Type: 'a',
-      BLvl: 's',
-      DtSt: '|',
-      Date1: '\\\\\\\\',
-      Date2: '\\\\\\\\',
-      Ctry: '\\\\\\',
-      Audn: '\\',
-      Form: '\\',
-      Cont: ['\\', '\\', '\\'],
-      GPub: '\\',
-      Conf: '|',
-      Fest: '\\',
-      Indx: '\\',
-      LitF: '\\',
-      Biog: '\\',
-      Lang: 'eng',
-      MRec: '\\',
-      Srce: '\\',
-      Freq: '\\',
-      Orig: '\\',
-      'S/L': '|',
-      Regl: '|',
-      SrTp: '\\',
-      EntW: '\\',
-      Alph: '\\',
+
+function createAndUpdateMarcInstance(instance) {
+  cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, instance.fields).then(
+    (instanceId) => {
+      instance.uuid = instanceId;
+
+      cy.getInstanceById(instanceId).then((instanceData) => {
+        instance.hrid = instanceData.hrid;
+        instanceData.administrativeNotes = ['admin note text'];
+        instanceData.catalogedDate = todayDate;
+        cy.updateInstance(instanceData);
+      });
     },
-  },
-  {
-    tag: '041',
-    content: '$a eng',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '100',
-    content: '$a Contributor',
-    indicators: ['1', '\\'],
-  },
-  {
-    tag: '245',
-    content: `$a ${marcInstance.title}`,
-    indicators: ['1', '0'],
-  },
-  {
-    tag: '336',
-    content: '$a text $b txt',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '337',
-    content: '$a unmediated $b n $2 rdamedia',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '338',
-    content: '$a volume $b nc $2 rdacarrier',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '505',
-    content: '$a pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. $g (1:57) --',
-    indicators: ['0', '\\'],
-  },
-  {
-    tag: '505',
-    content: '$a "Table of statutes and regulations": p. xvii-xxv. $t Quatrain II',
-    indicators: ['0', '0'],
-  },
-  {
-    tag: '905',
-    content: '$a Numeric (Summary statistics). $g 1948',
-    indicators: ['0', '\\'],
-  },
-  {
-    tag: '905',
-    content: '$a Computer programs. $8 4\\c',
-    indicators: ['0', '0'],
-  },
-];
-const marcInstanceWithoutFieldsWithoutTargetFields = [
-  {
-    tag: '008',
-    content: {
-      Type: 'a',
-      BLvl: 's',
-      DtSt: '|',
-      Date1: '\\\\\\\\',
-      Date2: '\\\\\\\\',
-      Ctry: '\\\\\\',
-      Audn: '\\',
-      Form: '\\',
-      Cont: ['\\', '\\', '\\'],
-      GPub: '\\',
-      Conf: '|',
-      Fest: '\\',
-      Indx: '\\',
-      LitF: '\\',
-      Biog: '\\',
-      Lang: 'eng',
-      MRec: '\\',
-      Srce: '\\',
-      Freq: '\\',
-      Orig: '\\',
-      'S/L': '|',
-      Regl: '|',
-      SrTp: '\\',
-      EntW: '\\',
-      Alph: '\\',
-    },
-  },
-  {
-    tag: '041',
-    content: '$a eng',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '100',
-    content: '$a Contributor',
-    indicators: ['1', '\\'],
-  },
-  {
-    tag: '245',
-    content: `$a ${marcInstanceWithoutFields.title}`,
-    indicators: ['1', '0'],
-  },
-  {
-    tag: '336',
-    content: '$a text $b txt',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '337',
-    content: '$a unmediated $b n $2 rdamedia',
-    indicators: ['\\', '\\'],
-  },
-  {
-    tag: '338',
-    content: '$a volume $b nc $2 rdacarrier',
-    indicators: ['\\', '\\'],
-  },
-];
+  );
+}
 
 describe('Bulk-edit', () => {
   describe('Query approach', () => {
@@ -203,31 +168,8 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
-          (instanceId) => {
-            marcInstance.uuid = instanceId;
-            cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-              marcInstance.hrid = instanceData.hrid;
-              instanceData.catalogedDate = todayDate;
-              instanceData.administrativeNotes = ['admin note text'];
-              cy.updateInstance(instanceData);
-            });
-          },
-        );
-        cy.createMarcBibliographicViaAPI(
-          QuickMarcEditor.defaultValidLdr,
-          marcInstanceWithoutFieldsWithoutTargetFields,
-        ).then((instanceId) => {
-          marcInstanceWithoutFields.uuid = instanceId;
-
-          cy.getInstanceById(marcInstanceWithoutFields.uuid).then((instanceData) => {
-            marcInstanceWithoutFields.hrid = instanceData.hrid;
-
-            instanceData.catalogedDate = todayDate;
-            instanceData.administrativeNotes = ['admin note text'];
-
-            cy.updateInstance(instanceData);
-          });
+        [marcInstance, marcInstanceWithoutFields].forEach((instance) => {
+          createAndUpdateMarcInstance(instance);
         });
 
         cy.login(user.username, user.password, {
