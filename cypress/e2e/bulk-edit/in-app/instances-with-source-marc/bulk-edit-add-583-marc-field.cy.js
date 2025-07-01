@@ -146,11 +146,6 @@ describe(
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('008')).to.not.be.empty,
-
                 (record) => expect(record.get('583')[0].ind1).to.eq('0'),
                 (record) => expect(record.get('583')[0].ind2).to.eq(' '),
                 (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),

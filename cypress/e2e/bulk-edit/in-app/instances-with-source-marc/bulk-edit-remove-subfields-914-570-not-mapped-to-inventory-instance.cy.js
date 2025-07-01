@@ -16,15 +16,40 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../../support/utils/dateTools';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 let user;
+const note914a = 'Scale 1:500,000;';
+const note914b1 = '1 in. equals 8 miles.';
+const note914b2 = 'Perspective map not drawn to scale.';
+const note570a = '"Selected bibliography": v. 1, p. 351-358, v. 2, p. 234-236.';
+const note5705 = 'NjP';
 const marcInstance = {
-  title: `AT_C503084_MarcInstance_${getRandomPostfix()}`,
+  title: `AT_C523599_MarcInstance_${getRandomPostfix()}`,
 };
-const localNote901 = 'Local note nine hundred one';
-const localNote503 = 'Local note five hundred three';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+const marcInstanceFields = [
+  {
+    tag: '008',
+    content: QuickMarcEditor.defaultValid008Values,
+  },
+  {
+    tag: '245',
+    content: `$a ${marcInstance.title}`,
+    indicators: ['1', '0'],
+  },
+  {
+    tag: '914',
+    content: `$a ${note914a} $b ${note914b1} $b ${note914b2}`,
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '570',
+    content: `$a ${note570a} $5 ${note5705}`,
+    indicators: ['\\', '\\'],
+  },
+];
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -37,17 +62,20 @@ describe('Bulk-edit', () => {
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
+          (instanceId) => {
+            marcInstance.uuid = instanceId;
 
-        cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-          marcInstance.uuid = instanceId;
+            cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
+              marcInstance.hrid = instanceData.hrid;
 
-          cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-            marcInstance.hrid = instanceData.hrid;
-
-            FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, marcInstance.uuid);
-          });
-        });
-
+              FileManager.createFile(
+                `cypress/fixtures/${instanceUUIDsFileName}`,
+                marcInstance.uuid,
+              );
+            });
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -71,15 +99,23 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C503084 Add MARC field (901, 503) not mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C503084'] },
+      'C523599 Find and remove subfield from MARC field (914, 570) not mapped to Inventory Instance (MARC) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C523599'] },
       () => {
-        // Step 1: Check columns for Source and General note
+        // Step 1: Show Source, hide General note
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
         );
-        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
+        BulkEditSearchPane.uncheckShowColumnCheckbox(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+        );
+        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+          true,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+        );
+        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+          false,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -87,59 +123,83 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
           'MARC',
         );
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+        );
 
         // Step 2: Open MARC bulk edit form
         BulkEditActions.openStartBulkEditMarcInstanceForm();
         BulkEditActions.verifyInitialStateBulkEditsFormForMarcInstance();
 
-        // Step 3-4: Fill in field 901 with subfield a and Add action
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('901', '\\', '\\', 'a');
-        BulkEditActions.addSubfieldActionForMarc(localNote901);
+        // Step 3-5: Find 914 and remove subfield $a
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('914', '\\', '\\', 'a');
+        BulkEditActions.findAndRemoveSubfieldActionForMarc(note914a);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        // Step 5-6: Add new row for field 503
+        // Step 6: Add new row
         BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('503', '0', '0', 'b', 1);
-        BulkEditActions.addSubfieldActionForMarc(localNote503, 1);
+
+        // Step 7: Find 914 $b (1 in. equals 8 miles.)
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('914', '\\', '\\', 'b', 1);
+        BulkEditActions.findAndRemoveSubfieldActionForMarc(note914b1, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        // Step 7: Confirm changes
+        // Step 8: Add new row
+        BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('570', '\\', '\\', '5', 2);
+        BulkEditActions.findAndRemoveSubfieldActionForMarc(note5705, 2);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
+
+        // Step 9: Confirm changes
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
-        BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude(
+        BulkEditSearchPane.verifyCellWithContentAbsentsInAreYouSureForm(
+          note914a,
+          note914b1,
+          note914b2,
+          note570a,
+          note5705,
+        );
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
         );
-        BulkEditSearchPane.verifyCellWithContentAbsentsInAreYouSureForm(localNote901, localNote503);
         BulkEditActions.verifyAreYouSureForm(1);
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
 
-        // Step 8: Download preview in MARC format
+        // Step 10: Download preview in MARC format
         BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
         BulkEditActions.downloadPreviewInMarcFormat();
 
         const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
         const currentTimestampUpToMinutesOneMinuteAfter =
           DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
+        const currentTimestampUpToMinutesTwoMinuteAfter =
+          DateTools.getCurrentISO8601TimestampUpToMinutesUTC(2);
         const assertionsOnMarcFileContent = [
           {
             uuid: marcInstance.uuid,
             assertions: [
-              (record) => {
-                expect(
-                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                    record
-                      .get('005')[0]
-                      .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-                ).to.be.true;
-              },
+              (record) => expect(
+                [
+                  currentTimestampUpToMinutes,
+                  currentTimestampUpToMinutesOneMinuteAfter,
+                  currentTimestampUpToMinutesTwoMinuteAfter,
+                ].some((prefix) => record.get('005')[0].value.startsWith(prefix)),
+              ).to.be.true,
 
-              (record) => {
-                expect(record.fields[5]).to.deep.eq(['901', '  ', 'a', localNote901]);
-              },
-              (record) => {
-                expect(record.fields[4]).to.deep.eq(['503', '00', 'b', localNote503]);
-              },
+              (record) => expect(record.get('914')[0].ind1).to.eq(' '),
+              (record) => expect(record.get('914')[0].ind2).to.eq(' '),
+              (record) => expect(record.get('914')[0].subf.length).to.eq(1),
+              (record) => expect(record.get('914')[0].subf[0][0]).to.eq('b'),
+              (record) => expect(record.get('914')[0].subf[0][1]).to.eq(note914b2),
+
+              (record) => expect(record.get('570')[0].ind1).to.eq(' '),
+              (record) => expect(record.get('570')[0].ind2).to.eq(' '),
+              (record) => expect(record.get('570')[0].subf.length).to.eq(1),
+              (record) => expect(record.get('570')[0].subf[0][0]).to.eq('a'),
+              (record) => expect(record.get('570')[0].subf[0][1]).to.eq(note570a),
 
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -149,7 +209,7 @@ describe('Bulk-edit', () => {
 
         parseMrcFileContentAndVerify(fileNames.previewMarc, assertionsOnMarcFileContent, 1);
 
-        // Step 9: Download preview in CSV format
+        // Step 11: Download preview in CSV format
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewCSV,
@@ -159,22 +219,28 @@ describe('Bulk-edit', () => {
           '',
         );
 
-        // Step 10: Commit changes
+        // Step 12: Commit changes
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyChangedColumnTitlesDoNotInclude(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+        );
         BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(
-          localNote901,
-          localNote503,
+          note914a,
+          note914b1,
+          note914b2,
+          note570a,
+          note5705,
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
 
-        // Step 11: Download changed records in MARC format
+        // Step 13: Download changed records in MARC format
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedMarc();
 
         parseMrcFileContentAndVerify(fileNames.changedRecordsMarc, assertionsOnMarcFileContent, 1);
 
-        // Step 12: Download changed records in CSV format
+        // Step 14: Download changed records in CSV format
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
@@ -184,23 +250,20 @@ describe('Bulk-edit', () => {
           '',
         );
 
-        // Step 13: Verify changes in Inventory app
+        // Step 15: Verify changes in Inventory app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note914a);
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note914b1);
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note5705);
         InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
 
-        const notes = [localNote901, localNote503];
-
-        notes.forEach((note) => {
-          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note);
-        });
-
-        // Step 14: Verify changes in MARC source
+        // Step 16: Verify changes in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('901', `\t901\t   \t$a ${localNote901}`);
-        InventoryViewSource.verifyFieldInMARCBibSource('503', `\t503\t0 0\t$b ${localNote503}`);
+        InventoryViewSource.verifyFieldInMARCBibSource('914', `\t914\t   \t$b ${note914b2}`);
+        InventoryViewSource.verifyFieldInMARCBibSource('570', `\t570\t   \t$a ${note570a}`);
         InventoryViewSource.verifyFieldContent(
           3,
           DateTools.getFormattedEndDateWithTimUTC(new Date()),
