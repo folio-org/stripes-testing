@@ -24,7 +24,7 @@ import {
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
-import { AUTHORIZATION_ROLES_COLUMNS } from '../../../constants';
+import { AUTHORIZATION_ROLES_COLUMNS, AUTHORIZATION_ROLES_COLUMNS_CM } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
 const newButton = Button(or('+ New', 'New'));
@@ -119,8 +119,11 @@ export default {
     cy.expect(rolesPane.exists());
   },
 
-  waitContentLoading: () => {
-    Object.values(AUTHORIZATION_ROLES_COLUMNS).forEach((columnName) => {
+  waitContentLoading: (consortiumManager = false) => {
+    const columnNames = consortiumManager
+      ? AUTHORIZATION_ROLES_COLUMNS_CM
+      : AUTHORIZATION_ROLES_COLUMNS;
+    Object.values(columnNames).forEach((columnName) => {
       cy.expect(rolesPane.find(MultiColumnListHeader(columnName)).exists());
     });
     cy.expect([roleSearchInputField.exists(), roleSearchButton.exists()]);
@@ -505,14 +508,17 @@ export default {
     else cy.expect(userRow.absent());
   },
 
-  verifyAssignedUsersAccordion: (viewOnly = false) => {
+  verifyAssignedUsersAccordion: (viewOnly = false, userLink) => {
     cy.expect([
       usersAccordion.has({ open: true }),
       usersAccordion.find(MultiColumnListHeader('Name')).exists(),
       usersAccordion.find(MultiColumnListHeader('Patron group')).exists(),
     ]);
-    if (viewOnly) cy.expect(usersAccordion.find(assignUsersButton).absent());
-    else cy.expect(usersAccordion.find(assignUsersButton).exists());
+    if (viewOnly) {
+      cy.expect(usersAccordion.find(assignUsersButton).absent());
+    } else cy.expect(usersAccordion.find(assignUsersButton).exists());
+    if (userLink === false) cy.expect(usersAccordion.find(Link()).absent());
+    if (userLink === true) cy.expect(usersAccordion.find(Link()).exists());
   },
 
   verifyAssignedUsersAccordionEmpty: () => {
@@ -590,13 +596,17 @@ export default {
     cy.expect(capabilitiesAccordion.find(MultiColumnListRow()).exists());
   },
 
-  verifyRoleViewPane: (roleName) => {
+  verifyRoleViewPane(roleName, roleDescription) {
     cy.expect([
       Pane(roleName).exists(),
       Pane(roleName).find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
+      roleNameInView.has({ value: roleName }),
+      typeKeyValue.exists(),
     ]);
+    this.verifyGeneralInformationWhenCollapsed('');
+    if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
   },
 
   closeRoleDetailView: (roleName) => {

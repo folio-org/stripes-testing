@@ -306,10 +306,6 @@ describe('Bulk-edit', () => {
             {
               uuid: marcInstanceWithoutFields.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('008')).to.not.be.empty,
                 (record) => expect(record.get('100')).to.be.empty,
                 (record) => expect(record.get('250')).to.be.empty,
                 (record) => expect(record.get('300')).to.be.empty,

@@ -16,13 +16,35 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../../support/utils/dateTools';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 let user;
+const accumulationNoteA = '5.4 cu. ft. average monthly accumulation,';
+const accumulationNoteB = 'Total reference requests for 1984: 179.';
+const accumulationNote3 = 'Employee records';
+const accumulationNote5 = 'DLC';
+const accumulationNote6 = '100-01/Cyrl';
+const accumulationNote8 = '1.5\\a';
+const fullAccumulationNoteInBulkEditForms = `${accumulationNoteA} ${accumulationNoteB} ${accumulationNote3} ${accumulationNote5}`;
 const marcInstance = {
-  title: `AT_C503084_MarcInstance_${getRandomPostfix()}`,
+  title: `AT_C506685_MarcInstance_${getRandomPostfix()}`,
 };
-const localNote901 = 'Local note nine hundred one';
-const localNote503 = 'Local note five hundred three';
+const marcInstanceFields = [
+  {
+    tag: '008',
+    content: QuickMarcEditor.defaultValid008Values,
+  },
+  {
+    tag: '245',
+    content: `$a ${marcInstance.title}`,
+    indicators: ['1', '0'],
+  },
+  {
+    tag: '584',
+    content: `$a ${accumulationNoteA} $b ${accumulationNoteB} $3 ${accumulationNote3} $5 ${accumulationNote5} $6 ${accumulationNote6} $8 ${accumulationNote8}`,
+    indicators: ['\\', '\\'],
+  },
+];
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 
@@ -37,17 +59,18 @@ describe('Bulk-edit', () => {
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-
-        cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-          marcInstance.uuid = instanceId;
-
-          cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-            marcInstance.hrid = instanceData.hrid;
-
-            FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, marcInstance.uuid);
-          });
-        });
-
+        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
+          (instanceId) => {
+            marcInstance.uuid = instanceId;
+            cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
+              marcInstance.hrid = instanceData.hrid;
+              FileManager.createFile(
+                `cypress/fixtures/${instanceUUIDsFileName}`,
+                marcInstance.uuid,
+              );
+            });
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -71,46 +94,46 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C503084 Add MARC field (901, 503) not mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C503084'] },
+      'C506685 Remove MARC field (584) mapped to Inventory Instance (MARC) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C506685'] },
       () => {
-        // Step 1: Check columns for Source and General note
+        // Step 1: Check columns for Source and Accumulation and Frequency of Use note
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-        );
-        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          'MARC',
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          fullAccumulationNoteInBulkEditForms,
         );
 
-        // Step 2: Open MARC bulk edit form
+        // Step 2: Uncheck Accumulation and Frequency of Use note column
+        BulkEditSearchPane.changeShowColumnCheckbox(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+        );
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+        );
+
+        // Step 3: Open MARC bulk edit form
         BulkEditActions.openStartBulkEditMarcInstanceForm();
         BulkEditActions.verifyInitialStateBulkEditsFormForMarcInstance();
 
-        // Step 3-4: Fill in field 901 with subfield a and Add action
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('901', '\\', '\\', 'a');
-        BulkEditActions.addSubfieldActionForMarc(localNote901);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
-
-        // Step 5-6: Add new row for field 503
-        BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
-        BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('503', '0', '0', 'b', 1);
-        BulkEditActions.addSubfieldActionForMarc(localNote503, 1);
+        // Step 4-6: Fill in field 584 with subfield b and Remove all action
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('584', '\\', '\\', 'b');
+        BulkEditActions.selectActionForMarcInstance('Remove all');
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 7: Confirm changes
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
-        BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+          marcInstance.hrid,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          '',
         );
-        BulkEditSearchPane.verifyCellWithContentAbsentsInAreYouSureForm(localNote901, localNote503);
         BulkEditActions.verifyAreYouSureForm(1);
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
 
@@ -134,12 +157,7 @@ describe('Bulk-edit', () => {
                 ).to.be.true;
               },
 
-              (record) => {
-                expect(record.fields[5]).to.deep.eq(['901', '  ', 'a', localNote901]);
-              },
-              (record) => {
-                expect(record.fields[4]).to.deep.eq(['503', '00', 'b', localNote503]);
-              },
+              (record) => expect(record.get('584')).to.be.empty,
 
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -162,9 +180,10 @@ describe('Bulk-edit', () => {
         // Step 10: Commit changes
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(
-          localNote901,
-          localNote503,
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          marcInstance.hrid,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          '',
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
 
@@ -184,23 +203,18 @@ describe('Bulk-edit', () => {
           '',
         );
 
-        // Step 13: Verify changes in Inventory app
+        // Step 13: Verify that 'Accumulation and Frequency of Use note' is NOT present in Inventory app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
+        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(accumulationNoteA);
         InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
 
-        const notes = [localNote901, localNote503];
-
-        notes.forEach((note) => {
-          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(note);
-        });
-
-        // Step 14: Verify changes in MARC source
+        // Step 14: Verify that 584 field is NOT present in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('901', `\t901\t   \t$a ${localNote901}`);
-        InventoryViewSource.verifyFieldInMARCBibSource('503', `\t503\t0 0\t$b ${localNote503}`);
+        InventoryViewSource.notContains('584');
+        InventoryViewSource.notContains(accumulationNoteA);
         InventoryViewSource.verifyFieldContent(
           3,
           DateTools.getFormattedEndDateWithTimUTC(new Date()),

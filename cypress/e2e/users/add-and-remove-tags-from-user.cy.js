@@ -34,7 +34,6 @@ describe('Users', () => {
       UsersCard.addTag(newTag);
       InteractorsTools.checkCalloutMessage('New tag created');
       UsersCard.verifyTagsNumber('1');
-      cy.reload();
       UsersCard.openTagsPane();
       UsersCard.deleteTag(newTag);
       UsersCard.verifyTagsNumber('0');
