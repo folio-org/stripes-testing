@@ -92,16 +92,21 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => cy
-    .okapiRequest({
-      method: 'DELETE',
-      path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    })
-    .then(({ status }) => {
-      return status;
-    }),
+  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => {
+    if (!userId) {
+      return cy.wrap(null);
+    }
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then(({ status }) => {
+        return status;
+      });
+  },
 
   getUsers: (searchParams) => {
     return cy
