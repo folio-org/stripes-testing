@@ -222,7 +222,10 @@ export default {
   createViaUi: (userData) => {
     return cy
       .do([
-        Dropdown('Actions').find(Button()).click(),
+        Section({ id: 'users-search-results-pane' })
+          .find(Dropdown('Actions'))
+          .find(Button())
+          .click(),
         Button({ id: 'clickable-newuser' }).click(),
         TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
         TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),

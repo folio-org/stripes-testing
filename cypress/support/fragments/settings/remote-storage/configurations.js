@@ -18,6 +18,7 @@ import Mappings from './mappings';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
+import { Configurations } from '.';
 
 const successfulCreateCalloutMessage = 'Remote storage configuration was successfully created.';
 const successfulChangeCalloutMessage = 'Remote storage configuration was successfully changed.';
@@ -225,7 +226,7 @@ export default {
       const configs = body.remoteStorageConfigurations || body.configurations || body;
       const exists = configs.some((cfg) => cfg.name === name);
       if (!exists) {
-        configurations.openConfigurationsTabFromSettings();
+        Configurations.openConfigurationsTabFromSettings();
         configurations.CaiaSoft.create(name);
       }
     });
