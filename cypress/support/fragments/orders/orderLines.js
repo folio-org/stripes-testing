@@ -43,6 +43,7 @@ const addRoutingListButton = Button('Add routing list');
 const routingListSection = Section({ id: 'routing-list' });
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
+const resetButton = Button('Reset all');
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
 const actionsButton = Button('Actions');
@@ -194,6 +195,16 @@ export default {
   resetFilters: () => {
     cy.wait(4000);
     cy.do(filtersPane.find(Button('Reset all')).click());
+  },
+
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
   },
 
   checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
