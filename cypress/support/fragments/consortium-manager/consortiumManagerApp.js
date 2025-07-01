@@ -237,4 +237,9 @@ export default {
     cy.do(memberDropdownButton.click());
     cy.expect(SelectionOption().absent());
   },
+
+  checkOptionInOpenedPane: (paneName, optionName, isShown = true) => {
+    if (isShown) cy.expect(Pane(paneName).find(NavListItem(optionName)).exists());
+    else cy.expect(Pane(paneName).find(NavListItem(optionName)).absent());
+  },
 };
