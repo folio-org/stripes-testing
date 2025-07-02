@@ -198,7 +198,7 @@ export default {
     let month = currentDate.getMonth() + 1;
     let year = currentDate.getFullYear();
     if (day <= 0) {
-      const lastMonth = new Date(year, month - 2, 1);
+      const lastMonth = new Date(year, month - 1, 0);
       year = lastMonth.getFullYear();
       month = lastMonth.getMonth() + 1;
       day = lastMonth.getDate() + day;
@@ -219,10 +219,17 @@ export default {
     let month = currentDate.getMonth() + 1;
     let year = currentDate.getFullYear();
     if (day <= 0) {
-      const lastMonth = new Date(year, month - 2, 1);
+      const lastMonth = new Date(year, month - 1, 0);
       year = lastMonth.getFullYear();
       month = lastMonth.getMonth() + 1;
       day = lastMonth.getDate() + day;
+
+      if (day <= 0) {
+        const prevMonth = new Date(year, month - 2, 0);
+        year = prevMonth.getFullYear();
+        month = prevMonth.getMonth() + 1;
+        day = prevMonth.getDate() + day;
+      }
     }
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
@@ -241,10 +248,10 @@ export default {
     let year = currentDate.getFullYear();
 
     if (day <= 3) {
-      const lastMonth = new Date(year, month - 2, 1);
+      const lastMonth = new Date(year, month - 1, 0);
       year = lastMonth.getFullYear();
       month = lastMonth.getMonth() + 1;
-      day = 30;
+      day = lastMonth.getDate() - (3 - day);
     } else {
       day -= 3;
     }
