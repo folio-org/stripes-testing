@@ -225,7 +225,7 @@ export default {
       const configs = body.remoteStorageConfigurations || body.configurations || body;
       const exists = configs.some((cfg) => cfg.name === name);
       if (!exists) {
-        configurations.openConfigurationsTabFromSettings();
+        this.openConfigurationsTabFromSettings();
         configurations.CaiaSoft.create(name);
       }
     });

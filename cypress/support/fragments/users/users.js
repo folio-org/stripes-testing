@@ -92,16 +92,21 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => cy
-    .okapiRequest({
-      method: 'DELETE',
-      path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    })
-    .then(({ status }) => {
-      return status;
-    }),
+  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => {
+    if (!userId) {
+      return cy.wrap(null);
+    }
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then(({ status }) => {
+        return status;
+      });
+  },
 
   getUsers: (searchParams) => {
     return cy
@@ -222,7 +227,10 @@ export default {
   createViaUi: (userData) => {
     return cy
       .do([
-        Dropdown('Actions').find(Button()).click(),
+        Section({ id: 'users-search-results-pane' })
+          .find(Dropdown('Actions'))
+          .find(Button())
+          .click(),
         Button({ id: 'clickable-newuser' }).click(),
         TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
         TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
