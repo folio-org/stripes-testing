@@ -376,7 +376,7 @@ export default {
   },
 
   selectRemoteStorage(name) {
-    cy.do(MultiColumnListCell({ content: name }).click());
+    cy.do(MultiColumnListCell({ content: including(name) }).click());
   },
 
   verifyDeletedConfiguration(name) {
