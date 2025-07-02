@@ -228,14 +228,14 @@ describe('MARC', () => {
             1,
             testData.instances[2].title,
             'Starts with',
-            'Keyword (title, contributor)',
+            'Keyword (title, contributor, identifier)',
             'NOT',
           );
           InventoryInstances.checkAdvSearchModalItemValues(
             1,
             testData.instances[2].title,
             'Starts with',
-            'Keyword (title, contributor)',
+            'Keyword (title, contributor, identifier)',
             'NOT',
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();

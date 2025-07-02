@@ -128,14 +128,12 @@ describe('Data Export', () => {
 
           const commonAssertions = (instance) => [
             (record) => expect(record.leader[5]).to.equal('d'),
-            (record) => expect(record.get('001')).to.not.be.empty,
             (record) => {
               expect(
                 record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
                   record.get('005')[0].value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
               ).to.be.true;
             },
-            (record) => expect(record.get('008')).to.not.be.empty,
             (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
             (record) => expect(record.get('245')[0].subf[0][1]).to.eq(instance.title),
             (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),

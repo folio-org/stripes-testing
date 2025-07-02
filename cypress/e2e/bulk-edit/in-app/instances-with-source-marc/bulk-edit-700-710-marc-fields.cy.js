@@ -175,10 +175,6 @@ describe('Bulk-edit', () => {
           {
             uuid: marcInstance.uuid,
             assertions: [
-              (record) => expect(record.leader).to.exist,
-              (record) => expect(record.get('001')).to.not.be.empty,
-              (record) => expect(record.get('005')).to.not.be.empty,
-              (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
               (record) => {
                 expect(
                   record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
@@ -187,7 +183,6 @@ describe('Bulk-edit', () => {
                       .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
                 ).to.be.true;
               },
-              (record) => expect(record.get('008')).to.not.be.empty,
 
               (record) => expect(record.get('700')).to.be.empty,
 

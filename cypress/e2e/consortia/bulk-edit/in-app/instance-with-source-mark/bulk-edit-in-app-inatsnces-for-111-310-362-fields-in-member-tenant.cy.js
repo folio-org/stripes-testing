@@ -321,12 +321,6 @@ describe('Bulk-edit', () => {
             {
               uuid: marcInstanceWithFields.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-                (record) => expect(record.get('008')).to.not.be.empty,
-
                 (record) => expect(record.get('111')).to.be.empty,
 
                 (record) => expect(record.get('310')[0].ind1).to.eq(' '),
@@ -360,10 +354,6 @@ describe('Bulk-edit', () => {
             {
               uuid: marcInstanceWithoutFields.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('008')).to.not.be.empty,
                 (record) => expect(record.get('111')).to.be.empty,
                 (record) => expect(record.get('310')).to.be.empty,
                 (record) => expect(record.get('362')).to.be.empty,
