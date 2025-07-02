@@ -88,7 +88,7 @@ describe('Eureka', () => {
 
       it(
         'C794509 Default roles cannot be created/edited/deleted (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C794509'] },
+        { tags: ['criticalPath', 'eureka', 'C794509'] },
         () => {
           AuthorizationRoles.searchRole(defaultRoles[0].name);
           AuthorizationRoles.clickOnRoleName(defaultRoles[0].name);
