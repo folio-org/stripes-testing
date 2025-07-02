@@ -137,8 +137,7 @@ describe('MARC', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.editedHoldingsFileName}`);
     });
 
-    // skipped due to https://folio-org.atlassian.net/browse/EUREKA-618
-    it.skip(
+    it(
       'C389500 Verify that "Call number type" is correctly mapped after importing and editing. (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C389500'] },
       () => {
