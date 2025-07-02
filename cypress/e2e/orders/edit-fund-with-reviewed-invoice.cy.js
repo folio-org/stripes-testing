@@ -192,7 +192,7 @@ describe('ui-orders: Orders', () => {
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
       Funds.closeTransactionDetails();
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       Funds.closeBudgetDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
