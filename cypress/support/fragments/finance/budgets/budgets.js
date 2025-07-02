@@ -99,7 +99,6 @@ export default {
       if (expenseClasses.length) {
         this.updateBudgetViaApi({
           ...resp,
-          // _version: resp._version + 1,
           statusExpenseClasses: expenseClasses.map(({ id }) => ({
             status: 'Active',
             expenseClassId: id,
