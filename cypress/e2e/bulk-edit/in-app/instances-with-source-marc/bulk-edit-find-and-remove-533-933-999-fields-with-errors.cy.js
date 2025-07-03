@@ -17,8 +17,11 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
+let dateAndTimeOfMarcInstanceCreation;
+let dateAndTimeOfMarcInstanceCreationIn005Field;
 const marcInstance = {
   title: `AT_C543812_MarcInstance_${getRandomPostfix()}`,
 };
@@ -57,6 +60,13 @@ describe('Bulk-edit', () => {
         user = userProperties;
         cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
           (instanceId) => {
+            dateAndTimeOfMarcInstanceCreation = DateTools.getFormattedEndDateWithTimUTC(
+              new Date(),
+              true,
+            );
+            dateAndTimeOfMarcInstanceCreationIn005Field =
+              DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
+
             marcInstance.uuid = instanceId;
 
             cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
@@ -93,6 +103,10 @@ describe('Bulk-edit', () => {
                     BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);
                     BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
                     BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
+
+                    // For clear test results, it is necessary to wait for a minute to ensure that bulk edit actions do not affect
+                    // the 'Record Last Updated' date and time.
+                    cy.wait(60_000);
                   });
                 });
               });
@@ -242,6 +256,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
+        InstanceRecordView.verifyLastUpdatedDateAndTime(dateAndTimeOfMarcInstanceCreation);
         InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion('Reproduction note');
         InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(field933a);
 
@@ -249,6 +264,10 @@ describe('Bulk-edit', () => {
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource('933', `\t933\t   \t$a ${field933a}`);
         InventoryViewSource.notContains('533\t');
+        InventoryViewSource.verifyExistanceOfValueInRow(
+          dateAndTimeOfMarcInstanceCreationIn005Field,
+          2,
+        );
       },
     );
   });

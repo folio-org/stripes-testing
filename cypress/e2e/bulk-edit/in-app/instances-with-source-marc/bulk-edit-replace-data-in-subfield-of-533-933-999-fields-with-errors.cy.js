@@ -21,6 +21,7 @@ import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 let dateAndTimeOfMarcInstanceCreation;
+let dateAndTimeOfMarcInstanceCreationIn005Field;
 const marcInstance = {
   title: `AT_C543814_MarcInstance_${getRandomPostfix()}`,
 };
@@ -64,6 +65,8 @@ describe('Bulk-edit', () => {
               new Date(),
               true,
             );
+            dateAndTimeOfMarcInstanceCreationIn005Field =
+              DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
 
             marcInstance.uuid = instanceId;
 
@@ -258,6 +261,10 @@ describe('Bulk-edit', () => {
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource('933', `\t933\t   \t$a ${field933a}`);
         InventoryViewSource.notContains('533\t');
+        InventoryViewSource.verifyExistanceOfValueInRow(
+          dateAndTimeOfMarcInstanceCreationIn005Field,
+          2,
+        );
       },
     );
   });
