@@ -2112,9 +2112,10 @@ export default {
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(HTML({ className: including('subfield-') }))
-        .find(Button({ icon: 'info' }))
-        .click(),
+        .perform((rowEl) => {
+          cy.wrap(rowEl).find('[class*="subfield-"]').eq(0).find('button[icon="info"]')
+            .click();
+        }),
     );
     cy.expect(Popover({ content: 'This field is protected.' }).exists());
   },
