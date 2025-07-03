@@ -141,15 +141,12 @@ function verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, userName
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.name }))
       .has({ content: subjectTypeName }),
-
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.source }))
       .has({ content: source }),
-
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
       .has({ content: `${date} by ${userName} ` }),
-
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.memberLibraries }))
       .has({ content: memberLibraries }),
