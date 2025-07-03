@@ -23,6 +23,7 @@ describe('remote-storage-configuration', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
+    Configurations.deleteViaApi(testData.configuration.id);
   });
 
   it(

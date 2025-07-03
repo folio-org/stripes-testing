@@ -13,13 +13,13 @@ const locC490902 = '68073904';
 const instanceTitlePartC490900 = 'The history of New England from 1630 to 1649';
 const instanceTitlePartC490902 = 'Vanity Fair; introduction and notes by Gilbert Phelps.';
 const expectedFieldsC490900 = [
-  { tag: '035', position: 4, content: undefined },
-  { tag: '035', position: 6, content: '$9 (DLC)   01012052' },
-  { tag: '035', position: 8, content: '$a (OCoLC)2628488' },
+  { tag: '035', position: 4, content: '$a 10065352' },
+  { tag: '035', position: 8, content: '$9 (DLC)   01012052' },
+  { tag: '035', position: 9, content: '$a (OCoLC)2628488' },
 ];
 const expectedFieldsC490902 = [
-  { tag: '035', position: 4, content: '$9 (DLC)   68073904' },
-  { tag: '035', position: 5, content: undefined },
+  { tag: '035', position: 4, content: '$a 1233775' },
+  { tag: '035', position: 9, content: undefined },
 ];
 const createdInstaceIds = [];
 
