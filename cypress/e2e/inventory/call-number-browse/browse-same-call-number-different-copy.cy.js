@@ -45,6 +45,7 @@ describe('Inventory', () => {
 
     before('Create data and user', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C651491*');
       cy.then(() => {
         CallNumberTypes.getCallNumberTypesViaAPI().then((res) => {
           callNumberTypeLcId = res.filter((type) => type.name === callNumberData.callNumberType)[0]

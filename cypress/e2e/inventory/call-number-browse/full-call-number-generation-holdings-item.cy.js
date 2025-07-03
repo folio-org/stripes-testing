@@ -43,7 +43,7 @@ describe('Inventory', () => {
 
     before('Create data and user', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteFullInstancesWithCallNumber({ type: 'all', value: fullCallNumber });
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C478256*');
       cy.then(() => {
         cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then((res) => {
           testData.locationId = res.id;
