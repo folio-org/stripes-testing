@@ -511,7 +511,8 @@ export default {
     cy.do(Button('New block').click());
   },
 
-  openTagsPane: () => {
+  openTagsPane() {
+    this.verifyTagsIconIsPresent();
     cy.do(Button({ id: 'clickable-show-tags' }).click());
     cy.expect(Pane('Tags').exists());
     cy.wait(2000);
