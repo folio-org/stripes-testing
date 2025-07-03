@@ -21,7 +21,7 @@ import InstanceStates from '../instanceStates';
 const saveAndCloseBtn = Button('Save & close');
 const cancelBtn = Button('Cancel');
 const callNumberTextField = TextArea('Call number');
-const callNumberType = Select('Call number type');
+const callNumberTypeSelect = Select('Call number type');
 const administrativeDataSection = Section({ id: 'acc01' });
 const enumerationDataSection = Section({ id: 'acc03' });
 const itemNotesSection = Section({ id: 'acc05' });
@@ -84,7 +84,7 @@ export default {
     cy.do(callNumberTextField.fillIn(callNumber));
   },
   chooseCallNumberType: (type) => {
-    cy.do(callNumberType.choose(type));
+    cy.do(callNumberTypeSelect.choose(type));
   },
   save: () => cy.do(saveAndCloseBtn.click()),
   saveAndClose({ itemSaved = false } = {}) {
@@ -241,5 +241,25 @@ export default {
         }).absent(),
       );
     }
+  },
+
+  fillCallNumberValues({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+    copyNumber,
+    volume,
+    enumeration,
+    chronology,
+  }) {
+    if (callNumber) this.addCallNumber(callNumber);
+    if (callNumberType) this.chooseCallNumberType(callNumberType);
+    if (callNumberPrefix) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
+    if (callNumberSuffix) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
+    if (copyNumber) cy.do(TextField('Copy number').fillIn(copyNumber));
+    if (volume) cy.do(TextField('Volume').fillIn(volume));
+    if (enumeration) cy.do(TextArea('Enumeration').fillIn(enumeration));
+    if (chronology) cy.do(TextArea('Chronology').fillIn(chronology));
   },
 };

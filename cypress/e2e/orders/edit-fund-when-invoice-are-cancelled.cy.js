@@ -116,6 +116,7 @@ describe('ui-orders: Orders', () => {
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.cancelInvoice();
+      cy.wait(4000);
     });
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
@@ -165,7 +166,7 @@ describe('ui-orders: Orders', () => {
       Invoices.selectInvoiceLine();
       Invoices.checkFundInInvoiceLine(firstFund);
       TopMenuNavigation.navigateToApp('Finance');
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       Funds.closeBudgetDetails();
       Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
