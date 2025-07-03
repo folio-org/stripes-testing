@@ -2119,4 +2119,18 @@ export default {
     );
     cy.expect(Popover({ content: 'This field is protected.' }).exists());
   },
+
+  verifyThereIsNoInfoIconNextToSubfield(rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subfield-"]')
+            .eq(0)
+            .find('button[icon="info"]')
+            .should('not.exist');
+        }),
+    );
+  },
 };
