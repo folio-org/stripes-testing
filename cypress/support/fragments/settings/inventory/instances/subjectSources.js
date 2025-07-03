@@ -7,10 +7,23 @@ import {
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
-export const actionButtons = {
-  edit: 'edit',
-  trash: 'trash',
+const COLUMN_INDEX = {
+  NAME: 0,
+  SOURCE: 1,
+  LAST_UPDATED: 2,
+  ACTIONS: 3,
 };
+
+export const ACTION_BUTTONS = {
+  EDIT: 'edit',
+  TRASH: 'trash',
+};
+
+function getRowIndex(element) {
+  const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+  return Number(rowNumber.slice(4));
+}
+
 export default {
   createViaApi(body) {
     return cy
@@ -20,9 +33,7 @@ export default {
         body,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ response }) => {
-        return response;
-      });
+      .then(({ response }) => response);
   },
 
   deleteViaApi(id) {
@@ -32,45 +43,42 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
-  // using in C594428, C594429, C594434
+
   verifySubjectSourceExists(sourceName, source, user, options = {}) {
     const { actions = [] } = options;
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+    const today = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: sourceName });
 
     cy.do(
-      MultiColumnListCell({ content: sourceName }).perform((element) => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
 
         cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.NAME }))
             .has({ content: sourceName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 2 }))
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.SOURCE }))
             .has({ content: source }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: including(`${date} by ${user}`) }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.LAST_UPDATED }))
+            .has({ content: including(`${today} by ${user}`) }),
         ]);
-        Object.values(actionButtons).forEach((action) => {
+        Object.values(ACTION_BUTTONS).forEach((action) => {
           const buttonSelector = EditableListRow({ index: rowIndex })
             .find(actionsCell)
             .find(Button({ icon: action }));
-          if (actions.includes(action)) {
-            cy.expect(buttonSelector.exists());
-          } else {
-            cy.expect(buttonSelector.absent());
-          }
+          cy.expect(actions.includes(action) ? buttonSelector.exists() : buttonSelector.absent());
         });
       }),
     );
   },
-  // using in C594434
+
   verifySubjectSourceAbsent(name) {
     cy.get('#controlled-vocab-pane')
-      .find('[class*="mclCell-"]:nth-child(1)')
+      .find(`[class*="mclCell-"]:nth-child(${COLUMN_INDEX.NAME + 1})`)
       .each(($cell) => {
         cy.wrap($cell).invoke('text').should('not.eq', name);
       });
