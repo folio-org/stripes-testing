@@ -275,6 +275,10 @@ describe('Inventory', () => {
               });
             });
 
+            cy.setTenant(Affiliations.Consortia);
+            cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
+              Permissions.inventoryAll.gui,
+            ]);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -347,20 +351,20 @@ describe('Inventory', () => {
       });
 
       before(() => {
-        testData.instances.forEach((instance) => {
-          addHoldingsRecord(instance.instanceId, Affiliations.College);
-        });
-        testData.instances.forEach((instance) => {
-          addHoldingsRecord(instance.instanceId, Affiliations.University);
-        });
-      });
-
-      before(() => {
-        testData.instances.forEach((instance) => {
-          addItemRecord(instance.instanceId, Affiliations.College);
-        });
-        testData.instances.forEach((instance) => {
-          addItemRecord(instance.instanceId, Affiliations.University);
+        cy.then(() => {
+          testData.instances.forEach((instance) => {
+            addHoldingsRecord(instance.instanceId, Affiliations.College);
+          });
+          testData.instances.forEach((instance) => {
+            addHoldingsRecord(instance.instanceId, Affiliations.University);
+          });
+        }).then(() => {
+          testData.instances.forEach((instance) => {
+            addItemRecord(instance.instanceId, Affiliations.College);
+          });
+          testData.instances.forEach((instance) => {
+            addItemRecord(instance.instanceId, Affiliations.University);
+          });
         });
       });
 
@@ -369,37 +373,38 @@ describe('Inventory', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
 
-        cy.setTenant(Affiliations.College);
-        createdItemIds.college.forEach((id) => {
-          InventoryItems.deleteItemViaApi(id);
+        cy.withinTenant(Affiliations.College, () => {
+          createdItemIds.college.forEach((id) => {
+            InventoryItems.deleteItemViaApi(id);
+          });
+          createdHoldingsIds.college.forEach((id) => {
+            InventoryHoldings.deleteHoldingRecordViaApi(id);
+          });
+          Locations.deleteViaApi(locations.college);
+          cy.deleteLoanType(loanTypeIds.college);
+          createdInstanceIds.college.forEach((id) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
         });
-        createdHoldingsIds.college.forEach((id) => {
-          InventoryHoldings.deleteHoldingRecordViaApi(id);
-        });
-        Locations.deleteViaApi(locations.college);
-        cy.deleteLoanType(loanTypeIds.college);
 
-        cy.setTenant(Affiliations.University);
-        createdItemIds.university.forEach((id) => {
-          InventoryItems.deleteItemViaApi(id);
+        cy.withinTenant(Affiliations.University, () => {
+          createdItemIds.university.forEach((id) => {
+            InventoryItems.deleteItemViaApi(id);
+          });
+          createdHoldingsIds.university.forEach((id) => {
+            InventoryHoldings.deleteHoldingRecordViaApi(id);
+          });
+          Locations.deleteViaApi(locations.university);
+          cy.deleteLoanType(loanTypeIds.university);
+          createdInstanceIds.university.forEach((id) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
         });
-        createdHoldingsIds.university.forEach((id) => {
-          InventoryHoldings.deleteHoldingRecordViaApi(id);
-        });
-        Locations.deleteViaApi(locations.university);
-        cy.deleteLoanType(loanTypeIds.university);
 
-        cy.setTenant(Affiliations.College);
-        createdInstanceIds.college.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
-        cy.setTenant(Affiliations.University);
-        createdInstanceIds.university.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
-        cy.resetTenant();
-        createdInstanceIds.consortia.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
+        cy.withinTenant(Affiliations.Consortia, () => {
+          createdInstanceIds.consortia.forEach((id) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
         });
       });
 
@@ -408,9 +413,12 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C404360'] },
         () => {
           cy.resetTenant();
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: '/',
-            waiter: () => true,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
