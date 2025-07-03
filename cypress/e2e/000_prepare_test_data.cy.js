@@ -27,6 +27,11 @@ describe('Prepare test data', () => {
             servicePointIds,
             defaultServicePointId,
           );
+        }).then(() => {
+          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+            .then((user) => {
+              userId = user[0].id;
+            });
         });
     });
   });
