@@ -306,7 +306,7 @@ describe('Inventory', () => {
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
         searchAndCheckCallNumbers(['nlm'], callNumbers[0].nlm);
-        searchAndCheckCallNumbers(['lc'], callNumbers[0].lc);
+        searchAndCheckCallNumbers(['lc'], callNumbers[1].lc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
