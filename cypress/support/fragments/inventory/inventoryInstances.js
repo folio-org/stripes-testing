@@ -623,7 +623,7 @@ export default {
   deleteFullInstancesByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: `search/instances?query=title=="${instanceTitle}"`,
+        path: `search/instances?query=title="${instanceTitle}"`,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
@@ -667,18 +667,20 @@ export default {
       })
       .then((response) => response.body.items)
       .then((items) => {
-        items.forEach((item) => {
-          return cy
-            .okapiRequest({
-              path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
-              isDefaultSearchParamsRequired: false,
-            })
-            .then(({ body: { instances } }) => {
-              instances.forEach((instance) => {
-                this.deleteFullInstancesByTitleViaApi(instance.title);
+        items
+          .filter((item) => item.fullCallNumber === value)
+          .forEach((item) => {
+            return cy
+              .okapiRequest({
+                path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
+                isDefaultSearchParamsRequired: false,
+              })
+              .then(({ body: { instances } }) => {
+                instances.forEach((instance) => {
+                  this.deleteFullInstancesByTitleViaApi(instance.title);
+                });
               });
-            });
-        });
+          });
       });
   },
 

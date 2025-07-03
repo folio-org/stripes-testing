@@ -222,4 +222,13 @@ export default {
       },
     );
   },
+
+  checkValuePresentForRow(callNumber, columnIndex, value) {
+    cy.do(
+      MultiColumnListCell(callNumber).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(MultiColumnListCell(value, { row: rowNumber, columnIndex }).exists());
+      }),
+    );
+  },
 };

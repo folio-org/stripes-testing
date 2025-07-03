@@ -8,7 +8,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 
-describe('orders: Test PO filters', () => {
+describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
   const today = new Date();
   const renewalDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOneTimeOrder };
