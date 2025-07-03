@@ -154,6 +154,7 @@ export default {
     cy.wait(1000);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
     cy.do(Button('Close').click());
+    cy.wait(1000);
   },
   checkPreview: (staffSlipType, displayText) => {
     cy.do(Button('Preview').click());
@@ -174,6 +175,7 @@ export default {
   },
   saveAndClose: () => {
     cy.do(saveButton.click());
+    cy.wait(1000);
     cy.expect(staffSlipPaneContent.absent());
   },
   checkAfterUpdate(staffSlipType) {
