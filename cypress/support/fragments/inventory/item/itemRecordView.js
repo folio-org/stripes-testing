@@ -558,4 +558,6 @@ export default {
     cy.do(actionsButton.click());
     cy.wait(1500);
   },
+
+  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(KeyValue('Effective call number').has({ value: effectiveCallNumber })),
 };
