@@ -10,12 +10,14 @@ let patronGroupId;
 
 function deleteAllMigrationRolesAndUsers() {
   cy.getAdminToken();
-  cy.getAuthorizationRoles({ limit: 500, query: 'name="migration_role*"' }).then((roles) => {
-    roles.forEach((role) => {
-      // Double-check just in case (because deleting useful roles can be a big problem)
-      if (role.name.includes('migration_role')) cy.deleteAuthorizationRoleApi(role.id);
-    });
-  });
+  cy.getAuthorizationRoles({ limit: 500, query: 'name="migration_permission_set*"' }).then(
+    (roles) => {
+      roles.forEach((role) => {
+        // Double-check just in case (because deleting useful roles can be a big problem)
+        if (role.name.includes('migration_')) cy.deleteAuthorizationRoleApi(role.id);
+      });
+    },
+  );
   Users.getUsers({ limit: 500, query: 'username="migration_username*"' }).then((users) => {
     users.forEach((user) => {
       Users.deleteViaApi(user.id);
@@ -87,7 +89,7 @@ describe('Create or delete migration test users', () => {
     cy.getAdminToken();
     migrationUsers.forEach((user) => {
       const roleData = {
-        name: `migration_role_${user.caseId}`,
+        name: `migration_permission_set_${user.caseId}`,
         description: 'Migration test role.',
       };
 
