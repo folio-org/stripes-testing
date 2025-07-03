@@ -76,8 +76,12 @@ export default {
   deleteAllDownloadedFiles(fileNames) {
     const fileNamesList = Object.values(fileNames);
 
-    fileNamesList.forEach((fileName) => {
-      FileManager.deleteFileFromDownloadsByMask(fileName);
+    fileNamesList.forEach((fileNameMask) => {
+      FileManager.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
+        if (fileName !== null) {
+          cy.task('deleteFile', fileName[0]);
+        }
+      });
     });
   },
 

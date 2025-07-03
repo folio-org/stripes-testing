@@ -126,10 +126,14 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
+            cy.reload();
+            AuthorizationRoles.waitContentLoading();
+          }, 20_000);
         });
       });
 

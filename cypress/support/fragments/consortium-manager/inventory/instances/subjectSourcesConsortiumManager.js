@@ -250,6 +250,23 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+  deleteSubjectSourceByName(name) {
+    getRowIndexesByColumnValue(columnIndex.name, (text) => text.includes(name)).then((rowIndex) => {
+      cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex[0]}"]`)
+        .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions + 1}) button[icon="trash"]`)
+        .click();
+    });
+  },
+  cancelDelitionOfSubjectSource(name) {
+    DeleteCancelReason.waitLoadingDeleteModal('subject source', name);
+    DeleteCancelReason.clickCancel();
+  },
+  confirmDeletionOfSubjectSource(name) {
+    DeleteCancelReason.waitLoadingDeleteModal('subject source', name);
+    DeleteCancelReason.clickDelete();
+    cy.expect(rootPane.exists());
+    InteractorsTools.checkCalloutMessage(`The subject source ${name} was successfully deleted.`);
+  },
   // using in C594434
   deleteSubjectSourceByUserAndTenantNames(name, userName, tenantName) {
     cy.wait(1500);
