@@ -116,6 +116,7 @@ describe('MARC', () => {
                 QuickMarcEditor.checkContent(updatedLDRvalue, 0);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndCloseDerive();
+                InventoryInstance.waitInventoryLoading();
                 InventoryInstance.checkInstanceTitle(title);
                 cy.url().then((url) => createdInstanceIDs.push(url.split('/')[5]));
               });
