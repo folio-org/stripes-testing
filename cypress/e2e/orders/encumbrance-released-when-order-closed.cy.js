@@ -86,9 +86,12 @@ describe('Orders', () => {
 
       // Make changes in "PO line details", Click "Save & close" button
       OrderLineEditForm.fillOrderLineFields({
-        receiptStatus: 'Receipt not required',
         paymentStatus: 'Payment not required',
       });
+      OrderLineEditForm.fillOrderLineFields({
+        receiptStatus: 'Receipt not required',
+      });
+      OrderLineEditForm.clickConfirmButton();
       OrderLineEditForm.clickSaveButton();
 
       // Warning message "Purchase order is closed - Complete" appears

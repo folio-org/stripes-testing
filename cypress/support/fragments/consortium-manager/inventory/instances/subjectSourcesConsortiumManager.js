@@ -206,6 +206,22 @@ export default {
     );
     cy.expect(rootPane.exists());
   },
+  createSharedSubjectSourceViaApi(typeId, name, consortiaId) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `consortia/${consortiaId}/sharing/settings`,
+      body: {
+        url: '/subject-sources',
+        settingId: typeId,
+        payload: {
+          source: 'local',
+          name,
+          id: typeId,
+        },
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
   // using in C594429
   getSubjectSourceIdViaApi(name, consortiaId) {
     return cy

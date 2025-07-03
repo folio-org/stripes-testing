@@ -23,6 +23,7 @@ import {
   Option,
   or,
   Pane,
+  Popover,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -220,6 +221,16 @@ export default {
 
   deleteRow(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
+  },
+
+  deleteRowInBulkEditMarcInstancesAccordion(rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('marcFieldRow-') }))
+        .find(deleteBtn)
+        .click(),
+    );
   },
 
   deleteRowBySelectedOption(option) {
@@ -2095,5 +2106,16 @@ export default {
   addSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Add', rowIndex);
     this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
+  },
+
+  clickInfoIconNextToSubfieldAndVerifyText(rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subfield-') }))
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: 'This field is protected.' }).exists());
   },
 };
