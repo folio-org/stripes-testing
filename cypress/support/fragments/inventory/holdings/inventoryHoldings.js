@@ -60,11 +60,12 @@ export default {
       },
     );
   },
-  deleteHoldingRecordViaApi(holdingsRecordId) {
+  deleteHoldingRecordViaApi(holdingsRecordId, ignoreErrors = true) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `holdings-storage/holdings/${holdingsRecordId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   checkIfExpanded(content, expand) {

@@ -623,7 +623,7 @@ export default {
   deleteFullInstancesByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: `search/instances?query=title=="${instanceTitle}"`,
+        path: `search/instances?query=title="${instanceTitle}"`,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {

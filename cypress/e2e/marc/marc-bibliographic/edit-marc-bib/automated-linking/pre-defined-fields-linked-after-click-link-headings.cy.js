@@ -292,7 +292,6 @@ describe('MARC', () => {
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
             QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-            QuickMarcEditor.closeAllCallouts();
             rowIndexOfLinkedFields.forEach((linkedField) => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkedField);
             });
