@@ -33,7 +33,7 @@ const readonlyFields = [holdingsHrId, sourceSelect];
 const callNumberField = rootForm.find(TextArea({ name: 'callNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
-const callNumberType = rootForm.find(Select('Call number type'));
+const callNumberTypeSelect = rootForm.find(Select('Call number type'));
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
@@ -196,7 +196,7 @@ export default {
     }
   },
   chooseCallNumberType(type) {
-    cy.do(callNumberType.choose(type));
+    cy.do(callNumberTypeSelect.choose(type));
   },
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
@@ -241,5 +241,18 @@ export default {
         .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
+  },
+  fillCallNumberValues({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+    copyNumber,
+  }) {
+    if (callNumber) this.fillCallNumber(callNumber);
+    if (callNumberType) this.chooseCallNumberType(callNumberType);
+    if (callNumberPrefix) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
+    if (callNumberSuffix) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
+    if (copyNumber) cy.do(TextField('Copy number').fillIn(copyNumber));
   },
 };
