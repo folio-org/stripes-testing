@@ -155,7 +155,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              'No value set-',
+              sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
