@@ -13,33 +13,37 @@ import {
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const randomPostfix = getRandomPostfix();
-    const instanceTitle = `AT_C478253_FolioInstance_${randomPostfix}`;
+    const instanceTitle = `AT_C478256_FolioInstance_${randomPostfix}`;
     const testData = {
       user: {},
     };
-    const callNumberData = {
-      callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+    const holdingsCallNumberData = {
+      callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
       callNumberPrefix: 'AT',
-      callNumber: 'QS 47 .GA8 E253',
+      callNumber: 'PN478 .A256',
       callNumberSuffix: `${randomFourDigitNumber()}`,
-      copyNumber: 'c.2',
+      copyNumber: 'c. 3',
+    };
+    const itemEnumerationData = {
       volume: 'v. 1',
       enumeration: 'no. 2',
-      chronology: '1922',
+      chronology: '1955',
     };
-
-    const fullCallNumber = `${callNumberData.callNumber} ${callNumberData.callNumberSuffix}`;
-    const callNumberQueryValue = `${callNumberData.callNumberPrefix} ${callNumberData.callNumber} ${callNumberData.callNumberSuffix}`;
-    const expectedEffectiveCallNumber = `${callNumberQueryValue} ${callNumberData.volume} ${callNumberData.enumeration} ${callNumberData.chronology} ${callNumberData.copyNumber}`;
+    const fullCallNumber = `${holdingsCallNumberData.callNumber} ${holdingsCallNumberData.callNumberSuffix}`;
+    const callNumberQueryValue = `${holdingsCallNumberData.callNumberPrefix} ${holdingsCallNumberData.callNumber} ${holdingsCallNumberData.callNumberSuffix}`;
+    const expectedEffectiveCallNumber = `${callNumberQueryValue} ${itemEnumerationData.volume} ${itemEnumerationData.enumeration} ${itemEnumerationData.chronology}`;
     const querySearchOption = 'Query search';
     let instanceData;
 
     before('Create data and user', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C478256*');
       cy.then(() => {
         cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then((res) => {
           testData.locationId = res.id;
@@ -74,8 +78,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C478253 Verify "fullCallNumber" generation when all "Call number" fields are filled in "Item" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C478253'] },
+      'C478256 Verify "fullCallNumber" generation when all "Call number" fields are filled in "Holdings" record and "Enumeration" fields are filled in "Item" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C478256'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -83,34 +87,46 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(instanceData.id);
         InventoryInstances.selectInstanceById(instanceData.id);
 
-        // Click add item button
+        // Open Holdings detail view
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.waitLoading();
+        // Edit Holdings
+        HoldingsRecordView.edit();
+        HoldingsRecordEdit.waitLoading();
+        HoldingsRecordEdit.fillCallNumberValues({
+          callNumber: holdingsCallNumberData.callNumber,
+          callNumberType: holdingsCallNumberData.callNumberType,
+          callNumberPrefix: holdingsCallNumberData.callNumberPrefix,
+          callNumberSuffix: holdingsCallNumberData.callNumberSuffix,
+          copyNumber: holdingsCallNumberData.copyNumber,
+        });
+        HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+        HoldingsRecordView.waitLoading();
+        // Close Holdings detail view
+        HoldingsRecordView.close();
+        // Back to Instance detail view
+        InventoryInstance.verifyInstanceTitle(instanceTitle);
+        // Add Item to Holdings
         InventoryInstance.addItem();
         ItemRecordNew.waitLoading(instanceTitle);
-        // Fill required fields
         ItemRecordNew.addMaterialType(testData.materialTypeName);
         ItemRecordNew.addPermanentLoanType(testData.loanTypeName);
-        // Fill call number and enumeration fields
+        // Fill only enumeration fields
         ItemRecordNew.fillCallNumberValues({
-          callNumber: callNumberData.callNumber,
-          callNumberType: callNumberData.callNumberType,
-          callNumberPrefix: callNumberData.callNumberPrefix,
-          callNumberSuffix: callNumberData.callNumberSuffix,
-          volume: callNumberData.volume,
-          enumeration: callNumberData.enumeration,
-          chronology: callNumberData.chronology,
-          copyNumber: callNumberData.copyNumber,
+          volume: itemEnumerationData.volume,
+          enumeration: itemEnumerationData.enumeration,
+          chronology: itemEnumerationData.chronology,
         });
-        // Save item
         ItemRecordNew.saveAndClose({ itemSaved: true });
-        // Verify detail view
-        InventoryInstance.verifyInstanceTitle(instanceTitle);
         // Switch to Browse
         InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
+        );
         BrowseCallNumber.waitForCallNumberToAppear(fullCallNumber);
         InventorySearchAndFilter.fillInBrowseSearch(fullCallNumber);
         // Intercept browse call
-        cy.intercept('GET', '/browse/call-numbers/all/instances*').as('browseCallNumbers');
+        cy.intercept('GET', '/browse/call-numbers/lc/instances*').as('browseCallNumbers');
         InventorySearchAndFilter.clickSearch();
         cy.wait('@browseCallNumbers').then(({ response }) => {
           const found = response.body.items.find((item) => item.fullCallNumber === fullCallNumber);
