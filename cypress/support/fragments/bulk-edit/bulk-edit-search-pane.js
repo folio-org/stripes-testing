@@ -67,6 +67,7 @@ const formMap = {
   [BULK_EDIT_FORMS.ARE_YOU_SURE]: areYouSureForm,
 };
 export const subjectsTableHeaders = ['Subject headings', 'Subject source', 'Subject type'];
+export const classificationsTableHeaders = ['Classification identifier type', 'Classification'];
 export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCESSIBILITY_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
@@ -1462,6 +1463,49 @@ export default {
     this.verifySubjectColumnHeadersInForm(formType, instanceIdentifier);
 
     const expectedValues = [subjectHeadingValue, subjectValue, subjectTypeValue];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
+  },
+
+  verifyClassificationColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            classificationsTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
+  verifyClassificationTableInForm(
+    formType,
+    instanceIdentifier,
+    classificationIdentifierTypeValue,
+    classificationValue,
+    miniRowIndex = 1,
+  ) {
+    this.verifyClassificationColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [classificationIdentifierTypeValue, classificationValue];
 
     cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
