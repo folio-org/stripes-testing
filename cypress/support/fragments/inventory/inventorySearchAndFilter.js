@@ -1219,7 +1219,7 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.intercept('GET', /\/search\/instances(\/facets)?\?.*/).as('getData');
+    cy.intercept('GET', /\/search\/(instances|call-numbers)(\/facets)?\?.*/).as('getData');
     cy.do(
       Button({
         ariaLabel: or(
