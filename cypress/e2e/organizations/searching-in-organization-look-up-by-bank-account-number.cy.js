@@ -6,6 +6,8 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import BankingInformation from '../../support/fragments/settings/organizations/bankingInformation';
+import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('Organizations', () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
@@ -33,10 +35,19 @@ describe('Organizations', () => {
     BankingInformation.setBankingInformationValue(true);
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+
+      cy.loginAsAdmin({
+        path: SettingsMenu.organizationsPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.selectBankingInformation();
+      SettingsOrganizations.enableBankingInformation();
+
+      cy.visit(TopMenu.organizationsPath);
+      Organizations.waitLoading();
       Organizations.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
-      Organizations.selectOrganization(firstOrganization.name);
+      Organizations.selectOrganizationInCurrentPage(firstOrganization.name);
       Organizations.editOrganization();
       Organizations.addBankingInformation(firstBankingInformation);
       Organizations.closeDetailsPane();
@@ -47,7 +58,7 @@ describe('Organizations', () => {
         secondOrganization.id = responseSecondOrganizations;
         Organizations.searchByParameters('Name', secondOrganization.name);
         Organizations.checkSearchResults(secondOrganization);
-        Organizations.selectOrganization(secondOrganization.name);
+        Organizations.selectOrganizationInCurrentPage(secondOrganization.name);
         Organizations.editOrganization();
         Organizations.addBankingInformation(secondBankingInformation);
         Organizations.closeDetailsPane();
@@ -73,20 +84,25 @@ describe('Organizations', () => {
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', firstOrganization.name);
     Organizations.checkSearchResults(firstOrganization);
-    Organizations.selectOrganization(firstOrganization.name);
+    Organizations.selectOrganizationInCurrentPage(firstOrganization.name);
     Organizations.editOrganization();
     Organizations.deleteBankingInformation();
     Organizations.closeDetailsPane();
     Organizations.resetFilters();
     Organizations.searchByParameters('Name', secondOrganization.name);
     Organizations.checkSearchResults(secondOrganization);
-    Organizations.selectOrganization(secondOrganization.name);
+    Organizations.selectOrganizationInCurrentPage(secondOrganization.name);
     Organizations.editOrganization();
     Organizations.deleteBankingInformation();
     Organizations.closeDetailsPane();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
     Organizations.deleteOrganizationViaApi(secondOrganization.id);
     BankingInformation.setBankingInformationValue(false);
+
+    cy.visit(TopMenu.settingsBankingInformationPath);
+    SettingsOrganizations.waitLoadingOrganizationSettings();
+    SettingsOrganizations.enableBankingInformation();
+
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(C423432User.userId);
   });
