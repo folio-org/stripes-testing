@@ -451,11 +451,11 @@ const defaultValid008HoldingsValues = {
 };
 const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
 const ldrFields = [
-  { label: 'Status', type: 'select' },
-  { label: 'Ctrl', type: 'select' },
-  { label: 'Desc', type: 'select' },
-  { label: 'MultiLvl', type: 'select' },
-  { label: 'ELvl', type: 'input' },
+  { label: 'Status', type: 'select', name: 'records[0].content.Status' },
+  { label: 'Ctrl', type: 'select', name: 'records[0].content.Ctrl' },
+  { label: 'ELvl', type: 'input', name: 'records[0].content.ELvl' },
+  { label: 'Desc', type: 'select', name: 'records[0].content.Desc' },
+  { label: 'MultiLvl', type: 'select', name: 'records[0].content.MultiLvl' },
 ];
 const authoritySubfieldsDefault = [
   {
@@ -1701,14 +1701,16 @@ export default {
 
   fillLDRFields(fieldValues) {
     const actions = [];
-    ldrFields.forEach(({ label, type }) => {
+    ldrFields.forEach(({ label, type, name }) => {
       const value = fieldValues[label];
+
       if (type === 'select') {
-        actions.push(Select(label).choose(value));
+        actions.push(cy.get(`select[name="${name}"]`).select(value));
       } else if (type === 'input') {
-        actions.push(TextField({ ariaLabel: label }).fillIn(value));
+        actions.push(cy.get(`input[name="${name}"]`).clear().type(value));
       }
     });
+
     return cy.do(...actions);
   },
 

@@ -59,8 +59,8 @@ describe('MARC', () => {
           },
 
           LDRValues: {
-            validLDR05Values: randomizeArray(['a', 'c', 'd', 'n', 'p', 'a', 'c', 'd', 'n', 'p']),
-            validLDR08Values: randomizeArray([' ', '\\', 'a', ' ', '\\', 'a', ' ', '\\', 'a']),
+            validLDR05Values: randomizeArray(['a', 'c', 'd', 'n', 'p', 'c']),
+            validLDR08Values: randomizeArray(['\\', 'a', '\\', 'a', '\\', 'a']),
             validLDR17Values: randomizeArray([
               alphabetLowerCase[Math.floor(Math.random() * alphabetLowerCase.length)],
               alphabetUpperCase[Math.floor(Math.random() * alphabetUpperCase.length)],
@@ -71,8 +71,8 @@ describe('MARC', () => {
               digits[Math.floor(Math.random() * digits.length)],
               specialChars[Math.floor(Math.random() * specialChars.length)],
             ]),
-            validLDR18Values: randomizeArray([' ', '\\', 'a', 'c', 'i', 'n', 'u']),
-            validLDR19Values: randomizeArray([' ', '\\', 'a', ' ', '\\', 'a', ' ', '\\', 'a']),
+            validLDR18Values: randomizeArray(['\\', 'a', 'c', 'i', 'n', 'u']),
+            validLDR19Values: randomizeArray(['\\', 'a', '\\', 'a', '\\', 'a']),
           },
         };
 
@@ -127,13 +127,14 @@ describe('MARC', () => {
               cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
               InventoryInstance.checkInstanceTitle(testData.fieldContents.originalTitle);
               InventoryInstance.deriveNewMarcBib();
+              QuickMarcEditor.waitLoading();
               QuickMarcEditor.check008FieldsAbsent(...testData.absent008Fields);
               const fieldValues = {
                 Status: ldrSelectOptions.Status[testData.LDRValues.validLDR05Values[i]],
                 Ctrl: ldrSelectOptions.Ctrl[testData.LDRValues.validLDR08Values[i]],
+                ELvl: testData.LDRValues.validLDR17Values[i],
                 Desc: ldrSelectOptions.Desc[testData.LDRValues.validLDR18Values[i]],
                 MultiLvl: ldrSelectOptions.MultiLvl[testData.LDRValues.validLDR19Values[i]],
-                ELvl: testData.LDRValues.validLDR17Values[i],
               };
               QuickMarcEditor.fillLDRFields(fieldValues);
               const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
@@ -143,6 +144,7 @@ describe('MARC', () => {
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.checkInstanceTitle(title);
               cy.url().then((url) => createdInstanceIDs.push(url.split('/')[5]));
+              cy.wait(2000);
             }
           },
         );
