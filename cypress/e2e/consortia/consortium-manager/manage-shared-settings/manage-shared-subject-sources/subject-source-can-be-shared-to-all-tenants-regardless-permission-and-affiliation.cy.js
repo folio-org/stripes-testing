@@ -2,12 +2,12 @@ import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiumManagerApp, {
+import ConsortiumManager, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SubjectSourcesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectSourcesConsortiumManager';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ConsortiumSubjectSources from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectSourcesConsortiumManager';
+import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumManagerSettings from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectSources from '../../../../../support/fragments/settings/inventory/instances/subjectSources';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
@@ -23,10 +23,11 @@ describe('Consortia', () => {
       describe('Manage shared Subject sources', () => {
         let userA;
         let userB;
-        const subjectSourceNames = [
-          `autotestSubjectSourceName${getRandomPostfix()}`,
-          `autotestSubjectSourceName${getRandomPostfix()}`,
-        ];
+        const subjectSource = {
+          name: `C594429 autotestSubjectSourceName${getRandomPostfix()}`,
+          source: 'consortium',
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
+        };
         const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create users data', () => {
@@ -69,13 +70,15 @@ describe('Consortia', () => {
         after('Delete users data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          Users.deleteViaApi(userA.userId);
-          Users.deleteViaApi(userB.userId);
-          SubjectSourcesConsortiumManager.getSourceSubjectIdViaApi(subjectSourceNames[0]).then(
-            (id) => {
-              SubjectSourcesConsortiumManager.deleteViaApi(id, subjectSourceNames[0]);
-            },
-          );
+          cy.getConsortiaId().then((consortiaId) => {
+            Users.deleteViaApi(userA.userId);
+            Users.deleteViaApi(userB.userId);
+            ConsortiumSubjectSources.getSubjectSourceIdViaApi(subjectSource.name, consortiaId).then(
+              (id) => {
+                ConsortiumSubjectSources.deleteViaApi(id, subjectSource.name, consortiaId);
+              },
+            );
+          });
         });
 
         it(
@@ -83,59 +86,83 @@ describe('Consortia', () => {
           { tags: ['criticalPathECS', 'folijet', 'C594429'] },
           () => {
             cy.login(userA.username, userA.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-            ConsortiumManagerApp.waitLoading();
-            SelectMembers.selectAllMembers();
-            ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            SubjectSourcesConsortiumManager.choose();
+            ConsortiumManager.waitLoading();
+            SelectMembersModal.selectAllMembers();
+            ConsortiumManager.verifyStatusOfConsortiumManager(2);
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumSubjectSources.choose();
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
-            SubjectSourcesConsortiumManager.clickNewButton();
-            [
-              { name: '', isUnique: true },
-              { name: 'Canadian Subject Headings', isUnique: false },
-              { name: subjectSourceNames[0], isUnique: true },
-            ].forEach((value) => {
-              SubjectSourcesConsortiumManager.validateNameFieldConditions(
-                value.name,
-                value.isUnique,
-              );
-            });
-            SubjectSourcesConsortiumManager.confirmSharing(subjectSourceNames[0]);
-            SubjectSourcesConsortiumManager.verifyCreatedSubjectSource({
-              name: subjectSourceNames[0],
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
+              '',
+              'empty',
+            );
+            ConsortiumSubjectSources.clickCancelButton();
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
+              'Chronological term',
+              'duplicate',
+            );
+            ConsortiumSubjectSources.clickCancelButton();
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
+              subjectSource.name,
+              'unique',
+            );
+            ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSource.name);
+            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
+            ConsortiumSubjectSources.verifySharedSubjectSourceExists({
+              name: subjectSource.name,
               actions: ['edit', 'trash'],
             });
-            SubjectSourcesConsortiumManager.createAndCancelRecord(subjectSourceNames[1]);
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceAndCancel(
+              subjectSource.name,
+            );
 
             cy.login(userB.username, userB.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({ name: subjectSourceNames[0] });
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              subjectSource.consortiaUser,
+            );
 
             cy.resetTenant();
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.central,
+              tenantNames.college,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.college);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({ name: subjectSourceNames[0] });
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              subjectSource.consortiaUser,
+            );
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.college,
+              tenantNames.university,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.university);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-            SubjectSources.verifyCreatedSubjectSource({ name: subjectSourceNames[0] });
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              subjectSource.consortiaUser,
+            );
           },
         );
       });

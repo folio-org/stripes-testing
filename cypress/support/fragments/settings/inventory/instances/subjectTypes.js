@@ -3,12 +3,19 @@ import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
-export const reasonsActions = {
-  edit: 'edit',
-  trash: 'trash',
+const COLUMN_INDEX = {
+  NAME: 0,
+  SOURCE: 1,
+  LAST_UPDATED: 2,
+  ACTIONS: 3,
 };
 
-export const folioSubjectTypes = [
+export const ACTION_BUTTONS = {
+  EDIT: 'edit',
+  TRASH: 'trash',
+};
+
+export const FOLIO_SUBJECT_TYPES = [
   'Personal name',
   'Corporate name',
   'Meeting name',
@@ -27,6 +34,12 @@ export const folioSubjectTypes = [
   'Type of entity unspecified',
 ];
 
+function getRowIndex(element) {
+  return Number(
+    element.closest('[data-row-index]').getAttribute('data-row-index').replace('row-', ''),
+  );
+}
+
 export default {
   createViaApi(body) {
     return cy
@@ -36,9 +49,7 @@ export default {
         body,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ response }) => {
-        return response;
-      });
+      .then(({ response }) => response);
   },
 
   deleteViaApi(id) {
@@ -50,86 +61,40 @@ export default {
   },
 
   verifySubjectTypeAbsent(name) {
-    cy.get('#editList-subjecttypes, #editList-subject-types') // Selects either if present
-      .should('exist') // Ensures at least one exists before proceeding
+    cy.get('#editList-subjecttypes, #editList-subject-types')
+      .should('exist')
       .as('subjectTypesList');
 
     cy.get('@subjectTypesList')
-      .find('[class*="mclCell-"]:nth-child(1)')
+      .find(`[class*="mclCell-"]:nth-child(${COLUMN_INDEX.NAME + 1})`)
       .each(($cell) => {
         cy.wrap($cell).invoke('text').should('not.eq', name);
       });
   },
 
-  verifyCreatedSubjectType({ name: subjectSubjectName, user, actions = [] }) {
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifySubjectTypeExists({ name, source, user, actions = [] }) {
+    const today = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const rowSelector = MultiColumnListCell({ content: name });
 
     cy.do(
-      MultiColumnListCell({ content: subjectSubjectName }).perform((element) => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
 
         cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectSubjectName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 1 }))
-            .has({ content: 'local' }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: including(`${date} by ${user.lastName},`) }),
-        ]);
-        Object.values(reasonsActions).forEach((action) => {
-          const buttonSelector = EditableListRow({ index: rowIndex })
-            .find(actionsCell)
-            .find(Button({ icon: action }));
-          if (actions.includes(action)) {
-            cy.expect(buttonSelector.exists());
-          } else {
-            cy.expect(buttonSelector.absent());
-          }
-        });
-      }),
-    );
-  },
-
-  verifySubjectTypeExists(
-    subjectTypeName,
-    source = 'local',
-    user = 'System, System user - mod-consortia-keycloak',
-    options = {},
-  ) {
-    const { actions = [] } = options;
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-
-    cy.do(
-      MultiColumnListCell({ content: subjectTypeName }).perform((element) => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
-
-        cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectTypeName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+          row.find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.NAME })).has({ content: name }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.SOURCE }))
             .has({ content: source }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: `${date} by ${user}` }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.LAST_UPDATED }))
+            .has({ content: including(`${today} by ${user}`) }),
         ]);
-        Object.values(reasonsActions).forEach((action) => {
-          const buttonSelector = EditableListRow({ index: rowIndex })
-            .find(actionsCell)
-            .find(Button({ icon: action }));
-          if (actions.includes(action)) {
-            cy.expect(buttonSelector.exists());
-          } else {
-            cy.expect(buttonSelector.absent());
-          }
+
+        const actionsCell = row.find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS }));
+        Object.values(ACTION_BUTTONS).forEach((action) => {
+          const actionButton = actionsCell.find(Button({ icon: action }));
+          cy.expect(actions.includes(action) ? actionButton.exists() : actionButton.absent());
         });
       }),
     );

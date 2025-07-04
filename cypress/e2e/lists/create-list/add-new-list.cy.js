@@ -6,7 +6,7 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Add new list', () => {
-    const userData = {};
+    let userData = {};
     const listData = {
       name: getTestEntityValue('list'),
     };
@@ -21,9 +21,7 @@ describe('Lists', () => {
         Permissions.loansAll.gui,
         Permissions.uiOrganizationsViewEditCreate.gui,
       ]).then((userProperties) => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
+        userData = userProperties;
       });
     });
 

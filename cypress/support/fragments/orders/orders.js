@@ -23,6 +23,7 @@ import {
   PaneContent,
   Spinner,
 } from '../../../../interactors';
+import { ORDER_SYSTEM_CLOSING_REASONS } from '../../constants';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -583,7 +584,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-closeReason.reason' }).click(),
       Button({ id: 'closeReason.reason-selection' }).click(),
-      SelectionOption({ id: 'option-closeReason.reason-selection-0-Cancelled' }).click(),
+      SelectionOption(ORDER_SYSTEM_CLOSING_REASONS.CANCELLED).click(),
     ]);
   },
   selectReEncumberFilter: () => {

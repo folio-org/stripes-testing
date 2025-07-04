@@ -450,6 +450,13 @@ const defaultValid008HoldingsValues = {
   'Spec ret': ['\\', '\\', '\\'],
 };
 const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
+const ldrFields = [
+  { label: 'Status', type: 'select', name: 'records[0].content.Status' },
+  { label: 'Ctrl', type: 'select', name: 'records[0].content.Ctrl' },
+  { label: 'ELvl', type: 'input', name: 'records[0].content.ELvl' },
+  { label: 'Desc', type: 'select', name: 'records[0].content.Desc' },
+  { label: 'MultiLvl', type: 'select', name: 'records[0].content.MultiLvl' },
+];
 const authoritySubfieldsDefault = [
   {
     ruleId: '8',
@@ -1690,6 +1697,21 @@ export default {
       (content) => cy.wrap(content).as('tagContent'),
     );
     return cy.get('@tagContent');
+  },
+
+  fillLDRFields(fieldValues) {
+    const actions = [];
+    ldrFields.forEach(({ label, type, name }) => {
+      const value = fieldValues[label];
+
+      if (type === 'select') {
+        actions.push(cy.get(`select[name="${name}"]`).select(value));
+      } else if (type === 'input') {
+        actions.push(cy.get(`input[name="${name}"]`).clear().type(value));
+      }
+    });
+
+    return cy.do(...actions);
   },
 
   deleteTag(rowIndex) {

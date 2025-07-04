@@ -85,3 +85,33 @@ Cypress.Commands.add('postEdgeOrdersGobiIntegration', (requestBody) => {
     body: requestBody,
   });
 });
+
+Cypress.Commands.add('getEdgeDematicAsrItems', (externalStorageId) => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('EDGE_HOST')}/asrService/asr/lookupNewAsrItems/${externalStorageId}?apikey=${Cypress.env('EDGE_API_KEY')}`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+      'Content-type': 'application/xml',
+    },
+  });
+});
+
+Cypress.Commands.add('getEdgeDematicAsrRequests', (externalStorageId) => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('EDGE_HOST')}/asrService/asr/lookupAsrRequests/${externalStorageId}?apikey=${Cypress.env('EDGE_API_KEY')}`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+      'Content-type': 'application/xml',
+    },
+  });
+});
+
+Cypress.Commands.add('getAllRemoteStorageConfigurations', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'remote-storage/configurations',
+    isDefaultSearchParamsRequired: false,
+  });
+});

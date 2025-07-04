@@ -2,12 +2,12 @@ import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiumManagerApp, {
+import ConsortiumManager, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
 import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ConsortiumManagerSettings from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
@@ -23,10 +23,15 @@ describe('Consortia', () => {
       describe('Manage shared Subject types', () => {
         let userA;
         let userB;
-        const subjectTypeNames = [
-          `autotestSubjectTypeName${getRandomPostfix()}`,
-          `autotestSubjectTypeName${getRandomPostfix()}`,
-        ];
+        const firstSubjectType = {
+          name: `C594406 autotestSubjectTypeName${getRandomPostfix()}`,
+          source: 'consortium',
+          consortiaUser: 'System, System user - mod-consortia-keycloak ',
+          memberLbrares: 'All',
+        };
+        const secondSubjectType = {
+          name: `C594406 autotestSubjectTypeName${getRandomPostfix()}`,
+        };
         const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create users data', () => {
@@ -77,57 +82,89 @@ describe('Consortia', () => {
           { tags: ['criticalPathECS', 'folijet', 'C594406'] },
           () => {
             cy.login(userA.username, userA.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-            ConsortiumManagerApp.waitLoading();
+            ConsortiumManager.waitLoading();
             SelectMembersModal.selectAllMembers();
-            ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumManager.verifyStatusOfConsortiumManager(2);
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
             InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectTypes.clickNewButton();
-            [
-              { name: '', isUnique: true },
-              { name: 'Chronological term', isUnique: false },
-              { name: subjectTypeNames[0], isUnique: true },
-            ].forEach((value) => {
-              ConsortiumSubjectTypes.validateNameFieldConditions(value.name, value.isUnique);
-            });
-            ConsortiumSubjectTypes.confirmSharingToAll(subjectTypeNames[0]);
-            ConsortiumSubjectTypes.verifyCreatedSubjectType({
-              name: subjectTypeNames[0],
-              actions: ['edit', 'trash'],
-            });
-            ConsortiumSubjectTypes.createNewAndCancel(subjectTypeNames[1]);
+            ConsortiumSubjectTypes.verifyNewRecordRowBeforeFilling();
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
+              '',
+              'empty',
+            );
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
+              'Chronological term',
+              'duplicate',
+            );
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
+              firstSubjectType.name,
+              'valid',
+            );
+            ConsortiumSubjectTypes.confirmShareWithAllMembers(firstSubjectType.name);
+            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
+              firstSubjectType.name,
+              firstSubjectType.source,
+              firstSubjectType.consortiaUser,
+              firstSubjectType.memberLbrares,
+              { actions: ['edit', 'trash'] },
+            );
+
+            ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeAndCancel(
+              secondSubjectType.name,
+            );
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(secondSubjectType.name);
 
             cy.login(userB.username, userB.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectTypeNames[0], 'consortium');
+            SubjectTypes.verifySubjectTypeExists({
+              name: firstSubjectType.name,
+              source: firstSubjectType.source,
+              user: firstSubjectType.consortiaUser,
+            });
 
             cy.resetTenant();
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.central,
+              tenantNames.college,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.college);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectTypeNames[0], 'consortium');
+            SubjectTypes.verifySubjectTypeExists({
+              name: firstSubjectType.name,
+              source: firstSubjectType.source,
+              user: firstSubjectType.consortiaUser,
+            });
 
             cy.resetTenant();
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.college,
+              tenantNames.university,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.university);
             TopMenuNavigation.navigateToApp(
               APPLICATION_NAMES.SETTINGS,
               APPLICATION_NAMES.INVENTORY,
             );
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
-            SubjectTypes.verifySubjectTypeExists(subjectTypeNames[0], 'consortium');
+            SubjectTypes.verifySubjectTypeExists({
+              name: firstSubjectType.name,
+              source: firstSubjectType.source,
+              user: firstSubjectType.consortiaUser,
+            });
           },
         );
       });

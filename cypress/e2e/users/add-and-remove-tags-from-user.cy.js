@@ -1,9 +1,11 @@
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
+import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Users', () => {
   let userData;
@@ -15,8 +17,8 @@ describe('Users', () => {
       userData = userProperties;
     });
     cy.loginAsAdmin({
-      path: TopMenu.usersPath,
-      waiter: UsersSearchPane.waitLoading,
+      path: SettingsMenu.tagsGeneralPath,
+      waiter: TagsGeneral.waitLoading,
     });
   });
 
@@ -29,12 +31,14 @@ describe('Users', () => {
     'C9318 Add and remove tags from a user (volaris)',
     { tags: ['criticalPath', 'volaris', 'C9318', 'eurekaPhase1'] },
     () => {
+      TagsGeneral.changeEnableTagsStatus('enable');
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(userData.username);
       UsersCard.openTagsPane();
       UsersCard.addTag(newTag);
       InteractorsTools.checkCalloutMessage('New tag created');
       UsersCard.verifyTagsNumber('1');
-      cy.reload();
       UsersCard.openTagsPane();
       UsersCard.deleteTag(newTag);
       UsersCard.verifyTagsNumber('0');
