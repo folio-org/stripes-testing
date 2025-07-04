@@ -108,6 +108,7 @@ describe('Invoices', () => {
         Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
         Permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
         Permissions.uiInvoicesVoucherExport.gui,
+        Permissions.invoiceSettingsBatchGroupViewEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
