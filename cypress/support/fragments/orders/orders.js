@@ -242,6 +242,7 @@ export default {
     expandActionsDropdown();
     cy.do([
       Button('Unopen').click(),
+      cy.wait(4000),
       Modal({ id: 'order-unopen-confirmation' })
         .find(Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }))
         .click(),

@@ -820,7 +820,7 @@ export default {
     const trySelect = () => {
       return cy
         .get('#organizations-list')
-        .find('a')
+        .find('a[data-test-text-link="true"]')
         .then(($links) => {
           const el = Array.from($links).find((li) => li.textContent.trim() === organizationName);
           if (el) {
@@ -840,6 +840,15 @@ export default {
         });
     };
     return trySelect();
+  },
+
+  selectOrganizationInCurrentPage: (organizationName) => {
+    cy.wait(4000);
+    cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
+    cy.wait(3000);
+    OrganizationDetails.waitLoading();
+
+    return OrganizationDetails;
   },
 
   organizationIsAbsent: (organizationName) => {
@@ -917,11 +926,11 @@ export default {
   },
 
   deleteBankingInformation: () => {
-    cy.do([bankingInformationButton.click()]);
-    cy.get('[data-test-repeatable-field-remove-item-button="true"]', { timeout: 15000 })
-      .first()
-      .click();
-    cy.do(saveAndClose.click());
+    cy.do([
+      bankingInformationButton.click(),
+      Button({ icon: 'trash' }).click(),
+      saveAndClose.click(),
+    ]);
     cy.wait(4000);
   },
 
