@@ -15,8 +15,8 @@ import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
-    describe('Manage shared settings', () => {
-      describe('Manage shared Subject types', () => {
+    describe('View settings', () => {
+      describe('View Subject sources', () => {
         let user;
         let consortiaId;
         const sharedSubjectSource = {

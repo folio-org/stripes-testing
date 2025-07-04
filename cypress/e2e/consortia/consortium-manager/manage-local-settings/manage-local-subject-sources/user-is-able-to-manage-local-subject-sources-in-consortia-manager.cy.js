@@ -17,163 +17,174 @@ import Users from '../../../../../support/fragments/users/users';
 import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('Consortium manager', () => {
-  describe('Manage local settings', () => {
-    describe('Manage local Subject sources', () => {
-      let user;
-      const subjectSource = {
-        name: `C594434 subjectSource_${getRandomPostfix()}`,
-        source: 'local',
-      };
-      const editedSubjectSourceName = `C594434 subjectSource_${getRandomPostfix()} edited`;
-      const canceledSubjectSourceName = `C594434 subjectSource_${getRandomPostfix()}`;
-      const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
+describe('Consortia', () => {
+  describe('Consortium manager', () => {
+    describe('Manage local settings', () => {
+      describe('Manage local Subject sources', () => {
+        let user;
+        const subjectSource = {
+          name: `C594434 subjectSource_${getRandomPostfix()}`,
+          source: 'local',
+        };
+        const editedSubjectSourceName = `C594434 subjectSource_${getRandomPostfix()} edited`;
+        const canceledSubjectSourceName = `C594434 subjectSource_${getRandomPostfix()}`;
+        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
-      before('Create test data', () => {
-        cy.getAdminToken();
-        cy.createTempUser([
-          Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-          Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-        ]).then((userProperties) => {
-          user = userProperties;
-
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
+        before('Create test data', () => {
+          cy.getAdminToken();
+          cy.createTempUser([
+            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
             Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-          ]);
+          ]).then((userProperties) => {
+            user = userProperties;
 
+            cy.assignAffiliationToUser(Affiliations.College, user.userId);
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
+            ]);
+
+            cy.resetTenant();
+            cy.getAdminToken();
+            cy.assignAffiliationToUser(Affiliations.University, user.userId);
+            cy.setTenant(Affiliations.University);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
+            ]);
+            cy.resetTenant();
+
+            cy.login(user.username, user.password);
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
+          });
+        });
+
+        after('Delete users data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          cy.assignAffiliationToUser(Affiliations.University, user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-          ]);
-          cy.resetTenant();
-
-          cy.login(user.username, user.password);
-          ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
+          Users.deleteViaApi(user.userId);
         });
-      });
 
-      after('Delete users data', () => {
-        cy.resetTenant();
-        cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
-      });
+        it(
+          'C594434 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local subjects of selected affiliated tenants in "Consortium manager" app (consortia) (folijet)',
+          { tags: ['criticalPathECS', 'folijet', 'C594434'] },
+          () => {
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+            ConsortiumManager.waitLoading();
+            SelectMembersModal.selectAllMembers();
+            ConsortiumManager.verifyStatusOfConsortiumManager(3);
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumSubjectSources.choose();
+            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
 
-      it(
-        'C594434 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local subjects of selected affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C594434'] },
-        () => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-          ConsortiumManager.waitLoading();
-          SelectMembersModal.selectAllMembers();
-          ConsortiumManager.verifyStatusOfConsortiumManager(3);
-          ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
-          ConsortiumSubjectSources.choose();
-          InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
-
-          ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
-            subjectSource.name,
-          );
-          ConsortiumSubjectSources.confirmSaveForMemberLibraries(
-            subjectSource.name,
-            tenantNames.college,
-            tenantNames.central,
-            tenantNames.university,
-          );
-          ConsortiumSubjectSources.verifyThreeLocalSubjectSourcesExist(
-            subjectSource.name,
-            user.lastName,
-          );
-
-          ConsortiumSubjectSources.editSubjectSourceByTenantName(
-            subjectSource.name,
-            editedSubjectSourceName,
-            subjectSource.source,
-            user.lastName,
-            tenantNames.university,
-          );
-          ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
-            editedSubjectSourceName,
-            tenantNames.university,
-            subjectSource.source,
-            { actions: ['edit', 'trash'] },
-          );
-          ConsortiumSubjectSources.verifyLocalSubjectSourceNotEdited(subjectSource.name);
-          ConsortiumSubjectSources.verifyNewAndSelectMembersButtonsState();
-
-          ConsortiumSubjectSources.deleteSubjectSourceByUserAndTenantNames(
-            subjectSource.name,
-            user.lastName,
-            tenantNames.college,
-          );
-          ConsortiumSubjectSources.verifySubjectSourceWithUserAndTenantNamesAbsent(
-            user.lastName,
-            tenantNames.college,
-          );
-          [tenantNames.central, tenantNames.university].forEach((tenant) => {
-            ConsortiumSubjectSources.verifySubjectSourceWithUserAndTenantNamesExist(
+            ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
+              subjectSource.name,
+            );
+            ConsortiumSubjectSources.confirmSaveForMemberLibraries(
+              subjectSource.name,
+              tenantNames.college,
+              tenantNames.central,
+              tenantNames.university,
+            );
+            ConsortiumSubjectSources.verifyThreeLocalSubjectSourcesExist(
               subjectSource.name,
               user.lastName,
-              tenant,
             );
-          });
 
-          ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
-            canceledSubjectSourceName,
-          );
-          ConsortiumSubjectSources.clickKeepEditingAndVerifyEditMode(
-            canceledSubjectSourceName,
-            subjectSource.source,
-            'No value set-',
-          );
-          ConsortiumSubjectSources.clickCancelButton();
-          ConsortiumSubjectSources.verifySubjectSourceAbsent(canceledSubjectSourceName);
+            ConsortiumSubjectSources.editSubjectSourceByTenantName(
+              subjectSource.name,
+              editedSubjectSourceName,
+              subjectSource.source,
+              user.lastName,
+              tenantNames.university,
+            );
+            ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
+              editedSubjectSourceName,
+              tenantNames.university,
+              subjectSource.source,
+              { actions: ['edit', 'trash'] },
+            );
+            ConsortiumSubjectSources.verifyLocalSubjectSourceNotEdited(subjectSource.name);
+            ConsortiumSubjectSources.verifyNewAndSelectMembersButtonsState();
 
-          ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
-            subjectSource.name,
-            'duplicate',
-          );
-          ConsortiumSubjectSources.clickCancelButton();
+            ConsortiumSubjectSources.deleteSubjectSourceByUserAndTenantNames(
+              subjectSource.name,
+              user.lastName,
+              tenantNames.college,
+            );
+            ConsortiumSubjectSources.verifySubjectSourceWithUserAndTenantNamesAbsent(
+              user.lastName,
+              tenantNames.college,
+            );
+            [tenantNames.central, tenantNames.university].forEach((tenant) => {
+              ConsortiumSubjectSources.verifySubjectSourceWithUserAndTenantNamesExist(
+                subjectSource.name,
+                user.lastName,
+                tenant,
+              );
+            });
 
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
-          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-          SubjectSources.verifySubjectSourceExists(
-            subjectSource.name,
-            subjectSource.source,
-            user.lastName,
-            { actions: ['edit', 'trash'] },
-          );
+            ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
+              canceledSubjectSourceName,
+            );
+            ConsortiumSubjectSources.clickKeepEditingAndVerifyEditMode(
+              canceledSubjectSourceName,
+              subjectSource.source,
+              'No value set-',
+            );
+            ConsortiumSubjectSources.clickCancelButton();
+            ConsortiumSubjectSources.verifySubjectSourceAbsent(canceledSubjectSourceName);
 
-          cy.resetTenant();
-          ConsortiumManagerSettings.switchActiveAffiliation(
-            tenantNames.central,
-            tenantNames.college,
-          );
-          ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.college);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
-          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-          SubjectSources.verifySubjectSourceAbsent(subjectSource.name);
+            ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
+              subjectSource.name,
+              'duplicate',
+            );
+            ConsortiumSubjectSources.clickCancelButton();
 
-          cy.resetTenant();
-          ConsortiumManagerSettings.switchActiveAffiliation(
-            tenantNames.college,
-            tenantNames.university,
-          );
-          ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.university);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
-          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
-          SubjectSources.verifySubjectSourceExists(
-            editedSubjectSourceName,
-            subjectSource.source,
-            user.lastName,
-            { actions: ['edit', 'trash'] },
-          );
-        },
-      );
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SubjectSources.verifySubjectSourceExists(
+              subjectSource.name,
+              subjectSource.source,
+              user.lastName,
+              { actions: ['edit', 'trash'] },
+            );
+
+            cy.resetTenant();
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.central,
+              tenantNames.college,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.college);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SubjectSources.verifySubjectSourceAbsent(subjectSource.name);
+
+            cy.resetTenant();
+            ConsortiumManagerSettings.switchActiveAffiliation(
+              tenantNames.college,
+              tenantNames.university,
+            );
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.university);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
+            SubjectSources.verifySubjectSourceExists(
+              editedSubjectSourceName,
+              subjectSource.source,
+              user.lastName,
+              { actions: ['edit', 'trash'] },
+            );
+          },
+        );
+      });
     });
   });
 });
