@@ -2,6 +2,7 @@
 import { including, matching } from '@interactors/html';
 import {
   Accordion,
+  AppIcon,
   Button,
   Link,
   MultiColumnList,
@@ -457,5 +458,24 @@ export default {
         );
       });
     });
+  },
+
+  clickOnAuthorityLink(value) {
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+    cy.do(
+      MultiColumnListCell({ content: `Linked to MARC authority${value}` })
+        .find(AppIcon({ dataLink: 'authority-app' }))
+        .click(),
+    );
+    cy.get('@windowOpen')
+      .should('have.been.called')
+      .then((stub) => {
+        const openedUrl = stub.args[0][0];
+        expect(openedUrl).to.include('/marc-authorities/authorities/');
+        cy.visit(openedUrl);
+        cy.url().should('include', '/marc-authorities/authorities');
+      });
   },
 };
