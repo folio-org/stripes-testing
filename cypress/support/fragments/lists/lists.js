@@ -792,7 +792,7 @@ const API = {
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"3"}',
+          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"15"}',
         },
         fields: ['users.active', 'user.id'],
       };
@@ -808,9 +808,25 @@ const API = {
         query: {
           entityTypeId: filteredEntityTypeId,
           fqlQuery:
-            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}],"_version":"3"}',
+            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}],"_version":"15"}',
         },
         fields: ['users.active', 'users.id', 'users.username'],
+      };
+    });
+  },
+
+  // supposed to contain big amount of data (on cypress env it approximately contains 6000+ records)
+  buildQueryOnAllInstances() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Instances',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"instance.source":{"$ne":"LINKED_DATA"}}',
+        },
+        fields: ['instance.hrid', 'instance.title', 'instance.instance_type_name', 'instance.source'],
       };
     });
   },
@@ -856,6 +872,36 @@ const API = {
     });
   },
 
+  getListByIdViaApi(listId) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `lists/${listId}`,
+    }).then((response) => {
+      return response.body;
+    });
+  },
+
+  waitForListToCompleteRefreshViaApi(listId) {
+    cy.wait(1000);
+    return recurse(
+      () => this.getListByIdViaApi(listId),
+      (body) => {
+        if (body.inProgressRefresh) {
+          return false;
+        } else if (!body.successRefresh || body.successRefresh.status === 'SUCCESS') {
+          return true;
+        } else {
+          throw new Error('Unknown status of list refresh!');
+        }
+      },
+      {
+        limit: 6,
+        timeout: 30 * 1000,
+        delay: 5000,
+      },
+    );
+  },
+
   getTypesViaApi() {
     return cy.okapiRequest({
       method: 'GET',
@@ -880,6 +926,53 @@ const API = {
         delay: 10000,
       },
     );
+  },
+
+  editViaApi(id, list) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `lists/${id}`,
+      body: list,
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      return response.body;
+    });
+  },
+
+  refreshViaApi(id) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `lists/${id}/refresh`,
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      return response.body;
+    });
+  },
+
+  // input parameter 'fields' should be an array of field names to export
+  // e.g. ['users.active', 'users.id', 'users.username']
+  exportViaApi(id, fields) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `lists/${id}/exports`,
+      body: fields,
+      isDefaultSearchParamsRequired: false,
+    }).then((postExportResponse) => {
+      return cy.okapiRequest({
+        method: 'GET',
+        path: `lists/${id}/exports/${postExportResponse.body.exportId}`,
+        isDefaultSearchParamsRequired: false,
+      }).then((getExportResponse) => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `lists/${id}/exports/${getExportResponse.body.exportId}/download`,
+          failOnStatusCode: false,
+          isDefaultSearchParamsRequired: false,
+        }).then((getDownloadResponse) => {
+          return getDownloadResponse.body;
+        });
+      });
+    });
   },
 
   deleteViaApi(id) {
