@@ -2,16 +2,16 @@ import uuid from 'uuid';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiumManagerApp, {
+import ConsortiumManager, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumManagerSettings from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -22,23 +22,24 @@ describe('Consortia', () => {
         const sharedSubjectType = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
-          memberLibrares: 'All',
+          memberLibraries: 'All',
+          user: 'No set value- ',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibrares: 'Consortium',
+          memberLibraries: 'Consortium',
         };
         const localSubjectTypeOnCollege = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibrares: 'College',
+          memberLibraries: 'College',
         };
         const localSubjectTypeOnUniversity = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibrares: 'University',
+          memberLibraries: 'University',
         };
         const settingsList = Object.values(settingsItems);
 
@@ -59,6 +60,7 @@ describe('Consortia', () => {
           }).then((response) => {
             localSubjectTypeOnCentral.id = response.body.id;
           });
+
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerView.gui,
             Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
@@ -91,6 +93,11 @@ describe('Consortia', () => {
               Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
             ]);
             cy.resetTenant();
+
+            cy.login(user.username, user.password);
+            ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+            ConsortiumManager.waitLoading();
           });
         });
 
@@ -121,72 +128,70 @@ describe('Consortia', () => {
 
         const verifyConsortiumManagerAfterSelectMembersSave = (setting, members) => {
           SelectMembersModal.saveAndClose();
-          ConsortiumManagerApp.waitLoading();
-          ConsortiumManagerApp.verifySettingPaneIsDisplayed();
-          ConsortiumManagerApp.verifyPaneIncludesSettings(setting);
-          ConsortiumManagerApp.verifySelectedSettingIsDisplayed('Subject types');
-          ConsortiumManagerApp.verifyMembersSelected(members);
-          ConsortiumManagerApp.verifySelectMembersButton();
+          ConsortiumManager.waitLoading();
+          ConsortiumManager.verifySettingPaneIsDisplayed();
+          ConsortiumManager.verifyPaneIncludesSettings(setting);
+          ConsortiumManager.verifySelectedSettingIsDisplayed('Subject types');
+          ConsortiumManager.verifyMembersSelected(members);
+          ConsortiumManager.verifySelectMembersButton();
         };
 
         it(
           'C594397 User with "Consortium manager: Can view existing settings" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
           { tags: ['criticalPathECS', 'folijet', 'C594397'] },
           () => {
-            cy.login(user.username, user.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-            ConsortiumManagerApp.waitLoading();
             SelectMembersModal.selectAllMembers();
-            ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+            ConsortiumManager.verifyStatusOfConsortiumManager(3);
+            ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
-              sharedSubjectType.memberLibrares,
               sharedSubjectType.source,
+              sharedSubjectType.user,
+              sharedSubjectType.memberLibraries,
             );
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
-              localSubjectTypeOnCentral.memberLibrares,
+              localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
-              localSubjectTypeOnCollege.memberLibrares,
+              localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
-              localSubjectTypeOnUniversity.memberLibrares,
+              localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
               { actions: ['edit', 'trash'] },
             );
 
-            ConsortiumManagerApp.clickSelectMembers();
+            ConsortiumManager.clickSelectMembers();
             SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
             SelectMembersModal.selectMembers(tenantNames.central);
             verifyFoundMembersAndTotalSelected(3, 2, [tenantNames.college, tenantNames.university]);
             SelectMembersModal.verifyMemberIsSelected(tenantNames.college, true);
             SelectMembersModal.verifyMemberIsSelected(tenantNames.university, true);
             verifyConsortiumManagerAfterSelectMembersSave(settingsList, 2);
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
-              sharedSubjectType.memberLibrares,
               sharedSubjectType.source,
+              sharedSubjectType.user,
+              sharedSubjectType.memberLibraries,
             );
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCentral.name);
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
-              localSubjectTypeOnCollege.memberLibrares,
+              localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectTypes.verifySubjectTypeExists(
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
-              localSubjectTypeOnUniversity.memberLibrares,
+              localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
               { actions: ['edit', 'trash'] },
             );

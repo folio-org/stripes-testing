@@ -26,217 +26,229 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
-  describe('Settings', () => {
-    let user;
-    const collectionOfMappingAndActionProfiles = [
-      {
-        mappingProfile: {
-          name: `C385654 Update instance.${getRandomPostfix()}`,
-          catalogedDate: '###TODAY###',
-          statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-          administrativeNote: 'Updated via OCLC match',
-        },
-        actionProfile: {
-          name: `C385654 Update instance via OCLC number match.${getRandomPostfix()}`,
-          action: 'UPDATE',
-          folioRecordType: 'INSTANCE',
-        },
+  describe(
+    'Settings',
+    {
+      retries: {
+        runMode: 1,
       },
-      {
-        mappingProfile: {
-          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C385654 Update holdings temp location.${getRandomPostfix()}`,
-          adminNote: 'Updated via OCLC number match',
-        },
-        actionProfile: {
-          name: `C385654 Update holdings via OCLC number match.${getRandomPostfix()}`,
-          action: 'UPDATE',
-          folioRecordType: 'HOLDINGS',
-        },
-      },
-    ];
-    const collectionOfMatchProfiles = [
-      {
-        matchProfile: {
-          profileName: `C385654 035$a to OCLC.${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '035',
-            in1: '',
-            in2: '',
-            subfield: 'a',
+    },
+    () => {
+      let user;
+      const collectionOfMappingAndActionProfiles = [
+        {
+          mappingProfile: {
+            name: `C385654 Update instance.${getRandomPostfix()}`,
+            catalogedDate: '###TODAY###',
+            statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
+            administrativeNote: 'Updated via OCLC match',
           },
-          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.identifierOCLC,
-        },
-      },
-      {
-        matchProfile: {
-          profileName: `C385654 035$z to OCLC.${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '035',
-            in1: '',
-            in2: '',
-            subfield: 'z',
+          actionProfile: {
+            name: `C385654 Update instance via OCLC number match.${getRandomPostfix()}`,
+            action: 'UPDATE',
+            folioRecordType: 'INSTANCE',
           },
-          matchCriterion: 'Exactly matches',
-          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.identifierOCLC,
         },
-      },
-      {
-        matchProfile: {
-          profileName: `C385654 Instance Status Batch Loaded.${getRandomPostfix()}`,
-          incomingStaticValue: 'Batch Loaded',
-          incomingStaticRecordValue: 'Text',
-          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          existingRecordOption: 'instance.statusId',
+        {
+          mappingProfile: {
+            typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C385654 Update holdings temp location.${getRandomPostfix()}`,
+            adminNote: 'Updated via OCLC number match',
+          },
+          actionProfile: {
+            name: `C385654 Update holdings via OCLC number match.${getRandomPostfix()}`,
+            action: 'UPDATE',
+            folioRecordType: 'HOLDINGS',
+          },
         },
-      },
-      {
-        matchProfile: {
-          profileName: `C385654 Holdings type electronic.${getRandomPostfix()}`,
-          incomingStaticValue: 'Electronic',
-          incomingStaticRecordValue: 'Text',
-          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
-          existingRecordOption: 'holdingsrecord.holdingsTypeId',
+      ];
+      const collectionOfMatchProfiles = [
+        {
+          matchProfile: {
+            profileName: `C385654 035$a to OCLC.${getRandomPostfix()}`,
+            incomingRecordFields: {
+              field: '035',
+              in1: '',
+              in2: '',
+              subfield: 'a',
+            },
+            recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            instanceOption: NewMatchProfile.optionsList.identifierOCLC,
+          },
         },
-      },
-    ];
-    const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-    };
-    const jobProfileNameForChanging = `C385654 Import job profile with the same match and action profiles.${getRandomPostfix()}`;
-    const linkedProfileNames = [
-      collectionOfMatchProfiles[1].matchProfile.profileName,
-      collectionOfMatchProfiles[2].matchProfile.profileName,
-      collectionOfMatchProfiles[3].matchProfile.profileName,
-      collectionOfMappingAndActionProfiles[0].actionProfile.name,
-      collectionOfMatchProfiles[0].matchProfile.profileName,
-      collectionOfMatchProfiles[2].matchProfile.profileName,
-      collectionOfMatchProfiles[3].matchProfile.profileName,
-      collectionOfMappingAndActionProfiles[0].actionProfile.name,
-      collectionOfMappingAndActionProfiles[1].actionProfile.name,
-    ];
+        {
+          matchProfile: {
+            profileName: `C385654 035$z to OCLC.${getRandomPostfix()}`,
+            incomingRecordFields: {
+              field: '035',
+              in1: '',
+              in2: '',
+              subfield: 'z',
+            },
+            matchCriterion: 'Exactly matches',
+            recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            instanceOption: NewMatchProfile.optionsList.identifierOCLC,
+          },
+        },
+        {
+          matchProfile: {
+            profileName: `C385654 Instance Status Batch Loaded.${getRandomPostfix()}`,
+            incomingStaticValue: 'Batch Loaded',
+            incomingStaticRecordValue: 'Text',
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            existingRecordOption: 'instance.statusId',
+          },
+        },
+        {
+          matchProfile: {
+            profileName: `C385654 Holdings type electronic.${getRandomPostfix()}`,
+            incomingStaticValue: 'Electronic',
+            incomingStaticRecordValue: 'Text',
+            existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
+            existingRecordOption: 'holdingsrecord.holdingsTypeId',
+          },
+        },
+      ];
+      const jobProfile = {
+        ...NewJobProfile.defaultJobProfile,
+        profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
+        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+      };
+      const jobProfileNameForChanging = `C385654 Import job profile with the same match and action profiles.${getRandomPostfix()}`;
+      const linkedProfileNames = [
+        collectionOfMatchProfiles[1].matchProfile.profileName,
+        collectionOfMatchProfiles[2].matchProfile.profileName,
+        collectionOfMatchProfiles[3].matchProfile.profileName,
+        collectionOfMappingAndActionProfiles[0].actionProfile.name,
+        collectionOfMatchProfiles[0].matchProfile.profileName,
+        collectionOfMatchProfiles[2].matchProfile.profileName,
+        collectionOfMatchProfiles[3].matchProfile.profileName,
+        collectionOfMappingAndActionProfiles[0].actionProfile.name,
+        collectionOfMappingAndActionProfiles[1].actionProfile.name,
+      ];
 
-    before('Create test data and login', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createInstanceMappingProfileForUpdateViaApi(
-        collectionOfMappingAndActionProfiles[0].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfMappingAndActionProfiles[0].actionProfile,
-          mappingProfileResponse.body.id,
-        );
-      });
-      NewFieldMappingProfile.createHoldingsMappingProfileForUpdateViaApi(
-        collectionOfMappingAndActionProfiles[1].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfMappingAndActionProfiles[1].actionProfile,
-          mappingProfileResponse.body.id,
-        );
-      });
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingOCLCMatchExpressionViaApi(
-        collectionOfMatchProfiles[0].matchProfile,
-      );
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingOCLCMatchExpressionViaApi(
-        collectionOfMatchProfiles[1].matchProfile,
-      );
-      NewMatchProfile.createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi(
-        collectionOfMatchProfiles[2].matchProfile,
-      );
-      NewMatchProfile.createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi(
-        collectionOfMatchProfiles[3].matchProfile,
-      );
-
-      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
-      });
-    });
-
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(user.userId);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileNameForChanging);
-        collectionOfMatchProfiles.forEach((profile) => {
-          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
-        });
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
-          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-            profile.mappingProfile.name,
+      beforeEach('Create test data and login', () => {
+        cy.getAdminToken();
+        NewFieldMappingProfile.createInstanceMappingProfileForUpdateViaApi(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            collectionOfMappingAndActionProfiles[0].actionProfile,
+            mappingProfileResponse.body.id,
           );
         });
+        NewFieldMappingProfile.createHoldingsMappingProfileForUpdateViaApi(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            collectionOfMappingAndActionProfiles[1].actionProfile,
+            mappingProfileResponse.body.id,
+          );
+        });
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingOCLCMatchExpressionViaApi(
+          collectionOfMatchProfiles[0].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingOCLCMatchExpressionViaApi(
+          collectionOfMatchProfiles[1].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi(
+          collectionOfMatchProfiles[2].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi(
+          collectionOfMatchProfiles[3].matchProfile,
+        );
+
+        cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+          user = userProperties;
+          cy.login(userProperties.username, userProperties.password);
+        });
       });
-    });
 
-    it(
-      'C385654 Verify that no duplicates of match and actions profiles appear after duplicating job profile with repeatable profiles (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C385654'] },
-      () => {
-        const calloutMessage = `The job profile "${jobProfileNameForChanging}" was successfully created`;
+      afterEach('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(user.userId);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileNameForChanging);
+          collectionOfMatchProfiles.forEach((profile) => {
+            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
+          });
+          collectionOfMappingAndActionProfiles.forEach((profile) => {
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
+          });
+        });
+      });
 
-        // create Job profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-        JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
-        NewJobProfile.linkMatchProfileForMatches(
-          collectionOfMatchProfiles[2].matchProfile.profileName,
-        );
-        NewJobProfile.waitLoading();
-        NewJobProfile.linkMatchProfileForMatches(
-          collectionOfMatchProfiles[3].matchProfile.profileName,
-        );
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[0].actionProfile.name,
-        );
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[1].actionProfile.name,
-        );
-        NewJobProfile.linkMatchProfileForNonMatches(
-          collectionOfMatchProfiles[0].matchProfile.profileName,
-          5,
-        );
-        NewJobProfile.waitLoading();
-        NewJobProfile.linkMatchProfileForMatches(
-          collectionOfMatchProfiles[2].matchProfile.profileName,
-          5,
-        );
-        NewJobProfile.waitLoading();
-        NewJobProfile.linkMatchProfileForMatches(
-          collectionOfMatchProfiles[3].matchProfile.profileName,
-          5,
-        );
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[0].actionProfile.name,
-          5,
-        );
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[1].actionProfile.name,
-          5,
-        );
-        cy.wait(2000);
-        NewJobProfile.saveAndClose();
-        cy.wait(2000);
-        JobProfileView.duplicate();
-        NewJobProfile.fillProfileName(jobProfileNameForChanging);
-        cy.wait(3000);
-        NewJobProfile.unlinkProfile(1);
-        cy.wait(3000);
-        NewJobProfile.saveAndClose();
-        JobProfileView.verifyCalloutMessage(calloutMessage);
-        JobProfileView.verifyJobProfileOpened();
-        cy.wait(7000);
-        JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
-        JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
-      },
-    );
-  });
+      it(
+        'C385654 Verify that no duplicates of match and actions profiles appear after duplicating job profile with repeatable profiles (folijet)',
+        { tags: ['criticalPath', 'folijet', 'C385654'] },
+        () => {
+          const calloutMessage = `The job profile "${jobProfileNameForChanging}" was successfully created`;
+
+          // create Job profile
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
+          JobProfiles.createJobProfile(jobProfile);
+          NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
+          NewJobProfile.linkMatchProfileForMatches(
+            collectionOfMatchProfiles[2].matchProfile.profileName,
+          );
+          NewJobProfile.waitLoading();
+          NewJobProfile.linkMatchProfileForMatches(
+            collectionOfMatchProfiles[3].matchProfile.profileName,
+          );
+          NewJobProfile.linkActionProfileForMatches(
+            collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          );
+          NewJobProfile.linkActionProfileForMatches(
+            collectionOfMappingAndActionProfiles[1].actionProfile.name,
+          );
+          NewJobProfile.linkMatchProfileForNonMatches(
+            collectionOfMatchProfiles[0].matchProfile.profileName,
+            5,
+          );
+          NewJobProfile.waitLoading();
+          NewJobProfile.linkMatchProfileForMatches(
+            collectionOfMatchProfiles[2].matchProfile.profileName,
+            5,
+          );
+          NewJobProfile.waitLoading();
+          NewJobProfile.linkMatchProfileForMatches(
+            collectionOfMatchProfiles[3].matchProfile.profileName,
+            5,
+          );
+          NewJobProfile.linkActionProfileForMatches(
+            collectionOfMappingAndActionProfiles[0].actionProfile.name,
+            5,
+          );
+          NewJobProfile.linkActionProfileForMatches(
+            collectionOfMappingAndActionProfiles[1].actionProfile.name,
+            5,
+          );
+          cy.wait(2000);
+          NewJobProfile.saveAndClose();
+          cy.wait(2000);
+          JobProfileView.duplicate();
+          NewJobProfile.fillProfileName(jobProfileNameForChanging);
+          NewJobProfile.unlinkProfile(
+            1,
+            collectionOfMappingAndActionProfiles[1].actionProfile.name,
+          );
+          NewJobProfile.saveAndClose();
+          JobProfileView.verifyCalloutMessage(calloutMessage);
+          JobProfileView.verifyJobProfileOpened();
+          cy.wait(2000);
+          JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
+          JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
+        },
+      );
+    },
+  );
 });

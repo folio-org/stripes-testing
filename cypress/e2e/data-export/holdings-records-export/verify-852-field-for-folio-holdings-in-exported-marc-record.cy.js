@@ -148,7 +148,7 @@ describe('Data Export', () => {
             },
           ];
 
-          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount);
+          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount, false);
         });
       },
     );

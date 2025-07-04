@@ -1,11 +1,29 @@
-import { including } from '@interactors/html';
-import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import {
+  Button,
+  EditableListRow,
+  including,
+  MultiColumnListCell,
+} from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
+import DateTools from '../../../../utils/dateTools';
 
-export const reasonsActions = {
-  edit: 'edit',
-  trash: 'trash',
+const COLUMN_INDEX = {
+  NAME: 0,
+  SOURCE: 1,
+  LAST_UPDATED: 2,
+  ACTIONS: 3,
 };
+
+export const ACTION_BUTTONS = {
+  EDIT: 'edit',
+  TRASH: 'trash',
+};
+
+function getRowIndex(element) {
+  const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+  return Number(rowNumber.slice(4));
+}
+
 export default {
   createViaApi(body) {
     return cy
@@ -15,9 +33,7 @@ export default {
         body,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ response }) => {
-        return response;
-      });
+      .then(({ response }) => response);
   },
 
   deleteViaApi(id) {
@@ -28,36 +44,43 @@ export default {
     });
   },
 
-  verifyCreatedSubjectSource({ name: subjectSourceName, actions = [] }) {
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+  verifySubjectSourceExists(sourceName, source, user, options = {}) {
+    const { actions = [] } = options;
+    const today = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: sourceName });
 
     cy.do(
-      MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
 
         cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectSourceName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: 'consortium' }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: including('by System, System user - mod-consortia-keycloak') }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.NAME }))
+            .has({ content: sourceName }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.SOURCE }))
+            .has({ content: source }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.LAST_UPDATED }))
+            .has({ content: including(`${today} by ${user}`) }),
         ]);
-        Object.values(reasonsActions).forEach((action) => {
+        Object.values(ACTION_BUTTONS).forEach((action) => {
           const buttonSelector = EditableListRow({ index: rowIndex })
             .find(actionsCell)
             .find(Button({ icon: action }));
-          if (actions.includes(action)) {
-            cy.expect(buttonSelector.exists());
-          } else {
-            cy.expect(buttonSelector.absent());
-          }
+          cy.expect(actions.includes(action) ? buttonSelector.exists() : buttonSelector.absent());
         });
       }),
     );
+  },
+
+  verifySubjectSourceAbsent(name) {
+    cy.get('#controlled-vocab-pane')
+      .find(`[class*="mclCell-"]:nth-child(${COLUMN_INDEX.NAME + 1})`)
+      .each(($cell) => {
+        cy.wrap($cell).invoke('text').should('not.eq', name);
+      });
   },
 };

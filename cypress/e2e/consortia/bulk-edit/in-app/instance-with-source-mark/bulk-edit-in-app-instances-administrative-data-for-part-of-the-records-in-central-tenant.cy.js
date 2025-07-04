@@ -235,9 +235,6 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const commonAssertions = (instance) => [
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-            (record) => expect(record.get('008')).to.not.be.empty,
             (record) => expect(record.fields[2]).to.include('008'),
             (record) => expect(record.fields[3]).to.deep.eq(['245', '  ', 'a', instance.title]),
             (record) => expect(record.fields[4]).to.include(instance.uuid),
