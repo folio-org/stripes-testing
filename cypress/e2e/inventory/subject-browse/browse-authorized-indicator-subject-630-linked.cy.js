@@ -110,7 +110,7 @@ describe('Inventory', () => {
 
         // Step 4: Click at "MARC authority" icon next to subject value
         cy.waitForAuthRefresh(() => {
-          BrowseSubjects.clickOnAuthorityLink(authorityHeading);
+          BrowseSubjects.clickOnAuthorityIcon(authorityHeading);
           MarcAuthority.waitLoading();
           cy.reload();
           MarcAuthority.waitLoading();

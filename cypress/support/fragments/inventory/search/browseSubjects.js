@@ -460,7 +460,7 @@ export default {
     });
   },
 
-  clickOnAuthorityLink(value) {
+  clickOnAuthorityIcon(value) {
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen');
     });
