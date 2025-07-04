@@ -41,6 +41,7 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375163*');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -81,10 +82,7 @@ describe('Inventory', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(testData.rowIndex, testData.tag610);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
         });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
