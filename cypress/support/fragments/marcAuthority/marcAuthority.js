@@ -146,7 +146,10 @@ export default {
     cy.do(actionsButton.click());
     cy.do(Button('Delete').click());
   },
-  contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
+  contains: (expectedText, { regexp = false } = {}) => {
+    if (regexp) cy.expect(rootSection.find(HTML(matching(new RegExp(expectedText)))).exists());
+    else cy.expect(rootSection.find(HTML(including(expectedText))).exists());
+  },
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
   checkTagInRow: (rowIndex, tag) => {
     cy.expect(
@@ -501,5 +504,11 @@ export default {
 
   checkActionsButtonEnabled(isEnabled = true) {
     cy.expect(actionsButton.is({ disabled: !isEnabled }));
+  },
+
+  verifyValueHighlighted(value) {
+    cy.expect(
+      rootSection.find(TableCell({ innerHTML: including(`<mark>${value}</mark>`) })).exists(),
+    );
   },
 };
