@@ -6,8 +6,8 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Edit list', () => {
-    const firstUser = {};
-    const secondUser = {};
+    let firstUser = {};
+    let secondUser = {};
     const listData = {
       name: getTestEntityValue('list'),
       recordType: 'Loans',
@@ -24,9 +24,7 @@ describe('Lists', () => {
         Permissions.uiUsersViewLoans.gui,
         Permissions.uiOrganizationsView.gui,
       ]).then((userProperties) => {
-        firstUser.username = userProperties.username;
-        firstUser.password = userProperties.password;
-        firstUser.userId = userProperties.userId;
+        firstUser = userProperties;
       });
       cy.createTempUser([
         Permissions.listsAll.gui,
@@ -36,9 +34,7 @@ describe('Lists', () => {
         Permissions.uiUsersViewLoans.gui,
         Permissions.uiOrganizationsView.gui,
       ]).then((userProperties) => {
-        secondUser.username = userProperties.username;
-        secondUser.password = userProperties.password;
-        secondUser.userId = userProperties.userId;
+        secondUser = userProperties;
       });
     });
 
