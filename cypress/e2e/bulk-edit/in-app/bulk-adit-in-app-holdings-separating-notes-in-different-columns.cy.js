@@ -43,7 +43,7 @@ const initialValueSets = [
   ],
 ];
 const editedValueSets = [
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, ''],
+  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, 'null (staff only) | null'],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, ''],
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -65,6 +65,7 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
           user = userProperties;
