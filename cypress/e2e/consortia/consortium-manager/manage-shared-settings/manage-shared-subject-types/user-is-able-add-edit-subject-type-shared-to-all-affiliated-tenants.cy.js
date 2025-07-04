@@ -25,7 +25,7 @@ describe('Consortia', () => {
           editedName: `C594405 subjectType_${getRandomPostfix()} edited`,
           source: 'consortium',
           memberLibraries: 'All',
-          consortiaUser: 'System, System user - mod-consortia-keycloak',
+          consortiaUser: 'System, System user - mod-consortia-keycloak ',
         };
 
         before('Create user and login', () => {
