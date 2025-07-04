@@ -152,7 +152,7 @@ describe('eHoldings', () => {
           EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
 
           EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
-          EHoldingsPackage.verifyTitleFound('Active and Passive Electronic Components');
+          EHoldingsPackage.verifyTitleFound('Advances in Civil Engineering');
           EHoldingsPackageView.selectTitleRecord();
           EHoldingsTitle.verifySubjectIncludesValue('Engineering');
         });
