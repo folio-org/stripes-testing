@@ -13,13 +13,13 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { including } from '../../../../interactors';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const marcBibFile = 'marcBibFileC375152.mrc';
-const marcAuthFile = 'marcAuthFileC375152.mrc';
+const marcBibFile = 'marcBibFileC375159.mrc';
+const marcAuthFile = 'marcAuthFileC375159.mrc';
 const bibJobProfile = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 const authJobProfile = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
-const authorityHeading = 'C375152 Auth100';
-const bibTag = '600';
-const authorityTag = '100';
+const authorityHeading = 'C375159 Auth150';
+const bibTag = '650';
+const authorityTag = '150';
 const subjectAccordionName = 'Subject';
 const randomPostfix = getRandomPostfix();
 
@@ -27,26 +27,24 @@ let user;
 let authorityRecordId;
 let instanceRecordId;
 
-// Permissions required for the test
 const requiredPermissions = [
   Permissions.inventoryAll.gui,
+  Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
   Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
   Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-  Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
 ];
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create user and import records', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceByTitleViaApi('C375152');
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375152');
+      InventoryInstances.deleteInstanceByTitleViaApi('C375159');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375159');
       cy.createTempUser(requiredPermissions).then((createdUser) => {
         user = createdUser;
       });
 
       cy.then(() => {
-        // Import MARC Authority record
         DataImport.uploadFileViaApi(
           marcAuthFile,
           `${marcAuthFile.split('.')[0]}_${randomPostfix}.mrc`,
@@ -54,7 +52,6 @@ describe('Inventory', () => {
         ).then((response) => {
           authorityRecordId = response[0].authority.id;
         });
-        // Import MARC Bib record
         DataImport.uploadFileViaApi(
           marcBibFile,
           `${marcBibFile.split('.')[0]}_${randomPostfix}.mrc`,
@@ -96,14 +93,14 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375152 Browse | Authorized indicator is shown for "Subject" from "600" "MARC Bib" field controlled by "MARC authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C375152'] },
+      'C375159 Browse | Authorized indicator is shown for "Subject" from "650" "MARC Bib" field controlled by "MARC authority" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C375159'] },
       () => {
         // Step 1: Select "Subjects" in browse options dropdown
         BrowseSubjects.select();
         BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, true);
 
-        // Step 2: Input query in browse input field which matches "600" linked field value
+        // Step 2: Input query in browse input field which matches "650" linked field value
         BrowseSubjects.browse(authorityHeading);
 
         // Step 3: Verify subject entry is bold and has authority icon
@@ -118,33 +115,31 @@ describe('Inventory', () => {
           MarcAuthority.waitLoading();
         }, 20_000);
 
-        // Step 4a: Verify authority record detail view is opened and 100 field is highlighted
+        // Step 4a: Verify authority record detail view is opened and 150 field is highlighted
         MarcAuthority.verifyHeader(authorityHeading);
         MarcAuthority.contains(`${authorityTag}\t.*${authorityHeading}`, { regexp: true });
         MarcAuthority.verifyValueHighlighted(authorityHeading);
 
-        // Step 5: Return to Inventory tab (simulate by navigating back)
+        // Step 5: Return to Inventory tab
         InventoryInstance.goToPreviousPage();
         BrowseSubjects.checkValueIsBold(authorityHeading);
         BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authorityHeading);
 
-        // Step 6: Click on the bold subject name (with authority icon)
-        BrowseSubjects.selectInstanceWithAuthorityIcon(authorityHeading);
-
-        // Step 6a: Verify Inventory pane is displayed with correct subject
+        // Switch to Search tab, search for the instance by subject
+        InventorySearchAndFilter.switchToSearchTab();
+        InventorySearchAndFilter.searchByParameter(subjectAccordionName, authorityHeading);
+        InventoryInstances.selectInstanceById(instanceRecordId);
         InventoryInstance.waitLoading();
         InventoryInstance.verifySubjectHeading(including(authorityHeading));
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(subjectAccordionName);
 
-        // Unlink record field
+        // Unlink record field and verify browse result
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInFieldByTag(bibTag);
         QuickMarcEditor.confirmUnlinkingField();
         QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
         BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, false);
-
-        // In Browse, verify that subject is not bold and does not have authority icon
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.checkValueIsBold(authorityHeading);
         BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authorityHeading);

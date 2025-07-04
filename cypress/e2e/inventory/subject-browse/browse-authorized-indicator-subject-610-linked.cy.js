@@ -11,6 +11,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { including } from '../../../../interactors';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 const marcBibFile = 'marcBibFileC375155.mrc';
 const marcAuthFile = 'marcAuthFileC375155.mrc';
@@ -20,6 +21,7 @@ const authorityHeading = 'C375155 Auth110';
 const bibTag = '610';
 const authorityTag = '110';
 const subjectAccordionName = 'Subject';
+const randomPostfix = getRandomPostfix();
 
 let user;
 let authorityRecordId;
@@ -32,106 +34,116 @@ const requiredPermissions = [
   Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
 ];
 
-describe('Inventory > Subject Browse', () => {
-  before('Create user and import records', () => {
-    cy.getAdminToken();
-    InventoryInstances.deleteInstanceByTitleViaApi('C375155');
-    MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375155');
-    cy.createTempUser(requiredPermissions).then((createdUser) => {
-      user = createdUser;
+describe('Inventory', () => {
+  describe('Subject Browse', () => {
+    before('Create user and import records', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C375155');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375155');
+      cy.createTempUser(requiredPermissions).then((createdUser) => {
+        user = createdUser;
+      });
+
+      cy.then(() => {
+        DataImport.uploadFileViaApi(
+          marcAuthFile,
+          `${marcAuthFile.split('.')[0]}_${randomPostfix}.mrc`,
+          authJobProfile,
+        ).then((response) => {
+          authorityRecordId = response[0].authority.id;
+        });
+        DataImport.uploadFileViaApi(
+          marcBibFile,
+          `${marcBibFile.split('.')[0]}_${randomPostfix}.mrc`,
+          bibJobProfile,
+        ).then((response) => {
+          instanceRecordId = response[0].instance.id;
+        });
+      }).then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventoryInstances.searchByTitle(instanceRecordId);
+        InventoryInstances.selectInstanceById(instanceRecordId);
+        InventoryInstance.editMarcBibliographicRecord();
+        InventoryInstance.verifyAndClickLinkIcon(bibTag);
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        InventoryInstance.searchResults(authorityHeading);
+        MarcAuthority.contains(authorityHeading);
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.checkAfterSaveAndClose();
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+      });
     });
 
-    cy.then(() => {
-      DataImport.uploadFileViaApi(marcAuthFile, marcAuthFile, authJobProfile).then((response) => {
-        authorityRecordId = response[0].authority.id;
-      });
-      DataImport.uploadFileViaApi(marcBibFile, marcBibFile, bibJobProfile).then((response) => {
-        instanceRecordId = response[0].instance.id;
-      });
-    }).then(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      InventoryInstances.searchByTitle(instanceRecordId);
-      InventoryInstances.selectInstanceById(instanceRecordId);
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon(bibTag);
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySelectMarcAuthorityModal();
-      InventoryInstance.searchResults(authorityHeading);
-      MarcAuthority.contains(authorityHeading);
-      InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
-      QuickMarcEditor.checkAfterSaveAndClose();
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      InventorySearchAndFilter.switchToBrowseTab();
+    after('Delete user, records', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      MarcAuthority.deleteViaAPI(authorityRecordId, true);
+      InventoryInstance.deleteInstanceViaApi(instanceRecordId);
     });
+
+    it(
+      'C375155 Browse | Authorized indicator is shown for "Subject" from "610" "MARC Bib" field controlled by "MARC authority" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C375155'] },
+      () => {
+        // Step 1: Select "Subjects" in browse options dropdown
+        BrowseSubjects.select();
+        BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, true);
+
+        // Step 2: Input query in browse input field which matches "610" linked field value
+        BrowseSubjects.browse(authorityHeading);
+
+        // Step 3: Verify subject entry is bold and has authority icon
+        BrowseSubjects.checkValueIsBold(authorityHeading);
+        BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authorityHeading);
+
+        // Step 4: Click at "MARC authority" icon next to subject value
+        cy.waitForAuthRefresh(() => {
+          BrowseSubjects.clickOnAuthorityLink(authorityHeading);
+          MarcAuthority.waitLoading();
+          cy.reload();
+          MarcAuthority.waitLoading();
+        }, 20_000);
+
+        // Step 4a: Verify authority record detail view is opened and 110 field is highlighted
+        MarcAuthority.verifyHeader(authorityHeading);
+        MarcAuthority.contains(`${authorityTag}\t.*${authorityHeading}`, { regexp: true });
+        MarcAuthority.verifyValueHighlighted(authorityHeading);
+
+        // Step 5: Return to Inventory tab
+        InventoryInstance.goToPreviousPage();
+        BrowseSubjects.checkValueIsBold(authorityHeading);
+        BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authorityHeading);
+
+        // Switch to Search tab, search for the instance by subject
+        InventorySearchAndFilter.switchToSearchTab();
+        InventorySearchAndFilter.searchByParameter(subjectAccordionName, authorityHeading);
+        InventoryInstances.selectInstanceById(instanceRecordId);
+        InventoryInstance.waitLoading();
+        InventoryInstance.verifySubjectHeading(including(authorityHeading));
+        InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(subjectAccordionName);
+
+        // Unlink record field and verify browse result
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.clickUnlinkIconInFieldByTag(bibTag);
+        QuickMarcEditor.confirmUnlinkingField();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.checkAfterSaveAndClose();
+        BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, false);
+        InventorySearchAndFilter.switchToBrowseTab();
+        BrowseSubjects.checkValueIsBold(authorityHeading);
+        BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authorityHeading);
+      },
+    );
   });
-
-  after('Delete user', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-    MarcAuthority.deleteViaAPI(authorityRecordId, true);
-    InventoryInstance.deleteInstanceViaApi(instanceRecordId);
-  });
-
-  it(
-    'C375155 Browse | Authorized indicator is shown for "Subject" from "610" "MARC Bib" field controlled by "MARC authority" record (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C375155'] },
-    () => {
-      // Step 1: Select "Subjects" in browse options dropdown
-      BrowseSubjects.select();
-      BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, true);
-
-      // Step 2: Input query in browse input field which matches "610" linked field value
-      BrowseSubjects.browse(authorityHeading);
-
-      // Step 3: Verify subject entry is bold and has authority icon
-      BrowseSubjects.checkValueIsBold(authorityHeading);
-      BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authorityHeading);
-
-      // Step 4: Click at "MARC authority" icon next to subject value
-      cy.waitForAuthRefresh(() => {
-        BrowseSubjects.clickOnAuthorityLink(authorityHeading);
-        MarcAuthority.waitLoading();
-        cy.reload();
-        MarcAuthority.waitLoading();
-      }, 20_000);
-
-      // Step 4a: Verify authority record detail view is opened and 110 field is highlighted
-      MarcAuthority.verifyHeader(authorityHeading);
-      MarcAuthority.contains(`${authorityTag}\t.*${authorityHeading}`, { regexp: true });
-      MarcAuthority.verifyValueHighlighted(authorityHeading);
-
-      // Step 5: Return to Inventory tab
-      InventoryInstance.goToPreviousPage();
-      BrowseSubjects.checkValueIsBold(authorityHeading);
-      BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authorityHeading);
-
-      // Switch to Search tab, search for the instance by subject
-      InventorySearchAndFilter.switchToSearchTab();
-      InventorySearchAndFilter.searchByParameter(subjectAccordionName, authorityHeading);
-      InventoryInstances.selectInstanceById(instanceRecordId);
-      InventoryInstance.waitLoading();
-      InventoryInstance.verifySubjectHeading(including(authorityHeading));
-      InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(subjectAccordionName);
-
-      // Unlink record field and verify browse result
-      InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.clickUnlinkIconInFieldByTag(bibTag);
-      QuickMarcEditor.confirmUnlinkingField();
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
-      QuickMarcEditor.checkAfterSaveAndClose();
-      BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, false);
-      InventorySearchAndFilter.switchToBrowseTab();
-      BrowseSubjects.checkValueIsBold(authorityHeading);
-      BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authorityHeading);
-    },
-  );
 });
