@@ -11,4 +11,5 @@ export const TableCell = HTML.extend('table cell')
   .selector('td')
   .filters({
     innerText: (el) => el.textContent,
+    innerHTML: (el) => el.innerHTML,
   });
