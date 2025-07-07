@@ -43,6 +43,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
+  languages: 'Instance — Languages',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
