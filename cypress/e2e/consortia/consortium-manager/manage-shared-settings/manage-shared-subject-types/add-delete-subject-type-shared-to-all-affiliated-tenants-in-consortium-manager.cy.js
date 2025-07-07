@@ -25,7 +25,7 @@ describe('Consortia', () => {
         const firstSubjectType = {
           name: `C594404 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
-          consortiaUser: 'System, System user - mod-consortia-keycloak',
+          consortiaUser: 'System, System user - mod-consortia-keycloak ',
           memberLbrares: 'All',
         };
         const secondSubjectType = {

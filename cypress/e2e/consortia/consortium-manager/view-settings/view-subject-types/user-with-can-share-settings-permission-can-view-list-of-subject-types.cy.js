@@ -15,29 +15,29 @@ import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
-    describe('Manage shared settings', () => {
-      describe('Manage shared Subject types', () => {
+    describe('View settings', () => {
+      describe('View Subject types', () => {
         let user;
         let consortiaId;
         const sharedSubjectType = {
-          name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'No set value-',
+          user: 'System, System user - mod-consortia-keycloak ',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
-          name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
           memberLibraries: 'Consortium',
         };
         const localSubjectTypeOnCollege = {
-          name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
           memberLibraries: 'College',
         };
         const localSubjectTypeOnUniversity = {
-          name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
           memberLibraries: 'University',
         };
@@ -62,7 +62,7 @@ describe('Consortia', () => {
           });
 
           cy.createTempUser([
-            Permissions.consortiaSettingsConsortiumManagerView.gui,
+            Permissions.consortiaSettingsConsortiumManagerShare.gui,
             Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
           ]).then((createdUserProperties) => {
             user = createdUserProperties;
@@ -120,12 +120,6 @@ describe('Consortia', () => {
           SubjectTypes.deleteViaApi(localSubjectTypeOnUniversity.id);
         });
 
-        const verifyFoundMembersAndTotalSelected = (members, total, tenants) => {
-          SelectMembersModal.verifyMembersFound(members);
-          SelectMembersModal.verifyTotalSelected(total);
-          SelectMembersModal.verifyAvailableTenants(tenants);
-        };
-
         const verifyConsortiumManagerAfterSelectMembersSave = (setting, members) => {
           SelectMembersModal.saveAndClose();
           ConsortiumManager.waitLoading();
@@ -137,8 +131,8 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594397 User with "Consortium manager: Can view existing settings" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594397'] },
+          'C594400 User with "Consortium manager: Can share settings to all members" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
+          { tags: ['criticalPathECS', 'folijet', 'C594400'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(3);
@@ -147,8 +141,9 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
+              'No value set-',
               sharedSubjectType.memberLibraries,
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
@@ -171,30 +166,25 @@ describe('Consortia', () => {
 
             ConsortiumManager.clickSelectMembers();
             SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
-            SelectMembersModal.selectMembers(tenantNames.central);
-            verifyFoundMembersAndTotalSelected(3, 2, [tenantNames.college, tenantNames.university]);
-            SelectMembersModal.verifyMemberIsSelected(tenantNames.college, true);
-            SelectMembersModal.verifyMemberIsSelected(tenantNames.university, true);
-            verifyConsortiumManagerAfterSelectMembersSave(settingsList, 2);
+            SelectMembersModal.checkMember(tenantNames.college, false);
+            SelectMembersModal.checkMember(tenantNames.university, false);
+            SelectMembersModal.verifyMemberIsSelected(tenantNames.central, true);
+            verifyConsortiumManagerAfterSelectMembersSave(settingsList, 1);
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
               sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
-            );
-            ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCentral.name);
-            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
-              localSubjectTypeOnCollege.name,
-              localSubjectTypeOnCollege.memberLibraries,
-              localSubjectTypeOnCollege.source,
               { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
-              localSubjectTypeOnUniversity.name,
-              localSubjectTypeOnUniversity.memberLibraries,
-              localSubjectTypeOnUniversity.source,
+              localSubjectTypeOnCentral.name,
+              localSubjectTypeOnCentral.memberLibraries,
+              localSubjectTypeOnCentral.source,
               { actions: ['edit', 'trash'] },
             );
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCollege.name);
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnUniversity.name);
           },
         );
       });
