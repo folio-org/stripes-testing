@@ -1,14 +1,13 @@
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -60,16 +59,12 @@ describe('Inventory', () => {
 
     it(
       'C422086 (CONSORTIA) Verify the link in Data export app after exporting shared MARC Source Instance from Instance details pane on Central tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet', 'C422086'] },
+      { tags: ['extendedPathECS', 'folijet', 'C422086'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
-        InventorySearchAndFilter.closeInstanceDetailPane();
-        InventorySearchAndFilter.selectResultCheckboxes(1);
-        InventorySearchAndFilter.verifySelectedRecords(1);
-        InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        ExportFile.waitLandingPageOpened();
+        InstanceRecordView.exportInstanceMarc();
+        cy.visit(TopMenu.dataExportPath);
+        cy.wait(1000);
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
           ExportFile.downloadExportedMarcFile(name);
