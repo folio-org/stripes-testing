@@ -599,6 +599,14 @@ export default {
     cy.expect(instanceAdministrativeNote.find(HTML(including(note))).exists());
   },
 
+  verifyInstaneceAdministrativeNoteByRow: (note, rowIndex = 0) => {
+    cy.expect(
+      instanceAdministrativeNote
+        .find(MultiColumnListCell({ row: rowIndex, content: including(note) }))
+        .exists(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
