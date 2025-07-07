@@ -13,7 +13,8 @@ export default {
     cy.expect(HTML(including(itemBarcode)).exists());
   },
   chooseItemReturnedByPatron() {
-    cy.do([returnedByPatronButton.exists(), returnedByPatronButton.click()]);
+    cy.wait(2000);
+    cy.get('button').contains('Returned by patron').click();
   },
   chooseItemReturnedByLibrary() {
     cy.do([foundByLibraryButton.exists(), foundByLibraryButton.click()]);
