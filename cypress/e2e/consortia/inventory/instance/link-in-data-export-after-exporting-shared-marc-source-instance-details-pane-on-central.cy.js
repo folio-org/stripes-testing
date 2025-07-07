@@ -51,6 +51,7 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       FileManager.deleteFileFromDownloadsByMask(testData.fileName);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
+      FileManager.deleteFileFromDownloadsByMask('*.csv');
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
