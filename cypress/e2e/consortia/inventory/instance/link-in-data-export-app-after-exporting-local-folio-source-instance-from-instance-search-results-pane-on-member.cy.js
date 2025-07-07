@@ -61,7 +61,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
+
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.waitLandingPageOpened();
         ExportFile.getExportedFileNameViaApi().then((name) => {
