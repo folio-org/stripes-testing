@@ -23,6 +23,7 @@ import {
   Option,
   or,
   Pane,
+  Popover,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -220,6 +221,16 @@ export default {
 
   deleteRow(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
+  },
+
+  deleteRowInBulkEditMarcInstancesAccordion(rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('marcFieldRow-') }))
+        .find(deleteBtn)
+        .click(),
+    );
   },
 
   deleteRowBySelectedOption(option) {
@@ -825,7 +836,8 @@ export default {
 
   fillInFirstTextArea(oldItem, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .fillIn(oldItem),
     );
@@ -890,8 +902,14 @@ export default {
   findValue(type, rowIndex = 0) {
     cy.wait(2000);
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.valueType)
+        .choose(type),
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.action)
+        .choose('Find'),
     ]);
   },
 
@@ -2095,5 +2113,31 @@ export default {
   addSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Add', rowIndex);
     this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
+  },
+
+  clickInfoIconNextToSubfieldAndVerifyText(rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl).find('[class*="subfield-"]').eq(0).find('button[icon="info"]')
+            .click();
+        }),
+    );
+    cy.expect(Popover({ content: 'This field is protected.' }).exists());
+  },
+
+  verifyThereIsNoInfoIconNextToSubfield(rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subfield-"]')
+            .eq(0)
+            .find('button[icon="info"]')
+            .should('not.exist');
+        }),
+    );
   },
 };

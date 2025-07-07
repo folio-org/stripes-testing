@@ -127,11 +127,12 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteItemViaApi(itemId) {
+  deleteItemViaApi(itemId, ignoreErrors = true) {
     cy.okapiRequest({
       method: 'DELETE',
       path: `inventory/items/${itemId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   addItemToHoldingViaApi({

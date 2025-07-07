@@ -45,7 +45,7 @@ const initialValueSets = [
 ];
 const editedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, ''],
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, ''],
+  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, null],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, noteText],
 ];
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
@@ -241,7 +241,11 @@ describe('Bulk-edit', () => {
           instance.holdingHRID,
         );
 
-        editedValueSets.forEach((editedValueSet) => {
+        [
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, 'null'],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, noteText],
+        ].forEach((editedValueSet) => {
           BulkEditSearchPane.verifyExactChangesUnderColumns(...editedValueSet);
         });
 
@@ -256,7 +260,7 @@ describe('Bulk-edit', () => {
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.checkAdministrativeNote('-');
         HoldingsRecordView.checkNotesByType(0, HOLDING_NOTE_TYPES.COPY_NOTE, noteText);
-        HoldingsRecordView.checkHoldingNoteTypeAbsent(HOLDING_NOTE_TYPES.REPRODUCTION, noteText);
+        HoldingsRecordView.checkNotesByType(1, HOLDING_NOTE_TYPES.REPRODUCTION, '-');
       },
     );
   });

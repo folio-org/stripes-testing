@@ -109,7 +109,7 @@ describe('Invoices', () => {
         });
         defaultOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
-        Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
+        Orders.createApprovedOrderForRollover(defaultOrder, false, false).then(
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
             orderNumber = firstOrderResponse.poNumber;

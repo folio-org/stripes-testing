@@ -145,7 +145,8 @@ describe('Invoices', () => {
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.approveAndPayInvoice();
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
     },
   );
 });

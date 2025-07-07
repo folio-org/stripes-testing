@@ -7,7 +7,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { folioSubjectTypes } from '../../../../support/fragments/settings/inventory/instances/subjectTypes';
+import { FOLIO_SUBJECT_TYPES } from '../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -67,7 +67,7 @@ describe('Inventory', () => {
         BrowseSubjects.verifyAccordionStatusByName(testData.accordionName, false);
         BrowseSubjects.expandAccordion(testData.accordionName);
         BrowseSubjects.verifyAccordionStatusByName(testData.accordionName, true);
-        BrowseSubjects.verifySubjectTypeDropdownOptions(folioSubjectTypes);
+        BrowseSubjects.verifySubjectTypeDropdownOptions(FOLIO_SUBJECT_TYPES);
       },
     );
   });

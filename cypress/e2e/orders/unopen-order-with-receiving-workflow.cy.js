@@ -143,7 +143,7 @@ describe('Orders', () => {
         OrderLines.editPOLInOrder();
 
         // Change "Receipt status" to "Receipt not required" in "PO line details" accordion
-        OrderLines.fillPOLineDetails({ receiptStatus: 'Receipt not required' });
+        OrderLines.fillPOLineDetails({ receiptStatus: 'Partially received' });
 
         // Click "Save & close" button
         OrderLines.saveOrderLine();
