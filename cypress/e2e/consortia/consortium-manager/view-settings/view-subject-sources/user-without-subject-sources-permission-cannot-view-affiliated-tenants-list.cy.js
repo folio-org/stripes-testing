@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -11,6 +12,7 @@ import ConsortiumManagerSettings from '../../../../../support/fragments/settings
 import SubjectSources from '../../../../../support/fragments/settings/inventory/instances/subjectSources';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -20,25 +22,29 @@ describe('Consortia', () => {
         let user;
         let consortiaId;
         const sharedSubjectSource = {
-          name: `C594420 autotestSubjectSourceName${getRandomPostfix()}`,
+          name: `C594422 autotestSubjectSourceName${getRandomPostfix()}`,
+          source: 'consortium',
+          memberLibraries: 'All',
+          user: 'No set value-',
           id: uuid(),
         };
         const localSubjectSourceOnCentral = {
-          name: `C594420 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594422 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
           memberLibraries: 'Consortium',
         };
         const localSubjectSourceOnCollege = {
-          name: `C594420 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594422 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
           memberLibraries: 'College',
         };
         const localSubjectSourceOnUniversity = {
-          name: `C594420 autotestSubjectTypeName${getRandomPostfix()}`,
+          name: `C594422 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
           memberLibraries: 'University',
         };
         const settingsList = Object.values(settingsItems);
+        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create test data and login', () => {
           cy.getAdminToken();
@@ -60,6 +66,7 @@ describe('Consortia', () => {
 
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerView.gui,
+            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
             Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
           ]).then((createdUserProperties) => {
             user = createdUserProperties;
@@ -72,13 +79,9 @@ describe('Consortia', () => {
             }).then((response) => {
               localSubjectSourceOnCollege.id = response.body.id;
             });
-            cy.assignPermissionsToExistingUser(user.userId, [
-              Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-            ]);
-
+            cy.assignPermissionsToExistingUser(user.userId, [Permissions.uiOrdersView.gui]);
             cy.resetTenant();
             cy.getAdminToken();
-            cy.assignAffiliationToUser(Affiliations.University, user.userId);
             cy.setTenant(Affiliations.University);
             SubjectSources.createViaApi({
               source: localSubjectSourceOnUniversity.source,
@@ -86,9 +89,6 @@ describe('Consortia', () => {
             }).then((response) => {
               localSubjectSourceOnUniversity.id = response.body.id;
             });
-            cy.assignPermissionsToExistingUser(user.userId, [
-              Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-            ]);
             cy.resetTenant();
 
             cy.login(user.username, user.password);
@@ -117,12 +117,6 @@ describe('Consortia', () => {
           SubjectSources.deleteViaApi(localSubjectSourceOnUniversity.id);
         });
 
-        const verifyFoundMembersAndTotalSelected = (members, total, tenants) => {
-          SelectMembersModal.verifyMembersFound(members);
-          SelectMembersModal.verifyTotalSelected(total);
-          SelectMembersModal.verifyAvailableTenants(tenants);
-        };
-
         const verifyConsortiumManagerAfterSelectMembersSave = (setting, members) => {
           SelectMembersModal.saveAndClose();
           ConsortiumManager.waitLoading();
@@ -134,13 +128,15 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594420 User with "Consortium manager: Can view existing settings" permission is able to view the list of subject sources of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594420'] },
+          'C594422 User without "inventory-storage.subject-sources.collection.get" permission is NOT able to view the list of subject sources of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
+          { tags: ['criticalPathECS', 'folijet', 'C594422'] },
           () => {
             SelectMembersModal.selectAllMembers();
-            ConsortiumManager.verifyStatusOfConsortiumManager(3);
+            ConsortiumManager.verifyStatusOfConsortiumManager(2);
+            ConsortiumManager.verifyChooseSettingsIsDisplayed();
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectSources.choose();
+            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: sharedSubjectSource.name,
             });
@@ -150,41 +146,15 @@ describe('Consortia', () => {
               localSubjectSourceOnCentral.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
-              localSubjectSourceOnCollege.name,
-              localSubjectSourceOnCollege.memberLibraries,
-              localSubjectSourceOnCollege.source,
-              { actions: ['edit', 'trash'] },
-            );
-            ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
-              localSubjectSourceOnUniversity.name,
-              localSubjectSourceOnUniversity.memberLibraries,
-              localSubjectSourceOnUniversity.source,
-              { actions: ['edit', 'trash'] },
-            );
+            ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnCollege.name);
+            ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnUniversity.name);
 
             ConsortiumManager.clickSelectMembers();
-            SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
+            SelectMembersModal.verifyStatusOfSelectMembersModal(2, 2, true);
             SelectMembersModal.selectMembers(tenantNames.central);
-            verifyFoundMembersAndTotalSelected(3, 2, [tenantNames.college, tenantNames.university]);
-            verifyConsortiumManagerAfterSelectMembersSave(settingsList, 2);
-
-            ConsortiumSubjectSources.verifySharedSubjectSourceExists({
-              name: sharedSubjectSource.name,
-            });
-            ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnCentral.name);
-            ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
-              localSubjectSourceOnCollege.name,
-              localSubjectSourceOnCollege.memberLibraries,
-              localSubjectSourceOnCollege.source,
-              { actions: ['edit', 'trash'] },
-            );
-            ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
-              localSubjectSourceOnUniversity.name,
-              localSubjectSourceOnUniversity.memberLibraries,
-              localSubjectSourceOnUniversity.source,
-              { actions: ['edit', 'trash'] },
-            );
+            SelectMembersModal.selectMembers(tenantNames.college);
+            verifyConsortiumManagerAfterSelectMembersSave(settingsList, 0);
+            ConsortiumSubjectSources.verifySubjectSourcesListIsEmpty();
           },
         );
       });
