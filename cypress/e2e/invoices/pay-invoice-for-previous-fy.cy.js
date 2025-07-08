@@ -415,7 +415,6 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
           // Click "Save & close" button
           InvoiceEditForm.clickSaveButton({ invoiceCreated: true, invoiceLineCreated: true });
-
           // Fiscal year" field is specified with previous "Fiscal year #1"
           InvoiceView.checkInvoiceDetails({
             title: testData.invoice.vendorInvoiceNo,

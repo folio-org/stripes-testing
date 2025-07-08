@@ -23,6 +23,7 @@ const expenseClassSection = budgetPane.find(Section({ id: 'expense-classes' }));
 
 export default {
   waitLoading() {
+    cy.wait(4000);
     cy.expect(budgetPane.exists());
   },
   checkBudgetDetails({ summary = [], information = [], balance = {}, expenseClass } = {}) {
