@@ -34,7 +34,7 @@ describe('Specification Storage - Create Field API', () => {
   afterEach('Cleanup: delete field', () => {
     cy.getAdminToken();
     if (fieldId) {
-      cy.deleteSpecificationField(fieldId);
+      cy.deleteSpecificationField(fieldId, false);
     }
   });
 
@@ -87,6 +87,30 @@ describe('Specification Storage - Create Field API', () => {
           specificationId: bibSpecId,
           scope: 'local',
         });
+      });
+    },
+  );
+
+  it(
+    'C490928 Create Local Field with duplicate "label" for MARC bib spec (API)',
+    { tags: ['C490928', 'criticalPath', 'spitfire'] },
+    () => {
+      const labels = ['Control Number', 'Title Statement', 'Local'];
+      labels.forEach((label) => {
+        const payload = {
+          ...createFieldPayload,
+          label,
+        };
+        cy.getUserToken(user.username, user.password);
+        cy.createSpecificationField(bibSpecId, payload)
+          .then((response) => {
+            expect(response.status).to.eq(201);
+            const respBody = response.body;
+            fieldId = respBody.id;
+          })
+          .then(() => {
+            cy.deleteSpecificationField(fieldId);
+          });
       });
     },
   );
