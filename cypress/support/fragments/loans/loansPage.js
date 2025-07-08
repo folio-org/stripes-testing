@@ -72,7 +72,7 @@ export default {
     return cy.expect(claimReturnedButton.exists());
   },
   claimReturnedButtonIsDisabled() {
-    return cy.expect(claimReturnedButton.absent());
+    return cy.expect(Button({ text: 'Claim returned', visible: true }).absent());
   },
   claimResolveButtonIsAbsent() {
     return cy.expect(resolveClaimButton.absent());
@@ -116,7 +116,12 @@ export default {
     cy.expect(KeyValue('Item status', { value: itemStatus }).exists());
   },
   checkClaimReturnedDateTime() {
-    cy.expect(KeyValue('Claimed returned', { value: matching(/\d{1,2}:\d{2}\s\w{2}/gm) }).exists());
+    cy.expect(
+      MultiColumnListRow({
+        indexRow: 'row-0',
+        content: matching(/\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)/),
+      }).exists(),
+    );
   },
   verifyExportFileName(actualName) {
     const expectedFileNameMask = /export\.csv/gm;
