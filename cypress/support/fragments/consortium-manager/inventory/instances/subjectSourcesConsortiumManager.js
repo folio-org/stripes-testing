@@ -47,7 +47,6 @@ function clickSaveButton() {
   cy.do(saveButton.click());
 }
 
-// using in C594434
 function clickCancelButton() {
   cy.do(cancelButton.click());
 }
@@ -116,7 +115,7 @@ export default {
       cy.expect(MultiColumnListHeader(header).exists());
     });
   },
-  // using in C594429
+
   createSharedWithAllMembersSubjectSourceWithValidationNameField(name, nameValidationState) {
     clickNewButton();
     this.verifyNewRecordRowBeforeFilling(false);
@@ -135,7 +134,7 @@ export default {
       cy.wait(1000);
     }
   },
-  // using in C594429
+
   createSharedWithAllMembersSubjectSourceAndCancel(name) {
     clickNewButton();
     fillNameField(name);
@@ -144,7 +143,7 @@ export default {
     cy.wait(1500);
     cy.expect(rootPane.exists());
   },
-  // using in C594434
+
   createLocalSubjectSourceSavedForMemberLibraries(name, isUniqueName = true) {
     clickNewButton();
     this.verifyNewRecordRowBeforeFilling(true);
@@ -156,7 +155,7 @@ export default {
     cy.expect(shareCheckbox.has({ checked: false, disabled: true }));
     clickSaveButton();
   },
-  // using in C594434
+
   clickKeepEditingAndVerifyEditMode(
     name,
     source,
@@ -175,7 +174,6 @@ export default {
     );
   },
 
-  // using in C594428
   createSharedWithAllMembersSubjectSource(subjectSourceName) {
     clickNewButton();
     this.verifyNewRecordRowBeforeFilling();
@@ -184,7 +182,7 @@ export default {
     cy.expect(shareCheckbox.has({ checked: true }));
     clickSaveButton();
   },
-  // using in C594428, C594429
+
   confirmShareWithAllMembers(subjectSourceName, state = 'created') {
     ConfirmShareModal.waitLoadingConfirmShareToAll(subjectSourceName);
     ConfirmShareModal.clickConfirm();
@@ -197,7 +195,7 @@ export default {
 
     InteractorsTools.checkCalloutMessage(message);
   },
-  // using in C594434
+
   confirmSaveForMemberLibraries(subjectSourceName, firstTenant, secondTenant, thirdTenant) {
     ConfirmCreateModal.waitLoadingConfirmCreate(subjectSourceName);
     ConfirmCreateModal.clickConfirm();
@@ -206,6 +204,7 @@ export default {
     );
     cy.expect(rootPane.exists());
   },
+
   createSharedSubjectSourceViaApi(typeId, name, consortiaId) {
     return cy.okapiRequest({
       method: 'POST',
@@ -222,7 +221,7 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
-  // using in C594429
+
   getSubjectSourceIdViaApi(name, consortiaId) {
     return cy
       .okapiRequest({
@@ -249,7 +248,7 @@ export default {
           });
       });
   },
-  // using in C594429
+
   deleteViaApi(publicationId, name, consortiaId) {
     cy.okapiRequest({
       method: 'DELETE',
@@ -266,6 +265,7 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
   deleteSubjectSourceByName(name) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text.includes(name)).then((rowIndex) => {
       cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex[0]}"]`)
@@ -273,17 +273,19 @@ export default {
         .click();
     });
   },
+
   cancelDelitionOfSubjectSource(name) {
     DeleteCancelReason.waitLoadingDeleteModal('subject source', name);
     DeleteCancelReason.clickCancel();
   },
+
   confirmDeletionOfSubjectSource(name) {
     DeleteCancelReason.waitLoadingDeleteModal('subject source', name);
     DeleteCancelReason.clickDelete();
     cy.expect(rootPane.exists());
     InteractorsTools.checkCalloutMessage(`The subject source ${name} was successfully deleted.`);
   },
-  // using in C594434
+
   deleteSubjectSourceByUserAndTenantNames(name, userName, tenantName) {
     cy.wait(1500);
 
@@ -304,7 +306,7 @@ export default {
       },
     );
   },
-  // using in C594428
+
   editSubjectSource(name, newName, source, userName) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text.includes(name)).then((rowIndex) => {
       cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex[0]}"]`)
@@ -317,7 +319,7 @@ export default {
     clickSaveButton();
     this.confirmShareWithAllMembers(newName, 'updated');
   },
-  // using in C594434
+
   editSubjectSourceByTenantName(name, newName, source, userName, tenantName) {
     getRowIndexesByColumnValue(columnIndex.lastUpdated, (text) => text.includes(userName)).then(
       (rowIndexes) => {
@@ -333,6 +335,7 @@ export default {
       including(`${newName} was successfully updated for ${tenantName} library.`),
     );
   },
+
   validateNameFieldWithError(message) {
     cy.expect([
       nameField.has({ error: message }),
@@ -341,7 +344,7 @@ export default {
     ]);
     cy.wait(1000);
   },
-  // using in C594434
+
   verifyLocalSubjectSourceNotEdited(name) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text.includes(name)).then(
       (rowIndexes) => {
@@ -357,7 +360,7 @@ export default {
       },
     );
   },
-  // using in C594434
+
   verifyColumnAndClickEdit(rowIndexes, searchValue) {
     let foundRowIndex;
 
@@ -383,7 +386,7 @@ export default {
         return foundRowIndex;
       });
   },
-  // using in C594428
+
   verifyEditedSubjectSourceRow(name, source, userName, rowIndex) {
     cy.expect([
       TextField({ name: `items[${rowIndex}].name` }).has({ value: name, disabled: false }),
@@ -402,7 +405,7 @@ export default {
       selectMembersButton.has({ disabled: true }),
     ]);
   },
-  // using in C594428, C594434
+
   verifyNewRecordRowBeforeFilling(isShareCheckboxDisabled = false) {
     const row = EditableListRow({ index: 0 });
 
@@ -419,7 +422,7 @@ export default {
       saveButton.has({ disabled: false }),
     ]);
   },
-  // using in C594434
+
   verifyNewSubjectSourceRowIsInEditMode(
     name,
     source,
@@ -441,7 +444,6 @@ export default {
     ]);
   },
 
-  // using in C594428, C594429
   verifySharedSubjectSourceExists({ name: subjectSourceName, actions = [] }) {
     cy.do(
       MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
@@ -455,9 +457,9 @@ export default {
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: columnIndex.source }))
             .has({ content: 'consortium' }),
-          // EditableListRow({ index: rowIndex })
-          //   .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
-          //   .has({ content: including('System, System user - mod-consortia-keycloak ') }),
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
+            .has({ content: including('System, System user - mod-consortia-keycloak ') }),
           EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: columnIndex.memberLibraries }))
             .has({ content: 'All' }),
@@ -472,14 +474,14 @@ export default {
       }),
     );
   },
-  // using in C594428
+
   verifySubjectSourcesListIsEmpty() {
     cy.expect([
       rootPane.has({ text: including('The list contains no items') }),
       rootPane.find(newButton).absent(),
     ]);
   },
-  // using in C594434
+
   verifyThreeLocalSubjectSourcesExist(subjectSourceName, userName) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const allowedSources = [tenantNames.central, tenantNames.college, tenantNames.university];
@@ -531,7 +533,7 @@ export default {
       },
     );
   },
-  // using in C594434
+
   verifyLocalSubjectSourceExists(subjectSourceName, tenantName, source = 'local', options = {}) {
     const { actions = [] } = options;
 
@@ -561,7 +563,7 @@ export default {
       }),
     );
   },
-  // using in C594434
+
   verifyNewAndSelectMembersButtonsState(
     newButtonDisabled = false,
     selectMembersButtonDisabled = false,
@@ -569,7 +571,7 @@ export default {
     cy.expect(newButton.has({ disabled: newButtonDisabled }));
     cy.expect(selectMembersButton.has({ disabled: selectMembersButtonDisabled }));
   },
-  // using in C594434
+
   verifySubjectSourceWithUserAndTenantNamesExist(sourceName, userName, tenantName) {
     cy.get('#editList-subjectsources').should('exist');
 
@@ -598,7 +600,6 @@ export default {
     );
   },
 
-  // using in C594434
   verifySubjectSourceWithUserAndTenantNamesAbsent(userName, tenantName) {
     cy.get('#editList-subjectsources').should('exist');
 
@@ -617,6 +618,7 @@ export default {
       },
     );
   },
+
   verifySubjectSourceAbsent(name) {
     cy.get('#editList-subjectsources')
       .find('[class*="mclCell-"]:nth-child(1)')

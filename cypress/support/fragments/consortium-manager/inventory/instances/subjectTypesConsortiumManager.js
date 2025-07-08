@@ -189,6 +189,25 @@ function getRowIndexesByColumnValue(columnIdx, matcher) {
     .then(() => rowIndexes);
 }
 
+function getAllSubjectTypeRowIndexesByName(subjectTypeName) {
+  const matchingIndexes = [];
+
+  return cy
+    .get('#editList-subjecttypes')
+    .find('[data-row-index]')
+    .each(($row) => {
+      const $cells = $row.find('[class*="mclCell-"]');
+      const nameCellText = $cells.eq(columnIndex.name).text().trim();
+
+      if (nameCellText === subjectTypeName) {
+        const rowAttr = $row.attr('data-row-index');
+        const index = rowAttr?.replace(/^row-/, '');
+        if (index !== undefined) matchingIndexes.push(index);
+      }
+    })
+    .then(() => matchingIndexes);
+}
+
 export default {
   clickNewButton,
   clickSaveButton,
@@ -204,7 +223,6 @@ export default {
     });
   },
 
-  // using in C594406
   createSharedWithAllMembersSubjectTypeWithValidationNameField(name, nameValidationState) {
     enableShareCheckbox();
     fillNameField(name);
@@ -222,7 +240,6 @@ export default {
     }
   },
 
-  // using in C594406, C594404
   validateNameFieldWithError(message) {
     cy.expect([
       nameField.has({ error: message }),
@@ -232,7 +249,6 @@ export default {
     cy.wait(1000);
   },
 
-  // using in C594404, C594405
   createSubjectTypeSharedWithAllMembers(name) {
     clickNewButton();
     this.verifyNewRecordRowBeforeFilling();
@@ -242,7 +258,6 @@ export default {
     clickSaveButton();
   },
 
-  // using in C594411
   createLocalSubjectTypeSavedForMemberLibraries(name, isUniqueSubjectTypeName = true) {
     clickNewButton();
     this.verifyNewRecordRowBeforeFilling(true);
@@ -255,7 +270,6 @@ export default {
     clickSaveButton();
   },
 
-  // using in C594406
   createSharedWithAllMembersSubjectTypeAndCancel(subjectTypeName, isUniqueSubjectTypeName = true) {
     clickNewButton();
     fillNameField(subjectTypeName);
@@ -270,7 +284,6 @@ export default {
     cy.expect(rootPane.exists());
   },
 
-  // using in C594411
   confirmSaveForMemberLibraries(subjectTypeName, firstTenant, secondTenant, thirdTenant) {
     ConfirmCreateModal.waitLoadingConfirmCreate(subjectTypeName);
     ConfirmCreateModal.clickConfirm();
@@ -280,7 +293,6 @@ export default {
     cy.expect(rootPane.exists());
   },
 
-  // using in C594406, C594404, C594405
   confirmShareWithAllMembers(subjectTypeName, subjectTypeState = 'created') {
     ConfirmShareModal.waitLoadingConfirmShareToAll(subjectTypeName);
     ConfirmShareModal.clickConfirm();
@@ -292,7 +304,6 @@ export default {
     );
   },
 
-  // using in C594411
   editSubjectTypeByTenantName(name, newName, userName, tenantName) {
     getRowIndexesByColumnValue(columnIndex.lastUpdated, (text) => text.includes(userName)).then(
       (rowIndexes) => {
@@ -309,7 +320,6 @@ export default {
     );
   },
 
-  // using in C594405
   editSharedToAllRecord(name, newName, userName, source) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then(([index]) => {
       this.clickEditByName(name);
@@ -320,14 +330,12 @@ export default {
     clickSaveButton();
   },
 
-  // using in C594404, C594411
   cancel() {
     cy.do(cancelButton.click());
     newButton.has({ disabled: true });
     selectMembersButton.has({ disabled: true });
   },
 
-  // using in C594411
   deleteSubjectTypeByUserAndTenantNames(name, userName, tenantName) {
     cy.wait(1500);
     getRowIndexesByColumnValue(columnIndex.lastUpdated, (text) => text.includes(userName)).then(
@@ -347,7 +355,7 @@ export default {
     cy.expect(rootPane.exists());
     InteractorsTools.checkCalloutMessage(`The subject type ${name} was successfully deleted.`);
   },
-  // using in C594404
+
   deleteBySubjectTypeName(name) {
     this.clickDeleteByName(name);
     DeleteCancelReason.waitLoadingDeleteModal('subject type', name);
@@ -356,7 +364,6 @@ export default {
     InteractorsTools.checkCalloutMessage(`The subject type ${name} was successfully deleted.`);
   },
 
-  // using in C594404
   clickDeleteByName(name) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then(([index]) => {
       cy.get(`#editList-subjecttypes [data-row-index="row-${index}"]`)
@@ -365,7 +372,6 @@ export default {
     });
   },
 
-  // using in C594405
   clickEditByName(name) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then(([index]) => {
       cy.get(`#editList-subjecttypes [data-row-index="row-${index}"]`)
@@ -373,7 +379,7 @@ export default {
         .click();
     });
   },
-  // using in C594397
+
   createSharedSubjectTypeViaApi(typeId, subjectTypeName, consortiaId) {
     return cy.okapiRequest({
       method: 'POST',
@@ -390,7 +396,7 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
-  // using in C594397
+
   deleteSharedSubjectTypeViaApi(consortiaId, id, subjectTypeName) {
     cy.okapiRequest({
       method: 'DELETE',
@@ -405,7 +411,6 @@ export default {
     });
   },
 
-  // using in C594406, C594411
   verifyNewSubjectTypeRowIsInEditMode(
     subjectTypeName,
     isCheckboxChecked = true,
@@ -424,7 +429,7 @@ export default {
       saveButton.has({ disabled: false }),
     ]);
   },
-  // using in C594404, C594411
+
   verifyNewRecordRowBeforeFilling(isCheckboxDisabled = false) {
     const row = EditableListRow({ index: 0 });
 
@@ -442,7 +447,6 @@ export default {
     ]);
   },
 
-  // using in C594411
   verifyEditRowInList(name, userLastName, rowIndex, source = 'local') {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const row = subjectTypesList.find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }));
@@ -466,7 +470,6 @@ export default {
     ]);
   },
 
-  // using in C594411
   verifyThreeLocalSubjectTypesExist(subjectTypeName, userName) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const allowedTypes = [tenantNames.central, tenantNames.college, tenantNames.university];
@@ -518,7 +521,7 @@ export default {
       },
     );
   },
-  // using in C594406, C594404, C594405, C594397
+
   verifySharedToAllMembersSubjectTypeExists(
     subjectTypeName,
     source,
@@ -534,7 +537,6 @@ export default {
     });
   },
 
-  // using in C594411
   verifyEditedLocalSubjectTypeExists(name) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then(([index]) => {
       cy.expect([
@@ -545,34 +547,13 @@ export default {
       ]);
     });
   },
-  // using in C594411
-  getAllSubjectTypeRowIndexesByName(subjectTypeName) {
-    const matchingIndexes = [];
 
-    return cy
-      .get('#editList-subjecttypes')
-      .find('[data-row-index]')
-      .each(($row) => {
-        const $cells = $row.find('[class*="mclCell-"]');
-        const nameCellText = $cells.eq(columnIndex.name).text().trim();
-
-        if (nameCellText === subjectTypeName) {
-          const rowAttr = $row.attr('data-row-index');
-          const index = rowAttr?.replace(/^row-/, '');
-          if (index !== undefined) matchingIndexes.push(index);
-        }
-      })
-      .then(() => matchingIndexes);
-  },
-
-  // using in C594411
   verifyLocalSubjectTypeNotEdited(name, recordNumber) {
-    this.getAllSubjectTypeRowIndexesByName(name).then((indexes) => {
+    getAllSubjectTypeRowIndexesByName(name).then((indexes) => {
       expect(indexes.length).to.equal(recordNumber);
     });
   },
 
-  // using in C594411, C594397
   verifyLocalSubjectTypeExists(subjectTypeName, tenantName, source = 'local', options = {}) {
     const { actions = [] } = options;
 
@@ -606,7 +587,6 @@ export default {
     );
   },
 
-  // using in C594404, C594411
   verifyNewAndSelectMembersButtonsState(
     newButtonDisabled = false,
     selectMembersButtonDisabled = false,
@@ -614,6 +594,13 @@ export default {
     cy.expect([
       newButton.has({ disabled: newButtonDisabled }),
       selectMembersButton.has({ disabled: selectMembersButtonDisabled }),
+    ]);
+  },
+
+  verifySubjectTypesListIsEmpty() {
+    cy.expect([
+      rootPane.has({ text: including('The list contains no items') }),
+      rootPane.find(newButton).absent(),
     ]);
   },
 };

@@ -113,14 +113,14 @@ describe('Bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', 'null | null (staff only)');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Electronic bookplate note', '');
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkItemNote('-', '-');
+        ItemRecordView.checkItemNote('No value set-No value set-', 'NoYes', 'Copy note');
       },
     );
   });
