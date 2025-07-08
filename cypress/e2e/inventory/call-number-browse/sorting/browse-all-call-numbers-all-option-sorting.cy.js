@@ -18,7 +18,7 @@ describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const randomPostfix = getRandomPostfix();
     const randomDigits = randomFourDigitNumber();
-    const instanceTitlePrefix = `AT_C477566_FolioInstance_${randomPostfix}`;
+    const instanceTitle = `AT_C477566_FolioInstance_${randomPostfix}`;
     const testData = { user: {} };
     const callNumberBase = 'QD477 .M566';
     const callNumberEndings = [
@@ -41,8 +41,7 @@ describe('Inventory', () => {
       CALL_NUMBER_TYPE_NAMES.MOYS,
       '', // No type selected
     ];
-    const instanceIds = [];
-    const holdingsIds = [];
+    let holdingsId;
     let callNumberTypeIds = [];
     let locationId;
     let loanTypeId;
@@ -81,26 +80,22 @@ describe('Inventory', () => {
         });
       })
         .then(() => {
-          for (let i = 0; i < 8; i++) {
-            const instanceTitle = `${instanceTitlePrefix}_${i + 1}`;
-            const instanceData = InventoryInstances.generateFolioInstances({
-              instanceTitlePrefix: instanceTitle,
-              holdingsCount: 1,
-            })[0];
-            InventoryInstances.createFolioInstancesViaApi({
-              folioInstances: [instanceData],
-              location: { id: locationId },
-            }).then((createdInstance) => {
-              instanceIds[i] = createdInstance.instanceId;
-              holdingsIds[i] = createdInstance.holdings[0].id;
-            });
-          }
+          const instanceData = InventoryInstances.generateFolioInstances({
+            instanceTitlePrefix: instanceTitle,
+            holdingsCount: 1,
+          })[0];
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: [instanceData],
+            location: { id: locationId },
+          }).then((createdInstance) => {
+            holdingsId = createdInstance.holdings[0].id;
+          });
         })
         .then(() => {
           cy.getAdminToken();
           for (let i = 0; i < 8; i++) {
             ItemRecordNew.createViaApi({
-              holdingsId: holdingsIds[i],
+              holdingsId,
               materialTypeId,
               permanentLoanTypeId: loanTypeId,
               itemLevelCallNumber: `${callNumberBase} ${callNumberEndings[i]}`,
@@ -120,7 +115,7 @@ describe('Inventory', () => {
     after('Clean up', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitlePrefix);
+      InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitle);
       CallNumberTypes.deleteLocalCallNumberTypeViaApi(localTypeId);
       CallNumberBrowseSettings.assignCallNumberTypesViaApi({
         name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
@@ -130,7 +125,7 @@ describe('Inventory', () => {
 
     it(
       'C477566 Similar call numbers with different types selected are sorted alphabetically when used "Call numbers (all)" browse option (case 2) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C477566'] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C477566'] },
       () => {
         const expectedRows = callNumberEndings.map((num) => `${callNumberBase} ${num}`);
         cy.login(testData.user.username, testData.user.password);
@@ -139,7 +134,9 @@ describe('Inventory', () => {
         // Switch to Browse tab and select Call numbers (all)
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
-        BrowseCallNumber.waitForCallNumberToAppear(expectedRows[0]);
+        expectedRows.forEach((row) => {
+          BrowseCallNumber.waitForCallNumberToAppear(row);
+        });
         InventorySearchAndFilter.fillInBrowseSearch(expectedRows[0]);
         InventorySearchAndFilter.clickSearch();
         // Verify the order and bolding
