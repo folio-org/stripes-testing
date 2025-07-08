@@ -45,10 +45,12 @@ export default {
   getDefaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
   getViaApi(searchParams) {
-    cy.okapiRequest({
-      path: 'service-points',
-      searchParams,
-    }).then(({ body }) => body.servicepoints);
+    return cy
+      .okapiRequest({
+        path: 'service-points',
+        searchParams,
+      })
+      .then(({ body }) => body.servicepoints);
   },
 
   getCircDesk1ServicePointViaApi() {
