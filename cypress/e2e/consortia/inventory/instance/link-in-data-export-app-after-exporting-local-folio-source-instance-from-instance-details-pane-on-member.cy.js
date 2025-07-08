@@ -2,9 +2,9 @@ import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -22,7 +22,6 @@ describe('Inventory', () => {
           testData.user = userProperties;
         })
         .then(() => {
-          cy.wait(3000);
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
@@ -46,6 +45,7 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       FileManager.deleteFileFromDownloadsByMask(testData.fileName);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
+      FileManager.deleteFileFromDownloadsByMask('*.csv');
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
@@ -54,14 +54,11 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422076 (CONSORTIA) Verify the link in Data export app after exporting local MARC Source Instance from Instance search results pane on Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet', 'C422076'] },
+      'C422079 (CONSORTIA) Verify the link in Data export app after exporting local FOLIO Source Instance from Instance details pane on Member tenant (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C422079'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        InventorySearchAndFilter.closeInstanceDetailPane();
-        InventorySearchAndFilter.selectResultCheckboxes(1);
-        InventorySearchAndFilter.verifySelectedRecords(1);
-        InventorySearchAndFilter.exportInstanceAsMarc();
+        InstanceRecordView.exportInstanceMarc();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.waitLandingPageOpened();
