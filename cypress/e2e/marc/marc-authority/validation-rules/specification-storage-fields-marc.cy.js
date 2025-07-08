@@ -66,4 +66,28 @@ describe('Specification Storage - Create Field API', () => {
       });
     },
   );
+
+  it(
+    'C494355 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC authority spec (API)',
+    { tags: ['C494355', 'criticalPath', 'spitfire'] },
+    () => {
+      const payload = {
+        ...createFieldPayload,
+      };
+      cy.getUserToken(user.username, user.password);
+      cy.createSpecificationField(authSpecId, payload).then((response) => {
+        expect(response.status).to.eq(201);
+        const respBody = response.body;
+        fieldId = respBody.id;
+        expect(respBody).to.include({
+          ...payload,
+          repeatable: true,
+          required: false,
+          deprecated: false,
+          specificationId: authSpecId,
+          scope: 'local',
+        });
+      });
+    },
+  );
 });
