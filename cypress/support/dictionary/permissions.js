@@ -385,6 +385,10 @@ export default {
     internal: 'specification-storage.specification.fields.collection.get',
     gui: 'Specification Storage - Get specification field definition collection',
   },
+  specificationStorageCreateSpecificationField: {
+    internal: 'specification-storage.specification.fields.item.post',
+    gui: 'Specification Storage - Create field definition for specification',
+  },
   specificationStorageDeleteSpecificationField: {
     internal: 'specification-storage.fields.item.delete',
     gui: 'Specification Storage - Delete specification field definition',
