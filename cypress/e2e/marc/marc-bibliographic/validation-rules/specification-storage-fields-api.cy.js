@@ -6,9 +6,6 @@ const createFieldPayload = {
   tag: '890',
   label: 'Custom Field - Contributor Data',
   url: 'http://www.example.org/field890.html',
-  repeatable: false,
-  required: false,
-  deprecated: false,
 };
 
 const requiredPermissions = [
@@ -34,27 +31,59 @@ describe('Specification Storage - Create Field API', () => {
     });
   });
 
-  after('Cleanup: delete field and user', () => {
+  afterEach('Cleanup: delete field', () => {
     cy.getAdminToken();
     if (fieldId) {
       cy.deleteSpecificationField(fieldId);
     }
-    if (user) {
-      Users.deleteViaApi(user.userId);
-    }
+  });
+
+  after('Cleanup: delete user', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(user.userId);
   });
 
   it(
     'C490917 Create Local Field (not repeatable, not required, not deprecated) for MARC bib spec (API)',
     { tags: ['C490917', 'criticalPath', 'spitfire'] },
     () => {
+      const payload = {
+        ...createFieldPayload,
+        repeatable: false,
+        required: false,
+        deprecated: false,
+      };
       cy.getUserToken(user.username, user.password);
-      cy.createSpecificationField(bibSpecId, createFieldPayload).then((response) => {
+      cy.createSpecificationField(bibSpecId, payload).then((response) => {
         expect(response.status).to.eq(201);
         const respBody = response.body;
         fieldId = respBody.id;
         expect(respBody).to.include({
-          ...createFieldPayload,
+          ...payload,
+          specificationId: bibSpecId,
+          scope: 'local',
+        });
+      });
+    },
+  );
+
+  it(
+    'C490918 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC bib spec (API)',
+    { tags: ['C490918', 'criticalPath', 'spitfire'] },
+    () => {
+      const payload = {
+        ...createFieldPayload,
+      };
+      cy.getUserToken(user.username, user.password);
+      cy.createSpecificationField(bibSpecId, payload).then((response) => {
+        expect(response.status).to.eq(201);
+        const respBody = response.body;
+        fieldId = respBody.id;
+        expect(respBody).to.include({
+          ...payload,
+          repeatable: true,
+          required: false,
+          deprecated: false,
           specificationId: bibSpecId,
           scope: 'local',
         });
