@@ -74,6 +74,7 @@ export default {
         this.fillRequiredFields(expenseClass);
       }),
     );
+    cy.wait(4000);
   },
 
   checkExpenseClass: (expenseClass, userName) => {
