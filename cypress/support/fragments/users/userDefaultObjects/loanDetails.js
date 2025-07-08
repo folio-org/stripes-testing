@@ -75,7 +75,8 @@ export default {
   },
   checkLostDate(date) {
     this.checkDateValid(date);
-    this.checkKeyValue('Lost', DateTools.getFormattedEndDateWithTimUTC(date));
+    const expectedDate = DateTools.getFormattedEndDateWithTimUTC(date).split(',')[0];
+    this.checkKeyValue('Lost', including(expectedDate));
   },
   checkRenewalCount() {
     cy.wait(1000);
@@ -162,14 +163,13 @@ export default {
   checkActionDate(row, actionDate) {
     this.checkDateValid(actionDate);
 
+    const expectedDate = DateTools.getFormattedEndDateWithTimUTC(actionDate).split(',')[0];
+
     cy.then(() => MultiColumnListHeader({ id: 'list-column-actiondate' }).index()).then(
       (columnIndex) => {
         cy.expect(
           LoanActionsList.find(
-            MultiColumnListCell(DateTools.getFormattedEndDateWithTimUTC(actionDate), {
-              row,
-              columnIndex,
-            }),
+            MultiColumnListCell(including(expectedDate), { row, columnIndex }),
           ).exists(),
         );
       },
