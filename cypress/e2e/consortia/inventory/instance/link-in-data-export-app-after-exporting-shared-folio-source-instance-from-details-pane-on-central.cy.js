@@ -49,10 +49,10 @@ describe('Inventory', () => {
       { tags: ['extendedPathECS', 'folijet', 'C422085'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        cy.pause();
         InstanceRecordView.exportInstanceMarc();
+
         cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
+        ExportFile.waitLandingPageOpened();
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
           ExportFile.downloadExportedMarcFile(name);
