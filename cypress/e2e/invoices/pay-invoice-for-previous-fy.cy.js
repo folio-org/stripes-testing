@@ -239,7 +239,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
           });
 
           // Click on invoice line record in "Invoice lines" accordion
-          InvoiceView.selectInvoiceLine();
+          InvoiceView.selectInvoiceLine().waitLoading();
 
           // * "Current encumbrance" field in "Fund distribution" accordion contains a link with "0.00" value
           InvoiceLineDetails.checkFundDistibutionTableContent([
@@ -279,6 +279,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
           // Close "Transactions" page
           Transactions.closeTransactionsPage();
+          BudgetDetails.waitLoading();
           BudgetDetails.checkBudgetDetails({
             information: [
               { key: 'Name', value: testData.budget.name },
@@ -290,6 +291,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
           // Close "Fund A-Fiscal year #1" page by clicking on "X" button on the top left of the page
           BudgetDetails.closeBudgetDetails();
+          FundDetails.waitLoading();
           FundDetails.checkFundDetails({
             information: [
               { key: 'Name', value: testData.fund.name },
@@ -491,6 +493,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
           // Close "Transactions" page
           Transactions.closeTransactionsPage();
+          BudgetDetails.waitLoading();
           BudgetDetails.checkBudgetDetails({
             information: [
               { key: 'Name', value: fiscalYears.next.code },
@@ -502,6 +505,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
           // Close "Fund A-Fiscal year #1" page by clicking on "X" button on the top left of the page
           BudgetDetails.closeBudgetDetails();
+          FundDetails.waitLoading();
           FundDetails.checkFundDetails({
             information: [
               { key: 'Name', value: testData.fund.name },
