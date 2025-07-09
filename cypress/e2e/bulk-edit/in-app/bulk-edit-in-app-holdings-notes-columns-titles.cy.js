@@ -170,7 +170,7 @@ describe(
           BulkEditActions.selectAction(actionsToSelect.addNote);
           BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
           BulkEditActions.fillInFirstTextArea(notes.administrative);
-          BulkEditActions.verifyValueInSecondTextArea(notes.administrative);
+          BulkEditActions.verifyValueInFirstTextArea(notes.administrative);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           notesToAdd.forEach((noteToAdd) => {

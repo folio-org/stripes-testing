@@ -69,7 +69,7 @@ const ind1Field = TextField({ name: 'ind1' });
 const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
-const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: false });
+const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),

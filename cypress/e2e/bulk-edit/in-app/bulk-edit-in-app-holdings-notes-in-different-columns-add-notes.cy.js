@@ -166,7 +166,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ACTION_NOTE);
         BulkEditActions.selectAction(actionsToSelect.add);
         BulkEditActions.verifyActionSelected(actionsToSelect.add);
-        BulkEditActions.fillInSecondTextArea(notesText.actionNoteNew);
+        BulkEditActions.fillInFirstTextArea(notesText.actionNoteNew);
         BulkEditActions.verifyValueInFirstTextArea(notesText.actionNoteNew);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();

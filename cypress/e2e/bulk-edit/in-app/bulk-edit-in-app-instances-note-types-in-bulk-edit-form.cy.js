@@ -159,7 +159,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionSelected(noteType);
         BulkEditActions.selectAction(actionToSelect);
         BulkEditActions.fillInFirstTextArea(noteText);
-        BulkEditActions.verifyValueInSecondTextArea(noteText);
+        BulkEditActions.verifyValueInFirstTextArea(noteText);
         BulkEditActions.verifyActionSelected(actionToSelect);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
