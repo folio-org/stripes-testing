@@ -15,8 +15,16 @@ const requiredPermissions = [
   Permissions.specificationStorageUpdateSpecificationField.gui,
 ];
 
+const limitedPermissions = [
+  Permissions.specificationStorageGetSpecificationFields.gui,
+  Permissions.specificationStorageCreateSpecificationField.gui,
+  Permissions.specificationStorageDeleteSpecificationField.gui,
+  // No update permission included
+];
+
 describe('Specification Storage - Create Field API', () => {
   let user;
+  let limitedUser;
   let fieldId;
   let bibSpecId;
 
@@ -42,6 +50,7 @@ describe('Specification Storage - Create Field API', () => {
   after('Cleanup: delete user', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(limitedUser.userId);
   });
 
   it(
@@ -194,6 +203,37 @@ describe('Specification Storage - Create Field API', () => {
                 });
               });
             });
+          });
+        });
+      });
+    },
+  );
+
+  it(
+    'C490936 Cannot update Local field for MARC bib spec without required permission',
+    { tags: ['C490936', 'criticalPath', 'spitfire'] },
+    () => {
+      // Step 1: Create a user with only GET and POST permissions (no PUT)
+      cy.getAdminToken();
+      cy.createTempUser(limitedPermissions).then((createdUser) => {
+        limitedUser = createdUser;
+        const payload = {
+          ...createFieldPayload,
+          tag: '897',
+        };
+
+        cy.getUserToken(limitedUser.username, limitedUser.password);
+        // Step 2: Create a Local MARC field as this user
+        cy.createSpecificationField(bibSpecId, payload).then((response) => {
+          expect(response.status).to.eq(201);
+          fieldId = response.body.id;
+          // Step 3: Attempt to update the field (should fail with 403)
+          const updatePayload = {
+            label: 'Name test field',
+          };
+          cy.updateSpecificationField(fieldId, updatePayload, false).then((updateResp) => {
+            expect(updateResp.status).to.eq(403);
+            expect(updateResp.body.errors[0].message).to.include('Access Denied');
           });
         });
       });
