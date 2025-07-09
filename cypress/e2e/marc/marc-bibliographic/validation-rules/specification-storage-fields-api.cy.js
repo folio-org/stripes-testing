@@ -4,7 +4,7 @@ import Users from '../../../../support/fragments/users/users';
 
 const createFieldPayload = {
   tag: '890',
-  label: 'Custom Field - Contributor Data',
+  label: 'AT Custom Field - Contributor Data',
   url: 'http://www.example.org/field890.html',
 };
 
@@ -12,6 +12,7 @@ const requiredPermissions = [
   Permissions.specificationStorageCreateSpecificationField.gui,
   Permissions.specificationStorageDeleteSpecificationField.gui,
   Permissions.specificationStorageGetSpecificationFields.gui,
+  Permissions.specificationStorageUpdateSpecificationField.gui,
 ];
 
 describe('Specification Storage - Create Field API', () => {
@@ -111,6 +112,90 @@ describe('Specification Storage - Create Field API', () => {
           .then(() => {
             cy.deleteSpecificationField(fieldId);
           });
+      });
+    },
+  );
+
+  it(
+    'C490951 Update all fields in Local Field for MARC bib spec (API)',
+    { tags: ['C490951', 'criticalPath', 'spitfire'] },
+    () => {
+      // Step 1: Create a Local MARC field with all flags true
+      const initialPayload = {
+        ...createFieldPayload,
+        tag: '898',
+        repeatable: true,
+        required: true,
+        deprecated: true,
+      };
+      cy.getUserToken(user.username, user.password);
+      cy.createSpecificationField(bibSpecId, initialPayload).then((response) => {
+        expect(response.status).to.eq(201);
+        const respBody = response.body;
+        fieldId = respBody.id;
+        expect(respBody).to.include({
+          ...initialPayload,
+          specificationId: bibSpecId,
+          scope: 'local',
+        });
+
+        // Step 2: Update the field with all flags false
+        const updatePayload1 = {
+          tag: '899',
+          label: 'Field name with updates made by user',
+          url: 'http://www.example.org/updated',
+          repeatable: false,
+          required: false,
+          deprecated: false,
+        };
+        cy.updateSpecificationField(fieldId, updatePayload1).then((updateResp1) => {
+          expect(updateResp1.status).to.eq(202);
+          expect(updateResp1.body).to.include({
+            ...updatePayload1,
+            specificationId: bibSpecId,
+            scope: 'local',
+          });
+
+          // Step 3: GET all fields and verify the update
+          cy.getSpecificationFields(bibSpecId).then((getResp1) => {
+            expect(getResp1.status).to.eq(200);
+            const updatedField1 = getResp1.body.fields.find((f) => f.id === fieldId);
+            expect(updatedField1).to.include({
+              ...updatePayload1,
+              specificationId: bibSpecId,
+              scope: 'local',
+            });
+
+            // Step 4: Update the field again with all flags true and new values
+            const updatePayload2 = {
+              tag: '900',
+              label: 'Field name with updates made by user #2',
+              url: 'http://www.example.org/updated2',
+              repeatable: true,
+              required: true,
+              deprecated: true,
+            };
+            cy.updateSpecificationField(fieldId, updatePayload2).then((updateResp2) => {
+              expect(updateResp2.status).to.eq(202);
+              expect(updateResp2.body).to.include({
+                ...updatePayload2,
+                specificationId: bibSpecId,
+                scope: 'local',
+              });
+
+              // Step 5: GET all fields and verify the second update
+              cy.getSpecificationFields(bibSpecId).then((getResp2) => {
+                expect(getResp2.status).to.eq(200);
+                const updatedField2 = getResp2.body.fields.find((f) => f.id === fieldId);
+                expect(updatedField2).to.include({
+                  ...updatePayload2,
+                  specificationId: bibSpecId,
+                  scope: 'local',
+                });
+              });
+            });
+          });
+        });
       });
     },
   );

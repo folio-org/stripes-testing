@@ -51,3 +51,12 @@ Cypress.Commands.add('createSpecificationField', (specificationId, field) => {
     body: field,
   });
 });
+
+Cypress.Commands.add('updateSpecificationField', (fieldId, field) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.PUT,
+    path: `specification-storage/fields/${fieldId}`,
+    isDefaultSearchParamsRequired: false,
+    body: field,
+  });
+});

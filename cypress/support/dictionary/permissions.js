@@ -389,10 +389,15 @@ export default {
     internal: 'specification-storage.specification.fields.item.post',
     gui: 'Specification Storage - Create field definition for specification',
   },
+  specificationStorageUpdateSpecificationField: {
+    internal: 'specification-storage.fields.item.put',
+    gui: 'Specification Storage - Update field definition',
+  },
   specificationStorageDeleteSpecificationField: {
     internal: 'specification-storage.fields.item.delete',
     gui: 'Specification Storage - Delete specification field definition',
   },
+
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
