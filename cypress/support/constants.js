@@ -317,6 +317,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   DEWAY_DECIMAL: 'Dewey Decimal classification',
   SUDOC: 'Superintendent of Documents classification',
   UDC: 'UDC',
+  MOYS: 'MOYS',
   LOCAL: 'Local',
 };
 
