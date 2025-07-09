@@ -141,7 +141,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings', 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Action note', 3);
-        BulkEditActions.selectSecondAction('Add note', 3);
+        BulkEditActions.selectAction('Add note', 3);
         BulkEditActions.verifyStaffOnlyCheckbox(false, 3);
         BulkEditActions.fillInSecondTextArea(notes.action, 3);
         BulkEditActions.addNewBulkEditFilterString();

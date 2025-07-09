@@ -157,10 +157,10 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionExistsInSelectOptionDropdown(noteType);
         BulkEditActions.clickFilteredOption(noteType);
         BulkEditActions.verifyOptionSelected(noteType);
-        BulkEditActions.selectSecondAction(actionToSelect);
+        BulkEditActions.selectAction(actionToSelect);
         BulkEditActions.fillInSecondTextArea(noteText);
         BulkEditActions.verifyValueInSecondTextArea(noteText);
-        BulkEditActions.verifySecondActionSelected(actionToSelect);
+        BulkEditActions.verifyActionSelected(actionToSelect);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);

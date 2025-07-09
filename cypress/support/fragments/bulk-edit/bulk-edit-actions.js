@@ -69,7 +69,7 @@ const ind1Field = TextField({ name: 'ind1' });
 const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
-const selectActionForMarcInstanceDropdown = Select({ name: 'action', required: true });
+const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -930,7 +930,7 @@ export default {
 
   urlRelationshipReplaceWith(oldValue, newValue, rowIndex = 0) {
     this.selectOption('URL relationship');
-    this.selectSecondAction('Find (full field search)');
+    this.selectAction('Find (full field search)');
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);

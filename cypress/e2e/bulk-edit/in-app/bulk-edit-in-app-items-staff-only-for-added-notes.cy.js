@@ -109,7 +109,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Check in note', 1);
-        BulkEditActions.selectSecondAction('Add note', 1);
+        BulkEditActions.selectAction('Add note', 1);
         BulkEditActions.verifyStaffOnlyCheckbox(false, 1);
         BulkEditActions.fillInSecondTextArea(notes.checkIn, 1);
         BulkEditActions.addNewBulkEditFilterString();
@@ -122,7 +122,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Action note', 4);
-        BulkEditActions.selectSecondAction('Add note', 4);
+        BulkEditActions.selectAction('Add note', 4);
         BulkEditActions.verifyStaffOnlyCheckbox(false, 4);
         BulkEditActions.fillInSecondTextArea(notes.action, 4);
         BulkEditActions.addNewBulkEditFilterString();

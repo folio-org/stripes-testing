@@ -127,7 +127,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
           BulkEditActions.selectOption('Staff suppress');
           BulkEditSearchPane.verifyInputLabel('Staff suppress');
-          BulkEditActions.selectSecondAction('Set true');
+          BulkEditActions.selectAction('Set true');
           BulkEditActions.verifyCheckboxAbsent();
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();

@@ -145,7 +145,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE);
         cy.wait(1000);
-        BulkEditActions.selectSecondAction('Add note');
+        BulkEditActions.selectAction('Add note');
         BulkEditActions.fillInSecondTextArea(copyNoteText);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
