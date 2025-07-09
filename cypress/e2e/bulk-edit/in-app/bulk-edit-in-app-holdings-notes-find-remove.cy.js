@@ -186,7 +186,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
-        BulkEditActions.selectSecondAction(actionsToSelect.find);
+        BulkEditActions.selectAction(actionsToSelect.find);
         BulkEditActions.verifyActionSelected(actionsToSelect.find);
         BulkEditActions.verifyTheSecondActionOptions(secondActionOptions);
         BulkEditActions.verifyConfirmButtonDisabled(true);

@@ -99,7 +99,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('Link text');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newLinkText);
         BulkEditActions.verifyConfirmButtonDisabled(false);
@@ -111,7 +111,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea('Te;st:');
         BulkEditActions.verifyConfirmButtonDisabled(false);
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newLinkText);
         BulkEditActions.verifyConfirmButtonDisabled(false);

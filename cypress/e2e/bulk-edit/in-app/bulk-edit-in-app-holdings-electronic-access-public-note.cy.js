@@ -99,14 +99,14 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('URL public note');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.fillInSecondTextArea(publicNote);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.findValue('URL public note');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea('My');
         BulkEditActions.fillInSecondTextArea(newPublicNote);

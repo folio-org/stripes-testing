@@ -125,7 +125,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('URL public note');
         let possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyTheActionOptions(possibleActions);
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.fillInSecondTextArea(newElectronicAccessFields.publicNote);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('URI', 1);

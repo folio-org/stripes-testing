@@ -69,7 +69,7 @@ const ind1Field = TextField({ name: 'ind1' });
 const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
-const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
+const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: false });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -1050,7 +1050,7 @@ export default {
         .choose(newType),
     ]);
     this.verifyOptionSelected(type, rowIndex);
-    this.verifySecondActionSelected('Change note type', rowIndex);
+    this.verifyActionSelected('Change note type', rowIndex);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') }))
@@ -1858,7 +1858,7 @@ export default {
     cy.expect(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(Select({ name: 'action', dataActionIndex: '0' }))
+        .find(Select({ name: 'name', dataActionIndex: '0' }))
         .has({ checkedOptionText: action }),
     );
   },
@@ -1867,7 +1867,7 @@ export default {
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(Select({ name: 'action', dataActionIndex: '1' }))
+        .find(Select({ name: 'name', dataActionIndex: '1' }))
         .choose(action),
     );
   },
@@ -2055,7 +2055,7 @@ export default {
     cy.expect(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(Select({ name: 'action', dataActionIndex: '1' }))
+        .find(Select({ name: 'name', dataActionIndex: '1' }))
         .has({ required: isRequired }),
     );
   },
