@@ -45,6 +45,9 @@ export default {
       Pane({ id: 'receiving-results-pane' }).exists(),
     ]);
   },
+  clearSearchField() {
+    cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
+  },
   searchByParameter({ parameter = 'Keyword', value } = {}) {
     cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
     cy.do(TextField({ id: 'input-record-search' }).fillIn(value));

@@ -132,24 +132,45 @@ export default {
   unselectExistingServicePoint(usedServicePoint) {
     cy.log(usedServicePoint);
     cy.wait(500);
-    cy.then(() => tableWithOwners.find(MultiColumnListCell(usedServicePoint)).row()).then(
-      (rowNumber) => {
-        const currentRow = tableWithOwners.find(
-          EditableListRow({ index: rowNumber - startRowIndex }),
-        );
-        // filter index implemented based on parent-child relations.
-        // aria-rowindex calculated started from 2. Need to count it.
-        cy.do(currentRow.find(Button({ icon: 'edit' })).click());
-        cy.do(
-          currentRow
-            .find(ValueChipRoot(usedServicePoint))
-            .find(Button({ icon: 'times' }))
-            .click(),
-        );
-        cy.do(currentRow.find(Button('Save')).click());
-      },
-    );
+
+    cy.then(() => tableWithOwners.rowCount()).then((rowsCount) => {
+      const checkRow = (index) => {
+        if (index >= rowsCount) return;
+
+        cy.then(() => tableWithOwners
+          .find(EditableListRow({ index }))
+          .find(MultiColumnListCell({ columnIndex: startRowIndex }))
+          .content()).then((servicePointNames) => {
+          if (servicePointNames && servicePointNames.includes(usedServicePoint)) {
+            const currentRow = tableWithOwners.find(EditableListRow({ index }));
+
+            cy.do(currentRow.find(Button({ icon: 'edit' })).click());
+            cy.wait(500);
+
+            cy.expect(currentRow.find(ValueChipRoot(usedServicePoint)).exists());
+
+            cy.do(
+              currentRow
+                .find(ValueChipRoot(usedServicePoint))
+                .find(Button({ icon: 'times' }))
+                .click(),
+            );
+            cy.wait(500);
+
+            cy.do(currentRow.find(Button('Save')).click());
+            cy.wait(500);
+
+            cy.expect(currentRow.find(ValueChipRoot(usedServicePoint)).absent());
+          } else {
+            checkRow(index + 1);
+          }
+        });
+      };
+
+      checkRow(0);
+    });
   },
+
   checkFreeServicePointPresence(freeServicePoint) {
     cy.do(
       tableWithOwners

@@ -377,6 +377,7 @@ export default {
   ),
 
   verifyLoanAndAvailabilitySection(data) {
+    this.expandAll();
     verifyPermanentLoanType(
       data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
     );
@@ -407,8 +408,16 @@ export default {
           KeyValue('Due date', { value: data.dueDate === '-' ? 'No value set-' : data.dueDate }),
         )
         .exists(),
-      loanAccordion.find(KeyValue('Staff only', { value: data.staffOnly })).exists(),
-      loanAccordion.find(KeyValue('Note', { value: data.note })).exists(),
+      loanAccordion
+        .find(
+          KeyValue('Staff only', {
+            value: data.staffOnly === '-' ? 'No value set-' : data.staffOnly,
+          }),
+        )
+        .exists(),
+      loanAccordion
+        .find(KeyValue('Note', { value: data.note === '-' ? 'No value set-' : data.note }))
+        .exists(),
     ]);
   },
 
@@ -560,4 +569,9 @@ export default {
   },
 
   verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(KeyValue('Effective call number').has({ value: effectiveCallNumber })),
+
+  expandAll() {
+    cy.do(Button('Expand all').click());
+    cy.wait(1000);
+  },
 };

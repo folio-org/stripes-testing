@@ -35,6 +35,10 @@ const relatedInvoiceLinesSection = invoiceLineDetailsPane.find(
 );
 
 export default {
+  waitLoading() {
+    cy.wait(4000);
+    cy.expect(invoiceLineDetailsPaneHeader.exists());
+  },
   openInvoiceLineEditForm() {
     cy.do([invoiceLineDetailsPaneHeader.find(actionsButton).click(), editButton.click()]);
     InvoiceLineEditForm.waitLoading();
