@@ -32,6 +32,7 @@ export const holdingsFieldValues = {
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
+  temporaryLocation: 'Temporary location — Name',
 };
 export const instanceFieldValues = {
   instanceId: 'Instance — Instance UUID',
