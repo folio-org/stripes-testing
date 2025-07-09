@@ -101,7 +101,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.deleteRow(1);
         BulkEditActions.selectAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.fillInSecondTextArea(newLinkText);
+        BulkEditActions.fillInFirstTextArea(newLinkText);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.findValue('Link text');
         possibleActions = ['Replace with', 'Remove'];
@@ -113,7 +113,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.fillInSecondTextArea(newLinkText);
+        BulkEditActions.fillInFirstTextArea(newLinkText);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(

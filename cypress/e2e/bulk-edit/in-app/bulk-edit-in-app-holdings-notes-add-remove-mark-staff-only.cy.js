@@ -178,7 +178,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 1);
         BulkEditActions.selectAction(actionsToSelect.addNote, 1);
-        BulkEditActions.fillInSecondTextArea(notes.additionalElectronicBookplate, 1);
+        BulkEditActions.fillInFirstTextArea(notes.additionalElectronicBookplate, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);

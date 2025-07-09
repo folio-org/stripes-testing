@@ -96,8 +96,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionAbsentInNewRow('URI');
         BulkEditActions.deleteRow(1);
         BulkEditActions.noteReplaceWith('URI', item.uri, item.newUri);
-        BulkEditActions.selectSecondAction('Replace with');
-        BulkEditActions.fillInSecondTextArea(item.lastUri);
+        BulkEditActions.selectAction('Replace with');
+        BulkEditActions.fillInFirstTextArea(item.lastUri);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [item.lastUri]);
         BulkEditActions.downloadPreview();

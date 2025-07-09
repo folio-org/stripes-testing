@@ -194,8 +194,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyTheActionOptions(actionOptions);
         BulkEditActions.selectAction(actionsToSelect.addNote);
         BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
-        BulkEditActions.fillInSecondTextArea(noteTexts.bibliographyNote2);
-        BulkEditActions.verifyValueInSecondTextArea(noteTexts.bibliographyNote2);
+        BulkEditActions.fillInFirstTextArea(noteTexts.bibliographyNote2);
+        BulkEditActions.verifyValueInFirstTextArea(noteTexts.bibliographyNote2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         setOfColumnValues.forEach((columnValueSet, ind) => {
@@ -205,8 +205,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyNewBulkEditRow(rowNumber);
           BulkEditActions.selectOption(columnValueSet.noteColumn, rowNumber);
           BulkEditActions.selectAction(actionsToSelect.addNote, rowNumber);
-          BulkEditActions.fillInSecondTextArea(columnValueSet.noteText, rowNumber);
-          BulkEditActions.verifyValueInSecondTextArea(columnValueSet.noteText, rowNumber);
+          BulkEditActions.fillInFirstTextArea(columnValueSet.noteText, rowNumber);
+          BulkEditActions.verifyValueInFirstTextArea(columnValueSet.noteText, rowNumber);
           BulkEditActions.verifyConfirmButtonDisabled(false);
         });
 

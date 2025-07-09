@@ -167,15 +167,15 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectAction(actionsToSelect.add);
         BulkEditActions.verifyActionSelected(actionsToSelect.add);
         BulkEditActions.fillInSecondTextArea(notesText.actionNoteNew);
-        BulkEditActions.verifyValueInSecondTextArea(notesText.actionNoteNew);
+        BulkEditActions.verifyValueInFirstTextArea(notesText.actionNoteNew);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(newNoteType, 1);
         BulkEditActions.selectAction(actionsToSelect.add, 1);
         BulkEditActions.verifyActionSelected(actionsToSelect.add, 1);
-        BulkEditActions.fillInSecondTextArea(notesText.newNoteText, 1);
-        BulkEditActions.verifyValueInSecondTextArea(notesText.newNoteText, 1);
+        BulkEditActions.fillInFirstTextArea(notesText.newNoteText, 1);
+        BulkEditActions.verifyValueInFirstTextArea(notesText.newNoteText, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);

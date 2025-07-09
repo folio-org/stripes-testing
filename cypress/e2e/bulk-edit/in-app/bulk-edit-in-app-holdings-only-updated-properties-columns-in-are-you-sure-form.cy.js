@@ -185,9 +185,9 @@ describe(
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption(optionsToSelect.uri, 1);
           BulkEditActions.selectAction(actionsToSelect.replaceWith, 1);
-          BulkEditActions.fillInSecondTextArea(newURI, 1);
+          BulkEditActions.fillInFirstTextArea(newURI, 1);
           BulkEditActions.verifyActionSelected(actionsToSelect.replaceWith, 1);
-          BulkEditActions.verifyValueInSecondTextArea(newURI, 1);
+          BulkEditActions.verifyValueInFirstTextArea(newURI, 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
@@ -205,9 +205,9 @@ describe(
           BulkEditActions.verifyNewBulkEditRow(4);
           BulkEditActions.selectOption(optionsToSelect.electronicBookplate, 4);
           BulkEditActions.selectAction(actionsToSelect.addNote, 4);
-          BulkEditActions.fillInSecondTextArea(electronicBookplateNoteText, 4);
+          BulkEditActions.fillInFirstTextArea(electronicBookplateNoteText, 4);
           BulkEditActions.verifyActionSelected(actionsToSelect.addNote, 4);
-          BulkEditActions.verifyValueInSecondTextArea(electronicBookplateNoteText, 4);
+          BulkEditActions.verifyValueInFirstTextArea(electronicBookplateNoteText, 4);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(5);

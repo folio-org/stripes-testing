@@ -78,7 +78,7 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.verifyTheActionOptions(nonAdministrativeNoteActionOptions, rowNumber);
   BulkEditActions.selectAction(actionsToSelect.addNote, rowNumber);
   BulkEditActions.verifyActionSelected(actionsToSelect.addNote, rowNumber);
-  BulkEditActions.fillInSecondTextArea(noteText, rowNumber);
+  BulkEditActions.fillInFirstTextArea(noteText, rowNumber);
   BulkEditActions.verifyValueInSecondTextArea(noteText, rowNumber);
   BulkEditActions.verifyConfirmButtonDisabled(false);
 }
@@ -169,7 +169,7 @@ describe(
           BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
           BulkEditActions.selectAction(actionsToSelect.addNote);
           BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
-          BulkEditActions.fillInSecondTextArea(notes.administrative);
+          BulkEditActions.fillInFirstTextArea(notes.administrative);
           BulkEditActions.verifyValueInSecondTextArea(notes.administrative);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 

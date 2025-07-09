@@ -147,7 +147,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectAction(actionsToSelect.addNote);
         cy.wait(500);
         BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
-        BulkEditActions.fillInSecondTextArea(notes.administrative);
+        BulkEditActions.fillInFirstTextArea(notes.administrative);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
@@ -155,14 +155,14 @@ describe('Bulk-edit', () => {
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(noteActionOptions, 1);
         BulkEditActions.selectAction(actionsToSelect.addNote, 1);
-        BulkEditActions.fillInSecondTextArea(notes.note, 1);
+        BulkEditActions.fillInFirstTextArea(notes.note, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING, 2);
         BulkEditActions.verifyTheActionOptions(noteActionOptions, 2);
         BulkEditActions.selectAction(actionsToSelect.addNote, 2);
-        BulkEditActions.fillInSecondTextArea(notes.binding, 2);
+        BulkEditActions.fillInFirstTextArea(notes.binding, 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
