@@ -2460,13 +2460,12 @@ export default {
   },
 
   checkOnlyBackslashesIn008Boxes() {
-    cy.get('input[value="008"]')
+    cy.get('input[name^="records"][name$=".tag"][value="008"]')
       .parents('[data-testid="quick-marc-editorid"]')
-      .find('div[data-testid="bytes-field-col"]')
-      .find('input')
-      .then((fields) => {
-        const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
-        expect(fieldValues.join('')).to.match(/^\\+$/);
+      .find('[data-testid="bytes-field-col"] select')
+      .then((selects) => {
+        const values = Array.from(selects, (el) => el.value);
+        expect(values.join('')).to.match(/^\\+$/);
       });
   },
 

@@ -15,6 +15,7 @@ const informationSection = Section({ id: 'information' });
 
 export default {
   waitLoading() {
+    cy.wait(4000);
     cy.expect(transactionDetailSection.exists());
   },
   checkTransactionDetails({ information = [] } = {}) {

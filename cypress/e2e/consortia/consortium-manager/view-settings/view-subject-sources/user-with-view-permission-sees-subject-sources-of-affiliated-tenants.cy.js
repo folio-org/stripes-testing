@@ -21,9 +21,6 @@ describe('Consortia', () => {
         let consortiaId;
         const sharedSubjectSource = {
           name: `C594420 autotestSubjectSourceName${getRandomPostfix()}`,
-          source: 'consortium',
-          memberLibraries: 'All',
-          user: 'No set value-',
           id: uuid(),
         };
         const localSubjectSourceOnCentral = {
