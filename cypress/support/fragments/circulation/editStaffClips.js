@@ -134,6 +134,7 @@ export default {
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
       addTokenButton.click(),
+      cy.wait(2000),
       saveButton.click(),
     ]);
     cy.wait(1000);

@@ -27,6 +27,7 @@ const previousBudgetsSection = fundDetailsPane.find(Section({ id: 'previousBudge
 export default {
   ...FinanceDetails,
   waitLoading: () => {
+    cy.wait(4000);
     cy.expect(fundDetailsPane.exists());
   },
   expandActionsDropdown() {

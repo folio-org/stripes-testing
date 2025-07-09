@@ -41,13 +41,14 @@ export default {
     this.checkStatus(row, ITEM_STATUS_NAMES.DECLARED_LOST);
   },
   startDeclareLost(row) {
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-10' }).index()).then((columnIndex) => {
-      cy.do(
-        LoanHistoryList.find(MultiColumnListCell({ row, columnIndex }))
-          .find(Dropdown('Action'))
-          .choose(DECLARE_LOST_ACTION_NAME),
-      );
-    });
+    const columnIndex = 11;
+    cy.do(
+      MultiColumnList('list-loanshistory')
+        .find(MultiColumnListCell({ row, columnIndex }))
+        .find(Dropdown('Action'))
+        .open(),
+    );
+    cy.do(Button(DECLARE_LOST_ACTION_NAME).click());
   },
   cancelDeclareLost() {
     cy.do(DeclareLostModal.find(Button('Cancel')).click());
