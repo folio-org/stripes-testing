@@ -210,8 +210,12 @@ export default {
     cy.expect(locationSelection.has({ open: false }));
   },
 
-  verifyLocationValue(value) {
-    cy.expect(Selection({ singleValue: value }).visible());
+  verifyLocationValue(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Selection({ singleValue: value }))
+        .visible(),
+    );
   },
 
   isDisabledRowIcons(isDisabled) {

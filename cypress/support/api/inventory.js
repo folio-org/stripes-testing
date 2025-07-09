@@ -417,7 +417,13 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
 
 Cypress.Commands.add(
   'createSimpleMarcHoldingsViaAPI',
-  (instanceId, instanceHrid, locationCode, actionNote = 'note') => {
+  (
+    instanceId,
+    instanceHrid,
+    locationCode,
+    actionNote = 'note',
+    { tag852firstIndicator = '\\' } = {},
+  ) => {
     cy.okapiRequest({
       path: 'records-editor/records',
       method: 'POST',
@@ -436,7 +442,7 @@ Cypress.Commands.add(
           },
           {
             content: `$b ${locationCode}`,
-            indicators: ['\\', '\\'],
+            indicators: [`${tag852firstIndicator || '\\'}`, '\\'],
             tag: '852',
           },
           {
