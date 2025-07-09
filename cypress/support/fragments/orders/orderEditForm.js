@@ -84,7 +84,8 @@ export default {
     cy.expect([
       infoSectionFields.poNumberPrefix.has({ required: false }),
       infoSectionFields.poNumberSuffix.has({ required: false }),
-      infoSectionFields.poNumber.exists(),
+      // infoSectionFields.poNumber.exists(),
+      cy.get('[data-test-po-number="true"]').should('exist'),
       infoSectionFields.vendor.has({ required: true }),
       infoSectionFields.orderType.has({ required: true }),
       infoSectionFields.acquisitionUnit.exists(),

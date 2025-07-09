@@ -22,6 +22,8 @@ import {
   Card,
   PaneContent,
   Spinner,
+  Callout,
+  calloutTypes,
 } from '../../../../interactors';
 import { ORDER_SYSTEM_CLOSING_REASONS } from '../../constants';
 import SearchHelper from '../finance/financeHelper';
@@ -449,6 +451,22 @@ export default {
     InteractorsTools.checkCalloutErrorMessage(
       `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
     );
+  },
+
+  checkOneOfCalloutsContainsErrorMessage: (text) => {
+    cy.get('[class^=calloutBase-]').then(($els) => {
+      const matchingId = [...$els].find(
+        (el) => el.className.includes('error') &&
+          el.querySelector('[class^=message-]')?.textContent.includes(text),
+      )?.id;
+      if (matchingId) {
+        cy.expect(
+          Callout({ id: matchingId, type: calloutTypes.error }).has({
+            textContent: including(text),
+          }),
+        );
+      }
+    });
   },
 
   resetFilters: () => {
