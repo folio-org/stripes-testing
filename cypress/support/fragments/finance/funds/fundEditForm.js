@@ -9,9 +9,10 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import States from '../states';
-import AddDonorsModal from '../modals/addDonorsModal';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
+import AddDonorsModal from '../modals/addDonorsModal';
+import States from '../states';
 
 const fundEditForm = Section({ id: 'pane-fund-form' });
 
@@ -42,7 +43,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(fundEditForm.exists());
   },
   verifyFormView() {

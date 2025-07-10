@@ -10,9 +10,10 @@ import {
   including,
   matching,
 } from '../../../../interactors';
-import OrderStates from './orderStates';
-import SearchHelper from '../finance/financeHelper';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import SearchHelper from '../finance/financeHelper';
+import OrderStates from './orderStates';
 
 const orderEditFormRoot = Section({ id: 'pane-poForm' });
 
@@ -55,7 +56,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(orderEditFormRoot.exists());
   },
   checkButtonsConditions(fields = []) {
@@ -84,7 +86,7 @@ export default {
     cy.expect([
       infoSectionFields.poNumberPrefix.has({ required: false }),
       infoSectionFields.poNumberSuffix.has({ required: false }),
-      infoSectionFields.poNumber.exists(),
+      cy.get('[data-test-po-number="true"]').should('exist'),
       infoSectionFields.vendor.has({ required: true }),
       infoSectionFields.orderType.has({ required: true }),
       infoSectionFields.acquisitionUnit.exists(),

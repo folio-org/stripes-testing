@@ -42,3 +42,52 @@ Cypress.Commands.add('getSpecificationFields', (specificationId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add(
+  'deleteSpecificationFieldByTag',
+  (specificationId, tagValue, failOnStatusCode = true) => {
+    return cy.getSpecificationFields(specificationId).then((response) => {
+      const field = response.body.fields.find((f) => f.tag === tagValue);
+      if (field) {
+        return cy.deleteSpecificationField(field.id, failOnStatusCode);
+      }
+      return cy.wrap(null);
+    });
+  },
+);
+
+Cypress.Commands.add('createSpecificationField', (specificationId, field) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.POST,
+    path: `specification-storage/specifications/${specificationId}/fields`,
+    isDefaultSearchParamsRequired: false,
+    body: field,
+  });
+});
+
+Cypress.Commands.add('updateSpecificationField', (fieldId, field, failOnStatusCode = true) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.PUT,
+    path: `specification-storage/fields/${fieldId}`,
+    isDefaultSearchParamsRequired: false,
+    body: field,
+    failOnStatusCode,
+  });
+});
+
+Cypress.Commands.add('createSpecificationFieldSubfield', (fieldId, subfield) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.POST,
+    path: `specification-storage/fields/${fieldId}/subfields`,
+    isDefaultSearchParamsRequired: false,
+    body: subfield,
+  });
+});
+
+Cypress.Commands.add('getSpecificationFieldSubfields', (fieldId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/fields/${fieldId}/subfields`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
