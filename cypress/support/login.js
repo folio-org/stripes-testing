@@ -22,7 +22,7 @@ Cypress.Commands.add(
 
         if (Cypress.env('selectTenantOnUI')) {
           cy.wait(500);
-          cy.do(Select('Tenant/Library').choose(Cypress.env('OKAPI_TENANT')));
+          cy.do(Select('Tenant/Library').choose('Central Office'));
           cy.wait(500);
           cy.do(Button('Continue').click());
           cy.wait(1000);
