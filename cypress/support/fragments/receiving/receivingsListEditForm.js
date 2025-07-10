@@ -7,9 +7,10 @@ import {
   TextField,
   including,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
-import ReceivingStates from './receivingStates';
 import SelectLocationModal from '../orders/modals/selectLocationModal';
+import ReceivingStates from './receivingStates';
 
 const receivingsListEditForm = Section({ id: 'pane-title-receive-list' });
 const receinigsListTable = receivingsListEditForm.find(HTML({ id: 'title-receive-list' }));
@@ -23,7 +24,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(receivingsListEditForm.exists());
   },
   checkButtonsConditions(fields = []) {

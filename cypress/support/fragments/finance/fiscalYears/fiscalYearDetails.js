@@ -1,5 +1,6 @@
 import { Button, PaneHeader, Section, including } from '../../../../../interactors';
 import { AppList } from '../../../../../interactors/applist';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import FinanceDetails from '../financeDetails';
 import LedgerDetails from '../ledgers/ledgerDetails';
 
@@ -8,7 +9,8 @@ const fiscalYearDetailsHeader = PaneHeader({ id: 'paneHeaderpane-fiscal-year-det
 
 export default {
   ...FinanceDetails,
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(fiscalYearDetailsSection.exists());
   },
   checkFiscalYearDetails({ information, financialSummary, ledgers, groups, funds } = {}) {
