@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+
 import {
   Accordion,
   Button,
@@ -15,6 +16,7 @@ import {
   Select,
   TextField,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import ReceivingDetails from './receivingDetails';
@@ -39,7 +41,8 @@ const filterOpenReceiving = () => {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect([
       Pane({ id: 'receiving-filters-pane' }).exists(),
       Pane({ id: 'receiving-results-pane' }).exists(),

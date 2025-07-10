@@ -1,6 +1,7 @@
 import { Button, Section, TextField, matching } from '../../../../interactors';
-import ReceivingStates from './receivingStates';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import ReceivingStates from './receivingStates';
 
 const receivingEditForm = Section({ id: 'pane-title-form' });
 const itemDetailsSection = receivingEditForm.find(Section({ id: 'itemDetails' }));
@@ -21,7 +22,8 @@ const cancelButton = receivingEditForm.find(Button('Cancel'));
 const saveAndCloseButton = receivingEditForm.find(Button('Save & close'));
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(receivingEditForm.exists());
   },
   checkReceivingFormContent({ itemDetails, lineDetails }) {
