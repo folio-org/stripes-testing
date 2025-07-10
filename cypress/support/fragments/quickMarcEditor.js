@@ -450,6 +450,13 @@ const defaultValid008HoldingsValues = {
   'Spec ret': ['\\', '\\', '\\'],
 };
 const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
+const ldrFields = [
+  { label: 'Status', type: 'select', name: 'records[0].content.Status' },
+  { label: 'Ctrl', type: 'select', name: 'records[0].content.Ctrl' },
+  { label: 'ELvl', type: 'input', name: 'records[0].content.ELvl' },
+  { label: 'Desc', type: 'select', name: 'records[0].content.Desc' },
+  { label: 'MultiLvl', type: 'select', name: 'records[0].content.MultiLvl' },
+];
 const authoritySubfieldsDefault = [
   {
     ruleId: '8',
@@ -1692,6 +1699,21 @@ export default {
     return cy.get('@tagContent');
   },
 
+  fillLDRFields(fieldValues) {
+    const actions = [];
+    ldrFields.forEach(({ label, type, name }) => {
+      const value = fieldValues[label];
+
+      if (type === 'select') {
+        actions.push(cy.get(`select[name="${name}"]`).select(value));
+      } else if (type === 'input') {
+        actions.push(cy.get(`input[name="${name}"]`).clear().type(value));
+      }
+    });
+
+    return cy.do(...actions);
+  },
+
   deleteTag(rowIndex) {
     cy.do([
       QuickMarcEditorRow({ index: rowIndex })
@@ -2438,13 +2460,12 @@ export default {
   },
 
   checkOnlyBackslashesIn008Boxes() {
-    cy.get('input[value="008"]')
+    cy.get('input[name^="records"][name$=".tag"][value="008"]')
       .parents('[data-testid="quick-marc-editorid"]')
-      .find('div[data-testid="bytes-field-col"]')
-      .find('input')
-      .then((fields) => {
-        const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
-        expect(fieldValues.join('')).to.match(/^\\+$/);
+      .find('[data-testid="bytes-field-col"] select')
+      .then((selects) => {
+        const values = Array.from(selects, (el) => el.value);
+        expect(values.join('')).to.match(/^\\+$/);
       });
   },
 

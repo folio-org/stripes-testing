@@ -22,7 +22,11 @@ describe('MARC', () => {
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
       };
       const dropdownUpdate = [testData.tagLdr, 'Status', 'n - New'];
-      const textUpdate = [testData.tag008, 'Geo Subd', 'a'];
+      const textUpdate = [
+        testData.tag008,
+        'Geo Subd',
+        'd - ui-quick-marc.record.fixedField.Subdivided geographically-direct',
+      ];
       const versionHistoryCardsData = [
         {
           isOriginal: false,
@@ -39,7 +43,7 @@ describe('MARC', () => {
           action: VersionHistorySection.fieldActions.EDITED,
           field: testData.tag008,
           from: '801007n| azannaabn          |b aaa      ',
-          to: '801007a| azannaabn          |b aaa      ',
+          to: '801007d| azannaabn          |b aaa      ',
         },
         {
           action: VersionHistorySection.fieldActions.EDITED,
@@ -120,8 +124,8 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.selectFieldsDropdownOption(...dropdownUpdate);
           QuickMarcEditor.verifyDropdownOptionChecked(...dropdownUpdate);
-          QuickMarcEditor.fillInTextBoxInField(...textUpdate);
-          QuickMarcEditor.verifyTextBoxValueInField(...textUpdate);
+          QuickMarcEditor.selectFieldsDropdownOption(...textUpdate);
+          QuickMarcEditor.verifyDropdownOptionChecked(...textUpdate);
           cy.wait(3000);
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();

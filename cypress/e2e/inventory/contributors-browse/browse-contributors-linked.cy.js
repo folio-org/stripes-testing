@@ -61,6 +61,7 @@ describe('Inventory', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        InventoryInstances.deleteInstanceByTitleViaApi('C359596*');
         cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -88,7 +89,6 @@ describe('Inventory', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             InventoryInstance.searchResultsWithOption('Identifier (all)', tag.authNaturalId);
-            InventoryInstance.selectRecord();
             InventoryInstance.clickLinkButton();
             InventoryInstance.closeDetailsView();
             InventoryInstance.closeFindAuthorityModal();

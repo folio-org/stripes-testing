@@ -599,6 +599,14 @@ export default {
     cy.expect(instanceAdministrativeNote.find(HTML(including(note))).exists());
   },
 
+  verifyInstaneceAdministrativeNoteByRow: (note, rowIndex = 0) => {
+    cy.expect(
+      instanceAdministrativeNote
+        .find(MultiColumnListCell({ row: rowIndex, content: including(note) }))
+        .exists(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
@@ -838,6 +846,14 @@ export default {
             or(...timePoints.map((timePoint) => including(`Record last updated: ${timePoint}`))),
           ),
         )
+        .exists(),
+    );
+  },
+
+  verifyLastUpdatedDateAndTime(updatedDate) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
         .exists(),
     );
   },

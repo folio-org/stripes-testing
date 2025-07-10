@@ -20,7 +20,6 @@ describe('Consortia', () => {
     describe('Manage shared settings', () => {
       describe('Manage shared Subject sources', () => {
         let user;
-
         const subjectSource = {
           name: `C594428 autotestSubjectSourceName${getRandomPostfix()}`,
           source: 'consortium',

@@ -20,9 +20,6 @@ describe('Inventory', () => {
     const instanceTitle = `AT_C478253_FolioInstance_${randomPostfix}`;
     const testData = {
       user: {},
-      instance: {},
-      holdings: {},
-      item: {},
     };
     const callNumberData = {
       callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
@@ -126,6 +123,7 @@ describe('Inventory', () => {
           querySearchOption,
           `itemFullCallNumbers="${callNumberQueryValue}"`,
         );
+        InventoryInstances.selectInstanceById(instanceData.id);
         // Open item detail view and verify effective call number
         InventoryInstance.openHoldings('');
         InventoryInstance.openItemByBarcode('No barcode');

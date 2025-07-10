@@ -234,6 +234,7 @@ export default {
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
+    cy.wait(4000);
   },
 
   fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(

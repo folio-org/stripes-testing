@@ -23,7 +23,7 @@ describe('Consortia', () => {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'No set value-',
+          user: 'No set value- ',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {

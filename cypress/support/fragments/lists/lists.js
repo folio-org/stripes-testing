@@ -792,7 +792,7 @@ const API = {
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"15"}',
+          fqlQuery: '{"users.active":{"$eq":"true"}}',
         },
         fields: ['users.active', 'user.id'],
       };
@@ -808,7 +808,7 @@ const API = {
         query: {
           entityTypeId: filteredEntityTypeId,
           fqlQuery:
-            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}],"_version":"15"}',
+            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}]}',
         },
         fields: ['users.active', 'users.id', 'users.username'],
       };
@@ -826,7 +826,12 @@ const API = {
           entityTypeId: filteredEntityTypeId,
           fqlQuery: '{"instance.source":{"$ne":"LINKED_DATA"}}',
         },
-        fields: ['instance.hrid', 'instance.title', 'instance.instance_type_name', 'instance.source'],
+        fields: [
+          'instance.hrid',
+          'instance.title',
+          'instance.instance_type_name',
+          'instance.source',
+        ],
       };
     });
   },
@@ -873,12 +878,14 @@ const API = {
   },
 
   getListByIdViaApi(listId) {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: `lists/${listId}`,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}`,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 
   waitForListToCompleteRefreshViaApi(listId) {
@@ -929,50 +936,60 @@ const API = {
   },
 
   editViaApi(id, list) {
-    return cy.okapiRequest({
-      method: 'PUT',
-      path: `lists/${id}`,
-      body: list,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `lists/${id}`,
+        body: list,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 
   refreshViaApi(id) {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: `lists/${id}/refresh`,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `lists/${id}/refresh`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 
   // input parameter 'fields' should be an array of field names to export
   // e.g. ['users.active', 'users.id', 'users.username']
   exportViaApi(id, fields) {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: `lists/${id}/exports`,
-      body: fields,
-      isDefaultSearchParamsRequired: false,
-    }).then((postExportResponse) => {
-      return cy.okapiRequest({
-        method: 'GET',
-        path: `lists/${id}/exports/${postExportResponse.body.exportId}`,
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `lists/${id}/exports`,
+        body: fields,
         isDefaultSearchParamsRequired: false,
-      }).then((getExportResponse) => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `lists/${id}/exports/${getExportResponse.body.exportId}/download`,
-          failOnStatusCode: false,
-          isDefaultSearchParamsRequired: false,
-        }).then((getDownloadResponse) => {
-          return getDownloadResponse.body;
-        });
+      })
+      .then((postExportResponse) => {
+        return cy
+          .okapiRequest({
+            method: 'GET',
+            path: `lists/${id}/exports/${postExportResponse.body.exportId}`,
+            isDefaultSearchParamsRequired: false,
+          })
+          .then((getExportResponse) => {
+            return cy
+              .okapiRequest({
+                method: 'GET',
+                path: `lists/${id}/exports/${getExportResponse.body.exportId}/download`,
+                failOnStatusCode: false,
+                isDefaultSearchParamsRequired: false,
+              })
+              .then((getDownloadResponse) => {
+                return getDownloadResponse.body;
+              });
+          });
       });
-    });
   },
 
   deleteViaApi(id) {
