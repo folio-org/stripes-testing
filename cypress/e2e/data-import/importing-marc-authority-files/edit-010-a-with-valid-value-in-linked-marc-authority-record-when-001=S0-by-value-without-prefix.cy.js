@@ -54,7 +54,7 @@ describe('Data Import', () => {
         '0',
         '0',
         '$a C374184 Marvel comics',
-        '',
+        '$v Catalogs.',
         '$0 http://id.loc.gov/authorities/names/n80026980',
         '',
       ],
@@ -195,9 +195,7 @@ describe('Data Import', () => {
           linkingTagAndValue.tag,
           linkingTagAndValue.rowIndex,
         );
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.waitForAuthRefresh(() => {
