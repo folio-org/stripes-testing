@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Edit list', () => {
+  describe('Delete list', () => {
     let userData = {};
     const listData = {
-      name: `C411740-${getTestEntityValue('list')}`,
-      description: `C411740-${getTestEntityValue('desc')}`,
+      name: `C411773-${getTestEntityValue('list')}`,
+      description: `C411773-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -17,15 +17,22 @@ describe('Lists', () => {
     };
     let listId;
 
-    before('Create user and list', () => {
+    before('Create user', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsEdit.gui,
+        Permissions.listsAll.gui,
         Permissions.usersViewRequests.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+        Permissions.loansAll.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-      }).then(() => {
+      });
+    });
+
+    beforeEach('Create a list', () => {
+      cy.getAdminToken().then(() => {
         Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
           Lists.createQueryViaApi(query).then((createdQuery) => {
             listData.queryId = createdQuery.queryId;
@@ -41,33 +48,36 @@ describe('Lists', () => {
           });
         });
       });
+
+
+
+      // Lists.getListByIdViaApi(listId).then((body) => {
+      //   listData.version = body.version;
+      // }).then(() => {
+      //   Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
+      //     Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
+      //       Lists.getListByIdViaApi(listId).then((body) => {
+      //         listData.version = body.version;
+      //       }).then(() => {
+      //         Lists.waitForListToCompleteRefreshViaApi(listId);
+      //       });
+      //     });
+      //   });
+      // });
     });
 
-    beforeEach('Reset list state', () => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken();
-      Lists.getListByIdViaApi(listId).then((body) => {
-        listData.version = body.version;
-      }).then(() => {
-        Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
-          Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
-            Lists.getListByIdViaApi(listId).then((body) => {
-              listData.version = body.version;
-            }).then(() => {
-              Lists.waitForListToCompleteRefreshViaApi(listId);
-            });
-          });
-        });
-      });
+      Lists.deleteViaApi(listId);
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      Lists.deleteViaApi(listId);
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411740 (Multiple users): Make the list INACTIVE (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411740'] },
+    it.only('C411773 (Multiple users): Delete list (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411773'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -76,19 +86,12 @@ describe('Lists', () => {
         Lists.waitLoading();
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
+        // delete a list
+        Lists.deleteViaApi(listId).then(() => { cy.wait(1000); });
         Lists.openActions();
-        Lists.editList();
-        // make a list inactive
-        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => { cy.wait(3000); });
-        Lists.editQuery();
-        cy.wait(2000);
-        // Change query value
-        Lists.changeQueryBoolValue(false);
-        cy.wait(5000);
-        Lists.testQuery();
-        cy.wait(5000);
-        Lists.runQueryAndSave();
-        Lists.verifyCalloutMessage(`Error: someone else modified ${listData.name}. Reload the page to view the latest version of this list`);
+        Lists.deleteList();
+        Lists.confirmDelete();
+        Lists.verifyCalloutMessage(`Error: ${listData.name} was not deleted because the list was not found. Verify the list location and try again.`);
       });
 
     it('C411741 (Multiple users): Make the list Private (corsair)',

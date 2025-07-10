@@ -5,7 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Concurrent edit of the same list by two users', () => {
+  describe('Edit list', () => {
     let userData = {};
     const listData = {
       name: `C411767-${getTestEntityValue('list')}`,
@@ -17,7 +17,7 @@ describe('Lists', () => {
     };
     let listId;
 
-    before('Create users and list', () => {
+    before('Create user and list', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsExport.gui,
