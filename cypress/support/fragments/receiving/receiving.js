@@ -348,6 +348,11 @@ export default {
     cy.wait(6000);
   },
 
+  selectPOLineInReceive: () => {
+    cy.get('[data-testid="titlePOLineLink"]').click();
+    cy.wait(6000);
+  },
+
   selectInstanceLinkInReceive: () => {
     cy.do(Section({ id: 'pane-title-details' }).find(Link()).click());
   },
