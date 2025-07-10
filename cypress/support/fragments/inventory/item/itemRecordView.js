@@ -273,14 +273,37 @@ export default {
       cy.expect(section.find(KeyValue(label)).has(conditions));
     });
   },
+
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
-    cy.expect(HTML(staffValue).exists());
+    cy.contains('div', 'Check in note')
+      .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
+      .filter((index, el) => {
+        return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
+      })
+      .first()
+      .within(() => {
+        cy.contains('div', 'Staff only')
+          .parent()
+          .find('[data-test-kv-value]')
+          .should('contain.text', staffValue);
+      });
   },
 
   checkCheckOutNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check out note')).has({ value: note }));
-    cy.expect(HTML(staffValue).exists());
+    cy.contains('div', 'Check out note')
+      .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
+      .filter((index, el) => {
+        return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
+      })
+      .first()
+      .within(() => {
+        cy.contains('div', 'Staff only')
+          .parent()
+          .find('[data-test-kv-value]')
+          .should('contain.text', staffValue);
+      });
   },
 
   checkElectronicBookplateNote: (note) => {
