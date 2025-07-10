@@ -397,6 +397,22 @@ export default {
     internal: 'specification-storage.fields.item.delete',
     gui: 'Specification Storage - Delete specification field definition',
   },
+  specificationStorageGetSpecificationFieldIndicators: {
+    internal: 'specification-storage.field.indicators.collection.get',
+    gui: 'Specification Storage - Get field indicators definition collection',
+  },
+  specificationStorageCreateSpecificationFieldIndicator: {
+    internal: 'specification-storage.field.indicators.item.post',
+    gui: 'Specification Storage - Create indicator definition for field',
+  },
+  specificationStorageGetSpecificationFieldSubfields: {
+    internal: 'specification-storage.field.subfields.collection.get',
+    gui: 'Specification Storage - Get field subfields definition collection',
+  },
+  specificationStorageCreateSpecificationFieldSubfield: {
+    internal: 'specification-storage.field.subfields.item.post',
+    gui: 'Specification Storage - Create subfield definition for field',
+  },
 
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
