@@ -4,6 +4,8 @@ import {
   Checkbox,
   EditableListRow,
   Form,
+  HTML,
+  Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -56,6 +58,11 @@ const successSaveEditedFileCalloutText = (authorityFileName) => {
 const authorityFileDeletedCalloutText = (authorityFileName) => {
   return `Authority file ${authorityFileName} has been deleted.`;
 };
+const deleteModalMessage1 = (sourceFileName) => `${sourceFileName} will be deleted.`;
+const deleteModalMessage2 =
+  'Are you sure you want to delete this authority file? After deletion, new records will no longer be able to be assigned to this authority file';
+const deleteModal = Modal('Delete authority file');
+const cancelDeletionButton = Button('No, do not delete');
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -556,5 +563,15 @@ export default {
   checkNewButtonShown(isShown = true) {
     if (isShown) cy.expect(newButton.exists());
     else cy.expect(newButton.absent());
+  },
+
+  verifyDeleteModal(sourceFileName) {
+    cy.expect([
+      deleteModal.exists(),
+      deleteModal.find(HTML({ text: including(deleteModalMessage1(sourceFileName)) })).exists(),
+      deleteModal.find(HTML({ text: including(deleteModalMessage2) })).exists(),
+      deleteModal.find(cancelDeletionButton).exists(),
+      deleteModal.find(confirmDeletionButton).exists(),
+    ]);
   },
 };
