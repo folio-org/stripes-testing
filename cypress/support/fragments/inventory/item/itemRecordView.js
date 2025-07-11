@@ -276,14 +276,14 @@ export default {
 
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
-    cy.contains('div', 'Check in note')
+    cy.contains('[class^="kvLabel-"]', 'Check in note')
       .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
       .filter((index, el) => {
         return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
       })
       .first()
       .within(() => {
-        cy.contains('div', 'Staff only')
+        cy.contains('[class^="kvLabel-"]', 'Staff only')
           .parent()
           .find('[data-test-kv-value]')
           .should('contain.text', staffValue);

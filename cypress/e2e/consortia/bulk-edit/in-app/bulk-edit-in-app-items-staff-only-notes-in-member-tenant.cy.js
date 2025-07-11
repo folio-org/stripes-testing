@@ -69,110 +69,107 @@ describe('Bulk-edit', () => {
         ItemNoteTypesConsortiumManager.createViaApi(sharedItemNoteType).then((newItemNoteType) => {
           sharedNoteTypeData = newItemNoteType;
 
-          cy.withinTenant(Affiliations.College, () => {
-            cy.createTempUser([
-              permissions.bulkEditEdit.gui,
-              permissions.uiInventoryViewCreateEditItems.gui,
-            ]).then((userProperties) => {
-              user = userProperties;
+          cy.setTenant(Affiliations.College);
+          cy.createTempUser([
+            permissions.bulkEditEdit.gui,
+            permissions.uiInventoryViewCreateEditItems.gui,
+          ]).then((userProperties) => {
+            user = userProperties;
 
-              cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-                instanceTypeId = instanceTypeData[0].id;
-              });
-              cy.getLocations({ limit: 1 }).then((res) => {
-                locationId = res.id;
-              });
-              cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
-                loanTypeId = res[0].id;
-              });
-              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                sourceId = folioSource.id;
-              });
-              // Create local item note type in member tenant
-              ItemNoteTypes.createItemNoteTypeViaApi(localItemNoteType.name)
-                .then((noteId) => {
-                  localItemNoteType.id = noteId;
-                })
-                .then(() => {
-                  // Create FOLIO instance
-                  InventoryInstances.createFolioInstanceViaApi({
-                    instance: {
-                      instanceTypeId,
-                      title: folioInstance.title,
-                    },
-                  }).then((createdInstanceData) => {
-                    folioInstance.id = createdInstanceData.instanceId;
+            cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+              instanceTypeId = instanceTypeData[0].id;
+            });
+            cy.getLocations({ limit: 1 }).then((res) => {
+              locationId = res.id;
+            });
+            cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
+              loanTypeId = res[0].id;
+            });
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              sourceId = folioSource.id;
+            });
+            // Create local item note type in member tenant
+            ItemNoteTypes.createItemNoteTypeViaApi(localItemNoteType.name)
+              .then((noteId) => {
+                localItemNoteType.id = noteId;
+              })
+              .then(() => {
+                // Create FOLIO instance
+                InventoryInstances.createFolioInstanceViaApi({
+                  instance: {
+                    instanceTypeId,
+                    title: folioInstance.title,
+                  },
+                }).then((createdInstanceData) => {
+                  folioInstance.id = createdInstanceData.instanceId;
+                });
+              })
+              .then(() => {
+                // Create MARC instance
+                cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                  marcInstance.id = instanceId;
+                });
+              })
+              .then(() => {
+                // Create holdings for both instances
+                instances.forEach((instance) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: instance.id,
+                    permanentLocationId: locationId,
+                    sourceId,
+                  }).then((holding) => {
+                    instance.holdingId = holding.id;
                   });
-                })
-                .then(() => {
-                  // Create MARC instance
-                  cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                    marcInstance.id = instanceId;
-                  });
-                })
-                .then(() => {
-                  // Create holdings for both instances
+                  cy.wait(1000);
+                });
+              })
+              .then(() => {
+                // Create items for both holdings with all required notes
+                cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                  materialTypeId = res.id;
+
                   instances.forEach((instance) => {
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instance.id,
-                      permanentLocationId: locationId,
-                      sourceId,
-                    }).then((holding) => {
-                      instance.holdingId = holding.id;
+                    InventoryItems.createItemViaApi({
+                      barcode: instance.itemBarcode,
+                      holdingsRecordId: instance.holdingId,
+                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                      notes: [
+                        {
+                          itemNoteTypeId: sharedNoteTypeData.settingId,
+                          note: sharedNoteText,
+                          staffOnly: false,
+                        },
+                        {
+                          itemNoteTypeId: localItemNoteType.id,
+                          note: localNoteText,
+                          staffOnly: true,
+                        },
+                      ],
+                      circulationNotes: [
+                        { noteType: 'Check in', note: checkInNoteText, staffOnly: false },
+                        { noteType: 'Check out', note: checkOutNoteText, staffOnly: true },
+                      ],
+                    }).then((item) => {
+                      instance.itemId = item.id;
                     });
                     cy.wait(1000);
                   });
-                })
-                .then(() => {
-                  // Create items for both holdings with all required notes
-                  cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                    materialTypeId = res.id;
-
-                    instances.forEach((instance) => {
-                      InventoryItems.createItemViaApi({
-                        barcode: instance.itemBarcode,
-                        holdingsRecordId: instance.holdingId,
-                        materialType: { id: materialTypeId },
-                        permanentLoanType: { id: loanTypeId },
-                        status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                        notes: [
-                          {
-                            itemNoteTypeId: sharedNoteTypeData.settingId,
-                            note: sharedNoteText,
-                            staffOnly: false,
-                          },
-                          {
-                            itemNoteTypeId: localItemNoteType.id,
-                            note: localNoteText,
-                            staffOnly: true,
-                          },
-                        ],
-                        circulationNotes: [
-                          { noteType: 'Check in', note: checkInNoteText, staffOnly: false },
-                          { noteType: 'Check out', note: checkOutNoteText, staffOnly: true },
-                        ],
-                      }).then((item) => {
-                        instance.itemId = item.id;
-                      });
-                      cy.wait(1000);
-                    });
-                  });
-                })
-                .then(() => {
-                  // Create .csv file with holding UUIDs
-                  FileManager.createFile(
-                    `cypress/fixtures/${holdingUUIDsFileName}`,
-                    `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
-                  );
                 });
-              cy.resetTenant();
-              cy.login(user.username, user.password, {
-                path: TopMenu.bulkEditPath,
-                waiter: BulkEditSearchPane.waitLoading,
+              })
+              .then(() => {
+                FileManager.createFile(
+                  `cypress/fixtures/${holdingUUIDsFileName}`,
+                  `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
+                );
               });
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
             });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
       });
 
