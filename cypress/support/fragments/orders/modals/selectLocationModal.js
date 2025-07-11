@@ -1,9 +1,11 @@
 import { Button, Modal, MultiColumnListCell, TextField } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 
 const selectLocationModal = Modal('Select locations');
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(selectLocationModal.exists());
   },
   verifyModalView() {
