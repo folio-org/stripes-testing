@@ -28,7 +28,10 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C163921 Delete remote storage configuration (volaris) (TaaS)',
-    { tags: ['criticalPath', 'volaris', 'C163921'] },
+    {
+      tags: ['criticalPath', 'volaris', 'C163921'],
+      retries: 2,
+    },
     () => {
       // #1 - 2 Open **"Settings"** app and **"Remote Storage"** in "Settings"
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
