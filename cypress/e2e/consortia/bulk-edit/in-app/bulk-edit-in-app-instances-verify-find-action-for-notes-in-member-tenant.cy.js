@@ -231,7 +231,7 @@ describe('Bulk-edit', () => {
           // Step 14: Download preview
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            fileNames.previewCSV,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             [
@@ -246,7 +246,7 @@ describe('Bulk-edit', () => {
             ],
           );
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            fileNames.previewCSV,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             [

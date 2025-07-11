@@ -320,7 +320,7 @@ describe('Bulk-edit', () => {
 
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
               editedHeaderValuesInCollegeInFile,

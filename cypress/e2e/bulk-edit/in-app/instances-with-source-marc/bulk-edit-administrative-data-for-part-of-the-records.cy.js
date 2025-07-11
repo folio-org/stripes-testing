@@ -159,7 +159,7 @@ describe('Bulk-edit', () => {
 
         marcInstances.forEach((instance) => {
           BulkEditFiles.verifyValueInRowByUUID(
-            fileNames.previewCSV,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             instance.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
@@ -167,7 +167,7 @@ describe('Bulk-edit', () => {
           );
         });
 
-        BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewCSV, 3);
+        BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewRecordsCSV, 3);
 
         // Step 7: Download preview in MARC format
         BulkEditActions.downloadPreviewInMarcFormat();
@@ -180,7 +180,7 @@ describe('Bulk-edit', () => {
           ],
         }));
 
-        parseMrcFileContentAndVerify(fileNames.previewMarc, assertionsOnMarcFileContent, 3);
+        parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, assertionsOnMarcFileContent, 3);
 
         // Step 8: Commit changes
         BulkEditActions.commitChanges();

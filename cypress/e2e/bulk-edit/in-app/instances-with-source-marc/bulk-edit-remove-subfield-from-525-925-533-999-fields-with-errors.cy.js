@@ -295,7 +295,7 @@ describe('Bulk-edit', () => {
         ];
 
         parseMrcFileContentAndVerify(
-          fileNames.previewMarc,
+          fileNames.previewRecordsMarc,
           assertionsOnMarcFileContentInPreviewFile,
           3,
         );
@@ -312,13 +312,13 @@ describe('Bulk-edit', () => {
         // Step 11: Download preview in CSV format
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewCSV,
+          fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWith525Field.hrid,
           'Notes',
           'Supplement note;;false',
         );
-        BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewCSV, 3);
+        BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewRecordsCSV, 3);
 
         // Step 12: Commit changes
         BulkEditActions.commitChanges();
@@ -414,7 +414,7 @@ describe('Bulk-edit', () => {
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
         parseMrcFileContentAndVerify(
-          fileNames.previewMarc,
+          fileNames.previewRecordsMarc,
           assertionsOnMarcFileContentInPreviewFile,
           3,
         );
@@ -422,13 +422,13 @@ describe('Bulk-edit', () => {
         // Step 24: Download and verify file with the preview of proposed changes (CSV)
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewCSV,
+          fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWith525Field.hrid,
           'Notes',
           'Supplement note;;false',
         );
-        BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewCSV, 3);
+        BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewRecordsCSV, 3);
 
         // Step 25: Download and verify file with updated records (MARC)
         BulkEditLogs.downloadFileWithUpdatedRecordsMarc();

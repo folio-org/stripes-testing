@@ -282,7 +282,7 @@ describe('Bulk-edit', () => {
 
           // Step 15: Download preview
           BulkEditActions.downloadPreview();
-          FileManager.convertCsvToJson(fileNames.previewCSV).then((csvFileData) => {
+          FileManager.convertCsvToJson(fileNames.previewRecordsCSV).then((csvFileData) => {
             const holdingRows = getRowsInCsvFileMatchingHrids(csvFileData, holdingHrids);
             holdingRows.forEach((holdingRow) => {
               cy.expect(

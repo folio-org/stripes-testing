@@ -328,7 +328,7 @@ describe('Bulk-edit', () => {
 
           const holdingElectronicAccessFieldsToEditInFile = `${electronicAccessTableHeadersInFile}${localUrlRelationship.name};${electronicAccessFieldsFromLowerCaseToStringInFile}|${localUrlRelationship.name};${electronicAccessFieldsFromLowerCaseToStringInFile}`;
 
-          FileManager.convertCsvToJson(fileNames.previewCSV).then((csvFileData) => {
+          FileManager.convertCsvToJson(fileNames.previewRecordsCSV).then((csvFileData) => {
             csvFileData.forEach((row) => {
               cy.expect(row).to.have.property(
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,

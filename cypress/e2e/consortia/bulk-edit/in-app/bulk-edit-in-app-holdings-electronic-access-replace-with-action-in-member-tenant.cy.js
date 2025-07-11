@@ -296,7 +296,7 @@ describe('Bulk-edit', () => {
 
           // Step 16: Download preview
           BulkEditActions.downloadPreview();
-          FileManager.convertCsvToJson(fileNames.previewCSV).then((csvFileData) => {
+          FileManager.convertCsvToJson(fileNames.previewRecordsCSV).then((csvFileData) => {
             csvFileData.forEach((row) => {
               cy.expect(row).to.have.property(
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,

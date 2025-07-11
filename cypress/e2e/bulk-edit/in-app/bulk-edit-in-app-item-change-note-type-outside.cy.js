@@ -152,7 +152,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckInNote(`${notes.copyOne}${notes.copyTwo}`, 'Yes\nNo');
+        ItemRecordView.checkCheckInNote(`${notes.copyOne}${notes.copyTwo}`, 'YesNo');
         ItemRecordView.checkItemNote(
           `${notes.checkOutOne}${notes.checkOutTwo}`,
           'YesNo',

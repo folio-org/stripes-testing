@@ -20,6 +20,7 @@ import {
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
+  ITEM_NOTE_TYPES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
@@ -31,35 +32,34 @@ let materialTypeId;
 let sourceId;
 let sharedNoteTypeData;
 const folioInstance = {
-  title: `AT_C566165_FolioInstance_${getRandomPostfix()}`,
+  title: `AT_C566169_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `barcode_${getRandomPostfix()}`,
   itemId: '',
   holdingId: '',
 };
 const marcInstance = {
-  title: `AT_C566165_MarcInstance_${getRandomPostfix()}`,
+  title: `AT_C566169_MarcInstance_${getRandomPostfix()}`,
   itemBarcode: `barcode__${getRandomPostfix()}`,
   itemId: '',
   holdingId: '',
 };
-const administrativeNoteText =
-  "Administrative note text ~,!,@,#,$,%,^,&,*,(,),~', {.[,]<},>,ø, Æ, §,";
+const administrativeNoteText = 'Administrative note text';
 const sharedNoteText = 'New shared note';
 const localNoteText = 'New local note';
-const checkInNoteText = "Check in note ~,!,@,#,$,%,^,&,*,(,),~', {.[,]<},>,ø, Æ, §,";
-const checkOutNoteText = 'Check out note staff only';
+const checkInNoteText = 'Check in note text';
+const checkOutNoteText = 'Check out note text';
 const sharedItemNoteType = {
   payload: {
-    name: `AT_C566165 shared note type ${randomFourDigitNumber()}`,
+    name: `AT_C566169 shared note type ${randomFourDigitNumber()}`,
   },
 };
 const localItemNoteType = {
-  name: `AT_C566165 local note type ${randomFourDigitNumber()}`,
+  name: `AT_C566169 local note type ${randomFourDigitNumber()}`,
 };
 const localItemNoteTypeName = localItemNoteType.name;
 const instances = [folioInstance, marcInstance];
-const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const fileNames = BulkEditFiles.getAllDownloadedFileNames(itemUUIDsFileName, true);
+const itemBarcodesFileName = `itemBarcodesFileName_${getRandomPostfix()}.csv`;
+const fileNames = BulkEditFiles.getAllDownloadedFileNames(itemBarcodesFileName, true);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -126,7 +126,7 @@ describe('Bulk-edit', () => {
                   });
                 })
                 .then(() => {
-                  // Create items for both holdings
+                  // Create items for both holdings with all required notes
                   cy.getMaterialTypes({ limit: 1 }).then((res) => {
                     materialTypeId = res.id;
 
@@ -137,6 +137,23 @@ describe('Bulk-edit', () => {
                         materialType: { id: materialTypeId },
                         permanentLoanType: { id: loanTypeId },
                         status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                        administrativeNotes: [administrativeNoteText],
+                        notes: [
+                          {
+                            itemNoteTypeId: sharedNoteTypeData.settingId,
+                            note: sharedNoteText,
+                            staffOnly: true,
+                          },
+                          {
+                            itemNoteTypeId: localItemNoteType.id,
+                            note: localNoteText,
+                            staffOnly: false,
+                          },
+                        ],
+                        circulationNotes: [
+                          { noteType: 'Check in', note: checkInNoteText, staffOnly: true },
+                          { noteType: 'Check out', note: checkOutNoteText, staffOnly: false },
+                        ],
                       }).then((item) => {
                         instance.itemId = item.id;
                       });
@@ -145,10 +162,10 @@ describe('Bulk-edit', () => {
                   });
                 })
                 .then(() => {
-                  // Create .csv file with item UUIDs
+                  // Create .csv file with item barcodes
                   FileManager.createFile(
-                    `cypress/fixtures/${itemUUIDsFileName}`,
-                    `${folioInstance.itemId}\n${marcInstance.itemId}`,
+                    `cypress/fixtures/${itemBarcodesFileName}`,
+                    `${folioInstance.itemBarcode}\n${marcInstance.itemBarcode}`,
                   );
                 });
               cy.resetTenant();
@@ -174,24 +191,24 @@ describe('Bulk-edit', () => {
         });
 
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
         BulkEditFiles.deleteAllDownloadedFiles(fileNames);
       });
 
       it(
-        'C566165 Verify "Add note" action for Items in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566165'] },
+        'C566169 Verify "Remove all" action for Items notes in Member tenant (consortia) (firebird)',
+        { tags: ['criticalPathECS', 'firebird', 'C566169'] },
         () => {
           // Step 1: Select record type and identifier
-          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');
 
           // Step 2: Upload .csv file
-          BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+          BulkEditSearchPane.uploadFile(itemBarcodesFileName);
 
           // Step 3: Check upload result
-          BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
+          BulkEditSearchPane.verifyPaneTitleFileName(itemBarcodesFileName);
           BulkEditSearchPane.verifyPaneRecordsCount('2 item');
-          BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
+          BulkEditSearchPane.verifyFileNameHeadLine(itemBarcodesFileName);
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -210,21 +227,32 @@ describe('Bulk-edit', () => {
             localItemNoteTypeName,
           );
 
-          // Step 5: Check checkboxes for shared and local note types and Member column
+          // Step 5: Check checkboxes for shared and local note types
           BulkEditSearchPane.changeShowColumnCheckbox(
             sharedItemNoteType.payload.name,
             localItemNoteTypeName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
           );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             true,
             sharedItemNoteType.payload.name,
             localItemNoteTypeName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
           );
 
           [sharedItemNoteType.payload.name, localItemNoteTypeName].forEach((column) => {
             BulkEditSearchPane.verifyResultColumnTitles(column);
+          });
+
+          instances.forEach((instance) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              instance.itemBarcode,
+              sharedItemNoteType.payload.name,
+              `${sharedNoteText} (staff only)`,
+            );
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              instance.itemBarcode,
+              localItemNoteTypeName,
+              localNoteText,
+            );
           });
 
           // Step 6: Uncheck checkboxes for shared and local note types
@@ -249,10 +277,10 @@ describe('Bulk-edit', () => {
           instances.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
               fileNames.matchedRecordsCSV,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-              instance.itemId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.itemBarcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+              instance.itemId,
             );
           });
 
@@ -270,69 +298,47 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(sharedItemNoteType.payload.name);
           BulkEditActions.clickOptionsSelection();
 
-          // Step 10-12: Select Administrative note
-          BulkEditActions.addItemNoteAndVerify('Administrative note', administrativeNoteText);
-          BulkEditActions.verifyConfirmButtonDisabled(false);
+          // Step 10-16: Remove all notes for each type
+          const removeAllNoteTypes = [
+            'Administrative note',
+            sharedItemNoteType.payload.name,
+            localItemNoteTypeName,
+            'Check in note',
+            'Check out note',
+          ];
+          removeAllNoteTypes.forEach((noteType, idx) => {
+            if (idx > 0) {
+              BulkEditActions.addNewBulkEditFilterString();
+              BulkEditActions.verifyNewBulkEditRow(idx);
+            }
+            BulkEditActions.noteRemoveAll(noteType, idx);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
+          });
 
-          // Step 13: Click Plus icon
-          BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.verifyNewBulkEditRow(1);
-
-          // Step 14-15: Select shared note type, Add note, fill text, check staff only
-          BulkEditActions.addItemNoteAndVerify(sharedItemNoteType.payload.name, sharedNoteText, 1);
-          BulkEditActions.verifyStaffOnlyCheckbox(false, 1);
-          BulkEditActions.checkStaffOnlyCheckbox(1);
-          BulkEditActions.verifyConfirmButtonDisabled(false);
-
-          // Step 16: Click Plus icon, select local note type, Add note, fill text
-          BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.verifyNewBulkEditRow(2);
-          BulkEditActions.addItemNoteAndVerify(localItemNoteTypeName, localNoteText, 2);
-          BulkEditActions.verifyConfirmButtonDisabled(false);
-
-          // Step 17-18: Click Plus icon, select Check in note, Add note, fill text
-          BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.verifyNewBulkEditRow(3);
-          BulkEditActions.addItemNoteAndVerify('Check in note', checkInNoteText, 3);
-          BulkEditActions.verifyStaffOnlyCheckbox(false, 3);
-          BulkEditActions.verifyConfirmButtonDisabled(false);
-
-          // Step 19-20: Click Plus icon, select Check out note, Add note, fill text, check staff only
-          BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.verifyNewBulkEditRow(4);
-          BulkEditActions.addItemNoteAndVerify('Check out note', checkOutNoteText, 4);
-          BulkEditActions.verifyStaffOnlyCheckbox(false, 4);
-          BulkEditActions.checkStaffOnlyCheckbox(4);
-          BulkEditActions.verifyConfirmButtonDisabled(false);
-
-          // Step 21: Confirm changes
+          // Step 17: Confirm changes
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
           const headerValuesToEdit = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: administrativeNoteText,
+              value: '',
             },
             {
               header: sharedItemNoteType.payload.name,
-              value: `${sharedNoteText} (staff only)`,
+              value: '',
             },
             {
               header: localItemNoteTypeName,
-              value: localNoteText,
+              value: '',
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              value: checkInNoteText,
+              value: '',
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: `${checkOutNoteText} (staff only)`,
-            },
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
-              value: tenantNames.college,
+              value: '',
             },
           ];
 
@@ -345,7 +351,7 @@ describe('Bulk-edit', () => {
 
           BulkEditActions.verifyAreYouSureForm(2);
 
-          // Step 22: Download preview
+          // Step 18: Download preview
           BulkEditActions.downloadPreview();
 
           instances.forEach((instance) => {
@@ -357,7 +363,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Step 23: Commit changes
+          // Step 19: Commit changes
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(2);
 
@@ -368,7 +374,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Step 24: Download changed records
+          // Step 20: Download changed records
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
@@ -381,28 +387,18 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Step 25: Verify changes in Inventory app
+          // Step 21: Verify changes in Inventory app
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
 
           instances.forEach((instance) => {
             InventorySearchAndFilter.searchByParameter('Barcode', instance.itemBarcode);
             ItemRecordView.waitLoading();
-            ItemRecordView.checkItemAdministrativeNote(administrativeNoteText);
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              1,
-              'Yes',
-              sharedItemNoteType.payload.name,
-              sharedNoteText,
-            );
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              0,
-              'No',
-              localItemNoteType.name,
-              localNoteText,
-            );
-            ItemRecordView.checkCheckInNote(checkInNoteText, 'No');
-            ItemRecordView.checkCheckOutNote(checkOutNoteText);
+            ItemRecordView.checkItemAdministrativeNote('-');
+            ItemRecordView.checkItemNoteAbsent(sharedItemNoteType.payload.name);
+            ItemRecordView.checkItemNoteAbsent(localItemNoteTypeName);
+            ItemRecordView.verifyTextAbsent(ITEM_NOTE_TYPES.CHECK_IN_NOTE);
+            ItemRecordView.verifyTextAbsent(ITEM_NOTE_TYPES.CHECK_OUT_NOTE);
             ItemRecordView.closeDetailView();
             InventorySearchAndFilter.resetAll();
           });
