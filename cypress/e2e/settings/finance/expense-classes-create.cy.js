@@ -25,13 +25,13 @@ describe('ui-invoices-settings: Batch Group creation', () => {
     () => {
       SettingsFinance.waitExpenseClassesLoading();
       SettingsFinance.createNewExpenseClass(expenseClass);
-      SettingsFinance.checkExpenseClass(expenseClass);
+      SettingsFinance.checkExpenseClass(expenseClass, expenseClass.source);
 
       newExpenseClass.name += 'updated';
       newExpenseClass.code += 'updated';
 
       SettingsFinance.editExpenseClass(newExpenseClass, expenseClass.name);
-      SettingsFinance.checkExpenseClass(newExpenseClass);
+      SettingsFinance.checkExpenseClass(newExpenseClass, newExpenseClass.source);
 
       SettingsFinance.deleteExpenseClass(newExpenseClass);
     },

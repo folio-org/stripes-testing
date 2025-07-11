@@ -20,14 +20,18 @@ describe('Fund type view', () => {
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+      ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
         servicePointId = servicePoints[0].id;
       });
+
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
       ExpenseClasses.createExpenseClassViaApi(newExpenseClass);
       FundTypes.createFundTypesViaApi(newFundTypes);
+      cy.getAdminSourceRecord().then((adminSourceRecord) => {
+        newExpenseClass.source = adminSourceRecord;
+      });
       cy.createTempUser([Permissions.uiSettingsFinanceView.gui], patronGroup.name).then(
         (userProperties) => {
           userData = userProperties;
@@ -59,7 +63,7 @@ describe('Fund type view', () => {
       SettingsFinance.checkEditDeleteIcon(newFundTypes);
       SettingsFinance.clickExpenseClass();
       SettingsFinance.verifyItemInDetailPanel();
-      SettingsFinance.checkExpenseClass(newExpenseClass);
+      SettingsFinance.checkExpenseClass(newExpenseClass, newExpenseClass.source);
       SettingsFinance.checkEditDeleteIcon(newExpenseClass);
     },
   );

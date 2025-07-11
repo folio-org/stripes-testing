@@ -74,13 +74,13 @@ export default {
     );
   },
 
-  checkExpenseClass: (expenseClass) => {
+  checkExpenseClass: (expenseClass, userName) => {
     cy.do(
       MultiColumnListCell({ content: expenseClass.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-        })} by folio-aqa, folio-aqa`;
+        })} by ${userName}`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))
