@@ -137,8 +137,7 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
 
-            // Wait for the content to be loaded.
-            cy.wait(6000);
+            InventoryInstance.waitInventoryLoading();
             InventoryInstance.viewSource();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);

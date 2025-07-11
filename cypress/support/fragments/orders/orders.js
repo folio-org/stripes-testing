@@ -1,40 +1,40 @@
 import {
-  Button,
-  SearchField,
-  PaneHeader,
-  Pane,
-  Select,
   Accordion,
-  KeyValue,
+  Button,
+  Card,
+  Callout,
+  calloutTypes,
   Checkbox,
+  HTML,
+  including,
+  KeyValue,
+  Link,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
-  Modal,
-  TextField,
-  HTML,
-  including,
-  SelectionOption,
   MultiSelect,
   MultiSelectOption,
-  Link,
-  Section,
-  Card,
+  Pane,
   PaneContent,
+  PaneHeader,
+  SearchField,
+  Section,
+  Select,
+  SelectionOption,
   Spinner,
-  Callout,
-  calloutTypes,
+  TextField,
 } from '../../../../interactors';
-import { ORDER_SYSTEM_CLOSING_REASONS } from '../../constants';
-import SearchHelper from '../finance/financeHelper';
-import InteractorsTools from '../../utils/interactorsTools';
+import { DEFAULT_WAIT_TIME, ORDER_SYSTEM_CLOSING_REASONS } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
-import OrderDetails from './orderDetails';
-import OrderEditForm from './orderEditForm';
+import InteractorsTools from '../../utils/interactorsTools';
+import SearchHelper from '../finance/financeHelper';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
+import OrderDetails from './orderDetails';
+import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
@@ -84,7 +84,8 @@ export default {
   clearSearchField() {
     cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
   },
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
   },
 

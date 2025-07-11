@@ -9,8 +9,9 @@ import {
   TextArea,
   TextField,
 } from '../../../../../interactors';
-import SearchHelper from '../../finance/financeHelper';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
+import SearchHelper from '../../finance/financeHelper';
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
@@ -68,7 +69,8 @@ const sections = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(orderTemplateForm.exists());
   },
   checkOrderTemplateFormContent() {
