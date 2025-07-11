@@ -188,10 +188,14 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -249,7 +253,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
+        if (index) MarcAuthority.deleteViaAPI(id, true);
         else InventoryInstance.deleteInstanceViaApi(id);
       });
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
