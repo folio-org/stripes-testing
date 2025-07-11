@@ -28,12 +28,34 @@ describe('MARC', () => {
         ],
         deletedFieldTags: ['380', '642', '645'],
         editedFieldValues: ['edited 1 time', 'edited 2 times', 'edited 3 times'],
+        editedDropdownOptions: 'dabababaaaan          |a aba    sd',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFiles = [
         { marc: 'oneMarcAuthority.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc` },
       ];
       const createdAuthorityID = [];
+      const dropdownSelections = {
+        'Geo Subd': 'd',
+        Roman: 'a',
+        Lang: 'b',
+        'Kind rec': 'a',
+        'Cat Rules': 'b',
+        'SH Sys': 'a',
+        Series: 'b',
+        'Numb Series': 'a',
+        'Main use': 'a',
+        'Subj use': 'a',
+        'Series use': 'a',
+        'Subd type': 'a',
+        'Govt Ag': '|',
+        RefEval: 'a',
+        RecUpd: 'a',
+        'Pers Name': 'b',
+        'Level Est': 'a',
+        'Mod Rec Est': 's',
+        Source: 'd',
+      };
 
       before('Create test data', () => {
         cy.createTempUser([
@@ -84,11 +106,9 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.select(createdAuthorityID[0]);
           MarcAuthority.edit();
-          MarcAuthority.change008Field('x', 'x', 'x');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          MarcAuthority.clickSaveAndCloseButton();
-          MarcAuthority.contains('xxx');
+          MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          MarcAuthority.contains(testData.editedDropdownOptions);
         },
       );
 

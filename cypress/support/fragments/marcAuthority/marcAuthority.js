@@ -242,6 +242,22 @@ export default {
       Select('CatRules').choose(catRulesOptions[catrules]),
     ]);
   },
+
+  select008DropdownsIfOptionsExist(dropdownSelections) {
+    Object.entries(dropdownSelections).forEach(([label, value]) => {
+      const selector = `select[name="records[3].content.${label}"]`;
+      cy.get('body').then(($body) => {
+        if ($body.find(selector).length > 0) {
+          cy.get(selector).then(($select) => {
+            if ($select.find(`option[value="${value}"]`).length > 0) {
+              cy.get(selector).select(value);
+            }
+          });
+        }
+      });
+    });
+  },
+
   clickSaveAndCloseButton: () => {
     cy.do(saveAndCloseButton.click());
   },
