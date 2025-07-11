@@ -8,13 +8,12 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialSource: { name: Cypress.env('diku_login') },
+        initialSource: { name: 'ADMINISTRATOR, Diku_admin' },
         authority: {
           source: INSTANCE_SOURCE_NAMES.MARC,
           searchInput: 'C350697 On the Road',
@@ -41,7 +40,7 @@ describe('MARC', () => {
       before('Create test data', () => {
         cy.getAdminToken();
         // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350697*');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('C350697*');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -130,9 +129,7 @@ describe('MARC', () => {
             // *The "Save & close" button stays clickable.
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             // #11 Click on the "Save & close" button.
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             // *The success saving message is displayed.
             // *Detail record opened in the third pane.
             QuickMarcEditor.confirmDelete();
