@@ -1,8 +1,9 @@
 import moment from 'moment';
 
 import { Button, Checkbox, Section, Select, TextField } from '../../../../../interactors';
-import IntegrationStates from './integrationStates';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
+import IntegrationStates from './integrationStates';
 
 const integrationViewForm = Section({ id: 'integration-form' });
 
@@ -38,7 +39,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(integrationViewForm.exists());
   },
   checkButtonsConditions(fields = []) {

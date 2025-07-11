@@ -1,11 +1,13 @@
 import { Button, including, Section, Card } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 
 const versionsHistoryOrderLineSection = Section({ id: 'versions-history-pane-order-line' });
 const iconClock = Button({ icon: 'clock' });
 const iconTimes = Button({ icon: 'times' });
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(versionsHistoryOrderLineSection.exists());
   },
   veriifyIconClockExists() {

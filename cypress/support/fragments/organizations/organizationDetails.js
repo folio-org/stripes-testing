@@ -1,4 +1,5 @@
 import { Button, MultiColumnList, MultiColumnListCell, Section } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import IntegrationViewForm from './integrations/integrationViewForm';
 
 const organizationDetailsSection = Section({ id: 'pane-organization-details' });
@@ -13,7 +14,8 @@ const listIntegrationConfigs = MultiColumnList({
 });
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(organizationDetailsSection.exists());
   },
   organizationDetailsSectionIsAbsent() {
