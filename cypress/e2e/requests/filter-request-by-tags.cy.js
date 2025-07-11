@@ -4,6 +4,9 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import Permissions from '../../support/dictionary/permissions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-requests: Filter requests by tags', () => {
   const userIds = [];
@@ -28,8 +31,29 @@ describe('ui-requests: Filter requests by tags', () => {
       label: `aqa3_${uuid()}`,
     },
   ];
+  let testUser;
+  let servicePoint;
+  let defaultLocation;
 
-  beforeEach(() => {
+  before('Create test data', () => {
+    cy.getAdminToken().then(() => {
+      servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+      ServicePoints.createViaApi(servicePoint);
+      defaultLocation = Location.getDefaultLocation(servicePoint.id);
+      Location.createViaApi(defaultLocation);
+
+      cy.createTempUser([
+        Permissions.uiRequestsAll.gui,
+        Permissions.uiTagsPermissionAll.gui,
+        Permissions.uiCreateEditDeleteLoanTypes.gui,
+        Permissions.uiUsersCreate.gui,
+        Permissions.uiUsersView.gui,
+      ]).then((userProperties) => {
+        testUser = userProperties;
+        cy.login(testUser.username, testUser.password);
+      });
+    });
+
     cy.getAdminToken().then(() => {
       Object.values(requestTypes).forEach((requestType) => {
         const itemStatus =
@@ -44,26 +68,37 @@ describe('ui-requests: Filter requests by tags', () => {
           },
         );
       });
-    });
-    tags.forEach((tag) => {
-      cy.createTagApi(tag).then((tagID) => tagIDs.push(tagID));
+
+      tags.forEach((tag) => {
+        cy.createTagApi(tag).then((tagID) => tagIDs.push(tagID));
+      });
     });
   });
 
-  afterEach(() => {
-    instances.forEach((instance) => {
-      cy.deleteItemViaApi(instance.itemId);
-      cy.deleteHoldingRecordViaApi(instance.holdingId);
-      InventoryInstance.deleteInstanceViaApi(instance.instanceId);
-    });
-    requests.forEach((request) => {
-      Requests.deleteRequestViaApi(request.id);
-    });
-    userIds.forEach((id) => {
-      Users.deleteViaApi(id);
-    });
-    tagIDs.forEach((tagID) => {
-      cy.deleteTagApi(tagID);
+  after('Delete test data', () => {
+    cy.getAdminToken().then(() => {
+      instances.forEach((instance) => {
+        cy.deleteItemViaApi(instance.itemId);
+        cy.deleteHoldingRecordViaApi(instance.holdingId);
+        InventoryInstance.deleteInstanceViaApi(instance.instanceId);
+      });
+      requests.forEach((request) => {
+        Requests.deleteRequestViaApi(request.id);
+      });
+      userIds.forEach((id) => {
+        Users.deleteViaApi(id);
+      });
+      tagIDs.forEach((tagID) => {
+        cy.deleteTagApi(tagID);
+      });
+      Users.deleteViaApi(testUser.userId);
+      ServicePoints.deleteViaApi(servicePoint.id);
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
+        defaultLocation.institutionId,
+        defaultLocation.campusId,
+        defaultLocation.libraryId,
+        defaultLocation.id,
+      );
     });
   });
 
