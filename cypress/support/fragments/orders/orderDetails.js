@@ -1,29 +1,30 @@
 import {
+  Accordion,
   Button,
+  Checkbox,
+  including,
+  KeyValue,
+  Link,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
   Pane,
   PaneHeader,
   Section,
-  KeyValue,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  including,
-  Link,
-  Checkbox,
-  Accordion,
-  MultiColumnList,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
-import OrderEditForm from './orderEditForm';
-import OrderLines from './orderLines';
-import OrderLineDetails from './orderLineDetails';
-import OrderLineEditForm from './orderLineEditForm';
+import ExportDetails from '../exportManager/exportDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
+import Receivings from '../receiving/receiving';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
 import CreateInvoiceModal from './modals/createInvoiceModal';
 import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
-import ExportDetails from '../exportManager/exportDetails';
-import Receivings from '../receiving/receiving';
-import CloseConfirmationModal from './modals/closeConfirmationModal';
+import OrderEditForm from './orderEditForm';
+import OrderLineDetails from './orderLineDetails';
+import OrderLineEditForm from './orderLineEditForm';
+import OrderLines from './orderLines';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
@@ -50,6 +51,10 @@ const openPolDetails = (title) => {
 };
 
 export default {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
+    cy.expect(orderDetailsPane.exists());
+  },
   openPolDetails,
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
