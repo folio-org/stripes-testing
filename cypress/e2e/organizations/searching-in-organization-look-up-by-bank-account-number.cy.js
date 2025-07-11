@@ -29,7 +29,11 @@ describe('Organizations', () => {
   let C423432User;
 
   before(() => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
+    cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+      C423432User = secondUserProperties;
+    });
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
@@ -61,9 +65,6 @@ describe('Organizations', () => {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
-    });
-    cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
-      C423432User = secondUserProperties;
     });
   });
 

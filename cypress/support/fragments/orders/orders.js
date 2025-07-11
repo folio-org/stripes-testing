@@ -887,6 +887,7 @@ export default {
   },
 
   openVendorFilterModal: () => {
+    cy.wait(4000);
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),
