@@ -179,7 +179,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.ONLINE_UI, 'holdings', 2);
         BulkEditActions.verifyActionsSelectDropdownDisabled(2);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.replaceWith, 2);
+        BulkEditActions.verifyActionSelected(actionsToSelect.replaceWith, 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(3);

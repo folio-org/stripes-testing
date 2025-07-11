@@ -79,7 +79,7 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.selectAction(actionsToSelect.addNote, rowNumber);
   BulkEditActions.verifyActionSelected(actionsToSelect.addNote, rowNumber);
   BulkEditActions.fillInFirstTextArea(noteText, rowNumber);
-  BulkEditActions.verifyValueInSecondTextArea(noteText, rowNumber);
+  BulkEditActions.verifyValueInFirstTextArea(noteText, rowNumber);
   BulkEditActions.verifyConfirmButtonDisabled(false);
 }
 
