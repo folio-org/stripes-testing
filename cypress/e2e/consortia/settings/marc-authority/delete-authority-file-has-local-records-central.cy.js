@@ -15,14 +15,14 @@ import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 
 const randomLetters = getRandomLetters(7);
 const testData = {
-  name: `AT_C436924_AuthSource_${getRandomPostfix()}`,
+  name: `AT_C436926_AuthSource_${getRandomPostfix()}`,
   prefix: randomLetters,
   startsWith: `${randomFourDigitNumber()}`,
   isActive: true,
-  baseURL: `https://autotesturl.com/C436924/${randomLetters}/source/`,
+  baseURL: `https://autotesturl.com/C436926/${randomLetters}/source/`,
   manageAuthFilesOption: 'Manage authority files',
   marcAuthorityTabName: 'MARC authority',
-  marcAuthorityHeading: `AT_C436924_MarcAuthority_${getRandomPostfix()}`,
+  marcAuthorityHeading: `AT_C436926_MarcAuthority_${getRandomPostfix()}`,
 };
 const authorityFields = [
   { tag: '100', content: `$a ${testData.marcAuthorityHeading}`, indicators: ['\\', '\\'] },
@@ -47,9 +47,8 @@ describe('MARC', () => {
         before('Create user, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          // Try to delete previosly created source files, or at least disactivate them
-          // Retention policy will prevent deletion for a long time
-          cy.getAuthoritySourceFileDataViaAPI('AT_C436924_*').then(() => {
+          // Try to delete previously created source files, or at least deactivate them
+          cy.getAuthoritySourceFileDataViaAPI('AT_C436926_*').then(() => {
             Cypress.env('authoritySourceFiles').forEach((sourceFile) => {
               ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(sourceFile.name);
               cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
@@ -63,7 +62,8 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
-
+            // Create a Local MARC authority record assigned to the file
+            cy.setTenant(Affiliations.College);
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
               testData.startsWith,
@@ -71,6 +71,7 @@ describe('MARC', () => {
             ).then((createdRecordId) => {
               createdAuthorityRecordId = createdRecordId;
 
+              cy.resetTenant();
               cy.getAdminToken();
               cy.createTempUser(permsCentral).then((userProps) => {
                 user = userProps;
@@ -86,7 +87,9 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
           if (user) Users.deleteViaApi(user.userId);
+          cy.setTenant(Affiliations.College);
           if (createdAuthorityRecordId) MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
+          cy.resetTenant();
           if (authorityFileId) {
             ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(testData.name);
             cy.deleteAuthoritySourceFileViaAPI(authorityFileId, true);
@@ -94,8 +97,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436924 Error shows when user tries to delete Local "Authority file" which has assigned Shared "MARC authority" records from Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C436924'] },
+          'C436926 Error shows when user tries to delete Local "Authority file" which has assigned Local "MARC authority" records from Central tenant (consortia) (spitfire)',
+          { tags: ['criticalPathECS', 'spitfire', 'C436926'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password);

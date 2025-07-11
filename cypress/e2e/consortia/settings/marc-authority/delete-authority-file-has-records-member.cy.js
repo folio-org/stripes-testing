@@ -15,14 +15,14 @@ import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 
 const randomLetters = getRandomLetters(7);
 const testData = {
-  name: `AT_C436924_AuthSource_${getRandomPostfix()}`,
+  name: `AT_C436925_AuthSource_${getRandomPostfix()}`,
   prefix: randomLetters,
   startsWith: `${randomFourDigitNumber()}`,
   isActive: true,
-  baseURL: `https://autotesturl.com/C436924/${randomLetters}/source/`,
+  baseURL: `https://autotesturl.com/C436925/${randomLetters}/source/`,
   manageAuthFilesOption: 'Manage authority files',
   marcAuthorityTabName: 'MARC authority',
-  marcAuthorityHeading: `AT_C436924_MarcAuthority_${getRandomPostfix()}`,
+  marcAuthorityHeading: `AT_C436925_MarcAuthority_${getRandomPostfix()}`,
 };
 const authorityFields = [
   { tag: '100', content: `$a ${testData.marcAuthorityHeading}`, indicators: ['\\', '\\'] },
@@ -32,13 +32,13 @@ let user;
 let authorityFileId;
 let createdAuthorityRecordId;
 
-const permsCentral = [Permissions.uiSettingsManageAuthorityFiles.gui];
-const permsMember = [
-  Permissions.uiSettingsViewAuthorityFiles.gui,
+const permsCentral = [
+  Permissions.uiSettingsManageAuthorityFiles.gui,
   Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
   Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
   Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
 ];
+const permsMember = [Permissions.uiSettingsViewAuthorityFiles.gui];
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -47,9 +47,8 @@ describe('MARC', () => {
         before('Create user, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          // Try to delete previosly created source files, or at least disactivate them
-          // Retention policy will prevent deletion for a long time
-          cy.getAuthoritySourceFileDataViaAPI('AT_C436924_*').then(() => {
+          // Try to delete previously created source files, or at least deactivate them
+          cy.getAuthoritySourceFileDataViaAPI('AT_C436925_*').then(() => {
             Cypress.env('authoritySourceFiles').forEach((sourceFile) => {
               ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(sourceFile.name);
               cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
@@ -63,14 +62,13 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
-
+            // Create a shared MARC authority record assigned to the file in Central tenant
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
               testData.startsWith,
               authorityFields,
             ).then((createdRecordId) => {
               createdAuthorityRecordId = createdRecordId;
-
               cy.getAdminToken();
               cy.createTempUser(permsCentral).then((userProps) => {
                 user = userProps;
@@ -94,18 +92,23 @@ describe('MARC', () => {
         });
 
         it(
-          'C436924 Error shows when user tries to delete Local "Authority file" which has assigned Shared "MARC authority" records from Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C436924'] },
+          'C436925 Error shows when user tries to delete Local "Authority file" which has assigned Shared "MARC authority" records from Member tenant (consortia) (spitfire)',
+          { tags: ['criticalPathECS', 'spitfire', 'C436925'] },
           () => {
             cy.resetTenant();
-            cy.login(user.username, user.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            // Step 1: Go to Manage authority files in Central
-            TopMenuNavigation.navigateToApp(
-              APPLICATION_NAMES.SETTINGS,
-              testData.marcAuthorityTabName,
-            );
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              TopMenuNavigation.navigateToApp(
+                APPLICATION_NAMES.SETTINGS,
+                testData.marcAuthorityTabName,
+              );
+              SettingsPane.waitLoading();
+              cy.reload();
+            }, 20_000);
             SettingsPane.waitLoading();
+            // Step 1: Switch to Member tenant and go to Manage authority files
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
@@ -116,13 +119,9 @@ describe('MARC', () => {
             ManageAuthorityFiles.clickConfirmDeletionButton();
             ManageAuthorityFiles.verifyDeleteAssignedSourceFileError(testData.name);
             ManageAuthorityFiles.checkSourceFileExistsByName(testData.name);
-            // Step 4: Switch to Member tenant
-            cy.waitForAuthRefresh(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              SettingsPane.waitLoading();
-              cy.reload();
-              SettingsPane.waitLoading();
-            }, 20_000);
+            // Step 4: Switch to Central tenant
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+            SettingsPane.waitLoading();
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
