@@ -226,7 +226,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.itemBarcode,
               headerValuesToEdit,
@@ -329,7 +329,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.itemBarcode,
               headerValuesToEditSecond,

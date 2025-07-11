@@ -299,7 +299,7 @@ export default {
       })
       .first()
       .within(() => {
-        cy.contains('div', 'Staff only')
+        cy.contains('[class^="kvLabel-"]', 'Staff only')
           .parent()
           .find('[data-test-kv-value]')
           .should('contain.text', staffValue);
