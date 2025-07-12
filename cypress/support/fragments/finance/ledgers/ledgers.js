@@ -251,7 +251,6 @@ export default {
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'restrictEncumbrance' }).click(),
-      Checkbox({ name: 'restrictExpenditures' }).click(),
       Checkbox({ name: 'needCloseBudgets' }).click(),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
