@@ -169,6 +169,12 @@ describe('Check in', () => {
       CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
       ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
       ClaimedReturned.chooseItemReturnedByLibrary();
+
+      // workaround for UICHKIN-483
+      CheckInActions.openActions();
+      CheckInActions.clickLoanDetailsOption();
+      CheckInActions.openCheckInPane();
+
       CheckInActions.openLoanDetails(userData.username);
       UsersCard.getApi(userData.userId).then((user) => {
         Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
@@ -187,6 +193,10 @@ describe('Check in', () => {
       CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
       ClaimedReturned.checkModalMessage(itemReturnedByPatron);
       ClaimedReturned.chooseItemReturnedByPatron();
+
+      // workaround for UICHKIN-483
+      CheckInActions.openActions();
+
       CheckInActions.openLoanDetails(userData.username);
       UsersCard.getApi(userData.userId).then((user) => {
         Loans.getApi(userData.userId).then(([returnedByPatron]) => {
