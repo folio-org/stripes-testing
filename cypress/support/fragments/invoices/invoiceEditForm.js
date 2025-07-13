@@ -68,7 +68,7 @@ export default {
     });
   },
   checkFiscalYearIsAbsent() {
-    cy.do(infoFields.fiscalYear.absent());
+    cy.get('#selected-invoice-fiscal-year-item').invoke('text').should('eq', '');
   },
   checkCurrency(currency) {
     cy.expect(Button({ id: 'currency' }).has({ singleValue: currency }));
