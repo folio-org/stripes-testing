@@ -942,9 +942,10 @@ const API = {
         path: `lists/${id}`,
         body: list,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then((response) => {
-        return response.body;
+        return response;
       });
   },
 
@@ -962,7 +963,7 @@ const API = {
 
   // input parameter 'fields' should be an array of field names to export
   // e.g. ['users.active', 'users.id', 'users.username']
-  exportViaApi(id, fields) {
+  postExportViaApi(id, fields) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -970,24 +971,54 @@ const API = {
         body: fields,
         isDefaultSearchParamsRequired: false,
       })
+      .then((response) => {
+        return response;
+      });
+  },
+
+  getExportStatusViaApi(listId, exportId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}/exports/${exportId}`,
+        isDefaultSearchParamsRequired: false,
+      }).then((response) => {
+        return response;
+      });
+  },
+
+  downloadViaApi(listId, exportId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}/exports/${exportId}/download`,
+        failOnStatusCode: false,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/octet-stream',
+        encoding: 'binary'
+      })
+      .then((getDownloadResponse) => {
+        return getDownloadResponse;
+      });
+  },
+
+  // input parameter 'fields' should be an array of field names to export
+  // e.g. ['users.active', 'users.id', 'users.username']
+  exportViaApiFullFlow(id, fields) {
+    return this.postExportViaApi(id, fields)
       .then((postExportResponse) => {
-        return cy
-          .okapiRequest({
-            method: 'GET',
-            path: `lists/${id}/exports/${postExportResponse.body.exportId}`,
-            isDefaultSearchParamsRequired: false,
-          })
+        recurse(
+          () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
+          (response) => response.body.status === 'SUCCESS',
+          {
+            limit: 10,
+            timeout: 10 * 1000,
+            delay: 1000,
+          },
+        );
+        return this.getExportStatusViaApi(id, postExportResponse.body.exportId)
           .then((getExportResponse) => {
-            return cy
-              .okapiRequest({
-                method: 'GET',
-                path: `lists/${id}/exports/${getExportResponse.body.exportId}/download`,
-                failOnStatusCode: false,
-                isDefaultSearchParamsRequired: false,
-              })
-              .then((getDownloadResponse) => {
-                return getDownloadResponse.body;
-              });
+            return this.downloadViaApi(id, getExportResponse.body.exportId);
           });
       });
   },

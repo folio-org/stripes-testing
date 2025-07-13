@@ -17,10 +17,10 @@ describe('Lists', () => {
     };
     let listId;
 
-    before('Create user and list', () => {
+    beforeEach('Create user and list', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsExport.gui,
+        Permissions.listsAll.gui,
         Permissions.usersViewRequests.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
@@ -43,11 +43,9 @@ describe('Lists', () => {
       });
     });
 
-    after('Delete test data', () => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken();
-      Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
-        Lists.deleteViaApi(listId);
-      });
+      Lists.deleteRecursivelyViaApi(listId);
       Users.deleteViaApi(userData.userId);
     });
 
@@ -62,16 +60,42 @@ describe('Lists', () => {
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
         Lists.openActions();
-        Lists.editList();
-        Lists.setName(`${listData.name}_test_name`);
+        Lists.exportList();
+
+        Lists.verifyCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
 
         cy.getUserTokenOfAdminUser();
-        Lists.exportViaApi(listId, listData.fields).then(() => { cy.wait(50); });
-        cy.getUserToken(userData.username, userData.password).then(() => {
-          cy.wait(500);
+        Lists.editViaApi(listId, { ...listData, description: 'new description' }).then((response) => {
+          expect(response.body).to.have.property('message', `List ( with id ${listId} ) is currently being exported`);
+          expect(response.body).to.have.property('code', 'update-export.in.progress');
         });
-        Lists.saveList();
-        Lists.verifyCalloutMessage(`Error: changes to ${listData.name} were not saved. Lists can't be updated while an export is in progress.`);
+      });
+
+    it('C411775 (Multiple users): Delete list when export is in progress (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411775'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+
+        Lists.waitLoading();
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.exportList();
+
+        Lists.verifyCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+
+        cy.getUserTokenOfAdminUser();
+        Lists.deleteViaApi(listId).then((response) => {
+          expect(response.body).to.have.property('message', `List ( with id ${listId} ) is currently being exported`);
+          expect(response.body).to.have.property('code', 'delete-export.in.progress');
+        });
       });
   });
 });
