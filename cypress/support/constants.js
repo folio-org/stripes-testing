@@ -317,6 +317,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   DEWAY_DECIMAL: 'Dewey Decimal classification',
   SUDOC: 'Superintendent of Documents classification',
   UDC: 'UDC',
+  MOYS: 'MOYS',
   LOCAL: 'Local',
 };
 
@@ -1349,3 +1350,5 @@ export const STANDARD_FIELDS = [
 ];
 
 export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
+
+export const DEFAULT_WAIT_TIME = 4000;

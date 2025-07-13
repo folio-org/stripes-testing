@@ -9,6 +9,7 @@ import {
   Select,
   not,
 } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
 
 const selectInstanceModal = Modal('Select instance');
@@ -71,7 +72,8 @@ const searchItemsOptions = [
 ];
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(selectInstanceModal.exists());
   },
   verifyModalView() {

@@ -8,6 +8,7 @@ import {
   TextField,
   including,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceStates from './invoiceStates';
@@ -44,7 +45,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(invoiceLineEditFormRoot.exists());
   },
   checkButtonsConditions(fields = []) {
