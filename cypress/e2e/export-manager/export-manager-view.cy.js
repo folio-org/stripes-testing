@@ -98,7 +98,7 @@ describe('Export Manager', () => {
       ExportManagerSearchPane.searchByBursar();
       ExportManagerSearchPane.searchByCirculationLog();
       ExportManagerSearchPane.searchByEHoldings();
-      ExportManagerSearchPane.searchByBulkEdit();
+      ExportManagerSearchPane.searchByCsvOrders();
       ExportManagerSearchPane.searchByEdifactOrders();
       ExportManagerSearchPane.searchBySuccessful();
       ExportManagerSearchPane.selectSearchResultItem();
