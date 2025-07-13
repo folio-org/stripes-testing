@@ -1,12 +1,14 @@
-import FinanceDetails from '../financeDetails';
 import { PaneHeader, Section, including } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
+import FinanceDetails from '../financeDetails';
 
 const groupDetailsPane = Section({ id: 'pane-group-details' });
 const groupDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-group-details' });
 
 export default {
   ...FinanceDetails,
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(groupDetailsPane.exists());
   },
   verifyGroupName: (title) => {

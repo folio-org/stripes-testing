@@ -33,6 +33,7 @@ describe('Finance: Funds', () => {
     ...Budgets.getDefaultBudget(),
     allocated: 100,
   };
+  const errorMessage = `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${defaultFund.code}].`;
   defaultFiscalYear.code = defaultFiscalYear.code.slice(0, -1) + '1';
   let user;
   let location;
@@ -102,7 +103,7 @@ describe('Finance: Funds', () => {
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
-        Orders.checkOrderIsNotOpened(defaultFund.code);
+        Orders.checkOneOfCalloutsContainsErrorMessage(errorMessage);
       });
     },
   );

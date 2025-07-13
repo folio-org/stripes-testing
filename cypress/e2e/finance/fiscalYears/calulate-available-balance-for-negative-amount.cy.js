@@ -20,6 +20,7 @@ describe('Finance', () => {
       ...Ledgers.getDefaultLedger(),
       fiscalYearOneId: fiscalYear.id,
       restrictExpenditures: false,
+      restrictEncumbrance: false,
     };
     const funds = {
       first: {
@@ -151,7 +152,7 @@ describe('Finance', () => {
             code: funds.second.code,
             allocated: '$0.00',
             unavailable: '$10.00',
-            available: '-$10.00',
+            available: '($10.00)',
           },
         ]);
       },
