@@ -792,7 +792,7 @@ const API = {
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"15"}',
+          fqlQuery: '{"users.active":{"$eq":"true"}}',
         },
         fields: ['users.active', 'user.id'],
       };
@@ -808,7 +808,7 @@ const API = {
         query: {
           entityTypeId: filteredEntityTypeId,
           fqlQuery:
-            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}],"_version":"15"}',
+            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}]}',
         },
         fields: ['users.active', 'users.id', 'users.username'],
       };
@@ -826,7 +826,12 @@ const API = {
           entityTypeId: filteredEntityTypeId,
           fqlQuery: '{"instance.source":{"$ne":"LINKED_DATA"}}',
         },
-        fields: ['instance.hrid', 'instance.title', 'instance.instance_type_name', 'instance.source'],
+        fields: [
+          'instance.hrid',
+          'instance.title',
+          'instance.instance_type_name',
+          'instance.source',
+        ],
       };
     });
   },
@@ -873,12 +878,14 @@ const API = {
   },
 
   getListByIdViaApi(listId) {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: `lists/${listId}`,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}`,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 
   waitForListToCompleteRefreshViaApi(listId) {
@@ -929,50 +936,91 @@ const API = {
   },
 
   editViaApi(id, list) {
-    return cy.okapiRequest({
-      method: 'PUT',
-      path: `lists/${id}`,
-      body: list,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `lists/${id}`,
+        body: list,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
+      });
   },
 
   refreshViaApi(id) {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: `lists/${id}/refresh`,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `lists/${id}/refresh`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 
   // input parameter 'fields' should be an array of field names to export
   // e.g. ['users.active', 'users.id', 'users.username']
-  exportViaApi(id, fields) {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: `lists/${id}/exports`,
-      body: fields,
-      isDefaultSearchParamsRequired: false,
-    }).then((postExportResponse) => {
-      return cy.okapiRequest({
-        method: 'GET',
-        path: `lists/${id}/exports/${postExportResponse.body.exportId}`,
+  postExportViaApi(id, fields) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `lists/${id}/exports`,
+        body: fields,
         isDefaultSearchParamsRequired: false,
-      }).then((getExportResponse) => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `lists/${id}/exports/${getExportResponse.body.exportId}/download`,
-          failOnStatusCode: false,
-          isDefaultSearchParamsRequired: false,
-        }).then((getDownloadResponse) => {
-          return getDownloadResponse.body;
-        });
+      })
+      .then((response) => {
+        return response;
       });
-    });
+  },
+
+  getExportStatusViaApi(listId, exportId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}/exports/${exportId}`,
+        isDefaultSearchParamsRequired: false,
+      }).then((response) => {
+        return response;
+      });
+  },
+
+  downloadViaApi(listId, exportId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}/exports/${exportId}/download`,
+        failOnStatusCode: false,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/octet-stream',
+        encoding: 'binary'
+      })
+      .then((getDownloadResponse) => {
+        return getDownloadResponse;
+      });
+  },
+
+  // input parameter 'fields' should be an array of field names to export
+  // e.g. ['users.active', 'users.id', 'users.username']
+  exportViaApiFullFlow(id, fields) {
+    return this.postExportViaApi(id, fields)
+      .then((postExportResponse) => {
+        recurse(
+          () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
+          (response) => response.body.status === 'SUCCESS',
+          {
+            limit: 10,
+            timeout: 10 * 1000,
+            delay: 1000,
+          },
+        );
+        return this.getExportStatusViaApi(id, postExportResponse.body.exportId)
+          .then((getExportResponse) => {
+            return this.downloadViaApi(id, getExportResponse.body.exportId);
+          });
+      });
   },
 
   deleteViaApi(id) {
