@@ -62,11 +62,18 @@ export default {
     );
   },
 
-  verifySearchResultsTable() {
-    cy.expect([
-      paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
-      paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
-    ]);
+  verifySearchResultsTable(isShown = true) {
+    if (isShown) {
+      cy.expect([
+        paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
+        paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
+      ]);
+    } else {
+      cy.expect([
+        paneIntanceDetails.find(MultiColumnListHeader('Classification')).absent(),
+        paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).absent(),
+      ]);
+    }
   },
 
   clickOnSearchResult: (value) => {
