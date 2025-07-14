@@ -161,4 +161,45 @@ describe('Specification Storage - Subfield API', () => {
         });
     },
   );
+
+  it(
+    'C499705 Cannot create Subfield code of Local field with empty "label" for MARC bib spec (API)',
+    { tags: ['C499705', 'criticalPath', 'spitfire'] },
+    () => {
+      cy.getUserToken(user.username, user.password);
+
+      // Test 1: Missing label field
+      const payloadWithoutLabel = {
+        code: '2',
+      };
+      cy.createSpecificationFieldSubfield(fieldId, payloadWithoutLabel, false).then((response) => {
+        expect(response.status).to.eq(400);
+        expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+      });
+
+      // Test 2: Empty label field
+      const payloadWithEmptyLabel = {
+        code: '2',
+        label: '',
+      };
+      cy.createSpecificationFieldSubfield(fieldId, payloadWithEmptyLabel, false).then(
+        (response) => {
+          expect(response.status).to.eq(400);
+          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+        },
+      );
+
+      // Test 3: Label with only spaces
+      const payloadWithSpaceLabel = {
+        code: '2',
+        label: ' ',
+      };
+      cy.createSpecificationFieldSubfield(fieldId, payloadWithSpaceLabel, false).then(
+        (response) => {
+          expect(response.status).to.eq(400);
+          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+        },
+      );
+    },
+  );
 });

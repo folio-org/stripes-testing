@@ -75,14 +75,18 @@ Cypress.Commands.add('updateSpecificationField', (fieldId, field, failOnStatusCo
   });
 });
 
-Cypress.Commands.add('createSpecificationFieldSubfield', (fieldId, subfield) => {
-  return cy.okapiRequest({
-    method: REQUEST_METHOD.POST,
-    path: `specification-storage/fields/${fieldId}/subfields`,
-    isDefaultSearchParamsRequired: false,
-    body: subfield,
-  });
-});
+Cypress.Commands.add(
+  'createSpecificationFieldSubfield',
+  (fieldId, subfield, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `specification-storage/fields/${fieldId}/subfields`,
+      isDefaultSearchParamsRequired: false,
+      body: subfield,
+      failOnStatusCode,
+    });
+  },
+);
 
 Cypress.Commands.add('getSpecificationFieldSubfields', (fieldId) => {
   return cy.okapiRequest({
