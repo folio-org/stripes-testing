@@ -38,7 +38,7 @@ describe('MARC Authority Validation Rules - Standard Fields', () => {
   });
 
   it(
-    'C499843 Cannot delete a standard MARC field of authority spec (API)',
+    'C499843 Cannot delete a standard MARC field of authority spec (API) (spitfire)',
     { tags: ['smoke', 'C499843', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls

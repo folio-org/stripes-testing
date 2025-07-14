@@ -243,7 +243,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
@@ -315,7 +315,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
               instance.holdingId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,

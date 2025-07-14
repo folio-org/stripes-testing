@@ -198,8 +198,6 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-          BulkEditActions.openActions();
-          BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
           itemBarcodes.forEach((barcode) => {

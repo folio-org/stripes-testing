@@ -163,13 +163,13 @@ describe('Bulk-edit', () => {
 
           usersToEdit.forEach((editedUser) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USER_ID,
               editedUser.userId,
               editedColumnValues,
             );
             BulkEditFiles.verifyValueInRowByUUID(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USER_ID,
               editedUser.userId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.EXPIRATION_DATE,
@@ -247,13 +247,13 @@ describe('Bulk-edit', () => {
 
           usersToEdit.forEach((editedUser) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USER_ID,
               editedUser.userId,
               editedColumnValues,
             );
             BulkEditFiles.verifyValueInRowByUUID(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USER_ID,
               editedUser.userId,
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.EXPIRATION_DATE,
