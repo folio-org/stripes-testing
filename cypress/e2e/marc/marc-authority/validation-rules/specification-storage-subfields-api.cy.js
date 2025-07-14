@@ -2,10 +2,10 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Specification Storage - Subfield API', () => {
+describe('Specification Storage - Subfield API for MARC Authority', () => {
   let user;
   let fieldId;
-  let bibSpecId;
+  let authSpecId;
   let createdSubfieldIds = [];
   const permissions = [
     Permissions.specificationStorageGetSpecificationFields.gui,
@@ -17,28 +17,28 @@ describe('Specification Storage - Subfield API', () => {
   ];
 
   const fieldPayload = {
-    tag: '891',
-    label: 'AT Custom Field - Subfield Test',
-    url: 'http://www.example.org/field891.html',
+    tag: '892',
+    label: 'AT Custom Field - Authority Subfield Test',
+    url: 'http://www.example.org/field892.html',
     repeatable: false,
     required: false,
     deprecated: false,
   };
 
-  before('Create user and fetch MARC bib specification', () => {
+  before('Create user and fetch MARC authority specification', () => {
     cy.getAdminToken();
     cy.createTempUser(permissions).then((createdUser) => {
       user = createdUser;
     });
     cy.getSpecificatoinIds()
       .then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
-        bibSpecId = bibSpec.id;
+        const authSpec = specs.find((s) => s.profile === 'authority');
+        expect(authSpec, 'MARC authority specification exists').to.exist;
+        authSpecId = authSpec.id;
       })
       .then(() => {
-        cy.deleteSpecificationFieldByTag(bibSpecId, fieldPayload.tag, false);
-        cy.createSpecificationField(bibSpecId, fieldPayload).then((fieldResp) => {
+        cy.deleteSpecificationFieldByTag(authSpecId, fieldPayload.tag, false);
+        cy.createSpecificationField(authSpecId, fieldPayload).then((fieldResp) => {
           expect(fieldResp.status).to.eq(201);
           fieldId = fieldResp.body.id;
         });
@@ -63,13 +63,13 @@ describe('Specification Storage - Subfield API', () => {
         cy.deleteSpecificationFieldSubfield(subfieldId);
       });
     }
-    cy.deleteSpecificationFieldByTag(bibSpecId, fieldPayload.tag, false);
+    cy.deleteSpecificationFieldByTag(authSpecId, fieldPayload.tag, false);
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C499708 Create Subfield code of Local field (not repeatable, not required, not deprecated) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499708', 'criticalPath', 'spitfire'] },
+    'C499711 Create Subfield Code of Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (spitfire)',
+    { tags: ['C499711', 'criticalPath', 'spitfire'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -117,8 +117,8 @@ describe('Specification Storage - Subfield API', () => {
   );
 
   it(
-    'C499709 Create Subfield code of Local field (repeatable, not required, not deprecated selected by default) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499709', 'criticalPath', 'spitfire'] },
+    'C499712 Create Subfield Code of Local Field (repeatable, not required, not deprecated selected by default) for MARC authority spec (API) (spitfire)',
+    { tags: ['C499712', 'criticalPath', 'spitfire'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -159,47 +159,6 @@ describe('Specification Storage - Subfield API', () => {
             });
           });
         });
-    },
-  );
-
-  it(
-    'C499705 Cannot create Subfield code of Local field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499705', 'criticalPath', 'spitfire'] },
-    () => {
-      cy.getUserToken(user.username, user.password);
-
-      // Test 1: Missing label field
-      const payloadWithoutLabel = {
-        code: '2',
-      };
-      cy.createSpecificationFieldSubfield(fieldId, payloadWithoutLabel, false).then((response) => {
-        expect(response.status).to.eq(400);
-        expect(response.body.errors[0].message).to.include("The 'label' field is required.");
-      });
-
-      // Test 2: Empty label field
-      const payloadWithEmptyLabel = {
-        code: '2',
-        label: '',
-      };
-      cy.createSpecificationFieldSubfield(fieldId, payloadWithEmptyLabel, false).then(
-        (response) => {
-          expect(response.status).to.eq(400);
-          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
-        },
-      );
-
-      // Test 3: Label with only spaces
-      const payloadWithSpaceLabel = {
-        code: '2',
-        label: ' ',
-      };
-      cy.createSpecificationFieldSubfield(fieldId, payloadWithSpaceLabel, false).then(
-        (response) => {
-          expect(response.status).to.eq(400);
-          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
-        },
-      );
     },
   );
 });
