@@ -1,8 +1,9 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -44,14 +45,16 @@ describe('Permissions', () => {
 
     it(
       'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-      { tags: ['smokeBroken', 'spitfire', 'C350967'] },
+      { tags: ['smoke', 'spitfire', 'C350967'] },
       () => {
         cy.login(userData.name, userData.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
+        InventorySearchAndFilter.verifyPanesExist();
+        InventorySearchAndFilter.instanceTabIsDefault();
         InventoryInstances.searchByTitle(instanceID);
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.checkExpectedMARCSource();
         // Wait for the content to be loaded.
         cy.wait(2000);

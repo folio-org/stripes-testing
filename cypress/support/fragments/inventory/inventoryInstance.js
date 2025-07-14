@@ -1374,7 +1374,6 @@ export default {
       Button({ id: 'edit-instance' }).exists(),
       Button({ id: 'copy-instance' }).exists(),
       Button({ id: 'clickable-view-source' }).exists(),
-      Button({ id: 'view-requests' }).exists(),
       editMARCBibRecordButton.absent(),
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());

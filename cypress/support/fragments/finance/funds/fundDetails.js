@@ -5,11 +5,12 @@ import {
   Section,
   including,
 } from '../../../../../interactors';
-import FinanceDetails from '../financeDetails';
-import FundEditForm from './fundEditForm';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import BudgetDetails from '../budgets/budgetDetails';
+import FinanceDetails from '../financeDetails';
 import AddBudgetModal from '../modals/addBudgetModal';
 import Transactions from '../transactions/transactions';
+import FundEditForm from './fundEditForm';
 
 const fundDetailsPane = Section({ id: 'pane-fund-details' });
 
@@ -26,8 +27,8 @@ const previousBudgetsSection = fundDetailsPane.find(Section({ id: 'previousBudge
 
 export default {
   ...FinanceDetails,
-  waitLoading: () => {
-    cy.wait(4000);
+  waitLoading: (ms = DEFAULT_WAIT_TIME) => {
+    cy.wait(ms);
     cy.expect(fundDetailsPane.exists());
   },
   expandActionsDropdown() {

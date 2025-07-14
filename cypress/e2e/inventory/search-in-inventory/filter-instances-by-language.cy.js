@@ -101,7 +101,7 @@ describe('Inventory', () => {
           });
 
           // 3. Open an instance, verify language in detail
-          InventoryInstances.selectInstance();
+          InventoryInstances.selectInstance(1);
           InventoryInstance.waitInventoryLoading();
           InventoryInstance.verifyInstanceLanguage(LANGUAGES[0].name);
 

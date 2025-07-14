@@ -39,7 +39,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields', () => {
   });
 
   it(
-    'C499836 Cannot delete a standard MARC field (API)',
+    'C499836 Cannot delete a standard MARC field (API) (spitfire)',
     { tags: ['smoke', 'C499836', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
