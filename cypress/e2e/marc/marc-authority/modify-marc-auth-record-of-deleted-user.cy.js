@@ -38,7 +38,7 @@ describe('MARC', () => {
 
     before('Creating user', () => {
       cy.getAdminToken();
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C358994');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -117,9 +117,7 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
       },
@@ -137,9 +135,7 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.valueAfterUpdate);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValue}`);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
 
@@ -159,9 +155,7 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
       },

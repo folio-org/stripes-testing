@@ -11,14 +11,15 @@ import {
   Warning,
   including,
 } from '../../../../interactors';
-import CancelConfirmationModal from './modals/cancelConfirmationModal';
-import OrderLineEditForm from './orderLineEditForm';
-import InventoryInstance from '../inventory/inventoryInstance';
-import TransactionDetails from '../finance/transactions/transactionDetails';
-import ExportDetails from '../exportManager/exportDetails';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
-import VersionHistory from './orderVersionHistory';
+import ExportDetails from '../exportManager/exportDetails';
+import TransactionDetails from '../finance/transactions/transactionDetails';
+import InventoryInstance from '../inventory/inventoryInstance';
+import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
+import OrderLineEditForm from './orderLineEditForm';
+import VersionHistory from './orderVersionHistory';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
@@ -43,7 +44,8 @@ const linkedInstancesDetailsSection = orderLineDetailsSection.find(
 );
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(orderLineDetailsSection.exists());
   },
   backToOrderDetails() {

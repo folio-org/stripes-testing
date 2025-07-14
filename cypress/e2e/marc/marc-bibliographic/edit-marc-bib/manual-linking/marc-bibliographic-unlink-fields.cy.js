@@ -164,9 +164,7 @@ describe('MARC', () => {
               unlinkedField.indicator1,
               unlinkedField.content,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(0, 1, contributors.firstName);
             InventoryInstance.checkMarcAppIconAbsent(0);

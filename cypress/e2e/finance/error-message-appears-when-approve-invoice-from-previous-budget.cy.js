@@ -41,8 +41,8 @@ describe('Finance', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.get4DaysAfterTomorrowDateForFiscalYear();
-  const periodStartForSecondFY = DateTools.get5DaysAfterTomorrowDateForFiscalYear();
+  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get7DaysAfterTomorrowDateForFiscalYear();
 
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
@@ -137,6 +137,7 @@ describe('Finance', () => {
         Invoices.selectInvoice(invoice.invoiceNumber);
         Invoices.editInvoice();
         Invoices.changeFY(secondFiscalYear.code);
+        cy.wait(2000); // wait for FY change to be applied
       });
     });
 

@@ -5,19 +5,19 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Concurrent edit of the same list by two users', () => {
+  describe('Edit list', () => {
     let userData = {};
     const listData = {
       name: `C411740-${getTestEntityValue('list')}`,
       description: `C411740-${getTestEntityValue('desc')}`,
-      recordType: 'Loans',
+      recordType: 'Users',
       fqlQuery: '',
       isActive: true,
       isPrivate: false,
     };
     let listId;
 
-    before('Create users and list', () => {
+    before('Create user and list', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsEdit.gui,
@@ -43,7 +43,7 @@ describe('Lists', () => {
       });
     });
 
-    beforeEach('Login as user', () => {
+    beforeEach('Reset list state', () => {
       cy.getAdminToken();
       Lists.getListByIdViaApi(listId).then((body) => {
         listData.version = body.version;
@@ -78,8 +78,14 @@ describe('Lists', () => {
         Lists.openList(listData.name);
         Lists.openActions();
         Lists.editList();
+
         // make a list inactive
-        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => { cy.wait(3000); });
+        cy.getUserTokenOfAdminUser();
+        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => { cy.wait(500); });
+        cy.getUserToken(userData.username, userData.password).then(() => {
+          cy.wait(500);
+        });
+
         Lists.editQuery();
         cy.wait(2000);
         // Change query value
@@ -105,9 +111,9 @@ describe('Lists', () => {
         Lists.editList();
 
         cy.getUserTokenOfAdminUser();
-        Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => { cy.wait(3000); });
+        Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => { cy.wait(500); });
         cy.getUserToken(userData.username, userData.password).then(() => {
-          cy.wait(1000);
+          cy.wait(500);
         });
 
         Lists.setDescription('test description');
@@ -138,8 +144,8 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(`Error: changes to ${listData.name} were not saved. Lists can't be updated while a refresh is in progress.`);
       });
 
-    it('C411765 (Multiple users) Edit deleted list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411765'] },
+    it('C411765 C411776 (Multiple users) Edit deleted list (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411765', 'C411776'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

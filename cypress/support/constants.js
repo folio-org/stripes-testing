@@ -1350,3 +1350,5 @@ export const STANDARD_FIELDS = [
 ];
 
 export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
+
+export const DEFAULT_WAIT_TIME = 4000;

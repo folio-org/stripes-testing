@@ -40,6 +40,7 @@ Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => 
     },
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
+    Cypress.env('authoritySourceFiles', body.authoritySourceFiles);
     return cy.wrap(body.authoritySourceFiles[0]);
   });
 });
