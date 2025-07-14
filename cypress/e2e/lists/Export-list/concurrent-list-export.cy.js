@@ -23,24 +23,28 @@ describe('Lists', () => {
         Permissions.listsAll.gui,
         Permissions.usersViewRequests.gui,
         Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-      }).then(() => {
-        Lists.buildQueryOnAllInstances().then(({ query, fields }) => {
-          Lists.createQueryViaApi(query).then((createdQuery) => {
-            listData.queryId = createdQuery.queryId;
-            listData.fqlQuery = createdQuery.fqlQuery;
-            listData.fields = fields;
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+        })
+        .then(() => {
+          Lists.buildQueryOnAllInstances().then(({ query, fields }) => {
+            Lists.createQueryViaApi(query).then((createdQuery) => {
+              listData.queryId = createdQuery.queryId;
+              listData.fqlQuery = createdQuery.fqlQuery;
+              listData.fields = fields;
 
-            Lists.createViaApi(listData).then((body) => {
-              listData.version = body.version;
-              listId = body.id;
-            }).then(() => {
-              Lists.waitForListToCompleteRefreshViaApi(listId);
+              Lists.createViaApi(listData)
+                .then((body) => {
+                  listData.version = body.version;
+                  listId = body.id;
+                })
+                .then(() => {
+                  Lists.waitForListToCompleteRefreshViaApi(listId);
+                });
             });
           });
         });
-      });
     });
 
     afterEach('Delete test data', () => {
@@ -49,7 +53,8 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411767 (Multiple users) Edit list when export is in progress (corsair)',
+    it(
+      'C411767 (Multiple users) Edit list when export is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'С411767'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -67,13 +72,20 @@ describe('Lists', () => {
         );
 
         cy.getUserTokenOfAdminUser();
-        Lists.editViaApi(listId, { ...listData, description: 'new description' }).then((response) => {
-          expect(response.body).to.have.property('message', `List ( with id ${listId} ) is currently being exported`);
-          expect(response.body).to.have.property('code', 'update-export.in.progress');
-        });
-      });
+        Lists.editViaApi(listId, { ...listData, description: 'new description' }).then(
+          (response) => {
+            expect(response.body).to.have.property(
+              'message',
+              `List ( with id ${listId} ) is currently being exported`,
+            );
+            expect(response.body).to.have.property('code', 'update-export.in.progress');
+          },
+        );
+      },
+    );
 
-    it('C411775 (Multiple users): Delete list when export is in progress (corsair)',
+    it(
+      'C411775 (Multiple users): Delete list when export is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411775'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -93,9 +105,13 @@ describe('Lists', () => {
 
         cy.getUserTokenOfAdminUser();
         Lists.deleteViaApi(listId).then((response) => {
-          expect(response.body).to.have.property('message', `List ( with id ${listId} ) is currently being exported`);
+          expect(response.body).to.have.property(
+            'message',
+            `List ( with id ${listId} ) is currently being exported`,
+          );
           expect(response.body).to.have.property('code', 'delete-export.in.progress');
         });
-      });
+      },
+    );
   });
 });
