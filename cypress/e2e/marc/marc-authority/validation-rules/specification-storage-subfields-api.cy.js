@@ -68,7 +68,7 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   });
 
   it(
-    'C499711 Create Subfield Code of Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API)',
+    'C499711 Create Subfield Code of Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (spitfire)',
     { tags: ['C499711', 'criticalPath', 'spitfire'] },
     () => {
       cy.getUserToken(user.username, user.password);
@@ -117,7 +117,7 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   );
 
   it(
-    'C499712 Create Subfield Code of Local Field (repeatable, not required, not deprecated selected by default) for MARC authority spec (API)',
+    'C499712 Create Subfield Code of Local Field (repeatable, not required, not deprecated selected by default) for MARC authority spec (API) (spitfire)',
     { tags: ['C499712', 'criticalPath', 'spitfire'] },
     () => {
       cy.getUserToken(user.username, user.password);

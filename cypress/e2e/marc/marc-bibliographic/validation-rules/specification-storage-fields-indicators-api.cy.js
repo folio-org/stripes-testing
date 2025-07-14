@@ -64,7 +64,7 @@ describe('Specification Storage - Field Indicators API', () => {
   });
 
   it(
-    'C499649 Cannot create indicator of Local field for MARC bib spec without required permission (API)',
+    'C499649 Cannot create indicator of Local field for MARC bib spec without required permission (API) (spitfire)',
     { tags: ['C499649', 'criticalPath', 'spitfire'] },
     () => {
       // Use the pre-created user with limited permissions
