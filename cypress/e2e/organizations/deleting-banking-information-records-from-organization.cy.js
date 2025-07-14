@@ -54,7 +54,7 @@ describe('Organizations', () => {
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', firstOrganization.name);
     Organizations.checkSearchResults(firstOrganization);
-    Organizations.selectOrganization(firstOrganization.name);
+    Organizations.selectOrganizationInCurrentPage(firstOrganization.name);
     Organizations.editOrganization();
     Organizations.deleteBankingInformation();
     Organizations.closeDetailsPane();
@@ -84,7 +84,7 @@ describe('Organizations', () => {
       Organizations.addSecondBankingInformation(secondBankingInformation);
       Organizations.checkBankInformationExist(secondBankingInformation.name);
       Organizations.editOrganization();
-      Organizations.deleteBankingInformation();
+      Organizations.removeBankingInfoByBankName(firstBankingInformation.name);
       Organizations.checkBankInformationExist(secondBankingInformation.name);
     },
   );
