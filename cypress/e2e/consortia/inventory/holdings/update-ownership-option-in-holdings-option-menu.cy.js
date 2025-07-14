@@ -94,13 +94,14 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
       cy.withinTenant(Affiliations.University, () => {
         cy.deleteHoldingRecordViaApi(testData.holdings.id);
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         Locations.deleteViaApi(testData.location);
+      });
+      cy.withinTenant(Affiliations.College, () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
       });
     });
 
