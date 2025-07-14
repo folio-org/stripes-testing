@@ -213,11 +213,11 @@ describe('Specification Storage - Subfield API', () => {
       cy.getSpecificationFields(bibSpecId).then((response) => {
         expect(response.status).to.eq(200);
 
-        // Find a standard field (e.g., 245 - Title Statement)
+        // Find a standard field (e.g., 088 - Standard Field)
         const standardField = response.body.fields.find(
-          (field) => field.tag === '245' && field.scope === 'system',
+          (field) => field.tag === '088' && field.scope === 'standard',
         );
-        expect(standardField, 'Standard field 245 exists').to.exist;
+        expect(standardField, 'Standard field 088 exists').to.exist;
 
         const subfieldPayload = {
           code: 'j',
@@ -261,6 +261,107 @@ describe('Specification Storage - Subfield API', () => {
                 deprecated: true,
                 scope: 'local',
               });
+            });
+          });
+      });
+    },
+  );
+
+  it(
+    'C499732 Cannot create Subfield code of Standard field with duplicate "code" for MARC bib spec (API) (spitfire)',
+    { tags: ['C499732', 'criticalPath', 'spitfire'] },
+    () => {
+      cy.getUserToken(user.username, user.password);
+
+      // Get all fields for the MARC bibliographic specification
+      cy.getSpecificationFields(bibSpecId).then((response) => {
+        expect(response.status).to.eq(200);
+
+        // Find a standard field (e.g., 100 - Main Entry--Personal Name)
+        const standardField = response.body.fields.find(
+          (field) => field.tag === '100' && field.scope === 'standard',
+        );
+        expect(standardField, 'Standard field 100 exists').to.exist;
+
+        // Step 1: Create a subfield with unique code
+        const subfieldPayload = {
+          code: 'o',
+          label: 'Subfield code o name',
+        };
+
+        cy.createSpecificationFieldSubfield(standardField.id, subfieldPayload)
+          .then((subfieldResp) => {
+            expect(subfieldResp.status).to.eq(201);
+            const createdSubfieldId = subfieldResp.body.id;
+            createdSubfieldIds.push(createdSubfieldId);
+            expect(subfieldResp.body).to.include({
+              fieldId: standardField.id,
+              code: 'o',
+              label: 'Subfield code o name',
+              scope: 'local',
+            });
+          })
+          .then(() => {
+            // Step 2: Attempt to create duplicate with same local code
+            const duplicateLocalPayload = {
+              code: 'o',
+              label: 'Subfield code o name duplicate',
+            };
+
+            cy.createSpecificationFieldSubfield(
+              standardField.id,
+              duplicateLocalPayload,
+              false,
+            ).then((duplicateResp) => {
+              expect(duplicateResp.status).to.eq(400);
+              expect(duplicateResp.body.errors[0].message).to.include("The 'code' must be unique.");
+            });
+          })
+          .then(() => {
+            // Step 3: Attempt to create duplicate with existing standard code (e.g., 'a')
+            const duplicateStandardPayload = {
+              code: 'a',
+              label: 'Subfield code a name duplicate',
+            };
+
+            cy.createSpecificationFieldSubfield(
+              standardField.id,
+              duplicateStandardPayload,
+              false,
+            ).then((duplicateStandardResp) => {
+              expect(duplicateStandardResp.status).to.eq(400);
+              expect(duplicateStandardResp.body.errors[0].message).to.include(
+                "The 'code' must be unique.",
+              );
+            });
+          })
+          .then(() => {
+            // Step 4: Verify all subfields exist (standard + created)
+            cy.getSpecificationFieldSubfields(standardField.id).then((getSubfieldsResp) => {
+              expect(getSubfieldsResp.status).to.eq(200);
+
+              // Verify our created subfield exists
+              const createdSubfield = getSubfieldsResp.body.subfields.find(
+                (sf) => sf.code === 'o' && sf.scope === 'local',
+              );
+              expect(createdSubfield, 'Created subfield o exists').to.exist;
+              expect(createdSubfield.label).to.eq('Subfield code o name');
+
+              // Verify standard subfields exist (should include 'a')
+              const standardSubfields = getSubfieldsResp.body.subfields.filter(
+                (sf) => sf.scope === 'standard',
+              );
+              expect(standardSubfields.length, 'Standard subfields exist').to.be.greaterThan(0);
+
+              // Verify standard subfield 'a' exists
+              const standardSubfieldA = standardSubfields.find((sf) => sf.code === 'a');
+              expect(standardSubfieldA, 'Standard subfield a exists').to.exist;
+
+              // Verify no duplicate 'o' or 'a' subfields were created
+              const allOSubfields = getSubfieldsResp.body.subfields.filter((sf) => sf.code === 'o');
+              const allASubfields = getSubfieldsResp.body.subfields.filter((sf) => sf.code === 'a');
+              expect(allOSubfields.length, 'Only one subfield o exists').to.eq(1);
+              expect(allASubfields.length, 'Only one subfield a exists').to.eq(1);
             });
           });
       });
