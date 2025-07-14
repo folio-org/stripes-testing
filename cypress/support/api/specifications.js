@@ -91,3 +91,12 @@ Cypress.Commands.add('getSpecificationFieldSubfields', (fieldId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('deleteSpecificationFieldSubfield', (subfieldId, failOnStatusCode = true) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `specification-storage/subfields/${subfieldId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
+  });
+});

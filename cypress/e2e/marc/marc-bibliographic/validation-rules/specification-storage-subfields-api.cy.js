@@ -6,7 +6,7 @@ describe('Specification Storage - Subfield API', () => {
   let user;
   let fieldId;
   let bibSpecId;
-  let createdSubfieldId;
+  let createdSubfieldIds = [];
   const permissions = [
     Permissions.specificationStorageGetSpecificationFields.gui,
     Permissions.specificationStorageCreateSpecificationField.gui,
@@ -45,8 +45,24 @@ describe('Specification Storage - Subfield API', () => {
       });
   });
 
-  after('Cleanup: delete user', () => {
+  afterEach('Clean up created subfields', () => {
+    if (createdSubfieldIds.length > 0) {
+      cy.getAdminToken();
+      createdSubfieldIds.forEach((subfieldId) => {
+        cy.deleteSpecificationFieldSubfield(subfieldId);
+      });
+      createdSubfieldIds = [];
+    }
+  });
+
+  after('Cleanup: delete user and subfields', () => {
     cy.getAdminToken();
+    // Clean up all created subfields
+    if (createdSubfieldIds.length > 0) {
+      createdSubfieldIds.forEach((subfieldId) => {
+        cy.deleteSpecificationFieldSubfield(subfieldId);
+      });
+    }
     cy.deleteSpecificationFieldByTag(bibSpecId, fieldPayload.tag, false);
     Users.deleteViaApi(user.userId);
   });
@@ -67,7 +83,8 @@ describe('Specification Storage - Subfield API', () => {
         .then((subfieldResp) => {
           expect(subfieldResp.status).to.eq(201);
           const subfieldBody = subfieldResp.body;
-          createdSubfieldId = subfieldBody.id;
+          const createdSubfieldId = subfieldBody.id;
+          createdSubfieldIds.push(createdSubfieldId);
           expect(subfieldBody).to.include({
             fieldId,
             code: '4',
@@ -81,13 +98,61 @@ describe('Specification Storage - Subfield API', () => {
         .then(() => {
           cy.getSpecificationFieldSubfields(fieldId).then((getSubfieldsResp) => {
             expect(getSubfieldsResp.status).to.eq(200);
-            const found = getSubfieldsResp.body.subfields.find((sf) => sf.id === createdSubfieldId);
+            const found = getSubfieldsResp.body.subfields.find(
+              (sf) => sf.id === createdSubfieldIds[createdSubfieldIds.length - 1],
+            );
             expect(found).to.exist;
             expect(found).to.include({
               fieldId,
               code: '4',
               label: 'label of code 4',
               repeatable: false,
+              required: false,
+              deprecated: false,
+              scope: 'local',
+            });
+          });
+        });
+    },
+  );
+
+  it(
+    'C499709 Create Subfield code of Local field (repeatable, not required, not deprecated selected by default) for MARC bib spec (API)',
+    { tags: ['C499709', 'criticalPath', 'spitfire'] },
+    () => {
+      cy.getUserToken(user.username, user.password);
+      const subfieldPayload = {
+        code: '5',
+        label: 'label of code 5',
+      };
+      cy.createSpecificationFieldSubfield(fieldId, subfieldPayload)
+        .then((subfieldResp) => {
+          expect(subfieldResp.status).to.eq(201);
+          const subfieldBody = subfieldResp.body;
+          const createdSubfieldId = subfieldBody.id;
+          createdSubfieldIds.push(createdSubfieldId);
+          expect(subfieldBody).to.include({
+            fieldId,
+            code: '5',
+            label: 'label of code 5',
+            repeatable: true,
+            required: false,
+            deprecated: false,
+            scope: 'local',
+          });
+        })
+        .then(() => {
+          cy.getSpecificationFieldSubfields(fieldId).then((getSubfieldsResp) => {
+            expect(getSubfieldsResp.status).to.eq(200);
+            const found = getSubfieldsResp.body.subfields.find(
+              (sf) => sf.id === createdSubfieldIds[createdSubfieldIds.length - 1],
+            );
+            expect(found).to.exist;
+            expect(found).to.include({
+              fieldId,
+              code: '5',
+              label: 'label of code 5',
+              repeatable: true,
               required: false,
               deprecated: false,
               scope: 'local',
