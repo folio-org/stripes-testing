@@ -246,13 +246,13 @@ describe('Bulk-edit', () => {
             assertions: commonAssertions(instance),
           }));
 
-          parseMrcFileContentAndVerify(fileNames.previewMarc, recordsToVerify, 2);
+          parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, recordsToVerify, 2);
 
           BulkEditActions.downloadPreview();
 
           marcInstances.forEach((instance) => {
             BulkEditFiles.verifyValueInRowByUUID(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               instance.hrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,

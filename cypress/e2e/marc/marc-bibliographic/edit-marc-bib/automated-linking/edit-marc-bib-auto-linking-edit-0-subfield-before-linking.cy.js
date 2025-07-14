@@ -188,7 +188,6 @@ describe('MARC', () => {
             // #7 Unlink the linked 650 field with "Lesbian activists" value in "$a" subfield by clicking on the "Unlink from MARC authority record" icon >> confirm unlinking.
             QuickMarcEditor.clickUnlinkIconInTagField(preLinkedFields[0].rowIndex);
             QuickMarcEditor.confirmUnlinkingField();
-            cy.wait(3000);
             QuickMarcEditor.verifyRowLinked(preLinkedFields[0].rowIndex, false);
             QuickMarcEditor.checkContent(
               preLinkedFields[0].newContent,
