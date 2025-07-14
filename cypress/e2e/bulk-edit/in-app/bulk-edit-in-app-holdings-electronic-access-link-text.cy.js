@@ -126,7 +126,7 @@ describe(
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.selectAction('Replace with');
           BulkEditActions.verifyConfirmButtonDisabled(true);
-          BulkEditActions.fillInFirstTextArea(newLinkText);
+          BulkEditActions.fillInFirstTextArea(replacedLinkText);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditSearchPane.verifyInputLabel(

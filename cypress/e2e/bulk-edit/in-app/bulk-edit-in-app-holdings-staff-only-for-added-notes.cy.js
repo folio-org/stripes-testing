@@ -178,7 +178,6 @@ describe('Bulk-edit', () => {
         const suppressFromDiscovery = 'true';
 
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10);
-        BulkEditActions.checkApplyToItemsRecordsCheckbox();
         BulkEditActions.deleteRow(2);
         BulkEditActions.verifyStaffOnlyCheckbox(false, 2);
         BulkEditActions.verifyStaffOnlyCheckbox(true, 3);
