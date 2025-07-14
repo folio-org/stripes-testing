@@ -219,6 +219,16 @@ describe('Specification Storage - Subfield API', () => {
         );
         expect(standardField, 'Standard field 088 exists').to.exist;
 
+        // Precondition: Remove subfield 'j' if it already exists
+        cy.getSpecificationFieldSubfields(standardField.id).then((getSubfieldsResp) => {
+          const existingSubfield = getSubfieldsResp.body.subfields.find(
+            (sf) => sf.code === 'j' && sf.scope === 'local',
+          );
+          if (existingSubfield) {
+            cy.deleteSpecificationFieldSubfield(existingSubfield.id);
+          }
+        });
+
         const subfieldPayload = {
           code: 'j',
           label: 'Added j subfield name',
@@ -282,6 +292,16 @@ describe('Specification Storage - Subfield API', () => {
           (field) => field.tag === '100' && field.scope === 'standard',
         );
         expect(standardField, 'Standard field 100 exists').to.exist;
+
+        // Precondition: Remove subfield 'o' if it already exists
+        cy.getSpecificationFieldSubfields(standardField.id).then((getSubfieldsResp) => {
+          const existingSubfield = getSubfieldsResp.body.subfields.find(
+            (sf) => sf.code === 'o' && sf.scope === 'local',
+          );
+          if (existingSubfield) {
+            cy.deleteSpecificationFieldSubfield(existingSubfield.id);
+          }
+        });
 
         // Step 1: Create a subfield with unique code
         const subfieldPayload = {
@@ -363,6 +383,86 @@ describe('Specification Storage - Subfield API', () => {
               expect(allOSubfields.length, 'Only one subfield o exists').to.eq(1);
               expect(allASubfields.length, 'Only one subfield a exists').to.eq(1);
             });
+          });
+      });
+    },
+  );
+
+  it(
+    'C499738 Create Subfield code of Standard field (not repeatable, not required, not deprecated) for MARC bib spec (API) (spitfire)',
+    { tags: ['C499738', 'criticalPath', 'spitfire'] },
+    () => {
+      const subfieldCode = 'y';
+      // Remove subfield if it exists to prevent conflicts
+      cy.getUserToken(user.username, user.password);
+
+      // Get all fields for the MARC bibliographic specification
+      cy.getSpecificationFields(bibSpecId).then((response) => {
+        expect(response.status).to.eq(200);
+
+        // Find a standard field (e.g., 100 - Main Entry--Personal Name)
+        const standardField = response.body.fields.find(
+          (field) => field.tag === '100' && field.scope === 'standard',
+        );
+        expect(standardField, 'Standard field 100 exists').to.exist;
+
+        // Precondition: Remove subfield 'y' if it already exists
+        cy.getSpecificationFieldSubfields(standardField.id)
+          .then((getSubfieldsResp) => {
+            const existingSubfield = getSubfieldsResp.body.subfields.find(
+              (sf) => sf.code === subfieldCode && sf.scope === 'local',
+            );
+            if (existingSubfield) {
+              cy.deleteSpecificationFieldSubfield(existingSubfield.id);
+            }
+          })
+          .then(() => {
+            // Step 1: Create a subfield with unique code
+
+            const subfieldPayload = {
+              code: subfieldCode,
+              label: `Added ${subfieldCode} subfield name`,
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            };
+
+            cy.createSpecificationFieldSubfield(standardField.id, subfieldPayload)
+              .then((subfieldResp) => {
+                expect(subfieldResp.status).to.eq(201);
+                const subfieldBody = subfieldResp.body;
+                const createdSubfieldId = subfieldBody.id;
+                createdSubfieldIds.push(createdSubfieldId);
+                expect(subfieldBody).to.include({
+                  fieldId: standardField.id,
+                  code: subfieldCode,
+                  label: `Added ${subfieldCode} subfield name`,
+                  repeatable: false,
+                  required: false,
+                  deprecated: false,
+                  scope: 'local',
+                });
+              })
+              .then(() => {
+                cy.getSpecificationFieldSubfields(standardField.id).then((getSubfieldsResp) => {
+                  expect(getSubfieldsResp.status).to.eq(200);
+
+                  // Verify created subfield exists
+                  const createdSubfield = getSubfieldsResp.body.subfields.find(
+                    (sf) => sf.code === subfieldCode && sf.scope === 'local',
+                  );
+                  expect(createdSubfield, 'Created subfield exists').to.exist;
+                  expect(createdSubfield).to.include({
+                    fieldId: standardField.id,
+                    code: subfieldCode,
+                    label: `Added ${subfieldCode} subfield name`,
+                    repeatable: false,
+                    required: false,
+                    deprecated: false,
+                    scope: 'local',
+                  });
+                });
+              });
           });
       });
     },
