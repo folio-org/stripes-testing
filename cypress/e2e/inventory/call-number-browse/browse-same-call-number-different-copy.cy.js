@@ -1,19 +1,19 @@
 import uuid from 'uuid';
-import Permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import {
   APPLICATION_NAMES,
-  CALL_NUMBER_TYPE_NAMES,
   BROWSE_CALL_NUMBER_OPTIONS,
+  CALL_NUMBER_TYPE_NAMES,
 } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
-import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
 import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -80,7 +80,7 @@ describe('Inventory', () => {
 
     beforeEach('Create 5 items with same call number, different enumeration/copy', () => {
       cy.getAdminToken();
-      for (const itemEnum of itemsEnumeration) {
+      itemsEnumeration.forEach((itemEnum) => {
         ItemRecordNew.createViaApi({
           holdingsId,
           itemBarcode: uuid(),
@@ -95,7 +95,7 @@ describe('Inventory', () => {
           chronology: itemEnum.chronology,
           copyNumber: itemEnum.copyNumber,
         });
-      }
+      });
       CallNumberBrowseSettings.assignCallNumberTypesViaApi({
         name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         callNumberTypes: [],
