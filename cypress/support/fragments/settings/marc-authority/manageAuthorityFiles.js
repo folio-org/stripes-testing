@@ -20,6 +20,7 @@ import {
   AUTHORITY_FILE_TEXT_FIELD_NAMES,
   AUTHORITY_FILE_SOURCES,
 } from '../../../constants';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
@@ -63,6 +64,7 @@ const deleteModalMessage2 =
   'Are you sure you want to delete this authority file? After deletion, new records will no longer be able to be assigned to this authority file';
 const deleteModal = Modal('Delete authority file');
 const cancelDeletionButton = Button('No, do not delete');
+const deleteAssignedSourceFileErrorText = (sourceFileName) => `${sourceFileName} cannot be deleted. Existing authority records are already assigned to this authority file.`;
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -498,6 +500,7 @@ export default {
   },
 
   clickConfirmDeletionButton() {
+    cy.wait(2000);
     cy.do(confirmDeletionButton.click());
   },
 
@@ -573,5 +576,11 @@ export default {
       deleteModal.find(cancelDeletionButton).exists(),
       deleteModal.find(confirmDeletionButton).exists(),
     ]);
+  },
+
+  verifyDeleteAssignedSourceFileError(sourceFileName) {
+    cy.expect(Callout(deleteAssignedSourceFileErrorText(sourceFileName)).exists());
+    InteractorsTools.dismissCallout(deleteAssignedSourceFileErrorText(sourceFileName));
+    cy.expect(Callout(deleteAssignedSourceFileErrorText(sourceFileName)).absent());
   },
 };
