@@ -982,7 +982,8 @@ const API = {
         method: 'GET',
         path: `lists/${listId}/exports/${exportId}`,
         isDefaultSearchParamsRequired: false,
-      }).then((response) => {
+      })
+      .then((response) => {
         return response;
       });
   },
@@ -995,7 +996,7 @@ const API = {
         failOnStatusCode: false,
         isDefaultSearchParamsRequired: false,
         contentTypeHeader: 'application/octet-stream',
-        encoding: 'binary'
+        encoding: 'binary',
       })
       .then((getDownloadResponse) => {
         return getDownloadResponse;
@@ -1005,22 +1006,22 @@ const API = {
   // input parameter 'fields' should be an array of field names to export
   // e.g. ['users.active', 'users.id', 'users.username']
   exportViaApiFullFlow(id, fields) {
-    return this.postExportViaApi(id, fields)
-      .then((postExportResponse) => {
-        recurse(
-          () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
-          (response) => response.body.status === 'SUCCESS',
-          {
-            limit: 10,
-            timeout: 10 * 1000,
-            delay: 1000,
-          },
-        );
-        return this.getExportStatusViaApi(id, postExportResponse.body.exportId)
-          .then((getExportResponse) => {
-            return this.downloadViaApi(id, getExportResponse.body.exportId);
-          });
-      });
+    return this.postExportViaApi(id, fields).then((postExportResponse) => {
+      recurse(
+        () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
+        (response) => response.body.status === 'SUCCESS',
+        {
+          limit: 10,
+          timeout: 10 * 1000,
+          delay: 1000,
+        },
+      );
+      return this.getExportStatusViaApi(id, postExportResponse.body.exportId).then(
+        (getExportResponse) => {
+          return this.downloadViaApi(id, getExportResponse.body.exportId);
+        },
+      );
+    });
   },
 
   deleteViaApi(id) {

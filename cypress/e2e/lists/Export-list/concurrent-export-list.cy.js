@@ -23,41 +23,49 @@ describe('Lists', () => {
         Permissions.listsExport.gui,
         Permissions.usersViewRequests.gui,
         Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-      }).then(() => {
-        Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
-          Lists.createQueryViaApi(query).then((createdQuery) => {
-            listData.queryId = createdQuery.queryId;
-            listData.fqlQuery = createdQuery.fqlQuery;
-            listData.fields = fields;
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+        })
+        .then(() => {
+          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+            Lists.createQueryViaApi(query).then((createdQuery) => {
+              listData.queryId = createdQuery.queryId;
+              listData.fqlQuery = createdQuery.fqlQuery;
+              listData.fields = fields;
 
-            Lists.createViaApi(listData).then((body) => {
-              listData.version = body.version;
-              listId = body.id;
-            }).then(() => {
-              Lists.waitForListToCompleteRefreshViaApi(listId);
+              Lists.createViaApi(listData)
+                .then((body) => {
+                  listData.version = body.version;
+                  listId = body.id;
+                })
+                .then(() => {
+                  Lists.waitForListToCompleteRefreshViaApi(listId);
+                });
             });
           });
         });
-      });
     });
 
     beforeEach('Reset list state', () => {
       cy.getAdminToken();
-      Lists.getListByIdViaApi(listId).then((body) => {
-        listData.version = body.version;
-      }).then(() => {
-        Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
-          Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
-            Lists.getListByIdViaApi(listId).then((body) => {
-              listData.version = body.version;
-            }).then(() => {
-              Lists.waitForListToCompleteRefreshViaApi(listId);
+      Lists.getListByIdViaApi(listId)
+        .then((body) => {
+          listData.version = body.version;
+        })
+        .then(() => {
+          Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
+            Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
+              Lists.getListByIdViaApi(listId)
+                .then((body) => {
+                  listData.version = body.version;
+                })
+                .then(() => {
+                  Lists.waitForListToCompleteRefreshViaApi(listId);
+                });
             });
           });
         });
-      });
     });
 
     after('Delete test data', () => {
@@ -66,7 +74,8 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411814 (Multiple users): Export list (corsair)',
+    it(
+      'C411814 (Multiple users): Export list (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411814'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -78,7 +87,9 @@ describe('Lists', () => {
         Lists.openList(listData.name);
 
         cy.getUserTokenOfAdminUser();
-        Lists.postExportViaApi(listId, listData.fields).then(() => { cy.wait(100); });
+        Lists.postExportViaApi(listId, listData.fields).then(() => {
+          cy.wait(100);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(100);
         });
@@ -89,9 +100,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
         );
-      });
+      },
+    );
 
-    it('C411815 (Multiple users): Export list when refresh is in progress (corsair)',
+    it(
+      'C411815 (Multiple users): Export list when refresh is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411815'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -104,7 +117,9 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         cy.getUserTokenOfAdminUser();
-        Lists.refreshViaApi(listId).then(() => { cy.wait(100); });
+        Lists.refreshViaApi(listId).then(() => {
+          cy.wait(100);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(100);
         });
@@ -115,9 +130,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: ${listData.name} was not exported. Lists can't be exported while a refresh is in progress.`,
         );
-      });
+      },
+    );
 
-    it('C411816 (Multiple users): Export list when another user make the list Private (corsair)',
+    it(
+      'C411816 (Multiple users): Export list when another user make the list Private (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411816'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -129,7 +146,9 @@ describe('Lists', () => {
         Lists.openList(listData.name);
 
         cy.getUserTokenOfAdminUser();
-        Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => { cy.wait(500); });
+        Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
@@ -140,9 +159,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: export of ${listData.name} failed. Someone else modified this list and you no longer have access to it.`,
         );
-      });
+      },
+    );
 
-    it('C411832 (Multiple users): Export list when another user make the list Inactive (corsair)',
+    it(
+      'C411832 (Multiple users): Export list when another user make the list Inactive (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411832'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -154,7 +175,9 @@ describe('Lists', () => {
         Lists.openList(listData.name);
 
         cy.getUserTokenOfAdminUser();
-        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => { cy.wait(500); });
+        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
@@ -165,9 +188,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: export of ${listData.name} failed. Verify the list is active and try to export the list again.`,
         );
-      });
+      },
+    );
 
-    it('C411817 (Multiple users): Export list when someone removes the list (corsair)',
+    it(
+      'C411817 (Multiple users): Export list when someone removes the list (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411817'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -179,7 +204,9 @@ describe('Lists', () => {
         Lists.openList(listData.name);
 
         cy.getUserTokenOfAdminUser();
-        Lists.deleteViaApi(listId).then(() => { cy.wait(500); });
+        Lists.deleteViaApi(listId).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
@@ -190,6 +217,7 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: export of ${listData.name} failed because the list was not found. Verify the list location and try again.`,
         );
-      });
+      },
+    );
   });
 });

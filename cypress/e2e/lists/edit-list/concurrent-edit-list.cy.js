@@ -23,41 +23,49 @@ describe('Lists', () => {
         Permissions.listsEdit.gui,
         Permissions.usersViewRequests.gui,
         Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-      }).then(() => {
-        Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
-          Lists.createQueryViaApi(query).then((createdQuery) => {
-            listData.queryId = createdQuery.queryId;
-            listData.fqlQuery = createdQuery.fqlQuery;
-            listData.fields = fields;
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+        })
+        .then(() => {
+          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+            Lists.createQueryViaApi(query).then((createdQuery) => {
+              listData.queryId = createdQuery.queryId;
+              listData.fqlQuery = createdQuery.fqlQuery;
+              listData.fields = fields;
 
-            Lists.createViaApi(listData).then((body) => {
-              listData.version = body.version;
-              listId = body.id;
-            }).then(() => {
-              Lists.waitForListToCompleteRefreshViaApi(listId);
+              Lists.createViaApi(listData)
+                .then((body) => {
+                  listData.version = body.version;
+                  listId = body.id;
+                })
+                .then(() => {
+                  Lists.waitForListToCompleteRefreshViaApi(listId);
+                });
             });
           });
         });
-      });
     });
 
     beforeEach('Reset list state', () => {
       cy.getAdminToken();
-      Lists.getListByIdViaApi(listId).then((body) => {
-        listData.version = body.version;
-      }).then(() => {
-        Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
-          Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
-            Lists.getListByIdViaApi(listId).then((body) => {
-              listData.version = body.version;
-            }).then(() => {
-              Lists.waitForListToCompleteRefreshViaApi(listId);
+      Lists.getListByIdViaApi(listId)
+        .then((body) => {
+          listData.version = body.version;
+        })
+        .then(() => {
+          Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
+            Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
+              Lists.getListByIdViaApi(listId)
+                .then((body) => {
+                  listData.version = body.version;
+                })
+                .then(() => {
+                  Lists.waitForListToCompleteRefreshViaApi(listId);
+                });
             });
           });
         });
-      });
     });
 
     after('Delete test data', () => {
@@ -66,7 +74,8 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411740 (Multiple users): Make the list INACTIVE (corsair)',
+    it(
+      'C411740 (Multiple users): Make the list INACTIVE (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411740'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -81,7 +90,9 @@ describe('Lists', () => {
 
         // make a list inactive
         cy.getUserTokenOfAdminUser();
-        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => { cy.wait(500); });
+        Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
@@ -94,10 +105,14 @@ describe('Lists', () => {
         Lists.testQuery();
         cy.wait(5000);
         Lists.runQueryAndSave();
-        Lists.verifyCalloutMessage(`Error: someone else modified ${listData.name}. Reload the page to view the latest version of this list`);
-      });
+        Lists.verifyCalloutMessage(
+          `Error: someone else modified ${listData.name}. Reload the page to view the latest version of this list`,
+        );
+      },
+    );
 
-    it('C411741 (Multiple users): Make the list Private (corsair)',
+    it(
+      'C411741 (Multiple users): Make the list Private (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411741'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -111,17 +126,23 @@ describe('Lists', () => {
         Lists.editList();
 
         cy.getUserTokenOfAdminUser();
-        Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => { cy.wait(500); });
+        Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
 
         Lists.setDescription('test description');
         Lists.saveList();
-        Lists.verifyCalloutMessage(`Error: changes to ${listData.name} were not saved. Someone else modified this list and you no longer have access to it.`);
-      });
+        Lists.verifyCalloutMessage(
+          `Error: changes to ${listData.name} were not saved. Someone else modified this list and you no longer have access to it.`,
+        );
+      },
+    );
 
-    it('C411766 (Multiple users) Edit list when refresh is in progress (corsair)',
+    it(
+      'C411766 (Multiple users) Edit list when refresh is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'С411766'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -134,17 +155,23 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         cy.getUserTokenOfAdminUser();
-        Lists.refreshViaApi(listId).then(() => { cy.wait(500); });
+        Lists.refreshViaApi(listId).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
 
         Lists.setDescription('test description');
         Lists.saveList();
-        Lists.verifyCalloutMessage(`Error: changes to ${listData.name} were not saved. Lists can't be updated while a refresh is in progress.`);
-      });
+        Lists.verifyCalloutMessage(
+          `Error: changes to ${listData.name} were not saved. Lists can't be updated while a refresh is in progress.`,
+        );
+      },
+    );
 
-    it('C411765 C411776 (Multiple users) Edit deleted list (corsair)',
+    it(
+      'C411765 C411776 (Multiple users) Edit deleted list (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411765', 'C411776'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -160,13 +187,18 @@ describe('Lists', () => {
         Lists.setName(`${listData.name}${modifiedName}`);
 
         cy.getUserTokenOfAdminUser();
-        Lists.deleteViaApi(listId).then(() => { cy.wait(500); });
+        Lists.deleteViaApi(listId).then(() => {
+          cy.wait(500);
+        });
         cy.getUserToken(userData.username, userData.password).then(() => {
           cy.wait(500);
         });
 
         Lists.saveList();
-        Lists.verifyCalloutMessage(`Error: ${listData.name}${modifiedName} was not found. Verify the list location and try again.`);
-      });
+        Lists.verifyCalloutMessage(
+          `Error: ${listData.name}${modifiedName} was not found. Verify the list location and try again.`,
+        );
+      },
+    );
   });
 });

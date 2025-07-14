@@ -64,8 +64,8 @@ export default {
   getAllDownloadedFileNames(fileName, isDateIncluded = false) {
     return {
       matchedRecordsCSV: this.getMatchedRecordsFileName(fileName, isDateIncluded),
-      previewCSV: this.getPreviewFileName(fileName, isDateIncluded),
-      previewMarc: this.getPreviewMarcFileName(fileName, isDateIncluded),
+      previewRecordsCSV: this.getPreviewFileName(fileName, isDateIncluded),
+      previewRecordsMarc: this.getPreviewMarcFileName(fileName, isDateIncluded),
       changedRecordsCSV: this.getChangedRecordsFileName(fileName, isDateIncluded),
       changedRecordsMarc: this.getChangedRecordsMarcFileName(fileName, isDateIncluded),
       errorsFromCommitting: this.getErrorsFromCommittingFileName(fileName, isDateIncluded),
