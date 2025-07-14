@@ -38,7 +38,7 @@ describe('MARC Authority Validation Rules - System Fields', () => {
   });
 
   it(
-    'C499842 Cannot delete a system MARC field of authority spec (API)',
+    'C499842 Cannot delete a system MARC field of authority spec (API) (spitfire)',
     { tags: ['smoke', 'C499842', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
