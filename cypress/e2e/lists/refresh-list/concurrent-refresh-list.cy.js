@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Export list', () => {
+  describe('Refresh list', () => {
     let userData = {};
     const listData = {
-      name: `C411814-${getTestEntityValue('list')}`,
-      description: `C411814-${getTestEntityValue('desc')}`,
+      name: `C411825-${getTestEntityValue('list')}`,
+      description: `C411825-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -20,9 +20,8 @@ describe('Lists', () => {
     before('Create user and list', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsExport.gui,
+        Permissions.listsEdit.gui,
         Permissions.usersViewRequests.gui,
-        Permissions.inventoryAll.gui,
       ])
         .then((userProperties) => {
           userData = userProperties;
@@ -74,9 +73,8 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it(
-      'C411814 (Multiple users): Export list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411814'] },
+    it('C411825 (Multiple users): Refresh list (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411825'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -87,7 +85,7 @@ describe('Lists', () => {
         Lists.openList(listData.name);
 
         cy.getUserTokenOfAdminUser();
-        Lists.postExportViaApi(listId, listData.fields).then(() => {
+        Lists.refreshViaApi(listId).then(() => {
           cy.wait(100);
         });
         cy.getUserToken(userData.username, userData.password).then(() => {
@@ -95,17 +93,14 @@ describe('Lists', () => {
         });
 
         Lists.openActions();
-        Lists.exportList();
-
+        Lists.refreshList();
         Lists.verifyCalloutMessage(
-          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+          `Error: refresh for ${listData.name} failed because a refresh for this list is already in progress.`,
         );
-      },
-    );
+      });
 
-    it(
-      'C411815 (Multiple users): Export list when refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411815'] },
+    it('C411826 (Multiple users): Refresh list when another user modifies the list (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411826'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -116,26 +111,51 @@ describe('Lists', () => {
         Lists.openList(listData.name);
         Lists.openActions();
         Lists.editList();
+
+        Lists.editQuery();
+        cy.wait(2000);
+        // Change query value
+        Lists.changeQueryBoolValue(false);
+        cy.wait(5000);
+        Lists.testQuery();
+        cy.wait(5000);
+        Lists.runQueryAndSave();
+
+        cy.wait(100);
         cy.getUserTokenOfAdminUser();
-        Lists.refreshViaApi(listId).then(() => {
-          cy.wait(100);
+        Lists.refreshViaApi(listId).then((response) => {
+          expect(response.body).to.have.property(
+            'message',
+            `List ( with id ${listId} ) is already in refresh state`,
+          );
+          expect(response.body).to.have.property('code', 'refresh-list.refresh.in.progress');
         });
-        cy.getUserToken(userData.username, userData.password).then(() => {
-          cy.wait(100);
+      });
+
+    it('C411829 (Multiple users): Cancel refresh (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411829'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
         });
+        Lists.waitLoading();
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
 
         Lists.openActions();
-        Lists.exportList();
+        Lists.refreshList();
 
+        cy.wait(200);
+        Lists.openActions();
+        Lists.cancelRefreshList();
         Lists.verifyCalloutMessage(
-          `Error: ${listData.name} was not exported. Lists can't be exported while a refresh is in progress.`,
+          `The refresh for ${listData.name} was successfully cancelled.`,
         );
-      },
-    );
+      });
 
-    it(
-      'C411816 (Multiple users): Export list when another user make the list Private (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411816'] },
+    it('C411835 (Multiple users): Refresh list when another user make the list Private (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411835'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -154,17 +174,14 @@ describe('Lists', () => {
         });
 
         Lists.openActions();
-        Lists.exportList();
-
+        Lists.refreshList();
         Lists.verifyCalloutMessage(
-          `Error: export of ${listData.name} failed. Someone else modified this list and you no longer have access to it.`,
+          `Error: refresh of ${listData.name} failed. Someone else modified this list and you no longer have access to it.`,
         );
-      },
-    );
+      });
 
-    it(
-      'C411832 (Multiple users): Export list when another user make the list Inactive (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411832'] },
+    it('C411836 (Multiple users): Refresh list when another user make the list Inactive (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411836'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -183,17 +200,14 @@ describe('Lists', () => {
         });
 
         Lists.openActions();
-        Lists.exportList();
-
+        Lists.refreshList();
         Lists.verifyCalloutMessage(
-          `Error: export of ${listData.name} failed. Verify the list is active and try to export the list again.`,
+          `Error: ${listData.name} was not refreshed because it is inactive. Set the list status to active to refresh the list.`,
         );
-      },
-    );
+      });
 
-    it(
-      'C411817 (Multiple users): Export list when someone removes the list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411817'] },
+    it('C411827 (Multiple users): Refresh list when someone removes the list (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411827'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -212,12 +226,10 @@ describe('Lists', () => {
         });
 
         Lists.openActions();
-        Lists.exportList();
-
+        Lists.refreshList();
         Lists.verifyCalloutMessage(
-          `Error: export of ${listData.name} failed because the list was not found. Verify the list location and try again.`,
+          `Error: ${listData.name} was not refreshed because the list was not found. Verify the list location and try again.`,
         );
-      },
-    );
+      });
   });
 });

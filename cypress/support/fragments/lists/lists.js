@@ -33,6 +33,7 @@ const closeWithoutSavingButton = Button('Close without saving');
 const keepEditingButton = Button('Keep editing');
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
+const cancelRefreshList = Button('Cancel refresh');
 const editList = Button('Edit list');
 const duplicateList = Button('Duplicate list');
 const deleteList = Button('Delete list');
@@ -106,7 +107,12 @@ const UI = {
 
   refreshList() {
     cy.do(refreshList.click());
-    cy.wait(3000);
+    cy.wait(2000);
+  },
+
+  cancelRefreshList() {
+    cy.do(cancelRefreshList.click());
+    cy.wait(1000);
   },
 
   verifyRefreshListButtonIsActive() {
@@ -955,9 +961,23 @@ const API = {
         method: 'POST',
         path: `lists/${id}/refresh`,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then((response) => {
-        return response.body;
+        return response;
+      });
+  },
+
+  cancelRefreshViaApi(id) {
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `lists/${id}/refresh`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
       });
   },
 
@@ -982,7 +1002,8 @@ const API = {
         method: 'GET',
         path: `lists/${listId}/exports/${exportId}`,
         isDefaultSearchParamsRequired: false,
-      }).then((response) => {
+      })
+      .then((response) => {
         return response;
       });
   },
@@ -995,7 +1016,7 @@ const API = {
         failOnStatusCode: false,
         isDefaultSearchParamsRequired: false,
         contentTypeHeader: 'application/octet-stream',
-        encoding: 'binary'
+        encoding: 'binary',
       })
       .then((getDownloadResponse) => {
         return getDownloadResponse;
@@ -1005,22 +1026,22 @@ const API = {
   // input parameter 'fields' should be an array of field names to export
   // e.g. ['users.active', 'users.id', 'users.username']
   exportViaApiFullFlow(id, fields) {
-    return this.postExportViaApi(id, fields)
-      .then((postExportResponse) => {
-        recurse(
-          () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
-          (response) => response.body.status === 'SUCCESS',
-          {
-            limit: 10,
-            timeout: 10 * 1000,
-            delay: 1000,
-          },
-        );
-        return this.getExportStatusViaApi(id, postExportResponse.body.exportId)
-          .then((getExportResponse) => {
-            return this.downloadViaApi(id, getExportResponse.body.exportId);
-          });
-      });
+    return this.postExportViaApi(id, fields).then((postExportResponse) => {
+      recurse(
+        () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
+        (response) => response.body.status === 'SUCCESS',
+        {
+          limit: 10,
+          timeout: 10 * 1000,
+          delay: 1000,
+        },
+      );
+      return this.getExportStatusViaApi(id, postExportResponse.body.exportId).then(
+        (getExportResponse) => {
+          return this.downloadViaApi(id, getExportResponse.body.exportId);
+        },
+      );
+    });
   },
 
   deleteViaApi(id) {
