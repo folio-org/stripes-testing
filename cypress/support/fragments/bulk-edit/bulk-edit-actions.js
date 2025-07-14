@@ -70,6 +70,7 @@ const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
 const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
+const selectActionForMarcInstanceDropdownFirst = Select({ name: 'name', dataActionIndex: '0' });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -1938,7 +1939,7 @@ export default {
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(HTML({ className: including('subRow-') }))
-        .find(selectActionForMarcInstanceDropdown)
+        .find(selectActionForMarcInstanceDropdownFirst)
         .has({ disabled: true, checkedOptionText: 'Add' }),
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
@@ -1948,7 +1949,7 @@ export default {
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(HTML({ className: including('subRow-') }))
-        .find(selectActionForMarcInstanceDropdown)
+        .find(selectActionForMarcInstanceDropdownFirst)
         .exists(),
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
