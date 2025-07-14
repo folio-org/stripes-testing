@@ -54,7 +54,7 @@ describe('Specification Storage - Create Field API', () => {
   });
 
   it(
-    'C490917 Create Local Field (not repeatable, not required, not deprecated) for MARC bib spec (API)',
+    'C490917 Create Local Field (not repeatable, not required, not deprecated) for MARC bib spec (API) (spitfire)',
     { tags: ['C490917', 'criticalPath', 'spitfire'] },
     () => {
       const payload = {
@@ -78,7 +78,7 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490918 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC bib spec (API)',
+    'C490918 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC bib spec (API) (spitfire)',
     { tags: ['C490918', 'criticalPath', 'spitfire'] },
     () => {
       const payload = {
@@ -102,7 +102,7 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490928 Create Local Field with duplicate "label" for MARC bib spec (API)',
+    'C490928 Create Local Field with duplicate "label" for MARC bib spec (API) (spitfire)',
     { tags: ['C490928', 'criticalPath', 'spitfire'] },
     () => {
       const labels = ['Control Number', 'Title Statement', 'Local'];
@@ -126,7 +126,7 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490951 Update all fields in Local Field for MARC bib spec (API)',
+    'C490951 Update all fields in Local Field for MARC bib spec (API) (spitfire)',
     { tags: ['C490951', 'criticalPath', 'spitfire'] },
     () => {
       // Step 1: Create a Local MARC field with all flags true
@@ -210,7 +210,7 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490936 Cannot update Local field for MARC bib spec without required permission',
+    'C490936 Cannot update Local field for MARC bib spec without required permission (API) (spitfire)',
     { tags: ['C490936', 'criticalPath', 'spitfire'] },
     () => {
       // Step 1: Create a user with only GET and POST permissions (no PUT)

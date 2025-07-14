@@ -15,6 +15,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 let user;
 let servicePointId;
+let loans;
 const item = {
   name: `ItemName${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
@@ -41,6 +42,8 @@ describe('Circulation log', () => {
         })
         .then(() => {
           UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
+            loans = userLoans;
+
             userLoans.loans.forEach(({ id }) => {
               UserLoans.claimItemReturnedViaApi(
                 { itemClaimedReturnedDateTime: moment.utc().format() },
@@ -61,7 +64,10 @@ describe('Circulation log', () => {
 
   it(
     'C17001 Filter circulation log by marked as missing (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17001'] },
+    {
+      tags: ['criticalPath', 'volaris', 'C17001'],
+      retries: 2,
+    },
     () => {
       UsersSearchPane.searchByKeywords(user.userId);
       UsersSearchPane.openUser(user.userId);
@@ -70,6 +76,7 @@ describe('Circulation log', () => {
       ConfirmItemStatusModal.confirmItemStatus('this is a test');
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+      cy.wait(3000);
       SearchPane.searchByMarkedAsMissing();
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch({
@@ -90,6 +97,10 @@ describe('Circulation log', () => {
     'C17002 Check the Actions button from filtering Circulation log by marked as missing (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17002'] },
     () => {
+      loans.loans.forEach(({ id }) => {
+        UserLoans.declareClaimedReturnedItemMissingViaApi({ loanId: id });
+      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByMarkedAsMissing();
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
     },

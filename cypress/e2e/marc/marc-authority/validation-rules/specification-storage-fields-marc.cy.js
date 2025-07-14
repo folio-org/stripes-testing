@@ -45,7 +45,7 @@ describe('Specification Storage - Create Field API', () => {
   });
 
   it(
-    'C494354 Create Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API)',
+    'C494354 Create Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (spitfire)',
     { tags: ['C494354', 'criticalPath', 'spitfire'] },
     () => {
       const payload = {
@@ -69,7 +69,7 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C494355 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC authority spec (API)',
+    'C494355 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC authority spec (API) (spitfire)',
     { tags: ['C494355', 'criticalPath', 'spitfire'] },
     () => {
       const payload = {
@@ -93,7 +93,7 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C494362 Update Local Field for MARC authority spec (API)',
+    'C494362 Update Local Field for MARC authority spec (API) (spitfire)',
     { tags: ['C494362', 'criticalPath', 'spitfire'] },
     () => {
       // Step 1: Create a Local MARC field with all flags true
