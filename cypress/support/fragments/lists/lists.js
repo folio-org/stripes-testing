@@ -33,6 +33,7 @@ const closeWithoutSavingButton = Button('Close without saving');
 const keepEditingButton = Button('Keep editing');
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
+const cancelRefreshList = Button('Cancel refresh');
 const editList = Button('Edit list');
 const duplicateList = Button('Duplicate list');
 const deleteList = Button('Delete list');
@@ -106,7 +107,12 @@ const UI = {
 
   refreshList() {
     cy.do(refreshList.click());
-    cy.wait(3000);
+    cy.wait(2000);
+  },
+
+  cancelRefreshList() {
+    cy.do(cancelRefreshList.click());
+    cy.wait(1000);
   },
 
   verifyRefreshListButtonIsActive() {
@@ -955,9 +961,23 @@ const API = {
         method: 'POST',
         path: `lists/${id}/refresh`,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then((response) => {
-        return response.body;
+        return response;
+      });
+  },
+
+  cancelRefreshViaApi(id) {
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `lists/${id}/refresh`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
       });
   },
 
