@@ -8,13 +8,11 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialSource: { name: Cypress.env('diku_login') },
         authority: {
           source: INSTANCE_SOURCE_NAMES.MARC,
           searchInput: 'C350697 On the Road',
@@ -40,8 +38,11 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((sourceRecord) => {
+          testData.initialSource = sourceRecord;
+        });
         // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350697*');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('C350697*');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -86,7 +87,7 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           // #4-#5 Click on "Record last updated" accordion button.Verify that "Source" value does not match with your user's name.
           // The "Source" value does not match with your user's name.
-          InventoryInstance.verifyLastUpdatedUser(testData.initialSource.name);
+          InventoryInstance.verifyLastUpdatedUser(testData.initialSource);
 
           testData.deletedFieldsTags.forEach((deletedFieldTag, index) => {
             // #6 Click on the "Actions" dropdown menu button and choose the "Edit MARC bibliographic record" option.
@@ -96,7 +97,7 @@ describe('MARC', () => {
             // #7 Verify that the "Source" value is equal to user's name of user which updated "MARC Bibliographic" record last time.
             // The "Source" value is equal to the user's name of user that updated the record last time.
             if (index === 0) {
-              QuickMarcEditor.checkPaneheaderContains(testData.initialSource.name);
+              QuickMarcEditor.checkPaneheaderContains(testData.initialSource);
             } else {
               QuickMarcEditor.checkPaneheaderContains(testData.userProperties.username);
             }
