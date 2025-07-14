@@ -18,14 +18,12 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Item', () => {
-    let locationId;
     const testData = {
       user: {},
       instance: {},
       holdings: {},
       item: { barcode: uuid() },
     };
-    const userPermissions = [Permissions.inventoryAll.gui];
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -40,7 +38,7 @@ describe('Inventory', () => {
                   servicePointId: servicePoints[0].id,
                 }).location;
                 Locations.createViaApi(collegeLocationData).then((location) => {
-                  locationId = location.id;
+                  testData.locationId = location.id;
                   testData.locationName = location.name;
                 });
               },
@@ -58,7 +56,7 @@ describe('Inventory', () => {
           .then(() => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: testData.instance.instanceId,
-              permanentLocationId: locationId,
+              permanentLocationId: testData.locationId,
               sourceId: testData.holdings.sourceId,
             }).then((holding) => {
               testData.holdings = holding;
@@ -77,16 +75,25 @@ describe('Inventory', () => {
       });
       cy.resetTenant();
 
-      cy.createTempUser(userPermissions).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryUpdateOwnership.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
-        [Affiliations.College, Affiliations.University].forEach((affiliation) => {
-          cy.affiliateUserToTenant({
-            tenantId: affiliation,
-            userId: testData.user.userId,
-            permissions: userPermissions,
-          });
-        });
+        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+        cy.setTenant(Affiliations.College);
+        cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+        cy.resetTenant();
+
+        cy.getAdminToken();
+        cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+        cy.setTenant(Affiliations.University);
+        cy.assignPermissionsToExistingUser(testData.user.userId, [
+          Permissions.inventoryAll.gui,
+          Permissions.uiInventoryUpdateOwnership.gui,
+        ]);
+        cy.resetTenant();
 
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -110,7 +117,7 @@ describe('Inventory', () => {
           cy.deleteItemViaApi(instance.items[0].id);
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         });
-        Locations.deleteViaApi(locationId);
+        Locations.deleteViaApi(testData.locationId);
       });
       cy.resetTenant();
       cy.getAdminToken();
@@ -119,8 +126,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C477589 "Update ownership" option is not displayed on Item menu if user don\'t have affiliation for second Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C477589'] },
+      'C477591 "Update ownership" option is not displayed on Item menu if user don\'t have permissions (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C477591'] },
       () => {
         InstanceRecordView.openHoldingItem({
           name: testData.locationName,
