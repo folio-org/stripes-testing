@@ -99,7 +99,7 @@ describe('Inventory', () => {
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         Locations.deleteViaApi(testData.location);
       });
-      cy.withinTenant(Affiliations.College, () => {
+      cy.withinTenant(Affiliations.Consortia, () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
       });
