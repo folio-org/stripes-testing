@@ -104,3 +104,16 @@ Cypress.Commands.add('deleteSpecificationFieldSubfield', (subfieldId, failOnStat
     failOnStatusCode,
   });
 });
+
+Cypress.Commands.add(
+  'createSpecificationFieldIndicator',
+  (fieldId, indicator, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `specification-storage/fields/${fieldId}/indicators`,
+      isDefaultSearchParamsRequired: false,
+      body: indicator,
+      failOnStatusCode,
+    });
+  },
+);
