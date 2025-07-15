@@ -1,5 +1,6 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -18,14 +19,15 @@ import {
 } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const randomPostfix = getRandomPostfix();
-const instanceTitlePrefix = 'AT_C468279_Instance';
-const classificationPrefix = 'C468279';
-const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[1].id; // Dewey
-const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[1].algorithm;
+const instanceTitlePrefix = 'AT_C468277_Instance';
+const classificationPrefix = 'C468277';
+const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[2].id; // LC
+const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[2].algorithm;
 
-const sharedTypeName = `AT_C468279_ClassifType_${randomPostfix}`;
+const sharedCentralTypeName = `AT_C468277_ClassifType_Central_${randomPostfix}`;
 
 const testClassifications = [
   {
@@ -33,7 +35,7 @@ const testClassifications = [
     type: 'Additional Dewey',
     value: `${classificationPrefix}598.099`,
     isMarc: false,
-    expectExact: true,
+    expectExact: false,
   },
   {
     title: `${instanceTitlePrefix}_2`,
@@ -47,7 +49,7 @@ const testClassifications = [
     type: 'Dewey',
     value: `${classificationPrefix}598.0994`,
     isMarc: true,
-    expectExact: true,
+    expectExact: false,
   },
   {
     title: `${instanceTitlePrefix}_4`,
@@ -61,14 +63,14 @@ const testClassifications = [
     type: 'LC',
     value: `${classificationPrefix}QS 11 .GA1 E53 2005`,
     isMarc: true,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_6`,
     type: 'LC (local)',
     value: `${classificationPrefix}DD259.4 .B527 1973`,
     isMarc: false,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_7`,
@@ -82,7 +84,7 @@ const testClassifications = [
     type: 'NLM',
     value: `${classificationPrefix}SB945.A5`,
     isMarc: true,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_9`,
@@ -100,7 +102,7 @@ const testClassifications = [
   },
   {
     title: `${instanceTitlePrefix}_11`,
-    type: sharedTypeName,
+    type: sharedCentralTypeName,
     value: `${classificationPrefix}VP000321`,
     isMarc: false,
     expectExact: true,
@@ -109,8 +111,8 @@ const testClassifications = [
 
 const marcFiles = [
   {
-    marc: 'marcBibFileC468279.mrc',
-    fileNameImported: `testMarcFileC468279.${getRandomPostfix()}.mrc`,
+    marc: 'marcBibFileC468277.mrc',
+    fileNameImported: `testMarcFileC468277.${getRandomPostfix()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
   },
 ];
@@ -130,8 +132,12 @@ describe('Inventory', () => {
         InventoryInstances.deleteInstanceByTitleViaApi(instanceTitlePrefix);
         cy.createTempUser(userPermissions).then((createdUser) => {
           user = createdUser;
+          cy.assignAffiliationToUser(Affiliations.College, user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(user.userId, userPermissions);
+          cy.resetTenant();
           ClassificationIdentifierTypesConsortiumManager.createViaApi({
-            payload: { name: sharedTypeName },
+            payload: { name: sharedCentralTypeName },
           }).then((shared) => {
             sharedType = shared;
             cy.getAdminToken();
@@ -169,18 +175,20 @@ describe('Inventory', () => {
                 });
               });
             });
-
-            ClassificationIdentifierTypes.getIdByName(sharedTypeName).then((sharedTypeId) => {
-              ClassificationBrowse.updateIdentifierTypesAPI(
-                classificationBrowseId,
-                classificationBrowseAlgorithm,
-                [
-                  CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
-                  CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-                  sharedTypeId,
-                ],
-              );
-            });
+            ClassificationIdentifierTypes.getIdByName(sharedCentralTypeName).then(
+              (sharedTypeId) => {
+                ClassificationBrowse.updateIdentifierTypesAPI(
+                  classificationBrowseId,
+                  classificationBrowseAlgorithm,
+                  [
+                    CLASSIFICATION_IDENTIFIER_TYPES.LC,
+                    CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
+                    CLASSIFICATION_IDENTIFIER_TYPES.NLM,
+                    sharedTypeId,
+                  ],
+                );
+              },
+            );
           });
         });
       });
@@ -201,11 +209,10 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468279 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468279'] },
+        'C468277 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Member tenant (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468277'] },
         () => {
           cy.waitForAuthRefresh(() => {
-            cy.resetTenant();
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -213,10 +220,12 @@ describe('Inventory', () => {
             cy.reload();
           }, 20_000);
           InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.forEach((row) => {
             InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-              BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+              BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
             );
             if (row.expectExact) {
               BrowseClassifications.waitForClassificationNumberToAppear(
@@ -234,23 +243,23 @@ describe('Inventory', () => {
             InventorySearchAndFilter.clickResetAllButton();
             BrowseClassifications.verifySearchResultsTable(false);
           });
-          // Check the second exact match and click on it
-          const secondExact = testClassifications.filter((tc) => tc.expectExact)[1];
+          // Check the first exact match and click on it
+          const firstExact = testClassifications.filter((tc) => tc.expectExact)[0];
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-            BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+            BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
           );
-          InventorySearchAndFilter.browseSearch(secondExact.value);
+          InventorySearchAndFilter.browseSearch(firstExact.value);
           BrowseClassifications.verifySearchResultsTable();
-          BrowseClassifications.verifyValueInResultTableIsHighlighted(secondExact.value);
-          InventorySearchAndFilter.selectFoundItemFromBrowse(secondExact.value);
+          BrowseClassifications.verifyValueInResultTableIsHighlighted(firstExact.value);
+          InventorySearchAndFilter.selectFoundItemFromBrowse(firstExact.value);
           InventorySearchAndFilter.verifySearchOptionAndQuery(
             'Query',
-            `classifications.classificationNumber=="${secondExact.value}"`,
+            `classifications.classificationNumber=="${firstExact.value}"`,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseClassifications.verifySearchResultsTable();
-          BrowseClassifications.verifyValueInResultTableIsHighlighted(secondExact.value);
+          BrowseClassifications.verifyValueInResultTableIsHighlighted(firstExact.value);
         },
       );
     });

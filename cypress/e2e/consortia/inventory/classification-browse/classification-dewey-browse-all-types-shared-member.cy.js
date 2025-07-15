@@ -27,7 +27,7 @@ const classificationPrefix = 'C468280';
 const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[1].id; // Dewey
 const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[1].algorithm;
 
-const localSharedTypeName = `AT_C468280_ClassifType_${randomPostfix}`;
+const sharedTypeName = `AT_C468280_ClassifType_${randomPostfix}`;
 
 const testClassifications = [
   {
@@ -102,7 +102,7 @@ const testClassifications = [
   },
   {
     title: `${instanceTitlePrefix}_11`,
-    type: localSharedTypeName,
+    type: sharedTypeName,
     value: `${classificationPrefix}VP000321`,
     isMarc: false,
     expectExact: true,
@@ -137,7 +137,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, userPermissions);
           cy.resetTenant();
           ClassificationIdentifierTypesConsortiumManager.createViaApi({
-            payload: { name: localSharedTypeName },
+            payload: { name: sharedTypeName },
           }).then((shared) => {
             sharedType = shared;
             cy.getAdminToken();
@@ -175,7 +175,7 @@ describe('Inventory', () => {
                 });
               });
             });
-            ClassificationIdentifierTypes.getIdByName(localSharedTypeName).then((sharedTypeId) => {
+            ClassificationIdentifierTypes.getIdByName(sharedTypeName).then((sharedTypeId) => {
               ClassificationBrowse.updateIdentifierTypesAPI(
                 classificationBrowseId,
                 classificationBrowseAlgorithm,
@@ -207,7 +207,7 @@ describe('Inventory', () => {
 
       it(
         'C468280 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C468280'] },
+        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468280'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.setTenant(Affiliations.College);

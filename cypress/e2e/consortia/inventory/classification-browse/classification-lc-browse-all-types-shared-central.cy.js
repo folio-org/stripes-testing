@@ -20,12 +20,12 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 
 const randomPostfix = getRandomPostfix();
-const instanceTitlePrefix = 'AT_C468279_Instance';
-const classificationPrefix = 'C468279';
-const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[1].id; // Dewey
-const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[1].algorithm;
+const instanceTitlePrefix = 'AT_C468276_Instance';
+const classificationPrefix = 'C468276';
+const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[2].id; // LC
+const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[2].algorithm;
 
-const sharedTypeName = `AT_C468279_ClassifType_${randomPostfix}`;
+const sharedCentralTypeName = `AT_C468276_ClassifType_Central_${randomPostfix}`;
 
 const testClassifications = [
   {
@@ -33,7 +33,7 @@ const testClassifications = [
     type: 'Additional Dewey',
     value: `${classificationPrefix}598.099`,
     isMarc: false,
-    expectExact: true,
+    expectExact: false,
   },
   {
     title: `${instanceTitlePrefix}_2`,
@@ -47,7 +47,7 @@ const testClassifications = [
     type: 'Dewey',
     value: `${classificationPrefix}598.0994`,
     isMarc: true,
-    expectExact: true,
+    expectExact: false,
   },
   {
     title: `${instanceTitlePrefix}_4`,
@@ -61,14 +61,14 @@ const testClassifications = [
     type: 'LC',
     value: `${classificationPrefix}QS 11 .GA1 E53 2005`,
     isMarc: true,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_6`,
     type: 'LC (local)',
     value: `${classificationPrefix}DD259.4 .B527 1973`,
     isMarc: false,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_7`,
@@ -82,7 +82,7 @@ const testClassifications = [
     type: 'NLM',
     value: `${classificationPrefix}SB945.A5`,
     isMarc: true,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_9`,
@@ -100,7 +100,7 @@ const testClassifications = [
   },
   {
     title: `${instanceTitlePrefix}_11`,
-    type: sharedTypeName,
+    type: sharedCentralTypeName,
     value: `${classificationPrefix}VP000321`,
     isMarc: false,
     expectExact: true,
@@ -109,8 +109,8 @@ const testClassifications = [
 
 const marcFiles = [
   {
-    marc: 'marcBibFileC468279.mrc',
-    fileNameImported: `testMarcFileC468279.${getRandomPostfix()}.mrc`,
+    marc: 'marcBibFileC468276.mrc',
+    fileNameImported: `testMarcFileC468276.${getRandomPostfix()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
   },
 ];
@@ -131,7 +131,7 @@ describe('Inventory', () => {
         cy.createTempUser(userPermissions).then((createdUser) => {
           user = createdUser;
           ClassificationIdentifierTypesConsortiumManager.createViaApi({
-            payload: { name: sharedTypeName },
+            payload: { name: sharedCentralTypeName },
           }).then((shared) => {
             sharedType = shared;
             cy.getAdminToken();
@@ -169,18 +169,20 @@ describe('Inventory', () => {
                 });
               });
             });
-
-            ClassificationIdentifierTypes.getIdByName(sharedTypeName).then((sharedTypeId) => {
-              ClassificationBrowse.updateIdentifierTypesAPI(
-                classificationBrowseId,
-                classificationBrowseAlgorithm,
-                [
-                  CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
-                  CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-                  sharedTypeId,
-                ],
-              );
-            });
+            ClassificationIdentifierTypes.getIdByName(sharedCentralTypeName).then(
+              (sharedTypeId) => {
+                ClassificationBrowse.updateIdentifierTypesAPI(
+                  classificationBrowseId,
+                  classificationBrowseAlgorithm,
+                  [
+                    CLASSIFICATION_IDENTIFIER_TYPES.LC,
+                    CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
+                    CLASSIFICATION_IDENTIFIER_TYPES.NLM,
+                    sharedTypeId,
+                  ],
+                );
+              },
+            );
           });
         });
       });
@@ -201,8 +203,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468279 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468279'] },
+        'C468276 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Central tenant (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468276'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.resetTenant();
@@ -216,7 +218,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.forEach((row) => {
             InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-              BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+              BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
             );
             if (row.expectExact) {
               BrowseClassifications.waitForClassificationNumberToAppear(
@@ -234,23 +236,23 @@ describe('Inventory', () => {
             InventorySearchAndFilter.clickResetAllButton();
             BrowseClassifications.verifySearchResultsTable(false);
           });
-          // Check the second exact match and click on it
-          const secondExact = testClassifications.filter((tc) => tc.expectExact)[1];
+          // Check the third exact match and click on it
+          const thirdExact = testClassifications.filter((tc) => tc.expectExact)[2];
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-            BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+            BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
           );
-          InventorySearchAndFilter.browseSearch(secondExact.value);
+          InventorySearchAndFilter.browseSearch(thirdExact.value);
           BrowseClassifications.verifySearchResultsTable();
-          BrowseClassifications.verifyValueInResultTableIsHighlighted(secondExact.value);
-          InventorySearchAndFilter.selectFoundItemFromBrowse(secondExact.value);
+          BrowseClassifications.verifyValueInResultTableIsHighlighted(thirdExact.value);
+          InventorySearchAndFilter.selectFoundItemFromBrowse(thirdExact.value);
           InventorySearchAndFilter.verifySearchOptionAndQuery(
             'Query',
-            `classifications.classificationNumber=="${secondExact.value}"`,
+            `classifications.classificationNumber=="${thirdExact.value}"`,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseClassifications.verifySearchResultsTable();
-          BrowseClassifications.verifyValueInResultTableIsHighlighted(secondExact.value);
+          BrowseClassifications.verifyValueInResultTableIsHighlighted(thirdExact.value);
         },
       );
     });
