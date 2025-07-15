@@ -70,7 +70,7 @@ describe('Eureka', () => {
         },
       ];
 
-      before(() => {
+      before('Create user, data', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
@@ -82,11 +82,10 @@ describe('Eureka', () => {
         });
       });
 
-      afterEach(() => {
+      after('Delete user, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteCapabilitiesFromRoleApi(roleId);
           cy.deleteAuthorizationRoleApi(roleId);
         });
       });
