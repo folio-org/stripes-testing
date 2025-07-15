@@ -96,7 +96,6 @@ describe('Orders', () => {
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
-    cy.getAdminToken();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();

@@ -105,6 +105,7 @@ describe(
             inventoryEntity.item.barcode,
           );
           FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
+          FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName);
           BulkEditFiles.deleteAllDownloadedFiles(fileNames);
         });
 
@@ -152,7 +153,7 @@ describe(
             ]);
 
             BulkEditLogs.downloadFileWithProposedChanges();
-            ExportFile.verifyFileIncludes(fileNames.previewCSV, [
+            ExportFile.verifyFileIncludes(fileNames.previewRecordsCSV, [
               '',
               `${inventoryEntity.locations.permanent.name} > 1,`,
               `${inventoryEntity.locations.permanent.name} > 1,`,

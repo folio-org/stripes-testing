@@ -5,7 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Edit list', () => {
+  describe('Export concurrent list', () => {
     let userData = {};
     const listData = {
       name: `C411767-${getTestEntityValue('list')}`,
@@ -110,6 +110,36 @@ describe('Lists', () => {
             `List ( with id ${listId} ) is currently being exported`,
           );
           expect(response.body).to.have.property('code', 'delete-export.in.progress');
+        });
+      },
+    );
+
+    it(
+      'C411828 (Multiple users): Refresh list when someone export the list (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411828'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+
+        Lists.waitLoading();
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.exportList();
+
+        Lists.verifyCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+
+        cy.getUserTokenOfAdminUser();
+        Lists.refreshViaApi(listId).then((response) => {
+          expect(response.body).to.have.property(
+            'message',
+            `List ( with id ${listId} ) is currently being exported`,
+          );
+          expect(response.body).to.have.property('code', 'refresh-export.in.progress');
         });
       },
     );

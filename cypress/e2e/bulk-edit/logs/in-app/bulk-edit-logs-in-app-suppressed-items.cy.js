@@ -73,6 +73,7 @@ describe(
           cy.getAdminToken();
           Users.deleteViaApi(user.userId);
           FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+          FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName);
           BulkEditFiles.deleteAllDownloadedFiles(fileNames);
         });
 
@@ -119,7 +120,7 @@ describe(
 
             BulkEditLogs.downloadFileWithProposedChanges();
             BulkEditFiles.verifyMatchedResultFileContent(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               [inventoryEntity.itemId],
               'firstElement',
               true,
