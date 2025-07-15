@@ -86,7 +86,7 @@ describe('Eureka', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          if (roleId) cy.deleteAuthorizationRoleApi(roleId);
         });
       });
 
