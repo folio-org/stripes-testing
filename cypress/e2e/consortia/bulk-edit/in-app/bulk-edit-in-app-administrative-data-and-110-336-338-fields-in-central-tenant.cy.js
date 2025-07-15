@@ -20,6 +20,7 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../../support/utils/dateTools';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let locationId;
@@ -58,8 +59,11 @@ const marcInstanceFields = [
     indicators: ['\\', '\\'],
   },
 ];
+const instances = [marcInstance, marcInstanceWithHoldingAndItem];
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+const warningAdminData = 'No change in administrative data required';
+const warningMarcFields = 'No change in MARC fields required';
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -92,6 +96,9 @@ describe('Bulk-edit', () => {
 
             cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
               marcInstance.hrid = instanceData.hrid;
+
+              instanceData.discoverySuppress = true;
+              cy.updateInstance(instanceData);
             });
           });
           // Create second shared MARC instance
@@ -136,7 +143,6 @@ describe('Bulk-edit', () => {
                   }).then((item) => {
                     marcInstanceWithHoldingAndItem.itemId = item.id;
                   });
-                  // Create .csv file with both instance UUIDs
                   FileManager.createFile(
                     `cypress/fixtures/${instanceUUIDsFileName}`,
                     `${marcInstance.uuid}\n${marcInstanceWithHoldingAndItem.uuid}`,
@@ -167,7 +173,7 @@ describe('Bulk-edit', () => {
         cy.deleteHoldingRecordViaApi(marcInstanceWithHoldingAndItem.holdingId);
         cy.resetTenant();
 
-        [marcInstance, marcInstanceWithHoldingAndItem].forEach((instance) => {
+        instances.forEach((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
 
@@ -221,6 +227,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           );
           BulkEditActions.selectSecondAction('Set true');
+
           // Step 5: Uncheck checkboxes for Apply to all holdings/items records
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
           BulkEditActions.checkApplyToItemsRecordsCheckbox();
@@ -251,53 +258,55 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyAreYouSureForm(2);
           BulkEditSearchPane.verifyPaginatorInAreYouSureForm(2);
 
+          const editedHeaderValuesInMarcInstance = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+              value: 'United States Joint Committee on the Library',
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
+              value: 'text',
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
+              value: 'computer -- online resource',
+            },
+          ];
+          const editedHeaderValuesInMarcInstanceWithHoldingAndItem = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
+              value: '',
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
+              value: '',
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
+              value: '',
+            },
+          ];
+
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
             marcInstance.hrid,
-            [
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                value: 'true',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-                value: 'United States Joint Committee on the Library',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
-                value: 'text',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
-                value: 'computer -- online resource',
-              },
-            ],
+            editedHeaderValuesInMarcInstance,
           );
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
             marcInstanceWithHoldingAndItem.hrid,
-            [
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                value: 'true',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-                value: '',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
-                value: '',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
-                value: '',
-              },
-            ],
+            editedHeaderValuesInMarcInstanceWithHoldingAndItem,
           );
+
+          instances.forEach((instance) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              instance.hrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+              'true',
+            );
+          });
 
           // Step 10: Download preview in MARC format
           BulkEditActions.downloadPreviewInMarcFormat();
 
-          // Step 10: Verify .mrc file content for all records to be changed
           const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
           const currentTimestampUpToMinutesOneMinuteAfter =
             DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
@@ -347,6 +356,7 @@ describe('Bulk-edit', () => {
               ],
             },
           ];
+
           parseMrcFileContentAndVerify(
             fileNames.previewRecordsMarc,
             assertionsOnMarcFileContent,
@@ -355,58 +365,64 @@ describe('Bulk-edit', () => {
 
           // Step 11: Download preview in CSV format
           BulkEditActions.downloadPreview();
-          // Step 11: Verify .csv file content for all records to be changed
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
             fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
-            [
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                value: 'true',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-                value: 'United States. Joint Committee on the Library.',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
-                value: 'text',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
-                value: 'computer -- online resource',
-              },
-            ],
+            editedHeaderValuesInMarcInstance,
           );
+          BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+            fileNames.previewRecordsCSV,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
+            marcInstanceWithHoldingAndItem.hrid,
+            editedHeaderValuesInMarcInstanceWithHoldingAndItem,
+          );
+
+          instances.forEach((instance) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              fileNames.previewRecordsCSV,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+              instance.uuid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+              true,
+            );
+          });
 
           // Step 12: Commit changes and verify updated records
           BulkEditActions.commitChanges();
-          BulkEditActions.verifySuccessBanner(1);
-          BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
+          BulkEditActions.verifySuccessBanner(2);
+          BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+            marcInstance.hrid,
+            editedHeaderValuesInMarcInstance,
+          );
+          BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+            marcInstanceWithHoldingAndItem.hrid,
+            editedHeaderValuesInMarcInstanceWithHoldingAndItem,
+          );
+          BulkEditSearchPane.verifyPaginatorInChangedRecords(2);
           BulkEditSearchPane.verifyErrorLabel(0, 2);
-          BulkEditSearchPane.verifyShowWarningsCheckbox(false, false);
+          BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
 
           // Step 13: Verify the table under "Errors & warnings" accordion
           BulkEditSearchPane.verifyErrorByIdentifier(
-            marcInstanceWithHoldingAndItem.uuid,
-            'No change in administrative data required',
+            marcInstance.uuid,
+            warningAdminData,
             'Warning',
           );
           BulkEditSearchPane.verifyErrorByIdentifier(
             marcInstanceWithHoldingAndItem.uuid,
-            'No change in MARC fields required',
+            warningMarcFields,
             'Warning',
           );
 
           // Step 14: Download changed records (MARC)
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
-          // Step 14: Verify changed MARC file content for marcInstance
+
           parseMrcFileContentAndVerify(
             fileNames.changedRecordsMarc,
             assertionsOnMarcFileContent,
-            1,
+            2,
           );
 
           // Step 15: Download changed records (CSV)
@@ -415,54 +431,65 @@ describe('Bulk-edit', () => {
             fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
-            [
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                value: 'true',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
-                value: 'United States. Joint Committee on the Library.',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
-                value: 'text',
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
-                value: 'computer -- online resource',
-              },
-            ],
+            editedHeaderValuesInMarcInstance,
           );
+
+          instances.forEach((instance) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              fileNames.changedRecordsCSV,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+              instance.uuid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+              true,
+            );
+          });
 
           // Step 16: Download errors (CSV) and verify warnings for marcInstanceWithHoldingAndItem
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(fileNames.errorsFromCommitting, [
-            `WARNING,${marcInstanceWithHoldingAndItem.uuid},No change in administrative data required`,
-            `WARNING,${marcInstanceWithHoldingAndItem.uuid},No change in MARC fields required`,
+          ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+            `WARNING,${marcInstance.uuid},${warningAdminData}`,
+            `WARNING,${marcInstanceWithHoldingAndItem.uuid},${warningMarcFields}`,
           ]);
 
           // Step 17: Verify changes in Inventory app
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
-          // InstanceRecordView.verifyContributors('United States. Joint Committee on the Library.');
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+          InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(
+            0,
+            'United States. Joint Committee on the Library',
+          );
           InstanceRecordView.verifyResourceType('text');
-          // InstanceRecordView.verifyFormats('computer -- online resource');
-          // InstanceRecordView.verifySuppressFromDiscovery(true);
+          InstanceRecordView.verifyInstanceFormat(
+            'computer',
+            'online resource',
+            'cr',
+            'rdacarrier',
+          );
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
             '110',
-            '$aUnited States.$bJoint Committee on the Library.',
+            '\t110\t1  \t$a United States. $b Joint Committee on the Library.',
           );
-          InventoryViewSource.verifyFieldInMARCBibSource('336', '$atext$2rdacontent');
+          InventoryViewSource.verifyFieldInMARCBibSource(
+            '336',
+            '\t336\t   \t$a text $2 rdacontent',
+          );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '338',
-            '$aonline resource$bcr$2rdacarrier$3liner notes',
+            '\t338\t   \t$a online resource $b cr $2 rdacarrier $3 liner notes',
           );
-          // (Optionally verify 005 field is updated)
+          InventoryViewSource.close();
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.searchInstanceByTitle(marcInstanceWithHoldingAndItem.title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
         },
       );
     });
