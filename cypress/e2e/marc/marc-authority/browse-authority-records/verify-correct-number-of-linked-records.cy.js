@@ -22,6 +22,7 @@ describe('MARC', () => {
         personalNameSearchOption: 'Personal name',
         uuidSearchOption: 'Authority UUID',
         authorized: 'Authorized',
+        reference: 'Reference',
         searchAuthorityQueries: [
           'Dugmore, C. W. (Clifford William)',
           'Woodson, Jacqueline',
@@ -263,10 +264,7 @@ describe('MARC', () => {
             testData.personalNameSearchOption,
             'Dugmore, Clifford William',
           );
-          MarcAuthorityBrowse.checkResultWithValue(
-            testData.authorized,
-            'Dugmore, Clifford William',
-          );
+          MarcAuthorityBrowse.checkResultWithValue(testData.reference, 'Dugmore, Clifford William');
           MarcAuthorities.verifyEmptyNumberOfTitlesForRowWithValue('Dugmore, Clifford William');
 
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[5].title);
