@@ -20,6 +20,7 @@ import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigatio
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcFileContent';
+import ExportFile from '../../../../../support/fragments/data-export/exportFile';
 
 let user;
 const marcInstanceWithFields = {
@@ -352,7 +353,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(changedRecordsFileNameCsv, 1);
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `WARNING,${marcInstanceWithoutFields.uuid},${warningMessage}`,
           ]);
 
