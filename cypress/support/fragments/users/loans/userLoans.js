@@ -1,5 +1,6 @@
 import { matching } from '@interactors/html';
 import moment from 'moment';
+import uuid from 'uuid';
 import {
   Button,
   HTML,
@@ -140,6 +141,19 @@ export default {
     body: {
       comment,
       itemClaimedReturnedDateTime,
+      id,
+    },
+    isDefaultSearchParamsRequired: false,
+  }),
+  declareClaimedReturnedItemMissingViaApi: ({
+    comment = 'Reason why the item is declared missing',
+    id = uuid(),
+    loanId,
+  }) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/declare-claimed-returned-item-as-missing`,
+    body: {
+      comment,
       id,
     },
     isDefaultSearchParamsRequired: false,

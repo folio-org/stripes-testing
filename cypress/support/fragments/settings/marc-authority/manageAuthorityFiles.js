@@ -295,13 +295,17 @@ export default {
     const targetRow = getTargetRowWithFile(name);
 
     cy.expect([
-      targetRow.find(MultiColumnListCell(prefix)).exists(),
       targetRow.find(MultiColumnListCell(startsWith)).exists(),
       targetRow.find(MultiColumnListCell(baseUrl)).exists(),
       targetRow.find(activeCheckbox).has({ checked: isActive, disabled: true }),
       targetRow.find(MultiColumnListCell(including(lastUpdatedBy))).exists(),
       targetRow.find(editButton).exists(),
     ]);
+    prefix.split(',').forEach((prefixValue) => {
+      cy.expect(
+        targetRow.find(MultiColumnListCell(including(prefixValue), { columnIndex: 1 })).exists(),
+      );
+    });
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
   },
 

@@ -31,34 +31,38 @@ describe('MARC Bibliographic Validation Rules - System Fields', () => {
     });
   });
 
-  it('Cannot delete a system MARC field (API)', { tags: ['smoke', 'C499835', 'spitfire'] }, () => {
-    // Ensure token is set for the user before API calls
-    cy.getUserToken(user.username, user.password);
-    // 1. Get all fields for the MARC bib specification
-    cy.getSpecificationFields(bibSpecId).then((response) => {
-      expect(response.status).to.eq(200);
-      // Find a system field (e.g., 001)
-      systemField = SYSTEM_FIELDS.map((tag) => findSystemField(response.body.fields, tag)).find(
-        Boolean,
-      );
-      expect(systemField, 'System field exists').to.exist;
-
-      // 2. Attempt to delete the system field
-      cy.deleteSpecificationField(systemField.id, false).then((deleteResp) => {
-        expect(deleteResp.status).to.eq(400);
-        expect(deleteResp.body.errors[0].message).to.contain(
-          'A system scope field cannot be deleted.',
+  it(
+    'Cannot delete a system MARC field (API) (spitfire)',
+    { tags: ['smoke', 'C499835', 'spitfire'] },
+    () => {
+      // Ensure token is set for the user before API calls
+      cy.getUserToken(user.username, user.password);
+      // 1. Get all fields for the MARC bib specification
+      cy.getSpecificationFields(bibSpecId).then((response) => {
+        expect(response.status).to.eq(200);
+        // Find a system field (e.g., 001)
+        systemField = SYSTEM_FIELDS.map((tag) => findSystemField(response.body.fields, tag)).find(
+          Boolean,
         );
-      });
+        expect(systemField, 'System field exists').to.exist;
 
-      // 3. Verify the field still exists
-      cy.getSpecificationFields(bibSpecId).then((getResp) => {
-        expect(getResp.status).to.eq(200);
-        const stillThere = getResp.body.fields.some((f) => f.id === systemField.id);
-        expect(stillThere, 'System field was not deleted').to.be.true;
+        // 2. Attempt to delete the system field
+        cy.deleteSpecificationField(systemField.id, false).then((deleteResp) => {
+          expect(deleteResp.status).to.eq(400);
+          expect(deleteResp.body.errors[0].message).to.contain(
+            'A system scope field cannot be deleted.',
+          );
+        });
+
+        // 3. Verify the field still exists
+        cy.getSpecificationFields(bibSpecId).then((getResp) => {
+          expect(getResp.status).to.eq(200);
+          const stillThere = getResp.body.fields.some((f) => f.id === systemField.id);
+          expect(stillThere, 'System field was not deleted').to.be.true;
+        });
       });
-    });
-  });
+    },
+  );
 
   after('Delete test user', () => {
     if (user) {
