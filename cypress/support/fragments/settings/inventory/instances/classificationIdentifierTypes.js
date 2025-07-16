@@ -117,4 +117,15 @@ export default {
       Pane(identifierTypesSectionName).exists(),
     ]);
   },
+
+  getIdByName(typeName) {
+    return cy
+      .okapiRequest({
+        path: `classification-types?query=name="${typeName}"`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body?.classificationTypes[0].id;
+      });
+  },
 };

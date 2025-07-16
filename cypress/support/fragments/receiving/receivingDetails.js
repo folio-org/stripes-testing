@@ -7,11 +7,12 @@ import {
   Link,
   PaneHeader,
 } from '../../../../interactors';
-import ReceivingsListEditForm from './receivingsListEditForm';
-import ReceivingEditForm from './receivingEditForm';
-import EditPieceModal from './modals/editPieceModal';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InventoryInstance from '../inventory/inventoryInstance';
 import OrderLineDetails from '../orders/orderLineDetails';
+import EditPieceModal from './modals/editPieceModal';
+import ReceivingEditForm from './receivingEditForm';
+import ReceivingsListEditForm from './receivingsListEditForm';
 
 const receivingDetailsSection = Section({ id: 'pane-title-details' });
 const receinvingDetailsHeader = PaneHeader({ id: 'paneHeaderpane-title-details' });
@@ -30,7 +31,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(receivingDetailsSection.exists());
   },
   checkButtonsConditions(fields = []) {

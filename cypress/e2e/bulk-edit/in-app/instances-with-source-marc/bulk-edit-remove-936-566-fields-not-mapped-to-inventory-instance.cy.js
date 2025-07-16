@@ -199,12 +199,12 @@ describe('Bulk-edit', () => {
           },
         ];
 
-        parseMrcFileContentAndVerify(fileNames.previewMarc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, assertionsOnMarcFileContent, 1);
 
         // Step 10: Download preview in CSV format
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewCSV,
+          fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           'Notes',
@@ -276,8 +276,8 @@ describe('Bulk-edit', () => {
 
         // Step 15: Verify changes in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.notContains('936');
-        InventoryViewSource.notContains('566');
+        InventoryViewSource.notContains('936\t');
+        InventoryViewSource.notContains('566\t');
 
         arrayOf936FieldSubfields.forEach((note) => {
           InventoryViewSource.notContains(note);

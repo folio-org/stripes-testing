@@ -1,10 +1,11 @@
 import { Button, PaneHeader, Section, including, Pane } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import FinanceDetails from '../financeDetails';
-import LedgerRollovers from './ledgerRollovers';
-import LedgerRolloverDetails from './ledgerRolloverDetails';
-import GroupDetails from '../groups/groupDetails';
 import FundDetails from '../funds/fundDetails';
+import GroupDetails from '../groups/groupDetails';
 import ExportBudgetModal from '../modals/exportBudgetModal';
+import LedgerRolloverDetails from './ledgerRolloverDetails';
+import LedgerRollovers from './ledgerRollovers';
 
 const ledgerDetailsPane = Section({ id: 'pane-ledger-details' });
 
@@ -15,7 +16,8 @@ const actionsButton = Button('Actions');
 
 export default {
   ...FinanceDetails,
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(ledgerDetailsPane.exists());
   },
   waitForLoadingLedgerDetailAfterRollover() {

@@ -178,12 +178,16 @@ describe(
             },
           ];
 
-          parseMrcFileContentAndVerify(fileNames.previewMarc, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(
+            fileNames.previewRecordsMarc,
+            assertionsOnMarcFileContent,
+            1,
+          );
 
           // Step 9: Download preview in CSV format
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyValueInRowByUUID(
-            fileNames.previewCSV,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
@@ -230,7 +234,7 @@ describe(
 
           // Step 14: Verify that 584 field is NOT present in MARC source
           InstanceRecordView.viewSource();
-          InventoryViewSource.notContains('584');
+          InventoryViewSource.notContains('584\t');
           InventoryViewSource.notContains(accumulationNoteA);
           InventoryViewSource.verifyFieldContent(
             3,

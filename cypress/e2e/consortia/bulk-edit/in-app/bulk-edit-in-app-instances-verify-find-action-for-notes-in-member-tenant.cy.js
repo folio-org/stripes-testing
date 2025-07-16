@@ -15,6 +15,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InstanceNoteTypes from '../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let instanceTypeId;
@@ -231,7 +232,7 @@ describe('Bulk-edit', () => {
           // Step 14: Download preview
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            fileNames.previewCSV,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             [
@@ -246,7 +247,7 @@ describe('Bulk-edit', () => {
             ],
           );
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            fileNames.previewCSV,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             [
@@ -325,7 +326,7 @@ describe('Bulk-edit', () => {
 
           // Step 18: Download errors
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(fileNames.errorsFromCommitting, [
+          ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
             `ERROR,${marcInstance.uuid},${errorReason}`,
           ]);
           BulkEditFiles.verifyCSVFileRecordsNumber(fileNames.errorsFromCommitting, 1);
@@ -447,7 +448,7 @@ describe('Bulk-edit', () => {
 
           // Step 26: Download errors
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(fileNames.errorsFromCommitting, [
+          ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
             `ERROR,${marcInstance.uuid},${errorReason}`,
           ]);
           BulkEditFiles.verifyCSVFileRecordsNumber(fileNames.errorsFromCommitting, 1);

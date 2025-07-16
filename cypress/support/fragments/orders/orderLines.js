@@ -177,8 +177,8 @@ export default {
   clickOnOrderLines: () => {
     cy.do([orderLineButton.click()]);
   },
-  waitLoading() {
-    cy.wait(6000);
+  waitLoading(ms = 6000) {
+    cy.wait(ms);
     cy.expect([
       Pane({ id: 'order-lines-filters-pane' }).exists(),
       Pane({ id: 'order-lines-results-pane' }).exists(),

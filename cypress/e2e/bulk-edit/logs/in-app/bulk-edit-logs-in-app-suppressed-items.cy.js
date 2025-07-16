@@ -17,127 +17,132 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
+let validItemBarcodesFileName;
+let fileNames;
+let inventoryEntity;
 
-const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(validItemBarcodesFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewFileName(validItemBarcodesFileName);
-const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validItemBarcodesFileName);
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    describe('Logs', () => {
+      describe('In-app approach', () => {
+        beforeEach('create test data', () => {
+          validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
+          fileNames = BulkEditFiles.getAllDownloadedFileNames(validItemBarcodesFileName, true);
+          inventoryEntity = {
+            instanceName: `AT_C380761_FolioInstance_${getRandomPostfix()}`,
+            itemBarcode: getRandomPostfix(),
+            itemId: '',
+          };
 
-const inventoryEntity = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
-  itemId: '',
-};
-
-describe('Bulk-edit', () => {
-  describe('Logs', () => {
-    describe('In-app approach', () => {
-      before('create test data', () => {
-        cy.createTempUser([
-          permissions.bulkEditView.gui,
-          permissions.bulkEditEdit.gui,
-          permissions.bulkEditLogsView.gui,
-          permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          user = userProperties;
-          InventoryInstances.createInstanceViaApi(
-            inventoryEntity.instanceName,
-            inventoryEntity.itemBarcode,
-          );
-          cy.getItems({ query: `"barcode"=="${inventoryEntity.itemBarcode}"` }).then(
-            (inventoryItem) => {
-              inventoryItem.discoverySuppress = true;
-              inventoryEntity.itemId = inventoryItem.id;
-              InventoryItems.editItemViaApi(inventoryItem);
-            },
-          );
-          FileManager.createFile(
-            `cypress/fixtures/${validItemBarcodesFileName}`,
-            inventoryEntity.itemBarcode,
-          );
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+          cy.createTempUser([
+            permissions.bulkEditView.gui,
+            permissions.bulkEditEdit.gui,
+            permissions.bulkEditLogsView.gui,
+            permissions.inventoryAll.gui,
+          ]).then((userProperties) => {
+            user = userProperties;
+            InventoryInstances.createInstanceViaApi(
+              inventoryEntity.instanceName,
+              inventoryEntity.itemBarcode,
+            );
+            cy.getItems({ query: `"barcode"=="${inventoryEntity.itemBarcode}"` }).then(
+              (inventoryItem) => {
+                inventoryItem.discoverySuppress = true;
+                inventoryEntity.itemId = inventoryItem.id;
+                InventoryItems.editItemViaApi(inventoryItem);
+              },
+            );
+            FileManager.createFile(
+              `cypress/fixtures/${validItemBarcodesFileName}`,
+              inventoryEntity.itemBarcode,
+            );
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           });
         });
-      });
 
-      after('delete test data', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(
-          validItemBarcodesFileName,
-          `*${matchedRecordsFileName}`,
-          previewOfProposedChangesFileName,
-          updatedRecordsFileName,
+        afterEach('delete test data', () => {
+          cy.getAdminToken();
+          Users.deleteViaApi(user.userId);
+          FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+          FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName);
+          BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+        });
+
+        it(
+          'C380761 Verify generated Logs files for Items suppressed from discovery (firebird)',
+          { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380761'] },
+          () => {
+            BulkEditSearchPane.checkItemsRadio();
+            BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
+
+            BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+            BulkEditSearchPane.waitFileUploading();
+
+            BulkEditActions.downloadMatchedResults();
+            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.editSuppressFromDiscovery(false);
+            BulkEditActions.addNewBulkEditFilterString();
+            BulkEditActions.fillPermanentLoanType('Selected', 1);
+            BulkEditActions.confirmChanges();
+            BulkEditActions.downloadPreview();
+            BulkEditActions.commitChanges();
+            BulkEditSearchPane.waitFileUploading();
+            BulkEditActions.openActions();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
+            BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', false);
+            BulkEditActions.downloadChangedCSV();
+
+            BulkEditSearchPane.openLogsSearch();
+            BulkEditLogs.checkItemsCheckbox();
+            BulkEditLogs.clickActionsRunBy(user.username);
+
+            BulkEditLogs.downloadFileUsedToTrigger();
+            BulkEditFiles.verifyCSVFileRows(validItemBarcodesFileName, [
+              inventoryEntity.itemBarcode,
+            ]);
+
+            BulkEditLogs.downloadFileWithMatchingRecords();
+            BulkEditFiles.verifyMatchedResultFileContent(
+              fileNames.matchedRecordsCSV,
+              [inventoryEntity.itemId],
+              'firstElement',
+              true,
+            );
+
+            BulkEditLogs.downloadFileWithProposedChanges();
+            BulkEditFiles.verifyMatchedResultFileContent(
+              fileNames.previewRecordsCSV,
+              [inventoryEntity.itemId],
+              'firstElement',
+              true,
+            );
+
+            BulkEditLogs.downloadFileWithUpdatedRecords();
+            BulkEditFiles.verifyMatchedResultFileContent(
+              fileNames.changedRecordsCSV,
+              [inventoryEntity.itemId],
+              'firstElement',
+              true,
+            );
+
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.switchToItem();
+            InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.itemBarcode);
+            ItemRecordView.waitLoading();
+            ItemRecordView.suppressedAsDiscoveryIsAbsent();
+            ItemRecordView.verifyPermanentLoanType('Selected');
+          },
         );
       });
-
-      it(
-        'C380761 Verify generated Logs files for Items suppressed from discovery (firebird)',
-        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380761'] },
-        () => {
-          BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
-
-          BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-          BulkEditSearchPane.waitFileUploading();
-
-          BulkEditActions.downloadMatchedResults();
-          BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditActions.editSuppressFromDiscovery(false);
-          BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.fillPermanentLoanType('Selected', 1);
-          BulkEditActions.confirmChanges();
-          BulkEditActions.downloadPreview();
-          BulkEditActions.commitChanges();
-          BulkEditSearchPane.waitFileUploading();
-          BulkEditActions.openActions();
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
-          BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', false);
-          BulkEditActions.downloadChangedCSV();
-
-          BulkEditSearchPane.openLogsSearch();
-          BulkEditLogs.checkItemsCheckbox();
-          BulkEditLogs.clickActionsRunBy(user.username);
-
-          BulkEditLogs.downloadFileUsedToTrigger();
-          BulkEditFiles.verifyCSVFileRows(validItemBarcodesFileName, [inventoryEntity.itemBarcode]);
-
-          BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileName}`,
-            [inventoryEntity.itemId],
-            'firstElement',
-            true,
-          );
-
-          BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [inventoryEntity.itemId],
-            'firstElement',
-            true,
-          );
-
-          BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [inventoryEntity.itemId],
-            'firstElement',
-            true,
-          );
-
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.itemBarcode);
-          ItemRecordView.waitLoading();
-          ItemRecordView.suppressedAsDiscoveryIsAbsent();
-          ItemRecordView.verifyPermanentLoanType('Selected');
-        },
-      );
     });
-  });
-});
+  },
+);

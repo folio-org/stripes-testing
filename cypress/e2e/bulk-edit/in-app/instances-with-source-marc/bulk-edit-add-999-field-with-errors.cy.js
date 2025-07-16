@@ -16,6 +16,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../../support/utils/dateTools';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const marcInstance = {
@@ -199,12 +200,12 @@ describe('Bulk-edit', () => {
             ],
           },
         ];
-        parseMrcFileContentAndVerify(fileNames.previewMarc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, assertionsOnMarcFileContent, 1);
 
         // Step 13: Download preview in CSV format
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewCSV,
+          fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           'Notes',
@@ -265,7 +266,7 @@ describe('Bulk-edit', () => {
 
         // Step 18: Download errors (CSV)
         BulkEditActions.downloadErrors();
-        BulkEditFiles.verifyCSVFileRowsValueIncludes(fileNames.errorsFromCommitting, [
+        ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
           `ERROR,${folioInstance.uuid},${errorMessage}`,
         ]);
 

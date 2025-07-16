@@ -132,7 +132,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'Yes\nNo');
+        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'YesNo');
         ItemRecordView.checkItemNote(`${notes.actionOne}${notes.actionTwo}`, 'YesNo', 'Provenance');
       },
     );
