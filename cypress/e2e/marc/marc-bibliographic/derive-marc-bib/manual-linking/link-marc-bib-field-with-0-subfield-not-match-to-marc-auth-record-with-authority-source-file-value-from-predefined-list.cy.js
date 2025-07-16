@@ -85,10 +85,14 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
         });
       });
 
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
     });
   });
 
@@ -133,9 +137,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       InventoryInstance.searchResults(marcAuthData.tag100Value);
       MarcAuthorities.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, testData.rowIndex);
-      QuickMarcEditor.pressSaveAndClose();
-      cy.wait(1500);
-      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.saveAndCloseWithValidationWarnings();
       QuickMarcEditor.verifyAfterDerivedMarcBibSave();
       cy.wait(3000);
       InventoryInstance.editMarcBibliographicRecord();
@@ -147,7 +149,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       InventorySearchAndFilter.browseSearch(marcAuthData.tag100Value);
       InventorySearchAndFilter.checkMarcAuthAppIconInSearchResult();
       InventorySearchAndFilter.verifyContributorsColumResult(marcAuthData.tag100Value);
-      InventorySearchAndFilter.clickMarcAuthIcon();
+      InventorySearchAndFilter.clickMarcAuthIconByTitle(marcAuthData.tag100Value);
       MarcAuthorities.verifyMarcViewPaneIsOpened();
       MarcAuthority.contains(`${marcAuthData.tag100}\t1  \t$a ${marcAuthData.tag100Value}`);
     },
