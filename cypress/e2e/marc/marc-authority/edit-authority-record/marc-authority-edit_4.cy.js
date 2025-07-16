@@ -117,7 +117,7 @@ describe('MARC', () => {
               marcFieldProtectionRules.push(response.id);
             });
           });
-
+          MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
           MarcAuthority.checkInfoButton('655', 11);
           MarcAuthority.checkInfoButton('655', 14);
