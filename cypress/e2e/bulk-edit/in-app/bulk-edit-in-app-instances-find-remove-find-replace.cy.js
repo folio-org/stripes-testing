@@ -338,7 +338,7 @@ describe('Bulk-edit', () => {
           ],
         );
         BulkEditActions.downloadErrors();
-        BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
           `ERROR,${marcInstance.instanceId},${errorReason}`,
           `ERROR,${marcInstance.instanceId},${errorReason}`,
         ]);
