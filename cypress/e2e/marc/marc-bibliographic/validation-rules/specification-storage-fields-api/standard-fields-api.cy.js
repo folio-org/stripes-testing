@@ -142,4 +142,114 @@ describe('Specification Storage - Standard Fields API', () => {
       });
     },
   );
+
+  it(
+    'C499819 Cannot update Standard Field with invalid value in "required" field for MARC bib spec (API) (spitfire)',
+    { tags: ['smoke', 'C499819', 'spitfire'] },
+    () => {
+      // Ensure token is set for the user before API calls
+      cy.getUserToken(user.username, user.password);
+
+      // Get all fields for the MARC bib specification
+      cy.getSpecificationFields(bibSpecId).then((response) => {
+        expect(response.status).to.eq(200);
+
+        // Find a standard field (e.g., 100)
+        standardField = findStandardField(response.body.fields, '100');
+        expect(standardField, 'Standard field 100 exists').to.exist;
+
+        // Store original field values for restoration at the end
+        const originalField = { ...standardField };
+
+        // Step 1: Update field without "required" field (should use default value false)
+        const payloadWithoutRequired = {
+          tag: '100',
+          label: 'Main Entry - Personal Name',
+          url: 'https://www.loc.gov/marc/bibliographic/bd100.html',
+          repeatable: false,
+          deprecated: false,
+        };
+
+        cy.updateSpecificationField(standardField.id, payloadWithoutRequired, true).then(
+          (updateResp) => {
+            expect(updateResp.status).to.eq(202);
+            expect(updateResp.body.required).to.eq(false); // Default value
+          },
+        );
+
+        // Step 2: Update field with "required" set to true
+        const payloadRequiredTrue = {
+          tag: '100',
+          label: 'Main Entry - Personal Name',
+          url: 'https://www.loc.gov/marc/bibliographic/bd100.html',
+          repeatable: false,
+          required: true,
+          deprecated: false,
+        };
+
+        cy.updateSpecificationField(standardField.id, payloadRequiredTrue, true).then(
+          (updateResp) => {
+            expect(updateResp.status).to.eq(202);
+            expect(updateResp.body.required).to.eq(true);
+          },
+        );
+
+        // Step 3: Verify the field was updated in the specification
+        cy.getSpecificationFields(bibSpecId).then((getResp) => {
+          expect(getResp.status).to.eq(200);
+          const updatedField = findStandardField(getResp.body.fields, '100');
+          expect(updatedField, 'Standard field 100 still exists').to.exist;
+          expect(updatedField.required).to.eq(true);
+        });
+
+        // Step 4: Update field with "required" set to false
+        const payloadRequiredFalse = {
+          tag: '100',
+          label: 'Main Entry - Personal Name',
+          url: 'https://www.loc.gov/marc/bibliographic/bd100.html',
+          repeatable: false,
+          required: false,
+          deprecated: false,
+        };
+
+        cy.updateSpecificationField(standardField.id, payloadRequiredFalse, true).then(
+          (updateResp) => {
+            expect(updateResp.status).to.eq(202);
+            expect(updateResp.body.required).to.eq(false);
+          },
+        );
+
+        // Step 5: Verify the field was updated in the specification
+        cy.getSpecificationFields(bibSpecId).then((getResp) => {
+          expect(getResp.status).to.eq(200);
+          const updatedField = findStandardField(getResp.body.fields, '100');
+          expect(updatedField, 'Standard field 100 still exists').to.exist;
+          expect(updatedField.required).to.eq(false);
+        });
+
+        // Step 6: Attempt to update with invalid "required" field value
+        // Note: We need to send raw JSON with invalid syntax to test JSON parse error
+        const payloadRequiredInvalid = {
+          tag: '100',
+          label: 'Main Entry - Personal Name',
+          url: 'https://www.loc.gov/marc/bibliographic/bd100.html',
+          repeatable: false,
+          required: 'test', // Invalid value
+          deprecated: false,
+        };
+
+        cy.updateSpecificationField(standardField.id, payloadRequiredInvalid, false).then(
+          (invalidResp) => {
+            expect(invalidResp.status).to.eq(400);
+            expect(invalidResp.body).to.have.property('errors');
+            expect(invalidResp.body.errors[0].message).to.contain('JSON parse error');
+          },
+        );
+        // Restore original field values
+        cy.updateSpecificationField(standardField.id, originalField, true).then((restoreResp) => {
+          expect(restoreResp.status).to.eq(202);
+        });
+      });
+    },
+  );
 });
