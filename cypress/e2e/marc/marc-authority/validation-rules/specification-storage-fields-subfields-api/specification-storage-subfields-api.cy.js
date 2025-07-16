@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
-import Permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
+import Permissions from '../../../../../support/dictionary/permissions';
+import Users from '../../../../../support/fragments/users/users';
 
 describe('Specification Storage - Subfield API for MARC Authority', () => {
   let user;

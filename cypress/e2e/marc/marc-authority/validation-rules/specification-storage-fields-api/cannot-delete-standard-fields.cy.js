@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
-import Permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
-import { STANDARD_FIELDS } from '../../../../support/constants';
+import Permissions from '../../../../../support/dictionary/permissions';
+import Users from '../../../../../support/fragments/users/users';
+import { STANDARD_FIELDS } from '../../../../../support/constants';
 
 describe('MARC Authority Validation Rules - Standard Fields', () => {
   const requiredPermissions = [
