@@ -17,7 +17,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag240: '240',
-          instanceField240Value: 'C380453 Laws, etc. 1995 Fish and Game Code',
+          instanceField240Value: '1995 Fish and Game Code',
           errorMessage:
             'You have selected an invalid heading based on the bibliographic field you want controlled. Please revise your selection.',
         };
