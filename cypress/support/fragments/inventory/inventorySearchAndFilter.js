@@ -633,7 +633,7 @@ export default {
     cy.do(searchButton.click());
   },
 
-  clickMarcAuthIcon() {
+  clickMarcAuthIconByTitle(title) {
     cy.window().then((win) => {
       cy.stub(win, 'open')
         .callsFake((url) => {
@@ -642,7 +642,10 @@ export default {
         .as('windowOpen');
     });
 
-    cy.get("[data-link='authority-app']").eq(0).click();
+    cy.contains('a[data-test-text-link="true"]', title)
+      .closest('div[role="gridcell"]')
+      .find('[data-link="authority-app"]')
+      .click();
   },
 
   checkContributorRequest() {
