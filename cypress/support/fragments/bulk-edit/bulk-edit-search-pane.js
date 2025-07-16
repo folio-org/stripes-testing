@@ -932,6 +932,7 @@ export default {
   },
 
   verifyCheckedCheckboxesPresentInTheTable() {
+    cy.wait(2000);
     cy.get('[role=columnheader]').then((headers) => {
       headers.each((_index, header) => {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
