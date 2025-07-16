@@ -67,9 +67,9 @@ describe('Eureka', () => {
         ],
         originalCapabilities: [
           {
-            table: CAPABILITY_TYPES.PROCEDURAL,
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Login Event Collection',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
@@ -126,9 +126,9 @@ describe('Eureka', () => {
             Procedural: 2,
           },
           capabilities: {
-            Data: 11,
+            Data: 12,
             Settings: 2,
-            Procedural: 5,
+            Procedural: 4,
           },
         },
         absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
@@ -191,8 +191,6 @@ describe('Eureka', () => {
       after('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
-        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 

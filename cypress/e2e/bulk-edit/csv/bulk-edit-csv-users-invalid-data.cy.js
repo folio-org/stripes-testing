@@ -6,6 +6,7 @@ import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files'
 import FileManager from '../../../support/utils/fileManager';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -79,7 +80,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadErrors();
-        BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
           `WARNING,${user.userId},No change in value required`,
         ]);
         BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 1);

@@ -113,7 +113,7 @@ describe(
             ExportFile.verifyFileIncludes(fileNames.matchedRecordsCSV, [uuid]);
 
             BulkEditLogs.downloadFileWithProposedChanges();
-            ExportFile.verifyFileIncludes(fileNames.previewCSV, [
+            ExportFile.verifyFileIncludes(fileNames.previewRecordsCSV, [
               `${permLocation},${tempLocation}`,
             ]);
 

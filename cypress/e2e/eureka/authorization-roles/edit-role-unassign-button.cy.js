@@ -88,9 +88,9 @@ describe('Eureka', () => {
             action: CAPABILITY_ACTIONS.CREATE,
           },
           {
-            table: CAPABILITY_TYPES.PROCEDURAL,
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Roles Collection',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.SETTINGS,

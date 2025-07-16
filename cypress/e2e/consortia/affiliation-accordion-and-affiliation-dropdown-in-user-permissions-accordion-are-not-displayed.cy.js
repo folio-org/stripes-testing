@@ -5,6 +5,7 @@ import getRandomPostfix, { getTestEntityValue } from '../../support/utils/string
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Modals from '../../support/fragments/modals';
 
 describe('Consortia', () => {
   const createUserData = () => ({
@@ -60,6 +61,8 @@ describe('Consortia', () => {
       UsersCard.affiliationsAccordionIsAbsent();
       UserEdit.verifyUserPermissionsAccordion();
       UserEdit.cancelEdit();
+      // workaround for issue UIU-3390
+      Modals.closeModalWithEscapeIfAny();
       Users.verifyUserDetailsPane();
       UsersCard.affiliationsAccordionIsAbsent();
     },
