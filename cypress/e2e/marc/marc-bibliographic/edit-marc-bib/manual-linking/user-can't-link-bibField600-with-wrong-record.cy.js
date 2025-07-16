@@ -17,7 +17,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag600: '600',
-          instanceField600Value: '1909-1998. (Barry Morris),',
+          instanceField600Value: 'C380454 Goldwater, Barry M. (Barry Morris), 1909-1998.',
           errorMessage:
             'You have selected an invalid heading based on the bibliographic field you want controlled. Please revise your selection.',
         };
