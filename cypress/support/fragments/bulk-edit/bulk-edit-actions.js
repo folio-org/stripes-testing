@@ -159,7 +159,8 @@ export default {
 
   verifyActionSelected(option, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-0' }))
         .has({ checkedOptionText: option }),
     );
@@ -850,7 +851,8 @@ export default {
 
   verifyValueInFirstTextArea(value, rowIndex = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .has({ value }),
     );
