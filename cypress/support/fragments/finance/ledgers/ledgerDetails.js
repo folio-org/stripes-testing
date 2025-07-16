@@ -1,4 +1,4 @@
-import { Button, PaneHeader, Section, including } from '../../../../../interactors';
+import { Button, PaneHeader, Section, including, Pane } from '../../../../../interactors';
 import FinanceDetails from '../financeDetails';
 import LedgerRollovers from './ledgerRollovers';
 import LedgerRolloverDetails from './ledgerRolloverDetails';
@@ -10,12 +10,16 @@ const ledgerDetailsPane = Section({ id: 'pane-ledger-details' });
 
 // ledger details header
 const ledgerDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-ledger-details' });
+const ledgerDetailsPaneAfterRollover = Pane({ id: 'pane-ledger-rollover-in-progress' });
 const actionsButton = Button('Actions');
 
 export default {
   ...FinanceDetails,
   waitLoading() {
     cy.expect(ledgerDetailsPane.exists());
+  },
+  waitForLoadingLedgerDetailAfterRollover() {
+    cy.expect(ledgerDetailsPaneAfterRollover.exists());
   },
   expandActionsDropdown() {
     cy.do(ledgerDetailsPaneHeader.find(actionsButton).click());
