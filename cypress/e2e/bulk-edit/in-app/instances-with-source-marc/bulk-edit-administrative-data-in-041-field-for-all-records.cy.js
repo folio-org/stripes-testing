@@ -22,6 +22,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let statisticalCode;
@@ -373,7 +374,7 @@ describe('Bulk-edit', () => {
 
         // Step 15: Download errors (CSV)
         BulkEditActions.downloadErrors();
-        BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
           `ERROR,${folioInstance.uuid},${errorMessage}`,
         ]);
 

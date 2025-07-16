@@ -276,8 +276,8 @@ describe('Bulk-edit', () => {
 
         // Step 15: Verify changes in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.notContains('936');
-        InventoryViewSource.notContains('566');
+        InventoryViewSource.notContains('936\t');
+        InventoryViewSource.notContains('566\t');
 
         arrayOf936FieldSubfields.forEach((note) => {
           InventoryViewSource.notContains(note);

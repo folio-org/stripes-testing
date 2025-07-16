@@ -22,23 +22,21 @@ import BrowseCallNumber from '../../../../support/fragments/inventory/search/bro
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const randomPostfix = getRandomPostfix();
-const instanceTitlePrefix = 'AT_C468281_Instance';
-const classificationPrefix = 'C468281';
-const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[1].id; // Dewey
-const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[1].algorithm;
+const instanceTitlePrefix = 'AT_C468278_Instance';
+const classificationPrefix = 'C468278';
+const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[2].id; // LC
+const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[2].algorithm;
 
-// Classification identifier types
-const localCentralTypeName = `AT_C468281_ClassifType_${randomPostfix}`;
-const localMemberTypeName = `AT_C468281_ClassifType${randomPostfix}`;
+const sharedCentralTypeName = `AT_C468278_ClassifType_Central_${randomPostfix}`;
+const localMemberTypeName = `AT_C468278_ClassifType_Member_${randomPostfix}`;
 
-// Classification values and types for each instance
 const testClassifications = [
   {
     title: `${instanceTitlePrefix}_1`,
     type: 'Additional Dewey',
     value: `${classificationPrefix}598.100`,
     isMarc: false,
-    expectExact: true,
+    expectExact: false,
   },
   {
     title: `${instanceTitlePrefix}_2`,
@@ -52,7 +50,7 @@ const testClassifications = [
     type: 'Dewey',
     value: `${classificationPrefix}598.0995`,
     isMarc: true,
-    expectExact: true,
+    expectExact: false,
   },
   {
     title: `${instanceTitlePrefix}_4`,
@@ -66,14 +64,14 @@ const testClassifications = [
     type: 'LC',
     value: `${classificationPrefix}QS 11 .GA1 E53 2006`,
     isMarc: true,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_6`,
     type: 'LC (local)',
     value: `${classificationPrefix}DD259.4 .B527 1974`,
     isMarc: false,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_7`,
@@ -87,7 +85,7 @@ const testClassifications = [
     type: 'NLM',
     value: `${classificationPrefix}SB945.A6`,
     isMarc: true,
-    expectExact: false,
+    expectExact: true,
   },
   {
     title: `${instanceTitlePrefix}_9`,
@@ -105,7 +103,7 @@ const testClassifications = [
   },
   {
     title: `${instanceTitlePrefix}_11`,
-    type: localCentralTypeName,
+    type: sharedCentralTypeName,
     value: `${classificationPrefix}VP000322`,
     isMarc: false,
     expectExact: true,
@@ -121,8 +119,8 @@ const testClassifications = [
 
 const marcFiles = [
   {
-    marc: 'marcBibFileC468281.mrc',
-    fileNameImported: `testMarcFileC468281.${getRandomPostfix()}.mrc`,
+    marc: 'marcBibFileC468278.mrc',
+    fileNameImported: `testMarcFileC468278.${getRandomPostfix()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
   },
 ];
@@ -148,7 +146,7 @@ describe('Inventory', () => {
           // Create Shared identifier type on Central
           cy.resetTenant();
           ClassificationIdentifierTypesConsortiumManager.createViaApi({
-            payload: { name: localCentralTypeName },
+            payload: { name: sharedCentralTypeName },
           }).then((sharedType) => {
             sharedCentralType = sharedType;
             // Create Local identifier type on Member
@@ -166,11 +164,11 @@ describe('Inventory', () => {
       });
 
       before('Create instances', () => {
-        // Create Folio instances on Member
         cy.then(() => {
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
+          // Create Folio instances on Member
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((types) => {
             const instanceTypeId = types[0].id;
             testClassifications
@@ -207,16 +205,17 @@ describe('Inventory', () => {
             });
           });
         }).then(() => {
-          // Set Dewey browse option to Dewey, Additional Dewey, Local (created on Central)
+          // Set LC browse option to LC, LC (local), NLM, Local (created on Central)
           cy.resetTenant();
-          ClassificationIdentifierTypes.getIdByName(sharedCentralType.payload.name).then(
+          ClassificationIdentifierTypes.getIdByName(sharedCentralTypeName).then(
             (sharedCentralTypeId) => {
               ClassificationBrowse.updateIdentifierTypesAPI(
                 classificationBrowseId,
                 classificationBrowseAlgorithm,
                 [
-                  CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-                  CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+                  CLASSIFICATION_IDENTIFIER_TYPES.LC,
+                  CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
+                  CLASSIFICATION_IDENTIFIER_TYPES.NLM,
                   sharedCentralTypeId,
                 ],
               );
@@ -243,11 +242,11 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468281 Classifications of each identifier type from Local Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Member tenant only (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468281'] },
+        'C468278 Classifications of each identifier type from Local Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Member tenant only (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468278'] },
         () => {
           cy.waitForAuthRefresh(() => {
-            cy.resetTenant();
+            cy.setTenant(Affiliations.College);
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -256,18 +255,19 @@ describe('Inventory', () => {
           }, 20_000);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
+          cy.setTenant(Affiliations.College);
           testClassifications.forEach((row) => {
-            cy.setTenant(Affiliations.College);
+            InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+              BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
+            );
             if (row.expectExact) {
               BrowseClassifications.waitForClassificationNumberToAppear(
                 row.value,
                 classificationBrowseId,
               );
             }
-            InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-              BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
-            );
             InventorySearchAndFilter.browseSearch(row.value);
             if (row.expectExact) {
               BrowseClassifications.verifySearchResultsTable();
@@ -280,12 +280,8 @@ describe('Inventory', () => {
           });
           // Check the second exact match and click on it
           const secondExact = testClassifications.filter((tc) => tc.expectExact)[1];
-          BrowseClassifications.waitForClassificationNumberToAppear(
-            secondExact.value,
-            classificationBrowseId,
-          );
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-            BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+            BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
           );
           InventorySearchAndFilter.browseSearch(secondExact.value);
           BrowseClassifications.verifySearchResultsTable();
@@ -300,12 +296,13 @@ describe('Inventory', () => {
           BrowseClassifications.verifySearchResultsTable();
           BrowseClassifications.verifyValueInResultTableIsHighlighted(secondExact.value);
 
-          // Step 15-17: On Central, non-exact match placeholder is displayed for all
+          // Switch to Central tenant and verify all searches show non-exact match placeholder
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.forEach((row) => {
             InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-              BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+              BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
             );
             InventorySearchAndFilter.browseSearch(row.value);
             BrowseCallNumber.checkNonExactSearchResult(row.value);

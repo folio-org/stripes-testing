@@ -75,6 +75,9 @@ describe('Inventory', () => {
                 CallNumberBrowseSettings.validateAvailableCallNumberTypeOption(expectedType);
               },
             );
+            if (browseOption) {
+              CallNumberBrowseSettings.clearAllSelectedCallNumberTypes(browseOption);
+            }
             CallNumberBrowseSettings.selectCallNumberTypeDropdownOption(
               testData.localCallNumberTypeName,
             );

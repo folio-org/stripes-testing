@@ -19,6 +19,7 @@ import InstanceRecordView from '../../../../../support/fragments/inventory/insta
 import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcFileContent';
 import { tenantNames } from '../../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ExportFile from '../../../../../support/fragments/data-export/exportFile';
 
 let user;
 let statisticalCodeFirst;
@@ -244,7 +245,7 @@ describe('Bulk-edit', () => {
             statisticalCodeSecond.fullName,
           );
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `ERROR,${folioInstance.uuid},${errorMessage}`,
           ]);
 
