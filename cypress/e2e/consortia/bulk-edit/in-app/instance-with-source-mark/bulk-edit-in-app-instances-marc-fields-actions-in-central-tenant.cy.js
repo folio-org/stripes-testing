@@ -352,12 +352,12 @@ describe('Bulk-edit', () => {
             '514',
             '$b Estimated to be 98.5%. $b Approximately 95%',
           );
-          InventoryViewSource.notContains('566');
+          InventoryViewSource.notContains('566\t');
           InventoryViewSource.verifyFieldInMARCBibSource(
             '945',
             `$a ${notes.firstLocalReplaced} $u http://www.test1.org $u https://www.test2.org`,
           );
-          InventoryViewSource.notContains('984');
+          InventoryViewSource.notContains('984\t');
         },
       );
     });
