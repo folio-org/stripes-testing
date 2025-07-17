@@ -1869,7 +1869,7 @@ export default {
     cy.expect(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(Select({ name: 'name', dataActionIndex: '0' }))
+        .find(selectActionForMarcInstanceDropdownFirst)
         .has({ checkedOptionText: action }),
     );
   },
