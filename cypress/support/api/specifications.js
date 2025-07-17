@@ -138,3 +138,37 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add('getSpecificationIndicatorCodes', (indicatorId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/indicators/${indicatorId}/indicator-codes`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add(
+  'createSpecificationIndicatorCode',
+  (indicatorId, indicatorCode, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `specification-storage/indicators/${indicatorId}/indicator-codes`,
+      isDefaultSearchParamsRequired: false,
+      body: indicatorCode,
+      failOnStatusCode,
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'updateSpecificationIndicatorCode',
+  (indicatorCodeId, indicatorCode, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.PUT,
+      path: `specification-storage/indicator-codes/${indicatorCodeId}`,
+      isDefaultSearchParamsRequired: false,
+      body: indicatorCode,
+      failOnStatusCode,
+    });
+  },
+);

@@ -409,6 +409,18 @@ export default {
     internal: 'specification-storage.indicators.item.put',
     gui: 'Specification Storage - Update indicator definition',
   },
+  specificationStorageGetSpecificationIndicatorCodes: {
+    internal: 'specification-storage.indicator.indicator-codes.collection.get',
+    gui: 'Specification Storage - Get indicator code definition collection',
+  },
+  specificationStorageCreateSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator.indicator-codes.item.post',
+    gui: 'Specification Storage - Create code definition for indicator',
+  },
+  specificationStorageUpdateSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator-codes.item.put',
+    gui: 'Specification Storage - Update indicator code definition',
+  },
   specificationStorageGetSpecificationFieldSubfields: {
     internal: 'specification-storage.field.subfields.collection.get',
     gui: 'Specification Storage - Get field subfields definition collection',
