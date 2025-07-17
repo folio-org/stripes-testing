@@ -119,9 +119,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag730);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib730AfterLinkingToAuth130);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
@@ -140,9 +138,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkModal(testData.tag730);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib730AfterUnlinking);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.notContains(testData.linkedIconText);

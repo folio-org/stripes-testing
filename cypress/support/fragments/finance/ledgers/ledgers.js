@@ -634,6 +634,14 @@ export default {
     return LedgerDetails;
   },
 
+  selectLedgerAfterRollover: (ledgerName) => {
+    cy.wait(4000);
+    cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+    LedgerDetails.waitForLoadingLedgerDetailAfterRollover();
+    cy.wait(4000);
+    return LedgerDetails;
+  },
+
   rolloverLogs() {
     cy.do([ledgerDetailsSection.find(actionsButton).click(), Button('Rollover logs').click()]);
   },
