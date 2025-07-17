@@ -110,7 +110,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectOption('Staff suppress');
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
-        BulkEditActions.selectSecondAction('Set false');
+        BulkEditActions.selectAction('Set false');
         BulkEditActions.verifyCheckboxAbsent();
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();

@@ -159,7 +159,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Staff suppress', 2);
         BulkEditSearchPane.verifyInputLabel('Staff suppress', 2);
-        BulkEditActions.selectSecondAction('Set true', 2);
+        BulkEditActions.selectAction('Set true', 2);
         BulkEditActions.addNewBulkEditFilterString();
         const suppressFromDiscovery = true;
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 3);
