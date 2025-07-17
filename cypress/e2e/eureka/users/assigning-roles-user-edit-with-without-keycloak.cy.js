@@ -218,7 +218,7 @@ describe('Eureka', () => {
         UserEdit.verifyUserRolesRowsCount(1);
         UserEdit.saveUserEditForm();
 
-        // workaround for issue UIU-3396
+        // workaround for issue UIU-3390
         Modals.closeModalWithEscapeIfAny();
 
         UsersCard.verifyUserLastFirstNameInCard(

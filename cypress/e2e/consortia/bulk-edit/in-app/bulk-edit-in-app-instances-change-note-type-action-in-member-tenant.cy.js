@@ -219,14 +219,14 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             'Notes',
-            `Reproduction note;${notes.reproduction};false | Action note;${notes.action};false`,
+            `Reproduction note;${notes.reproduction};false|Action note;${notes.action};false`,
           );
           BulkEditFiles.verifyValueInRowByUUID(
             matchedRecordsFileName,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             'Notes',
-            `Reproduction note;${notes.reproduction};true | Action note;${notes.action};false`,
+            `Reproduction note;${notes.reproduction};true|Action note;${notes.action};false`,
           );
           BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();

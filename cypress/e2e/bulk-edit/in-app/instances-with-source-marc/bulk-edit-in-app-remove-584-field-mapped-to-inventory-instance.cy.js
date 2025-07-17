@@ -234,7 +234,7 @@ describe(
 
           // Step 14: Verify that 584 field is NOT present in MARC source
           InstanceRecordView.viewSource();
-          InventoryViewSource.notContains('584');
+          InventoryViewSource.notContains('584\t');
           InventoryViewSource.notContains(accumulationNoteA);
           InventoryViewSource.verifyFieldContent(
             3,

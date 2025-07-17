@@ -65,12 +65,10 @@ describe('Invoices', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-        cy.visit(TopMenu.fundPath);
-        cy.getAdminToken();
+
+        cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(secondFund.name);
           Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);

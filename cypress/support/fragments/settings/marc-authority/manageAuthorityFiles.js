@@ -65,6 +65,7 @@ const deleteModalMessage2 =
 const deleteModal = Modal('Delete authority file');
 const cancelDeletionButton = Button('No, do not delete');
 const deleteAssignedSourceFileErrorText = (sourceFileName) => `${sourceFileName} cannot be deleted. Existing authority records are already assigned to this authority file.`;
+const updateAssignedSourceFileErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved. Existing authority records are already assigned to this authority file.`;
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -295,13 +296,17 @@ export default {
     const targetRow = getTargetRowWithFile(name);
 
     cy.expect([
-      targetRow.find(MultiColumnListCell(prefix)).exists(),
       targetRow.find(MultiColumnListCell(startsWith)).exists(),
       targetRow.find(MultiColumnListCell(baseUrl)).exists(),
       targetRow.find(activeCheckbox).has({ checked: isActive, disabled: true }),
       targetRow.find(MultiColumnListCell(including(lastUpdatedBy))).exists(),
       targetRow.find(editButton).exists(),
     ]);
+    prefix.split(',').forEach((prefixValue) => {
+      cy.expect(
+        targetRow.find(MultiColumnListCell(including(prefixValue), { columnIndex: 1 })).exists(),
+      );
+    });
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
   },
 
@@ -582,5 +587,11 @@ export default {
     cy.expect(Callout(deleteAssignedSourceFileErrorText(sourceFileName)).exists());
     InteractorsTools.dismissCallout(deleteAssignedSourceFileErrorText(sourceFileName));
     cy.expect(Callout(deleteAssignedSourceFileErrorText(sourceFileName)).absent());
+  },
+
+  verifyUpdateAssignedSourceFileError(sourceFileName) {
+    cy.expect(Callout(updateAssignedSourceFileErrorText(sourceFileName)).exists());
+    InteractorsTools.dismissCallout(updateAssignedSourceFileErrorText(sourceFileName));
+    cy.expect(Callout(updateAssignedSourceFileErrorText(sourceFileName)).absent());
   },
 };

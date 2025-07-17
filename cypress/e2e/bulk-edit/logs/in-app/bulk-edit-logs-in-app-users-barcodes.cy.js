@@ -53,6 +53,7 @@ describe(
         afterEach('delete test data', () => {
           cy.getAdminToken();
           FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
+          FileManager.deleteFileFromDownloadsByMask(validUserBarcodesFileName);
           Users.deleteViaApi(user.userId);
           BulkEditFiles.deleteAllDownloadedFiles(fileNames);
         });
@@ -97,13 +98,13 @@ describe(
 
             BulkEditLogs.downloadFileWithProposedChanges();
             BulkEditFiles.verifyMatchedResultFileContent(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               ['graduate'],
               'patronGroup',
               true,
             );
             BulkEditFiles.verifyMatchedResultFileContent(
-              fileNames.previewCSV,
+              fileNames.previewRecordsCSV,
               [newExpirationDate.dateWithDashes],
               'expirationDate',
               true,

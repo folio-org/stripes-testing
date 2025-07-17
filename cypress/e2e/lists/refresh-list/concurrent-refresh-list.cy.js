@@ -19,10 +19,7 @@ describe('Lists', () => {
 
     before('Create user and list', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.listsEdit.gui,
-        Permissions.usersViewRequests.gui,
-      ])
+      cy.createTempUser([Permissions.listsEdit.gui, Permissions.usersViewRequests.gui])
         .then((userProperties) => {
           userData = userProperties;
         })
@@ -73,7 +70,8 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411825 (Multiple users): Refresh list (corsair)',
+    it(
+      'C411825 (Multiple users): Refresh list (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411825'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -97,9 +95,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: refresh for ${listData.name} failed because a refresh for this list is already in progress.`,
         );
-      });
+      },
+    );
 
-    it('C411826 (Multiple users): Refresh list when another user modifies the list (corsair)',
+    it(
+      'C411826 (Multiple users): Refresh list when another user modifies the list (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411826'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -130,9 +130,11 @@ describe('Lists', () => {
           );
           expect(response.body).to.have.property('code', 'refresh-list.refresh.in.progress');
         });
-      });
+      },
+    );
 
-    it('C411829 (Multiple users): Cancel refresh (corsair)',
+    it(
+      'C411829 (Multiple users): Cancel refresh (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411829'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -149,12 +151,12 @@ describe('Lists', () => {
         cy.wait(200);
         Lists.openActions();
         Lists.cancelRefreshList();
-        Lists.verifyCalloutMessage(
-          `The refresh for ${listData.name} was successfully cancelled.`,
-        );
-      });
+        Lists.verifyCalloutMessage(`The refresh for ${listData.name} was successfully cancelled.`);
+      },
+    );
 
-    it('C411835 (Multiple users): Refresh list when another user make the list Private (corsair)',
+    it(
+      'C411835 (Multiple users): Refresh list when another user make the list Private (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411835'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -178,9 +180,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: refresh of ${listData.name} failed. Someone else modified this list and you no longer have access to it.`,
         );
-      });
+      },
+    );
 
-    it('C411836 (Multiple users): Refresh list when another user make the list Inactive (corsair)',
+    it(
+      'C411836 (Multiple users): Refresh list when another user make the list Inactive (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411836'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -204,9 +208,11 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: ${listData.name} was not refreshed because it is inactive. Set the list status to active to refresh the list.`,
         );
-      });
+      },
+    );
 
-    it('C411827 (Multiple users): Refresh list when someone removes the list (corsair)',
+    it(
+      'C411827 (Multiple users): Refresh list when someone removes the list (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411827'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -230,6 +236,7 @@ describe('Lists', () => {
         Lists.verifyCalloutMessage(
           `Error: ${listData.name} was not refreshed because the list was not found. Verify the list location and try again.`,
         );
-      });
+      },
+    );
   });
 });

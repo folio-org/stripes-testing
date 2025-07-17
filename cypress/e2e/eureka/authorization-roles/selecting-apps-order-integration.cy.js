@@ -115,7 +115,7 @@ describe('Eureka', () => {
 
       it(
         'C736766 Selecting applications for order integrations when create authorization role (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eureka', 'C736766'] },
+        { tags: ['smoke', 'thunderjet', 'eureka', 'C736766'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);
