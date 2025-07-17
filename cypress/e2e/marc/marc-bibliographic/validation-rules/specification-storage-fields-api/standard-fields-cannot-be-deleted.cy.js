@@ -1,31 +1,32 @@
 /* eslint-disable no-unused-expressions */
-import Permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
-import { STANDARD_FIELDS } from '../../../../support/constants';
+import Permissions from '../../../../../support/dictionary/permissions';
+import Users from '../../../../../support/fragments/users/users';
 
-describe('MARC Authority Validation Rules - Standard Fields', () => {
+describe('MARC Bibliographic Validation Rules - Standard Fields', () => {
   const requiredPermissions = [
     Permissions.specificationStorageGetSpecificationFields.gui,
     Permissions.specificationStorageDeleteSpecificationField.gui,
   ];
 
+  // Standard MARC fields for bibliographic specification
+  const STANDARD_FIELDS = ['010', '100', '600', '650', '700', '800'];
   function findStandardField(fields, tag) {
     return fields.find((f) => f.tag === tag && f.scope === 'standard');
   }
 
   let user;
-  let authoritySpecId;
+  let bibSpecId;
   let standardField;
 
-  before('Create user and fetch MARC authority specification', () => {
+  before('Create user and fetch MARC bib specification', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
       cy.getSpecificatoinIds().then((specs) => {
-        // Find the specification with profile 'authority'
-        const authoritySpec = specs.find((s) => s.profile === 'authority');
-        expect(authoritySpec, 'MARC authority specification exists').to.exist;
-        authoritySpecId = authoritySpec.id;
+        // Find the specification with profile 'bibliographic'
+        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
+        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+        bibSpecId = bibSpec.id;
       });
     });
   });
@@ -38,15 +39,15 @@ describe('MARC Authority Validation Rules - Standard Fields', () => {
   });
 
   it(
-    'C499843 Cannot delete a standard MARC field of authority spec (API) (spitfire)',
-    { tags: ['smoke', 'C499843', 'spitfire'] },
+    'C499836 Cannot delete a standard MARC field (API) (spitfire)',
+    { tags: ['smoke', 'C499836', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
-      // 1. Get all fields for the MARC authority specification
-      cy.getSpecificationFields(authoritySpecId).then((response) => {
+      // 1. Get all fields for the MARC bib specification
+      cy.getSpecificationFields(bibSpecId).then((response) => {
         expect(response.status).to.eq(200);
-        // Find a standard field (e.g., 010, 100)
+        // Find a standard field (e.g., 100)
         standardField = STANDARD_FIELDS.map((tag) => findStandardField(response.body.fields, tag)).find(Boolean);
         expect(standardField, 'Standard field exists').to.exist;
 
@@ -59,7 +60,7 @@ describe('MARC Authority Validation Rules - Standard Fields', () => {
         });
 
         // 3. Verify the field still exists
-        cy.getSpecificationFields(authoritySpecId).then((getResp) => {
+        cy.getSpecificationFields(bibSpecId).then((getResp) => {
           expect(getResp.status).to.eq(200);
           const stillThere = getResp.body.fields.some((f) => f.id === standardField.id);
           expect(stillThere, 'Standard field was not deleted').to.be.true;
