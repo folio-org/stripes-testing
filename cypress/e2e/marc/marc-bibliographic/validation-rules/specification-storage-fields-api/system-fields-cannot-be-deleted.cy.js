@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
-import Permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
+import Permissions from '../../../../../support/dictionary/permissions';
+import Users from '../../../../../support/fragments/users/users';
 
 describe('MARC Bibliographic Validation Rules - System Fields', () => {
   const requiredPermissions = [
@@ -32,7 +32,7 @@ describe('MARC Bibliographic Validation Rules - System Fields', () => {
   });
 
   it(
-    'Cannot delete a system MARC field (API) (spitfire)',
+    'C499835 Cannot delete a system MARC field (API) (spitfire)',
     { tags: ['smoke', 'C499835', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
