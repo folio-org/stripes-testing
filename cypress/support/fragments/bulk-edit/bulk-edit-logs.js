@@ -371,6 +371,14 @@ export default {
     );
   },
 
+  verifyEditingColumnValue(runByUsername, content) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content, column: 'Editing' }))
+        .exists(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
