@@ -21,6 +21,7 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
+import UserEdit from '../../../../support/fragments/users/userEdit';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -75,6 +76,8 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         cy.getUserGroups({ limit: 1 }).then((patronGroups) => {
           patronGroupId = patronGroups;
         });
+
+        UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
       })
       .then(() => {
         Users.createViaApi({

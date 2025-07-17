@@ -4,6 +4,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Requests', () => {
   const userIds = [];
@@ -12,7 +13,7 @@ describe('Requests', () => {
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
   const instanceTitlePrefix = 'test_sort_';
 
-  beforeEach(() => {
+  before(() => {
     cy.getAdminToken().then(() => {
       Object.values(requestTypes).forEach((requestType) => {
         const itemStatus =
@@ -30,11 +31,13 @@ describe('Requests', () => {
           requests.push(createdRequest);
         });
       });
+
+      UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
     });
     cy.loginAsAdmin();
   });
 
-  afterEach(() => {
+  after(() => {
     instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);

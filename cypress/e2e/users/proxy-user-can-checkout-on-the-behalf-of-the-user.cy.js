@@ -8,6 +8,7 @@ import Locations from '../../support/fragments/settings/tenant/location-setup/lo
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Users', () => {
   const usersData = {};
@@ -32,6 +33,8 @@ describe('Users', () => {
         cy.createTempUser().then((proxyProperties) => {
           usersData.userProxy = proxyProperties;
         });
+
+        UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
       })
       .then(() => {
         proxyBody = {

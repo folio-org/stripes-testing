@@ -8,6 +8,7 @@ import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Requests', () => {
   const requests = [];
@@ -25,7 +26,7 @@ describe('Requests', () => {
     id: uuid(),
   };
 
-  beforeEach(() => {
+  before(() => {
     cy.getAdminToken();
     cy.createLoanType({
       name: `type_${getRandomPostfix()}`,
@@ -53,9 +54,11 @@ describe('Requests', () => {
         },
       );
     });
+
+    UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
   });
 
-  afterEach(() => {
+  after(() => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);

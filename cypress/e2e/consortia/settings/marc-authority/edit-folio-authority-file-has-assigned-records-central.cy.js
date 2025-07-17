@@ -36,6 +36,10 @@ describe('MARC', () => {
           ManageAuthorityFiles.setAuthorityFileToActiveViaApi(
             DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
           );
+          ManageAuthorityFiles.updateBaseUrlInAuthorityFileViaApi(
+            DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
+            defaultBaseUrl,
+          );
           cy.createTempUser(userPermissionsCentral).then((createdUser) => {
             user = createdUser;
             cy.assignAffiliationToUser(Affiliations.College, user.userId);
