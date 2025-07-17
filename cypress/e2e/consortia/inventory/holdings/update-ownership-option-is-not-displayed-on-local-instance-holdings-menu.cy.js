@@ -9,8 +9,6 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
@@ -21,16 +19,9 @@ describe('Inventory', () => {
       user: {},
       holdings: {},
     };
-    const userPermissions = [
-      Permissions.inventoryAll.gui,
-      Permissions.uiInventoryUpdateOwnership.gui,
-    ];
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.getConsortiaId().then((consortiaId) => {
-        testData.consortiaId = consortiaId;
-      });
       cy.withinTenant(Affiliations.College, () => {
         InventoryInstance.createInstanceViaApi()
           .then(({ instanceData }) => {
@@ -50,41 +41,23 @@ describe('Inventory', () => {
               sourceId: testData.holdings.sourceId,
             }).then((holding) => {
               testData.holdings = holding;
-
-              InventoryInstance.shareInstanceViaApi(
-                testData.instance.instanceId,
-                testData.consortiaId,
-                Affiliations.College,
-                Affiliations.Consortia,
-              );
             });
           });
       });
-      cy.withinTenant(Affiliations.University, () => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-          (servicePoints) => {
-            testData.location = Locations.getDefaultLocation({
-              servicePointId: servicePoints[0].id,
-            }).location;
-            Locations.createViaApi(testData.location).then((location) => {
-              testData.location.id = location.id;
-            });
-          },
-        );
-      });
 
-      cy.createTempUser(userPermissions).then((userProperties) => {
+      cy.getAdminToken();
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
         [Affiliations.College, Affiliations.University].forEach((affiliation) => {
           cy.affiliateUserToTenant({
             tenantId: affiliation,
             userId: testData.user.userId,
-            permissions: userPermissions,
+            permissions: [Permissions.inventoryAll.gui],
           });
         });
-
         cy.resetTenant();
+
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
@@ -94,20 +67,18 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.withinTenant(Affiliations.University, () => {
+      cy.withinTenant(Affiliations.College, () => {
         cy.deleteHoldingRecordViaApi(testData.holdings.id);
-        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-        Locations.deleteViaApi(testData.location);
       });
       cy.withinTenant(Affiliations.Consortia, () => {
-        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         Users.deleteViaApi(testData.user.userId);
       });
     });
 
     it(
-      'C490891 Check "Update ownership" option in Holdings option menu (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet', 'C490891'] },
+      'C476823 "Update ownership" option is not displayed on Local Instance Holdings menu (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C476823'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
@@ -115,24 +86,8 @@ describe('Inventory', () => {
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.validateOptionInActionsMenu([
-          { optionName: actionsMenuOptions.updateOwnership, shouldExist: true },
+          { optionName: actionsMenuOptions.updateOwnership, shouldExist: false },
         ]);
-        ['cancel', 'confirm'].forEach((action) => {
-          HoldingsRecordView.updateOwnership(
-            tenantNames.university,
-            action,
-            testData.holdings.hrid,
-            tenantNames.college,
-            testData.location.name,
-          );
-        });
-        InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
-        InstanceRecordView.expandConsortiaHoldings();
-        InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
-        InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
-        InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
-        InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
       },
     );
   });
