@@ -1,11 +1,6 @@
-import {
-  APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  RECORD_STATUSES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
@@ -16,7 +11,6 @@ import Z3950TargetProfiles from '../../../../support/fragments/settings/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -24,10 +18,6 @@ describe('Inventory', () => {
       oclcNumber: '1234568',
       OCLCAuthentication: '100481406/PAOLF',
       instanceId: '',
-      marcFile: {
-        path: 'oneMarcBib.mrc',
-        fileName: `C402762 autotestFileName${getRandomPostfix()}.mrc`,
-      },
       updatedInstanceTitle:
         'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
     };
@@ -45,12 +35,8 @@ describe('Inventory', () => {
           Permissions.settingsDataImportView.gui,
         ]);
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-        DataImport.uploadFileViaApi(
-          testData.marcFile.path,
-          testData.marcFile.fileName,
-          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-        ).then((response) => {
-          testData.instanceId = response[0].instance.id;
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instanceId = instanceData;
         });
         cy.resetTenant();
 
@@ -72,8 +58,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C418584 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = MARC Instance (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C418584'] },
+      'C418585 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = FOLIO Instance (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C418585'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
