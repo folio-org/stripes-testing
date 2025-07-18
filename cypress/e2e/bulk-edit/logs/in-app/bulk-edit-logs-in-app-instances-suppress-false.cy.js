@@ -20,6 +20,7 @@ import {
   ITEM_STATUS_NAMES,
 } from '../../../../support/constants';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 let instanceTypeId;
@@ -28,15 +29,41 @@ let locationId;
 let loanTypeId;
 let materialTypeId;
 let sourceId;
-const folioInstanceTitles = {
-  instance: `AT_C435891_FolioInstance_${getRandomPostfix()}`,
-  instanceWithHolding: `AT_C435891_FolioInstance_with_holding${getRandomPostfix()}`,
-  instanceWithHoldingAndItem: `AT_C435891_FolioInstance_with_holding_and_item${getRandomPostfix()}`,
-};
-const marcInstanceTitles = {
-  instance: `AT_C435891_MarcInstance_${getRandomPostfix()}`,
-  instanceWithHolding: `AT_C435891_MarcInstance_with_holding${getRandomPostfix()}`,
-  instanceWithHoldingAndItem: `AT_C435891_MarcInstance_with_holding_and_item${getRandomPostfix()}`,
+const instances = {
+  folio: {
+    instance: {
+      title: `AT_C435891_FolioInstance_${getRandomPostfix()}`,
+      hasHolding: false,
+      hasItem: false,
+    },
+    instanceWithHolding: {
+      title: `AT_C435891_FolioInstance_with_holding${getRandomPostfix()}`,
+      hasHolding: true,
+      hasItem: false,
+    },
+    instanceWithHoldingAndItem: {
+      title: `AT_C435891_FolioInstance_with_holding_and_item${getRandomPostfix()}`,
+      hasHolding: true,
+      hasItem: true,
+    },
+  },
+  marc: {
+    instance: {
+      title: `AT_C435891_MarcInstance_${getRandomPostfix()}`,
+      hasHolding: false,
+      hasItem: false,
+    },
+    instanceWithHolding: {
+      title: `AT_C435891_MarcInstance_with_holding${getRandomPostfix()}`,
+      hasHolding: true,
+      hasItem: false,
+    },
+    instanceWithHoldingAndItem: {
+      title: `AT_C435891_MarcInstance_with_holding_and_item${getRandomPostfix()}`,
+      hasHolding: true,
+      hasItem: true,
+    },
+  },
 };
 const actionOptions = {
   setFalse: 'Set false',
@@ -45,8 +72,6 @@ const actionOptions = {
 const warningMessageForInstanceWithoutItems = 'No change in value required';
 const warningMessageForInstanceWithItems =
   'No change in value for instance required, suppressed associated records have been updated.';
-
-const itemBarcodes = [getRandomPostfix(), getRandomPostfix()];
 const createdInstanceIds = [];
 const createdInstanceHrids = [];
 const instanceUUIDsFileName = `instanceUUIDs_${getRandomPostfix()}.csv`;
@@ -90,13 +115,15 @@ describe('Bulk-edit', () => {
               cy.createInstance({
                 instance: {
                   instanceTypeId,
-                  title: folioInstanceTitles.instance,
+                  title: instances.folio.instance.title,
                 },
               }).then((instanceId) => {
                 createdInstanceIds.push(instanceId);
+                instances.folio.instance.id = instanceId;
                 cy.wait(1000);
                 cy.getInstanceById(instanceId).then((instanceData) => {
                   createdInstanceHrids.push(instanceData.hrid);
+                  instances.folio.instance.hrid = instanceData.hrid;
                   cy.wait(500);
                 });
               });
@@ -106,7 +133,7 @@ describe('Bulk-edit', () => {
               cy.createInstance({
                 instance: {
                   instanceTypeId,
-                  title: folioInstanceTitles.instanceWithHolding,
+                  title: instances.folio.instanceWithHolding.title,
                 },
                 holdings: [
                   {
@@ -118,9 +145,11 @@ describe('Bulk-edit', () => {
                 ],
               }).then((instanceId) => {
                 createdInstanceIds.push(instanceId);
+                instances.folio.instanceWithHolding.id = instanceId;
                 cy.wait(1000);
                 cy.getInstanceById(instanceId).then((instanceData) => {
                   createdInstanceHrids.push(instanceData.hrid);
+                  instances.folio.instanceWithHolding.hrid = instanceData.hrid;
                   cy.wait(500);
                 });
               });
@@ -130,7 +159,7 @@ describe('Bulk-edit', () => {
               cy.createInstance({
                 instance: {
                   instanceTypeId,
-                  title: folioInstanceTitles.instanceWithHoldingAndItem,
+                  title: instances.folio.instanceWithHoldingAndItem.title,
                 },
                 holdings: [
                   {
@@ -143,7 +172,7 @@ describe('Bulk-edit', () => {
                 items: [
                   [
                     {
-                      barcode: itemBarcodes[0],
+                      barcode: getRandomPostfix(),
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                       permanentLoanType: { id: loanTypeId },
                       materialType: { id: materialTypeId },
@@ -153,29 +182,35 @@ describe('Bulk-edit', () => {
                 ],
               }).then((instanceId) => {
                 createdInstanceIds.push(instanceId);
+                instances.folio.instanceWithHoldingAndItem.id = instanceId;
                 cy.wait(1000);
                 cy.getInstanceById(instanceId).then((instanceData) => {
                   createdInstanceHrids.push(instanceData.hrid);
+                  instances.folio.instanceWithHoldingAndItem.hrid = instanceData.hrid;
                   cy.wait(500);
                 });
               });
             })
             .then(() => {
               // MARC instance without holding
-              cy.createSimpleMarcBibViaAPI(marcInstanceTitles.instance).then((instanceId) => {
+              cy.createSimpleMarcBibViaAPI(instances.marc.instance.title).then((instanceId) => {
                 createdInstanceIds.push(instanceId);
+                instances.marc.instance.id = instanceId;
                 cy.getInstanceById(instanceId).then((instanceData) => {
                   createdInstanceHrids.push(instanceData.hrid);
+                  instances.marc.instance.hrid = instanceData.hrid;
                 });
               });
             })
             .then(() => {
               // MARC instance with holding
-              cy.createSimpleMarcBibViaAPI(marcInstanceTitles.instanceWithHolding).then(
+              cy.createSimpleMarcBibViaAPI(instances.marc.instanceWithHolding.title).then(
                 (instanceId) => {
                   createdInstanceIds.push(instanceId);
+                  instances.marc.instanceWithHolding.id = instanceId;
                   cy.getInstanceById(instanceId).then((instanceData) => {
                     createdInstanceHrids.push(instanceData.hrid);
+                    instances.marc.instanceWithHolding.hrid = instanceData.hrid;
                     InventoryHoldings.createHoldingRecordViaApi({
                       instanceId: instanceData.id,
                       permanentLocationId: locationId,
@@ -188,11 +223,13 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               // MARC instance with holding and item
-              cy.createSimpleMarcBibViaAPI(marcInstanceTitles.instanceWithHoldingAndItem).then(
+              cy.createSimpleMarcBibViaAPI(instances.marc.instanceWithHoldingAndItem.title).then(
                 (instanceId) => {
                   createdInstanceIds.push(instanceId);
+                  instances.marc.instanceWithHoldingAndItem.id = instanceId;
                   cy.getInstanceById(instanceId).then((instanceData) => {
                     createdInstanceHrids.push(instanceData.hrid);
+                    instances.marc.instanceWithHoldingAndItem.hrid = instanceData.hrid;
                     InventoryHoldings.createHoldingRecordViaApi({
                       instanceId: instanceData.id,
                       permanentLocationId: locationId,
@@ -205,7 +242,7 @@ describe('Bulk-edit', () => {
                         permanentLoanType: { id: loanTypeId },
                         status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                         discoverySuppress: true,
-                        barcode: itemBarcodes[1],
+                        barcode: getRandomPostfix(),
                       });
                     });
                   });
@@ -256,20 +293,21 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
           );
 
+          const instanceHeaderValues = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+              value: 'false',
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
+              value: 'false',
+            },
+          ];
+
           createdInstanceHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
               hrid,
-              [
-                {
-                  header:
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                  value: 'false',
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                  value: 'false',
-                },
-              ],
+              instanceHeaderValues,
             );
           });
 
@@ -277,22 +315,23 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
+          const instanceHeaderValuesInFile = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+              value: false,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
+              value: false,
+            },
+          ];
+
           createdInstanceHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               fileNames.matchedRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               hrid,
-              [
-                {
-                  header:
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                  value: false,
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                  value: false,
-                },
-              ],
+              instanceHeaderValuesInFile,
             );
           });
 
@@ -327,17 +366,7 @@ describe('Bulk-edit', () => {
           createdInstanceHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
               hrid,
-              [
-                {
-                  header:
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                  value: 'false',
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                  value: 'false',
-                },
-              ],
+              instanceHeaderValues,
             );
           });
 
@@ -349,17 +378,7 @@ describe('Bulk-edit', () => {
               fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               hrid,
-              [
-                {
-                  header:
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                  value: false,
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                  value: false,
-                },
-              ],
+              instanceHeaderValuesInFile,
             );
           });
 
@@ -370,45 +389,41 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyErrorLabel(0, 6);
 
           // Step 13: Check the table populated with Top 10 warnings
-
-          const instanceWithItemIds = [createdInstanceIds[2], createdInstanceIds[5]];
-
-          instanceWithItemIds.forEach((instanceId) => {
-            BulkEditSearchPane.verifyErrorByIdentifier(
-              instanceId,
-              warningMessageForInstanceWithItems,
-              'Warning',
-            );
-          });
-
-          const instanceWithoutItemIds = [
-            createdInstanceIds[0],
-            createdInstanceIds[1],
-            createdInstanceIds[3],
-            createdInstanceIds[4],
+          const allInstanceObjects = [
+            ...Object.values(instances.folio),
+            ...Object.values(instances.marc),
           ];
 
-          instanceWithoutItemIds.forEach((instanceId) => {
-            BulkEditSearchPane.verifyErrorByIdentifier(
-              instanceId,
-              warningMessageForInstanceWithoutItems,
-              'Warning',
-            );
+          allInstanceObjects.forEach((instance) => {
+            if (!instance.hasItem) {
+              BulkEditSearchPane.verifyErrorByIdentifier(
+                instance.id,
+                warningMessageForInstanceWithoutItems,
+                'Warning',
+              );
+            } else {
+              BulkEditSearchPane.verifyErrorByIdentifier(
+                instance.id,
+                warningMessageForInstanceWithItems,
+                'Warning',
+              );
+            }
           });
 
           // Step 14: Download errors (warnings)
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
 
-          instanceWithItemIds.forEach((instanceId) => {
-            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-              `WARNING,${instanceId},${warningMessageForInstanceWithItems}`,
-            ]);
-          });
-          instanceWithoutItemIds.forEach((instanceId) => {
-            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-              `WARNING,${instanceId},${warningMessageForInstanceWithoutItems}`,
-            ]);
+          allInstanceObjects.forEach((instance) => {
+            if (!instance.hasItem) {
+              ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+                `WARNING,${instance.id},${warningMessageForInstanceWithoutItems}`,
+              ]);
+            } else {
+              ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+                `WARNING,${instance.id},${warningMessageForInstanceWithItems}`,
+              ]);
+            }
           });
 
           // remove earlier downloaded files
@@ -434,17 +449,7 @@ describe('Bulk-edit', () => {
               fileNames.matchedRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               hrid,
-              [
-                {
-                  header:
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                  value: false,
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                  value: false,
-                },
-              ],
+              instanceHeaderValuesInFile,
             );
           });
 
@@ -456,70 +461,47 @@ describe('Bulk-edit', () => {
               fileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               hrid,
-              [
-                {
-                  header:
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-                  value: false,
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                  value: false,
-                },
-              ],
+              instanceHeaderValuesInFile,
             );
           });
 
           // Step 21: Click on the "File with errors encountered when committing the changes" hyperlink
           BulkEditLogs.downloadFileWithCommitErrors();
 
-          instanceWithItemIds.forEach((instanceId) => {
-            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-              `WARNING,${instanceId},${warningMessageForInstanceWithItems}`,
-            ]);
-          });
-          instanceWithoutItemIds.forEach((instanceId) => {
-            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-              `WARNING,${instanceId},${warningMessageForInstanceWithoutItems}`,
-            ]);
+          allInstanceObjects.forEach((instance) => {
+            if (!instance.hasItem) {
+              ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+                `WARNING,${instance.id},${warningMessageForInstanceWithoutItems}`,
+              ]);
+            } else {
+              ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+                `WARNING,${instance.id},${warningMessageForInstanceWithItems}`,
+              ]);
+            }
           });
 
           // Step 22: Inventory verification
-          createdInstanceHrids.forEach((instanceHrid) => {
+          allInstanceObjects.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+            InventorySearchAndFilter.searchInstanceByHRID(instance.hrid);
             InventoryInstances.selectInstance();
             cy.wait(1000);
             InstanceRecordView.verifyNotMarkAsStaffSuppressed();
-          });
 
-          const instancesWithHolding = [
-            createdInstanceHrids[1],
-            createdInstanceHrids[2],
-            createdInstanceHrids[4],
-            createdInstanceHrids[5],
-          ];
+            if (instance.hasHolding) {
+              InventorySearchAndFilter.selectViewHoldings();
+              HoldingsRecordView.waitLoading();
+              cy.wait(2000);
+              HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+              HoldingsRecordView.close();
 
-          instancesWithHolding.forEach((instanceHrid) => {
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-            InventoryInstances.selectInstance();
-            InventorySearchAndFilter.selectViewHoldings();
-            HoldingsRecordView.waitLoading();
-            cy.wait(1000);
-            HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
-          });
-
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
-
-          itemBarcodes.forEach((itemBarcode) => {
-            InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
-            ItemRecordView.waitLoading();
-            cy.wait(1000);
-            ItemRecordView.suppressedAsDiscoveryIsAbsent();
-            ItemRecordView.closeDetailView();
-            InventorySearchAndFilter.resetAll();
+              if (instance.hasItem) {
+                InventoryInstance.openHoldings(['']);
+                InventoryInstance.openItemByStatus(ITEM_STATUS_NAMES.AVAILABLE);
+                ItemRecordView.waitLoading();
+                ItemRecordView.suppressedAsDiscoveryIsAbsent();
+              }
+            }
           });
         },
       );
