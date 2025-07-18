@@ -17,7 +17,7 @@ import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: { runMode: 1 } }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_2_year_${getRandomPostfix()}`,

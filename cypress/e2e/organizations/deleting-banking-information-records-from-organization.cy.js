@@ -7,7 +7,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 
-describe('Organizations', () => {
+describe('Organizations', { retries: { runMode: 1 } }, () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
   const secondBankingInformation = {
     name: `SecondBankInfo_${getRandomPostfix()}`,

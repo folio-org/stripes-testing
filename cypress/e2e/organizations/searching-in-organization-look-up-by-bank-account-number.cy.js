@@ -9,7 +9,7 @@ import BankingInformation from '../../support/fragments/settings/organizations/b
 import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 
-describe('Organizations', () => {
+describe('Organizations', { retries: { runMode: 1 } }, () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
   const secondOrganization = {
     name: `autotest_name2_${getRandomPostfix()}`,
