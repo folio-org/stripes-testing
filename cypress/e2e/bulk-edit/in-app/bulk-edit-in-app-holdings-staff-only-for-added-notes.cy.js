@@ -141,9 +141,9 @@ describe('Bulk-edit', () => {
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings', 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Action note', 3);
-        BulkEditActions.selectSecondAction('Add note', 3);
+        BulkEditActions.selectAction('Add note', 3);
         BulkEditActions.verifyStaffOnlyCheckbox(false, 3);
-        BulkEditActions.fillInSecondTextArea(notes.action, 3);
+        BulkEditActions.fillInFirstTextArea(notes.action, 3);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.findValue('Binding', 4);
 
@@ -152,7 +152,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyPossibleActions(possibleActions, 4);
         BulkEditActions.verifyCheckboxAbsentByRow(4);
         BulkEditActions.selectAction('Add note', 4);
-        BulkEditActions.fillInSecondTextArea(notes.binding, 4);
+        BulkEditActions.fillInFirstTextArea(notes.binding, 4);
         BulkEditActions.checkStaffOnlyCheckbox(4);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
@@ -178,7 +178,6 @@ describe('Bulk-edit', () => {
         const suppressFromDiscovery = 'true';
 
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10);
-        BulkEditActions.checkApplyToItemsRecordsCheckbox();
         BulkEditActions.deleteRow(2);
         BulkEditActions.verifyStaffOnlyCheckbox(false, 2);
         BulkEditActions.verifyStaffOnlyCheckbox(true, 3);

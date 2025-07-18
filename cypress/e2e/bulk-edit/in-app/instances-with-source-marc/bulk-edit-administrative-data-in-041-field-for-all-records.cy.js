@@ -241,7 +241,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Statistical code', 1);
         BulkEditSearchPane.verifyInputLabel('Statistical code', 1);
-        BulkEditActions.selectSecondAction('Remove', 1);
+        BulkEditActions.selectAction('Remove', 1);
         BulkEditActions.selectStatisticalCodeValue(statisticalCode.fullName, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 

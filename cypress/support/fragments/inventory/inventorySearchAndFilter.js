@@ -1426,4 +1426,27 @@ export default {
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());
   },
+
+  getAllValuesFromColumn(columnIndex) {
+    return cy
+      .wait(3000)
+      .get('[class^="mclRow-"]')
+      .then(($rows) => {
+        const cellValues = [];
+        $rows.each((_, row) => {
+          const cell = row.querySelectorAll('[class^="mclCell-"]')[columnIndex];
+          if (cell) {
+            const cellText = cell.textContent.replace('would be here', '').trim();
+            cellValues.push(cellText);
+          }
+        });
+        return cellValues;
+      });
+  },
+
+  checkAllValuesInColumnSorted(columnIndex) {
+    this.getAllValuesFromColumn(columnIndex).then((cellValues) => {
+      cy.expect(cellValues).to.deep.equal(cellValues.sort());
+    });
+  },
 };

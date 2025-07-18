@@ -108,7 +108,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
         BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 1, 2);
+        BulkEditSearchPane.verifyErrorLabel(1, 1);
         BulkEditSearchPane.verifyReasonForError('Duplicate entry');
         BulkEditSearchPane.verifyReasonForError('No match found');
         BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();

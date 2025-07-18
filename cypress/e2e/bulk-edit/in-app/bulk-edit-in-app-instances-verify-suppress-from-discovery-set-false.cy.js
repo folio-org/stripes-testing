@@ -312,8 +312,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(optionToSelect.suppressFromDiscovery);
         BulkEditActions.verifyOptionSelected(optionToSelect.suppressFromDiscovery);
         BulkEditActions.verifyTheActionOptions(Object.values(actionOptions));
-        BulkEditActions.selectSecondAction(actionOptions.setTrue);
-        BulkEditActions.verifySecondActionSelected(actionOptions.setTrue);
+        BulkEditActions.selectAction(actionOptions.setTrue);
+        BulkEditActions.verifyActionSelected(actionOptions.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -342,8 +342,8 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.closeAreYouSureForm();
         BulkEditActions.verifyAreYouSureFormAbsents();
-        BulkEditActions.selectSecondAction(actionOptions.setFalse);
-        BulkEditActions.verifySecondActionSelected(actionOptions.setFalse);
+        BulkEditActions.selectAction(actionOptions.setFalse);
+        BulkEditActions.verifyActionSelected(actionOptions.setFalse);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
