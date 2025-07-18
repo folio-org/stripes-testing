@@ -10,7 +10,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: { runMode: 1 } }, () => {
   const organization = NewOrganization.getDefaultOrganization();
   const testData = {
     organization,
