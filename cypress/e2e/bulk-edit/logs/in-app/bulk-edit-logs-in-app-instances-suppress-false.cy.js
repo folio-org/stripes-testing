@@ -24,46 +24,45 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 
 let user;
 let instanceTypeId;
-let holdingTypeId;
 let locationId;
 let loanTypeId;
 let materialTypeId;
 let sourceId;
 const instances = {
-  folio: {
-    instance: {
+  folio: [
+    {
       title: `AT_C435891_FolioInstance_${getRandomPostfix()}`,
       hasHolding: false,
       hasItem: false,
     },
-    instanceWithHolding: {
+    {
       title: `AT_C435891_FolioInstance_with_holding${getRandomPostfix()}`,
       hasHolding: true,
       hasItem: false,
     },
-    instanceWithHoldingAndItem: {
+    {
       title: `AT_C435891_FolioInstance_with_holding_and_item${getRandomPostfix()}`,
       hasHolding: true,
       hasItem: true,
     },
-  },
-  marc: {
-    instance: {
+  ],
+  marc: [
+    {
       title: `AT_C435891_MarcInstance_${getRandomPostfix()}`,
       hasHolding: false,
       hasItem: false,
     },
-    instanceWithHolding: {
+    {
       title: `AT_C435891_MarcInstance_with_holding${getRandomPostfix()}`,
       hasHolding: true,
       hasItem: false,
     },
-    instanceWithHoldingAndItem: {
+    {
       title: `AT_C435891_MarcInstance_with_holding_and_item${getRandomPostfix()}`,
       hasHolding: true,
       hasItem: true,
     },
-  },
+  ],
 };
 const actionOptions = {
   setFalse: 'Set false',
@@ -94,9 +93,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getHoldingTypes({ limit: 1 }).then((res) => {
-            holdingTypeId = res[0].id;
-          });
           cy.getLocations({ limit: 1 }).then((res) => {
             locationId = res.id;
           });
@@ -111,131 +107,49 @@ describe('Bulk-edit', () => {
               sourceId = folioSource.id;
             })
             .then(() => {
-              // FOLIO instance without holding
-              cy.createInstance({
-                instance: {
-                  instanceTypeId,
-                  title: instances.folio.instance.title,
-                },
-              }).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-                instances.folio.instance.id = instanceId;
-                cy.wait(1000);
-                cy.getInstanceById(instanceId).then((instanceData) => {
-                  createdInstanceHrids.push(instanceData.hrid);
-                  instances.folio.instance.hrid = instanceData.hrid;
-                  cy.wait(500);
-                });
-              });
-            })
-            .then(() => {
-              // FOLIO instance with holding
-              cy.createInstance({
-                instance: {
-                  instanceTypeId,
-                  title: instances.folio.instanceWithHolding.title,
-                },
-                holdings: [
-                  {
-                    holdingsTypeId: holdingTypeId,
-                    permanentLocationId: locationId,
-                    discoverySuppress: true,
-                    sourceId,
+              // Create FOLIO instances
+              instances.folio.forEach((instance) => {
+                cy.createInstance({
+                  instance: {
+                    instanceTypeId,
+                    title: instance.title,
                   },
-                ],
-              }).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-                instances.folio.instanceWithHolding.id = instanceId;
-                cy.wait(1000);
-                cy.getInstanceById(instanceId).then((instanceData) => {
-                  createdInstanceHrids.push(instanceData.hrid);
-                  instances.folio.instanceWithHolding.hrid = instanceData.hrid;
-                  cy.wait(500);
-                });
-              });
-            })
-            .then(() => {
-              // FOLIO instance with holding and item
-              cy.createInstance({
-                instance: {
-                  instanceTypeId,
-                  title: instances.folio.instanceWithHoldingAndItem.title,
-                },
-                holdings: [
-                  {
-                    holdingsTypeId: holdingTypeId,
-                    permanentLocationId: locationId,
-                    discoverySuppress: true,
-                    sourceId,
-                  },
-                ],
-                items: [
-                  [
-                    {
-                      barcode: getRandomPostfix(),
-                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      permanentLoanType: { id: loanTypeId },
-                      materialType: { id: materialTypeId },
-                      discoverySuppress: true,
-                    },
-                  ],
-                ],
-              }).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-                instances.folio.instanceWithHoldingAndItem.id = instanceId;
-                cy.wait(1000);
-                cy.getInstanceById(instanceId).then((instanceData) => {
-                  createdInstanceHrids.push(instanceData.hrid);
-                  instances.folio.instanceWithHoldingAndItem.hrid = instanceData.hrid;
-                  cy.wait(500);
-                });
-              });
-            })
-            .then(() => {
-              // MARC instance without holding
-              cy.createSimpleMarcBibViaAPI(instances.marc.instance.title).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-                instances.marc.instance.id = instanceId;
-                cy.getInstanceById(instanceId).then((instanceData) => {
-                  createdInstanceHrids.push(instanceData.hrid);
-                  instances.marc.instance.hrid = instanceData.hrid;
-                });
-              });
-            })
-            .then(() => {
-              // MARC instance with holding
-              cy.createSimpleMarcBibViaAPI(instances.marc.instanceWithHolding.title).then(
-                (instanceId) => {
+                }).then((instanceId) => {
                   createdInstanceIds.push(instanceId);
-                  instances.marc.instanceWithHolding.id = instanceId;
+                  instance.id = instanceId;
+                  cy.wait(1000);
                   cy.getInstanceById(instanceId).then((instanceData) => {
                     createdInstanceHrids.push(instanceData.hrid);
-                    instances.marc.instanceWithHolding.hrid = instanceData.hrid;
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instanceData.id,
-                      permanentLocationId: locationId,
-                      discoverySuppress: true,
-                      sourceId,
-                    });
+                    instance.hrid = instanceData.hrid;
+                    cy.wait(500);
                   });
-                },
-              );
+                });
+              });
             })
             .then(() => {
-              // MARC instance with holding and item
-              cy.createSimpleMarcBibViaAPI(instances.marc.instanceWithHoldingAndItem.title).then(
-                (instanceId) => {
+              // Create MARC instances
+              instances.marc.forEach((instance) => {
+                cy.createSimpleMarcBibViaAPI(instance.title).then((instanceId) => {
                   createdInstanceIds.push(instanceId);
-                  instances.marc.instanceWithHoldingAndItem.id = instanceId;
+                  instance.id = instanceId;
                   cy.getInstanceById(instanceId).then((instanceData) => {
                     createdInstanceHrids.push(instanceData.hrid);
-                    instances.marc.instanceWithHoldingAndItem.hrid = instanceData.hrid;
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instanceData.id,
-                      permanentLocationId: locationId,
-                      discoverySuppress: true,
-                      sourceId,
-                    }).then((holdingData) => {
+                    instance.hrid = instanceData.hrid;
+                  });
+                });
+              });
+            })
+            .then(() => {
+              // Create holdings and items
+              [...instances.folio, ...instances.marc].forEach((instance) => {
+                if (instance.hasHolding) {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: instance.id,
+                    permanentLocationId: locationId,
+                    discoverySuppress: true,
+                    sourceId,
+                  }).then((holdingData) => {
+                    if (instance.hasItem) {
                       cy.createItem({
                         holdingsRecordId: holdingData.id,
                         materialType: { id: materialTypeId },
@@ -244,10 +158,10 @@ describe('Bulk-edit', () => {
                         discoverySuppress: true,
                         barcode: getRandomPostfix(),
                       });
-                    });
+                    }
                   });
-                },
-              );
+                }
+              });
             })
             .then(() => {
               FileManager.createFile(
@@ -389,10 +303,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyErrorLabel(0, 6);
 
           // Step 13: Check the table populated with Top 10 warnings
-          const allInstanceObjects = [
-            ...Object.values(instances.folio),
-            ...Object.values(instances.marc),
-          ];
+          const allInstanceObjects = [...instances.folio, ...instances.marc];
 
           allInstanceObjects.forEach((instance) => {
             if (!instance.hasItem) {
