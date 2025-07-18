@@ -2989,4 +2989,9 @@ export default {
         .has({ value }),
     );
   },
+
+  verifyDropdownsShownInField(rowIndex, isShown = true) {
+    if (isShown) cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).exists());
+    else cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).absent());
+  },
 };
