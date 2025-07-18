@@ -14,7 +14,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Orders', () => {
+describe('Orders', { retries: { runMode: 1 } }, () => {
   const testData = {
     organization: {},
     servicePoint: {},

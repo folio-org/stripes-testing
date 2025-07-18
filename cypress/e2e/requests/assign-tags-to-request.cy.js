@@ -2,6 +2,9 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
 
 describe('Requests', () => {
   let userId;
@@ -16,10 +19,12 @@ describe('Requests', () => {
         requestData = createdRequest;
         instanceData = instanceRecordData;
       });
+
+      UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 2"');
     });
   });
 
-  afterEach(() => {
+  after(() => {
     cy.getAdminToken();
     cy.getInstance({
       limit: 1,
@@ -39,7 +44,12 @@ describe('Requests', () => {
     'C747 Assign Tags to Request (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C747'] },
     () => {
-      cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
+      cy.loginAsAdmin({
+        path: SettingsMenu.tagsGeneralPath,
+        waiter: TagsGeneral.waitLoading,
+      });
+      TagsGeneral.changeEnableTagsStatus('enable');
+      cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(instanceData.instanceTitle);
       Requests.selectFirstRequest(instanceData.instanceTitle);
