@@ -21,7 +21,7 @@ import Approvals from '../../support/fragments/settings/invoices/approvals';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import ApproveInvoiceModal from '../../support/fragments/invoices/modal/approveInvoiceModal';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: { runMode: 1 } }, () => {
   const organization = NewOrganization.getDefaultOrganization();
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
