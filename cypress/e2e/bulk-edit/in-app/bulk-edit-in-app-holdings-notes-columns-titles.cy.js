@@ -76,10 +76,10 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.verifyNewBulkEditRow(rowNumber);
   BulkEditActions.selectOption(holdingNoteType, rowNumber);
   BulkEditActions.verifyTheActionOptions(nonAdministrativeNoteActionOptions, rowNumber);
-  BulkEditActions.selectSecondAction(actionsToSelect.addNote, rowNumber);
-  BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote, rowNumber);
-  BulkEditActions.fillInSecondTextArea(noteText, rowNumber);
-  BulkEditActions.verifyValueInSecondTextArea(noteText, rowNumber);
+  BulkEditActions.selectAction(actionsToSelect.addNote, rowNumber);
+  BulkEditActions.verifyActionSelected(actionsToSelect.addNote, rowNumber);
+  BulkEditActions.fillInFirstTextArea(noteText, rowNumber);
+  BulkEditActions.verifyValueInFirstTextArea(noteText, rowNumber);
   BulkEditActions.verifyConfirmButtonDisabled(false);
 }
 
@@ -167,10 +167,10 @@ describe(
           BulkEditActions.verifyHoldingsOptions();
           BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
           BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
-          BulkEditActions.selectSecondAction(actionsToSelect.addNote);
-          BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
-          BulkEditActions.fillInSecondTextArea(notes.administrative);
-          BulkEditActions.verifyValueInSecondTextArea(notes.administrative);
+          BulkEditActions.selectAction(actionsToSelect.addNote);
+          BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
+          BulkEditActions.fillInFirstTextArea(notes.administrative);
+          BulkEditActions.verifyValueInFirstTextArea(notes.administrative);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           notesToAdd.forEach((noteToAdd) => {

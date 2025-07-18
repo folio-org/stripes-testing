@@ -179,8 +179,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
           );
-          BulkEditActions.selectSecondAction('Add');
-          BulkEditActions.verifySecondActionSelected('Add');
+          BulkEditActions.selectAction('Add');
+          BulkEditActions.verifyActionSelected('Add');
           BulkEditActions.fillInStatisticaCodeValue('book');
           BulkEditActions.verifyFilteredMultiSelectOptionsListIncludesOptionsWithText('book');
           BulkEditActions.selectStatisticalCodeValue(statisticalCodeValue);
