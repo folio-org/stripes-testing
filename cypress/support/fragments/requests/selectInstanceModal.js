@@ -65,6 +65,7 @@ export default {
     cy.wait(500);
     cy.get('#effectiveLocation-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#effectiveLocation-multiselect-input').type(option, {
       force: true,
     });
@@ -77,6 +78,7 @@ export default {
     cy.wait(500);
     cy.get('#language-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#language-multiselect-input').type(option, {
       force: true,
     });
@@ -89,6 +91,7 @@ export default {
     cy.wait(500);
     cy.get('#resource-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#resource-multiselect-input').type(option, {
       force: true,
     });
@@ -101,6 +104,7 @@ export default {
     cy.wait(500);
     cy.get('#format-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#format-multiselect-input').type(option, {
       force: true,
     });
@@ -113,6 +117,7 @@ export default {
     cy.wait(500);
     cy.get('#mode-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#mode-multiselect-input').type(option, {
       force: true,
     });
@@ -125,6 +130,7 @@ export default {
     cy.wait(500);
     cy.get('#natureOfContent-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#natureOfContent-multiselect-input').type(option, {
       force: true,
     });
@@ -204,6 +210,7 @@ export default {
     cy.wait(500);
     cy.get('#instancesTags-multiselect-input').click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.get('#instancesTags-multiselect-input').type(option, {
       force: true,
     });
