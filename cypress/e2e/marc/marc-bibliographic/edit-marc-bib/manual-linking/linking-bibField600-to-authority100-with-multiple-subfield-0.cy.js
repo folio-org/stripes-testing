@@ -23,17 +23,18 @@ describe('MARC', () => {
           markedValue: 'C380753 Black Panther',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
-          subjectValue: 'C380753 Black Panther (Fictitious character) Wakanda Forever',
+          subjectValue:
+            'C380753 Black Panther (Fictitious character) Wakanda Forever--Comic books, strips, etc',
           filterState: [
             'advancedSearch',
-            'keyword exactPhrase C380753 Black Panther or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
+            'keyword exactPhrase C380753 Black Panther (Fictitious character) or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
           ],
           bib600AfterUnlinking: [
             45,
             '600',
             '0',
             '0',
-            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
+            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $v Comic books, strips, etc. $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
           ],
         };
 
@@ -69,7 +70,7 @@ describe('MARC', () => {
           '0',
           '0',
           '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever',
-          '$i comics',
+          '$v Comic books, strips, etc. $i comics',
           '$0 http://id.loc.gov/authorities/names/n2016004081',
           '$4 .prt $2 test',
         ];
@@ -138,9 +139,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, 45);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600AfterLinkingToAuth100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.verifyInstanceSubject(
@@ -170,9 +169,7 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib600AfterUnlinking);
             QuickMarcEditor.checkLinkButtonExistByRowIndex(45);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               0,

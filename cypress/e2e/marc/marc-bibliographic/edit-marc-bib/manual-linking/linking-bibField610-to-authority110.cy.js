@@ -19,7 +19,7 @@ describe('MARC', () => {
         const testData = {
           tag610: '610',
           authorityMarkedValue: 'C374706 Radio "Vaticana". Hrvatski program',
-          subjectValue: 'C374706 Radio "Vaticana". Hrvatski program test',
+          subjectValue: 'C374706 Radio "Vaticana". Hrvatski program test--Congresses',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Subject',
         };
@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag610,
           '2',
           '0',
-          '$a C374706 Radio "Vaticana". $b Hrvatski program $u test $0 http://id.loc.gov/authorities/names/n93094742',
+          '$a C374706 Radio "Vaticana". $b Hrvatski program $v Congresses. $u test $0 http://id.loc.gov/authorities/names/n93094742',
         ];
         const bib610LinkedFieldValues = [
           18,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '2',
           '0',
           '$a C374706 Radio "Vaticana". $b Hrvatski program',
-          '$u test',
+          '$v Congresses. $u test',
           '$0 http://id.loc.gov/authorities/names/n93094742',
           '',
         ];
@@ -126,9 +126,7 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib610LinkedFieldValues);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               0,
@@ -141,16 +139,12 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
@@ -161,9 +155,7 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib610UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib610UnlinkedFieldValues[0]);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();
