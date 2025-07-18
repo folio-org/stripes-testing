@@ -167,7 +167,7 @@ describe('Bulk-edit', () => {
 
       it(
         'C436750 Verify generated Logs files for Items (Query - In app) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C436750'] },
+        { tags: ['extendedPath', 'firebird', 'C436750'] },
         () => {
           const itemIds = [instance.itemAvailable.id, instance.itemCheckedOut.id];
 
