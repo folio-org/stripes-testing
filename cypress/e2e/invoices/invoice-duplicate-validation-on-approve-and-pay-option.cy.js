@@ -181,6 +181,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
       });
       setApprovePayValue(isApprovePayEnabled);
       Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.sortInvoicesBy('Status');
     });
   });
 
@@ -193,7 +194,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     'C440075 Check invoice duplicate validation on "Approve & pay" option (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 0);
+      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 1);
       InvoiceView.clickApproveAndPayInvoice({ isApprovePayEnabled });
       ApproveInvoiceModal.verifyModalViewForDuplicateInvoice(
         { isApprovePayEnabled },
@@ -204,7 +205,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
       });
       Invoices.closeInvoiceDetailsPane();
-      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 1);
+      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 0);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
       });
