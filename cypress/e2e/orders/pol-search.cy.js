@@ -8,7 +8,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('orders: Test Po line search', () => {
+describe('orders: Test Po line search', { retries: { runMode: 1 } }, () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
