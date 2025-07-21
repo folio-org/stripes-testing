@@ -20,7 +20,12 @@ describe('Requests', () => {
         instanceData = instanceRecordData;
       });
 
-      UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 2"');
+      UserEdit.setupUserServicePointsMultiple(Cypress.env('diku_login'), [
+        'Circ Desk 1',
+        'Circ Desk 2',
+        'Online',
+        'DCB',
+      ]);
     });
   });
 

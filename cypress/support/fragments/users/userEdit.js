@@ -570,16 +570,21 @@ export default {
       });
   },
 
-  setupUserServicePoints(username, servicePointQuery) {
+  setupUserServicePointsMultiple(username, servicePointNames) {
     cy.getUsers({ limit: 1, query: `"username"="${username}"` }).then((users) => {
-      ServicePoints.getViaApi({ limit: 1, query: servicePointQuery }).then((servicePoints) => {
-        const servicePointId = servicePoints[0].id;
-
+      ServicePoints.getViaApi().then((servicePoints) => {
+        const servicePointIds = servicePointNames
+          .map((name) => servicePoints.find((sp) => sp.name.includes(name))?.id)
+          .filter(Boolean);
         cy.getUserServicePoints(users[0].id).then((userServicePoints) => {
           if (userServicePoints && userServicePoints.length > 0) {
-            this.changeServicePointPreferenceViaApi(users[0].id, [servicePointId], servicePointId);
+            this.changeServicePointPreferenceViaApi(
+              users[0].id,
+              servicePointIds,
+              servicePointIds[0],
+            );
           } else {
-            this.addServicePointViaApi(servicePointId, users[0].id, servicePointId);
+            this.addServicePointsViaApi(servicePointIds, users[0].id, servicePointIds[0]);
           }
           cy.wait(1000);
         });

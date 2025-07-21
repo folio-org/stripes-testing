@@ -34,7 +34,12 @@ describe('Users', () => {
           usersData.userProxy = proxyProperties;
         });
 
-        UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
+        UserEdit.setupUserServicePointsMultiple(Cypress.env('diku_login'), [
+          'Circ Desk 1',
+          'Circ Desk 2',
+          'Online',
+          'DCB',
+        ]);
       })
       .then(() => {
         proxyBody = {
