@@ -223,8 +223,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption(suppressFromDiscovery);
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
           BulkEditActions.verifyTheActionOptions(Object.values(actions));
-          BulkEditActions.selectSecondAction(actions.setTrue);
-          BulkEditActions.verifySecondActionSelected(actions.setTrue);
+          BulkEditActions.selectAction(actions.setTrue);
+          BulkEditActions.verifyActionSelected(actions.setTrue);
           BulkEditActions.applyToItemsRecordsCheckboxExists(true);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
@@ -343,8 +343,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption(suppressFromDiscovery);
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
-          BulkEditActions.selectSecondAction(actions.setFalse);
-          BulkEditActions.verifySecondActionSelected(actions.setFalse);
+          BulkEditActions.selectAction(actions.setFalse);
+          BulkEditActions.verifyActionSelected(actions.setFalse);
           BulkEditActions.applyToItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();

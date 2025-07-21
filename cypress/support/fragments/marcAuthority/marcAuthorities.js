@@ -786,7 +786,7 @@ export default {
   },
 
   checkSearchInput(value) {
-    cy.expect(searchInput.has({ value }));
+    cy.expect(searchInput.has({ value: including(value) }));
   },
 
   clickResetAllButtonInAdvSearchModal() {

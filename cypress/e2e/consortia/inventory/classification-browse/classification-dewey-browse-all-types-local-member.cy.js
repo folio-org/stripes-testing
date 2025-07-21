@@ -244,7 +244,7 @@ describe('Inventory', () => {
 
       it(
         'C468281 Classifications of each identifier type from Local Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Member tenant only (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C468281'] },
+        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468281'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.resetTenant();

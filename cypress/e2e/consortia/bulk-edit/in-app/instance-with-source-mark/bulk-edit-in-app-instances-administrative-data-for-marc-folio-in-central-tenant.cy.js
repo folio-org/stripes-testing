@@ -19,6 +19,7 @@ import InstanceRecordView from '../../../../../support/fragments/inventory/insta
 import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcFileContent';
 import { tenantNames } from '../../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ExportFile from '../../../../../support/fragments/data-export/exportFile';
 
 let user;
 let statisticalCodeFirst;
@@ -174,8 +175,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
           );
-          BulkEditActions.selectSecondAction('Add');
-          BulkEditActions.verifySecondActionSelected('Add');
+          BulkEditActions.selectAction('Add');
+          BulkEditActions.verifyActionSelected('Add');
           BulkEditActions.selectStatisticalCodeValue(statisticalCodeSecond.fullName);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
@@ -183,7 +184,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
             1,
           );
-          BulkEditActions.selectSecondAction('Remove', 1);
+          BulkEditActions.selectAction('Remove', 1);
           BulkEditActions.selectStatisticalCodeValue(statisticalCodeFirst.fullName, 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
@@ -244,7 +245,7 @@ describe('Bulk-edit', () => {
             statisticalCodeSecond.fullName,
           );
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `ERROR,${folioInstance.uuid},${errorMessage}`,
           ]);
 

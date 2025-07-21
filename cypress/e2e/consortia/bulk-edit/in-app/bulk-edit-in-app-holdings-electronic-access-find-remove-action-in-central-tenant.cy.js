@@ -331,7 +331,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL relationship');
-          BulkEditActions.selectSecondAction('Find (full field search)');
+          BulkEditActions.selectAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.checkTypeExists(sharedUrlRelationship.payload.name);
           BulkEditActions.selectFromUnchangedSelect(localUrlRelationshipNameWithAffiliation);
@@ -355,7 +355,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex);
             BulkEditActions.selectOption(filter.option, rowIndex);
-            BulkEditActions.selectSecondAction(filter.action, rowIndex);
+            BulkEditActions.selectAction(filter.action, rowIndex);
             BulkEditActions.fillInFirstTextArea(filter.value, rowIndex);
             BulkEditActions.selectSecondAction('Remove', rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);

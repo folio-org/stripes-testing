@@ -57,7 +57,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.selectOption('Temporary item location');
         BulkEditSearchPane.verifyInputLabel('Temporary item location');
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.locationLookupExists();
         BulkEditSearchPane.verifyInputLabel('Replace with');
 

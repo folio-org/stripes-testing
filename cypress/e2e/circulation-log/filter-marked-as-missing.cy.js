@@ -22,7 +22,7 @@ const item = {
 };
 
 describe('Circulation log', () => {
-  before('creating user and checking out item', () => {
+  beforeEach('creating user and checking out item', () => {
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
       ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
@@ -56,7 +56,7 @@ describe('Circulation log', () => {
     });
   });
 
-  after('cleaning up test data', () => {
+  afterEach('cleaning up test data', () => {
     cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     Users.deleteViaApi(user.userId);
