@@ -34,9 +34,9 @@ describe('Finance: Ledgers', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let location;
@@ -77,7 +77,6 @@ describe('Finance: Ledgers', () => {
       });
       firstOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      cy.visit(TopMenu.ordersPath);
       Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
         firstOrder.id = firstOrderResponse.id;
         Orders.checkCreatedOrder(firstOrder);
@@ -102,6 +101,7 @@ describe('Finance: Ledgers', () => {
         'None',
         'Allocation',
       );
+      cy.wait(10000); // wait for rollover to finish
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);

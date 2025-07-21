@@ -293,7 +293,11 @@ export default {
   },
 
   verifyUserIsNotInUserList(name) {
-    cy.do([usersSelectionList.find(SelectionOption(including(name))).absent()]);
+    cy.expect(usersSelectionList.find(SelectionOption(including(name))).absent());
+  },
+
+  verifyUserIsInUserList(name) {
+    cy.expect(logsUsersAccordion.find(SelectionOption(including(name))).exists());
   },
 
   verifyEmptyUserDropdown() {
