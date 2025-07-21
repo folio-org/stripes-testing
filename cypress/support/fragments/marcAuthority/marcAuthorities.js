@@ -1715,4 +1715,17 @@ export default {
       else rootSection.find(MultiColumnListHeader(column)).is({ sortable: false });
     });
   },
+
+  toggleAuthorityLccnValidationRule({ enable = true }) {
+    cy.getSpecificatoinIds({ family: 'MARC' }).then((specs) => {
+      // Find the specification with profile 'authority'
+      const authoritySpecId = specs.find((spec) => spec.profile === 'authority').id;
+      cy.getSpecificatoinRules(authoritySpecId).then((rules) => {
+        const lccnRuleId = rules.find((rule) => rule.name === 'Invalid LCCN Subfield Value').id;
+        cy.updateSpecificatoinRule(authoritySpecId, lccnRuleId, {
+          enabled: enable,
+        });
+      });
+    });
+  },
 };
