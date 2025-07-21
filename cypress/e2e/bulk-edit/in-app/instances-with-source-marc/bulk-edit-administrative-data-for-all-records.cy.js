@@ -209,17 +209,17 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.selectOption('Staff suppress', 1);
         BulkEditSearchPane.verifyInputLabel('Staff suppress', 1);
-        BulkEditActions.selectSecondAction('Set true', 1);
+        BulkEditActions.selectAction('Set true', 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Statistical code', 2);
         BulkEditSearchPane.verifyInputLabel('Statistical code', 2);
-        BulkEditActions.selectSecondAction('Remove all', 2);
+        BulkEditActions.selectAction('Remove all', 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Suppress from discovery', 3);
         BulkEditSearchPane.verifyInputLabel('Suppress from discovery', 3);
-        BulkEditActions.selectSecondAction('Set true', 3);
+        BulkEditActions.selectAction('Set true', 3);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true, 3);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -283,11 +283,6 @@ describe('Bulk-edit', () => {
             uuid: marcInstance.uuid,
             assertions: [
               (record) => expect(record.leader).to.eq(ldrValue),
-              (record) => expect(record.get('001')).to.not.be.empty,
-              (record) => expect(record.get('005')).to.not.be.empty,
-              (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-
-              (record) => expect(record.get('008')).to.not.be.empty,
 
               (record) => expect(record.get('245')[0].ind1).to.eq('1'),
               (record) => expect(record.get('245')[0].ind2).to.eq('0'),

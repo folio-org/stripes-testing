@@ -31,18 +31,18 @@ const collegeHoldingHrids = [];
 const universityHoldingIds = [];
 const universityHoldingHrids = [];
 const folioInstance = {
-  title: `C494356 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C494356_FolioInstance_${getRandomPostfix()}`,
 };
 const marcInstance = {
-  title: `C494356 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C494356_MarcInstance_${getRandomPostfix()}`,
 };
 const sharedUrlRelationship = {
   payload: {
-    name: `C494356 shared urlRelationship ${getRandomPostfix()}`,
+    name: `AT_C494356 shared urlRelationship ${getRandomPostfix()}`,
   },
 };
 const localUrlRelationship = {
-  name: `C494356 local urlRelationship ${getRandomPostfix()}`,
+  name: `AT_C494356 local urlRelationship ${getRandomPostfix()}`,
 };
 const localUrlRelationshipNameWithAffiliation = `${localUrlRelationship.name} (${Affiliations.College})`;
 const electronicAccessFieldsFromUpperCase = {
@@ -319,7 +319,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL relationship');
-          BulkEditActions.selectSecondAction('Find (full field search)');
+          BulkEditActions.selectAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);
           BulkEditActions.selectSecondAction('Replace with');

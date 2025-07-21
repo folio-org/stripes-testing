@@ -15,6 +15,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InstanceNoteTypes from '../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let instanceTypeId;
@@ -193,14 +194,14 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};true`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false|${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};true`,
           );
           BulkEditFiles.verifyValueInRowByUUID(
             matchedRecordsFileName,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false|${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
           );
           BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
@@ -274,7 +275,7 @@ describe('Bulk-edit', () => {
             `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};true|${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
           );
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `ERROR,${marcInstance.uuid},${errorReason}`,
             `ERROR,${marcInstance.uuid},${errorReason}`,
           ]);

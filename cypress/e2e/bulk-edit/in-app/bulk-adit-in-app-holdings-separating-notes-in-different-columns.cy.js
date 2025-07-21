@@ -43,7 +43,7 @@ const initialValueSets = [
   ],
 ];
 const editedValueSets = [
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, ''],
+  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, 'null (staff only) | null'],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, ''],
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -65,6 +65,7 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -177,7 +178,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE);
         cy.wait(1000);
-        BulkEditActions.selectSecondAction(actionsToSelect.find);
+        BulkEditActions.selectAction(actionsToSelect.find);
         BulkEditActions.fillInFirstTextArea(notesText.copyNote);
         BulkEditActions.selectSecondAction(actionsToSelect.remove);
         BulkEditActions.verifyActionSelected(actionsToSelect.find);
@@ -187,8 +188,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 1);
-        BulkEditActions.selectSecondAction(actionsToSelect.removeAll, 1);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.removeAll, 1);
+        BulkEditActions.selectAction(actionsToSelect.removeAll, 1);
+        BulkEditActions.verifyActionSelected(actionsToSelect.removeAll, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);

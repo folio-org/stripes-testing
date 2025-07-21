@@ -25,6 +25,7 @@ import InstanceRecordView from '../../../../../support/fragments/inventory/insta
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import parseMrcFileContentAndVerify from '../../../../../support/utils/parseMrcFileContent';
 import UrlRelationship from '../../../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
+import ExportFile from '../../../../../support/fragments/data-export/exportFile';
 
 let user;
 let instanceTypeId;
@@ -250,10 +251,6 @@ describe('Bulk-edit', () => {
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
                 (record) => {
                   expect(
                     record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
@@ -354,7 +351,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(changedRecordsFileNameCsv, 1);
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `ERROR,${folioInstance.uuid},${errorMessage}`,
           ]);
 

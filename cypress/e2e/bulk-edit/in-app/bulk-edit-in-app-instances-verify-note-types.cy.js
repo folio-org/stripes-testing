@@ -192,10 +192,10 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(noteTypes.bibliographyNote);
         BulkEditSearchPane.verifyInputLabel(noteTypes.bibliographyNote);
         BulkEditActions.verifyTheActionOptions(actionOptions);
-        BulkEditActions.selectSecondAction(actionsToSelect.addNote);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
-        BulkEditActions.fillInSecondTextArea(noteTexts.bibliographyNote2);
-        BulkEditActions.verifyValueInSecondTextArea(noteTexts.bibliographyNote2);
+        BulkEditActions.selectAction(actionsToSelect.addNote);
+        BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
+        BulkEditActions.fillInFirstTextArea(noteTexts.bibliographyNote2);
+        BulkEditActions.verifyValueInFirstTextArea(noteTexts.bibliographyNote2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         setOfColumnValues.forEach((columnValueSet, ind) => {
@@ -204,9 +204,9 @@ describe('Bulk-edit', () => {
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(rowNumber);
           BulkEditActions.selectOption(columnValueSet.noteColumn, rowNumber);
-          BulkEditActions.selectSecondAction(actionsToSelect.addNote, rowNumber);
-          BulkEditActions.fillInSecondTextArea(columnValueSet.noteText, rowNumber);
-          BulkEditActions.verifyValueInSecondTextArea(columnValueSet.noteText, rowNumber);
+          BulkEditActions.selectAction(actionsToSelect.addNote, rowNumber);
+          BulkEditActions.fillInFirstTextArea(columnValueSet.noteText, rowNumber);
+          BulkEditActions.verifyValueInFirstTextArea(columnValueSet.noteText, rowNumber);
           BulkEditActions.verifyConfirmButtonDisabled(false);
         });
 

@@ -86,7 +86,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyResultsUnderColumns(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
-          '',
+          'false',
         );
         BulkEditSearchPane.verifyResultsUnderColumns(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SOURCE,
@@ -145,8 +145,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE);
         cy.wait(1000);
-        BulkEditActions.selectSecondAction('Add note');
-        BulkEditActions.fillInSecondTextArea(copyNoteText);
+        BulkEditActions.selectAction('Add note');
+        BulkEditActions.fillInFirstTextArea(copyNoteText);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(

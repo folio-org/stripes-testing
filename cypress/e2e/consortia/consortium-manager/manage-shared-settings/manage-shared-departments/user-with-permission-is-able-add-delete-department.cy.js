@@ -1,23 +1,24 @@
 import moment from 'moment';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
+import ConsortiaControlledVocabularyPaneset, {
+  actionIcons,
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Departments from '../../../../../support/fragments/settings/users/departments';
-import ConsortiaControlledVocabularyPaneset, {
-  actionIcons,
-} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -71,7 +72,7 @@ describe('Consortia', () => {
           'C406999 User with "Consortium manager: Can share settings to all members" permission is able to add/delete department shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
