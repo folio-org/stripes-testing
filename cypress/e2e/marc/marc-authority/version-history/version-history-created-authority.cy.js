@@ -65,6 +65,7 @@ describe('MARC', () => {
             MarcAuthorities.waitLoading();
             MarcAuthorities.clickActionsAndNewAuthorityButton();
             MarcAuthority.checkSourceFileSelectShown();
+            MarcAuthority.setValid008DropdownValues();
             MarcAuthority.selectSourceFile(testData.sourceName);
             newFields.forEach((newField) => {
               MarcAuthority.addNewFieldAfterExistingByTag(
