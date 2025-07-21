@@ -22,11 +22,7 @@ describe('MARC', () => {
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
       };
       const dropdownUpdate = [testData.tagLdr, 'Status', 'n - New'];
-      const textUpdate = [
-        testData.tag008,
-        'Geo Subd',
-        'd - ui-quick-marc.record.fixedField.Subdivided geographically-direct',
-      ];
+      const textUpdate = [testData.tag008, 'Geo Subd', 'd - Subdivided geographically-direct'];
       const versionHistoryCardsData = [
         {
           isOriginal: false,
