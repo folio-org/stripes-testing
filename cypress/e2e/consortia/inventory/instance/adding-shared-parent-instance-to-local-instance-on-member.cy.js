@@ -60,7 +60,7 @@ describe('Inventory', () => {
         InstanceRecordView.waitLoading();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.addParentInstances(testData.sharedInstance.instanceTitle);
+        InstanceRecordEdit.addParentInstance(testData.sharedInstance.instanceTitle);
         InstanceRecordEdit.verifyParentInstance(
           testData.sharedInstance.instanceTitle,
           testData.sharedInstance.instanceHRID,

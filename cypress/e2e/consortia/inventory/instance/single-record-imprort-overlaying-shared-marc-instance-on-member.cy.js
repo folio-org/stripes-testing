@@ -13,7 +13,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -34,6 +33,17 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
+      cy.setTenant(Affiliations.College);
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
+      DataImport.uploadFileViaApi(
+        testData.marcFile.path,
+        testData.marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.instanceId = response[0].instance.id;
+      });
+      cy.resetTenant();
+
       cy.createTempUser([]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -44,22 +54,13 @@ describe('Inventory', () => {
           Permissions.uiInventoryViewCreateEditInstances.gui,
           Permissions.settingsDataImportView.gui,
         ]);
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-        DataImport.uploadFileViaApi(
-          testData.marcFile.path,
-          testData.marcFile.fileName,
-          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-        ).then((response) => {
-          testData.instanceId = response[0].instance.id;
-        });
         cy.resetTenant();
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
       });
     });
 

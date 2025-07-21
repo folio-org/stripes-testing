@@ -26,7 +26,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instanceId = instanceData;
+        testData.instanceId = instanceData.instanceId;
       });
 
       cy.createTempUser([

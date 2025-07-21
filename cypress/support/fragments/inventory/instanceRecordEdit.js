@@ -193,7 +193,7 @@ export default {
     cy.do(subjectAccordion.find(Button({ icon: 'trash' })).click());
     cy.wait(1000);
   },
-  addParentInstances: (instanceTitle) => {
+  addParentInstance: (instanceTitle) => {
     cy.do([
       addParentInstanceButton.click(),
       parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
