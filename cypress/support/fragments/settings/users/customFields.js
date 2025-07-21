@@ -161,7 +161,7 @@ export default {
   },
 
   verifyDeletedCustomFields(field) {
-    cy.expect(Accordion(field).absent());
+    cy.expect(Accordion({ label: field.fieldLabel }).absent());
   },
 
   verifyEditButtonAbsent() {
