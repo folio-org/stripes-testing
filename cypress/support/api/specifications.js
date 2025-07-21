@@ -106,6 +106,19 @@ Cypress.Commands.add('deleteSpecificationFieldSubfield', (subfieldId, failOnStat
   });
 });
 
+Cypress.Commands.add(
+  'updateSpecificationSubfield',
+  (subfieldId, subfield, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.PUT,
+      path: `specification-storage/subfields/${subfieldId}`,
+      isDefaultSearchParamsRequired: false,
+      body: subfield,
+      failOnStatusCode,
+    });
+  },
+);
+
 Cypress.Commands.add('getSpecificationFieldIndicators', (fieldId) => {
   return cy.okapiRequest({
     method: REQUEST_METHOD.GET,

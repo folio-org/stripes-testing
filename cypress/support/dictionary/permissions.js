@@ -433,6 +433,10 @@ export default {
     internal: 'specification-storage.field.subfields.item.post',
     gui: 'Specification Storage - Create subfield definition for field',
   },
+  specificationStorageUpdateSpecificationSubfield: {
+    internal: 'specification-storage.subfields.item.put',
+    gui: 'Specification Storage - Update subfield definition',
+  },
 
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
