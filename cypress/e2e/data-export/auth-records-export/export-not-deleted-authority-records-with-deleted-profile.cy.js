@@ -7,30 +7,27 @@ import FileManager from '../../../support/utils/fileManager';
 import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import { getLongDelay } from '../../../support/utils/cypressTools';
-import DateTools from '../../../support/utils/dateTools';
 
 let user;
 let exportedFileName;
 let authorityUUIDsFileName;
 let createdAuthoritySourceFileId;
-const recordsCount = 1;
 const authFile = {
-  sourceName: `AT_C446006_AuthoritySourceFile_${getRandomPostfix()}`,
+  sourceName: `AT_C446012_AuthoritySourceFile_${getRandomPostfix()}`,
   prefix: getRandomLetters(8),
   startWithNumber: '1',
   hridStartsWith: '',
 };
 const authorityInstance = {
-  title: `AT_C446006_MarcAuthority_${getRandomPostfix()}`,
+  title: `AT_C446012_MarcAuthority_${getRandomPostfix()}`,
 };
 const authorityFields = [
   { tag: '100', content: `$a ${authorityInstance.title}`, indicators: ['\\', '\\'] },
 ];
-const authorityExportProfile = 'Default authority';
+const deletedAuthorityExportProfile = 'Deleted authority';
 
 describe('Data Export', () => {
   before('create test data', () => {
@@ -54,18 +51,12 @@ describe('Data Export', () => {
           authorityFields,
         ).then((createdRecordId) => {
           authorityInstance.id = createdRecordId;
-          authorityUUIDsFileName = `AT_C446006_authorityUUIDs_${getRandomPostfix()}.csv`;
+          authorityUUIDsFileName = `AT_C446012_authorityUUIDs_${getRandomPostfix()}.csv`;
 
           FileManager.createFile(
             `cypress/fixtures/${authorityUUIDsFileName}`,
             authorityInstance.id,
           );
-
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            query: `id="${authorityInstance.id}"`,
-          }).then((authorities) => {
-            authorityInstance.naturalId = authorities[0].naturalId;
-          });
         });
       });
       cy.login(user.username, user.password, {
@@ -81,22 +72,22 @@ describe('Data Export', () => {
     cy.deleteAuthoritySourceFileViaAPI(createdAuthoritySourceFileId, true);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${authorityUUIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(exportedFileName);
   });
 
   it(
-    'C446006 Export not deleted Authority records with Default authority export job profile (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C446006'] },
+    'C446012 Export not deleted Authority records with "Deleted authority export job profile" (firebird)',
+    { tags: ['criticalPath', 'firebird', 'C446012'] },
     () => {
-      // Step 1-4: Upload the .csv file
+      // Step 1: Trigger the data export by clicking on the "or choose file" button and submitting the CSV file
       ExportFileHelper.uploadFile(authorityUUIDsFileName);
+
+      // Step 2-4: Run the "Deleted authority export job profile"
       ExportFileHelper.exportWithDefaultJobProfile(
         authorityUUIDsFileName,
-        'Default authority',
+        deletedAuthorityExportProfile,
         'Authorities',
       );
       DataExportLogs.verifyAreYouSureModalAbsent();
-
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
       cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
         const { jobExecutions } = response.body;
@@ -104,47 +95,23 @@ describe('Data Export', () => {
         const jobId = jobData.hrId;
         exportedFileName = `${authorityUUIDsFileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
 
-        DataExportResults.verifySuccessExportResultCells(
+        DataExportResults.verifyFailedExportResultCells(
           exportedFileName,
-          recordsCount,
+          1,
           jobId,
           user.username,
-          authorityExportProfile,
+          deletedAuthorityExportProfile,
         );
 
-        // Step 5: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
-        DataExportLogs.clickButtonWithText(exportedFileName);
+        const date = new Date();
+        const formattedDateUpToHours = date.toISOString().slice(0, 13);
 
-        // Step 6: Check exported records included in the file
-        const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
-        const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
-        const assertionsOnMarcFileContent = [
-          {
-            uuid: authorityInstance.id,
-            assertions: [
-              (record) => expect(record.leader).to.exist,
-              (record) => expect(record.get('001')[0].value).to.eq(authorityInstance.naturalId),
-              (record) => {
-                expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-              },
-              (record) => {
-                expect(record.get('008')[0].value.startsWith(todayDateYYMMDD)).to.be.true;
-              },
-              (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
-              (record) => expect(record.get('100')[0].subf[0][1]).to.eq(authorityInstance.title),
-              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
-              (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
-              (record) => expect(record.get('999')[0].subf[1][1]).to.eq(authorityInstance.id),
-            ],
-          },
-        ];
-
-        parseMrcFileContentAndVerify(
-          exportedFileName,
-          assertionsOnMarcFileContent,
-          recordsCount,
-          false,
-          true,
+        // Step 5: Click on the row with failed data export job at the "Data Export" logs table
+        DataExportLogs.clickFileNameFromTheList(exportedFileName);
+        DataExportLogs.verifyErrorTextInErrorLogsPane(
+          new RegExp(
+            `${formattedDateUpToHours}.*ERROR This profile can only be used to export authority records set for deletion`,
+          ),
         );
       });
     },

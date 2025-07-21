@@ -88,7 +88,7 @@ export default {
     recordsCount,
     jobId,
     userName = null,
-    jobType = 'instances',
+    jobType = 'Default instances',
     invalidQuery = false,
   ) {
     const row = ListRow({ content: including(resultFileName) });
@@ -113,7 +113,7 @@ export default {
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
             resultRow.exported.is({ content: '0' }),
-            resultRow.jobProfile.is({ content: `Default ${jobType} export job profile` }),
+            resultRow.jobProfile.is({ content: `${jobType} export job profile` }),
             resultRow.runBy.is({ content: userNameToVerify }),
             resultRow.id.is({ content: jobId.toString() }),
           ]);

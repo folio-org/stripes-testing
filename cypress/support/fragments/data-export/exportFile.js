@@ -195,13 +195,13 @@ export default {
   removeMarcField,
   exportWithDefaultJobProfile: (
     fileName,
-    jobType = 'instances',
+    jobType = 'Default instances',
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
     cy.do([
       MultiColumnListCell({
-        content: `Default ${jobType} export job profile`,
+        content: `${jobType} export job profile`,
         columnIndex: 0,
       }).click(),
       areYouSureModal.find(Select()).choose(selectType),
