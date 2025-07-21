@@ -15,12 +15,13 @@ import Users from '../../../../support/fragments/users/users';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      oclcNumberForImport: '1234568',
+      oclcNumberForImport: '1202462670',
       oclcNumberForOverlay: '3213213',
       OCLCAuthentication: '100481406/PAOLF',
       instanceId: '',
-      // updatedInstanceTitle:
-      //   'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
+      instanceTitle: 'Cooking Light Soups & Stew.',
+      updatedInstanceTitle:
+        'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
     };
 
     before('Create test data', () => {
@@ -63,12 +64,12 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         Logs.openViewAllLogs();
-        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Update Instance');
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
         LogsViewAll.waitUIToBeFiltered();
         LogsViewAll.openFileDetails('No file name');
         FileDetails.verifyTitle(
-          // testData.updatedInstanceTitle,
+          testData.updatedInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
         [

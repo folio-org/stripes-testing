@@ -1,9 +1,10 @@
-import { including, matching, or } from '@interactors/html';
+import { HTML, including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
   Checkbox,
   FieldSet,
+  KeyValue,
   Modal,
   Pane,
   PaneHeader,
@@ -191,6 +192,25 @@ export default {
     cy.do(subjectAccordion.find(Button({ icon: 'trash' })).click());
     cy.wait(1000);
   },
+  addParentInstance: (instanceTitle) => {
+    cy.do([
+      addParentInstanceButton.click(),
+      parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.searchByTitle(instanceTitle);
+    InventoryInstanceModal.selectInstance();
+  },
+  addChildInstance(instanceTitle) {
+    cy.do([
+      addChildInstanceButton.click(),
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.searchByTitle(instanceTitle);
+    InventoryInstanceModal.selectInstance();
+  },
+  // id="clickable-add-child-instance-add-button"
   selectNatureOfContent(value) {
     cy.do(Select('Nature of content term').choose(value));
   },
@@ -405,6 +425,22 @@ export default {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
     cy.expect(Selection({ value: including(statisticalCode) }).absent());
   },
+  selectParentRelationshipType(type) {
+    cy.do(
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(Select({ name: 'parentInstances[0].instanceRelationshipTypeId' }))
+        .choose(type),
+    );
+  },
+  selectChildRelationshipType(type) {
+    cy.do(
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(Select({ name: 'childInstances[0].instanceRelationshipTypeId' }))
+        .choose(type),
+    );
+  },
   verifyErrorMessageForStatisticalCode: (isPresented = true) => {
     if (isPresented) {
       cy.expect(FieldSet('Statistical code').has({ error: 'Please select to continue' }));
@@ -492,5 +528,45 @@ export default {
   clickSetForDeletionCheckbox(isChecked) {
     cy.do(setForDeletionChecbox.click());
     cy.expect(setForDeletionChecbox.has({ checked: isChecked }));
+  },
+
+  verifyParentInstance(title, hrid) {
+    cy.expect([
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Instance HRID'))
+        .has({ value: hrid }),
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Title*Connected'))
+        .has({ value: title }),
+    ]);
+  },
+
+  verifyChildInstance(title, hrid) {
+    cy.expect([
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Instance HRID'))
+        .has({ value: hrid }),
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Title*Connected'))
+        .has({ value: title }),
+    ]);
+  },
+
+  verifyShareParentLinkingError() {
+    cy.expect(
+      Modal('Saving instance failed')
+        .find(
+          HTML(
+            including(
+              '400: One instance is local and one is shared. To be linked, both instances must be local or shared.',
+            ),
+          ),
+        )
+        .exists(),
+    );
   },
 };
