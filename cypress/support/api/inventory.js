@@ -149,11 +149,12 @@ Cypress.Commands.add('createModesOfIssuans', (specialMode) => {
   });
 });
 
-Cypress.Commands.add('deleteModesOfIssuans', (id) => {
+Cypress.Commands.add('deleteModesOfIssuans', (id, ignoreErrors = true) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `modes-of-issuance/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
@@ -416,7 +417,13 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
 
 Cypress.Commands.add(
   'createSimpleMarcHoldingsViaAPI',
-  (instanceId, instanceHrid, locationCode, actionNote = 'note') => {
+  (
+    instanceId,
+    instanceHrid,
+    locationCode,
+    actionNote = 'note',
+    { tag852firstIndicator = '\\' } = {},
+  ) => {
     cy.okapiRequest({
       path: 'records-editor/records',
       method: 'POST',
@@ -435,7 +442,7 @@ Cypress.Commands.add(
           },
           {
             content: `$b ${locationCode}`,
-            indicators: ['\\', '\\'],
+            indicators: [`${tag852firstIndicator || '\\'}`, '\\'],
             tag: '852',
           },
           {
@@ -681,4 +688,13 @@ Cypress.Commands.add('getSubjectTypesViaApi', (searchParams) => {
       Cypress.env('subjectTypes', body.subjectTypes);
       return body.subjectTypes;
     });
+});
+
+Cypress.Commands.add('getAllModesOfIssuance', (searchParams) => {
+  cy.okapiRequest({
+    path: 'modes-of-issuance',
+    searchParams,
+  }).then(({ body }) => {
+    return body.issuanceModes;
+  });
 });

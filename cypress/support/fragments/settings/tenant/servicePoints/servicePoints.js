@@ -44,12 +44,25 @@ export default {
   defaultServicePoint,
   getDefaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
-  getViaApi: (searchParams) => cy
-    .okapiRequest({
-      path: 'service-points',
-      searchParams,
-    })
-    .then(({ body }) => body.servicepoints),
+  getViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'service-points',
+        searchParams,
+      })
+      .then(({ body }) => body.servicepoints);
+  },
+
+  getCircDesk1ServicePointViaApi() {
+    if (!Cypress.env('CircDesk1')) {
+      return this.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+        Cypress.env('CircDesk1', servicePoints[0]);
+        return servicePoints[0];
+      });
+    } else {
+      return Cypress.env('CircDesk1');
+    }
+  },
 
   createViaApi: (servicePointParameters = defaultServicePoint) => cy.okapiRequest({
     path: 'service-points',

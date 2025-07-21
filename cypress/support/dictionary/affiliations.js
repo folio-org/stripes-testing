@@ -13,6 +13,7 @@ export default {
     University: 'cs00000int_0005',
     School: 'cs00000int_0003',
     College: 'cs00000int_0001',
+    Professional: 'cs00000int_0002',
   },
   snapshot: {
     Consortia: 'consortium',

@@ -49,6 +49,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 
 Cypress.Commands.add('getAdminToken', () => {
   cy.clearCookies({ domain: null });
+  cy.wait(2000); // Wait for cookies to be cleared
   cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 
@@ -58,6 +59,10 @@ Cypress.Commands.add('getCollegeAdminToken', () => {
 
 Cypress.Commands.add('getUniversityAdminToken', () => {
   cy.getToken(adminUsernames.university, Cypress.env('diku_password'));
+});
+
+Cypress.Commands.add('getUserTokenOfAdminUser', () => {
+  cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 
 Cypress.Commands.add('getUserToken', (username, password) => {
@@ -106,6 +111,7 @@ Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
   cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
+  cy.wait(500);
 });
 
 Cypress.Commands.add('getConsortiaStatus', () => {

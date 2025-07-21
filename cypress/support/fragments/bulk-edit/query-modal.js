@@ -32,6 +32,7 @@ export const holdingsFieldValues = {
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
+  temporaryLocation: 'Temporary location — Name',
 };
 export const instanceFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -43,6 +44,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
+  languages: 'Instance — Languages',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
@@ -62,6 +64,8 @@ export const usersFieldValues = {
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
   userId: 'User — User UUID',
+  userType: 'User — Type',
+  userEmail: 'User — Email',
 };
 export const dateTimeOperators = [
   'Select operator',

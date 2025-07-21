@@ -26,6 +26,7 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
 const changesAccordion = Accordion(previewOfRecordsChangedFormName);
 const errorsAccordion = Accordion('Errors & warnings');
+const showWarningsCheckbox = Checkbox({ labelText: 'Show warnings' });
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -65,6 +66,8 @@ const formMap = {
   [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED]: changesAccordion,
   [BULK_EDIT_FORMS.ARE_YOU_SURE]: areYouSureForm,
 };
+export const subjectsTableHeaders = ['Subject headings', 'Subject source', 'Subject type'];
+export const classificationsTableHeaders = ['Classification identifier type', 'Classification'];
 export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCESSIBILITY_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
@@ -806,12 +809,39 @@ export default {
     );
   },
 
+  verifyErrorsAccordionIncludesNumberOfIdentifiers(expectedErrorsCount, arrayOfIdentifiers) {
+    cy.then(() => {
+      errorsAccordion
+        .find(MultiColumnList())
+        .rowCount()
+        .then((count) => {
+          expect(count).to.equal(expectedErrorsCount);
+        });
+    });
+    cy.then(() => {
+      for (let i = 0; i < expectedErrorsCount; i++) {
+        errorsAccordion
+          .find(MultiColumnList())
+          .find(MultiColumnListRow({ indexRow: `row-${i}` }))
+          .find(MultiColumnListCell({ column: 'Record identifier' }))
+          .content()
+          .then((identifier) => {
+            expect(arrayOfIdentifiers).to.include(identifier);
+          });
+      }
+    });
+  },
+
   verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
       errorsAccordion
         .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
         .exists(),
     );
+  },
+
+  clickShowWarningsCheckbox() {
+    cy.do(errorsAccordion.find(showWarningsCheckbox).click());
   },
 
   verifyReasonForError(errorText) {
@@ -902,6 +932,7 @@ export default {
   },
 
   verifyCheckedCheckboxesPresentInTheTable() {
+    cy.wait(2000);
     cy.get('[role=columnheader]').then((headers) => {
       headers.each((_index, header) => {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
@@ -1376,6 +1407,24 @@ export default {
     );
   },
 
+  verifySubjectColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            subjectsTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
   verifyElectronicAccessTableInForm(
     formType,
     instanceIdentifier,
@@ -1389,6 +1438,75 @@ export default {
     this.verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier);
 
     const expectedValues = [relationship, uri, linkText, materialsSpecified, publicNote];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
+  },
+
+  verifySubjectTableInForm(
+    formType,
+    instanceIdentifier,
+    subjectHeadingValue,
+    subjectValue,
+    subjectTypeValue,
+    miniRowIndex = 1,
+  ) {
+    this.verifySubjectColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [subjectHeadingValue, subjectValue, subjectTypeValue];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
+  },
+
+  verifyClassificationColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            classificationsTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
+  verifyClassificationTableInForm(
+    formType,
+    instanceIdentifier,
+    classificationIdentifierTypeValue,
+    classificationValue,
+    miniRowIndex = 1,
+  ) {
+    this.verifyClassificationColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [classificationIdentifierTypeValue, classificationValue];
 
     cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
@@ -1456,6 +1574,7 @@ export default {
       matchedAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
     cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .eq(0)
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);
@@ -1556,6 +1675,12 @@ export default {
   verifyCellWithContentAbsentsInChangesAccordion(...cellContent) {
     cellContent.forEach((content) => {
       cy.expect(changesAccordion.find(MultiColumnListCell(content)).absent());
+    });
+  },
+
+  verifyCellWithContentAbsentsInAreYouSureForm(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(content)).absent());
     });
   },
 };

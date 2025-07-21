@@ -1,37 +1,40 @@
 import {
-  Button,
-  SearchField,
-  PaneHeader,
-  Pane,
-  Select,
   Accordion,
-  KeyValue,
+  Button,
+  Card,
+  Callout,
+  calloutTypes,
   Checkbox,
+  HTML,
+  including,
+  KeyValue,
+  Link,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
-  Modal,
-  TextField,
-  HTML,
-  including,
-  SelectionOption,
   MultiSelect,
   MultiSelectOption,
-  Link,
-  Section,
-  Card,
+  Pane,
   PaneContent,
+  PaneHeader,
+  SearchField,
+  Section,
+  Select,
+  SelectionOption,
   Spinner,
+  TextField,
 } from '../../../../interactors';
-import SearchHelper from '../finance/financeHelper';
-import InteractorsTools from '../../utils/interactorsTools';
+import { DEFAULT_WAIT_TIME, ORDER_SYSTEM_CLOSING_REASONS } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
-import OrderDetails from './orderDetails';
-import OrderEditForm from './orderEditForm';
+import InteractorsTools from '../../utils/interactorsTools';
+import SearchHelper from '../finance/financeHelper';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
+import OrderDetails from './orderDetails';
+import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
@@ -45,7 +48,7 @@ const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-const admin = 'ADMINISTRATOR, Diku_admin';
+const admin = Cypress.env('diku_login');
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -81,7 +84,8 @@ export default {
   clearSearchField() {
     cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
   },
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
   },
 
@@ -242,6 +246,7 @@ export default {
     expandActionsDropdown();
     cy.do([
       Button('Unopen').click(),
+      cy.wait(4000),
       Modal({ id: 'order-unopen-confirmation' })
         .find(Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }))
         .click(),
@@ -449,9 +454,35 @@ export default {
     );
   },
 
+  checkOneOfCalloutsContainsErrorMessage: (text) => {
+    cy.get('[class^=calloutBase-]').then(($els) => {
+      const matchingId = [...$els].find(
+        (el) => el.className.includes('error') &&
+          el.querySelector('[class^=message-]')?.textContent.includes(text),
+      )?.id;
+      if (matchingId) {
+        cy.expect(
+          Callout({ id: matchingId, type: calloutTypes.error }).has({
+            textContent: including(text),
+          }),
+        );
+      }
+    });
+  },
+
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
+  },
+
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
   },
 
   selectStatusInSearch: (orderStatus) => {
@@ -572,7 +603,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-closeReason.reason' }).click(),
       Button({ id: 'closeReason.reason-selection' }).click(),
-      SelectionOption({ id: 'option-closeReason.reason-selection-0-Cancelled' }).click(),
+      SelectionOption(ORDER_SYSTEM_CLOSING_REASONS.CANCELLED).click(),
     ]);
   },
   selectReEncumberFilter: () => {
@@ -655,6 +686,7 @@ export default {
     cy.wait(4000);
     cy.do([
       buttonAcquisitionMethodFilter.click(),
+      MultiSelect({ id: 'acq-methods-filter' }).toggle(),
       MultiSelect({ id: 'acq-methods-filter' }).select([AUmethod]),
       buttonAcquisitionMethodFilter.click(),
     ]);
@@ -900,7 +932,7 @@ export default {
   openVendorFilterModal: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
-      Button('Organization look-up').click(),
+      Button({ id: 'filter-vendor-button' }).click(),
     ]);
     cy.expect(selectOrganizationModal.exists());
   },

@@ -1,13 +1,13 @@
 import {
   Button,
   KeyValue,
-  Label,
   Pane,
   Select,
   Selection,
   TextArea,
   TextField,
   matching,
+  Modal,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
@@ -15,6 +15,7 @@ import SelectLocationModal from '../../orders/modals/selectLocationModal';
 import DeletePieceModal from './deletePieceModal';
 
 const editPieceModal = Pane({ id: 'pane-title-form' });
+const deleteHoldingModal = Modal({ id: 'delete-holdings-confirmation' });
 const createNewHoldingForLocationButton = editPieceModal.find(
   Button('Create new holdings for location'),
 );
@@ -31,7 +32,7 @@ const editPieceFields = {
   'Piece format': editPieceModal.find(Select({ name: 'format' })),
   'Expected receipt date': editPieceModal.find(TextField({ name: 'receiptDate' })),
   Comment: editPieceModal.find(TextArea({ name: 'comment' })),
-  'Order line locations': editPieceModal.find(Label('Order line locations')),
+  'Order line locations': editPieceModal.find(KeyValue('Order line locations')),
   'Create item': editPieceModal.find(KeyValue('Create item')),
 };
 
@@ -83,6 +84,7 @@ export default {
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
     cy.do(quickReceiveButton.click());
+    cy.do(deleteHoldingModal.find(Button('Keep Holdings')).click());
 
     if (peiceReceived) {
       InteractorsTools.checkCalloutMessage(

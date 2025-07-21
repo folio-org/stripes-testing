@@ -379,6 +379,61 @@ export default {
     internal: 'inventory-storage.authorities.all',
     gui: 'inventory storage module - all authorities permissions',
   },
+
+  // Specification Storage
+  specificationStorageGetSpecificationFields: {
+    internal: 'specification-storage.specification.fields.collection.get',
+    gui: 'Specification Storage - Get specification field definition collection',
+  },
+  specificationStorageCreateSpecificationField: {
+    internal: 'specification-storage.specification.fields.item.post',
+    gui: 'Specification Storage - Create field definition for specification',
+  },
+  specificationStorageUpdateSpecificationField: {
+    internal: 'specification-storage.fields.item.put',
+    gui: 'Specification Storage - Update field definition',
+  },
+  specificationStorageDeleteSpecificationField: {
+    internal: 'specification-storage.fields.item.delete',
+    gui: 'Specification Storage - Delete specification field definition',
+  },
+  specificationStorageGetSpecificationFieldIndicators: {
+    internal: 'specification-storage.field.indicators.collection.get',
+    gui: 'Specification Storage - Get field indicators definition collection',
+  },
+  specificationStorageCreateSpecificationFieldIndicator: {
+    internal: 'specification-storage.field.indicators.item.post',
+    gui: 'Specification Storage - Create indicator definition for field',
+  },
+  specificationStorageUpdateSpecificationFieldIndicator: {
+    internal: 'specification-storage.indicators.item.put',
+    gui: 'Specification Storage - Update indicator definition',
+  },
+  specificationStorageGetSpecificationIndicatorCodes: {
+    internal: 'specification-storage.indicator.indicator-codes.collection.get',
+    gui: 'Specification Storage - Get indicator code definition collection',
+  },
+  specificationStorageCreateSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator.indicator-codes.item.post',
+    gui: 'Specification Storage - Create code definition for indicator',
+  },
+  specificationStorageUpdateSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator-codes.item.put',
+    gui: 'Specification Storage - Update indicator code definition',
+  },
+  specificationStorageDeleteSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator-codes.item.delete',
+    gui: 'Specification Storage - Delete indicator code definition',
+  },
+  specificationStorageGetSpecificationFieldSubfields: {
+    internal: 'specification-storage.field.subfields.collection.get',
+    gui: 'Specification Storage - Get field subfields definition collection',
+  },
+  specificationStorageCreateSpecificationFieldSubfield: {
+    internal: 'specification-storage.field.subfields.item.post',
+    gui: 'Specification Storage - Create subfield definition for field',
+  },
+
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
@@ -413,6 +468,14 @@ export default {
   uiCirculationViewCreateEditDeleteFixedDueDateSchedules: {
     internal: 'ui-circulation.settings.fixed-due-date-schedules',
     gui: 'Settings (Circulation): Can create, edit and remove fixed due date schedules',
+  },
+  uiCirculationViewLoanHistory: {
+    internal: 'ui-circulation.settings.loan-history',
+    gui: 'Settings (Circulation): Can view loan history',
+  },
+  uiCirculationEditLoanHistory: {
+    internal: 'ui-circulation.settings.edit-loan-history',
+    gui: 'Settings (Circulation): Can edit loan history',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },

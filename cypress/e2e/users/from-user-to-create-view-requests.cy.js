@@ -3,13 +3,18 @@ import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Users', () => {
   let userData;
 
   before('Preconditions', () => {
-    cy.createTempUser().then((userProperties) => {
-      userData = userProperties;
+    cy.getAdminToken().then(() => {
+      cy.createTempUser().then((userProperties) => {
+        userData = userProperties;
+      });
+
+      UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
     });
     cy.loginAsAdmin({
       path: TopMenu.usersPath,

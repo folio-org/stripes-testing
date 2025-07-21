@@ -6,3 +6,15 @@ Cypress.Commands.add('getBatchGroups', (searchParams) => {
     return response.body.batchGroups[0];
   });
 });
+
+Cypress.Commands.add('updateBatchGroup', (id, name, description = '') => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `batch-groups/${id}`,
+    body: {
+      id,
+      name,
+      description,
+    },
+  });
+});

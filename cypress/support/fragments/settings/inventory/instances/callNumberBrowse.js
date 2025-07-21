@@ -30,6 +30,7 @@ const elements = {
   editButton: Button({ icon: 'edit' }),
   cancelButton: Button('Cancel'),
   saveButton: Button('Save'),
+  selectedOptionsRemoveBtn: 'ul[class*=multiSelectValueList] button[aria-label="times"]',
 
   getTargetRowByName(callNumberName) {
     return this.callNumberBrowsePane.find(
@@ -109,6 +110,14 @@ const Actions = {
     const targetRow = elements.getTargetRowByName(optionName);
     cy.do(targetRow.find(elements.callNumberTypesDropdown).toggle());
     cy.expect(targetRow.find(elements.callNumberTypesDropdown).has({ open: true }));
+  },
+
+  clearAllSelectedCallNumberTypes(itemName) {
+    cy.do(
+      elements.getTargetRowByName(itemName).perform((option) => {
+        option.querySelectorAll(elements.selectedOptionsRemoveBtn).forEach((btn) => btn.click());
+      }),
+    );
   },
 
   selectCallNumberTypeDropdownOption(optionName) {

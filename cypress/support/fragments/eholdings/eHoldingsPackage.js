@@ -69,10 +69,10 @@ export default {
   },
 
   verifyHoldingStatus: (expectedStatus = FILTER_STATUSES.SELECTED) => {
-    // TODO: request dynamic loading of titles
-    // need to load changed state of titles
-    // Temporarily added a wait so that the titles have time to change their state
-    cy.wait(13000);
+    waitTitlesLoading().then(() => {
+      cy.expect(titlesSection.exists());
+      cy.expect(Spinner().absent());
+    });
     cy.reload();
     cy.url().then((url) => {
       const packageId = url.split('?')[0].split('/').at(-1);

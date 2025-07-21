@@ -820,7 +820,7 @@ export default {
     const trySelect = () => {
       return cy
         .get('#organizations-list')
-        .find('a')
+        .find('a[data-test-text-link="true"]')
         .then(($links) => {
           const el = Array.from($links).find((li) => li.textContent.trim() === organizationName);
           if (el) {
@@ -840,6 +840,15 @@ export default {
         });
     };
     return trySelect();
+  },
+
+  selectOrganizationInCurrentPage: (organizationName) => {
+    cy.wait(4000);
+    cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
+    cy.wait(3000);
+    OrganizationDetails.waitLoading();
+
+    return OrganizationDetails;
   },
 
   organizationIsAbsent: (organizationName) => {
@@ -917,15 +926,31 @@ export default {
   },
 
   deleteBankingInformation: () => {
+    cy.do([
+      bankingInformationButton.click(),
+      Button({ icon: 'trash' }).click(),
+      saveAndClose.click(),
+    ]);
+    cy.wait(4000);
+  },
+
+  removeBankingInfoByBankName: (bankName) => {
     cy.do([bankingInformationButton.click()]);
-    cy.get('[data-test-repeatable-field-remove-item-button="true"]', { timeout: 15000 })
-      .first()
+    cy.get(`input[value="${bankName}"]`)
+      .parents('[data-test-repeatable-field-list-item]')
+      .find('button[data-test-repeatable-field-remove-item-button]')
       .click();
     cy.do(saveAndClose.click());
-    cy.wait(4000);
+    cy.wait(500);
   },
 
   checkBankingInformationAddButtonIsDisabled: () => {
     cy.expect(Button({ id: 'bankingInformation-add-button' }).has({ disabled: true }));
+  },
+
+  checkButtonsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(Button(label).has(conditions));
+    });
   },
 };

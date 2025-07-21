@@ -75,6 +75,11 @@ export default {
     cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
   },
 
+  verifyButtonsState(isEnabled = true) {
+    cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
+    cy.expect(Button('+ New').absent());
+  },
+
   verifyPaneIncludesSettings(settingsList) {
     cy.get('#settings-nav-pane-content a').then(($elements) => {
       const availableSettings = [];
@@ -231,5 +236,10 @@ export default {
     cy.expect(memberDropdownList.has({ optionList: memberNamesArray.sort() }));
     cy.do(memberDropdownButton.click());
     cy.expect(SelectionOption().absent());
+  },
+
+  checkOptionInOpenedPane: (paneName, optionName, isShown = true) => {
+    if (isShown) cy.expect(Pane(paneName).find(NavListItem(optionName)).exists());
+    else cy.expect(Pane(paneName).find(NavListItem(optionName)).absent());
   },
 };

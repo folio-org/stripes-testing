@@ -73,6 +73,7 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `material-types/${materialTypeId}`,
+      failOnStatusCode: false,
     });
   },
 

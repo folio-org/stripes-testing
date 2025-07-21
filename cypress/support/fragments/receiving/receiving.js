@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+
 import {
   Accordion,
   Button,
@@ -15,6 +16,7 @@ import {
   Select,
   TextField,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import ReceivingDetails from './receivingDetails';
@@ -31,19 +33,23 @@ const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
-const editPieceModal = Modal('Edit piece');
 const selectLocationsModal = Modal('Select locations');
+const pieceDetailsSection = Section({ id: 'pieceDetails' });
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect([
       Pane({ id: 'receiving-filters-pane' }).exists(),
       Pane({ id: 'receiving-results-pane' }).exists(),
     ]);
+  },
+  clearSearchField() {
+    cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
   },
   searchByParameter({ parameter = 'Keyword', value } = {}) {
     cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
@@ -143,10 +149,10 @@ export default {
 
   receiveDisplayOnHoldingPiece(displaySummary) {
     cy.do([
-      editPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
-      editPieceModal.find(Checkbox('Display on holding')).click(),
+      pieceDetailsSection.find(TextField('Display summary')).fillIn(displaySummary),
+      pieceDetailsSection.find(Checkbox('Display on holding')).click(),
     ]);
-    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
+    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
     this.openDropDownInEditPieceModal();
     cy.do(Button('Quick receive').click());
     cy.wait(1000);
@@ -154,16 +160,16 @@ export default {
   },
 
   editDisplayOnHoldingAndAddDisplayToPublicPiece() {
-    cy.do(editPieceModal.find(Checkbox('Display on holding')).click());
-    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
-    cy.do(editPieceModal.find(Checkbox('Display to public')).click());
+    cy.do(pieceDetailsSection.find(Checkbox('Display on holding')).click());
+    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
+    cy.do(pieceDetailsSection.find(Checkbox('Display to public')).click());
     cy.do(Button('Save & close').click());
     cy.wait(1000);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
   receiveWithoutDisplayOnHoldingPiece(displaySummary) {
-    cy.do(editPieceModal.find(TextField('Display summary')).fillIn(displaySummary));
+    cy.do(pieceDetailsSection.find(TextField('Display summary')).fillIn(displaySummary));
     this.openDropDownInEditPieceModal();
     cy.do(Button('Quick receive').click());
     cy.wait(1000);
@@ -342,6 +348,11 @@ export default {
 
   selectInstanceInReceive: () => {
     cy.get('[data-testid="titleInstanceLink"]').click();
+    cy.wait(6000);
+  },
+
+  selectPOLineInReceive: () => {
+    cy.get('[data-testid="titlePOLineLink"]').click();
     cy.wait(6000);
   },
 

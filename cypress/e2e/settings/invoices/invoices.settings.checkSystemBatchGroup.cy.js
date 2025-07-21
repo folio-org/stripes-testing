@@ -18,6 +18,14 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 
+  after('Revert FOLIO batch group values to default', () => {
+    cy.getBatchGroups({ query: `name="${systemBatchGroup.name}"` }).then((group) => {
+      if (group) {
+        cy.updateBatchGroup(group.id, systemBatchGroupName, systemBatchGroupDescription);
+      }
+    });
+  });
+
   it(
     'C10938 FOLIO Batch group is created by system and can only be edited (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },

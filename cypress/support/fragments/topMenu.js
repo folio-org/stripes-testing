@@ -49,6 +49,7 @@ const readingRoom = '/reading-room';
 const serials = '/serials-management/serials';
 const linkedDataEditor = '/linked-data-editor/search';
 const sudocPath = '/sudoc';
+const settingsBankingInformationPath = '/settings/organizations/banking-information';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -102,6 +103,7 @@ export default {
   serials,
   linkedDataEditor,
   sudocPath,
+  settingsBankingInformationPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

@@ -32,11 +32,13 @@ import {
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
+const setExpirationDateButton = Button('Set');
 const actionsButton = Button('Actions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const userInformationAccordion = Accordion('User information');
@@ -473,11 +475,25 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickCloseWithoutSavingIfModalExists() {
+    cy.do(cancelButton.click());
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
+  },
+
   saveAndClose() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
     cy.wait(3000);
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
     cy.expect(rootPane.absent());
   },
 
@@ -552,6 +568,23 @@ export default {
           isDefaultSearchParamsRequired: false,
         });
       });
+  },
+
+  setupUserServicePoints(username, servicePointQuery) {
+    cy.getUsers({ limit: 1, query: `"username"="${username}"` }).then((users) => {
+      ServicePoints.getViaApi({ limit: 1, query: servicePointQuery }).then((servicePoints) => {
+        const servicePointId = servicePoints[0].id;
+
+        cy.getUserServicePoints(users[0].id).then((userServicePoints) => {
+          if (userServicePoints && userServicePoints.length > 0) {
+            this.changeServicePointPreferenceViaApi(users[0].id, [servicePointId], servicePointId);
+          } else {
+            this.addServicePointViaApi(servicePointId, users[0].id, servicePointId);
+          }
+          cy.wait(1000);
+        });
+      });
+    });
   },
 
   updateExternalIdViaApi(user, externalSystemId) {
@@ -786,20 +819,20 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi: (userData) => {
-    return cy
-      .do([
-        lastNameField.fillIn(userData.personal.lastName),
-        addressSelect.choose(userData.patronGroup),
-        barcodeField.fillIn(userData.barcode),
-        usernameField.fillIn(userData.username),
-        emailField.fillIn(userData.personal.email),
-        saveAndCloseBtn.click(),
-      ])
-      .then(() => {
-        cy.intercept('/users').as('user');
-        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
-      });
+  enterValidValueToCreateViaUi: (userData, patronGroup) => {
+    cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
+    cy.do([
+      lastNameField.fillIn(userData.personal.lastName),
+      barcodeField.fillIn(userData.barcode),
+      usernameField.fillIn(userData.username),
+      emailField.fillIn(userData.personal.email),
+      addressSelect.choose(patronGroup),
+      setExpirationDateButton.click(),
+      saveAndCloseBtn.click(),
+    ]);
+    return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   verifyUserPermissionsAccordion(isShown = false) {

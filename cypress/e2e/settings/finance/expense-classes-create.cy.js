@@ -2,7 +2,7 @@ import NewExpenseClass from '../../../support/fragments/settings/finance/newExpe
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('ui-invoices-settings: Batch Group creation', () => {
+describe('ui-invoices-settings: Batch Group creation', { retries: { runMode: 1 } }, () => {
   const expenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const newExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   before(() => {
