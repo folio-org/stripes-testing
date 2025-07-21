@@ -128,7 +128,7 @@ describe('Inventory', () => {
         );
         InstanceRecordEdit.selectChildRelationshipType('bound-with');
         InstanceRecordEdit.saveAndClose();
-        InstanceRecordView.waitLoading();
+        InstanceRecordEdit.verifyShareParentLinkingError();
       },
     );
   });
