@@ -210,7 +210,6 @@ export default {
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
-  // id="clickable-add-child-instance-add-button"
   selectNatureOfContent(value) {
     cy.do(Select('Nature of content term').choose(value));
   },
