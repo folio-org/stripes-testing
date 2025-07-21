@@ -62,6 +62,11 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
+    cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((user) => {
+      const userId = user[0].id;
+      // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
+      cy.setPrefferedProfileForUser(userId);
+    });
   });
 
   after('Delete test data', () => {
