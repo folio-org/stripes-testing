@@ -178,7 +178,7 @@ describe('Fiscal Year Rollover', () => {
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      Ledgers.selectLedgerAfterRollover(defaultLedger.name);
       Ledgers.closeRolloverInfo();
       Ledgers.rollover();
       Ledgers.fillInTestRolloverAndVarifyErrorForOneTimeOrdersWithAllocation(

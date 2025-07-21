@@ -7,12 +7,15 @@ import {
   MultiColumnListHeader,
   PaneContent,
   Button,
+  or,
 } from '../../../../../interactors';
 
 const browseInventoryPane = Pane('Browse inventory');
 const inventoryPane = Pane('Inventory');
 const searchFilterPane = Pane('Search & filter');
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
+const nextButton = Button('Next', { disabled: or(true, false) });
+const previousButton = Button('Previous', { disabled: or(true, false) });
 
 export default {
   verifyBrowseInventoryPane() {
@@ -62,11 +65,18 @@ export default {
     );
   },
 
-  verifySearchResultsTable() {
-    cy.expect([
-      paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
-      paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
-    ]);
+  verifySearchResultsTable(isShown = true) {
+    if (isShown) {
+      cy.expect([
+        paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
+        paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
+      ]);
+    } else {
+      cy.expect([
+        paneIntanceDetails.find(MultiColumnListHeader('Classification')).absent(),
+        paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).absent(),
+      ]);
+    }
   },
 
   clickOnSearchResult: (value) => {
@@ -77,6 +87,17 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
 
+  getClassificationNumbersViaApi(classificationBrowseId = 'all', classificationNumber) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `browse/classification-numbers/${classificationBrowseId}/instances`,
+      searchParams: {
+        query: `(number>="${classificationNumber.replace(/"/g, '""')}")`,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   waitForClassificationNumberToAppear(
     classificationNumber,
     classificationBrowseId = 'all',
@@ -84,14 +105,7 @@ export default {
   ) {
     return cy.recurse(
       () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `browse/classification-numbers/${classificationBrowseId}/instances`,
-          searchParams: {
-            query: `(number>="${classificationNumber.replace(/"/g, '""')}")`,
-          },
-          isDefaultSearchParamsRequired: false,
-        });
+        return this.getClassificationNumbersViaApi(classificationBrowseId, classificationNumber);
       },
       (response) => {
         const foundNumbers = response.body.items.filter((item) => {
@@ -110,5 +124,18 @@ export default {
         error: `Classification number did not appear: "${classificationNumber}"`,
       },
     );
+  },
+
+  checkPaginationButtonsShown() {
+    cy.expect([nextButton.exists(), previousButton.exists()]);
+  },
+
+  clickNextPaginationButton() {
+    cy.do(nextButton.click());
+    cy.wait(2000);
+  },
+
+  getNextPaginationButtonState() {
+    return cy.wrap(nextButton.perform((el) => !el.disabled));
   },
 };

@@ -116,6 +116,7 @@ describe('ui-orders: Orders', () => {
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.cancelInvoice();
+      cy.wait(4000);
     });
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
@@ -139,6 +140,7 @@ describe('ui-orders: Orders', () => {
     'C368478 Editing fund distribution in PO line when related Cancelled from approved invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      Orders.resetFiltersIfActive();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
@@ -165,7 +167,7 @@ describe('ui-orders: Orders', () => {
       Invoices.selectInvoiceLine();
       Invoices.checkFundInInvoiceLine(firstFund);
       TopMenuNavigation.navigateToApp('Finance');
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       Funds.closeBudgetDetails();
       Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);

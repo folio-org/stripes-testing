@@ -61,6 +61,7 @@ describe('Inventory', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        InventoryInstances.deleteInstanceByTitleViaApi('C359596*');
         cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(

@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -205,8 +205,10 @@ export default {
     cy.expect(HTML(including(text)).absent());
   },
 
-  verifyMaterialType: (type) => {
-    cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
+  verifyMaterialType: (type, orLogic = false) => {
+    let matcher = including(type);
+    if (orLogic) matcher = or(...type.map((el) => including(el)));
+    cy.expect(itemDataAccordion.find(HTML(matcher)).exists());
   },
 
   checkItemNote: (note, staffValue = 'Yes', value = 'Note') => {
@@ -271,14 +273,37 @@ export default {
       cy.expect(section.find(KeyValue(label)).has(conditions));
     });
   },
+
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
-    cy.expect(HTML(staffValue).exists());
+    cy.contains('[class^="kvLabel-"]', 'Check in note')
+      .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
+      .filter((index, el) => {
+        return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
+      })
+      .first()
+      .within(() => {
+        cy.contains('[class^="kvLabel-"]', 'Staff only')
+          .parent()
+          .find('[data-test-kv-value]')
+          .should('contain.text', staffValue);
+      });
   },
 
   checkCheckOutNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check out note')).has({ value: note }));
-    cy.expect(HTML(staffValue).exists());
+    cy.contains('div', 'Check out note')
+      .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
+      .filter((index, el) => {
+        return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
+      })
+      .first()
+      .within(() => {
+        cy.contains('[class^="kvLabel-"]', 'Staff only')
+          .parent()
+          .find('[data-test-kv-value]')
+          .should('contain.text', staffValue);
+      });
   },
 
   checkElectronicBookplateNote: (note) => {
@@ -375,6 +400,7 @@ export default {
   ),
 
   verifyLoanAndAvailabilitySection(data) {
+    this.expandAll();
     verifyPermanentLoanType(
       data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
     );
@@ -405,8 +431,16 @@ export default {
           KeyValue('Due date', { value: data.dueDate === '-' ? 'No value set-' : data.dueDate }),
         )
         .exists(),
-      loanAccordion.find(KeyValue('Staff only', { value: data.staffOnly })).exists(),
-      loanAccordion.find(KeyValue('Note', { value: data.note })).exists(),
+      loanAccordion
+        .find(
+          KeyValue('Staff only', {
+            value: data.staffOnly === '-' ? 'No value set-' : data.staffOnly,
+          }),
+        )
+        .exists(),
+      loanAccordion
+        .find(KeyValue('Note', { value: data.note === '-' ? 'No value set-' : data.note }))
+        .exists(),
     ]);
   },
 
@@ -555,5 +589,12 @@ export default {
     });
     cy.do(actionsButton.click());
     cy.wait(1500);
+  },
+
+  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(KeyValue('Effective call number').has({ value: effectiveCallNumber })),
+
+  expandAll() {
+    cy.do(Button('Expand all').click());
+    cy.wait(1000);
   },
 };

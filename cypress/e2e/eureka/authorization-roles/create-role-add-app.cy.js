@@ -10,7 +10,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `AT_C496128_UserRole_${getRandomPostfix()}`,
         originalApplication: 'app-platform-minimal',
-        newApplication: 'app-platform-complete',
+        newApplication: 'app-agreements',
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
@@ -50,12 +50,12 @@ describe('Eureka', () => {
         newCapabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Accounts Item',
+            resource: 'Erm Agreements',
             action: CAPABILITY_ACTIONS.EDIT,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Accounts Collection',
+            resource: 'Erm Agreements Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
@@ -98,10 +98,14 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
+            cy.reload();
+            AuthorizationRoles.waitContentLoading();
+          }, 20_000);
         });
       });
 

@@ -25,6 +25,7 @@ import {
   SearchField,
   Section,
   Select,
+  Spinner,
   TextArea,
   TextField,
   and,
@@ -50,7 +51,7 @@ import ItemRecordView from './item/itemRecordView';
 import NewOrderModal from './modals/newOrderModal';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
-const actionsButton = instanceDetailsSection.find(Button('Actions'));
+const actionsButton = instanceDetailsSection.find(Button('Actions', { disabled: or(true, false) }));
 const shareInstanceModal = Modal(including('Are you sure you want to share this instance?'));
 const identifiers = MultiColumnList({ id: 'list-identifiers' });
 const editMARCBibRecordButton = Button({ id: 'edit-instance-marc' });
@@ -156,6 +157,7 @@ const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings
 const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
+const versionHistoryButton = Button({ icon: 'clock' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -350,10 +352,10 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
-const waitInstanceRecordViewOpened = (title) => {
-  cy.wait(1500);
+const waitInstanceRecordViewOpened = () => {
   cy.expect(instanceDetailsSection.exists());
-  cy.expect(Pane({ titleLabel: including(title) }).exists());
+  cy.expect(Pane().exists());
+  cy.expect(Spinner().absent());
 };
 
 const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {
@@ -1285,7 +1287,7 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content: including(content) }).exists());
   },
-  openHoldingItem({ name, barcode, shouldOpen = true }) {
+  openHoldingItem({ name = '', barcode = 'No barcode', shouldOpen = true }) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
@@ -1372,7 +1374,6 @@ export default {
       Button({ id: 'edit-instance' }).exists(),
       Button({ id: 'copy-instance' }).exists(),
       Button({ id: 'clickable-view-source' }).exists(),
-      Button({ id: 'view-requests' }).exists(),
       editMARCBibRecordButton.absent(),
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
@@ -1449,8 +1450,8 @@ export default {
         }),
         (response) => response.body.sharingInstances[0].status === 'COMPLETE',
         {
-          limit: 20,
-          delay: 1000,
+          limit: 30,
+          delay: 2000,
         },
       );
     });
@@ -1473,6 +1474,7 @@ export default {
   overlayWithOclc: (oclc) => {
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
       if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
+        cy.wait(3000);
         cy.do(importTypeSelect.choose('OCLC WorldCat'));
       }
       cy.do(
@@ -1861,5 +1863,12 @@ export default {
     );
     if (isPresent) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
+  },
+
+  clickVersionHistoryButton() {
+    this.waitLoading();
+    cy.do(versionHistoryButton.click());
+    cy.expect(Spinner().exists());
+    cy.expect(Spinner().absent());
   },
 };

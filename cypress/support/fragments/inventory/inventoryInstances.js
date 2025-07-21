@@ -179,11 +179,11 @@ const searchItemsOptionsValues = [
   'advancedSearch',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
-advSearchInstancesOptions[0] = 'Keyword (title, contributor)';
+advSearchInstancesOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
-advSearchHoldingsOptions[0] = 'Keyword (title, contributor)';
+advSearchHoldingsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
-advSearchItemsOptions[0] = 'Keyword (title, contributor)';
+advSearchItemsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 17);
@@ -623,7 +623,7 @@ export default {
   deleteFullInstancesByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: `search/instances?query=title=="${instanceTitle}"`,
+        path: `search/instances?query=title="${instanceTitle}"`,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
@@ -667,18 +667,20 @@ export default {
       })
       .then((response) => response.body.items)
       .then((items) => {
-        items.forEach((item) => {
-          return cy
-            .okapiRequest({
-              path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
-              isDefaultSearchParamsRequired: false,
-            })
-            .then(({ body: { instances } }) => {
-              instances.forEach((instance) => {
-                this.deleteFullInstancesByTitleViaApi(instance.title);
+        items
+          .filter((item) => item.fullCallNumber === value)
+          .forEach((item) => {
+            return cy
+              .okapiRequest({
+                path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
+                isDefaultSearchParamsRequired: false,
+              })
+              .then(({ body: { instances } }) => {
+                instances.forEach((instance) => {
+                  this.deleteFullInstancesByTitleViaApi(instance.title);
+                });
               });
-            });
-        });
+          });
       });
   },
 

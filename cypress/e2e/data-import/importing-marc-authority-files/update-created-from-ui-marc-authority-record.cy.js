@@ -205,9 +205,7 @@ describe('Data Import', () => {
         });
 
         // Click on the "Save & close" button
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(2000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         MarcAuthority.verifyAfterSaveAndClose();
         QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
         MarcAuthorities.verifyViewPaneContentExists();

@@ -633,7 +633,7 @@ export default {
     cy.do(searchButton.click());
   },
 
-  clickMarcAuthIcon() {
+  clickMarcAuthIconByTitle(title) {
     cy.window().then((win) => {
       cy.stub(win, 'open')
         .callsFake((url) => {
@@ -642,7 +642,10 @@ export default {
         .as('windowOpen');
     });
 
-    cy.get("[data-link='authority-app']").eq(0).click();
+    cy.contains('a[data-test-text-link="true"]', title)
+      .closest('div[role="gridcell"]')
+      .find('[data-link="authority-app"]')
+      .click();
   },
 
   checkContributorRequest() {
@@ -1219,8 +1222,7 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
-    cy.intercept('GET', '/search/instances?*').as('getInstances');
+    cy.intercept('GET', /\/search\/(instances|call-numbers)(\/facets)?\?.*/).as('getData');
     cy.do(
       Button({
         ariaLabel: or(
@@ -1229,7 +1231,7 @@ export default {
         ),
       }).click(),
     );
-    cy.wait(['@getInstances', '@getFacets']);
+    cy.wait('@getData');
   },
 
   checkSharedInstancesInResultList() {
@@ -1423,5 +1425,28 @@ export default {
     cy.do(accordion.find(MultiSelect()).open());
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());
+  },
+
+  getAllValuesFromColumn(columnIndex) {
+    return cy
+      .wait(3000)
+      .get('[class^="mclRow-"]')
+      .then(($rows) => {
+        const cellValues = [];
+        $rows.each((_, row) => {
+          const cell = row.querySelectorAll('[class^="mclCell-"]')[columnIndex];
+          if (cell) {
+            const cellText = cell.textContent.replace('would be here', '').trim();
+            cellValues.push(cellText);
+          }
+        });
+        return cellValues;
+      });
+  },
+
+  checkAllValuesInColumnSorted(columnIndex) {
+    this.getAllValuesFromColumn(columnIndex).then((cellValues) => {
+      cy.expect(cellValues).to.deep.equal(cellValues.sort());
+    });
   },
 };

@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+
 import {
   Button,
   Accordion,
@@ -18,10 +19,11 @@ import {
   HTML,
   including,
 } from '../../../../../interactors';
-import LedgerDetails from './ledgerDetails';
-import FinanceHelper from '../financeHelper';
-import getRandomPostfix from '../../../utils/stringTools';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
+import getRandomPostfix from '../../../utils/stringTools';
+import FinanceHelper from '../financeHelper';
+import LedgerDetails from './ledgerDetails';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
@@ -169,6 +171,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.wait(6000);
+    InteractorsTools.closeAllVisibleCallouts();
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
@@ -233,6 +236,7 @@ export default {
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
+    cy.wait(4000);
   },
 
   fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
@@ -247,7 +251,6 @@ export default {
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'restrictEncumbrance' }).click(),
-      Checkbox({ name: 'restrictExpenditures' }).click(),
       Checkbox({ name: 'needCloseBudgets' }).click(),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
@@ -627,7 +630,15 @@ export default {
     cy.wait(4000);
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
     LedgerDetails.waitLoading();
+    cy.wait(4000);
+    return LedgerDetails;
+  },
 
+  selectLedgerAfterRollover: (ledgerName) => {
+    cy.wait(4000);
+    cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+    LedgerDetails.waitForLoadingLedgerDetailAfterRollover();
+    cy.wait(4000);
     return LedgerDetails;
   },
 
@@ -1365,7 +1376,8 @@ export default {
     });
   },
 
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect([ledgerResultsPaneSection.exists(), ledgersFiltersSection.exists()]);
   },
 

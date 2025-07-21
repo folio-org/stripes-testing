@@ -7,6 +7,7 @@ import {
   including,
   Link,
 } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 
 const transactionDetailSection = Section({ id: 'pane-transaction-details' });
 const transactionDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-transaction-details' });
@@ -14,7 +15,8 @@ const transactionDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-transactio
 const informationSection = Section({ id: 'information' });
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(transactionDetailSection.exists());
   },
   checkTransactionDetails({ information = [] } = {}) {

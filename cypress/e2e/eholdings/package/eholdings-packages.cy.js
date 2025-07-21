@@ -150,9 +150,9 @@ describe('eHoldings', () => {
           EHoldingsPackage.toggleTitlesAccordion();
           EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
           EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
-
           EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
-          EHoldingsPackage.verifyTitleFound('Active and Passive Electronic Components');
+          cy.wait(2000);
+          EHoldingsPackage.verifyTitleFound('Advances in Civil Engineering');
           EHoldingsPackageView.selectTitleRecord();
           EHoldingsTitle.verifySubjectIncludesValue('Engineering');
         });

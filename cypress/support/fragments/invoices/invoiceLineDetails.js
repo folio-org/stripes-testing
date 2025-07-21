@@ -12,9 +12,10 @@ import {
   including,
   matching,
 } from '../../../../interactors';
-import InvoiceLineEditForm from './invoiceLineEditForm';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import FundDetails from '../finance/funds/fundDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
+import InvoiceLineEditForm from './invoiceLineEditForm';
 
 // invoice lines details
 const invoiceLineDetailsPane = Pane({ id: 'pane-invoiceLineDetails' });
@@ -35,6 +36,10 @@ const relatedInvoiceLinesSection = invoiceLineDetailsPane.find(
 );
 
 export default {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
+    cy.expect(invoiceLineDetailsPaneHeader.exists());
+  },
   openInvoiceLineEditForm() {
     cy.do([invoiceLineDetailsPaneHeader.find(actionsButton).click(), editButton.click()]);
     InvoiceLineEditForm.waitLoading();

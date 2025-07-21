@@ -227,7 +227,7 @@ export default {
     cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
       .contains(firstFund.name)
       .click();
-    cy.get('[data-test-col-transfer-to="true"]').click();
+    cy.get('[data-test-col-transfer-to="true"] button[aria-label="open menu"]').click();
     cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
       .contains(secondFund.name)
       .click();
@@ -939,6 +939,7 @@ export default {
   selectBudgetDetails(rowNumber = 0) {
     cy.wait(4000);
     cy.do(currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click());
+    cy.wait(4000);
     cy.expect(budgetPane.exists());
   },
 
@@ -960,6 +961,7 @@ export default {
   },
 
   selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
+    cy.wait(4000);
     cy.do([
       Section({ id: 'previousBudgets' })
         .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
@@ -1140,7 +1142,15 @@ export default {
   },
 
   closeMenu: () => {
-    cy.do(Button({ icon: 'times' }).click());
+    cy.do(
+      PaneHeader()
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closePaneHeader: () => {
+    cy.get('[data-test-pane-header] [class^=iconButton]').first().click();
   },
 
   closeTransactionDetails: () => {

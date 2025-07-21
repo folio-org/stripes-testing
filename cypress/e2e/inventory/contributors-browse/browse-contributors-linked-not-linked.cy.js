@@ -44,51 +44,51 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+        const uploadPromises = marcFiles.map((marcFile) => DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
+          });
+        }));
+
+        cy.wrap(Promise.all(uploadPromises)).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
             });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIconByIndex(26);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.searchResults(testData.contributorName);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag010,
+              `$a ${marcFiles[1].naturalId}`,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
-          cy.wait(5000);
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
-        cy.waitForAuthRefresh(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIconByIndex(26);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.searchResults(testData.contributorName);
-          InventoryInstance.selectRecord();
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag010,
-            `$a ${marcFiles[1].naturalId}`,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
-          QuickMarcEditor.checkAfterSaveAndClose();
-        });
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
       });
     });
 
@@ -109,6 +109,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         BrowseContributors.select();
         BrowseContributors.waitForContributorToAppear(testData.contributorName, true, true);
+        BrowseContributors.waitForContributorToAppear(testData.contributorName, true, false);
         BrowseContributors.browse(testData.contributorName);
         BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.contributorName);
         BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.contributorName);
