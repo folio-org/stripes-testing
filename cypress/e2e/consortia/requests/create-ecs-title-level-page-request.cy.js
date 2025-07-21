@@ -26,8 +26,8 @@ describe('Consortia Vega', () => {
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.getViaApi().then((servicePoints) => {
-          servicePoint = servicePoints.find((sp) => sp.name === 'Circ Desk 1');
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
         });
 
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {

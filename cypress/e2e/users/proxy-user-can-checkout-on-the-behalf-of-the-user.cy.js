@@ -1,14 +1,13 @@
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Users', () => {
   const usersData = {};
@@ -33,8 +32,6 @@ describe('Users', () => {
         cy.createTempUser().then((proxyProperties) => {
           usersData.userProxy = proxyProperties;
         });
-
-        UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
       })
       .then(() => {
         proxyBody = {

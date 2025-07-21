@@ -1,10 +1,9 @@
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Requests from '../../support/fragments/requests/requests';
+import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
 
 describe('Requests', () => {
   let userId;
@@ -19,8 +18,6 @@ describe('Requests', () => {
         requestData = createdRequest;
         instanceData = instanceRecordData;
       });
-
-      UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 2"');
     });
   });
 
