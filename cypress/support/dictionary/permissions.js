@@ -421,6 +421,10 @@ export default {
     internal: 'specification-storage.indicator-codes.item.put',
     gui: 'Specification Storage - Update indicator code definition',
   },
+  specificationStorageDeleteSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator-codes.item.delete',
+    gui: 'Specification Storage - Delete indicator code definition',
+  },
   specificationStorageGetSpecificationFieldSubfields: {
     internal: 'specification-storage.field.subfields.collection.get',
     gui: 'Specification Storage - Get field subfields definition collection',

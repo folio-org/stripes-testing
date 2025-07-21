@@ -293,7 +293,11 @@ export default {
   },
 
   verifyUserIsNotInUserList(name) {
-    cy.do([usersSelectionList.find(SelectionOption(including(name))).absent()]);
+    cy.expect(usersSelectionList.find(SelectionOption(including(name))).absent());
+  },
+
+  verifyUserIsInUserList(name) {
+    cy.expect(logsUsersAccordion.find(SelectionOption(including(name))).exists());
   },
 
   verifyEmptyUserDropdown() {
@@ -367,6 +371,14 @@ export default {
     cy.expect(
       ListRow({ text: including(runByUsername) })
         .find(MultiColumnListCell({ content }))
+        .exists(),
+    );
+  },
+
+  verifyEditingColumnValue(runByUsername, content) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content, column: 'Editing' }))
         .exists(),
     );
   },
