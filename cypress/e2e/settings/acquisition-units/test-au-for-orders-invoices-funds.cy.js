@@ -69,8 +69,8 @@ describe('Acquisition Units', () => {
         });
       });
     });
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
+    ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+      effectiveLocationServicePoint = servicePoint;
       NewLocation.createViaApi(
         NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
       ).then((locationResponse) => {

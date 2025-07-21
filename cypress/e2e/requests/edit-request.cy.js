@@ -2,7 +2,6 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Requests', () => {
   let userId;
@@ -20,8 +19,6 @@ describe('Requests', () => {
         cancellationReason = cancellationReasonId;
       },
     );
-
-    UserEdit.setupUserDefaultServicePoints(Cypress.env('diku_login'));
   });
 
   after(() => {

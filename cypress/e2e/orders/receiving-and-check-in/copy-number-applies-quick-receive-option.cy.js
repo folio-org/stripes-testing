@@ -44,8 +44,8 @@ describe('orders: Receiving and Check-in', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      circ2LocationServicePoint = servicePoints[0];
+    ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+      circ2LocationServicePoint = servicePoint;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(circ2LocationServicePoint.id)).then(
         (locationResponse) => {
           location = locationResponse;

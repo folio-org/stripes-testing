@@ -15,8 +15,8 @@ describe('fse-checkout - UI', () => {
     cy.allure().logCommandSteps(false);
     cy.getAdminToken().then(() => {
       // create new user and assign a service point
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        servicePointId = servicePoints[0].id;
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        servicePointId = servicePoint.id;
       });
       cy.createTempUser([permissions.checkoutAll.gui], 'FSE AQA autotest').then(
         (userProperties) => {

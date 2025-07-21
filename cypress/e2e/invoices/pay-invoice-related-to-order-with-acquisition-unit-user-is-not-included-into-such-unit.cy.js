@@ -50,10 +50,8 @@ describe('Invoices', () => {
   before('Create test data and login', () => {
     cy.getAdminToken();
     AcquisitionUnits.createAcquisitionUnitViaApi(testData.acqUnit).then(() => {
-      cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((user) => {
-        testData.adminId = user[0].id;
-
-        AcquisitionUnits.assignUserViaApi(user[0].id, testData.acqUnit.id).then((id) => {
+      cy.getAdminUserDetails().then((user) => {
+        AcquisitionUnits.assignUserViaApi(user.id, testData.acqUnit.id).then((id) => {
           testData.membershipAdminId = id;
         });
       });

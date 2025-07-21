@@ -32,7 +32,6 @@ import {
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -127,6 +126,18 @@ const saveButton = Button({ id: 'clickable-save' });
 
 let totalRows;
 
+Cypress.Commands.add('getUserServicePoints', (userId) => {
+  cy.okapiRequest({
+    path: 'service-points-users',
+    searchParams: {
+      query: `(userId==${userId})`,
+    },
+  }).then(({ body }) => {
+    Cypress.env('userServicePoints', body.servicePointsUsers);
+    return body.servicePointsUsers;
+  });
+});
+
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
   method: 'POST',
@@ -139,8 +150,6 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
   },
   isDefaultSearchParamsRequired: false,
 });
-
-const defaultServicePoints = ['Circ Desk 1', 'Circ Desk 2', 'Online'];
 
 export default {
   addServicePointsViaApi,
@@ -547,7 +556,7 @@ export default {
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
         body: {
           userId,
-          servicePointsIds: servicePointIds,
+          servicePointsIds: [...new Set([...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds, ...servicePointIds])],
           defaultServicePointId,
         },
         isDefaultSearchParamsRequired: false,
@@ -570,32 +579,6 @@ export default {
           isDefaultSearchParamsRequired: false,
         });
       });
-  },
-
-  setupUserServicePointsMultiple(username, servicePointNames) {
-    cy.getUsers({ limit: 1, query: `"username"="${username}"` }).then((users) => {
-      ServicePoints.getViaApi().then((servicePoints) => {
-        const servicePointIds = servicePointNames
-          .map((name) => servicePoints.find((sp) => sp.name.includes(name))?.id)
-          .filter(Boolean);
-        cy.getUserServicePoints(users[0].id).then((userServicePoints) => {
-          if (userServicePoints && userServicePoints.length > 0) {
-            this.changeServicePointPreferenceViaApi(
-              users[0].id,
-              servicePointIds,
-              servicePointIds[0],
-            );
-          } else {
-            this.addServicePointsViaApi(servicePointIds, users[0].id, servicePointIds[0]);
-          }
-          cy.wait(1000);
-        });
-      });
-    });
-  },
-
-  setupUserDefaultServicePoints(username) {
-    this.setupUserServicePointsMultiple(username, defaultServicePoints);
   },
 
   updateExternalIdViaApi(user, externalSystemId) {
