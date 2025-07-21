@@ -1,7 +1,8 @@
-import { MultiColumnListCell, Button, Pane } from '../../../../interactors';
+import { MultiColumnListCell, Button, Pane, Modal } from '../../../../interactors';
 
 const jobsPane = Pane('Jobs');
 const logsPane = Pane('Logs');
+const areYouSureModal = Modal('Are you sure you want to run this job?');
 
 export default {
   waitLoading: () => {
@@ -24,5 +25,9 @@ export default {
 
   saveMarcFileForImport: () => {
     cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button()).click());
+  },
+
+  verifyAreYouSureModalAbsent() {
+    cy.expect(areYouSureModal.absent());
   },
 };
