@@ -14,12 +14,7 @@ describe('Users', () => {
         userData = userProperties;
       });
 
-      UserEdit.setupUserServicePointsMultiple(Cypress.env('diku_login'), [
-        'Circ Desk 1',
-        'Circ Desk 2',
-        'Online',
-        'DCB',
-      ]);
+      UserEdit.setupUserDefaultServicePoints(Cypress.env('diku_login'));
     });
     cy.loginAsAdmin({
       path: TopMenu.usersPath,

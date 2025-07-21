@@ -140,6 +140,8 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
   isDefaultSearchParamsRequired: false,
 });
 
+const defaultServicePoints = ['Circ Desk 1', 'Circ Desk 2', 'Online'];
+
 export default {
   addServicePointsViaApi,
 
@@ -590,6 +592,10 @@ export default {
         });
       });
     });
+  },
+
+  setupUserDefaultServicePoints(username) {
+    this.setupUserServicePointsMultiple(username, defaultServicePoints);
   },
 
   updateExternalIdViaApi(user, externalSystemId) {

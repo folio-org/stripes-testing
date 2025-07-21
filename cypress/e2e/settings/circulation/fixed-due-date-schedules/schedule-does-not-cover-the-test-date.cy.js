@@ -77,12 +77,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           patronGroupId = patronGroups;
         });
 
-        UserEdit.setupUserServicePointsMultiple(Cypress.env('diku_login'), [
-          'Circ Desk 1',
-          'Circ Desk 2',
-          'Online',
-          'DCB',
-        ]);
+        UserEdit.setupUserDefaultServicePoints(Cypress.env('diku_login'));
       })
       .then(() => {
         Users.createViaApi({
