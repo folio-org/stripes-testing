@@ -126,26 +126,26 @@ const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
 const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
-const default008FieldValues = {
-  'Cat Rules': '\\',
-  'Geo Subd': '\\',
-  'Govt Ag': '\\',
-  'Kind rec': '\\',
+const valid008FieldValues = {
+  'Cat Rules': 'c',
+  'Geo Subd': 'n',
+  'Govt Ag': '|',
+  'Kind rec': 'a',
   Lang: '\\',
-  'Level Est': '\\',
-  'Main use': '\\',
+  'Level Est': 'a',
+  'Main use': 'a',
   'Mod Rec Est': '\\',
-  'Numb Series': '\\',
-  'Pers Name': '\\',
-  RecUpd: '\\',
-  RefEval: '\\',
-  Roman: '\\',
-  'SH Sys': '\\',
-  Series: '\\',
-  'Series use': '\\',
+  'Numb Series': 'n',
+  'Pers Name': 'a',
+  RecUpd: 'a',
+  RefEval: 'a',
+  Roman: '|',
+  'SH Sys': 'a',
+  Series: 'n',
+  'Series use': 'a',
   Source: '\\',
-  'Subj use': '\\',
-  'Type Subd': '\\',
+  'Subj use': 'a',
+  'Type Subd': 'n',
   Undef_18: '\\\\\\\\\\\\\\\\\\\\',
   Undef_30: '\\',
   Undef_34: '\\\\\\\\',
@@ -1631,7 +1631,7 @@ export default {
   ) {
     return cy.createMarcAuthorityViaAPI(LDR, [
       { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: default008FieldValues, indicators: ['\\', '\\'] },
+      { tag: '008', content: valid008FieldValues, indicators: ['\\', '\\'] },
       ...fields,
     ]);
   },
@@ -1657,7 +1657,7 @@ export default {
 
   createMarcAuthorityRecordViaApiByReadingFromMrkFile(
     mrkFileName,
-    field008Values = default008FieldValues,
+    field008Values = valid008FieldValues,
   ) {
     return new Promise((resolve) => {
       FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {

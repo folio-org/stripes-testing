@@ -83,6 +83,7 @@ describe('MARC', () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(localAuthFile.name);
           newFields.forEach((newField) => {
             MarcAuthority.addNewFieldAfterExistingByTag(
