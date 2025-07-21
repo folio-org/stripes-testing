@@ -65,6 +65,7 @@ export const usersFieldValues = {
   userBarcode: 'User — Barcode',
   userId: 'User — User UUID',
   userType: 'User — Type',
+  userEmail: 'User — Email',
 };
 export const dateTimeOperators = [
   'Select operator',
