@@ -172,3 +172,15 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add(
+  'deleteSpecificationIndicatorCode',
+  (indicatorCodeId, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `specification-storage/indicator-codes/${indicatorCodeId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
+    });
+  },
+);

@@ -8,7 +8,6 @@ import {
   Accordion,
   Checkbox,
   MultiSelect,
-  MultiSelectOption,
   TextField,
   SearchField,
 } from '../../../../interactors';
@@ -23,7 +22,7 @@ const formatAccordion = Accordion({ id: 'format' });
 const modeOfIssuance = Accordion({ id: 'mode' });
 const natureOfContentAccordion = Accordion({ id: 'natureOfContent' });
 const staffSuppressAccordion = Accordion({ id: 'staffSuppress' });
-const discoverySuppressAccordion = Accordion({ id: 'discoverySuppress' });
+const discoverySuppressAccordion = Accordion({ id: 'instancesDiscoverySuppress' });
 const createdDateAccordion = Accordion({ id: 'createdDate' });
 const updatedDateAccordion = Accordion({ id: 'updatedDate' });
 const sourceAccordion = Accordion({ id: 'source' });
@@ -60,55 +59,82 @@ export default {
   },
 
   filterByEffectiveLocation(option) {
-    cy.do([
-      effectiveLocationAccordion.find(MultiSelect()).filter(option),
-      effectiveLocationAccordion.find(MultiSelectOption(option)).click(),
-    ]);
+    cy.expect(effectiveLocationAccordion.exists());
+    cy.wait(500);
+    cy.get('#accordion-toggle-button-effectiveLocation').click();
+    cy.wait(500);
+    cy.get('#effectiveLocation-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#effectiveLocation-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-effectiveLocation-multiselect').contains(option).click();
     cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(1000);
   },
   filterByLanguage(option) {
-    cy.do([
-      languageAccordion.clickHeader(),
-      languageAccordion.find(MultiSelect()).filter(option),
-      languageAccordion.find(MultiSelectOption(option)).click(),
-    ]);
+    cy.do(languageAccordion.clickHeader());
+    cy.wait(500);
+    cy.get('#language-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#language-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-language-multiselect').contains(option).click();
     cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(1000);
   },
   filterByResourceType(option) {
-    cy.do([
-      resourceTypeAccordion.clickHeader(),
-      resourceTypeAccordion.find(MultiSelect()).filter(option),
-      resourceTypeAccordion.find(MultiSelectOption(option)).click(),
-    ]);
+    cy.do(resourceTypeAccordion.clickHeader());
+    cy.wait(500);
+    cy.get('#resource-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#resource-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-resource-multiselect').contains(option).click();
     cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(2000);
   },
   filterByFormat(option) {
-    cy.do([
-      formatAccordion.clickHeader(),
-      formatAccordion.find(MultiSelect()).filter(option),
-      formatAccordion.find(MultiSelectOption(option)).click(),
-    ]);
+    cy.do(formatAccordion.clickHeader());
+    cy.wait(500);
+    cy.get('#format-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#format-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-format-multiselect').contains(option).click();
     cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(2000);
   },
   filterByModeOfIssuance(option) {
-    cy.do([
-      modeOfIssuance.clickHeader(),
-      modeOfIssuance.find(MultiSelect()).filter(option),
-      modeOfIssuance.find(MultiSelectOption(option)).click(),
-    ]);
+    cy.do(modeOfIssuance.clickHeader());
+    cy.wait(500);
+    cy.get('#mode-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#mode-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-mode-multiselect').contains(option).click();
     cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(2000);
   },
   filterByNatureOfContent(option) {
-    cy.do([
-      natureOfContentAccordion.clickHeader(),
-      natureOfContentAccordion.find(MultiSelect()).filter(option),
-      natureOfContentAccordion.find(MultiSelectOption(option)).click(),
-    ]);
+    cy.do(natureOfContentAccordion.clickHeader());
+    cy.wait(500);
+    cy.get('#natureOfContent-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#natureOfContent-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-natureOfContent-multiselect').contains(option).click();
     cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(2000);
   },
@@ -135,14 +161,14 @@ export default {
     if (option === 'Yes') {
       cy.do(
         discoverySuppressAccordion
-          .find(Checkbox({ id: 'clickable-filter-discoverySuppress-true' }))
+          .find(Checkbox({ id: 'clickable-filter-instancesDiscoverySuppress-true' }))
           .click(),
       );
-      cy.wait(2000);
-    } else {
+      cy.wait(1000);
+    } else if (option === 'No') {
       cy.do(
         discoverySuppressAccordion
-          .find(Checkbox({ id: 'clickable-filter-discoverySuppress-false' }))
+          .find(Checkbox({ id: 'clickable-filter-instancesDiscoverySuppress-false' }))
           .click(),
       );
       cy.wait(2000);
@@ -180,17 +206,16 @@ export default {
     }
   },
   filterByTags(option) {
-    cy.do([
-      selectInstanceModal.find(tagsAccordion).clickHeader(),
-      selectInstanceModal.find(tagsAccordion).find(MultiSelect()).filter(option),
-      selectInstanceModal.find(tagsAccordion).find(MultiSelectOption(option)).click(),
-    ]);
-    cy.expect(
-      selectInstanceModal
-        .find(tagsAccordion)
-        .find(MultiSelect({ selected: including(option) }))
-        .exists(),
-    );
+    cy.do(selectInstanceModal.find(tagsAccordion).clickHeader());
+    cy.wait(500);
+    cy.get('#instancesTags-multiselect-input').click();
+    cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
+    cy.get('#instancesTags-multiselect-input').type(option, {
+      force: true,
+    });
+    cy.get('#multiselect-option-list-instancesTags-multiselect').contains(option).click();
+    cy.expect(MultiSelect({ selected: including(option) }).exists());
     cy.wait(2000);
   },
   verifyListResults(title) {
