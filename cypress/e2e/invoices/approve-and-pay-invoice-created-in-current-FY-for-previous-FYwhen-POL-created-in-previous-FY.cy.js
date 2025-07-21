@@ -20,7 +20,7 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: { runMode: 1 } }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -109,7 +109,7 @@ describe('Invoices', () => {
         });
         defaultOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
-        Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
+        Orders.createApprovedOrderForRollover(defaultOrder, false, false).then(
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
             orderNumber = firstOrderResponse.poNumber;

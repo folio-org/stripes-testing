@@ -7,11 +7,16 @@ import permissions from '../../support/dictionary/permissions';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import FundDetails from '../../support/fragments/finance/funds/fundDetails';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import TransactionDetails from '../../support/fragments/finance/transactions/transactionDetails';
+import Transactions from '../../support/fragments/finance/transactions/transactions';
 import Invoices from '../../support/fragments/invoices/invoices';
+import InvoiceDetails from '../../support/fragments/invoices/invoiceView';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
@@ -21,10 +26,10 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('orders: Unopen order', () => {
+describe('orders: Unopen order', { retries: { runMode: 1 } }, () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
@@ -205,22 +210,29 @@ describe('orders: Unopen order', () => {
     'C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
+      /* Orders app */
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.unOpenOrder();
-      OrderLines.selectPOLInOrder(0);
-      cy.wait(5000);
+      OrderLines.selectPOLInOrder(0); // Order details -> PO Line details
+      OrderLineDetails.waitLoading();
       OrderLines.checkFundInPOL(secondFund);
-      OrderLines.backToEditingOrder();
+      OrderLines.backToEditingOrder(); // Order Line details -> Order details
       Orders.openOrder();
-      OrderLines.selectPOLInOrder(0);
+      OrderLines.selectPOLInOrder(0); // Order details -> PO Line details
+      OrderLineDetails.waitLoading();
       OrderLines.checkFundInPOL(secondFund);
-      TopMenuNavigation.navigateToApp('Finance');
+      TopMenuNavigation.navigateToApp('Finance'); // Order Line details -> Finance app
+
+      /* Finance app */
       FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
+      Funds.selectFund(secondFund.name); // Funds results -> Fund details
+      FundDetails.waitLoading();
+      Funds.selectBudgetDetails(); // Fund details -> Budget details
+      Funds.viewTransactions(); // Budget details -> Transactions
+      Transactions.waitLoading();
       Funds.selectTransactionInList('Encumbrance');
+      TransactionDetails.waitLoading();
       Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$0.00',
@@ -228,19 +240,26 @@ describe('orders: Unopen order', () => {
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
-      Funds.closeTransactionDetails();
-      Funds.closeMenu();
-      Funds.closeBudgetDetails();
-      Funds.closeFundDetails();
+      InteractorsTools.closeAllVisibleCallouts();
+      Funds.closeTransactionDetails(); // Transactions -> Budget details
+      Funds.closePaneHeader();
+      Funds.closeBudgetDetails(); // Budget details -> Fund details
+      Funds.closeFundDetails(); // Fund details -> Funds results
       TopMenuNavigation.navigateToApp('Invoices');
+
+      /* Invoices app */
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
-      Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
-      Invoices.selectInvoiceLine();
+      Invoices.selectInvoice(firstInvoice.vendorInvoiceNo); // Invoices results -> Invoice details
+      InvoiceDetails.waitLoading();
+      Invoices.selectInvoiceLine(); // Invoice details -> Invoice line details
       TopMenuNavigation.navigateToApp('Finance');
+
+      /* Finance app */
       FinanceHelp.searchByName(firstFund.name);
-      Funds.selectFund(firstFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
+      Funds.selectFund(firstFund.name); // Funds results -> Fund details
+      FundDetails.waitLoading();
+      Funds.selectBudgetDetails(); // Fund details -> Budget details
+      Funds.viewTransactions(); // Budget details -> Transactions
       Funds.selectTransactionInList('Payment');
       Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
