@@ -2866,19 +2866,25 @@ export default {
     });
   },
 
-  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true) {
+  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true, indicatorsShown = true) {
     cy.expect([
       getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
       getRowInteractorByRowNumber(rowNumber)
         .find(TextArea({ ariaLabel: 'Subfield' }))
         .has({ disabled: isDisabled }),
-      getRowInteractorByRowNumber(rowNumber)
-        .find(TextField('Indicator', { name: including('.indicators[0]') }))
-        .has({ disabled: isDisabled }),
-      getRowInteractorByRowNumber(rowNumber)
-        .find(TextField('Indicator', { name: including('.indicators[1]') }))
-        .has({ disabled: isDisabled }),
     ]);
+    if (indicatorsShown) {
+      cy.expect([
+        getRowInteractorByRowNumber(rowNumber)
+          .find(TextField('Indicator', { name: including('.indicators[0]') }))
+          .has({ disabled: isDisabled }),
+        getRowInteractorByRowNumber(rowNumber)
+          .find(TextField('Indicator', { name: including('.indicators[1]') }))
+          .has({ disabled: isDisabled }),
+      ]);
+    } else {
+      cy.expect([getRowInteractorByRowNumber(rowNumber).find(TextField('Indicator')).absent()]);
+    }
   },
 
   selectOptionsIn008FieldRelfDropdowns(...options) {
