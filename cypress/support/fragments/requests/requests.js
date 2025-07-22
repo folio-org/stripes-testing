@@ -19,7 +19,7 @@ import {
   Spinner,
   TextArea,
   TextField,
-  ValueChipRoot
+  ValueChipRoot,
 } from '../../../../interactors';
 import {
   FULFILMENT_PREFERENCES,
@@ -282,6 +282,14 @@ export default {
       .find(Link(including(title)))
       .click(),
   ),
+
+  selectExactRequest: (title, rowIndex) => cy.do(
+    requestsPane
+      .find(MultiColumnListCell({ row: rowIndex, content: title }))
+      .find(Link(including(title)))
+      .click(),
+  ),
+
   selectRequest: (title, rowIndex) => cy.do(
     requestsPane
       .find(
@@ -292,6 +300,7 @@ export default {
       )
       .click(),
   ),
+
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })
