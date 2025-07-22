@@ -1,6 +1,6 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -57,7 +57,7 @@ describe('Data Import', () => {
         // create 3 action profiles linked to mapping profile
         NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
-            actionProfiles.forEach((profile) => {
+            SettingsActionProfiles.forEach((profile) => {
               NewActionProfile.createActionProfileViaApi(
                 profile.actionProfile,
                 mappingProfileResponse.body.id,
@@ -80,7 +80,7 @@ describe('Data Import', () => {
       cy.getAdminToken(() => {
         Users.deleteViaApi(testData.user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-        actionProfiles.forEach((profile) => {
+        SettingsActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.name);
         });
       });
@@ -93,7 +93,7 @@ describe('Data Import', () => {
         // #2-3 Create a new job profile by clicking Actions/New job profile -> Give the job profile a name -> Accepted Data type = MARC
         JobProfiles.createJobProfile(jobProfile);
         // Add three action profiles to the job profile
-        actionProfiles.forEach((profile) => {
+        SettingsActionProfiles.forEach((profile) => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         JobProfileEdit.verifyLinkedProfiles(

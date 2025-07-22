@@ -1,7 +1,5 @@
 import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
@@ -10,6 +8,7 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -96,10 +95,10 @@ describe('Data Import', () => {
         FieldMappingProfiles.verifySearchResult(mappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.checkListOfExistingProfilesIsDisplayed();
-        ActionProfiles.verifySearchFieldIsEmpty();
-        ActionProfiles.search(actionProfile.name);
-        ActionProfiles.verifySearchResult(actionProfile.name);
+        SettingsActionProfiles.checkListOfExistingProfilesIsDisplayed();
+        SettingsActionProfiles.verifySearchFieldIsEmpty();
+        SettingsActionProfiles.search(actionProfile.name);
+        SettingsActionProfiles.verifySearchResult(actionProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
@@ -118,8 +117,8 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.verifySearchFieldIsEmpty();
-        ActionProfiles.checkListOfExistingProfilesIsDisplayed();
+        SettingsActionProfiles.verifySearchFieldIsEmpty();
+        SettingsActionProfiles.checkListOfExistingProfilesIsDisplayed();
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.verifySearchFieldIsEmpty();

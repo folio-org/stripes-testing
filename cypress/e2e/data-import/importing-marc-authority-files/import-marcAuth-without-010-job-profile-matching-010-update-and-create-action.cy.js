@@ -1,34 +1,33 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import {
   ActionProfiles as SettingsActionProfiles,
+  SettingsDataImport,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
-  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -88,7 +87,7 @@ describe('Data Import', () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
       SettingsDataImport.goToSettingsDataImport();
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
+      SettingsActionProfiles.create(actionProfile, mappingProfile.name);
       cy.wait(3000);
 
       // create Job profile

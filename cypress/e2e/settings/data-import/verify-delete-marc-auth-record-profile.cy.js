@@ -1,13 +1,15 @@
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  SettingsDataImport,
+} from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import { SettingsDataImport } from '../../../support/fragments/settings/dataImport';
-import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -56,9 +58,9 @@ describe('Data Import', () => {
         MatchProfiles.verifyMatchProfileAbsent();
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.checkListOfExistingProfilesIsDisplayed();
-        ActionProfiles.search(profileName);
-        ActionProfiles.verifyActionProfileAbsent();
+        SettingsActionProfiles.checkListOfExistingProfilesIsDisplayed();
+        SettingsActionProfiles.search(profileName);
+        SettingsActionProfiles.verifyActionProfileAbsent();
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
