@@ -31,8 +31,8 @@ describe('Inventory', () => {
     };
     const recordTypeOptionsForNew = [
       'Instance',
-      'Invoice',
       'Order',
+      'Invoice',
       'MARC Bibliographic',
       'MARC Authority',
     ];

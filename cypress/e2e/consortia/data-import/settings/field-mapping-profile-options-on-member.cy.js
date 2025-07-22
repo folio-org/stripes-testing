@@ -3,12 +3,10 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
-  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfileEditForm,
+  FieldMappingProfileView,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
 } from '../../../../support/fragments/settings/dataImport';
-import ActionProfileEditForm from '../../../../support/fragments/settings/dataImport/actionProfiles/actionProfileEditForm';
-import ActionProfileView from '../../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
-import NewActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsDataImport, {
   SETTINGS_TABS,
@@ -21,39 +19,24 @@ describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const mappingProfile = {
-      name: `C421994 Mapping profile${getRandomPostfix()}`,
+      name: `C421997 Mapping profile${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
-    const actionProfile = {
-      name: `C421994 Action profile${getRandomPostfix()}`,
-      action: 'UPDATE',
-      folioRecordType: 'MARC_BIBLIOGRAPHIC',
-    };
-    const recordTypeOptionsForNew = [
+    const recordTypeOptions = [
       'Instance',
       'Holdings',
       'Item',
       'Order',
       'Invoice',
       'MARC Bibliographic',
-      'MARC Authority',
-    ];
-    const recordTypeOptionsForCreated = [
-      'Instance',
-      'Holdings',
-      'Item',
-      'MARC Bibliographic',
+      'MARC Holdings (disabled)',
       'MARC Authority',
     ];
 
     before('Create test data', () => {
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
-      NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-        (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfileResponse.body.id);
-        },
-      );
+      NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
       cy.resetTenant();
 
       cy.createTempUser([]).then((userProperties) => {
@@ -70,8 +53,8 @@ describe('Inventory', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        SettingsActionProfiles.waitLoading();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+        SettingsFieldMappingProfiles.waitLoading();
       });
     });
 
@@ -79,23 +62,22 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
     });
 
     it(
-      'C421994 (CONSORTIA) Verify the action profile options on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C421994'] },
+      'C421997 (CONSORTIA) Verify the field mapping profile options on Member tenant (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C421997'] },
       () => {
-        SettingsActionProfiles.createNewActionProfile();
-        NewActionProfile.verifyFolioRecordTypeOptions(recordTypeOptionsForNew);
-        NewActionProfile.clickClose();
+        SettingsFieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.verifyFolioRecordTypeOptions(recordTypeOptions);
+        NewFieldMappingProfile.clickClose();
 
-        SettingsActionProfiles.waitLoading();
-        SettingsActionProfiles.search(actionProfile.name);
-        ActionProfileView.edit();
-        ActionProfileEditForm.waitLoading();
-        ActionProfileEditForm.verifyFolioRecordType(recordTypeOptionsForCreated);
+        SettingsFieldMappingProfiles.waitLoading();
+        SettingsFieldMappingProfiles.search(mappingProfile.name);
+        FieldMappingProfileView.clickEditButton(mappingProfile.name);
+        FieldMappingProfileEditForm.waitLoading();
+        FieldMappingProfileEditForm.verifyFolioRecordTypeOptions(recordTypeOptions);
       },
     );
   });
