@@ -21,7 +21,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const mappingProfile = {
-      name: `C421994 Mapping profiel${getRandomPostfix()}`,
+      name: `C421994 Mapping profile${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {

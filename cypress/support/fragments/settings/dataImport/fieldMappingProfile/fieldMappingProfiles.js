@@ -16,7 +16,6 @@ import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
 import FieldMappingProfileView from './fieldMappingProfileView';
 import getRandomPostfix from '../../../../utils/stringTools';
 import { getLongDelay } from '../../../../utils/cypressTools';
-import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import Callout from '../../../../../../interactors/callout';
 import ArrayUtils from '../../../../utils/arrays';
@@ -143,8 +142,8 @@ export default {
   ) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
-    FieldMappingProfileEdit.markFieldForProtection(firstProtectedField);
-    FieldMappingProfileEdit.markFieldForProtection(secondProtectedField);
+    FieldMappingProfileEditForm.markFieldForProtection(firstProtectedField);
+    FieldMappingProfileEditForm.markFieldForProtection(secondProtectedField);
     NewFieldMappingProfile.save();
   },
   createMappingProfileWithNotes: (mappingProfile, note) => {
