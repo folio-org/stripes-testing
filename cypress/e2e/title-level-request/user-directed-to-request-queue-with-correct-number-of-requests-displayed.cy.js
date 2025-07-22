@@ -72,9 +72,11 @@ describe('Title Level Request', () => {
         testData.user.userId,
         testData.servicePoint.id,
       );
+    });
+    return cy.wrap(null).then(() => {
       instanceData = testData.folioInstances[0];
       TitleLevelRequests.enableTLRViaApi();
-      Requests.createNewRequestViaApi({
+      return Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
         instanceId: instanceData.instanceId,
@@ -85,66 +87,73 @@ describe('Title Level Request', () => {
         requestLevel: REQUEST_LEVELS.ITEM,
         requestType: REQUEST_TYPES.PAGE,
         requesterId: testData.userForItemLevelRequest.userId,
-      }).then((request) => {
-        requestIds.push(request.body.id);
-      });
-      Requests.createNewRequestViaApi({
-        fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        holdingsRecordId: testData.holdingTypeId,
-        instanceId: instanceData.instanceId,
-        item: { barcode: instanceData.barcodes[0] },
-        itemId: instanceData.itemIds[0],
-        pickupServicePointId: testData.servicePoint.id,
-        requestDate: new Date(),
-        requestLevel: REQUEST_LEVELS.ITEM,
-        requestType: REQUEST_TYPES.HOLD,
-        requesterId: testData.user.userId,
-      }).then((request) => {
-        requestIds.push(request.body.id);
-      });
-      Requests.createNewRequestViaApi({
-        fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        holdingsRecordId: testData.holdingTypeId,
-        instanceId: instanceData.instanceId,
-        item: { barcode: instanceData.barcodes[0] },
-        itemId: instanceData.itemIds[0],
-        pickupServicePointId: testData.servicePoint.id,
-        requestDate: new Date(),
-        requestLevel: REQUEST_LEVELS.ITEM,
-        requestType: REQUEST_TYPES.HOLD,
-        requesterId: testData.userForTLR2.userId,
-      }).then((request) => {
-        requestIds.push(request.body.id);
-      });
-      Requests.createNewRequestViaApi({
-        fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        instanceId: instanceData.instanceId,
-        item: { barcode: instanceData.barcodes[0] },
-        pickupServicePointId: testData.servicePoint.id,
-        requestDate: new Date(),
-        requestLevel: REQUEST_LEVELS.TITLE,
-        requestType: REQUEST_TYPES.PAGE,
-        requesterId: testData.userForTLR.userId,
-      }).then((request) => {
-        requestIds.push(request.body.id);
-      });
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
-      Requests.getRequestApi({
-        query: `(instance.title=="${instanceData.instanceTitle}")`,
-      }).then((requestResponse) => {
-        lastRequestPosition = requestResponse[3].position;
-        holdRequests = requestResponse.filter(
-          (request) => request.requestLevel === REQUEST_LEVELS.ITEM &&
-            request.requestType === REQUEST_TYPES.HOLD,
-        ).length;
-        requestPosition = requestResponse.filter(
-          (request) => request.requestLevel === REQUEST_LEVELS.ITEM &&
-            request.requestType === REQUEST_TYPES.PAGE,
-        )[0].position;
-      });
+      })
+        .then((request1) => {
+          requestIds.push(request1.body.id);
+          return Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            holdingsRecordId: testData.holdingTypeId,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[0] },
+            itemId: instanceData.itemIds[0],
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.ITEM,
+            requestType: REQUEST_TYPES.HOLD,
+            requesterId: testData.user.userId,
+          });
+        })
+        .then((request2) => {
+          requestIds.push(request2.body.id);
+          return Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            holdingsRecordId: testData.holdingTypeId,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[0] },
+            itemId: instanceData.itemIds[0],
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.ITEM,
+            requestType: REQUEST_TYPES.HOLD,
+            requesterId: testData.userForTLR2.userId,
+          });
+        })
+        .then((request3) => {
+          requestIds.push(request3.body.id);
+          return Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[0] },
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.TITLE,
+            requestType: REQUEST_TYPES.PAGE,
+            requesterId: testData.userForTLR.userId,
+          });
+        })
+        .then((request4) => {
+          requestIds.push(request4.body.id);
+          return cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
+        })
+        .then(() => {
+          return Requests.getRequestApi({
+            query: `(instance.title=="${instanceData.instanceTitle}")`,
+          });
+        })
+        .then((requestResponse) => {
+          lastRequestPosition = requestResponse[3].position;
+          holdRequests = requestResponse.filter(
+            (request) => request.requestLevel === REQUEST_LEVELS.ITEM &&
+              request.requestType === REQUEST_TYPES.HOLD,
+          ).length;
+          requestPosition = requestResponse.filter(
+            (request) => request.requestLevel === REQUEST_LEVELS.ITEM &&
+              request.requestType === REQUEST_TYPES.PAGE,
+          )[0].position;
+        });
     });
   });
 
@@ -189,7 +198,8 @@ describe('Title Level Request', () => {
       RequestDetail.viewRequestsInQueue();
 
       // From this Request queue, select the Request placed most recently
-      Requests.selectRequest(testData.userForTLR.barcode, 3);
+      Requests.selectExactRequest(instanceData.instanceTitle, 3);
+
       RequestDetail.waitLoading();
       RequestDetail.verifyPositionInQueue(`${lastRequestPosition} (${holdRequests} requests)`);
       // From the Action menu, select Reorder queue
