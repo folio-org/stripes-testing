@@ -97,11 +97,7 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.waitLoading();
         AuthorizationRoles.clickActionsButton();
-        AuthorizationRoles.clickNewButton();
-        AuthorizationRoles.fillRoleNameDescription(testData.centralRoleName2);
-        AuthorizationRoles.clickSaveButton();
-        AuthorizationRoles.verifyCreateAccessError();
-        AuthorizationRoles.closeRoleCreateView();
+        AuthorizationRoles.checkNewButtonShown(false);
         AuthorizationRoles.searchRole(testData.centralRoleName);
         AuthorizationRoles.clickOnRoleName(testData.centralRoleName);
         AuthorizationRoles.checkActionsButtonShown(false, testData.centralRoleName);
@@ -109,11 +105,7 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.college);
         AuthorizationRoles.waitLoading();
         AuthorizationRoles.clickActionsButton();
-        AuthorizationRoles.clickNewButton();
-        AuthorizationRoles.fillRoleNameDescription(testData.collegeRoleName2);
-        AuthorizationRoles.clickSaveButton();
-        AuthorizationRoles.verifyCreateAccessError();
-        AuthorizationRoles.closeRoleCreateView();
+        AuthorizationRoles.checkNewButtonShown(false);
         AuthorizationRoles.searchRole(testData.collegeRoleName);
         AuthorizationRoles.clickOnRoleName(testData.collegeRoleName);
         AuthorizationRoles.checkActionsButtonShown(false, testData.collegeRoleName);
