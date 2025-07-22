@@ -438,6 +438,26 @@ export default {
     gui: 'Specification Storage - Update subfield definition',
   },
 
+  specificationStorageSpecificationRulesItemPatch: {
+    internal: 'specification-storage.specification.rules.item.patch',
+    gui: 'Specification Storage - Toggle rule for specification',
+  },
+
+  specificationStorageSpecificationRulesCollectionGet: {
+    internal: 'specification-storage.specification.rules.collection.get',
+    gui: 'Specification Storage - Get specification rules collection',
+  },
+
+  specificationStorageSpecificationItemGet: {
+    internal: 'specification-storage.specifications.item.get',
+    gui: 'Specification Storage - Get specification',
+  },
+
+  specificationStorageSpecificationCollectionGet: {
+    internal: 'specification-storage.specifications.collection.get',
+    gui: 'Specification Storage - Get specification collection',
+  },
+
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
