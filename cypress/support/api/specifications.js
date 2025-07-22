@@ -57,14 +57,18 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('createSpecificationField', (specificationId, field) => {
-  return cy.okapiRequest({
-    method: REQUEST_METHOD.POST,
-    path: `specification-storage/specifications/${specificationId}/fields`,
-    isDefaultSearchParamsRequired: false,
-    body: field,
-  });
-});
+Cypress.Commands.add(
+  'createSpecificationField',
+  (specificationId, field, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `specification-storage/specifications/${specificationId}/fields`,
+      isDefaultSearchParamsRequired: false,
+      body: field,
+      failOnStatusCode,
+    });
+  },
+);
 
 Cypress.Commands.add('updateSpecificationField', (fieldId, field, failOnStatusCode = true) => {
   return cy.okapiRequest({
