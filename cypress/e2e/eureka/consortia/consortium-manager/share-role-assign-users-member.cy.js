@@ -48,7 +48,7 @@ describe('Eureka', () => {
       {
         type: CAPABILITY_TYPES.DATA,
         resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
+        action: CAPABILITY_ACTIONS.EDIT,
       },
       {
         type: CAPABILITY_TYPES.DATA,
@@ -200,6 +200,7 @@ describe('Eureka', () => {
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
         AuthorizationRoles.clickOnCapabilitySetsAccordion();
         testData.capabilitySets.forEach((capabilitySet) => {
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabilitySet);

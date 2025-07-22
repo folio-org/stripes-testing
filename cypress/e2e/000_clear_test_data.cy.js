@@ -13,8 +13,8 @@ describe('Delete test entities', () => {
     () => {
       let defaultServicePointId = '';
       cy.getAdminToken().then(() => {
-        ServicePoints.getViaApi().then((servicePoints) => {
-          defaultServicePointId = servicePoints.find((sp) => sp.name === 'Circ Desk 1').id;
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          defaultServicePointId = servicePoint.id;
         }).then(() => {
           cy.okapiRequest({
             path: 'users',
