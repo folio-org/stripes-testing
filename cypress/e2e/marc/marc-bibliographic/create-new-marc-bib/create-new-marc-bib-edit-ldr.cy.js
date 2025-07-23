@@ -604,6 +604,7 @@ describe('MARC', () => {
               default:
                 break;
             }
+            cy.wait(1000);
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkInstanceTitle(title);
