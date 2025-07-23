@@ -4,7 +4,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Organizations', () => {
+describe('Organizations', { retries: { runMode: 1 } }, () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let user;
 

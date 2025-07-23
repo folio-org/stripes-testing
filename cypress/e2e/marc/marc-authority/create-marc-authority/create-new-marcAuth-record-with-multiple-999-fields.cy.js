@@ -85,6 +85,7 @@ describe('MARC', () => {
 
           // 2 Click on "Select authority file" dropdown and select any option
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(localAuthFile.name);
           QuickMarcEditor.checkPaneheaderContains(headerText);
 

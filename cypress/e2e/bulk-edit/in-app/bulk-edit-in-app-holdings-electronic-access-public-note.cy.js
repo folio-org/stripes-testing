@@ -94,13 +94,13 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('URL public note');
         let possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectSecondAction('Clear field');
+        BulkEditActions.selectAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('URL public note');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.selectSecondAction('Replace with');
-        BulkEditActions.fillInSecondTextArea(publicNote);
+        BulkEditActions.selectAction('Replace with');
+        BulkEditActions.fillInFirstTextArea(publicNote);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.findValue('URL public note');
         possibleActions = ['Replace with', 'Remove'];

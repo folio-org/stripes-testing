@@ -5,7 +5,7 @@ import permissionsList from '../dictionary/permissions';
 import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     path: 'users',
     searchParams,
     isDefaultSearchParamsRequired: false,
@@ -15,15 +15,20 @@ Cypress.Commands.add('getUsers', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('getUserServicePoints', (userId) => {
-  cy.okapiRequest({
-    path: 'service-points-users',
-    searchParams: {
-      query: `(userId==${userId})`,
-    },
-  }).then(({ body }) => {
-    Cypress.env('userServicePoints', body.servicePointsUsers);
-    return body.servicePointsUsers;
+Cypress.Commands.add('getAdminUserDetails', () => {
+  if (!Cypress.env('adminUserDetails')) {
+    return cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((users) => {
+      Cypress.env('adminUserDetails', users[0]);
+      return users[0];
+    });
+  } else {
+    return Cypress.env('adminUserDetails');
+  }
+});
+
+Cypress.Commands.add('getAdminUserId', () => {
+  return cy.getAdminUserDetails().then((user) => {
+    return user.id;
   });
 });
 
@@ -214,9 +219,9 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
                   responseCapabs.body.capabilities.filter(
                     (capab) => capab.permission === permissionName,
                   ).length > 0 ||
-                    responseSets.body.capabilitySets.filter(
-                      (set) => set.permission === permissionName,
-                    ).length > 0,
+                  responseSets.body.capabilitySets.filter(
+                    (set) => set.permission === permissionName,
+                  ).length > 0,
                   `Capabilities/sets found for "${permissionName}"`,
                 ).to.be.true;
               });
@@ -326,8 +331,8 @@ Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = [
               responseCapabs.body.capabilities.filter(
                 (capab) => capab.permission === permissionName,
               ).length > 0 ||
-                responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
-                  .length > 0,
+              responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
+                .length > 0,
               `Capabilities/sets found for "${permissionName}"`,
             ).to.be.true;
           });

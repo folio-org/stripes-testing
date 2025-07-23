@@ -1474,6 +1474,7 @@ export default {
   overlayWithOclc: (oclc) => {
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
       if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
+        cy.wait(3000);
         cy.do(importTypeSelect.choose('OCLC WorldCat'));
       }
       cy.do(

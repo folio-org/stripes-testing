@@ -135,8 +135,8 @@ export default {
       Checkbox('item.copy').click(),
       addTokenButton.click(),
       cy.wait(2000),
-      saveButton.click(),
     ]);
+    cy.get('button[id="footer-save-entity"]').click();
     cy.wait(1000);
   },
   fillTemplateContent(content) {
@@ -175,7 +175,7 @@ export default {
     cy.do(saveButton.click());
   },
   saveAndClose: () => {
-    cy.do(saveButton.click());
+    cy.get('button[id="footer-save-entity"]').click();
     cy.wait(1000);
     cy.expect(staffSlipPaneContent.absent());
   },

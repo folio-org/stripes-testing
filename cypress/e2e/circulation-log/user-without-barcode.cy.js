@@ -12,15 +12,15 @@ import Users from '../../support/fragments/users/users';
 describe('Circulation log', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    servicePoint: {},
     requestsId: '',
     user: Users.generateUserModel(),
   };
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        testData.servicePointId = servicePoints[0].id;
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        testData.servicePoint = servicePoint;
       });
       cy.getLocations({ limit: 1 }).then((res) => {
         testData.location = res;
@@ -37,17 +37,13 @@ describe('Circulation log', () => {
         testData.user = userProperties;
         testData.user = { ...testData.user, ...userProperties };
       }).then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          testData.servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(
-            testData.servicePointId,
-            testData.user.userId,
-            testData.servicePointId,
-          );
-        }).then(() => {
-          // cy.overrideLocalSettings(testData.user.userId);
-        });
+        UserEdit.addServicePointViaApi(
+          testData.servicePoint.id,
+          testData.user.userId,
+          testData.servicePoint.id,
+        );
+      }).then(() => {
+        // cy.overrideLocalSettings(testData.user.userId);
       });
     });
   });

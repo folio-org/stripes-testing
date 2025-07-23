@@ -19,8 +19,8 @@ describe('Patron notices', () => {
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        servicePointId = servicePoints[0].id;
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        servicePointId = servicePoint.id;
       });
       NoticePolicyTemplate.createViaApi(template).then((noticeTemplateResp) => {
         testData.noticeTemplateBody = noticeTemplateResp;

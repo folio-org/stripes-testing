@@ -197,7 +197,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.selectOption(staffSuppressOption);
         BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-        BulkEditActions.selectSecondAction('Set true');
+        BulkEditActions.selectAction('Set true');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(

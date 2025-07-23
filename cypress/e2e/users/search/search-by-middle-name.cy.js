@@ -22,8 +22,8 @@ describe('Users', () => {
         testData.user = userProperties;
         testData.user = { ...testData.user, ...userProperties };
       }).then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          testData.servicePointId = servicePoints[0].id;
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          testData.servicePointId = servicePoint.id;
         }).then(() => {
           UserEdit.addServicePointViaApi(
             testData.servicePointId,

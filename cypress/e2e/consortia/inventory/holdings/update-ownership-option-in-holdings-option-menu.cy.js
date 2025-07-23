@@ -61,10 +61,10 @@ describe('Inventory', () => {
           });
       });
       cy.withinTenant(Affiliations.University, () => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-          (servicePoints) => {
+        ServicePoints.getCircDesk1ServicePointViaApi().then(
+          (servicePoint) => {
             testData.location = Locations.getDefaultLocation({
-              servicePointId: servicePoints[0].id,
+              servicePointId: servicePoint.id,
             }).location;
             Locations.createViaApi(testData.location).then((location) => {
               testData.location.id = location.id;
@@ -94,13 +94,14 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
       cy.withinTenant(Affiliations.University, () => {
         cy.deleteHoldingRecordViaApi(testData.holdings.id);
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         Locations.deleteViaApi(testData.location);
+      });
+      cy.withinTenant(Affiliations.Consortia, () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
       });
     });
 

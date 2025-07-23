@@ -1,10 +1,11 @@
 import { REQUEST_METHOD } from '../constants';
 
-Cypress.Commands.add('getSpecificatoinIds', () => {
+Cypress.Commands.add('getSpecificatoinIds', (searchParams) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'specification-storage/specifications',
     isDefaultSearchParamsRequired: false,
+    searchParams,
   }).then((response) => {
     return response.body.specifications;
   });
@@ -105,6 +106,14 @@ Cypress.Commands.add('deleteSpecificationFieldSubfield', (subfieldId, failOnStat
   });
 });
 
+Cypress.Commands.add('getSpecificationFieldIndicators', (fieldId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/fields/${fieldId}/indicators`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
 Cypress.Commands.add(
   'createSpecificationFieldIndicator',
   (fieldId, indicator, failOnStatusCode = true) => {
@@ -117,3 +126,81 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add(
+  'updateSpecificationFieldIndicator',
+  (indicatorId, indicator, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.PUT,
+      path: `specification-storage/indicators/${indicatorId}`,
+      isDefaultSearchParamsRequired: false,
+      body: indicator,
+      failOnStatusCode,
+    });
+  },
+);
+
+Cypress.Commands.add('getSpecificationIndicatorCodes', (indicatorId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/indicators/${indicatorId}/indicator-codes`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add(
+  'createSpecificationIndicatorCode',
+  (indicatorId, indicatorCode, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `specification-storage/indicators/${indicatorId}/indicator-codes`,
+      isDefaultSearchParamsRequired: false,
+      body: indicatorCode,
+      failOnStatusCode,
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'updateSpecificationIndicatorCode',
+  (indicatorCodeId, indicatorCode, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.PUT,
+      path: `specification-storage/indicator-codes/${indicatorCodeId}`,
+      isDefaultSearchParamsRequired: false,
+      body: indicatorCode,
+      failOnStatusCode,
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'deleteSpecificationIndicatorCode',
+  (indicatorCodeId, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `specification-storage/indicator-codes/${indicatorCodeId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
+    });
+  },
+);
+
+Cypress.Commands.add('getSpecificatoinRules', (specificationId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/specifications/${specificationId}/rules`,
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response.body.rules;
+  });
+});
+
+Cypress.Commands.add('updateSpecificatoinRule', (specificationId, specificationRuleId, body) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.PATCH,
+    path: `specification-storage/specifications/${specificationId}/rules/${specificationRuleId}`,
+    isDefaultSearchParamsRequired: false,
+    body,
+  });
+});

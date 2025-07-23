@@ -32,7 +32,6 @@ import {
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -126,6 +125,18 @@ const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
 
 let totalRows;
+
+Cypress.Commands.add('getUserServicePoints', (userId) => {
+  cy.okapiRequest({
+    path: 'service-points-users',
+    searchParams: {
+      query: `(userId==${userId})`,
+    },
+  }).then(({ body }) => {
+    Cypress.env('userServicePoints', body.servicePointsUsers);
+    return body.servicePointsUsers;
+  });
+});
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -545,7 +556,7 @@ export default {
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
         body: {
           userId,
-          servicePointsIds: servicePointIds,
+          servicePointsIds: [...new Set([...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds, ...servicePointIds])],
           defaultServicePointId,
         },
         isDefaultSearchParamsRequired: false,
@@ -568,23 +579,6 @@ export default {
           isDefaultSearchParamsRequired: false,
         });
       });
-  },
-
-  setupUserServicePoints(username, servicePointQuery) {
-    cy.getUsers({ limit: 1, query: `"username"="${username}"` }).then((users) => {
-      ServicePoints.getViaApi({ limit: 1, query: servicePointQuery }).then((servicePoints) => {
-        const servicePointId = servicePoints[0].id;
-
-        cy.getUserServicePoints(users[0].id).then((userServicePoints) => {
-          if (userServicePoints && userServicePoints.length > 0) {
-            this.changeServicePointPreferenceViaApi(users[0].id, [servicePointId], servicePointId);
-          } else {
-            this.addServicePointViaApi(servicePointId, users[0].id, servicePointId);
-          }
-          cy.wait(1000);
-        });
-      });
-    });
   },
 
   updateExternalIdViaApi(user, externalSystemId) {
