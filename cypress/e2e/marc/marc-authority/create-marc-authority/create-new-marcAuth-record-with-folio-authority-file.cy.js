@@ -69,6 +69,7 @@ describe('MARC', () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.sourceName);
           QuickMarcEditor.checkContentByTag(testData.tag001, '');
           newFields.forEach((newField) => {

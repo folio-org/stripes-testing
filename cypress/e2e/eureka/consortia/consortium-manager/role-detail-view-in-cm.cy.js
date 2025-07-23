@@ -159,7 +159,7 @@ describe('Eureka', () => {
           testData.roleCentral.name,
           testData.roleCentral.description,
         );
-        AuthorizationRoles.checkActionsButtonShown(true, testData.roleCentral.name);
+        AuthorizationRoles.checkActionsButtonShown(false, testData.roleCentral.name);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleCentral.name, false);
         AuthorizationRoles.verifyAssignedUsersAccordion(false, false);
         AuthorizationRoles.verifyAssignedUser(
@@ -176,7 +176,7 @@ describe('Eureka', () => {
           testData.roleCollege.name,
           testData.roleCollege.description,
         );
-        AuthorizationRoles.checkActionsButtonShown(true, testData.roleCollege.name);
+        AuthorizationRoles.checkActionsButtonShown(false, testData.roleCollege.name);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleCollege.name, false);
         AuthorizationRoles.verifyAssignedUsersAccordion(false, false);
         AuthorizationRoles.verifyAssignedUser(

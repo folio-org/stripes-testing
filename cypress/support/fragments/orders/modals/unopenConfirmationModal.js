@@ -19,7 +19,7 @@ const values = {
   },
   [false]: {
     content:
-      'This order has at least one order line with receiving workflow "Synchronized order and receipt quantity". Such POLs with related receiving records will have any unreceived pieces deleted, and any "On order" Item records related to those pieces will also be deleted from inventory. Holdings linked to those items that have no other related items can also be deleted from inventory. How would you like to proceed?',
+      'This order has at least one order line with receiving workflow "Synchronized order and receipt quantity". Such POLs with related receiving records will have any unreceived pieces, with no current requests pending, deleted, and any "On order" Item records related to those pieces will also be deleted from inventory. Holdings linked to those items that have no other related items can also be deleted from inventory. How would you like to proceed?',
     deleteHoldingsValue: 'Delete Holdings and items',
     keepHoldingsValue: 'Delete items',
   },

@@ -61,10 +61,10 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
-            (users) => {
-              testData.adminLastName = users[0].personal.lastName;
-              testData.adminFirstName = users[0].personal.firstName;
+          cy.getAdminUserDetails().then(
+            (user) => {
+              testData.adminLastName = user.personal.lastName;
+              testData.adminFirstName = user.personal.firstName;
 
               versionHistorySourceCardsData.forEach((cardData, index) => {
                 if (index) {

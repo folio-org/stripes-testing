@@ -50,6 +50,7 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkRecordStatusNew();
+          MarcAuthority.setValid008DropdownValues();
 
           MarcAuthority.selectSourceFile(authorityFile);
 

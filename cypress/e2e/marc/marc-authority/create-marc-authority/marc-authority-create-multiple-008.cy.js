@@ -50,6 +50,7 @@ describe('MARC', () => {
           // Step 1: Open new authority record pane
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkRecordStatusNew();
+          MarcAuthority.setValid008DropdownValues();
 
           // Step 2: Select authority file (LCNAF)
           MarcAuthority.selectSourceFile(authorityFile);
@@ -62,17 +63,17 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(tag100, `$a ${marcAuthorityHeading}`, 4);
           QuickMarcEditor.checkContent(`$a ${marcAuthorityHeading}`, 5);
           // Add an empty field and change tag to 008
-          QuickMarcEditor.addEmptyFields(3);
-          QuickMarcEditor.checkEmptyFieldAdded(4);
-          QuickMarcEditor.updateTagNameToLockedTag(4, tag008);
+          QuickMarcEditor.addEmptyFields(5);
+          QuickMarcEditor.checkEmptyFieldAdded(6);
+          QuickMarcEditor.updateTagNameToLockedTag(6, tag008);
 
           // The new row should be disabled (read-only)
-          QuickMarcEditor.verifyTagValue(4, tag008);
-          QuickMarcEditor.verifyDropdownsShownInField(4, true);
+          QuickMarcEditor.verifyTagValue(6, tag008);
+          QuickMarcEditor.verifyDropdownsShownInField(6, true);
 
           // Step 4: Try to save and check for error message
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, errorNonRepeatable);
+          QuickMarcEditor.checkErrorMessage(6, errorNonRepeatable);
           // The pane should still be open
           QuickMarcEditor.checkRecordStatusNew();
         },

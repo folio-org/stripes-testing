@@ -40,7 +40,7 @@ describe('Eureka', () => {
       {
         type: CAPABILITY_TYPES.DATA,
         resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
+        action: CAPABILITY_ACTIONS.EDIT,
       },
       {
         type: CAPABILITY_TYPES.SETTINGS,
@@ -168,6 +168,13 @@ describe('Eureka', () => {
           assignUserCentral.firstName,
           true,
         );
+        AuthorizationRoles.closeRoleDetailView(sharedRoleName);
+        AuthorizationRoles.searchRole('');
+        AuthorizationRoles.waitContentLoading(true);
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationRoles.waitContentLoading(true);
+        AuthorizationRoles.searchRole(duplicateRoleNamePart);
+        AuthorizationRoles.checkRoleFound(including(duplicateRoleNamePart), false);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);

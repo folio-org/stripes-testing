@@ -7,31 +7,26 @@ describe('Prepare test data', () => {
     let defaultServicePointId;
     let userId;
     cy.getAdminToken().then(() => {
-      cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((user) => {
-        userId = user[0].id;
-      });
-      ServicePoints.getViaApi()
-        .then((servicePoints) => {
-          defaultServicePointId = servicePoints.find((sp) => sp.name.includes('Circ Desk 1')).id;
-          servicePointIds.push(defaultServicePointId);
-          servicePointIds.push(servicePoints.find((sp) => sp.name.includes('DCB')).id);
-          servicePointIds.push(servicePoints.find((sp) => sp.name.includes('Circ Desk 2')).id);
-          servicePointIds.push(servicePoints.find((sp) => sp.name.includes('Online')).id);
-        })
+      cy.getAdminUserId().then((id) => {
+        userId = id;
+      })
         .then(() => {
-          cy.log(servicePointIds);
-          cy.log(userId);
-          cy.log(defaultServicePointId);
+          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            servicePointIds.push(servicePoint.id);
+            defaultServicePointId = servicePoint.id;
+          });
+          ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+            servicePointIds.push(servicePoint.id);
+          });
+          ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
+            servicePointIds.push(servicePoint.id);
+          });
+        }).then(() => {
           UserEdit.changeServicePointPreferenceViaApi(
             userId,
             servicePointIds,
             defaultServicePointId,
           );
-        }).then(() => {
-          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
-            .then((user) => {
-              userId = user[0].id;
-            });
         });
     });
   });

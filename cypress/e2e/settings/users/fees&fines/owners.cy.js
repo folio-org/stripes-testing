@@ -141,7 +141,7 @@ describe('Fees&Fines', () => {
           // clarify should be service points be shared between existing users
           UsersOwners.getUsedServicePoints().then((usedServicePoints) => {
             addedServicePoints.push(
-              UsersOwners.defaultServicePoints.filter(
+              ServicePoints.defaultServicePoints.filter(
                 (servicePoint) => !usedServicePoints?.includes(servicePoint),
               )[0],
             );
