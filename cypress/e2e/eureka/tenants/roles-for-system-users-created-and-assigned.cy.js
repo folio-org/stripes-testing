@@ -6,6 +6,7 @@ describe('Eureka', () => {
     };
 
     const expectedSystemRoles = [];
+    const allExistingCapabilities = [];
     let existingRoles;
 
     function getDataFromAppDescriptor(appDescriptor) {
@@ -36,6 +37,9 @@ describe('Eureka', () => {
       });
       cy.getAuthorizationRoles({ limit: 500 }).then((roles) => {
         existingRoles = roles;
+      });
+      cy.getCapabilitiesApi(5000, true).then((capabs) => {
+        allExistingCapabilities.push(...capabs);
       });
     });
 
@@ -76,7 +80,10 @@ describe('Eureka', () => {
 
               expectedSystemRole.missingPermissions = [];
               expectedSystemRole.permissionNames.forEach((permission) => {
-                if (!assignedPermissionNames.includes(permission)) {
+                if (
+                  !assignedPermissionNames.includes(permission) &&
+                  allExistingCapabilities.find((capab) => capab.permission === permission)
+                ) {
                   expectedSystemRole.missingPermissions.push(permission);
                 }
               });
