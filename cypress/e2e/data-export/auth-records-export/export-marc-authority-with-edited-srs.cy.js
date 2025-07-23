@@ -39,7 +39,7 @@ const marcAuthority = {
 const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 const expectedMarcFields = [
   ['008', '830616n| azannaabn          |a aaa      '],
-  // ['010', '  ', 'a', '63943573'],
+  ['010', '  ', 'a', '63943573'],
   ['035', '  ', 'a', '(OCoLC)oca00955395'],
   ['040', '  ', 'a', 'DLC', 'b', 'eng', 'c', 'DLC', 'd', 'OCoLC', 'd', 'DLc', 'e', 'rda'],
   ['046', '  ', 'f', '1498', 'g', '1578', '2', 'edtf'],
@@ -137,7 +137,7 @@ describe('Data Export', () => {
             uuid: marcAuthority.id,
             assertions: [
               (record) => {
-                expect(record.leader).to.eq('00850cz  a2200253n  4500');
+                expect(record.leader).to.eq('00875cz  a2200265n  4500');
               },
               (record) => {
                 expect(record.fields[0]).to.deep.eq(['001', 'n  83073672 ']);
@@ -187,6 +187,10 @@ describe('Data Export', () => {
       QuickMarcEditor.saveAndCloseWithValidationWarnings();
       QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
+      const updatedExpectedMarcFields = [...expectedMarcFields];
+      const index010 = updatedExpectedMarcFields.findIndex((field) => field[0] === '010');
+      updatedExpectedMarcFields[index010] = ['010', '  ', 'a', '   63943573 '];
+
       // Step 10: Go to "Data export" app
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
 
@@ -223,7 +227,7 @@ describe('Data Export', () => {
             uuid: marcAuthority.id,
             assertions: [
               (record) => {
-                expect(record.leader).to.eq('00850az  a2200253n  4500');
+                expect(record.leader).to.eq('00879az  a2200265n  4500');
               },
               (record) => {
                 expect(record.fields[0]).to.deep.eq(['001', 'n  83073672 ']);
@@ -231,7 +235,7 @@ describe('Data Export', () => {
               (record) => {
                 expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
               },
-              ...expectedMarcFields.map((fieldData, index) => (record) => {
+              ...updatedExpectedMarcFields.map((fieldData, index) => (record) => {
                 expect(record.fields[index + 2]).to.deep.eq(fieldData);
               }),
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
