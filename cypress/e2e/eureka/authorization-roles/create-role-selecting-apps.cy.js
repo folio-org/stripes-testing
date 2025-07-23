@@ -10,12 +10,12 @@ describe('Eureka', () => {
       const testData = {
         roleName: `AT_C430260_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description C430260 ${getRandomPostfix()}`,
-        firstApplicationName: 'app-dcb',
+        firstApplicationName: 'app-licenses',
         secondApplicationName: 'app-acquisitions',
         capabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Circulation-Item',
+            resource: 'Finance',
             action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
@@ -25,12 +25,12 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Dcb Transactions Status',
+            resource: 'Licenses Files',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Licenses Admin Action',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {

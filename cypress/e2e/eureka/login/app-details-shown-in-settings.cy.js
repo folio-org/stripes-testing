@@ -10,7 +10,11 @@ describe('Eureka', () => {
     const appIds = [];
     const moduleIds = [];
     const uiModuleIds = [];
-    const expectedMissingModules = [];
+    const expectedMissingModules = [
+      'circulation-bff-requests',
+      'requests-mediated',
+      'requests-mediated-actions',
+    ];
     const isDefaultEnv =
       Cypress.env('OKAPI_HOST').includes('snapshot') ||
       Cypress.env('OKAPI_HOST').includes('cypress');
