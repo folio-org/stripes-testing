@@ -39,7 +39,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
   });
 
   it(
-    'C490926 Cannot create Local Field with empty "label" for MARC bib spec (spitfire)',
+    'C490926 Cannot create Local Field with empty "label" for MARC bib spec (API) (spitfire)',
     { tags: ['C490926', 'extendedPath', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls

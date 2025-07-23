@@ -37,7 +37,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with I
   });
 
   it(
-    'C490922 Cannot create Local Field with invalid "tag" length for MARC bib spec (spitfire)',
+    'C490922 Cannot create Local Field with invalid "tag" length for MARC bib spec (API) (spitfire)',
     { tags: ['C490922', 'extendedPath', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls

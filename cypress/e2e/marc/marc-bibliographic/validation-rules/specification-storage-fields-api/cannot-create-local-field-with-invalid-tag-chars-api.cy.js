@@ -37,7 +37,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with I
   });
 
   it(
-    'C490923 Cannot create Local Field with invalid chars in "tag" (letters, special characters, spaces) for MARC bib spec (spitfire)',
+    'C490923 Cannot create Local Field with invalid chars in "tag" (letters, special characters, spaces) for MARC bib spec (API) (spitfire)',
     { tags: ['C490923', 'extendedPath', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
