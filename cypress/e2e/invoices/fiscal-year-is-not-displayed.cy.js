@@ -78,7 +78,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     () => {
       // #1 Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });
-      InvoiceEditForm.checkFiscalYearIsAbsent();
+      InvoiceEditForm.checkIfFiscalYearIsNotExists();
       InvoiceEditForm.checkButtonsConditions([
         { label: 'Cancel', conditions: { disabled: false } },
         { label: 'Save & close', conditions: { disabled: true } },
@@ -106,7 +106,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
       // #4 Click "Actions" button on the third "Vendor invoice number - <number>" pane -> select "Edit" option
       Invoices.openInvoiceEditForm({ createNew: false });
-      InvoiceEditForm.checkFiscalYearIsAbsent();
+      InvoiceEditForm.checkIfFiscalYearIsNotExists();
       InvoiceEditForm.checkButtonsConditions([
         { label: 'Cancel', conditions: { disabled: false } },
         { label: 'Save & close', conditions: { disabled: true } },

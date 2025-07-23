@@ -70,6 +70,9 @@ export default {
   checkFiscalYearIsAbsent() {
     cy.get('#selected-invoice-fiscal-year-item').invoke('text').should('eq', '');
   },
+  checkIfFiscalYearIsNotExists() {
+    cy.get('#selected-invoice-fiscal-year-item').should('not.exist');
+  },
   checkCurrency(currency) {
     cy.expect(Button({ id: 'currency' }).has({ singleValue: currency }));
   },
