@@ -57,10 +57,10 @@ describe('Inventory', () => {
           .then(({ instanceData }) => {
             testData.collegeTenant.instance = instanceData;
 
-            ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-              (servicePoints) => {
+            ServicePoints.getCircDesk1ServicePointViaApi().then(
+              (servicePoint) => {
                 const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoints[0].id,
+                  servicePointId: servicePoint.id,
                 }).location;
                 Locations.createViaApi(collegeLocationData).then((location) => {
                   testData.collegeTenant.location = location;
@@ -107,13 +107,13 @@ describe('Inventory', () => {
       });
 
       cy.withinTenant(Affiliations.University, () => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-          .then((servicePoints) => {
+        ServicePoints.getCircDesk1ServicePointViaApi()
+          .then((servicePoint) => {
             const universityFirstLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoints[0].id,
+              servicePointId: servicePoint.id,
             }).location;
             const universitySecondLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoints[0].id,
+              servicePointId: servicePoint.id,
             }).location;
             Locations.createViaApi(universityFirstLocationData).then((location) => {
               testData.universityTenant.location1 = location;

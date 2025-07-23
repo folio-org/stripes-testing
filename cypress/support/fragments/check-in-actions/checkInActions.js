@@ -191,9 +191,7 @@ export default {
 
   openLoanDetails(username) {
     cy.wait(1000);
-    cy.do(availableActionsButton.click());
-    cy.wait(500);
-    cy.do(loanDetailsButton.click());
+    cy.do([availableActionsButton.click(), loanDetailsButton.click()]);
     cy.wait(1000);
     cy.expect(Pane(including(username)).exists());
     cy.expect(Pane(including('Loan details')).exists());

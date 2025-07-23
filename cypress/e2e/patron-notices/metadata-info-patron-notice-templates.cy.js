@@ -16,15 +16,12 @@ describe('Patron notices', () => {
     before('Preconditions', () => {
       cy.getAdminToken();
       NoticeTemplates.createViaApi(noticeTemplate);
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-        .then((servicePoints) => {
-          return servicePoints[0].id;
-        })
-        .then((servicePointId) => {
+      ServicePoints.getCircDesk1ServicePointViaApi()
+        .then((servicePoint) => {
           cy.createTempUser([permissions.uiCirculationSettingsNoticeTemplates.gui]).then(
             (userProperties) => {
               userData = userProperties;
-              UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+              UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
             },
           );
         })
