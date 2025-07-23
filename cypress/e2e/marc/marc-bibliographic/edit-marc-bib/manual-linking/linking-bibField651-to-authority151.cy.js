@@ -19,7 +19,7 @@ describe('MARC', () => {
         const testData = {
           tag651: '651',
           authorityMarkedValue: 'C375071 Clear Creek (Tex.)',
-          subjectValue: 'C375071 Clear Creek (Tex.)--Place in Texas',
+          subjectValue: 'C375071 Clear Creek (Tex.)--Place in Texas--Form',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Subject',
         };
@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag651,
           '\\',
           '0',
-          '$a C375071 Clear Creek (Tex.) $g Place in Texas $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
+          '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
         ];
         const bib651LinkedFieldValues = [
           20,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '\\',
           '0',
           '$a C375071 Clear Creek (Tex.) $g Place in Texas',
-          '',
+          '$v Form',
           '$0 http://id.loc.gov/authorities/names/n79041362',
           '$3 papers',
         ];
@@ -127,9 +127,7 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag651);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib651LinkedFieldValues);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               2,
@@ -142,16 +140,12 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
@@ -162,9 +156,7 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib651UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib651UnlinkedFieldValues[0]);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

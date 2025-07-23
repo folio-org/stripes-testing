@@ -1088,10 +1088,14 @@ export default {
     cy.expect(Checkbox({ label: 'Apply to all items records', checked }).exists());
   },
 
+  applyToHoldingsRecordsCheckboxExists(checked) {
+    cy.expect(Checkbox({ label: 'Apply to all holdings records', checked }).exists());
+  },
+
   applyToHoldingsItemsRecordsCheckboxExists(checked) {
     cy.expect([
-      Checkbox({ label: 'Apply to all items records', checked }).exists(),
-      Checkbox({ label: 'Apply to all holdings records', checked }).exists(),
+      this.applyToItemsRecordsCheckboxExists(checked),
+      this.applyToHoldingsRecordsCheckboxExists(checked),
     ]);
   },
 

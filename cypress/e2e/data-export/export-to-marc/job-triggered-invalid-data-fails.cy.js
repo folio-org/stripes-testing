@@ -46,7 +46,7 @@ describe('Data Export', () => {
       { tags: ['extendedPath', 'firebird', 'C345415'] },
       () => {
         ExportFileHelper.uploadFile(emptyFile);
-        ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');
+        ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'Default authority', 'Authorities');
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then((interception) => {
           const job = interception.response.body.jobExecutions[0];
@@ -59,14 +59,14 @@ describe('Data Export', () => {
             recordsCount,
             jobId,
             user.username,
-            'authority',
+            'Default authority',
           );
         });
         cy.getUserToken(user.username, user.password);
         ExportFileHelper.uploadFile(uuidsInInvalidFormat);
         ExportFileHelper.exportWithDefaultJobProfile(
           uuidsInInvalidFormat,
-          'authority',
+          'Default authority',
           'Authorities',
         );
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo1');
@@ -81,14 +81,14 @@ describe('Data Export', () => {
             recordsCount,
             jobId,
             user.username,
-            'authority',
+            'Default authority',
           );
         });
         cy.getUserToken(user.username, user.password);
         ExportFileHelper.uploadFile(notFoundUUIDsInValidFormat);
         ExportFileHelper.exportWithDefaultJobProfile(
           notFoundUUIDsInValidFormat,
-          'authority',
+          'Default authority',
           'Authorities',
         );
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
@@ -103,7 +103,7 @@ describe('Data Export', () => {
             recordsCount,
             jobId,
             user.username,
-            'authority',
+            'Default authority',
           );
         });
       },

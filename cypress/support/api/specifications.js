@@ -1,10 +1,11 @@
 import { REQUEST_METHOD } from '../constants';
 
-Cypress.Commands.add('getSpecificatoinIds', () => {
+Cypress.Commands.add('getSpecificatoinIds', (searchParams) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'specification-storage/specifications',
     isDefaultSearchParamsRequired: false,
+    searchParams,
   }).then((response) => {
     return response.body.specifications;
   });
@@ -172,3 +173,34 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add(
+  'deleteSpecificationIndicatorCode',
+  (indicatorCodeId, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `specification-storage/indicator-codes/${indicatorCodeId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
+    });
+  },
+);
+
+Cypress.Commands.add('getSpecificatoinRules', (specificationId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `specification-storage/specifications/${specificationId}/rules`,
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response.body.rules;
+  });
+});
+
+Cypress.Commands.add('updateSpecificatoinRule', (specificationId, specificationRuleId, body) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.PATCH,
+    path: `specification-storage/specifications/${specificationId}/rules/${specificationRuleId}`,
+    isDefaultSearchParamsRequired: false,
+    body,
+  });
+});
