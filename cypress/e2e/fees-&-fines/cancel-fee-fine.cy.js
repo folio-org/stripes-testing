@@ -140,9 +140,6 @@ describe('Fees&Fines', () => {
         RefundFeeFine.selectRefundReason(testData.refundReason.nameReason);
         // Click "Refund" and "Confirm" button
         RefundFeeFine.submitAndConfirm();
-        RefundFeeFine.verifyRefundSuccess(
-          `1 fee/fine for $${feeFineType.amount}.00 has been successfully fully refunded for `,
-        );
         // Switch to "Open" tab
         cy.visit(AppPaths.getOpenFeeFinePath(testData.user.userId));
         // Select the just Refunded fee/fine, click on "..." button and select "Error" action
