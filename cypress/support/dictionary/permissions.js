@@ -1135,6 +1135,10 @@ export default {
     internal: 'ui-inventory.settings.call-number-browse',
     gui: 'Settings (Inventory): Configure call number browse',
   },
+  uiSettingsCallNumberTypesCreateEditDelete: {
+    internal: 'ui-inventory.settings.call-number-types',
+    gui: 'Settings (Inventory): Create, edit, delete call number types',
+  },
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',

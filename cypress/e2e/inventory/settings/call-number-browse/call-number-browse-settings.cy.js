@@ -102,3 +102,49 @@ describe('Inventory', () => {
     });
   });
 });
+
+describe('Inventory', () => {
+  describe('Settings', () => {
+    describe('Call number browse', () => {
+      const callNumberBrowseTab = 'Call number browse';
+      const callNumberTypesTab = 'Call number types';
+      let testUser;
+
+      before('Create user with permissions', () => {
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.uiSettingsCallNumberBrowseView.gui,
+          Permissions.uiSettingsCallNumberTypesCreateEditDelete.gui,
+        ]).then((userProperties) => {
+          testUser = userProperties;
+        });
+      });
+
+      after('Delete user', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testUser.userId);
+      });
+
+      it(
+        'C627455 View "Settings >> Inventory >> Call number browse" page (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C627455'] },
+        () => {
+          cy.login(testUser.username, testUser.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsPane.waitLoading();
+          SettingsPane.checkTabPresentInSecondPane(
+            APPLICATION_NAMES.INVENTORY,
+            callNumberBrowseTab,
+          );
+          SettingsPane.checkTabPresentInSecondPane(APPLICATION_NAMES.INVENTORY, callNumberTypesTab);
+          CallNumberBrowseSettings.openCallNumberBrowse();
+          CallNumberBrowseSettings.validateCallNumberBrowsePaneOpened();
+          CallNumberBrowseSettings.validateCallNumberBrowseTable();
+          CallNumberBrowseSettings.checkInfoIconExists();
+          CallNumberBrowseSettings.clickInfoIcon();
+          CallNumberBrowseSettings.checkPopoverMessage();
+        },
+      );
+    });
+  });
+});
