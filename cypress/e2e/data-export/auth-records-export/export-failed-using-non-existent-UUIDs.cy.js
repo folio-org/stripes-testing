@@ -62,7 +62,11 @@ describe('Data Export', () => {
         MarcAuthoritiesDelete.checkDelete(searchHeading);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFileHelper.uploadRecentlyDownloadedFile(downloadedFile);
-        ExportFileHelper.exportWithDefaultJobProfile(downloadedFile, 'authority', 'Authorities');
+        ExportFileHelper.exportWithDefaultJobProfile(
+          downloadedFile,
+          'Default authority',
+          'Authorities',
+        );
         DataExportResults.verifyLastLog(downloadedFile, 'Fail');
       },
     );

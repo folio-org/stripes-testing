@@ -43,7 +43,7 @@ describe('Data Export', () => {
       ExportFileHelper.uploadFile(editedFileName);
       ExportFileHelper.exportWithDefaultJobProfile(
         editedFileName,
-        'instances',
+        'Default instances',
         'Instances',
         '.cql',
       );
@@ -60,7 +60,7 @@ describe('Data Export', () => {
           recordsCount,
           jobId,
           user.username,
-          'instances',
+          'Default instances',
           true,
         );
       });
