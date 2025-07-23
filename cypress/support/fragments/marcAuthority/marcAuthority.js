@@ -179,29 +179,29 @@ const defaultAuthority = {
 
 const detailsPaneHeader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 const langOptions = {
-  '\\': '\\ - ui-quick-marc.record.fixedField.No information provided',
-  b: 'b - ui-quick-marc.record.fixedField.English and French',
-  e: 'e - ui-quick-marc.record.fixedField.English only',
-  f: 'f - ui-quick-marc.record.fixedField.French only',
+  '\\': '\\ - No information provided',
+  b: 'b - English and French',
+  e: 'e - English only',
+  f: 'f - French only',
   '|': '| - No attempt to code',
 };
 const kindRecOptions = {
-  a: 'a - ui-quick-marc.record.fixedField.Established heading',
-  b: 'b - ui-quick-marc.record.fixedField.Untraced reference',
-  c: 'c - ui-quick-marc.record.fixedField.Traced reference',
-  d: 'd - ui-quick-marc.record.fixedField.Subdivision',
-  e: 'e - ui-quick-marc.record.fixedField.Node label',
-  f: 'f - ui-quick-marc.record.fixedField.Established heading and subdivision',
-  g: 'g - ui-quick-marc.record.fixedField.Reference and subdivision',
+  a: 'a - Established heading',
+  b: 'b - Untraced reference',
+  c: 'c - Traced reference',
+  d: 'd - Subdivision',
+  e: 'e - Node label',
+  f: 'f - Established heading and subdivision',
+  g: 'g - Reference and subdivision',
   '|': '| - No attempt to code',
 };
 const catRulesOptions = {
-  a: 'a - ui-quick-marc.record.fixedField.Earlier rules',
-  b: 'b - ui-quick-marc.record.fixedField.AACR 1',
-  c: 'c - ui-quick-marc.record.fixedField.AACR 2',
-  d: 'd - ui-quick-marc.record.fixedField.AACR 2 compatible heading',
-  z: 'z - ui-quick-marc.record.fixedField.Other',
-  n: 'n - ui-quick-marc.record.fixedField.Not applicable',
+  a: 'a - Earlier rules',
+  b: 'b - AACR 1',
+  c: 'c - AACR 2',
+  d: 'd - AACR 2 compatible heading',
+  z: 'z - Other',
+  n: 'n - Not applicable',
   '|': '| - No attempt to code',
 };
 

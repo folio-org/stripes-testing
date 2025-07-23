@@ -698,3 +698,35 @@ Cypress.Commands.add('getAllModesOfIssuance', (searchParams) => {
     return body.issuanceModes;
   });
 });
+
+Cypress.Commands.add('toggleLccnDuplicateCheck', ({ enable = true }) => {
+  cy.okapiRequest({
+    path: 'settings/entries',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    const targetEntry = body.items.find((entry) => entry.key === 'lccn-duplicate-check');
+    if (targetEntry) {
+      return cy.okapiRequest({
+        method: 'PUT',
+        path: `settings/entries/${targetEntry.id}`,
+        isDefaultSearchParamsRequired: false,
+        body: {
+          ...targetEntry,
+          value: { duplicateLccnCheckingEnabled: enable },
+        },
+      });
+    } else {
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'settings/entries',
+        isDefaultSearchParamsRequired: false,
+        body: {
+          id: '497f6eca-6276-4993-bfeb-53cbbbba6f47',
+          scope: 'ui-quick-marc.lccn-duplicate-check.manage',
+          key: 'lccn-duplicate-check',
+          value: { duplicateLccnCheckingEnabled: enable },
+        },
+      });
+    }
+  });
+});

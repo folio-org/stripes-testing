@@ -11,6 +11,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
@@ -873,6 +874,10 @@ export default {
       Button('Approve & pay').click(),
       submitButton.click(),
     ]);
+  },
+
+  sortInvoicesBy: (column) => {
+    cy.do(MultiColumnListHeader(column).click());
   },
 
   searchByNumber: (invoiceNumber) => {
