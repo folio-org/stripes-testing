@@ -1155,6 +1155,10 @@ export default {
     internal: 'ui-marc-authorities.settings.authority-files.view',
     gui: 'Settings (MARC authority): View authority files',
   },
+  uiSettingsInventoryViewList: {
+    internal: 'ui-inventory.settings.list.view',
+    gui: 'Settings (Inventory): View list of settings pages',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
