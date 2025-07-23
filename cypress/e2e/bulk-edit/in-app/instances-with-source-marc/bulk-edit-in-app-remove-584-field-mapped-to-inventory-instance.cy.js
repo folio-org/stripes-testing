@@ -40,7 +40,7 @@ describe(
   },
   () => {
     describe('In-app approach', () => {
-      before('create test data', () => {
+      beforeEach('create test data', () => {
         marcInstance = {
           title: `AT_C506685_MarcInstance_${getRandomPostfix()}`,
         };
@@ -98,7 +98,7 @@ describe(
         });
       });
 
-      after('delete test data', () => {
+      afterEach('delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);

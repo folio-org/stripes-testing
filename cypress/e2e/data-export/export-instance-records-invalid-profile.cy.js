@@ -48,7 +48,7 @@ describe('Data Export', () => {
       { tags: ['criticalPathBroken', 'firebird', 'C350407'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
-        ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
+        ExportFileHelper.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then((interception) => {
@@ -62,7 +62,7 @@ describe('Data Export', () => {
             recordsCount,
             jobId,
             user.username,
-            'holdings',
+            'Default holdings',
           );
         });
       },
