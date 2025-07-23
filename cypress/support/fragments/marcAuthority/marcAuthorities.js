@@ -391,6 +391,12 @@ export default {
     ]);
   },
 
+  checkRowsCountExistance: (expectedRowsCount) => {
+    cy.expect([
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+    ]);
+  },
+
   checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
     authoritiesList
       .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))

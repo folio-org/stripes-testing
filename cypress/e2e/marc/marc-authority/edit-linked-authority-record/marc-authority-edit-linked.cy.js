@@ -84,10 +84,14 @@ describe('MARC', () => {
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
       });
 
@@ -114,27 +118,21 @@ describe('MARC', () => {
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.subfieldZValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(
             testData.tag010,
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.updatedSubfieldZValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(
             testData.tag010,
             `$a ${marcFiles[1].authority010FieldValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
 
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);

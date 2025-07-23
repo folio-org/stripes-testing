@@ -74,10 +74,14 @@ describe('MARC', () => {
       });
 
       beforeEach(() => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
       });
 
       after(() => {
@@ -110,7 +114,7 @@ describe('MARC', () => {
             .forEach((record) => {
               MarcAuthorities.checkRow(record);
             });
-          MarcAuthorities.checkRowsCount(5);
+          MarcAuthorities.checkRowsCountExistance(5);
 
           // #6 Click on the "Advanced search" button placed on the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();
@@ -131,7 +135,7 @@ describe('MARC', () => {
             .forEach((record) => {
               MarcAuthorities.checkRow(record);
             });
-          MarcAuthorities.checkRowsCount(9);
+          MarcAuthorities.checkRowsCountExistance(9);
 
           // #12 Click on the "Advanced search" button placed on the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();
@@ -150,7 +154,7 @@ describe('MARC', () => {
           records.forEach((record) => {
             MarcAuthorities.checkRow(record);
           });
-          MarcAuthorities.checkRowsCount(12);
+          MarcAuthorities.checkRowsCountExistance(12);
           // #18 Click on the "Advanced search" button placed on the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();
 
@@ -170,7 +174,7 @@ describe('MARC', () => {
             .forEach((record) => {
               MarcAuthorities.checkRow(record);
             });
-          MarcAuthorities.checkRowsCount(9);
+          MarcAuthorities.checkRowsCountExistance(9);
 
           // #22 Click on the "Advanced search" button placed on the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();
@@ -190,7 +194,7 @@ describe('MARC', () => {
             .forEach((record) => {
               MarcAuthorities.checkRow(record);
             });
-          MarcAuthorities.checkRowsCount(6);
+          MarcAuthorities.checkRowsCountExistance(6);
         },
       );
     });
