@@ -124,4 +124,67 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
       });
     },
   );
+
+  it(
+    'C499651 Cannot create Indicators of Local field with empty "label" for MARC bib spec (API) (spitfire)',
+    { tags: ['C499651', 'extendedPath', 'spitfire'] },
+    () => {
+      // Ensure token is set for the user before API calls
+      cy.getUserToken(user.username, user.password);
+
+      // Step 1: Attempt to create indicator without "label" field (order: 1)
+      const indicator1PayloadNoLabel = {
+        order: 1,
+      };
+
+      cy.createSpecificationFieldIndicator(localField.id, indicator1PayloadNoLabel, false).then(
+        (response) => {
+          expect(response.status, 'Step 1: Create indicator without label field').to.eq(400);
+          expect(response.body.errors).to.exist;
+          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+        },
+      );
+
+      // Step 2: Attempt to create indicator without "label" field (order: 2)
+      const indicator2PayloadNoLabel = {
+        order: 2,
+      };
+
+      cy.createSpecificationFieldIndicator(localField.id, indicator2PayloadNoLabel, false).then(
+        (response) => {
+          expect(response.status, 'Step 2: Create indicator without label field').to.eq(400);
+          expect(response.body.errors).to.exist;
+          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+        },
+      );
+
+      // Step 3: Attempt to create indicator with empty "label" field (order: 1)
+      const indicator1PayloadEmptyLabel = {
+        order: 1,
+        label: '',
+      };
+
+      cy.createSpecificationFieldIndicator(localField.id, indicator1PayloadEmptyLabel, false).then(
+        (response) => {
+          expect(response.status, 'Step 3: Create indicator with empty label field').to.eq(400);
+          expect(response.body.errors).to.exist;
+          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+        },
+      );
+
+      // Step 4: Attempt to create indicator with empty "label" field (order: 2)
+      const indicator2PayloadEmptyLabel = {
+        order: 2,
+        label: '',
+      };
+
+      cy.createSpecificationFieldIndicator(localField.id, indicator2PayloadEmptyLabel, false).then(
+        (response) => {
+          expect(response.status, 'Step 4: Create indicator with empty label field').to.eq(400);
+          expect(response.body.errors).to.exist;
+          expect(response.body.errors[0].message).to.include("The 'label' field is required.");
+        },
+      );
+    },
+  );
 });
