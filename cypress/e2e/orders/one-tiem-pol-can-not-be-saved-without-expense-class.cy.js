@@ -12,6 +12,9 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
+import getRandomPostfix from '../../support/utils/stringTools';
+import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -21,6 +24,16 @@ describe('Orders', () => {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
     orderType: 'One-time',
+  };
+  const firstExpenseClass = {
+    ...NewExpenseClass.defaultUiBatchGroup,
+    name: 'Print',
+  };
+
+  const secondExpenseClass = {
+    ...NewExpenseClass.defaultUiBatchGroup,
+    name: 'Electronic',
+    code: `${getRandomPostfix()}_1`,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
@@ -41,7 +54,14 @@ describe('Orders', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          cy.loginAsAdmin({
+            path: TopMenu.settingsFinanceExpenseClassesPath,
+            waiter: SettingsFinance.waitExpenseClassesLoading,
+          });
+          SettingsFinance.createNewExpenseClass(firstExpenseClass);
+          SettingsFinance.createNewExpenseClass(secondExpenseClass);
+
+          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -78,7 +98,21 @@ describe('Orders', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.fundPath,
+      waiter: Funds.waitLoading,
+    });
+    FinanceHelp.clickFundButton();
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.editBudget();
+    Funds.deleteAllExpenseClasses();
+    Funds.deleteBudgetViaActions();
+    Funds.deleteFundViaActions();
+    cy.visit(TopMenu.settingsFinanceExpenseClassesPath);
+    SettingsFinance.deleteExpenseClass(firstExpenseClass);
+    SettingsFinance.deleteExpenseClass(secondExpenseClass);
     Orders.deleteOrderViaApi(order.id);
     Users.deleteViaApi(user.userId);
   });
