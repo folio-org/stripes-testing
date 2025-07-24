@@ -187,4 +187,61 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
       );
     },
   );
+
+  it(
+    'C499656 Cannot create Indicators of Local field with invalid value in "order" field for MARC bib spec (API) (spitfire)',
+    { tags: ['C499656', 'extendedPath', 'spitfire'] },
+    () => {
+      // Ensure token is set for the user before API calls
+      cy.getUserToken(user.username, user.password);
+
+      // Test scenarios for order field validation
+      const orderValidationScenarios = [
+        {
+          description: 'order value 0 (below valid range)',
+          payload: { order: 0, label: 'Ind 1 name' },
+          expectedError: "The indicator 'order' field can only accept numbers 1-2.",
+        },
+        {
+          description: 'order value 3 (above valid range)',
+          payload: { order: 3, label: 'Ind 1 name' },
+          expectedError: "The indicator 'order' field can only accept numbers 1-2.",
+        },
+        {
+          description: 'empty order field',
+          payload: { order: '', label: 'Ind 1 name' },
+          expectedError: "The 'order' field is required.",
+        },
+        {
+          description: 'order field with 2 characters',
+          payload: { order: '11', label: 'Ind 1 name' },
+          expectedError: "The indicator 'order' field can only accept numbers 1-2.",
+        },
+        {
+          description: 'order field with letter',
+          payload: { order: 'a', label: 'Ind 1 name' },
+          expectedError: 'JSON parse error',
+        },
+        {
+          description: 'order field with special character',
+          payload: { order: '$', label: 'Ind 1 name' },
+          expectedError: 'JSON parse error',
+        },
+      ];
+
+      // Test each order field validation scenario
+      orderValidationScenarios.forEach((scenario, index) => {
+        cy.createSpecificationFieldIndicator(localField.id, scenario.payload, false).then(
+          (response) => {
+            expect(
+              response.status,
+              `Step ${index + 1}: Create indicator with ${scenario.description}`,
+            ).to.eq(400);
+            expect(response.body.errors).to.exist;
+            expect(response.body.errors[0].message).to.include(scenario.expectedError);
+          },
+        );
+      });
+    },
+  );
 });
