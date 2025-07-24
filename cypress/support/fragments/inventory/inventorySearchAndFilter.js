@@ -457,6 +457,7 @@ export default {
   saveCQLQuery() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveCQLQuery.click());
+    cy.wait(5000);
   },
 
   exportInstanceAsMarc() {
