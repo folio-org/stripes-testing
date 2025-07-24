@@ -57,14 +57,18 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('createSpecificationField', (specificationId, field) => {
-  return cy.okapiRequest({
-    method: REQUEST_METHOD.POST,
-    path: `specification-storage/specifications/${specificationId}/fields`,
-    isDefaultSearchParamsRequired: false,
-    body: field,
-  });
-});
+Cypress.Commands.add(
+  'createSpecificationField',
+  (specificationId, field, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `specification-storage/specifications/${specificationId}/fields`,
+      isDefaultSearchParamsRequired: false,
+      body: field,
+      failOnStatusCode,
+    });
+  },
+);
 
 Cypress.Commands.add('updateSpecificationField', (fieldId, field, failOnStatusCode = true) => {
   return cy.okapiRequest({
@@ -105,6 +109,19 @@ Cypress.Commands.add('deleteSpecificationFieldSubfield', (subfieldId, failOnStat
     failOnStatusCode,
   });
 });
+
+Cypress.Commands.add(
+  'updateSpecificationSubfield',
+  (subfieldId, subfield, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.PUT,
+      path: `specification-storage/subfields/${subfieldId}`,
+      isDefaultSearchParamsRequired: false,
+      body: subfield,
+      failOnStatusCode,
+    });
+  },
+);
 
 Cypress.Commands.add('getSpecificationFieldIndicators', (fieldId) => {
   return cy.okapiRequest({
@@ -186,21 +203,24 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getSpecificatoinRules', (specificationId) => {
-  cy.okapiRequest({
+Cypress.Commands.add('getSpecificationRules', (specificationId, failOnStatusCode = true) => {
+  return cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: `specification-storage/specifications/${specificationId}/rules`,
     isDefaultSearchParamsRequired: false,
-  }).then((response) => {
-    return response.body.rules;
+    failOnStatusCode,
   });
 });
 
-Cypress.Commands.add('updateSpecificatoinRule', (specificationId, specificationRuleId, body) => {
-  return cy.okapiRequest({
-    method: REQUEST_METHOD.PATCH,
-    path: `specification-storage/specifications/${specificationId}/rules/${specificationRuleId}`,
-    isDefaultSearchParamsRequired: false,
-    body,
-  });
-});
+Cypress.Commands.add(
+  'updateSpecificationRule',
+  (specificationId, ruleId, rule, failOnStatusCode = true) => {
+    return cy.okapiRequest({
+      method: 'PATCH',
+      path: `specification-storage/specifications/${specificationId}/rules/${ruleId}`,
+      isDefaultSearchParamsRequired: false,
+      body: rule,
+      failOnStatusCode,
+    });
+  },
+);
