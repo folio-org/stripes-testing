@@ -773,6 +773,22 @@ export default {
     );
   },
 
+  getExportedCSVFileNameFromCallout() {
+    const fileNamePattern = /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}/;
+
+    return Callout({
+      textContent: including('QuickAuthorityExport'),
+    }).perform((element) => {
+      const text = element.textContent || '';
+      const fileNameMatch = text.match(fileNamePattern);
+
+      if (!fileNameMatch) {
+        throw new Error('File name not found in callout message.');
+      }
+      return fileNameMatch[0].replace(/:/g, '_');
+    });
+  },
+
   checkRowsContent(contents) {
     contents.forEach((content, rowIndex) => {
       cy.expect(MultiColumnListCell({ row: rowIndex, content }).exists());

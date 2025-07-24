@@ -310,4 +310,14 @@ export default {
       });
     });
   },
+
+  verifyCSVFileRecordsNumber(fileName, recordsNumber) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = actualContent.split('\n');
+
+        expect(values).to.have.length(recordsNumber);
+      });
+    });
+  },
 };
