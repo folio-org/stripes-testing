@@ -1062,6 +1062,7 @@ export default {
           cy.do(saveAndCloseButton.click());
           return;
         }
+        // eslint-disable-next-line cypress/no-force
         cy.wrap($buttons.eq(0)).click({ force: true });
         cy.wait(300);
         loop();

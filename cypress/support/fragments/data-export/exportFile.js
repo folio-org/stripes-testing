@@ -4,6 +4,8 @@ import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../in
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
 
+const areYouSureModal = Modal('Are you sure you want to run this job?');
+
 const downloadCSVFile = (fileName, mask) => {
   // retry until file has been downloaded
   // TODO: add into best practicies in wiki
@@ -193,18 +195,19 @@ export default {
   removeMarcField,
   exportWithDefaultJobProfile: (
     fileName,
-    jobType = 'instances',
+    jobType = 'Default instances',
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
     cy.do([
       MultiColumnListCell({
-        content: `Default ${jobType} export job profile`,
+        content: `${jobType} export job profile`,
         columnIndex: 0,
       }).click(),
-      Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose(selectType),
-      Button('Run').click(),
+      areYouSureModal.find(Select()).choose(selectType),
     ]);
+    cy.expect(areYouSureModal.find(Button('Cancel')).has({ disabled: false }));
+    cy.do(Button('Run').click());
     cy.get('#job-logs-list').contains(fileName.replace(fileType, ''));
   },
 
@@ -296,5 +299,15 @@ export default {
         const hridElement = elem.parent().find('[class*="mclCell-"]:nth-child(10)');
         return +hridElement[0].innerText;
       });
+  },
+
+  moveDownloadedFileToFixtures(downloadedFileMask) {
+    return FileManager.findDownloadedFilesByMask(downloadedFileMask).then((downloadedFilenames) => {
+      const downloadedFile = downloadedFilenames[0];
+      const originalFileName = FileManager.getFileNameFromFilePath(downloadedFile);
+      return FileManager.readFile(downloadedFile).then((actualContent) => {
+        return FileManager.createFile(`cypress/fixtures/${originalFileName}`, actualContent);
+      });
+    });
   },
 };

@@ -1,20 +1,18 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -25,6 +23,7 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -152,12 +151,12 @@ describe('Data Import', () => {
           cy.waitForAuthRefresh(() => {
             cy.loginAsAdmin({
               path: SettingsMenu.actionProfilePath,
-              waiter: ActionProfiles.waitLoading,
+              waiter: SettingsActionProfiles.waitLoading,
             });
             cy.reload();
-            ActionProfiles.waitLoading();
+            SettingsActionProfiles.waitLoading();
           }, 20_000);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
+          SettingsActionProfiles.create(actionProfile, mappingProfile.name);
 
           // create Job profile
           cy.visit(SettingsMenu.jobProfilePath);

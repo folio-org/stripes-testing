@@ -457,6 +457,7 @@ export default {
   saveCQLQuery() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveCQLQuery.click());
+    cy.wait(5000);
   },
 
   exportInstanceAsMarc() {
@@ -797,6 +798,12 @@ export default {
     // otherwise, UI throws "Permissions" error
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1200);
+  },
+
+  closeTagsPane() {
+    cy.do(tagsPane.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
+    cy.expect(tagsPane.absent());
   },
 
   openTagsField() {

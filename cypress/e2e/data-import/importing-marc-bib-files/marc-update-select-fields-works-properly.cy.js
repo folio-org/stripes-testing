@@ -9,7 +9,6 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -146,11 +145,11 @@ describe.skip('Data Import', () => {
 
         // create action profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+        SettingsActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
-        ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
+        SettingsActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
         // create match profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
