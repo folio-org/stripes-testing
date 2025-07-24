@@ -39,7 +39,7 @@ describe('Eureka', () => {
       {
         type: CAPABILITY_TYPES.DATA,
         resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
+        action: CAPABILITY_ACTIONS.EDIT,
       },
       {
         type: CAPABILITY_TYPES.SETTINGS,

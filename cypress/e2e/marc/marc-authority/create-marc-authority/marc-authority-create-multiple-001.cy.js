@@ -58,6 +58,7 @@ describe('MARC', () => {
           // Open new authority record pane
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkRecordStatusNew();
+          MarcAuthority.setValid008DropdownValues();
 
           // Select authority file (LCNAF)
           MarcAuthority.selectSourceFile(authorityFile1);

@@ -110,7 +110,7 @@ describe('Orders', () => {
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Open Order
-      Orders.resetFilters();
+      Orders.resetFiltersIfActive();
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 

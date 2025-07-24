@@ -4,7 +4,6 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Requests', () => {
   const userIds = [];
@@ -31,8 +30,6 @@ describe('Requests', () => {
           requests.push(createdRequest);
         });
       });
-
-      UserEdit.setupUserServicePoints(Cypress.env('diku_login'), 'name=="Circ Desk 1"');
     });
     cy.loginAsAdmin();
   });

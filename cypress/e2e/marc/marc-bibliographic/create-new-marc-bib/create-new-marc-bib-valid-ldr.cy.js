@@ -106,6 +106,7 @@ describe('MARC', () => {
                 LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
               );
             });
+            cy.wait(1000);
             QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();

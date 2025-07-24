@@ -34,7 +34,7 @@ describe('Data Export', () => {
       { tags: ['extendedPath', 'spitfire', 'C353208'] },
       () => {
         ExportFileHelper.uploadFile(emptyFile);
-        ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');
+        ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'Default authority', 'Authorities');
         DataExportResults.verifyLastLog(emptyFile, 'Fail');
       },
     );

@@ -81,6 +81,7 @@ describe('MARC', () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
 
           // Step 2: Select any default FOLIO authority file
           MarcAuthority.selectSourceFile(selectedFolioFile);

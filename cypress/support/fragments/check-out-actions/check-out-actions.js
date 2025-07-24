@@ -115,7 +115,9 @@ export default {
   },
 
   endCheckOutSession: () => {
+    cy.intercept('POST', '**/circulation/end-patron-action-session').as('endPatronActionSession');
     cy.do(endSessionButton.click());
+    cy.wait('@endPatronActionSession');
     cy.expect(endSessionButton.absent());
   },
 

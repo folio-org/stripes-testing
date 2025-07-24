@@ -36,9 +36,9 @@ describe('MARC', () => {
         testData.userProperties = createdUserProperties;
 
         cy.getAdminToken().then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
+          ServicePoints.getCircDesk1ServicePointViaApi().then(
             (servicePoint) => {
-              testData.servicePointId = servicePoint[0].id;
+              testData.servicePointId = servicePoint.id;
               NewLocation.createViaApi(
                 NewLocation.getDefaultLocation(testData.servicePointId),
               ).then((res) => {

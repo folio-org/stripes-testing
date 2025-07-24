@@ -53,11 +53,13 @@ describe('Data Import', () => {
         Permissions.uiTenantSettingsSettingsLocation.gui,
       ]).then((userProperties) => {
         user = userProperties;
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+        }, 20_000);
       });
     });
 
@@ -73,8 +75,7 @@ describe('Data Import', () => {
       );
     });
 
-    // skipped due EUREKA-618
-    it.skip(
+    it(
       'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C356820'] },
       () => {

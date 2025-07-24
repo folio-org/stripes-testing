@@ -195,4 +195,10 @@ export default {
     marcAuthorities.checkRecordsResultListIsAbsent();
     marcAuthorities.verifyEmptyAuthorityField();
   },
+
+  verifySelectedSearchOption: (parameter) => {
+    cy.expect(
+      SearchField({ id: 'textarea-authorities-search' }).has({ selectedFilterText: parameter }),
+    );
+  },
 };
