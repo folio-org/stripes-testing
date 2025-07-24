@@ -1,5 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../support/fragments/topMenu';
@@ -10,13 +11,11 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
-const item = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+const folioInstance = {
+  title: `AT_C350407_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: generateItemBarcode(),
 };
-const fileName = `autoTestFile${getRandomPostfix()}.csv`;
-
-// TODO: identify how to stabilize flaky test
+const fileName = `AT_C350407_autoTestFile${getRandomPostfix()}.csv`;
 
 describe('Data Export', () => {
   describe('Generating MARC records on the fly', () => {
@@ -26,36 +25,47 @@ describe('Data Export', () => {
         permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        const instanceID = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
+        folioInstance.id = InventoryInstances.createInstanceViaApi(
+          folioInstance.title,
+          folioInstance.itemBarcode,
         );
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.dataExportPath);
-        FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
+        cy.getInstanceById(folioInstance.id).then((instanceData) => {
+          instanceData.editions = ['Edition 1', 'Edition 2'];
+          instanceData.languages = ['eng'];
+          instanceData.publicationFrequency = ['Monthly'];
+          instanceData.publicationRange = ['4'];
+
+          cy.updateInstance(instanceData);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
+        FileManager.createFile(`cypress/fixtures/${fileName}`, folioInstance.id);
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${fileName}`);
     });
 
     it(
       'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-      { tags: ['criticalPathBroken', 'firebird', 'C350407'] },
+      { tags: ['criticalPath', 'firebird', 'C350407'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-        cy.wait('@getInfo', getLongDelay()).then((interception) => {
-          const job = interception.response.body.jobExecutions[0];
-          const resultFileName = job.exportedFiles[0].fileName;
-          const recordsCount = job.progress.total;
-          const jobId = job.hrId;
+        cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+          const { jobExecutions } = response.body;
+          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+          const resultFileName = jobData.exportedFiles[0].fileName;
+          const recordsCount = jobData.progress.total;
+          const jobId = jobData.hrId;
 
           DataExportResults.verifyFailedExportResultCells(
             resultFileName,
@@ -63,6 +73,15 @@ describe('Data Export', () => {
             jobId,
             user.username,
             'Default holdings',
+          );
+          cy.getUserToken(user.username, user.password);
+
+          const date = new Date();
+          const formattedDateUpToHours = date.toISOString().slice(0, 13);
+
+          DataExportLogs.clickFileNameFromTheList(resultFileName);
+          DataExportLogs.verifyErrorTextInErrorLogsPane(
+            new RegExp(`${formattedDateUpToHours}.*ERROR Record not found: ${folioInstance.id}`),
           );
         });
       },

@@ -300,4 +300,14 @@ export default {
         return +hridElement[0].innerText;
       });
   },
+
+  moveDownloadedFileToFixtures(downloadedFileMask) {
+    return FileManager.findDownloadedFilesByMask(downloadedFileMask).then((downloadedFilenames) => {
+      const downloadedFile = downloadedFilenames[0];
+      const originalFileName = FileManager.getFileNameFromFilePath(downloadedFile);
+      return FileManager.readFile(downloadedFile).then((actualContent) => {
+        return FileManager.createFile(`cypress/fixtures/${originalFileName}`, actualContent);
+      });
+    });
+  },
 };
