@@ -117,6 +117,7 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.University);
         cy.deleteModesOfIssuance(testData.universityLocalModes.id);
@@ -134,13 +135,14 @@ describe('Consortium manager', () => {
 
       it(
         'C410939 User with "Consortium manager: Can view existing settings" permission is able to view the list of modes of issuance of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410939'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user939.username, testData.user939.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+          cy.wait(4000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
@@ -154,17 +156,18 @@ describe('Consortium manager', () => {
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalModes.name, 'local', '', tenantNames.central],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.collegeLocalModes.name, 'local', '', tenantNames.college],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.universityLocalModes.name, 'local', '', tenantNames.university],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -183,22 +186,22 @@ describe('Consortium manager', () => {
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.collegeLocalModes.name, 'local', '', tenantNames.college],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.universityLocalModes.name, 'local', '', tenantNames.university],
-            ['edit', 'trash'],
+            [],
           );
         },
       );
 
       it(
         'C410940 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of modes of issuance of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410940'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user940.username, testData.user940.password);
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           cy.wait(4000);
           SelectMembers.selectAllMembers();
@@ -256,9 +259,9 @@ describe('Consortium manager', () => {
 
       it(
         'C410942 User with "Consortium manager: Can share settings to all members" permission is able to view the list of modes of issuance of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410942'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user942.username, testData.user942.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
@@ -269,21 +272,22 @@ describe('Consortium manager', () => {
           ModesOfIssuanceConsortiumManager.choose();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralSharedModes.payload.name, 'consortium', '', 'All'],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalModes.name, 'local', '', tenantNames.central],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.collegeLocalModes.name, 'local', '', tenantNames.college],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.universityLocalModes.name, 'local', '', tenantNames.university],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -293,11 +297,11 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyMembersSelected(1);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralSharedModes.payload.name, 'consortium', '', 'All'],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalModes.name, 'local', '', tenantNames.central],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(

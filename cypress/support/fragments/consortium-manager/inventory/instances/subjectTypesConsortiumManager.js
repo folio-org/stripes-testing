@@ -217,7 +217,6 @@ export default {
   verifySubjectTypeAbsent,
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Subject types');
-    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

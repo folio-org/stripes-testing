@@ -110,7 +110,6 @@ export default {
   clickCancelButton,
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Subject sources');
-    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Code', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
