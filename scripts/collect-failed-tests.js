@@ -17,6 +17,7 @@ const selectedTeams = [
   team.Volaris,
   team.Corsair,
   team.Eureka,
+  team.Citation,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
@@ -41,7 +42,7 @@ function parseCommand() {
         if (
           selectedStatus.includes(test.status_id) &&
           selectedTeams.includes(test.custom_dev_team)
-          // && test.custom_test_group === 1     ---> to select smoke tests
+          // && test.custom_test_group === 1     // ---> to select smoke tests (1), critical (2), extended (3)
         ) {
           ids.push('C' + test.case_id + ' ');
         }
@@ -90,6 +91,8 @@ function parseCommand() {
           const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
           if (numberOfChunks === 1) {
             console.log(parsedCommand);
+            // To print test cases IDs (NOT FILTERED!!!)
+            // console.log(`\n${ids.join('')}`);
           } else {
             console.log(`Number of chunks: ${chunks.length}\n`);
             chunks.forEach((chunk, index) => {
