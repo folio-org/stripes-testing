@@ -10,7 +10,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `AT_C430262_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        originalApplications: ['app-platform-minimal', 'app-dcb'],
+        originalApplications: ['app-platform-minimal', 'app-licenses'],
         newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
@@ -54,7 +54,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Licenses Admin Action',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],

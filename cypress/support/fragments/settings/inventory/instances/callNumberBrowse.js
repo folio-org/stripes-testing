@@ -5,9 +5,12 @@ import {
   NavListItem,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiSelectOption,
   MultiSelect,
   MultiSelectMenu,
+  IconButton,
+  Popover,
   including,
 } from '../../../../../../interactors';
 import { CallNumberTypes } from './callNumberTypes';
@@ -22,6 +25,9 @@ export const callNumbersIds = {
   'Other scheme': 'other',
   'Superintendent of Documents classification': 'sudoc',
 };
+const tableHeaderTexts = ['Name', 'Call number types', 'Actions'];
+const typesPopoverText =
+  'Please note that if no call number types are selected for a browse option, this option will display all call number types.';
 
 const elements = {
   sectionName: 'Call number browse',
@@ -31,6 +37,7 @@ const elements = {
   cancelButton: Button('Cancel'),
   saveButton: Button('Save'),
   selectedOptionsRemoveBtn: 'ul[class*=multiSelectValueList] button[aria-label="times"]',
+  typesPopoverIcon: MultiColumnListHeader(tableHeaderTexts[1]).find(IconButton('info')),
 
   getTargetRowByName(callNumberName) {
     return this.callNumberBrowsePane.find(
@@ -90,6 +97,35 @@ const Assertions = {
   validateAvailableCallNumberTypeOption(optionName) {
     cy.expect(MultiSelectMenu().find(MultiSelectOption(optionName)).exists());
   },
+
+  checkTableHeaders() {
+    tableHeaderTexts.forEach((headerText, index) => {
+      cy.expect(
+        elements.callNumberBrowsePane.find(MultiColumnListHeader(headerText, { index })).exists(),
+      );
+    });
+  },
+
+  checkInfoIconExists() {
+    cy.expect(elements.callNumberBrowsePane.find(elements.typesPopoverIcon).exists());
+  },
+
+  checkPopoverMessage() {
+    cy.expect(Popover({ content: typesPopoverText }).exists());
+  },
+
+  validateCallNumberBrowseTable(isEditable = true) {
+    this.checkTableHeaders();
+    Object.keys(callNumbersIds).forEach((callNumberBrowseName) => {
+      const targetRow = elements.getTargetRowByName(callNumberBrowseName);
+      cy.expect([
+        targetRow.find(MultiColumnListCell(callNumberBrowseName, { columnIndex: 0 })).exists(),
+        isEditable
+          ? targetRow.find(elements.editButton).exists()
+          : targetRow.find(elements.editButton).absent(),
+      ]);
+    });
+  },
 };
 
 const Actions = {
@@ -138,6 +174,10 @@ const Actions = {
   clickCancelButtonForItem(optionName) {
     const targetRow = elements.getTargetRowByName(optionName);
     cy.do(targetRow.find(elements.cancelButton).click());
+  },
+
+  clickInfoIcon() {
+    cy.do(elements.callNumberBrowsePane.find(elements.typesPopoverIcon).click());
   },
 };
 
