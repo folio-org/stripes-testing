@@ -7,7 +7,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -125,10 +124,10 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfileForModify, mappingProfileFieldsForModify.name);
-        ActionProfiles.checkActionProfilePresented(actionProfileForModify.name);
-        ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+        SettingsActionProfiles.create(actionProfileForModify, mappingProfileFieldsForModify.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfileForModify.name);
+        SettingsActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.openNewJobProfileForm();

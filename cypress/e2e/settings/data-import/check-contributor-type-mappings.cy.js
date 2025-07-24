@@ -5,10 +5,10 @@ import DataImportJobProfiles from '../../../support/fragments/data_import/job_pr
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import { OrderLines, Orders } from '../../../support/fragments/orders';
 import {
-  ActionProfiles,
   FieldMappingProfileView,
   FieldMappingProfiles,
   JobProfiles,
+  ActionProfiles as SettingsActionProfiles,
   SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
@@ -104,7 +104,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         JobProfiles.deleteJobProfileByNameViaApi(jobProfile);
-        ActionProfiles.deleteActionProfileByNameViaApi(actionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile);
         FieldMappingProfiles.deleteMappingProfileByNameViaApi(fieldMappingProfile);
         OrderLines.getOrderLineViaApi({ query: `titleOrPackage=="${orderLineTitle}"` }).then(
           (orderLines) => {
@@ -142,7 +142,7 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
 
         // Click on "Actions" button, Select "New action profile" option
-        const ActionProfileEditForm = ActionProfiles.createNewActionProfile();
+        const ActionProfileEditForm = SettingsActionProfiles.createNewActionProfile();
 
         // Fill action profile fields
         ActionProfileEditForm.fillActionProfileFields({ ...testData.actionProfile });

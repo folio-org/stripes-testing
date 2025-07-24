@@ -1,17 +1,16 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import ConfirmDelete from '../../../support/fragments/data_import/action_profiles/modals/confirmDelete';
-import ExceptionDelete from '../../../support/fragments/data_import/action_profiles/modals/exceptionDelete';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import ActionProfileView from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
+import ConfirmDelete from '../../../support/fragments/settings/dataImport/actionProfiles/modals/confirmDelete';
+import ExceptionDelete from '../../../support/fragments/settings/dataImport/actionProfiles/modals/exceptionDelete';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/generateTextCode';
@@ -55,11 +54,11 @@ describe('Data Import', () => {
 
           cy.login(user.username, user.password, {
             path: SettingsMenu.actionProfilePath,
-            waiter: ActionProfiles.waitLoading,
+            waiter: SettingsActionProfiles.waitLoading,
           });
         });
       });
-      ActionProfiles.createWithoutLinkedMappingProfile(actionProfileToDelete);
+      SettingsActionProfiles.createWithoutLinkedMappingProfile(actionProfileToDelete);
     });
 
     after('Delete test data', () => {
@@ -75,19 +74,19 @@ describe('Data Import', () => {
       'C2346 Delete an existing action profile (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet', 'C2346'] },
       () => {
-        ActionProfiles.search(profile.createActionProfile.name);
-        ActionProfiles.selectActionProfileFromList(profile.createActionProfile.name);
+        SettingsActionProfiles.search(profile.createActionProfile.name);
+        SettingsActionProfiles.selectActionProfileFromList(profile.createActionProfile.name);
         ActionProfileView.delete();
         ConfirmDelete.confirmDeleteActionProfile();
         ExceptionDelete.verifyExceptionMessage();
         ExceptionDelete.closeException();
-        ActionProfiles.search(actionProfileToDelete.name);
-        ActionProfiles.selectActionProfileFromList(actionProfileToDelete.name);
+        SettingsActionProfiles.search(actionProfileToDelete.name);
+        SettingsActionProfiles.selectActionProfileFromList(actionProfileToDelete.name);
         ActionProfileView.delete();
         ConfirmDelete.confirmDeleteActionProfile();
-        ActionProfiles.checkCalloutMessage(calloutMessage);
-        ActionProfiles.search(actionProfileToDelete.name);
-        ActionProfiles.verifyActionProfileAbsent();
+        SettingsActionProfiles.checkCalloutMessage(calloutMessage);
+        SettingsActionProfiles.search(actionProfileToDelete.name);
+        SettingsActionProfiles.verifyActionProfileAbsent();
       },
     );
   });

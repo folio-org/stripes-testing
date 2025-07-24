@@ -1635,6 +1635,12 @@ export default {
       .click();
   },
 
+  verifyFolioRecordTypeOptions: (options) => {
+    options.forEach((option) => {
+      cy.expect(recordTypeselect.has({ allOptionsText: including(option) }));
+    });
+  },
+
   selectPaymentStatusFromDropdown: (name) => {
     cy.get('#po-line-details')
       .find('label:contains("Payment status") + div button[aria-haspopup]')

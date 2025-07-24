@@ -9,9 +9,9 @@ import {
   Select,
   TextField,
   Pane,
-} from '../../../../../interactors';
-import { ACTION_NAMES_IN_ACTION_PROFILE } from '../../../constants';
-import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
+} from '../../../../../../interactors';
+import { ACTION_NAMES_IN_ACTION_PROFILE } from '../../../../constants';
+import SelectMappingProfile from '../modals/selectProfileModal';
 
 const profileLinkSection = Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' });
 const profileLinkButton = Button('Link Profile');
