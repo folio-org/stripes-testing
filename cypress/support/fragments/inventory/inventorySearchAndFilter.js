@@ -800,6 +800,12 @@ export default {
     cy.wait(1200);
   },
 
+  closeTagsPane() {
+    cy.do(tagsPane.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
+    cy.expect(tagsPane.absent());
+  },
+
   openTagsField() {
     cy.do(tagsButton.click());
   },

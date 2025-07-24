@@ -283,21 +283,10 @@ export default {
       .click(),
   ),
 
-  selectExactRequest: (title, rowIndex) => cy.do(
+  selectRequest: (title, rowIndex) => cy.do(
     requestsPane
       .find(MultiColumnListCell({ row: rowIndex, content: title }))
       .find(Link(including(title)))
-      .click(),
-  ),
-
-  selectRequest: (title, rowIndex) => cy.do(
-    requestsPane
-      .find(
-        MultiColumnListCell({
-          row: rowIndex,
-          content: title,
-        }),
-      )
       .click(),
   ),
 
