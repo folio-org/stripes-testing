@@ -198,7 +198,7 @@ describe('Title Level Request', () => {
       RequestDetail.viewRequestsInQueue();
 
       // From this Request queue, select the Request placed most recently
-      Requests.selectExactRequest(instanceData.instanceTitle, 3);
+      Requests.selectRequest(instanceData.instanceTitle, 3);
 
       RequestDetail.waitLoading();
       RequestDetail.verifyPositionInQueue(`${lastRequestPosition} (${holdRequests} requests)`);
