@@ -11,7 +11,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -163,7 +162,7 @@ describe('Data Import', () => {
         // create action profiles for creating
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         });
 
         // create job profile for creating
@@ -314,11 +313,11 @@ describe('Data Import', () => {
 
         // create action profiles for updating
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(
+        SettingsActionProfiles.create(
           collectionOfMappingAndActionProfilesForUpdate[0].actionProfile,
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
-        ActionProfiles.checkActionProfilePresented(
+        SettingsActionProfiles.checkActionProfilePresented(
           collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
         );
 
@@ -482,11 +481,11 @@ describe('Data Import', () => {
 
         // create action profiles for updating
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(
+        SettingsActionProfiles.create(
           collectionOfMappingAndActionProfilesForUpdate[0].actionProfile,
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
-        ActionProfiles.checkActionProfilePresented(
+        SettingsActionProfiles.checkActionProfilePresented(
           collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
         );
 
@@ -695,8 +694,8 @@ describe('Data Import', () => {
         // create action profiles for updating
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create match profiles

@@ -11,7 +11,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';

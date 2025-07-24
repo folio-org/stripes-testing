@@ -27,7 +27,7 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';

@@ -7,13 +7,13 @@ import {
   Section,
   Select,
   TextField,
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   FOLIO_RECORD_TYPE,
   PROFILE_TYPE_NAMES,
-} from '../../../constants';
-import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
+} from '../../../../constants';
+import SelectMappingProfile from '../modals/selectProfileModal';
 
 const nameField = TextField({ name: 'profile.name' });
 const actionSelect = Select({ name: 'profile.action' });
@@ -123,6 +123,12 @@ export default {
 
   verifyFOLIORecordTypeOptionExists(type) {
     cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
+
+  verifyFolioRecordTypeOptions: (options) => {
+    options.forEach((option) => {
+      cy.expect(recordTypeselect.has({ allOptionsText: including(option) }));
+    });
   },
 
   clickClose: () => cy.do(closeButton.click()),

@@ -7,11 +7,11 @@ import {
   FOLIO_RECORD_TYPE,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
+import ActionProfileView from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -106,8 +106,8 @@ describe('Data Import', () => {
         NewMatchProfile.checkCalloutMessage(matchProfileErrorMessage);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.search(actionProfile.name);
-        ActionProfiles.selectActionProfileFromList(actionProfile.name);
+        SettingsActionProfiles.search(actionProfile.name);
+        SettingsActionProfiles.selectActionProfileFromList(actionProfile.name);
         ActionProfileView.duplicate();
         NewActionProfile.chooseAction(actionProfile.action);
         NewActionProfile.saveProfile();

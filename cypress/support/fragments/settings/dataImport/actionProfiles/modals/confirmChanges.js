@@ -1,4 +1,4 @@
-import { Button, Modal } from '../../../../../../interactors';
+import { Button, Modal } from '../../../../../../../interactors';
 
 const confirm = Modal('Confirm action profile changes');
 

@@ -7,6 +7,7 @@ import {
   MultiSelectMenu,
   AdvancedSearchRow,
   Button,
+  Callout,
   Checkbox,
   Modal,
   MultiColumnList,
@@ -24,6 +25,7 @@ import {
   TextField,
   TextInput,
   or,
+  and,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import Arrays from '../../utils/arrays';
@@ -36,6 +38,7 @@ import InventoryInstance from './inventoryInstance';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
 import QuickMarcEditor from '../quickMarcEditor';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -379,6 +382,22 @@ export default {
   exportInstanceMarc() {
     cy.do([actionsButton.click(), exportInstanceMarcButton.click()]);
   },
+
+  verifyToastNotificationAfterExportInstanceMarc(recordHrid) {
+    const currentDate = DateTools.getFormattedDate({ date: new Date() });
+
+    cy.expect(
+      Callout({
+        textContent: and(
+          including(`The export is complete. The downloaded QuickInstanceExport${currentDate}`),
+          including(
+            `.csv contains selected record's UUID. To retrieve the quick-export-${recordHrid}.mrc file, please go to the Data export app.`,
+          ),
+        ),
+      }).exists(),
+    );
+  },
+
   resetAllFilters: () => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },

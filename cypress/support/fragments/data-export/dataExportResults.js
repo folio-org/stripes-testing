@@ -109,7 +109,7 @@ export default {
           const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
             Cypress.env('users')[0].personal.lastName
           }`;
-          cy.do([
+          cy.expect([
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
             resultRow.exported.is({ content: '0' }),
@@ -118,8 +118,8 @@ export default {
             resultRow.id.is({ content: jobId.toString() }),
           ]);
 
-          if (invalidQuery) cy.do(resultRow.failed.is({ content: '' }));
-          else cy.do(resultRow.failed.is({ content: recordsCount.toString() }));
+          if (invalidQuery) cy.expect(resultRow.failed.is({ content: '' }));
+          else cy.expect(resultRow.failed.is({ content: recordsCount.toString() }));
         },
       );
     });
@@ -169,7 +169,7 @@ export default {
 
     const userNameToVerify = `${user.firstName} ${user.lastName}`;
 
-    cy.do([
+    cy.expect([
       resultRow.status.is({ content: 'Completed with errors' }),
       resultRow.total.is({ content: totalRecordsCount.toString() }),
       resultRow.exported.is({ content: exportedRecordsCount.toString() }),
@@ -180,8 +180,8 @@ export default {
 
     const failedRecordsCount = totalRecordsCount - exportedRecordsCount;
 
-    if (invalidQuery) cy.do(resultRow.failed.is({ content: '' }));
-    else cy.do(resultRow.failed.is({ content: failedRecordsCount.toString() }));
+    if (invalidQuery) cy.expect(resultRow.failed.is({ content: '' }));
+    else cy.expect(resultRow.failed.is({ content: failedRecordsCount.toString() }));
 
     // verify file name
     cy.do(
@@ -210,7 +210,7 @@ export default {
       status: MultiColumnListCell({ row: 0, columnIndex: 1 }),
     };
 
-    cy.do(result.status.is({ content: status }));
+    cy.expect(result.status.is({ content: status }));
 
     const regex = new RegExp(`${fileName.slice(0, -4)}-\\d+.mrc`);
 

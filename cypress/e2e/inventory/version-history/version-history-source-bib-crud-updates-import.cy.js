@@ -14,7 +14,7 @@ import DateTools from '../../../support/utils/dateTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';

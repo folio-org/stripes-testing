@@ -1,4 +1,4 @@
-import { Button, Modal } from '../../../../../../interactors';
+import { Button, Modal } from '../../../../../../../interactors';
 
 const confirmEditModal = Modal({ id: 'confirm-edit-action-profile-modal' });
 
