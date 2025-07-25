@@ -67,7 +67,7 @@ describe('Inventory', () => {
         InstanceRecordView.waitLoading();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.addChildInstances(testData.secondLocalInstance.instanceTitle);
+        InstanceRecordEdit.addChildInstance(testData.secondLocalInstance.instanceTitle);
         InstanceRecordEdit.verifyChildInstance(
           testData.secondLocalInstance.instanceTitle,
           testData.secondLocalInstance.instanceHRID,
