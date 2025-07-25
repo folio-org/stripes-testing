@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C423559'] },
+        'C692052 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C692052'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

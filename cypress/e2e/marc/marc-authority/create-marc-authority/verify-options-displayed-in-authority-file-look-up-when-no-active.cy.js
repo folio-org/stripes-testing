@@ -58,9 +58,9 @@ describe('MARC', () => {
       });
 
       it(
-        `C422245 Verify options displayed in "Authority file look-up" modal in "Create a new MARC authority record"
+        `C656275 Verify options displayed in "Authority file look-up" modal in "Create a new MARC authority record"
          window when no one have the "Active" checkbox selected in the settings (spitfire)`,
-        { tags: ['criticalPath', 'spitfire', 'C422245'] },
+        { tags: ['criticalPath', 'spitfire', 'C656275'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
