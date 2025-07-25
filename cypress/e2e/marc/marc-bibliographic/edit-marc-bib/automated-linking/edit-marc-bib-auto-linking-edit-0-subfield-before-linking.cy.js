@@ -28,7 +28,7 @@ describe('MARC', () => {
             tag: '650',
             value: 'Lesbian authors',
             rowIndex: 30,
-            newContent: '$a Lesbian authors $0 http://id.loc.gov/authorities/subjects/sh96007532',
+            newContent: '$a Lesbian authors $0 id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
