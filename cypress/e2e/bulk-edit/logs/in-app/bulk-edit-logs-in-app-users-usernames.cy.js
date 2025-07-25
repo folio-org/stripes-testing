@@ -42,8 +42,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C375246 Verify generated Logs files for Users In app -- only invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'C375246'] },
+        'C651571 Verify generated Logs files for Users In app -- only invalid records (firebird)',
+        { tags: ['smoke', 'firebird', 'C651571'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
           BulkEditSearchPane.uploadFile(invalidUsernamesFilename);

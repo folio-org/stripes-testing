@@ -104,8 +104,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C423990 Verify generated Logs files for Instances (Instance HRIDs) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C423990'] },
+        'C651447 Verify generated Logs files for Instances staff suppress (Set false) (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C651447'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDFileName);
