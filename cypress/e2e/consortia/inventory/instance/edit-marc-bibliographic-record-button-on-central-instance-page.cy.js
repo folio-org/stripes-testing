@@ -17,7 +17,7 @@ describe('Inventory', () => {
       marcFileName: `C409474 autotestFileName ${getRandomPostfix()}`,
       tag010: {
         tag: '010',
-        content: '$a 85153773',
+        content: '$a 81153773',
       },
       source: 'MARC',
     };
@@ -63,6 +63,7 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
+        cy.wait(2000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({
