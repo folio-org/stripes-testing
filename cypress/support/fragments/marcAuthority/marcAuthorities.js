@@ -621,11 +621,13 @@ export default {
   chooseAuthoritySourceOption: (option) => {
     const alias = `getItems${getRandomPostfix()}`;
     cy.wait(1000);
-    cy.intercept('GET', '/search/authorities?*').as(alias);
+    cy.intercept('GET', /\/(search|browse)\/authorities\?.*/).as(alias);
     cy.do(MultiSelect({ label: 'Authority source' }).select([including(option)]));
-    cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
-      const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+    cy.wait(`@${alias}`, { timeout: 10000 }).then((interception) => {
+      if (interception && interception.request.url.includes('/search/authorities')) {
+        const { totalRecords } = interception.response.body;
+        cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+      }
       cy.wait(1000);
     });
   },

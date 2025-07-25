@@ -7,6 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/constants';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -116,6 +117,9 @@ describe('Inventory', () => {
       'C451468 Call number of not valid format and with selected "LC" call number type can be found via browse (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451468'] },
       () => {
+        [testData.firstCallNumber, testData.secondCallNumber].forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({

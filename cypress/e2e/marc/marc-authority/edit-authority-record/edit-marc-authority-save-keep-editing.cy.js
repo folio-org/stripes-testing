@@ -145,7 +145,7 @@ describe('MARC', () => {
 
           // Save edits and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(2000);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -154,13 +154,12 @@ describe('MARC', () => {
           );
 
           // Add field and verify button states updated
-          cy.wait(2000);
           MarcAuthority.addNewField(4, testData.newField.tag, testData.newField.content);
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save added field and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(2000);
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -176,7 +175,7 @@ describe('MARC', () => {
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(3000);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
 
@@ -191,7 +190,7 @@ describe('MARC', () => {
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(2000);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
@@ -203,7 +202,7 @@ describe('MARC', () => {
 
           // Save field reordering and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(2000);
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
