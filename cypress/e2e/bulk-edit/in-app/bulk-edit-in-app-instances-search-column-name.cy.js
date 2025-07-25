@@ -52,8 +52,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C423687 Verify "Search column name" search box for Instances records (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C423687'] },
+      'C692092 Verify "Search column name" search box for Instances records (firebird)',
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C692092'] },
       () => {
         cy.viewport(1000, 660);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

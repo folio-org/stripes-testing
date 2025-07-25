@@ -46,8 +46,8 @@ describe.skip('bulk-edit', () => {
     });
 
     it(
-      'C423696 Verify Query tab permissions (In app Instances, Holdings, Items) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423696'] },
+      'C692238 Verify Query tab permissions (In app Instances, Holdings, Items) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C692238'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.bulkEditPath,
@@ -93,8 +93,8 @@ describe.skip('bulk-edit', () => {
     );
 
     it(
-      'C423695 Verify Query tab permissions (In app Instances) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423695'] },
+      'C692236 Verify Query tab permissions (In app Instances) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C692236'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,

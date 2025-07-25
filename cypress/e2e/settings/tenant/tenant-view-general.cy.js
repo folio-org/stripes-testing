@@ -49,8 +49,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C410753 Settings (tenant): View -- General (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C410753'] },
+    'C717754 Settings (tenant): View -- General (firebird) (TaaS)',
+    { tags: ['extendedPath', 'firebird', 'C717754'] },
     () => {
       // Click on "Addresses" in the General subsection.
       TenantPane.selectTenant(TENANTS.ADDRESSES);

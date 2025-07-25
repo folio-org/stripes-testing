@@ -75,8 +75,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C380761 Verify generated Logs files for Items suppressed from discovery (firebird)',
-        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380761'] },
+        'C651557 Verify generated Logs files for Items suppressed from discovery (firebird)',
+        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C651557'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

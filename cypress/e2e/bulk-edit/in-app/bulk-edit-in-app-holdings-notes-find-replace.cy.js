@@ -81,8 +81,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C422054 Verify Bulk Edit actions for Holdings notes - Find-Replace (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422054'] },
+      'C605959 Verify Bulk Edit actions for Holdings notes - Find-Replace (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C605959'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

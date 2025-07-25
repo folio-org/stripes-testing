@@ -58,8 +58,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C423558 Verify "Search column name" search box for Holdings records. (firebird)',
-      { tags: ['smoke', 'firebird', 'C423558'] },
+      'C692093 Verify "Search column name" search box for Holdings records. (firebird)',
+      { tags: ['smoke', 'firebird', 'C692093'] },
       () => {
         cy.viewport(1920, 1080);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
