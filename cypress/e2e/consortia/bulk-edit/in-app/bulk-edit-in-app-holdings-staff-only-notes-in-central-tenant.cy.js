@@ -454,6 +454,7 @@ describe('Bulk-edit', () => {
 
           collegeHoldingHrids.forEach((hrid) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            cy.wait(5000);
             InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.searchHoldingsByHRID(hrid);
             InventorySearchAndFilter.selectViewHoldings();
