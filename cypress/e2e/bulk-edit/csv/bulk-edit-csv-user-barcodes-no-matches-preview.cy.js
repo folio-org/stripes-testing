@@ -45,8 +45,8 @@ describe(
       });
 
       it(
-        'C360556 Populating preview of matched records in case no matches (firebird)',
-        { tags: ['smoke', 'firebird', 'shiftLeft', 'C360556'] },
+        'C692090 Populating preview of matched records in case no matches (firebird)',
+        { tags: ['smoke', 'firebird', 'shiftLeft', 'C692090'] },
         () => {
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

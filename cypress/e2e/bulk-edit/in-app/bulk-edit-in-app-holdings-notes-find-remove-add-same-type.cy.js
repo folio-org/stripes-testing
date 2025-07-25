@@ -81,8 +81,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C422070 Verify Bulk Edit actions for Holdings notes - Find-Remove and Add the same type (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C422070'] },
+      'C605967 Verify Bulk Edit actions for Holdings notes - Find-Remove and Add the same type (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird', 'C605967'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

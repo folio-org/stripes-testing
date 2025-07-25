@@ -32,8 +32,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C350905 Negative uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350905'] },
+      'C627391 Negative uploading file with identifiers -- In app approach (firebird)',
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C627391'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

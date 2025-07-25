@@ -81,8 +81,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C399062 Verify generated Logs files for Holdings suppressed from discovery (Set true) (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C399062'] },
+        'C651554 Verify generated Logs files for Holdings suppressed from discovery (Set true) (firebird) (TaaS)',
+        { tags: ['extendedPath', 'firebird', 'C651554'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');

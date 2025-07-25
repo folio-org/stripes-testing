@@ -44,8 +44,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C436741 Query builder - Search users that has preferred contact type and have "Active" status ("String stores UUID" and "Boolean" property types) ("String stores UUID" and "Boolean" property types) (firebird)',
-      { tags: ['smoke', 'firebird', 'C436741'] },
+      'C651593 Query builder - Search users that has preferred contact type and have "Active" status ("String stores UUID" and "Boolean" property types) ("String stores UUID" and "Boolean" property types) (firebird)',
+      { tags: ['smoke', 'firebird', 'C651593'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();

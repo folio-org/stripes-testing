@@ -32,8 +32,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C350765 Verify BULK EDIT permissions list (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350765'] },
+      'C663361 Verify BULK EDIT permissions list (firebird)',
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C663361'] },
       () => {
         const permissionsToVerify = [
           permissions.bulkEditCsvView.gui,

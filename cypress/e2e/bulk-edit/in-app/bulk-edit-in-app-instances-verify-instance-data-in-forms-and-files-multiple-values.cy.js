@@ -103,8 +103,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C423679 Verify rendering Instance record data in bulk edit forms and files (fields with multiple values) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423679'] },
+      'C655296 Verify rendering Instance record data in bulk edit forms and files (fields with multiple values) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C655296'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.verifyRecordIdentifiers(instanceIdentifiers);

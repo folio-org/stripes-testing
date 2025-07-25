@@ -109,8 +109,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C466315 Bulk edit Instance fields - change note type within the group (firebird)',
-        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C466315'] },
+        'C663260 Bulk edit Instance fields - change note type within the group (firebird)',
+        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C663260'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
