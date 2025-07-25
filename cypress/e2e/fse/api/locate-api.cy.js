@@ -106,7 +106,7 @@ describe('fse-locate-integration - API', () => {
   );
 
   it(
-    `TCxxxx - Locate DCB - check that configuration is in place ${Cypress.env('LOCATE_HOST')}`,
+    `TC195975 - Locate DCB - check Locate - DCB configuration ${Cypress.env('LOCATE_HOST')}`,
     { tags: ['fse', 'api', 'locate', 'dcb'] },
     () => {
       const dcbVars = [
