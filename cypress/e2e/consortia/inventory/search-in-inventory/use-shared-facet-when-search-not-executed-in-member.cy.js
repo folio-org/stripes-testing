@@ -74,9 +74,8 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.resetTenant();
-          cy.loginAsAdmin().then(() => {
+          cy.getAdminToken().then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
               if (marcFile.tenant === 'College') {
                 cy.setTenant(Affiliations.College);
               } else {
@@ -208,8 +207,16 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
 
         // 13 Cancel facet selection by clicking on "x" icon placed in the "Shared" accordion button.
-        InventorySearchAndFilter.selectOptionInExpandedFilter(Dropdowns.SHARED, Dropdowns.YES, false);
-        InventorySearchAndFilter.selectOptionInExpandedFilter(Dropdowns.SHARED, Dropdowns.NO, false);
+        InventorySearchAndFilter.selectOptionInExpandedFilter(
+          Dropdowns.SHARED,
+          Dropdowns.YES,
+          false,
+        );
+        InventorySearchAndFilter.selectOptionInExpandedFilter(
+          Dropdowns.SHARED,
+          Dropdowns.NO,
+          false,
+        );
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
         InventorySearchAndFilter.verifyResultPaneEmpty(true);
