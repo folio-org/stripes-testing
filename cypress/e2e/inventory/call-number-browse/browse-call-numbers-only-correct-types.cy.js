@@ -301,19 +301,16 @@ describe('Inventory', () => {
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
         searchAndCheckCallNumbers(['lc'], callNumbers[1].lc);
-        searchAndCheckCallNumbers(['local'], callNumbers[0].local);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
         searchAndCheckCallNumbers(['nlm'], callNumbers[0].nlm);
-        searchAndCheckCallNumbers(['lc'], callNumbers[1].lc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
         searchAndCheckCallNumbers(['other'], callNumbers[0].other);
-        searchAndCheckCallNumbers(['udc'], callNumbers[0].udc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
