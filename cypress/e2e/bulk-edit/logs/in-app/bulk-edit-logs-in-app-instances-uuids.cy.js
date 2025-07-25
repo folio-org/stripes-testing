@@ -108,8 +108,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C423988 Verify generated Logs files for Instances (Instance UUIDs) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C423988'] },
+        'C651448 Verify generated Logs files for Instances staff suppress (Set true) (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C651448'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

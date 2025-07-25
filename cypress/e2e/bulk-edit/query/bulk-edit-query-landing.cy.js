@@ -67,8 +67,8 @@ describe('bulk-edit', () => {
     );
 
     it(
-      'C436746 Verify actions in the "Build query" form (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C436746'] },
+      'C651590 Verify actions in the "Build query" form (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C651590'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,

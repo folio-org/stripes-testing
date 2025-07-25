@@ -36,8 +36,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353216 Verify "Start bulk edit" option with error accordion -- in- app approach (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353216'] },
+      'C689194 Verify "Start bulk edit" option with error accordion -- in- app approach (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird', 'C689194'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

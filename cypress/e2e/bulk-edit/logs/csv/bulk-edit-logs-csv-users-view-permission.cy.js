@@ -48,8 +48,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C380562'] },
+        'C692235 Verify generated Logs files for Users Local are hidden without "Users: Can view user profile" permission (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C692235'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);
