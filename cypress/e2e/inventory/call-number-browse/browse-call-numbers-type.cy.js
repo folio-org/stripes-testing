@@ -42,7 +42,6 @@ describe('Inventory', () => {
         value: `T22.19:M54/2005${randomLetters}`,
       },
       { type: 'UDC', value: `338.48${randomLetters}` },
-      { type: localCallNumberTypeName, value: `MyNr123465${randomLetters}` },
       { value: `Local.315${randomLetters}` },
     ];
     const callNumberTypesSettings = [

@@ -30,6 +30,27 @@ describe('MARC', () => {
           searchOption: 'Keyword',
           marcAuthTitle: 'John Doe Sir, 1909-1965',
         };
+        const dropdownSelections = {
+          'Geo Subd': 'a',
+          Roman: 'a',
+          Lang: 'b',
+          'Kind rec': 'a',
+          'Cat Rules': 'b',
+          'SH Sys': 'a',
+          Series: 'b',
+          'Numb Series': 'a',
+          'Main use': 'a',
+          'Subj use': 'a',
+          'Series use': 'a',
+          'Type Subd': 'a',
+          'Govt Ag': 'a',
+          RefEval: 'a',
+          RecUpd: 'a',
+          'Pers Name': 'b',
+          'Level Est': 'a',
+          'Mod Rec Est': 'a',
+          Source: 'a',
+        };
 
         const newFields = [
           { previousFieldTag: '008', tag: '010', content: '$a n  00776439' },
@@ -65,11 +86,14 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+              cy.reload();
+              MarcAuthorities.waitLoading();
+            }, 20_000);
           });
         });
 
@@ -88,6 +112,7 @@ describe('MARC', () => {
             // Creating marc authority part
             MarcAuthorities.clickActionsAndNewAuthorityButton();
             QuickMarcEditor.checkPaneheaderContains(testData.newAuthorityHeaderText);
+            MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections);
             MarcAuthority.checkSourceFileSelectShown();
             MarcAuthority.selectSourceFile(testData.sourceName);
             newFields.forEach((newField) => {
@@ -99,9 +124,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.checkContentByTag(newFields[0].tag, newFields[0].content);
             QuickMarcEditor.checkContentByTag(newFields[1].tag, newFields[1].content);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             MarcAuthority.verifyAfterSaveAndClose();
             QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.newAuthorityHeaderText);
             MarcAuthority.getId().then((id) => {
@@ -145,9 +168,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n00776439',
               '',
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordionContributor,
@@ -164,7 +185,7 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordsResultListIsAbsent();
             MarcAuthorities.searchByParameter(testData.searchOption, testData.naturalId);
             MarcAuthorities.checkRow(testData.marcAuthTitle);
-            MarcAuthorities.verifyNumberOfTitles(5, '1');
+            MarcAuthorities.verifyNumberOfTitles('1');
           },
         );
       });
