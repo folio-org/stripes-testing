@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423528 Create a new MARC authority record with "Local" authority file selected (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C423528'] },
+        'C663337 Create a new MARC authority record with "Local" authority file selected (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C663337'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
