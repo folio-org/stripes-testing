@@ -12,11 +12,20 @@ describe('Inventory', () => {
   let userId;
   const testData = {};
   beforeEach('create tests data', () => {
-    testData.instanceTitle = `!!"autoTestInstanceTitle ${getRandomPostfix()}`;
+    testData.instanceTitle = `!1_AutoTestInstanceTitle ${getRandomPostfix()}`;
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
+
+          for (let i = 0; i < 100; i++) {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: testData.instanceTypeId,
+                title: `!2_AutoTestInstanceTitle ${getRandomPostfix()}`,
+              },
+            });
+          }
         });
       })
       .then(() => {
@@ -47,6 +56,7 @@ describe('Inventory', () => {
     cy.getAdminToken();
     Users.deleteViaApi(userId);
     InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
+    InventoryInstances.deleteInstanceByTitleViaApi('!2_AutoTestInstanceTitle*');
   });
 
   it(
