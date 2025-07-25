@@ -26,14 +26,14 @@ describe('Settings: Tenant', () => {
       testData.servicePoint = servicePoint;
 
       const institutionAB = Institutions.getDefaultInstitution({
-        name: `autotest_institution ${getRandomPostfix()}`,
+        name: `1_autotest_institution ${getRandomPostfix()}`,
       });
 
       Institutions.createViaApi(institutionAB).then((locinst) => {
         testData.institutions.push(locinst);
 
         const campus = Campuses.getDefaultCampuse({
-          name: `autotest_campus ${getRandomPostfix()}`,
+          name: `1_autotest_campus ${getRandomPostfix()}`,
           institutionId: locinst.id,
         });
 
@@ -47,13 +47,13 @@ describe('Settings: Tenant', () => {
               testData.campuses[testData.campuses.length - 1].numOfLibraries++;
               Locations.createViaApi({
                 id: uuid(),
-                code: `autotest_location_code-${getRandomPostfix()}`,
-                name: `autotest_location_name-${getRandomPostfix()}`,
+                code: `1_autotest_location_code-${getRandomPostfix()}`,
+                name: `1_autotest_location_name-${getRandomPostfix()}`,
                 isActive: true,
                 institutionId: locinst.id,
                 campusId: loccamp.id,
                 libraryId: loclib.id,
-                discoveryDisplayName: `autotest_location_discovery-${getRandomPostfix()}`,
+                discoveryDisplayName: `1_autotest_location_discovery-${getRandomPostfix()}`,
                 servicePointIds: [servicePoint.id],
                 primaryServicePoint: servicePoint.id,
               }).then((location) => {
@@ -65,7 +65,7 @@ describe('Settings: Tenant', () => {
       });
 
       const institutionCD = Institutions.getDefaultInstitution({
-        name: `autotest_institution ${getRandomPostfix()}`,
+        name: `1_autotest_institution ${getRandomPostfix()}`,
       });
 
       Institutions.createViaApi(institutionCD).then((locinst) => {
@@ -73,7 +73,7 @@ describe('Settings: Tenant', () => {
 
         [...Array(2)].forEach((_, index) => {
           const campus = Campuses.getDefaultCampuse({
-            name: `autotest_campus ${getRandomPostfix()}`,
+            name: `1_autotest_campus ${getRandomPostfix()}`,
             institutionId: locinst.id,
           });
 
