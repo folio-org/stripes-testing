@@ -7,7 +7,7 @@ import {
   Link,
   KeyValue,
   Callout,
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-action-profile-pane' });
 const resultsPane = Pane({ id: 'pane-results' });

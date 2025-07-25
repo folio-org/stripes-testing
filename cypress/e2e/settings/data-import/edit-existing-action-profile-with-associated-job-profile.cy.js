@@ -1,16 +1,15 @@
 import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import ConfirmChanges from '../../../support/fragments/data_import/action_profiles/modals/confirmChanges';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import ActionProfileEdit from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileEdit';
+import ActionProfileView from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
+import ConfirmChanges from '../../../support/fragments/settings/dataImport/actionProfiles/modals/confirmChanges';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsDataImport, {
   SETTINGS_TABS,
@@ -74,9 +73,9 @@ describe('Data Import', () => {
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.checkListOfExistingProfilesIsDisplayed();
-        ActionProfiles.search(actionProfile.name);
-        ActionProfiles.verifyActionProfileOpened(actionProfile.name);
+        SettingsActionProfiles.checkListOfExistingProfilesIsDisplayed();
+        SettingsActionProfiles.search(actionProfile.name);
+        SettingsActionProfiles.verifyActionProfileOpened(actionProfile.name);
         ActionProfileView.edit();
         ActionProfileEdit.verifyScreenName(actionProfile.name);
         ActionProfileEdit.changeAction();
@@ -86,8 +85,8 @@ describe('Data Import', () => {
         ActionProfileEdit.changesNotSaved();
         ActionProfileEdit.save();
         ConfirmChanges.confirmChanges();
-        ActionProfiles.checkListOfExistingProfilesIsDisplayed();
-        ActionProfiles.checkCalloutMessage(calloutMessage);
+        SettingsActionProfiles.checkListOfExistingProfilesIsDisplayed();
+        SettingsActionProfiles.checkCalloutMessage(calloutMessage);
         ActionProfileView.verifyAction();
       },
     );

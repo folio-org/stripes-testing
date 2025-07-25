@@ -1,7 +1,7 @@
 import { ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import ActionProfileView from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';

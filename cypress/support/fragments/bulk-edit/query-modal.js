@@ -47,13 +47,13 @@ export const instanceFieldValues = {
   languages: 'Instance — Languages',
 };
 export const itemFieldValues = {
-  instanceId: 'Instances — Instance UUID',
-  instanceTitle: 'Instances — Resource title',
-  itemStatus: 'Items — Status',
-  itemUuid: 'Items — Item UUID',
-  holdingsId: 'Holdings — UUID',
+  instanceId: 'Instance — Instance UUID',
+  instanceTitle: 'Instance — Resource title',
+  itemStatus: 'Item — Status',
+  itemUuid: 'Item — Item UUID',
+  holdingsId: 'Holding — UUID',
   temporaryLocation: 'Temporary location — Name',
-  itemDiscoverySuppress: 'Items — Suppress from discovery',
+  itemDiscoverySuppress: 'Item — Suppress from discovery',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',

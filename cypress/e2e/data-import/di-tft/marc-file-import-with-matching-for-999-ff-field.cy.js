@@ -9,7 +9,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -153,7 +152,7 @@ describe('Data Import', () => {
           FieldMappingProfiles.createInstanceMappingProfile(mappingProfile);
 
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
+          SettingsActionProfiles.create(actionProfile, mappingProfile.name);
 
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
           JobProfiles.createJobProfile(jobProfile);
@@ -202,8 +201,8 @@ describe('Data Import', () => {
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfileForUpdate.name);
 
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-          ActionProfiles.create(actionProfileForUpdate, mappingProfileForUpdate.name);
-          ActionProfiles.checkActionProfilePresented(actionProfileForUpdate.name);
+          SettingsActionProfiles.create(actionProfileForUpdate, mappingProfileForUpdate.name);
+          SettingsActionProfiles.checkActionProfilePresented(actionProfileForUpdate.name);
 
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(matchProfile);

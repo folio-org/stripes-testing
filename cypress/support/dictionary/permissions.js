@@ -1159,6 +1159,10 @@ export default {
     internal: 'ui-inventory.settings.call-number-browse',
     gui: 'Settings (Inventory): Configure call number browse',
   },
+  uiSettingsCallNumberTypesCreateEditDelete: {
+    internal: 'ui-inventory.settings.call-number-types',
+    gui: 'Settings (Inventory): Create, edit, delete call number types',
+  },
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
@@ -1178,6 +1182,10 @@ export default {
   uiSettingsViewAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.view',
     gui: 'Settings (MARC authority): View authority files',
+  },
+  uiSettingsInventoryViewList: {
+    internal: 'ui-inventory.settings.list.view',
+    gui: 'Settings (Inventory): View list of settings pages',
   },
   // Added the below permissions for custom label creation
 

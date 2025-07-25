@@ -10,7 +10,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -274,17 +273,23 @@ describe('Data Import', () => {
 
         // create Action profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
+        SettingsActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
-        ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+        SettingsActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
-        ActionProfiles.create(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
-        ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
+        SettingsActionProfiles.create(
+          marcBibActionProfileOverride,
+          marcBibMappingProfileOverride.name,
+        );
+        SettingsActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
 
-        ActionProfiles.create(instanceActionProfileOverride, instanceMappingProfileOverride.name);
-        ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
+        SettingsActionProfiles.create(
+          instanceActionProfileOverride,
+          instanceMappingProfileOverride.name,
+        );
+        SettingsActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
         // create Match profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
