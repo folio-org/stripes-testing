@@ -96,8 +96,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C11081 Verify item status filters retrieve items with that item status (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C11081', 'eurekaPhase1'] },
+      'C663285 Verify item status filters retrieve items with that item status (spitfire)',
+      { tags: ['smoke', 'spitfire', 'C663285', 'eurekaPhase1'] },
       () => {
         cy.intercept('GET', '/inventory/items?*').as('getItems');
         cy.intercept('GET', '/search/instances?*').as('getInstances');

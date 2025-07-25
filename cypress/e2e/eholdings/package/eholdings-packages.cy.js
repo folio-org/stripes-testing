@@ -210,8 +210,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C703'] },
+      'C736713 Set [Show titles in package to patrons] to Hide (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C736713'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
