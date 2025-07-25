@@ -899,4 +899,9 @@ export default {
   verifyAddHoldingsButtonIsAbsent() {
     cy.expect(addHoldingsButton.absent());
   },
+
+  verifyAddItemButtonIsAbsent({ holdingName } = {}) {
+    const holdingSection = rootSection.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).absent());
+  },
 };
