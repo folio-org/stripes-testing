@@ -58,8 +58,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353633 Verify that the in-app bulk edit preview contains affected records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353633'] },
+      'C692041 Verify that the in-app bulk edit preview contains affected records (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird', 'C692041'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
           'Items',

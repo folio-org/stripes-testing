@@ -91,8 +91,8 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C399063 Verify generated Logs files for Holdings suppressed from discovery (Set false) (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C399063'] },
+        'C651551 Verify generated Logs files for Holdings suppressed from discovery (Set false) (firebird) (TaaS)',
+        { tags: ['extendedPath', 'firebird', 'C651551'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);

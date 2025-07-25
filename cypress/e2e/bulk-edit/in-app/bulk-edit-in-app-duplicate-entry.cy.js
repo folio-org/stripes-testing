@@ -71,8 +71,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C350933 Verify Errors accordion with repeated records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C350933'] },
+      'C663286 Verify Errors accordion with repeated records (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird', 'C663286'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

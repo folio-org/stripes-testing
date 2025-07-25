@@ -77,8 +77,8 @@ describe('bulk-edit', () => {
     );
 
     it(
-      'C359606 Negative -- Verify bulk edit Users emails (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C359606'] },
+      'C651548 Negative -- Verify bulk edit Users emails (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C651548'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

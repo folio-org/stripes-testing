@@ -41,8 +41,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C436782 Query builder - Search users with expiration date in specified date range and first name, last name containing specific letters ("Date-time" and "String" property types) (firebird)',
-      { tags: ['smoke', 'firebird', 'C436782'] },
+      'C651594 Query builder - Search users with expiration date in specified date range and first name, last name containing specific letters ("Date-time" and "String" property types) (firebird)',
+      { tags: ['smoke', 'firebird', 'C651594'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
