@@ -1053,6 +1053,24 @@ export default {
     ]);
   },
 
+  deleteAllExpenseClasses: () => {
+    const selector = 'button[data-test-repeatable-field-remove-item-button]';
+    const loop = () => {
+      cy.get('body').then(($body) => {
+        const $buttons = $body.find(selector);
+        if (!$buttons.length) {
+          cy.do(saveAndCloseButton.click());
+          return;
+        }
+        // eslint-disable-next-line cypress/no-force
+        cy.wrap($buttons.eq(0)).click({ force: true });
+        cy.wait(300);
+        loop();
+      });
+    };
+    cy.get(selector, { timeout: 10000 }).should('be.visible').then(loop);
+  },
+
   getFundsViaApi(searchParams) {
     return cy
       .okapiRequest({

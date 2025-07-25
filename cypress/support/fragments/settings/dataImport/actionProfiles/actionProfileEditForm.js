@@ -131,4 +131,9 @@ export default {
       );
     }
   },
+  verifyFolioRecordType(options) {
+    options.forEach((option) => {
+      cy.expect(detailsSectionFields.recordType.has({ allOptionsText: including(option) }));
+    });
+  },
 };

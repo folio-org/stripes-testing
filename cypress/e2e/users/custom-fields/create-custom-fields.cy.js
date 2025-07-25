@@ -23,8 +23,10 @@ describe('Users', () => {
     });
 
     beforeEach(() => {
-      cy.login(user.username, user.password,
-        { path: TopMenu.customFieldsPath, waiter: CustomFields.waitLoading });
+      cy.login(user.username, user.password, {
+        path: TopMenu.customFieldsPath,
+        waiter: CustomFields.waitLoading,
+      });
     });
 
     after('delete test data', () => {
@@ -46,7 +48,7 @@ describe('Users', () => {
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyTextFieldPresented(fieldData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
@@ -68,7 +70,7 @@ describe('Users', () => {
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyAreaFieldPresented(fieldData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
@@ -90,7 +92,7 @@ describe('Users', () => {
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyCheckboxPresented(checkboxData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
@@ -116,7 +118,7 @@ describe('Users', () => {
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyRadioButtonPresented(radioButtonData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();

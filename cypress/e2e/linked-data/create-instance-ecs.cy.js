@@ -62,6 +62,8 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
+    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
+    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {

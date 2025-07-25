@@ -11,7 +11,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -217,8 +216,8 @@ describe('Data Import', () => {
 
           // create action profile
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(actionProfile.name);
+          SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
           // create job profile for update
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

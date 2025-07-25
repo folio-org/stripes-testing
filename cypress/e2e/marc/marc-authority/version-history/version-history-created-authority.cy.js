@@ -49,12 +49,10 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
-            (user) => {
-              testData.lastName = user[0].personal.lastName;
-              testData.firstName = user[0].personal.firstName;
-            },
-          );
+          cy.getAdminUserDetails().then((user) => {
+            testData.lastName = user.personal.lastName;
+            testData.firstName = user.personal.firstName;
+          });
 
           cy.then(() => {
             cy.getAdminToken();
@@ -65,6 +63,7 @@ describe('MARC', () => {
             MarcAuthorities.waitLoading();
             MarcAuthorities.clickActionsAndNewAuthorityButton();
             MarcAuthority.checkSourceFileSelectShown();
+            MarcAuthority.setValid008DropdownValues();
             MarcAuthority.selectSourceFile(testData.sourceName);
             newFields.forEach((newField) => {
               MarcAuthority.addNewFieldAfterExistingByTag(

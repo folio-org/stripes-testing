@@ -47,26 +47,24 @@ describe.skip('Inventory', () => {
     before(() => {
       cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then(
-          (servicePoints) => {
-            effectiveLocationServicePoint = servicePoints[0];
-            NewLocation.createViaApi(
-              NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-            ).then((location) => {
-              effectiveLocation = location;
-              Orders.createOrderWithOrderLineViaApi(
-                NewOrder.getDefaultOrder(),
-                BasicOrderLine.getDefaultOrderLine({
-                  quantity: itemQuantity,
-                  title: instanceTitle,
-                  specialLocationId: effectiveLocation.id,
-                }),
-              ).then((order) => {
-                orderNumber = order.poNumber;
-              });
+        ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+          effectiveLocationServicePoint = servicePoint;
+          NewLocation.createViaApi(
+            NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+          ).then((location) => {
+            effectiveLocation = location;
+            Orders.createOrderWithOrderLineViaApi(
+              NewOrder.getDefaultOrder(),
+              BasicOrderLine.getDefaultOrderLine({
+                quantity: itemQuantity,
+                title: instanceTitle,
+                specialLocationId: effectiveLocation.id,
+              }),
+            ).then((order) => {
+              orderNumber = order.poNumber;
             });
-          },
-        );
+          });
+        });
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' }).then((servicePoints) => {
           notEffectiveLocationServicePoint = servicePoints[0];
         });

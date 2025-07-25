@@ -102,7 +102,6 @@ describe('Data Export', () => {
         InventorySearchAndFilter.byEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
         cy.wait(3000);
         InventorySearchAndFilter.saveCQLQuery();
-        cy.wait(1000);
         FileManager.verifyFile(
           InventoryActions.verifySaveCQLQueryFileName,
           'SearchInstanceCQLQuery*',

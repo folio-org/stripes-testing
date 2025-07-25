@@ -9,7 +9,7 @@ import {
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -38,6 +38,27 @@ describe('Data Import', () => {
     const searchValue = 'aat423564';
     const recordTitle = 'C423564 John Doe Sir, 1909-1965';
     const headerText = /New .*MARC authority record/;
+    const dropdownSelections = {
+      'Geo Subd': 'a',
+      Roman: 'a',
+      Lang: 'b',
+      'Kind rec': 'a',
+      'Cat Rules': 'b',
+      'SH Sys': 'a',
+      Series: 'b',
+      'Numb Series': 'a',
+      'Main use': 'a',
+      'Subj use': 'a',
+      'Series use': 'a',
+      'Type Subd': 'a',
+      'Govt Ag': 'a',
+      RefEval: 'a',
+      RecUpd: 'a',
+      'Pers Name': 'b',
+      'Level Est': 'a',
+      'Mod Rec Est': 'a',
+      Source: 'a',
+    };
     const newFields = [
       { previousFieldTag: '008', tag: '010', content: '$a aat423564' },
       {
@@ -190,7 +211,7 @@ describe('Data Import', () => {
         MarcAuthority.selectSourceFile(
           DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
         );
-
+        MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections);
         // Add 5 new fields by clicking on "+" icon and fill it
         newFields.forEach((newField) => {
           MarcAuthority.addNewFieldAfterExistingByTag(

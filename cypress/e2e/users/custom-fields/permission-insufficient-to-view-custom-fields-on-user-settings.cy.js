@@ -12,16 +12,13 @@ describe('Users', () => {
 
     before('Preconditions', () => {
       cy.getAdminToken().then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-          (servicePoints) => {
-            servicePointId = servicePoints[0].id;
-          },
-        );
-        cy.createTempUser([permissions.uiUsersCanViewCustomFields.gui])
-          .then((userProperties) => {
-            userData = userProperties;
-            UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-          });
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          servicePointId = servicePoint.id;
+        });
+        cy.createTempUser([permissions.uiUsersCanViewCustomFields.gui]).then((userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+        });
       });
     });
 
@@ -34,8 +31,10 @@ describe('Users', () => {
       'C388654 permission insufficient to view custom fields on user settings (volaris)',
       { tags: ['extendedPath', 'volaris', 'C388654', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password,
-          { path: TopMenu.customFieldsPath, waiter: CustomFields.waitLoading });
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.customFieldsPath,
+          waiter: CustomFields.waitLoading,
+        });
         CustomFields.waitLoading();
       },
     );

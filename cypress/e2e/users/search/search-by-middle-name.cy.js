@@ -16,27 +16,34 @@ describe('Users', () => {
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      cy.createTempUserParameterized(testData.user,
+      cy.createTempUserParameterized(
+        testData.user,
         [permissions.checkoutAll.gui, permissions.uiUsersView.gui],
-        { userType: 'patron' }).then((userProperties) => {
-        testData.user = userProperties;
-        testData.user = { ...testData.user, ...userProperties };
-      }).then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          testData.servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(
-            testData.servicePointId,
-            testData.user.userId,
-            testData.servicePointId,
-          );
-        }).then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchPane.waitLoading,
-          });
+        { userType: 'patron' },
+      )
+        .then((userProperties) => {
+          testData.user = userProperties;
+          testData.user = { ...testData.user, ...userProperties };
+        })
+        .then(() => {
+          ServicePoints.getCircDesk1ServicePointViaApi()
+            .then((servicePoint) => {
+              testData.servicePointId = servicePoint.id;
+            })
+            .then(() => {
+              UserEdit.addServicePointViaApi(
+                testData.servicePointId,
+                testData.user.userId,
+                testData.servicePointId,
+              );
+            })
+            .then(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.usersPath,
+                waiter: UsersSearchPane.waitLoading,
+              });
+            });
         });
-      });
     });
   });
 

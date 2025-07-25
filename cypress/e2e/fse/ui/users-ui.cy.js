@@ -19,13 +19,11 @@ describe('fse-users - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
       Users.waitLoading();
-      cy.getUsers({ limit: 1, query: `"username"=="${Cypress.env('diku_login')}"` }).then(
-        (userResp) => {
-          UsersSearchPane.searchByKeywords(userResp[0].id);
-          UsersSearchPane.openUser(userResp[0].id);
-          UsersCard.verifyUserCardOpened();
-        },
-      );
+      cy.getAdminUserId().then((id) => {
+        UsersSearchPane.searchByKeywords(id);
+        UsersSearchPane.openUser(id);
+        UsersCard.verifyUserCardOpened();
+      });
     },
   );
 });

@@ -14,7 +14,15 @@ import { CallNumberBrowseSettings } from '../../../support/fragments/settings/in
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
-    const testData = {};
+    const testData = {
+      browseOptions: [
+        'Dewey Decimal classification',
+        'Library of Congress classification',
+        'National Library of Medicine classification',
+        'Other scheme',
+        'Superintendent of Documents classification',
+      ],
+    };
     const randomLetters = getRandomLetters(7);
     let callNumberTypes = null;
     const getIdByName = (name) => callNumberTypes.find((type) => type.name === name)?.id;
@@ -123,10 +131,14 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
@@ -160,13 +172,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(marcInstances[1].instanceTitle);
         InventorySearchAndFilter.verifyNumberOfSearchResults(2);
 
-        [
-          'Dewey Decimal classification',
-          'Library of Congress classification',
-          'National Library of Medicine classification',
-          'Other scheme',
-          'Superintendent of Documents classification',
-        ].forEach((browseOption) => {
+        testData.browseOptions.forEach((browseOption) => {
           folioInstances.forEach((instance, idx) => {
             const itemCallNumberType = getNameById(instance.items[0].itemLevelCallNumberTypeId);
             const itemCallNumberValue = instance.items[0].itemLevelCallNumber;

@@ -31,6 +31,7 @@ import {
   including,
   not,
   or,
+  and,
   matching,
   MultiColumnListHeader,
 } from '../../../../interactors';
@@ -39,6 +40,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -126,26 +128,26 @@ const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
 const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
-const default008FieldValues = {
-  'Cat Rules': '\\',
-  'Geo Subd': '\\',
-  'Govt Ag': '\\',
-  'Kind rec': '\\',
+const valid008FieldValues = {
+  'Cat Rules': 'c',
+  'Geo Subd': 'n',
+  'Govt Ag': '|',
+  'Kind rec': 'a',
   Lang: '\\',
-  'Level Est': '\\',
-  'Main use': '\\',
+  'Level Est': 'a',
+  'Main use': 'a',
   'Mod Rec Est': '\\',
-  'Numb Series': '\\',
-  'Pers Name': '\\',
-  RecUpd: '\\',
-  RefEval: '\\',
-  Roman: '\\',
-  'SH Sys': '\\',
-  Series: '\\',
-  'Series use': '\\',
+  'Numb Series': 'n',
+  'Pers Name': 'a',
+  RecUpd: 'a',
+  RefEval: 'a',
+  Roman: '|',
+  'SH Sys': 'a',
+  Series: 'n',
+  'Series use': 'a',
   Source: '\\',
-  'Subj use': '\\',
-  'Type Subd': '\\',
+  'Subj use': 'a',
+  'Type Subd': 'n',
   Undef_18: '\\\\\\\\\\\\\\\\\\\\',
   Undef_30: '\\',
   Undef_34: '\\\\\\\\',
@@ -250,6 +252,18 @@ export default {
     // valid name example: 2023-03-26_09-51-07_7642_auth_headings_updates.csv
     const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
     expect(actualName).to.match(fileNameMask);
+  },
+
+  verifyAuthorityFileName(actualName) {
+    // valid name example: QuickInstanceExport2021-12-24T14_05_53+03_00.csv
+    const expectedFileNameMask =
+      /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
+    expect(actualName).to.match(expectedFileNameMask);
+
+    const actualDate = DateTools.parseDateFromFilename(
+      FileManager.getFileNameFromFilePath(actualName),
+    );
+    DateTools.verifyDate(actualDate);
   },
 
   verifyContentOfExportFile(actual, ...expectedArray) {
@@ -388,6 +402,12 @@ export default {
     cy.expect([
       authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
       authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
+    ]);
+  },
+
+  checkRowsCountExistance: (expectedRowsCount) => {
+    cy.expect([
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
     ]);
   },
 
@@ -736,6 +756,37 @@ export default {
   exportSelected() {
     cy.do(actionsButton.click());
     cy.do(buttonExportSelected.click());
+  },
+
+  verifyToastNotificationAfterExportAuthority() {
+    const currentDate = DateTools.getFormattedDate({ date: new Date() });
+
+    cy.expect(
+      Callout({
+        textContent: and(
+          including(`QuickAuthorityExport${currentDate}`),
+          including(
+            "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
+          ),
+        ),
+      }).exists(),
+    );
+  },
+
+  getExportedCSVFileNameFromCallout() {
+    const fileNamePattern = /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}/;
+
+    return Callout({
+      textContent: including('QuickAuthorityExport'),
+    }).perform((element) => {
+      const text = element.textContent || '';
+      const fileNameMatch = text.match(fileNamePattern);
+
+      if (!fileNameMatch) {
+        throw new Error('File name not found in callout message.');
+      }
+      return fileNameMatch[0].replace(/:/g, '_');
+    });
   },
 
   checkRowsContent(contents) {
@@ -1631,7 +1682,7 @@ export default {
   ) {
     return cy.createMarcAuthorityViaAPI(LDR, [
       { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: default008FieldValues, indicators: ['\\', '\\'] },
+      { tag: '008', content: valid008FieldValues, indicators: ['\\', '\\'] },
       ...fields,
     ]);
   },
@@ -1657,7 +1708,7 @@ export default {
 
   createMarcAuthorityRecordViaApiByReadingFromMrkFile(
     mrkFileName,
-    field008Values = default008FieldValues,
+    field008Values = valid008FieldValues,
   ) {
     return new Promise((resolve) => {
       FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {
@@ -1713,6 +1764,19 @@ export default {
     resultsListColumns.forEach((column, index) => {
       if (index < 3) rootSection.find(MultiColumnListHeader(column)).is({ sortable: true });
       else rootSection.find(MultiColumnListHeader(column)).is({ sortable: false });
+    });
+  },
+
+  toggleAuthorityLccnValidationRule({ enable = true }) {
+    cy.getSpecificatoinIds({ family: 'MARC' }).then((specs) => {
+      // Find the specification with profile 'authority'
+      const authoritySpecId = specs.find((spec) => spec.profile === 'authority').id;
+      cy.getSpecificatoinRules(authoritySpecId).then((rules) => {
+        const lccnRuleId = rules.find((rule) => rule.name === 'Invalid LCCN Subfield Value').id;
+        cy.updateSpecificatoinRule(authoritySpecId, lccnRuleId, {
+          enabled: enable,
+        });
+      });
     });
   },
 };

@@ -22,11 +22,7 @@ describe('MARC', () => {
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
       };
       const dropdownUpdate = [testData.tagLdr, 'Status', 'n - New'];
-      const textUpdate = [
-        testData.tag008,
-        'Geo Subd',
-        'd - ui-quick-marc.record.fixedField.Subdivided geographically-direct',
-      ];
+      const textUpdate = [testData.tag008, 'Geo Subd', 'd - Subdivided geographically-direct'];
       const versionHistoryCardsData = [
         {
           isOriginal: false,
@@ -70,22 +66,20 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
-            (users) => {
-              testData.adminLastName = users[0].personal.lastName;
-              testData.adminFirstName = users[0].personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(

@@ -30,17 +30,15 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.setTenant(Affiliations.College)
         .then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-            (servicePoints) => {
-              const collegeLocationData = Locations.getDefaultLocation({
-                servicePointId: servicePoints[0].id,
-              }).location;
-              Locations.createViaApi(collegeLocationData).then((location) => {
-                testData.locationId = location.id;
-                testData.locationName = location.name;
-              });
-            },
-          );
+          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            const collegeLocationData = Locations.getDefaultLocation({
+              servicePointId: servicePoint.id,
+            }).location;
+            Locations.createViaApi(collegeLocationData).then((location) => {
+              testData.locationId = location.id;
+              testData.locationName = location.name;
+            });
+          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             testData.holdings.sourceId = folioSource.id;
           });

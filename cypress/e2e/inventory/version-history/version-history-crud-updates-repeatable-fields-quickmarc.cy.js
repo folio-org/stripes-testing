@@ -217,24 +217,22 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
-            (users) => {
-              testData.adminLastName = users[0].personal.lastName;
-              testData.adminFirstName = users[0].personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              [versionHistorySourceCardsData, versionHistoryViewCardsData].forEach(
-                (cardData, index) => {
-                  if (index % 2) {
-                    cardData.firstName = testData.adminFirstName;
-                    cardData.lastName = testData.adminLastName;
-                  } else {
-                    cardData.firstName = userProperties.firstName;
-                    cardData.lastName = userProperties.lastName;
-                  }
-                },
-              );
-            },
-          );
+            [versionHistorySourceCardsData, versionHistoryViewCardsData].forEach(
+              (cardData, index) => {
+                if (index % 2) {
+                  cardData.firstName = testData.adminFirstName;
+                  cardData.lastName = testData.adminLastName;
+                } else {
+                  cardData.firstName = userProperties.firstName;
+                  cardData.lastName = userProperties.lastName;
+                }
+              },
+            );
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(

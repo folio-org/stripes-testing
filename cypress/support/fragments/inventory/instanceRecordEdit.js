@@ -1,10 +1,9 @@
-import { including, matching, or } from '@interactors/html';
+import { HTML, including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
   Checkbox,
   FieldSet,
-  HTML,
   KeyValue,
   Modal,
   Pane,
@@ -197,6 +196,15 @@ export default {
     cy.do([
       addParentInstanceButton.click(),
       parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.searchByTitle(instanceTitle);
+    InventoryInstanceModal.selectInstance();
+  },
+  addChildInstance(instanceTitle) {
+    cy.do([
+      addChildInstanceButton.click(),
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
     InventoryInstanceModal.searchByTitle(instanceTitle);
@@ -424,6 +432,14 @@ export default {
         .choose(type),
     );
   },
+  selectChildRelationshipType(type) {
+    cy.do(
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(Select({ name: 'childInstances[0].instanceRelationshipTypeId' }))
+        .choose(type),
+    );
+  },
   verifyErrorMessageForStatisticalCode: (isPresented = true) => {
     if (isPresented) {
       cy.expect(FieldSet('Statistical code').has({ error: 'Please select to continue' }));
@@ -520,6 +536,19 @@ export default {
         .find(KeyValue('Instance HRID'))
         .has({ value: hrid }),
       parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Title*Connected'))
+        .has({ value: title }),
+    ]);
+  },
+
+  verifyChildInstance(title, hrid) {
+    cy.expect([
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Instance HRID'))
+        .has({ value: hrid }),
+      childInstanceFieldSet
         .find(RepeatableFieldItem())
         .find(KeyValue('Title*Connected'))
         .has({ value: title }),

@@ -57,17 +57,15 @@ describe('Inventory', () => {
           .then(({ instanceData }) => {
             testData.collegeTenant.instance = instanceData;
 
-            ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-              (servicePoints) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoints[0].id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.collegeTenant.location = location;
-                  testData.collegeTenant.locationName = location.name;
-                });
-              },
-            );
+            ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+              const collegeLocationData = Locations.getDefaultLocation({
+                servicePointId: servicePoint.id,
+              }).location;
+              Locations.createViaApi(collegeLocationData).then((location) => {
+                testData.collegeTenant.location = location;
+                testData.collegeTenant.locationName = location.name;
+              });
+            });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
               testData.collegeTenant.holdings.sourceId = folioSource.id;
             });
@@ -107,13 +105,13 @@ describe('Inventory', () => {
       });
 
       cy.withinTenant(Affiliations.University, () => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-          .then((servicePoints) => {
+        ServicePoints.getCircDesk1ServicePointViaApi()
+          .then((servicePoint) => {
             const universityFirstLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoints[0].id,
+              servicePointId: servicePoint.id,
             }).location;
             const universitySecondLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoints[0].id,
+              servicePointId: servicePoint.id,
             }).location;
             Locations.createViaApi(universityFirstLocationData).then((location) => {
               testData.universityTenant.location1 = location;

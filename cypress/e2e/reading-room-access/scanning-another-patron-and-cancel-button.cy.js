@@ -73,9 +73,6 @@ describe('Reading Room Access', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((users) => {
-      UserEdit.changeServicePointPreferenceViaApi(users[0].id, [testData.servicePoint.id]);
-    });
     ServicePoints.deleteViaApi(testData.servicePointId);
     Users.deleteViaApi(testData.patronUser.userId);
     Users.deleteViaApi(testData.firstUser.userId);

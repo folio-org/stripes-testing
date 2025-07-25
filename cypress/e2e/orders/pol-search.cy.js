@@ -8,7 +8,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('orders: Test Po line search', { retries: { runMode: 1 } }, () => {
+describe('orders: Test Po line search', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
@@ -107,7 +107,7 @@ describe('orders: Test Po line search', { retries: { runMode: 1 } }, () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches', { tags: ['smoke'] }, () => {
+    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke'] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();
