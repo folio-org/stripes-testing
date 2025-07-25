@@ -31,6 +31,7 @@ import {
   including,
   not,
   or,
+  and,
   matching,
   MultiColumnListHeader,
 } from '../../../../interactors';
@@ -39,6 +40,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -250,6 +252,18 @@ export default {
     // valid name example: 2023-03-26_09-51-07_7642_auth_headings_updates.csv
     const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
     expect(actualName).to.match(fileNameMask);
+  },
+
+  verifyAuthorityFileName(actualName) {
+    // valid name example: QuickInstanceExport2021-12-24T14_05_53+03_00.csv
+    const expectedFileNameMask =
+      /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
+    expect(actualName).to.match(expectedFileNameMask);
+
+    const actualDate = DateTools.parseDateFromFilename(
+      FileManager.getFileNameFromFilePath(actualName),
+    );
+    DateTools.verifyDate(actualDate);
   },
 
   verifyContentOfExportFile(actual, ...expectedArray) {
@@ -742,6 +756,37 @@ export default {
   exportSelected() {
     cy.do(actionsButton.click());
     cy.do(buttonExportSelected.click());
+  },
+
+  verifyToastNotificationAfterExportAuthority() {
+    const currentDate = DateTools.getFormattedDate({ date: new Date() });
+
+    cy.expect(
+      Callout({
+        textContent: and(
+          including(`QuickAuthorityExport${currentDate}`),
+          including(
+            "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
+          ),
+        ),
+      }).exists(),
+    );
+  },
+
+  getExportedCSVFileNameFromCallout() {
+    const fileNamePattern = /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}/;
+
+    return Callout({
+      textContent: including('QuickAuthorityExport'),
+    }).perform((element) => {
+      const text = element.textContent || '';
+      const fileNameMatch = text.match(fileNamePattern);
+
+      if (!fileNameMatch) {
+        throw new Error('File name not found in callout message.');
+      }
+      return fileNameMatch[0].replace(/:/g, '_');
+    });
   },
 
   checkRowsContent(contents) {
