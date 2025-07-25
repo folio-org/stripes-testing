@@ -44,7 +44,7 @@ describe('Finance', () => {
 
     it(
       'C414970 Decrease allocation resulting in a negative available budget amount (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['obsolete', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);

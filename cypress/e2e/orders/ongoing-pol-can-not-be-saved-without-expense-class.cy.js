@@ -26,12 +26,11 @@ describe('Orders', () => {
   };
   const firstExpenseClass = {
     ...NewExpenseClass.defaultUiBatchGroup,
-    name: 'Print',
   };
 
   const secondExpenseClass = {
     ...NewExpenseClass.defaultUiBatchGroup,
-    name: 'Electronic',
+    name: `AT_Class_${getRandomPostfix()}_1`,
     code: `${getRandomPostfix()}_1`,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -65,7 +64,7 @@ describe('Orders', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
-          Funds.addTwoExpensesClass('Print', 'Electronic');
+          Funds.addTwoExpensesClass(firstExpenseClass.name, secondExpenseClass.name);
         });
       });
     });
