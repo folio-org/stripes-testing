@@ -317,6 +317,8 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(exportedFileName);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
