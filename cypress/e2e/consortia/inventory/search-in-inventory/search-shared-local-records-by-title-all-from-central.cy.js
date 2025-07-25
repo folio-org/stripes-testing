@@ -63,12 +63,11 @@ describe('Inventory', () => {
     ];
 
     before('Create user, data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
-
-          cy.resetTenant();
-          cy.getAdminToken();
 
           ServicePoints.createViaApi(testData.servicePoint);
           testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
