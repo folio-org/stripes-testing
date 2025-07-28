@@ -14,23 +14,22 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
-      tag: '650',
-      marcValue: 'Speaking Oratory debating',
-      rowIndex: 15,
+      tag: '810',
+      marcValue: 'John Bartholomew and Son. Bartholomew world travel series 1995 English',
+      rowIndex: 25,
       searchOption: 'Keyword',
-      instanceTitle:
-        'Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
+      instanceTitle: 'Arabian Gulf.',
     };
 
     const marcFiles = [
       {
-        marc: 'marcBibFileForC375271.mrc',
+        marc: 'marcBibFileForC375272.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       },
       {
-        marc: 'marcAuthFileForC375271.mrc',
+        marc: 'marcAuthFileForC375272.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
@@ -47,7 +46,7 @@ describe('MARC', () => {
         Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
         cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -76,9 +75,7 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.marcValue);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
         cy.waitForAuthRefresh(() => {
@@ -102,8 +99,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375271 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "650" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C375271'] },
+      'C375272 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "810" field (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C375272'] },
       () => {
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
         MarcAuthorities.checkRow(testData.marcValue);

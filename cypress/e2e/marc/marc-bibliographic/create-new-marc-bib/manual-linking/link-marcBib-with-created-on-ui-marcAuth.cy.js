@@ -185,7 +185,7 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordsResultListIsAbsent();
             MarcAuthorities.searchByParameter(testData.searchOption, testData.naturalId);
             MarcAuthorities.checkRow(testData.marcAuthTitle);
-            MarcAuthorities.verifyNumberOfTitles('1');
+            MarcAuthorities.verifyNumberOfTitles(5, '1');
           },
         );
       });
