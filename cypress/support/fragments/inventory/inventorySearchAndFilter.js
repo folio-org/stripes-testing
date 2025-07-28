@@ -801,13 +801,22 @@ export default {
   },
 
   closeTagsPane() {
-    cy.do(tagsPane.find(Button({ icon: 'times' })).click());
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
     cy.wait(1000);
     cy.expect(tagsPane.absent());
   },
 
   openTagsField() {
     cy.do(tagsButton.click());
+  },
+
+  checkTagsCounter(count) {
+    cy.expect(tagsButton.find(HTML(`${count}`)).exists());
   },
 
   verifyInstanceDetailsView() {

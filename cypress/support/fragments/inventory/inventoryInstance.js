@@ -28,6 +28,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  ValueChipRoot,
   and,
   calloutTypes,
   including,
@@ -1081,12 +1082,44 @@ export default {
     cy.wait(1500);
   },
 
-  checkAddedTag: (tagName, instanceTitle) => {
+  checkTagSelectedInDropdown(tag, isShown = true) {
+    if (isShown) cy.expect(ValueChipRoot(tag).exists());
+    else cy.expect(ValueChipRoot(tag).absent());
+  },
+
+  checkAddedTag(tagName, instanceTitle) {
     cy.do(MultiColumnListCell(instanceTitle).click());
     cy.wait(1500);
     cy.do(tagButton.click());
     cy.wait(1500);
-    cy.expect(textFieldTagInput.exists(tagName));
+    this.checkTagSelectedInDropdown(tagName);
+  },
+
+  addMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      cy.do(textFieldTagInput.choose(tag));
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.wait(500);
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+    });
+  },
+
+  deleteMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+      cy.do(ValueChipRoot(tag).find(closeTag).click());
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.wait(500);
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag, false);
+    });
   },
 
   deleteTag: (tagName) => {
