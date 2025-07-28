@@ -20,6 +20,7 @@ const testData = {};
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('create inventory instance', () => {
+      cy.getAdminToken();
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
@@ -44,10 +45,6 @@ describe('Inventory', () => {
               testData.loanType = res[0].id;
             });
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
-            cy.getUsers({
-              limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
-            });
           })
           .then(() => {
             const items = FilterItems.itemStatuses.map((status) => ({
@@ -92,7 +89,10 @@ describe('Inventory', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-      users.deleteViaApi(userId);
+
+      if (userId) {
+        users.deleteViaApi(userId);
+      }
     });
 
     it(

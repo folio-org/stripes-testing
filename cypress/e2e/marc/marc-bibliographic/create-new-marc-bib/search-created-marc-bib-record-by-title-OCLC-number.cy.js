@@ -37,7 +37,9 @@ describe('MARC', () => {
       });
       after('Delete test data', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(userId);
+        if (userId) {
+          Users.deleteViaApi(userId);
+        }
         InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
       });
 

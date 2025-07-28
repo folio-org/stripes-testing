@@ -86,7 +86,9 @@ describe('Inventory', () => {
       });
       ServicePoints.deleteViaApi(testData.userServicePoint.id);
       Locations.deleteViaApi(testData.defaultLocation);
-      Users.deleteViaApi(testData.user.userId);
+      if (testData?.userProperties?.userId) {
+        Users.deleteViaApi(testData.userProperties.userId);
+      }
       cy.deleteLoanType(testData.loanTypeId);
     });
 
@@ -97,12 +99,14 @@ describe('Inventory', () => {
         // Fill in the input field at "Search & filter" pane with the "Call number" value which is alphabetically the first one out of all 25 (see Preconditions)
         // (For example, "E 3184 S75 1231")
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0]);
         InventorySearchAndFilter.browseSearch(callNumbers[0]);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0]);
         BrowseCallNumber.resultRowsIsInRequiredOder(callNumbers);
 
         // Fill in the input field at "Search & filter" pane with the "Call number" value which is alphabetically not the first one out of all 25 (see Preconditions)
         // (For example, "E 3184 S75 1238")
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[7]);
         InventorySearchAndFilter.browseSearch(callNumbers[7]);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[7]);
         BrowseCallNumber.resultRowsIsInRequiredOder(callNumbers.slice(8));

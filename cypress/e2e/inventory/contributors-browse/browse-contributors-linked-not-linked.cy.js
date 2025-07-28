@@ -40,6 +40,7 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C359595');
       InventoryInstances.deleteInstanceByTitleViaApi('C359595');
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
@@ -86,7 +87,9 @@ describe('Inventory', () => {
 
     after('Deleting created user and data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.userProperties.userId);
+      if (testData?.userProperties?.userId) {
+        Users.deleteViaApi(testData.userProperties.userId);
+      }
       createdRecordIDs.forEach((id, index) => {
         if (index) MarcAuthority.deleteViaAPI(id);
         else InventoryInstance.deleteInstanceViaApi(id);
