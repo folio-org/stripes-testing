@@ -87,7 +87,7 @@ describe('Data Export', () => {
 
     it(
       'C15846 Trigger export by CQL query - using default instance mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C15846'] },
+      { tags: ['extendedPath', 'firebird', 'C15846'] },
       () => {
         // Step 1: Upload CQL file and verify job profile selection page
         ExportFileHelper.uploadFile(downloadedCQLFile);
