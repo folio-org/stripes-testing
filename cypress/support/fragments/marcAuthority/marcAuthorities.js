@@ -302,10 +302,8 @@ export default {
     );
   },
 
-  verifyNumberOfTitles(linkValue) {
-    cy.expect(
-      MultiColumnListCell({ column: 'Number of titles', content: linkValue }).find(Link()).exists(),
-    );
+  verifyNumberOfTitles(columnIndex, linkValue) {
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyNumberOfTitlesForRowWithValue(value, itemCount) {
