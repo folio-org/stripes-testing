@@ -26,7 +26,7 @@ const buttonClose = rootHeader.find(Button({ icon: 'times' }));
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const infoButton = Button({ ariaLabel: 'info' });
-const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
+const saveAndCloseButton = Button('Save & close');
 const continueWithSaveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
 );
@@ -326,8 +326,8 @@ export default {
         .has({ disabled: true }),
     );
     cy.do(saveAndCloseButton.click());
-    cy.wait(1500);
-    cy.do(saveAndCloseButton.click());
+    cy.wait(2000);
+    // Check if the save was successful by looking for success callout or verify we're back to holdings view
     cy.expect(
       Callout(
         'This record has successfully saved and is in process. Changes may not appear immediately.',

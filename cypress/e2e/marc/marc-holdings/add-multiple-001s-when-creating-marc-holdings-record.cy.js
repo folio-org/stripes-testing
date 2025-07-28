@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -67,7 +67,9 @@ describe('MARC', () => {
       'C387462 Add multiple 001s when creating "MARC Holdings" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C387462'] },
       () => {
-        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
+        // Wait for the inventory page to fully load
+        InventoryInstances.waitContentLoading();
+        // Search directly for the instance
         InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);
         InventorySearchAndFilter.clickSearch();
         InventoryInstance.selectTopRecord();

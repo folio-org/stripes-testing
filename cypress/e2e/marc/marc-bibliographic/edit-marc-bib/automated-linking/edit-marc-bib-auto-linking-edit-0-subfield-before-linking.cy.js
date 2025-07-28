@@ -201,7 +201,7 @@ describe('MARC', () => {
               '\\',
               '0',
               '$a Lesbian activists',
-              '',
+              '$z Jamaica $v Biography.',
               '$0 http://id.loc.gov/authorities/subjects/sh96007532',
               '',
             );

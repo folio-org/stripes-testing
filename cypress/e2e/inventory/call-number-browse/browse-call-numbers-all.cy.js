@@ -138,6 +138,7 @@ describe('Inventory', () => {
         // * Browse results are shown in second pane:
         //  * a row with "Call number" value corresponding to a browse query is highlighted (bold text)
         callNumbers.forEach((el) => {
+          BrowseCallNumber.waitForCallNumberToAppear(el.value);
           InventorySearchAndFilter.browseSearch(el.value);
           BrowseCallNumber.valueInResultTableIsHighlighted(el.value);
         });

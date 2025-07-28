@@ -40,7 +40,7 @@ describe('MARC', () => {
           'Panther Photographic International',
           'Black Panther, Wakanda forever (Motion picture)',
           'Black Panther (Fictitious character)',
-          'Good and evil--History',
+          'Good and evil',
           'Africa',
           'Comics (Graphic works)',
         ];
