@@ -151,7 +151,7 @@ describe('MARC', () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.verifyBrowseAuthorityPane(
           testData.searchOptions.nameTitle.title,
-          'Fail PASS (editable) test',
+          'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail',
         );
 
         MarcAuthorities.clickReset();
