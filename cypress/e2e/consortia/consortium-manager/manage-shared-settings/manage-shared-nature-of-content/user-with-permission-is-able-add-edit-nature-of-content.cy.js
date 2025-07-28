@@ -31,6 +31,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudNatureOfContent.gui,
               ]).then((userProperties) => {
                 userData = userProperties;
@@ -70,7 +71,7 @@ describe('Consortia', () => {
 
         it(
           'C411302 User with "Consortium manager: Can share settings to all members" permission is able to add/edit nature of content shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C411302'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
@@ -144,7 +145,7 @@ describe('Consortia', () => {
 
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyListIsEmpty();
-            // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
             cy.visit(SettingsMenu.natureOfContent);
             cy.wait(4000);
