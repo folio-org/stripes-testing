@@ -10,12 +10,12 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../support/utils/stringTools';
 
-describe('Data Export', () => {
-  let user;
-  const csvFileName = `repeatedUUIDs_${getRandomPostfix()}.csv`;
-  const instanceIds = [];
-  const numberOfInstances = 5;
+let user;
+const csvFileName = `repeatedUUIDs_${getRandomPostfix()}.csv`;
+const instanceIds = [];
+const numberOfInstances = 5;
 
+describe('Data Export', () => {
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
