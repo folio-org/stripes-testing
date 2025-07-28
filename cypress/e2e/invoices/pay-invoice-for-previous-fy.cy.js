@@ -24,6 +24,7 @@ import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { CodeTools, DateTools, StringTools } from '../../support/utils';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', { retries: { runMode: 1 } }, () => {
   const isApprovePayEnabled = true;
@@ -108,14 +109,17 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiInvoicesPayInvoices.gui,
       Permissions.uiOrdersView.gui,
+      Permissions.invoiceSettingsAll.gui,
       ...permissions,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
+      cy.visit(TopMenu.ordersPath);
     });
   };
 
