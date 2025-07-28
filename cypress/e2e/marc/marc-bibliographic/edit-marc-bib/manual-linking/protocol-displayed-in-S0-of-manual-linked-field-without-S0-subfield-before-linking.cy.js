@@ -155,7 +155,7 @@ describe('MARC', () => {
               }).then((authorities) => {
                 if (authorities) {
                   authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id);
+                    MarcAuthority.deleteViaAPI(id, true);
                   });
                 }
               });

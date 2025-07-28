@@ -178,10 +178,10 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
             );
             InventoryViewSource.contains(
               `${marcAuthIcon}\n\t655\t  2\t$a C388552 Autobiography $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,
