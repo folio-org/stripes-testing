@@ -49,11 +49,12 @@ describe('Data Export', () => {
       );
 
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-      cy.wait('@getInfo', getLongDelay()).then((interception) => {
-        const job = interception.response.body.jobExecutions[0];
-        const resultFileName = job.exportedFiles[0].fileName;
-        const recordsCount = job.progress.total;
-        const jobId = job.hrId;
+      cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+        const { jobExecutions } = response.body;
+        const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+        const recordsCount = jobData.progress.total;
+        const jobId = jobData.hrId;
+        const resultFileName = `${editedFileName.replace('.cql', '')}-${jobId}.mrc`;
 
         DataExportResults.verifyFailedExportResultCells(
           resultFileName,
