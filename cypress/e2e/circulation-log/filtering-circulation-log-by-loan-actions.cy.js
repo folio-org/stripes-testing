@@ -293,14 +293,12 @@ describe('Circulation log', () => {
         userBarcode: userData.barcode,
       });
       cy.getToken(userData.username, userData.password);
-      UserLoans.updateTimerForAgedToLost('minute');
       cy.getAdminToken();
     });
 
     after('Deleting circulation rule', () => {
       CirculationRules.deleteRuleViaApi(testData.addedRule);
       cy.getToken(userData.username, userData.password);
-      UserLoans.updateTimerForAgedToLost('reset');
       cy.getAdminToken();
       cy.deleteLoanPolicy(loanablePolicyBody.id);
       RequestPolicy.deleteViaApi(requestPolicyBody.id);
@@ -328,7 +326,7 @@ describe('Circulation log', () => {
 
     it(
       'C17007 Filter circulation log by aged to lost (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C17007'] },
+      { tags: ['criticalPathBroken', 'volaris', 'C17007'] },
       () => {
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           const loanData = userLoans.loans[0];

@@ -8,6 +8,7 @@ import {
   Modal,
   Callout,
   TextField,
+  Spinner,
   and,
   some,
   Pane,
@@ -808,6 +809,7 @@ export default {
 
   confirmUnlinkingField() {
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+    cy.expect(Spinner().absent());
   },
 
   cancelUnlinkingField() {
@@ -1197,6 +1199,7 @@ export default {
         QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
         QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
         QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).absent(),
+        cy.expect(Spinner().absent()),
       ]);
     } else {
       cy.expect([
@@ -1218,6 +1221,7 @@ export default {
         QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
         QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
         QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+        cy.expect(Spinner().absent()),
       ]);
     }
   },
