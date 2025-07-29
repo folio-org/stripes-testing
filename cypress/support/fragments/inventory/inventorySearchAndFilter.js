@@ -98,6 +98,7 @@ const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }))
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
+const clearIcon = Button({ icon: 'times-circle-solid' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -801,13 +802,22 @@ export default {
   },
 
   closeTagsPane() {
-    cy.do(tagsPane.find(Button({ icon: 'times' })).click());
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
     cy.wait(1000);
     cy.expect(tagsPane.absent());
   },
 
   openTagsField() {
     cy.do(tagsButton.click());
+  },
+
+  checkTagsCounter(count) {
+    cy.expect(tagsButton.find(HTML(`${count}`)).exists());
   },
 
   verifyInstanceDetailsView() {
@@ -1455,5 +1465,11 @@ export default {
     this.getAllValuesFromColumn(columnIndex).then((cellValues) => {
       cy.expect(cellValues).to.deep.equal(cellValues.sort());
     });
+  },
+
+  clearBrowseInputField() {
+    cy.do(browseSearchInputField.focus());
+    cy.do(browseSearchInputField.find(clearIcon).click());
+    this.checkBrowseSearchInputFieldContent('');
   },
 };

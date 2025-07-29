@@ -124,7 +124,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1500);
+  cy.wait(500);
   cy.do(viewSourceButton.click());
 };
 
@@ -363,9 +363,9 @@ export default {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
   },
 
-  openHoldingView: () => {
+  openHoldingView: (actionsShown = true) => {
     cy.do(Button('View holdings').click());
-    cy.expect(actionsButton.exists());
+    if (actionsShown) cy.expect(actionsButton.exists());
   },
 
   openHoldingItem({ name, barcode, shouldOpen = true }) {
