@@ -34,8 +34,8 @@ module.exports = defineConfig({
   env: {
     OKAPI_HOST: 'https://kong-perm-test.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000000',
-    diku_login: 'folio',
-    diku_password: 'folio',
+    diku_login: 'admin',
+    diku_password: 'bugfest09',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
