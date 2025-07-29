@@ -71,7 +71,7 @@ describe('Data Export', () => {
 
     it(
       'C10961 Verify HRID mapping (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C10961'] },
+      { tags: ['extendedPath', 'firebird', 'C10961'] },
       () => {
         // Step 1: Go to "Inventory" app
         InventorySearchAndFilter.verifySearchAndFilterPane();
