@@ -158,7 +158,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350561 Check that the user can Duplicate request (Title level request) (vega)',
-    { tags: ['extendedPath', 'vega', 'C350561'] },
+    { tags: ['extendedPathFlaky', 'vega', 'C350561'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

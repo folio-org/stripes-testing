@@ -46,7 +46,7 @@ export default {
 
   verifyNumberOfTitlesInRow(rowIndex, itemCount) {
     cy.expect(
-      MultiColumnListCell({ row: rowIndex, column: 'Number of titles' }).has({
+      MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).has({
         content: itemCount.toString(),
       }),
     );

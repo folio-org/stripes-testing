@@ -10,6 +10,7 @@ import SelectMembers from '../../../../../support/fragments/consortium-manager/m
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const testData = {
   centralSharedReason: {
@@ -105,13 +106,14 @@ describe('Consortium manager', () => {
 
       it(
         'C410834 User with "Consortium manager: Can view existing settings" permission is able to view the list of request cancellation reasons of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410834'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user834.username, testData.user834.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
+          cy.wait(4000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
@@ -125,17 +127,18 @@ describe('Consortium manager', () => {
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalReason.name, '', '', tenantNames.central],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.collegeLocalReason.name, '', '', tenantNames.college],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.universityLocalReason.name, '', '', tenantNames.university],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -154,22 +157,22 @@ describe('Consortium manager', () => {
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.collegeLocalReason.name, '', '', tenantNames.college],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.universityLocalReason.name, '', '', tenantNames.university],
-            ['edit', 'trash'],
+            [],
           );
         },
       );
 
       it(
         'C410837 User with "Consortium manager: Can share settings to all members" permission is able to view the list of request cancellation reasons of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410837'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user837.username, testData.user837.password);
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           cy.wait(4000);
           SelectMembers.selectAllMembers();
@@ -178,21 +181,22 @@ describe('Consortium manager', () => {
           RequestCancellationReasonsConsortiumManager.choose();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralSharedReason.payload.name, '', '', 'All'],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalReason.name, '', '', tenantNames.central],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.collegeLocalReason.name, '', '', tenantNames.college],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.universityLocalReason.name, '', '', tenantNames.university],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -202,11 +206,11 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyMembersSelected(1);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralSharedReason.payload.name, '', '', 'All'],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalReason.name, '', '', tenantNames.central],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(

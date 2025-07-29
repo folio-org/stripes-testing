@@ -12,6 +12,7 @@ import SubjectTypes from '../../../../../support/fragments/settings/inventory/in
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -143,26 +144,27 @@ describe('Consortia', () => {
               sharedSubjectType.source,
               'No value set-',
               sharedSubjectType.memberLibraries,
-              { actions: ['edit', 'trash'] },
+              { actions: [] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
-              { actions: ['edit', 'trash'] },
+              { actions: [] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
-              { actions: ['edit', 'trash'] },
+              { actions: [] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
-              { actions: ['edit', 'trash'] },
+              { actions: [] },
             );
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
             ConsortiumManager.clickSelectMembers();
             SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
@@ -175,13 +177,13 @@ describe('Consortia', () => {
               sharedSubjectType.source,
               sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
-              { actions: ['edit', 'trash'] },
+              { actions: [] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
-              { actions: ['edit', 'trash'] },
+              { actions: [] },
             );
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCollege.name);
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnUniversity.name);

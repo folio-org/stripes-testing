@@ -32,6 +32,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudAlternativeTitleTypes.gui,
               ]).then((userProperties) => {
                 userData = userProperties;
@@ -71,7 +72,7 @@ describe('Consortia', () => {
 
         it(
           'C410876 User with "Consortium manager: Can share settings to all members" permission is able to add/edit alternative title type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410876'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
