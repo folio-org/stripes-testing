@@ -64,7 +64,7 @@ describe('Data Import', () => {
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
-      profileName: `C468186 001-to-001 match ${getRandomPostfix()}`,
+      profileName: `C594483 001-to-001 match ${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
       },

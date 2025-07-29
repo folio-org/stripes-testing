@@ -124,7 +124,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1500);
+  cy.wait(500);
   cy.do(viewSourceButton.click());
 };
 
@@ -643,6 +643,11 @@ export default {
   exportInstanceMarc: () => {
     cy.wait(1000);
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
+  },
+
+  exportInstanceMarcButtonAbsent: () => {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
   },
 
   setRecordForDeletion: () => {

@@ -138,7 +138,7 @@ describe('MARC', () => {
 
         it(
           'C389484 "Link headings" button is NOT displayed in create "MARC bib" window when auto-link for all heading types is disabled (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C389484'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C389484'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
