@@ -53,7 +53,7 @@ describe('Data Import', () => {
         '700',
         '1',
         '\\',
-        '$a C374167 DiCaprio, Leonardo $e actor. $0 http://id.loc.gov/authorities/names/n94000330',
+        '$a C374167 DiCaprio, Leonardo, $e actor. $0 http://id.loc.gov/authorities/names/n94000330',
       ],
     };
     const mappingProfile = {
@@ -247,7 +247,11 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(
+          testData.csvFile,
+          'Default authority',
+          'Authorities',
+        );
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file
