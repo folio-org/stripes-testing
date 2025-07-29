@@ -257,7 +257,7 @@ describe('Permissions', () => {
 
       it(
         'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C404383'] },
+        { tags: ['extendedPathFlaky', 'volaris', 'C404383'] },
         () => {
           cy.visit(SettingsMenu.conditionsPath);
           cy.wait(waitTimeout);
