@@ -39,6 +39,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.settingsCircView.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
@@ -97,7 +98,7 @@ describe('Consortia', () => {
 
         it(
           'C410843 Request cancellation reason can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410843'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

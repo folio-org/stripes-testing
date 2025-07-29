@@ -16,6 +16,7 @@ export default {
     const ModalSelectProfile = Modal(
       type === 'match' ? 'Select Match Profiles' : 'Select Action Profiles',
     );
+    cy.wait(2000);
     cy.do(MultiColumnListCell(name).click());
     cy.expect(MultiColumnListCell(name).absent());
     cy.expect(ModalSelectProfile.absent());

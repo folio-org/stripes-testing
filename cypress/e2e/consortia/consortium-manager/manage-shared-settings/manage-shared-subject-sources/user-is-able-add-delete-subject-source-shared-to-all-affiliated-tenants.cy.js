@@ -32,6 +32,7 @@ describe('Consortia', () => {
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerShare.gui,
+            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
             Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
           ]).then((userProperties) => {
             user = userProperties;

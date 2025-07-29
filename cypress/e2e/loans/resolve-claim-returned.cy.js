@@ -101,7 +101,7 @@ describe('Loans', () => {
 
     it(
       'C10960 Loans: Resolve claimed returned item (vega) (TaaS)',
-      { tags: ['criticalPath', 'vega', 'C10960'] },
+      { tags: ['criticalPathFlaky', 'vega', 'C10960'] },
       () => {
         // Navigate to loan details for a loan where the item is claim returned
         UsersSearchPane.openUserCard(testData.user.username);

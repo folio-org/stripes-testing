@@ -42,6 +42,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.uiUsersViewPatronGroups.gui,
               ]).then((userProperties) => {
                 userData = userProperties;
@@ -73,7 +74,7 @@ describe('Consortia', () => {
 
         it(
           'C407757 User with "Consortium manager: Can share settings to all members" permission is able to add/delete patron group shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C407757'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

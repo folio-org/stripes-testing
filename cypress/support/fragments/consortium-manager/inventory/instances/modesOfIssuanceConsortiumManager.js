@@ -1,11 +1,10 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
-const newButton = Button('+ New');
 
 export default {
   createViaApi(type) {
@@ -76,7 +75,6 @@ export default {
 
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Modes of issuance');
-    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

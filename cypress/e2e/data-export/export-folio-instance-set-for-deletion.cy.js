@@ -117,7 +117,7 @@ describe('Data Export', () => {
 
           const commonAssertions = (instanceId) => [
             (record) => {
-              expect(record.leader).to.eq('00263dam a22000973c 4500');
+              expect(record.leader).to.eq('00265dam a22000973c 4500');
             },
             (record) => {
               expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;

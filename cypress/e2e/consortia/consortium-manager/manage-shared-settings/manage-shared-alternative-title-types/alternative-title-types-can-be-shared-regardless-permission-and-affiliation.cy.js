@@ -35,6 +35,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudAlternativeTitleTypes.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
@@ -96,7 +97,7 @@ describe('Consortia', () => {
 
         it(
           'C410877 Alternative title type can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410877'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

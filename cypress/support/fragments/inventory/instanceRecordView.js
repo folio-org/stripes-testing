@@ -6,16 +6,17 @@ import {
   Callout,
   KeyValue,
   Link,
+  MessageBanner,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
-  MessageBanner,
   Pane,
   Section,
   Tooltip,
   matching,
 } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
@@ -23,7 +24,6 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
-import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -56,6 +56,7 @@ const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings
 const versionHistoryButton = Button({ icon: 'clock' });
 const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
+const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -123,7 +124,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1500);
+  cy.wait(500);
   cy.do(viewSourceButton.click());
 };
 
@@ -624,7 +625,7 @@ export default {
   },
 
   addHoldings: () => {
-    cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
+    cy.do(addHoldingsButton.click());
     InventoryNewHoldings.waitLoading();
   },
 
@@ -893,5 +894,14 @@ export default {
     if (code) matchingString += code;
     if (source) matchingString += source;
     cy.expect(formatsList.find(MultiColumnListRow(including(matchingString))).exists());
+  },
+
+  verifyAddHoldingsButtonIsAbsent() {
+    cy.expect(addHoldingsButton.absent());
+  },
+
+  verifyAddItemButtonIsAbsent({ holdingName } = {}) {
+    const holdingSection = rootSection.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).absent());
   },
 };
