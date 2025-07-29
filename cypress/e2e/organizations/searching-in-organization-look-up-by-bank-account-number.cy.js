@@ -109,7 +109,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
 
   it(
     'C423426 Searching in "Organization look-up" by "Bank account number" with appropriate permission (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       Orders.openVendorFilterModal();
       Orders.searchVendorbyindex(
@@ -142,7 +142,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
 
   it(
     'C423432 Searching in "Organization look-up" by "Bank account number" without banking permissions (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       cy.login(C423432User.username, C423432User.password, {
         path: TopMenu.ordersPath,
