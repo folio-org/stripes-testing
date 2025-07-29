@@ -261,7 +261,7 @@ describe('Data Import', () => {
         // Go to "Data export" app and download exported ".mrc" file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(csvFile);
-        ExportFile.exportWithDefaultJobProfile(csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(csvFile, 'Default authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(exportedMarcFile);
         ExportFile.verifyFileIncludes(exportedMarcFile, [
           'aat423564',
