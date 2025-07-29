@@ -57,7 +57,7 @@ describe('Data Import', () => {
         // create 3 action profiles linked to mapping profile
         NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
-            SettingsActionProfiles.forEach((profile) => {
+            actionProfiles.forEach((profile) => {
               NewActionProfile.createActionProfileViaApi(
                 profile.actionProfile,
                 mappingProfileResponse.body.id,
@@ -93,7 +93,7 @@ describe('Data Import', () => {
         // #2-3 Create a new job profile by clicking Actions/New job profile -> Give the job profile a name -> Accepted Data type = MARC
         JobProfiles.createJobProfile(jobProfile);
         // Add three action profiles to the job profile
-        SettingsActionProfiles.forEach((profile) => {
+        actionProfiles.forEach((profile) => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         JobProfileEdit.verifyLinkedProfiles(
