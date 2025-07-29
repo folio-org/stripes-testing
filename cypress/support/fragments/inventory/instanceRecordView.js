@@ -645,6 +645,11 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
+  exportInstanceMarcButtonAbsent: () => {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
+  },
+
   setRecordForDeletion: () => {
     cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
   },
