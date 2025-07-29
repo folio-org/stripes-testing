@@ -98,6 +98,7 @@ const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }))
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
+const clearIcon = Button({ icon: 'times-circle-solid' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1464,5 +1465,11 @@ export default {
     this.getAllValuesFromColumn(columnIndex).then((cellValues) => {
       cy.expect(cellValues).to.deep.equal(cellValues.sort());
     });
+  },
+
+  clearBrowseInputField() {
+    cy.do(browseSearchInputField.focus());
+    cy.do(browseSearchInputField.find(clearIcon).click());
+    this.checkBrowseSearchInputFieldContent('');
   },
 };
