@@ -144,7 +144,7 @@ describe('Bulk-edit', () => {
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.clickSelectedLocation('Select location', newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, newLocation);
