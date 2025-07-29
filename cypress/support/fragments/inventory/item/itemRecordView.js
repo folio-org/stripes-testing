@@ -26,6 +26,7 @@ const itemNotesAccordion = Accordion('Item notes');
 const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
+const tagsAccordion = Accordion('Tags');
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -596,5 +597,14 @@ export default {
   expandAll() {
     cy.do(Button('Expand all').click());
     cy.wait(1000);
+  },
+
+  toggleTagsAccordion(isOpened = true) {
+    cy.do(tagsAccordion.clickHeader());
+    cy.expect(tagsAccordion.is({ open: isOpened }));
+  },
+
+  checkTagsCounter(count) {
+    cy.expect(tagsAccordion.has({ counter: `${count}` }));
   },
 };

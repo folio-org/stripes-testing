@@ -25,7 +25,7 @@ describe('Consortia', () => {
           editedName: `C594405 subjectType_${getRandomPostfix()} edited`,
           source: 'consortium',
           memberLibraries: 'All',
-          consortiaUser: 'System, System user - mod-consortia-keycloak ',
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
         };
 
         before('Create user and login', () => {
@@ -33,6 +33,7 @@ describe('Consortia', () => {
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerShare.gui,
+            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
             Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
           ]).then((userProperties) => {
             user = userProperties;

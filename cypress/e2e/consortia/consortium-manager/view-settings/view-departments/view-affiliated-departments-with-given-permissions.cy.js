@@ -186,13 +186,14 @@ describe('Consortium manager', () => {
 
       it(
         'C404390 User with "Consortium manager: Can view existing settings" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C404390'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user390.username, testData.user390.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
+          cy.wait(4000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
@@ -212,7 +213,7 @@ describe('Consortium manager', () => {
               '3',
               tenantNames.central,
             ],
-            ['edit'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
@@ -230,8 +231,9 @@ describe('Consortium manager', () => {
               '-',
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
@@ -256,7 +258,7 @@ describe('Consortium manager', () => {
               '2',
               tenantNames.college,
             ],
-            ['edit'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -266,14 +268,14 @@ describe('Consortium manager', () => {
               '-',
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            [],
           );
         },
       );
 
       it(
         'C404400 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C404400'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user400.username, testData.user400.password);
@@ -354,7 +356,7 @@ describe('Consortium manager', () => {
 
       it(
         'C407747 User with "Consortium manager: Can share settings to all members" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C407747'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user747.username, testData.user747.password);
@@ -372,7 +374,7 @@ describe('Consortium manager', () => {
               '6',
               'All',
             ],
-            ['edit'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -382,7 +384,7 @@ describe('Consortium manager', () => {
               '3',
               tenantNames.central,
             ],
-            ['edit'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
@@ -393,7 +395,7 @@ describe('Consortium manager', () => {
               '2',
               tenantNames.college,
             ],
-            ['edit'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -403,8 +405,9 @@ describe('Consortium manager', () => {
               '-',
               tenantNames.university,
             ],
-            ['edit'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
@@ -420,7 +423,7 @@ describe('Consortium manager', () => {
               '3',
               'All',
             ],
-            ['edit'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -430,7 +433,7 @@ describe('Consortium manager', () => {
               '3',
               tenantNames.central,
             ],
-            ['edit'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(

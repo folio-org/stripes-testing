@@ -146,7 +146,7 @@ function verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, userName
       .has({ content: source }),
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
-      .has({ content: `${date} by ${userName}` }),
+      .has({ content: including(`${date} by ${userName}`) }),
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.memberLibraries }))
       .has({ content: memberLibraries }),
@@ -217,7 +217,6 @@ export default {
   verifySubjectTypeAbsent,
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Subject types');
-    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
