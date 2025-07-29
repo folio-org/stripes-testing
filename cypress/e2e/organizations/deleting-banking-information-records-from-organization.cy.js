@@ -70,7 +70,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
 
   it(
     'C423514 Deleting Banking information records from an Organization with "Organizations: View, edit, create and delete banking information" (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       cy.login(C423504User.username, C423504User.password, {
         path: TopMenu.organizationsPath,
