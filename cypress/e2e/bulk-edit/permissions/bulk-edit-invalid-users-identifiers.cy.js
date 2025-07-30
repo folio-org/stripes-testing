@@ -14,7 +14,8 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
 const matchedRecordsFileName = BulkEditFiles.getErrorsFromMatchingFileName(userUUIDsFileName);
 
-describe('Bulk-edit', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Bulk-edit', () => {
   describe('Permissions', () => {
     before('Create test data', () => {
       cy.createTempUser([
@@ -43,7 +44,7 @@ describe('Bulk-edit', () => {
 
     it(
       'C360963 Verify behavior when uploading only invalid Users identifiers  (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C360963'] },
+      { tags: [] },
       () => {
         // Navigate to the "Bulk edit" app => Select "Users" App => Select "Users UUIDs" from "Records identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

@@ -32,6 +32,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudInstanceNoteTypes.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
@@ -91,7 +92,7 @@ describe('Consortia', () => {
 
         it(
           'C410933 Instance note type can be shared to all tenants in "Consortium manager" app regardless permission and affiliation  (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410933'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

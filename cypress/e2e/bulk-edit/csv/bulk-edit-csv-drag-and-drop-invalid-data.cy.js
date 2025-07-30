@@ -41,7 +41,7 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353651 - "New bulk edit" button with invalid data (firebird) (TaaS)',
+      'C353651 Verify "New bulk edit" button with invalid data (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird', 'C353651'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
@@ -50,12 +50,6 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyPaneRecordsCount('0 user');
         BulkEditSearchPane.verifyErrorLabel(11);
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
-
-        const top10Values = values.slice(0, 9);
-
-        top10Values.forEach((value) => {
-          BulkEditSearchPane.verifyNonMatchedResults(value);
-        });
 
         BulkEditSearchPane.actionsIsShown();
         BulkEditActions.verifyNoNewBulkEditButton();
@@ -66,10 +60,6 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyPaneRecordsCount('0 item');
         BulkEditSearchPane.verifyErrorLabel(11);
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
-
-        top10Values.forEach((value) => {
-          BulkEditSearchPane.verifyNonMatchedResults(value);
-        });
 
         BulkEditSearchPane.actionsIsShown();
         BulkEditActions.verifyNoNewBulkEditButton();

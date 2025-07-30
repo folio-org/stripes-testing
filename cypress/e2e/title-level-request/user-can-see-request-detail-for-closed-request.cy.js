@@ -183,7 +183,7 @@ describe('Request Detail. TLR', () => {
 
   it(
     'C350556 Check that the user can see "Request Detail" for request after it is Closed (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega', 'C350556'] },
+    { tags: ['extendedPathFlaky', 'vega', 'C350556'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

@@ -1,8 +1,17 @@
-import { MultiColumnListCell, Button, Pane, Modal, including } from '../../../../interactors';
+import {
+  Accordion,
+  MultiColumnListCell,
+  Button,
+  Pane,
+  Modal,
+  including,
+} from '../../../../interactors';
 
 const jobsPane = Pane('Jobs');
 const logsPane = Pane('Logs');
 const areYouSureModal = Modal('Are you sure you want to run this job?');
+const viewAllLogsButton = Button('View all');
+const runningAccordion = Accordion('Running');
 
 export default {
   waitLoading: () => {
@@ -37,5 +46,13 @@ export default {
 
   verifyErrorTextInErrorLogsPane(errorText) {
     cy.get('[class^=errorLogsContainer]').contains(errorText);
+  },
+
+  verifyViewAllLogsButtonEnabled() {
+    cy.expect(viewAllLogsButton.has({ disabled: false }));
+  },
+
+  verifyRunningAccordionExpanded() {
+    cy.expect(runningAccordion.has({ open: true }));
   },
 };
