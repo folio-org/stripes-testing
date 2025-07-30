@@ -380,7 +380,11 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(
+          testData.csvFile,
+          'Default authority',
+          'Authorities',
+        );
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
