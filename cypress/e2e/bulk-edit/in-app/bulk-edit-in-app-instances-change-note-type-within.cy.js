@@ -37,7 +37,7 @@ describe(
     },
   },
   () => {
-    describe('in-app approach', () => {
+    describe('In-app approach', () => {
       beforeEach('create test data', () => {
         instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
         matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);

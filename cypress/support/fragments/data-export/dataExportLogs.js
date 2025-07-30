@@ -9,6 +9,7 @@ import {
 
 const jobsPane = Pane('Jobs');
 const logsPane = Pane('Logs');
+const fileButton = Button('or choose file');
 const areYouSureModal = Modal('Are you sure you want to run this job?');
 const viewAllLogsButton = Button('View all');
 const runningAccordion = Accordion('Running');
@@ -54,5 +55,13 @@ export default {
 
   verifyRunningAccordionExpanded() {
     cy.expect(runningAccordion.has({ open: true }));
+  },
+
+  verifyDragAndDropAreaExists() {
+    cy.get('[data-testid="fileUploader-input"]').should('exist');
+  },
+
+  verifyUploadFileButtonEnabled() {
+    cy.expect(fileButton.has({ disabled: false }));
   },
 };
