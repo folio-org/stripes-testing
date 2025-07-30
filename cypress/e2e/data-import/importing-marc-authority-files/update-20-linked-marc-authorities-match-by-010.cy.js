@@ -316,9 +316,7 @@ describe('Data Import', () => {
           );
           cy.wait(200);
         });
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
         cy.wait(4000);
 
