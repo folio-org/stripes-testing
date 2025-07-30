@@ -57,6 +57,8 @@ const versionHistoryButton = Button({ icon: 'clock' });
 const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
 const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
+const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -908,5 +910,20 @@ export default {
   verifyAddItemButtonIsAbsent({ holdingName } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).absent());
+  },
+
+  verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        classificationAccordion
+          .find(listClassifications)
+          .find(MultiColumnListCell({ columnIndex: 1, content: classificationNumber }))
+          .find(clipboardIcon)
+          .click(),
+      );
+      cy.expect(Callout(clipboardCopyCalloutText(classificationNumber)).exists());
+    }).then(() => {
+      cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
+    });
   },
 };
