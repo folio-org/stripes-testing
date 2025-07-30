@@ -413,6 +413,7 @@ export default {
   },
 
   verifyDuplicateSubjectsWithDifferentSources: (subject) => {
+    cy.wait(2000);
     getRowIndexesBySubjectName(subject.name).then((rowIndexes) => {
       rowIndexes.forEach((index) => {
         cy.expect([
