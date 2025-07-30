@@ -143,7 +143,7 @@ describe('Orders', () => {
 
   it(
     'C375986 Encumbered amount is not changed after deleting received piece when related paid invoice exists and order is closed (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.getAdminToken().then(() => {
         Invoices.changeInvoiceStatusViaApi({
