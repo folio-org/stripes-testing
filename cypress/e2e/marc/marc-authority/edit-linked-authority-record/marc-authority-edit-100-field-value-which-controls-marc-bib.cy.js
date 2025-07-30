@@ -126,7 +126,7 @@ describe('MARC', () => {
 
       it(
         'C374156 Edit "1XX" field value of "MARC Authority" record which controls "MARC Bibs" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C374156'] },
+        { tags: ['extendedPathBroken', 'spitfire', 'C374156'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
