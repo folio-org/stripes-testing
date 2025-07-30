@@ -81,7 +81,7 @@ const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-but
 const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
-const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
+const instancesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-find-records') });
 const getListHeader = (name) => inventorySearchResultsPane.find(MultiColumnListHeader(name));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
@@ -1471,5 +1471,9 @@ export default {
     cy.do(browseSearchInputField.focus());
     cy.do(browseSearchInputField.find(clearIcon).click());
     this.checkBrowseSearchInputFieldContent('');
+  },
+
+  verifyBrowseFacetsNotDisplayed() {
+    cy.expect(searchAndFilterSection.find(Accordion()).absent());
   },
 };
