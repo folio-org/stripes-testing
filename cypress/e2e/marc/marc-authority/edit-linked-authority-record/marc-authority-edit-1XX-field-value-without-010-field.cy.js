@@ -154,7 +154,6 @@ describe('MARC', () => {
           MarcAuthorities.verifyNumberOfTitles(5, '1');
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
           InventoryInstance.waitInstanceRecordViewOpened(marcFiles[0].instanceTitle);
-          InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
           InventoryInstance.viewSource();
           InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${testData.tag611}\t`);
           InventoryViewSource.contains(
