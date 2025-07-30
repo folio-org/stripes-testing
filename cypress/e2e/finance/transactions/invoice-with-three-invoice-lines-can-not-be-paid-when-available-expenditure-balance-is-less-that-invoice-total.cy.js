@@ -160,7 +160,10 @@ describe('Finance: Transactions', () => {
                         ...firstOrderResponse,
                         workflowStatus: ORDER_STATUSES.OPEN,
                       });
-                      cy.visit(TopMenu.ordersPath);
+                      cy.loginAsAdmin({
+                        path: TopMenu.ordersPath,
+                        waiter: Orders.waitLoading,
+                      });
                       Orders.searchByParameter('PO number', firstOrderNumber);
                       Orders.selectFromResultsList(firstOrderNumber);
                       Orders.newInvoiceFromOrder();

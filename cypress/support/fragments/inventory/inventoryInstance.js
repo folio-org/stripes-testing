@@ -1904,4 +1904,19 @@ export default {
     cy.expect(Spinner().exists());
     cy.expect(Spinner().absent());
   },
+
+  checkButtonsShown({ actions, addHoldings, addItem }) {
+    if (actions) cy.expect(actionsButton.exists());
+    if (actions === false) cy.expect(actionsButton.absent());
+    if (addHoldings) cy.expect(addHoldingButton.exists());
+    if (addHoldings === false) cy.expect(addHoldingButton.absent());
+    if (addItem) cy.expect(addItemButton.exists());
+    if (addItem === false) cy.expect(addItemButton.absent());
+  },
+
+  verifyActionsMenuEmpty() {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.expect(Section({ id: 'inventory-menu-section' }).absent());
+  },
 };

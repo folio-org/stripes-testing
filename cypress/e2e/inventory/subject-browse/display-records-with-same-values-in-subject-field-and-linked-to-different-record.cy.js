@@ -118,9 +118,7 @@ describe('Inventory', () => {
             MarcAuthoritiesSearch.selectAuthorityByIndex(i);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
 
             InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
             InventoryInstances.resetAllFilters();
