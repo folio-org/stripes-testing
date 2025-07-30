@@ -315,9 +315,9 @@ export default {
     ]);
   },
 
-  select008DropdownsIfOptionsExist(dropdownSelections) {
+  select008DropdownsIfOptionsExist(dropdownSelections, rowIndex = 3) {
     Object.entries(dropdownSelections).forEach(([label, value]) => {
-      const selector = `select[name="records[3].content.${label}"]`;
+      const selector = `select[name="records[${rowIndex}].content.${label}"]`;
       cy.get('body').then(($body) => {
         if ($body.find(selector).length > 0) {
           cy.get(selector).then(($select) => {

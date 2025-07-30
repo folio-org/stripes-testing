@@ -124,7 +124,7 @@ describe('MARC', () => {
 
       it(
         'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C360092'] },
+        { tags: ['extendedPathBroken', 'spitfire', 'C360092'] },
         () => {
           MarcAuthorities.searchBy(
             testData.authorityC360092.searchOption,

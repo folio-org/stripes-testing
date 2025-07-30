@@ -18,11 +18,14 @@ describe('Inventory', () => {
         localCallNumberTypeName: `AT_C627460_LocalCNType_${getRandomPostfix()}`,
         callNumberBrowseOption: BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         preSelectedCallNumberTypes: [
-          CALL_NUMBER_TYPES_DEFAULT.LIBRARY_OF_CONGRESS_CLASSIFICATION,
           CALL_NUMBER_TYPES_DEFAULT.DEWEY_DECIMAL_CLASSIFICATION,
+          CALL_NUMBER_TYPES_DEFAULT.LIBRARY_OF_CONGRESS_CLASSIFICATION,
         ],
       };
-
+      const expectedTypesDisplay = [
+        CALL_NUMBER_TYPES_DEFAULT.DEWEY_DECIMAL_CLASSIFICATION,
+        CALL_NUMBER_TYPES_DEFAULT.LIBRARY_OF_CONGRESS_CLASSIFICATION,
+      ].join('');
       const saveCalloutText = `The call number browse type ${testData.callNumberBrowseOption} was successfully updated`;
 
       before('Create test data', () => {
@@ -65,7 +68,7 @@ describe('Inventory', () => {
           // Verify that the browse option has pre-selected call number types
           CallNumberBrowseSettings.validateCallNumberBrowseRowInTable(
             testData.callNumberBrowseOption,
-            testData.preSelectedCallNumberTypes.join(''),
+            expectedTypesDisplay,
             true,
           );
 
