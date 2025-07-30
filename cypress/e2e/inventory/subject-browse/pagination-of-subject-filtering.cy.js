@@ -61,7 +61,7 @@ describe.skip('Inventory', () => {
 
     it(
       'C584530 Check pagination of subject filtering (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584530'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C584530'] },
       () => {
         const subjectTypes = ['Topical term', 'Geographic name', 'Personal name'];
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);

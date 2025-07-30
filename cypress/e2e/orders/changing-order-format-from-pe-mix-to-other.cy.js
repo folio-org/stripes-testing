@@ -92,7 +92,7 @@ describe('Orders', () => {
 
   it(
     'C357551: “Electronic” format specific fields are cleared when changing order format from "P/E Mix" to "Other" (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
