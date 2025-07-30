@@ -157,7 +157,7 @@ describe('Orders', () => {
 
     it(
       'C196751 Export orders based on orders lines search (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO line number', firstOrderNumber);
         cy.wait(5000);
