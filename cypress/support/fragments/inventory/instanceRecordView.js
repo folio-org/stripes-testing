@@ -126,7 +126,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(500);
+  cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
 

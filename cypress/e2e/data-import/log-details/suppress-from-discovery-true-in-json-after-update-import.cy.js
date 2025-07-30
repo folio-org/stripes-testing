@@ -31,7 +31,6 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
@@ -97,10 +96,7 @@ describe('Data Import', () => {
           marcFileForCreate.instanceId = response[0].instance.id;
         });
 
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -113,9 +109,9 @@ describe('Data Import', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+        InventoryInstance.deleteInstanceViaApi(marcFileForCreate.instanceId);
       });
-      Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(marcFileForCreate.instanceId);
     });
 
     it(

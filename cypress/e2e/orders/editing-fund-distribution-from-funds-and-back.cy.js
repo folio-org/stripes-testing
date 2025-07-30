@@ -17,6 +17,7 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -129,12 +130,15 @@ describe('Orders', () => {
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesPayInvoices.gui,
       permissions.uiOrdersEdit.gui,
+      permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.ordersPath);
     });
   });
 
