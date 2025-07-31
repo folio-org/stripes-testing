@@ -54,7 +54,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C366590 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 2) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C366590'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C366590'] },
       () => {
         EHoldingsPackageView.getTotalTitlesCount().then((titlesCount) => {
           testData.titlesCount = titlesCount;
@@ -132,7 +132,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C366591 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 1) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C366591'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C366591'] },
       () => {
         // Click the "Search" button in "Titles" accordion
         const FilterTitlesModal = EHoldingsPackageView.openFilterTitlesModal();

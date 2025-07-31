@@ -104,7 +104,7 @@ describe('Fees&Fines', () => {
           }).then((res) => {
             testData.loanTypeId = res.id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             testData.materialTypeId = res.id;
           });
         })

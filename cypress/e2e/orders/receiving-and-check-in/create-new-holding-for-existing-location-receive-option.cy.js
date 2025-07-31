@@ -31,8 +31,8 @@ describe('Orders', () => {
         }).location;
 
         Locations.createViaApi(testData.location).then((location) => {
-          InventoryInstances.getMaterialTypes().then((materialTypes) => {
-            testData.materialType = materialTypes[0];
+          cy.getDefaultMaterialType().then((mt) => {
+            testData.materialType = mt;
           });
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances: testData.folioInstances,

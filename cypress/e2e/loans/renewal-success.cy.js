@@ -60,9 +60,9 @@ describe('Renewal', () => {
           sourceId = holdingsSources[0].id;
         });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
-        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` }).then(
-          (materilaTypes) => {
-            materialTypeId = materilaTypes.id;
+        cy.getBookMaterialType().then(
+          (mt) => {
+            materialTypeId = mt.id;
           },
         );
         cy.getRequestPolicy();
