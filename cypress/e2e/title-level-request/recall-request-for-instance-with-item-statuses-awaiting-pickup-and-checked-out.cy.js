@@ -80,7 +80,7 @@ describe('Title level Request', () => {
           instanceData.loanTypeId = loanType.id;
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })

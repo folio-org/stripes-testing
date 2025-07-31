@@ -27,7 +27,7 @@ describe('Check out', () => {
     cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 }).then(({ id, name }) => {
+        cy.getDefaultMaterialType().then(({ id, name }) => {
           materialTypeName = { id, name };
         });
         cy.getLocations({ limit: 2 });

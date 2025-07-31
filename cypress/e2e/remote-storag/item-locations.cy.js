@@ -22,7 +22,7 @@ describe('Remote Storage', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
+            cy.getDefaultMaterialType();
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 1 });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {

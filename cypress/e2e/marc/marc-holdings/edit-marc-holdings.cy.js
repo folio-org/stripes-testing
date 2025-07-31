@@ -91,7 +91,7 @@ describe('MARC', () => {
     // Excluded from scope due to https://folio-org.atlassian.net/browse/EUREKA-618
     it.skip(
       'C359241 Edit MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C359241'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C359241'] },
       () => {
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.waitLoading();

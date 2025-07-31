@@ -143,7 +143,7 @@ function createRequestApi(
       cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
         instanceRecordData.permanentLoanTypeId = loanTypes[0].id;
       });
-      cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
+      cy.getDefaultMaterialType().then((materialType) => {
         instanceRecordData.materialTypeId = materialType.id;
       });
       cy.getLocations({ limit: 1 }).then((location) => {

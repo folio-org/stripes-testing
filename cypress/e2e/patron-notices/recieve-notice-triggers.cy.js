@@ -129,7 +129,7 @@ describe('Patron notices', () => {
             }).then((loanType) => {
               testData.loanTypeId = loanType.id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               testData.materialTypeId = res.id;
               testData.materialTypeName = res.name;
             });

@@ -54,7 +54,7 @@ describe('Inventory', () => {
             instance.loanTypeId = res[0].id;
             instance.loanTypeName = res[0].name;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             instance.materialTypeId = res.id;
           });
           InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
