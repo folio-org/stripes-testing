@@ -5,7 +5,6 @@ import DataExportResults from '../../../support/fragments/data-export/dataExport
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
@@ -16,18 +15,21 @@ import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileCon
 let user;
 let instanceTypeId;
 let exportedFileName;
-const csvFileName = `AT_C350408_instanceUUIDs_${getRandomPostfix()}.csv`;
+const csvFileName = `AT_C350411_instanceUUIDs_${getRandomPostfix()}.csv`;
+const identifierConfig = [
+  { name: 'ASIN', value: 'ASIN_B01ABCD123' },
+  { name: 'BNB', value: 'BNB_GB1234567' },
+  { name: 'Local identifier', value: 'Local_LOCAL123456' },
+  { name: 'StEdNL', value: 'StEdNL_789012' },
+  { name: 'UkMac', value: 'UkMac_345678' },
+];
 const testData = {
-  instanceTitle: `AT_C350408_FolioInstance_${getRandomPostfix()}`,
+  instanceTitle: `AT_C350411_FolioInstance_${getRandomPostfix()}`,
   instanceId: '',
-  instanceHrid: '',
-  notes: [
-    {
-      note: 'Test note NOT marked as Staff only',
-      instanceNoteTypeId: '',
-      staffOnly: false,
-    },
-  ],
+  identifiers: identifierConfig.map((config) => ({
+    identifierTypeId: '',
+    value: config.value,
+  })),
 };
 
 describe('Data Export', () => {
@@ -43,29 +45,23 @@ describe('Data Export', () => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
           instanceTypeId = instanceTypeData[0].id;
 
-          // Get instance note types - use General note type (always available by default)
-          InstanceNoteTypes.getInstanceNoteTypesViaApi({
-            limit: 1,
-            query: 'name=="General note"',
-          }).then((response) => {
-            const generalNoteType = response.instanceNoteTypes[0];
+          cy.getInstanceIdentifierTypes().then(() => {
+            const identifierTypes = Cypress.env('identifierTypes');
 
-            // Use the General note type for the single note
-            testData.notes[0].instanceNoteTypeId = generalNoteType.id;
+            // Set identifier type IDs using configuration
+            identifierConfig.forEach((config, index) => {
+              const identifierType = identifierTypes.find((type) => type.name === config.name);
+              testData.identifiers[index].identifierTypeId = identifierType.id;
+            });
 
-            // Create Folio instance with notes that are NOT marked as "Staff only"
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId,
                 title: testData.instanceTitle,
-                notes: testData.notes,
+                identifiers: testData.identifiers,
               },
             }).then((createdInstanceData) => {
               testData.instanceId = createdInstanceData.instanceId;
-
-              cy.getInstanceById(createdInstanceData.instanceId).then((instanceData) => {
-                testData.instanceHrid = instanceData.hrid;
-              });
 
               FileManager.createFile(`cypress/fixtures/${csvFileName}`, testData.instanceId);
             });
@@ -88,15 +84,15 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350408 Verify NOTEs types that are NOT marked as "StaffOnly" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C350408'] },
+      'C350411 Verify appending subfields to Identifiers (ASIN, BNB, Local identifiers, StEdNL, UKMac) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C350411'] },
       () => {
         // Step 1: Go to the "Data Export" app (already logged in from before block)
         DataExportLogs.verifyDragAndDropAreaExists();
         DataExportLogs.verifyUploadFileButtonEnabled();
         DataExportLogs.verifyRunningAccordionExpanded();
 
-        // Step 2: Trigger the data export by clicking on the "or choose file" button and submitting .csv file
+        // Step 2: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(csvFileName);
 
         // Step 3: Run the "Default instance export job profile" by clicking on it > Specify "Instance" type > Click on "Run" button
@@ -120,19 +116,46 @@ describe('Data Export', () => {
           // Step 4: Download the recently created file with extension .mrc by clicking on file name
           DataExportLogs.clickButtonWithText(exportedFileName);
 
-          // Step 5-6: Verify MARC field mappings for Notes that are NOT marked as "Staff only"
+          // Step 5-6: Verify identifier mappings to field 024
           const assertionsOnMarcFileContent = [
             {
               uuid: testData.instanceId,
               assertions: [
                 (record) => {
-                  const noteField = record.get('500')[0];
+                  // Verify field 024 mappings for all identifier types
+                  const identifierFields = record.get('024');
 
-                  expect(noteField).to.exist;
-                  expect(noteField.ind1).to.eq(' ');
-                  expect(noteField.ind2).to.eq(' ');
-                  expect(noteField.subf[0][0]).to.eq('a');
-                  expect(noteField.subf[0][1]).to.eq(testData.notes[0].note);
+                  expect(identifierFields).to.exist;
+                  expect(identifierFields.length).to.eq(5);
+
+                  // Helper function to find field by identifier value
+                  const findFieldByIdentifierType = (identifierType) => {
+                    return identifierFields.find((field) => {
+                      return field.subf[1][1] === identifierType;
+                    });
+                  };
+
+                  // Helper function to verify identifier mapping
+                  const verifyIdentifierMapping = (
+                    identifierType,
+                    expectedAValue,
+                    expectedQValue,
+                  ) => {
+                    const field = findFieldByIdentifierType(identifierType);
+
+                    expect(field).to.exist;
+                    expect(field.ind1).to.eq('8');
+                    expect(field.ind2).to.eq(' ');
+                    expect(field.subf[0][0]).to.eq('a');
+                    expect(field.subf[0][1]).to.eq(expectedAValue);
+                    expect(field.subf[1][0]).to.eq('q');
+                    expect(field.subf[1][1]).to.eq(expectedQValue);
+                  };
+
+                  // Verify all identifier mappings using configuration
+                  identifierConfig.forEach(({ name, value }) => {
+                    verifyIdentifierMapping(name, value, name);
+                  });
                 },
               ],
             },
