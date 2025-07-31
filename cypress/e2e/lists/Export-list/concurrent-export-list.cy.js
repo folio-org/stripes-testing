@@ -115,7 +115,7 @@ describe('Lists', () => {
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
         Lists.openActions();
-        Lists.editList();
+
         cy.getUserTokenOfAdminUser();
         Lists.refreshViaApi(listId).then(() => {
           cy.wait(100);
@@ -124,7 +124,6 @@ describe('Lists', () => {
           cy.wait(100);
         });
 
-        Lists.openActions();
         Lists.exportList();
 
         Lists.verifyCalloutMessage(
@@ -144,16 +143,16 @@ describe('Lists', () => {
         Lists.waitLoading();
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
+        Lists.openActions();
 
         cy.getUserTokenOfAdminUser();
         Lists.editViaApi(listId, { ...listData, isPrivate: true }).then(() => {
           cy.wait(500);
         });
         cy.getUserToken(userData.username, userData.password).then(() => {
-          cy.wait(500);
+          cy.wait(100);
         });
 
-        Lists.openActions();
         Lists.exportList();
 
         Lists.verifyCalloutMessage(
@@ -173,16 +172,16 @@ describe('Lists', () => {
         Lists.waitLoading();
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
+        Lists.openActions();
 
         cy.getUserTokenOfAdminUser();
         Lists.editViaApi(listId, { ...listData, isActive: false }).then(() => {
           cy.wait(500);
         });
         cy.getUserToken(userData.username, userData.password).then(() => {
-          cy.wait(500);
+          cy.wait(100);
         });
 
-        Lists.openActions();
         Lists.exportList();
 
         Lists.verifyCalloutMessage(
@@ -202,16 +201,16 @@ describe('Lists', () => {
         Lists.waitLoading();
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
+        Lists.openActions();
 
         cy.getUserTokenOfAdminUser();
         Lists.deleteViaApi(listId).then(() => {
           cy.wait(500);
         });
         cy.getUserToken(userData.username, userData.password).then(() => {
-          cy.wait(500);
+          cy.wait(100);
         });
 
-        Lists.openActions();
         Lists.exportList();
 
         Lists.verifyCalloutMessage(

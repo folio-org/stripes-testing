@@ -152,8 +152,8 @@ describe('Consortium manager', () => {
       });
 
       it(
-        'C648469 User with "Consortium manager: Can view existing settings" permission is able to view the list of instance note types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        'C648469 User with "Consortium manager: Can view existing settings" permission is able to view the list of holdings sources of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        { tags: ['criticalPathECS', 'thunderjet', 'C648469'] },
         () => {
           cy.resetTenant();
           cy.login(tempUserC648469.username, tempUserC648469.password);

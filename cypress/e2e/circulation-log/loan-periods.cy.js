@@ -89,7 +89,7 @@ describe('Circulation log', () => {
         Permissions.checkinAll.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-        InventoryInstances.getMaterialTypes({ limit: 3 })
+        cy.getMaterialTypes({ limit: 3 })
           .then((materialTypesRes) => {
             materialTypes = materialTypesRes;
             testData = {

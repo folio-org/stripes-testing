@@ -53,7 +53,7 @@ describe('MARC', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
+            cy.getDefaultMaterialType();
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 2 });
             InventoryHoldings.getHoldingSources({ limit: 2 }).then((holdingsSources) => {

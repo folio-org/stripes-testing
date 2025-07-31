@@ -77,7 +77,7 @@ describe('orders: Test Po line filters', () => {
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
       orderLine.locations[0].locationId = location.id;
     });
-    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+    cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.getFundsApi({ query: 'code="USHIST"' }).then((funds) => {

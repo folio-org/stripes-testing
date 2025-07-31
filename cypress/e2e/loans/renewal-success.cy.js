@@ -3,8 +3,7 @@ import uuid from 'uuid';
 import {
   CY_ENV,
   ITEM_STATUS_NAMES,
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -60,9 +59,9 @@ describe('Renewal', () => {
           sourceId = holdingsSources[0].id;
         });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
-        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` }).then(
-          (materilaTypes) => {
-            materialTypeId = materilaTypes.id;
+        cy.getBookMaterialType().then(
+          (mt) => {
+            materialTypeId = mt.id;
           },
         );
         cy.getRequestPolicy();

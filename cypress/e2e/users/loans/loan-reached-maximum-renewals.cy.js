@@ -49,7 +49,7 @@ describe('Loans', () => {
 
         cy.getAdminToken()
           .then(() => {
-            cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+            cy.getDefaultMaterialType().then((materialTypes) => {
               materialType = materialTypes;
             });
             InventoryHoldings.getHoldingSources({ limit: 1 }).then((source) => {

@@ -133,7 +133,7 @@ describe('Data Import', () => {
                   vendorId = organization.id;
                 },
               );
-              cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+              cy.getBookMaterialType().then((materialType) => {
                 materialTypeId = materialType.id;
               });
               cy.getAcquisitionMethodsApi({

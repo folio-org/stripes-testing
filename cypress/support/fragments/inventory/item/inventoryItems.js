@@ -142,7 +142,7 @@ export default {
   }) {
     cy.then(() => {
       cy.getLoanTypes({ limit: 1 });
-      cy.getMaterialTypes({ limit: 1 });
+      cy.getDefaultMaterialType();
     }).then(() => {
       const item = {
         id: uuid(),
