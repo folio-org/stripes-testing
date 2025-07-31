@@ -9,6 +9,7 @@ import AuthorizationRoles, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -135,7 +136,14 @@ describe('Eureka', () => {
           testData.userBody.personal.firstName,
         );
         UsersCard.close();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchResultsPane.verifySearchPaneIsEmpty();
+        UsersSearchPane.searchByKeywords(testData.userBody.username);
         UsersSearchPane.selectUserFromList(testData.userBody.username);
+        UsersCard.verifyUserLastFirstNameInCard(
+          testData.userBody.personal.lastName,
+          testData.userBody.personal.firstName,
+        );
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);
