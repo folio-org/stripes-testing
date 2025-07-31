@@ -829,6 +829,11 @@ export const electronicAccessRelationshipId = {
 export const ELECTRONIC_ACCESS_RELATIONSHIP_NAME = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
+  NO_INFORMATION_PROVIDED: 'No information provided',
+  RELATED_RESOURCE: 'Related resource',
+  NO_DISPLAY_CONSTANT_GENERATED: 'No display constant generated',
+  COMPONENT_PART_OF_RESOURCE: 'Component part(s) of resource',
+  VERSION_OF_COMPONENT_PART_OF_RESOURCE: 'Version of component part(s) of resource',
 };
 
 export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
