@@ -166,4 +166,8 @@ export default {
     if (type) cy.expect(Callout({ textContent: message, type }).exists());
     else cy.expect(Callout({ textContent: message }).exists());
   },
+  checkNoErrorCallouts: () => {
+    cy.wait(1000);
+    cy.get('[class^=calloutBase-][class*="error"]').should('not.exist');
+  },
 };

@@ -22,6 +22,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
+import { Permissions } from '../../../support/dictionary';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -206,12 +208,15 @@ describe('Finance: Transactions', () => {
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
       permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.invoicesPath);
     });
   });
 

@@ -110,22 +110,20 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              [versionHistorySourceCardsData].forEach((cardData, index) => {
-                if (index) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            [versionHistorySourceCardsData].forEach((cardData, index) => {
+              if (index) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -173,7 +171,7 @@ describe('Inventory', () => {
           cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
-
+          cy.reload();
           InventoryInstance.viewSource();
           InventoryViewSource.verifyVersionHistoryButtonShown();
           InventoryViewSource.clickVersionHistoryButton();

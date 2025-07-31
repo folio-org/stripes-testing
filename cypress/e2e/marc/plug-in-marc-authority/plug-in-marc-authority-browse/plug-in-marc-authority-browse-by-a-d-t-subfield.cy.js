@@ -18,14 +18,14 @@ describe('MARC', () => {
       const testData = {
         createdRecordIDs: [],
         rowIndex100: 27,
-        tag100content: 'valueA valueD valueT',
+        tag100content: 'valueD valueA',
         rowIndex650: 42,
-        tag650content: 'valueA valueD valueT',
+        tag650content: 'valueA',
         rowIndex240: 28,
-        tag240content: 'valueA1 valueA2 valueD1 valueD2 valueT1 valueT2',
-        filterStateTag100: ['personalNameTitle', 'valueA valueD valueT'],
-        filterStateTag650: ['subject', 'valueA valueD valueT'],
-        filterStateTag240: ['nameTitle', 'valueA1 valueA2 valueD1 valueD2 valueT1 valueT2'],
+        tag240content: 'valueT1 valueD1 valueT2 valueK valueD2 valueN',
+        filterStateTag100: ['personalNameTitle', 'valueD valueA'],
+        filterStateTag650: ['subject', 'valueA'],
+        filterStateTag240: ['nameTitle', 'valueT1 valueD1 valueT2 valueK valueD2 valueN'],
       };
 
       const marcFile = {

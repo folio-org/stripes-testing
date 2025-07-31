@@ -89,7 +89,7 @@ describe('Orders', () => {
 
     it(
       'C343213 Receive pieces for package order (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

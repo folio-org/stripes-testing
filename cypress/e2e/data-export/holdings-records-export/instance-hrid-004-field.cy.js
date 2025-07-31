@@ -56,7 +56,7 @@ describe('Data Export', () => {
       { tags: ['smoke', 'firebird', 'C376962'] },
       () => {
         ExportFile.uploadFile(fileName);
-        ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
+        ExportFile.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then(({ response }) => {

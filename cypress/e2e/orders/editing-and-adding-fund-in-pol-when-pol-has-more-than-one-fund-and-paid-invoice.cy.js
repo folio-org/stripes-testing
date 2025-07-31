@@ -16,6 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -137,6 +138,8 @@ describe('Orders', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
+      cy.visit(TopMenu.settingsInvoiveApprovalPath);
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(firstInvoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

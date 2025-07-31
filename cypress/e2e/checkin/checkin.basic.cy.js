@@ -141,11 +141,6 @@ describe('Check in', () => {
           CheckInPane.checkResultsInTheRow(checkInResultsData);
           CheckInActions.checkActionsMenuOptions();
 
-          // workaround for UICHKIN-483
-          CheckInActions.openActions();
-          CheckInActions.clickLoanDetailsOption();
-          CheckInActions.openCheckInPane();
-
           CheckInActions.openLoanDetails(userData.username);
           CheckInActions.openCheckInPane();
           CheckInActions.openPatronDetails(userData.username);

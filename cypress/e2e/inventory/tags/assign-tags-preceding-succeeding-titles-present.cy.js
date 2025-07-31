@@ -102,7 +102,7 @@ describe('Inventory', () => {
 
     it(
       'C358961 Assign tags to an Instance record when unlinked preceding/succeeding titles present 3: quickMARC (volaris)',
-      { tags: ['extendedPathBroken', 'volaris', 'C358961'] },
+      { tags: ['extendedPathFlaky', 'volaris', 'C358961'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: SettingsMenu.tagsGeneralPath,

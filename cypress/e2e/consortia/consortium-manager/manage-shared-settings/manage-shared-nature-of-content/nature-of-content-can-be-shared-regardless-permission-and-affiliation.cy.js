@@ -32,6 +32,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudNatureOfContent.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
@@ -91,7 +92,7 @@ describe('Consortia', () => {
 
         it(
           'C411303 Nature of content can be shared to all tenants in "Consortium manager" app regardless permission and affiliation  (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C411303'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

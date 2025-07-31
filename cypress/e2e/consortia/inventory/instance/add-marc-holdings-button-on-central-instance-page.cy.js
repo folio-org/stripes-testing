@@ -1,10 +1,12 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { tenantNames } from '../../../../support/dictionary/affiliations';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InstanceRecordView, {
   actionsMenuOptions,
 } from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -29,6 +31,7 @@ describe('Inventory', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
     });
 
     after('Delete test data', () => {

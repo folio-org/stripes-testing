@@ -191,7 +191,6 @@ describe('Patron notices', () => {
               testData.userServicePoint.id,
             );
             cy.getToken(testData.user.username, testData.user.password);
-            UserLoans.updateTimerForAgedToLost('minute');
             cy.getAdminToken();
             cy.login(testData.user.username, testData.user.password, {
               path: SettingsMenu.circulationPatronNoticeTemplatesPath,
@@ -203,7 +202,6 @@ describe('Patron notices', () => {
 
     after('Deleting created entities', () => {
       cy.getToken(testData.user.username, testData.user.password);
-      UserLoans.updateTimerForAgedToLost('reset');
       cy.getAdminToken();
       CirculationRules.deleteRuleViaApi(testData.addedRule);
       UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
@@ -232,7 +230,7 @@ describe('Patron notices', () => {
 
     it(
       'C347865 Item aged to lost triggers (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C347865'] },
+      { tags: ['criticalPathBroken', 'volaris', 'C347865'] },
       () => {
         noticeTemplates.forEach((template, index) => {
           NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

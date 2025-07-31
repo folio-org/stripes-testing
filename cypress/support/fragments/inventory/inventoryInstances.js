@@ -383,6 +383,11 @@ export default {
     cy.do([actionsButton.click(), exportInstanceMarcButton.click()]);
   },
 
+  exportInstanceMarcButtonAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect(exportInstanceMarcButton.absent());
+  },
+
   verifyToastNotificationAfterExportInstanceMarc(recordHrid) {
     const currentDate = DateTools.getFormattedDate({ date: new Date() });
 
