@@ -5,12 +5,14 @@ import {
   MultiColumnListCell,
   HTML,
   SelectionOption,
+  matching,
   not,
+  or,
 } from '../../../../../interactors';
 import AuthorizationRoles from '../../settings/authorization-roles/authorizationRoles';
 
 const compareRolesButton = Button('Compare roles');
-const compareRolesMainPane = Pane('Compare roles');
+const compareRolesMainPane = Pane(or('Compare roles', 'Compare users'));
 const compareRolesSubPane = (paneIndex) => compareRolesMainPane.find(Pane({ index: paneIndex }));
 const selectMemberDropdown = Button({ id: 'memberSelect' });
 const selectRoleDropdown = Button({ name: 'authorization-role' });
@@ -18,6 +20,8 @@ const noCapabilitiesFoundText = 'No capabilities found';
 const noCapabilitySetsFoundText = 'No capability sets found';
 const actionsButton = Button('Actions');
 const selectRolePlaceholderText = 'Select authorization role';
+const compareUsersButton = Button('Compare users');
+const selectUserDropdown = Button({ name: 'users' });
 
 export default {
   selectRolePlaceholderText,
@@ -93,16 +97,18 @@ export default {
 
   checkCapability: (
     { table, resource, action },
-    isSelected = true,
+    isSelected = true, // set to null/undefined to skip checking checkbox (e.g. when comparing users)
     isHighlighted = false,
     paneIndex = 0,
   ) => {
     const currentPane = compareRolesSubPane(paneIndex);
-    const targetCheckbox = currentPane
-      .find(AuthorizationRoles.capabilitiesAccordion)
-      .find(AuthorizationRoles.capabilityTables[table])
-      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (isSelected !== undefined && isSelected !== null) {
+      const targetCheckbox = currentPane
+        .find(AuthorizationRoles.capabilitiesAccordion)
+        .find(AuthorizationRoles.capabilityTables[table])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+    }
     const highlightedValue = currentPane
       .find(AuthorizationRoles.capabilitiesAccordion)
       .find(AuthorizationRoles.capabilityTables[table])
@@ -113,16 +119,18 @@ export default {
 
   checkCapabilitySet: (
     { table, resource, action },
-    isSelected = true,
+    isSelected = true, // set to null/undefined to skip checking checkbox (e.g. when comparing users)
     isHighlighted = false,
     paneIndex = 0,
   ) => {
     const currentPane = compareRolesSubPane(paneIndex);
-    const targetCheckbox = currentPane
-      .find(AuthorizationRoles.capabilitySetsAccordion)
-      .find(AuthorizationRoles.capabilityTables[table])
-      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (isSelected !== undefined && isSelected !== null) {
+      const targetCheckbox = currentPane
+        .find(AuthorizationRoles.capabilitySetsAccordion)
+        .find(AuthorizationRoles.capabilityTables[table])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+    }
     cy.expect(
       currentPane
         .find(AuthorizationRoles.capabilitySetsAccordion)
@@ -162,5 +170,46 @@ export default {
     const currentPane = compareRolesSubPane(paneIndex);
     cy.do(currentPane.find(AuthorizationRoles.capabilitySetsAccordion).clickHeader());
     cy.expect(currentPane.find(AuthorizationRoles.capabilitySetsAccordion).has({ open: isOpen }));
+  },
+
+  clickCompareUsers() {
+    cy.do([actionsButton.click(), compareUsersButton.click()]);
+    [compareRolesSubPane(0), compareRolesSubPane(1)].forEach((pane) => {
+      cy.expect([
+        pane.find(selectMemberDropdown).exists(),
+        pane.find(selectUserDropdown).has({ disabled: true }),
+        pane.find(selectRoleDropdown).has({ disabled: true }),
+        pane.find(AuthorizationRoles.capabilitiesAccordion).has({ open: false }),
+        pane.find(AuthorizationRoles.capabilitySetsAccordion).has({ open: false }),
+      ]);
+    });
+  },
+
+  verifySelectedUser: (username, paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    const matcher = matching(new RegExp(`^Select control${username}(_\\w+)?$`));
+    cy.expect(currentPane.find(selectUserDropdown).has({ text: matcher }));
+  },
+
+  selectUser(username, paneIndex = 0) {
+    const currentPane = compareRolesSubPane(paneIndex);
+    const userMatcher = matching(new RegExp(`^${username}(_\\w+)?$`));
+    cy.do([
+      currentPane.find(selectUserDropdown).click(),
+      currentPane.find(SelectionOption(userMatcher)).click(),
+    ]);
+    cy.wait(3000);
+    this.verifySelectedUser(username, paneIndex);
+    cy.expect([currentPane.find(selectRoleDropdown).has({ disabled: false })]);
+  },
+
+  checkUserPresent: (username, isPresent = true, paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(selectUserDropdown).click());
+    cy.wait(3000);
+    if (isPresent) cy.expect(currentPane.find(SelectionOption(username)).exists());
+    else cy.expect(currentPane.find(SelectionOption(username)).absent());
+    cy.do(compareRolesMainPane.click());
+    cy.expect(currentPane.find(SelectionOption()).absent());
   },
 };
