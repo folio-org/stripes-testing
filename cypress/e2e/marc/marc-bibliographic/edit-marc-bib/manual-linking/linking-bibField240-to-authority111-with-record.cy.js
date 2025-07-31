@@ -108,37 +108,41 @@ describe('MARC', () => {
           });
         });
 
-        it('C374112 Link the "240" of "MARC Bib" field with "111" field of "MARC Authority" record', () => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
+        it(
+          'C374112 Link the "240" of "MARC Bib" field with "111" field of "MARC Authority" record (spitfire)',
+          { tags: ['extendedPath', 'spitfire', 'C374112'] },
+          () => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
 
-          QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240InitialFieldValues);
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
+            QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240InitialFieldValues);
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
 
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          InventoryInstance.searchResults(testData.authorityMarcValue);
-          MarcAuthorities.checkFieldAndContentExistence('111', testData.authorityHeading);
-          MarcAuthorities.clickLinkButton();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.searchResults(testData.authorityMarcValue);
+            MarcAuthorities.checkFieldAndContentExistence('111', testData.authorityHeading);
+            MarcAuthorities.clickLinkButton();
 
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-          QuickMarcEditor.verifyTagFieldAfterLinking(...bib240LinkedFieldValues);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
-          QuickMarcEditor.checkAfterSaveAndClose();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
+            QuickMarcEditor.verifyTagFieldAfterLinking(...bib240LinkedFieldValues);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
-          InventoryInstance.verifyAlternativeTitle(
-            0,
-            1,
-            `${testData.linkedIconText}Final Act (1972-1975 : English`,
-          );
-          InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
+            InventoryInstance.verifyAlternativeTitle(
+              0,
+              1,
+              `${testData.linkedIconText}Final Act (1972-1975 : English`,
+            );
+            InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
 
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickUnlinkIcon(testData.tag240);
-          QuickMarcEditor.confirmUnlinkingField();
-          QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240UnlinkedFieldValues);
-        });
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickUnlinkIcon(testData.tag240);
+            QuickMarcEditor.confirmUnlinkingField();
+            QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240UnlinkedFieldValues);
+          },
+        );
       });
     });
   });
