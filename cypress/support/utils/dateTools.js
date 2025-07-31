@@ -178,10 +178,13 @@ export default {
   },
 
   getDayTomorrowDateForFiscalYearOnUIEdit: () => {
-    const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate() + 1,
-    )}/${currentDate.getFullYear()}`;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return (
+      `${padWithZero(tomorrow.getMonth() + 1)}/` +
+      `${padWithZero(tomorrow.getDate())}/` +
+      `${tomorrow.getFullYear()}`
+    );
   },
 
   getPreviousDayDateForFiscalYear: () => {
