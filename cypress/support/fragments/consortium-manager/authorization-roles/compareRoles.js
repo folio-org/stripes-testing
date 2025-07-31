@@ -22,18 +22,39 @@ const actionsButton = Button('Actions');
 const selectRolePlaceholderText = 'Select authorization role';
 const compareUsersButton = Button('Compare users');
 const selectUserDropdown = Button({ name: 'users' });
+const selectUserPlaceholderText = 'Select User';
 
 export default {
   selectRolePlaceholderText,
+  selectUserPlaceholderText,
+
+  checkRolesDropdownDisabled: (paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.expect(
+      currentPane
+        .find(selectRoleDropdown)
+        .has({ text: `Select control${selectRolePlaceholderText}`, disabled: true }),
+    );
+  },
+
+  checkUsersDropdownDisabled: (paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.expect(
+      currentPane
+        .find(selectUserDropdown)
+        .has({ text: `Select control${selectUserPlaceholderText}`, disabled: true }),
+    );
+  },
+
   clickCompareRoles() {
     cy.do([actionsButton.click(), compareRolesButton.click()]);
-    [compareRolesSubPane(0), compareRolesSubPane(1)].forEach((pane) => {
+    [compareRolesSubPane(0), compareRolesSubPane(1)].forEach((pane, index) => {
       cy.expect([
         pane.find(selectMemberDropdown).exists(),
-        pane.find(selectRoleDropdown).has({ disabled: true }),
         pane.find(AuthorizationRoles.capabilitiesAccordion).has({ open: false }),
         pane.find(AuthorizationRoles.capabilitySetsAccordion).has({ open: false }),
       ]);
+      this.checkRolesDropdownDisabled(index);
     });
   },
 
@@ -73,7 +94,11 @@ export default {
 
   verifySelectedRole: (roleName, paneIndex = 0) => {
     const currentPane = compareRolesSubPane(paneIndex);
-    cy.expect(currentPane.find(selectRoleDropdown).has({ text: `Select control${roleName}` }));
+    cy.expect(
+      currentPane
+        .find(selectRoleDropdown)
+        .has({ text: `Select control${roleName}`, disabled: or(true, false) }),
+    );
   },
 
   checkRolePresent: (roleName, isPresent = true, paneIndex = 0) => {
@@ -174,14 +199,14 @@ export default {
 
   clickCompareUsers() {
     cy.do([actionsButton.click(), compareUsersButton.click()]);
-    [compareRolesSubPane(0), compareRolesSubPane(1)].forEach((pane) => {
+    [compareRolesSubPane(0), compareRolesSubPane(1)].forEach((pane, index) => {
       cy.expect([
         pane.find(selectMemberDropdown).exists(),
-        pane.find(selectUserDropdown).has({ disabled: true }),
-        pane.find(selectRoleDropdown).has({ disabled: true }),
         pane.find(AuthorizationRoles.capabilitiesAccordion).has({ open: false }),
         pane.find(AuthorizationRoles.capabilitySetsAccordion).has({ open: false }),
       ]);
+      this.checkUsersDropdownDisabled(index);
+      this.checkRolesDropdownDisabled(index);
     });
   },
 
@@ -209,6 +234,15 @@ export default {
     cy.wait(3000);
     if (isPresent) cy.expect(currentPane.find(SelectionOption(username)).exists());
     else cy.expect(currentPane.find(SelectionOption(username)).absent());
+    cy.do(compareRolesMainPane.click());
+    cy.expect(currentPane.find(SelectionOption()).absent());
+  },
+
+  checkNoUsersPresent: (paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(selectUserDropdown).click());
+    cy.wait(3000);
+    cy.expect(currentPane.find(SelectionOption(not('--'))).absent());
     cy.do(compareRolesMainPane.click());
     cy.expect(currentPane.find(SelectionOption()).absent());
   },
