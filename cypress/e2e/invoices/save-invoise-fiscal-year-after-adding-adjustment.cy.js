@@ -143,6 +143,7 @@ describe('Invoices', () => {
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
+        Ledgers.closeAllVisibleCallouts();
         Ledgers.fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
           secondFiscalYear.code,
           'None',
