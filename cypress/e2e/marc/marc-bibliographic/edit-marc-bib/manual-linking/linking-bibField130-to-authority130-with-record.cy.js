@@ -18,8 +18,8 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag130: '130',
-          authorityMarkedValue: 'Bible. Polish. Biblia Płocka 1992',
-          authorityMarcValue: 'Bible. $l Polish. $s Biblia Płocka $d 1992',
+          authorityMarkedValue: 'C692103 Bible. Polish. Biblia Płocka 1992',
+          authorityMarcValue: 'C692103 Bible. $l Polish. $s Biblia Płocka $d 1992',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };
@@ -35,7 +35,7 @@ describe('MARC', () => {
             marc: 'marcAuthFileC692103.mrc',
             fileName: `testMarcAuthorityFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            authorityHeading: 'Bible. Polish. Biblia Płocka 1992',
+            authorityHeading: 'C692103 Bible. Polish. Biblia Płocka 1992',
             authority130FieldValue: 'n92085235',
             propertyName: 'authority',
           },
@@ -56,7 +56,7 @@ describe('MARC', () => {
           testData.tag130,
           '0',
           '\\',
-          '$a Bible. $l Polish. $s Biblia Płocka $d 1992',
+          '$a C692103 Bible. $l Polish. $s Biblia Płocka $d 1992',
           '',
           '$0 http://id.loc.gov/authorities/names/n92085235',
           '',
@@ -67,12 +67,12 @@ describe('MARC', () => {
           testData.tag130,
           '0',
           '\\',
-          '$a Bible. $l Polish. $s Biblia Płocka $d 1992 $0 http://id.loc.gov/authorities/names/n92085235',
+          '$a C692103 Bible. $l Polish. $s Biblia Płocka $d 1992 $0 http://id.loc.gov/authorities/names/n92085235',
         ];
 
         before('Creating user and data', () => {
           cy.getAdminToken();
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Bible. Polish. Biblia Płocka*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C692103*');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
