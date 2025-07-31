@@ -54,7 +54,7 @@ describe('Circulation log', () => {
         cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
           testData.loanTypeId = loanTypes[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })

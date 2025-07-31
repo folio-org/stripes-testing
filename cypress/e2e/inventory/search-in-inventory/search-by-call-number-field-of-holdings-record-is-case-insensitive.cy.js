@@ -45,7 +45,7 @@ describe('Inventory', () => {
           cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
             testData.loanTypeId = loanTypes[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 })
+          cy.getDefaultMaterialType()
             .then((materialTypes) => {
               testData.materialTypeId = materialTypes.id;
               testData.materialType = materialTypes.name;

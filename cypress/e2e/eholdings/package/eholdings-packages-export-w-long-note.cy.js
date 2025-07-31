@@ -63,7 +63,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C357529 Export all "Titles" (less than 10k) of "Package" record with large "Note" (around 4k symbols). (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C357529'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C357529'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Cambridge');

@@ -48,7 +48,7 @@ describe('Inventory', () => {
           ServicePoints.createViaApi(service);
           location = Location.getDefaultLocation(service.id);
           Location.createViaApi(location);
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             itemData.materialTypeId = res.id;
           });
           [...Array(3)].forEach((_, index) => {

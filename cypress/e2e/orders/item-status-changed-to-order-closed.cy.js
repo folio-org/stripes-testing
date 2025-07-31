@@ -48,7 +48,7 @@ describe('Orders', () => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
           const acquisitionMethod = body.acquisitionMethods[0].id;
 
-          cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+          cy.getBookMaterialType().then((materialType) => {
             const materialTypeId = materialType.id;
 
             [...Array(orderLinesCount).keys()].forEach(() => {
