@@ -3,8 +3,7 @@ import uuid from 'uuid';
 import {
   CY_ENV,
   ITEM_STATUS_NAMES,
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
