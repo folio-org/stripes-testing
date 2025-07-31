@@ -653,6 +653,7 @@ export default {
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
+    cy.wait(4000);
   },
 
   binderyActivePhysicalPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
