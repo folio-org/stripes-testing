@@ -154,6 +154,9 @@ describe('Eureka', () => {
           userBodies[0].personal.firstName,
         );
         UsersCard.close();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchResultsPane.verifySearchPaneIsEmpty();
+        UsersSearchPane.searchByKeywords(userBodies[0].username);
         UsersSearchPane.selectUserFromList(userBodies[0].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
