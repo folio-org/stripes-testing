@@ -93,4 +93,12 @@ export default {
       );
     });
   },
+
+  verifySearchResultsForPreferredName(expectedPreferredName, unexpectedPreferredName) {
+    cy.wait(2000);
+    this.checkSearchResultsCount(1);
+    this.verifyUserIsPresentInTheList(expectedPreferredName);
+    this.verifyUserIsNotPresentInTheList(unexpectedPreferredName);
+    cy.wait(2000);
+  },
 };
