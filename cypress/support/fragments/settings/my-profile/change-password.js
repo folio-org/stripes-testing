@@ -75,4 +75,14 @@ export default {
     cy.expect(saveButton.is({ disabled: false }));
     cy.do(saveButton.click());
   },
+
+  fillPasswordFields(currentPassword, newPassword, confirmPassword) {
+    this.typeCurrentPassword(currentPassword);
+    this.typeNewPassword(newPassword);
+    this.typeConfirmPassword(confirmPassword);
+  },
+
+  verifyPasswordSaved() {
+    cy.url().should('not.contain', '/change-password');
+  },
 };

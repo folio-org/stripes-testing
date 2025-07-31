@@ -556,7 +556,12 @@ export default {
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
         body: {
           userId,
-          servicePointsIds: [...new Set([...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds, ...servicePointIds])],
+          servicePointsIds: [
+            ...new Set([
+              ...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds,
+              ...servicePointIds,
+            ]),
+          ],
           defaultServicePointId,
         },
         isDefaultSearchParamsRequired: false,
@@ -1077,5 +1082,36 @@ export default {
   selectRolesAffiliation(affiliation) {
     cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
     this.checkSelectedRolesAffiliation(affiliation);
+  },
+
+  clickAddSponsor() {
+    cy.do(Button({ id: 'clickable-plugin-find-sponsor' }).click());
+    cy.wait(1000);
+  },
+
+  verifyInvalidModal(type) {
+    const modalTitle = `Invalid ${type}`;
+    const pluralType = type.toLowerCase() === 'proxy' ? 'proxies' : `${type.toLowerCase()}s`;
+    const errorMessage = `Users cannot be ${pluralType} for themselves.`;
+
+    cy.expect([
+      Modal(modalTitle).exists(),
+      Modal(modalTitle)
+        .find(HTML(including(errorMessage)))
+        .exists(),
+      Modal(modalTitle).find(Button('OK')).exists(),
+    ]);
+  },
+
+  closeInvalidModal(type) {
+    const modalTitle = `Invalid ${type}`;
+    cy.do(Modal(modalTitle).find(Button('OK')).click());
+    cy.expect(Modal(modalTitle).absent());
+  },
+
+  verifyNoRecordAdded(type) {
+    const pluralType = type.toLowerCase() === 'proxy' ? 'proxies' : `${type.toLowerCase()}s`;
+    const noRecordsText = `No ${pluralType} found`;
+    cy.expect(proxySponsorAccordion.find(HTML(including(noRecordsText))).exists());
   },
 };
