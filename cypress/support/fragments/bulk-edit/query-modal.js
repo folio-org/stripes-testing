@@ -28,9 +28,9 @@ const selectFieldButton = Button(including('Select field'));
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holding — Instance UUID',
-  callNumber: 'Holding — Call number',
-  callNumberPrefix: 'Holding — Call number prefix',
+  instanceUuid: 'Holdings — Instance UUID',
+  callNumber: 'Holdings — Call number',
+  callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
 };

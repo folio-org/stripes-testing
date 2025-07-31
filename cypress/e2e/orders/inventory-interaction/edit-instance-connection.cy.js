@@ -20,8 +20,8 @@ describe('Orders', () => {
 
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
-        InventoryInstances.getMaterialTypes().then((materialTypes) => {
-          testData.materialType = materialTypes[0];
+        cy.getDefaultMaterialType().then((mt) => {
+          testData.materialType = mt;
         });
         ServicePoints.createViaApi(testData.servicePoint);
         testData.location = Locations.getDefaultLocation({

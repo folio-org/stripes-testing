@@ -20,9 +20,9 @@ describe('Check in', () => {
       userData = userProperties;
 
       cy.getAdminToken();
-      InventoryInstances.getMaterialTypes({ limit: 1 })
-        .then((materialTypes) => {
-          materialType = materialTypes[0];
+      cy.getDefaultMaterialType()
+        .then((mt) => {
+          materialType = mt;
 
           testData = {
             folioInstances: InventoryInstances.generateFolioInstances({

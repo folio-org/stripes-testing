@@ -47,6 +47,8 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           cy.getAdminToken();
+          InventoryInstances.deleteFullInstancesByTitleViaApi(testData.marcBibTitle);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcAuthTitle);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -80,12 +82,9 @@ describe('MARC', () => {
             cy.wait(1000); // need to wait for choose Type of Heading
             MarcAuthorities.chooseTypeOfHeading('Conference Name');
             InventoryInstance.searchResults(testData.marcAuthTitle);
-            InventoryInstance.selectRecord();
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             cy.wait(1000); // need to wait until save is done
           });
           cy.waitForAuthRefresh(() => {

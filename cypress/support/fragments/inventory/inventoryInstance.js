@@ -28,6 +28,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  ValueChipRoot,
   and,
   calloutTypes,
   including,
@@ -1081,12 +1082,44 @@ export default {
     cy.wait(1500);
   },
 
-  checkAddedTag: (tagName, instanceTitle) => {
+  checkTagSelectedInDropdown(tag, isShown = true) {
+    if (isShown) cy.expect(ValueChipRoot(tag).exists());
+    else cy.expect(ValueChipRoot(tag).absent());
+  },
+
+  checkAddedTag(tagName, instanceTitle) {
     cy.do(MultiColumnListCell(instanceTitle).click());
     cy.wait(1500);
     cy.do(tagButton.click());
     cy.wait(1500);
-    cy.expect(textFieldTagInput.exists(tagName));
+    this.checkTagSelectedInDropdown(tagName);
+  },
+
+  addMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      cy.do(textFieldTagInput.choose(tag));
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.wait(500);
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+    });
+  },
+
+  deleteMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+      cy.do(ValueChipRoot(tag).find(closeTag).click());
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.wait(500);
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag, false);
+    });
   },
 
   deleteTag: (tagName) => {
@@ -1870,5 +1903,20 @@ export default {
     cy.do(versionHistoryButton.click());
     cy.expect(Spinner().exists());
     cy.expect(Spinner().absent());
+  },
+
+  checkButtonsShown({ actions, addHoldings, addItem }) {
+    if (actions) cy.expect(actionsButton.exists());
+    if (actions === false) cy.expect(actionsButton.absent());
+    if (addHoldings) cy.expect(addHoldingButton.exists());
+    if (addHoldings === false) cy.expect(addHoldingButton.absent());
+    if (addItem) cy.expect(addItemButton.exists());
+    if (addItem === false) cy.expect(addItemButton.absent());
+  },
+
+  verifyActionsMenuEmpty() {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.expect(Section({ id: 'inventory-menu-section' }).absent());
   },
 };

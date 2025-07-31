@@ -59,7 +59,7 @@ describe('Staff slips', () => {
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
           itemData.materialType = materialTypes.name[0].toUpperCase() + materialTypes.name.slice(1);
         });

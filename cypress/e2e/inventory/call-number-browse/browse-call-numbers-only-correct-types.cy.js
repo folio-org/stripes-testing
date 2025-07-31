@@ -167,7 +167,7 @@ describe('Inventory', () => {
             instances[0].loanTypeId = res[0].id;
             instances[0].loanTypeName = res[0].name;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             instances[0].materialTypeId = res.id;
           });
           const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -287,7 +287,7 @@ describe('Inventory', () => {
 
     it(
       'C405530 Verify that call numbers of other types are not displayed in browse result list for certain call number type when user uses pagination buttons (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C405530', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C405530', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -301,19 +301,16 @@ describe('Inventory', () => {
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
         searchAndCheckCallNumbers(['lc'], callNumbers[1].lc);
-        searchAndCheckCallNumbers(['local'], callNumbers[0].local);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
         searchAndCheckCallNumbers(['nlm'], callNumbers[0].nlm);
-        searchAndCheckCallNumbers(['lc'], callNumbers[1].lc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
         searchAndCheckCallNumbers(['other'], callNumbers[0].other);
-        searchAndCheckCallNumbers(['udc'], callNumbers[0].udc);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,

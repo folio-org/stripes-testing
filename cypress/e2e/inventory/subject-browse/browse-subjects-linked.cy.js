@@ -41,6 +41,7 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375163*');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -64,7 +65,6 @@ describe('Inventory', () => {
           });
         });
 
-        cy.getAdminToken();
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -84,11 +84,14 @@ describe('Inventory', () => {
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(testData.rowIndex, testData.tag610);
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
         });
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
@@ -120,9 +123,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInTagField(20);
         QuickMarcEditor.confirmUnlinkingField();
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
         BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false);
         InventorySearchAndFilter.switchToBrowseTab();

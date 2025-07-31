@@ -43,7 +43,7 @@ describe('Title level Request', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           instanceData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })

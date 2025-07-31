@@ -97,10 +97,10 @@ describe('TLR: Item renew', () => {
         cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
           testData.loanTypeId = loanTypes[0].id;
         });
-        cy.getMaterialTypes({ query: 'name="book"' }).then((materialTypes) => {
+        cy.getBookMaterialType().then((materialTypes) => {
           testData.materialBookId = materialTypes.id;
         });
-        cy.getMaterialTypes({ query: 'name="dvd"' }).then((materialTypes) => {
+        cy.getDvdMaterialType().then((materialTypes) => {
           testData.materialDvdId = materialTypes.id;
         });
       })

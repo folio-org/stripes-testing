@@ -858,6 +858,15 @@ const API = {
       });
   },
 
+  getQueryViaApi(queryId, searchParameters) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `query/${queryId}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: searchParameters,
+    });
+  },
+
   createViaApi(list) {
     const newList = JSON.parse(JSON.stringify(list));
     return this.getTypesViaApi().then((response) => {
@@ -915,10 +924,25 @@ const API = {
     );
   },
 
+  getVersionApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'fqm/version',
+    });
+  },
+
   getTypesViaApi() {
     return cy.okapiRequest({
       method: 'GET',
       path: 'entity-types',
+    });
+  },
+
+  getTypeIdByNameViaApi(type) {
+    return this.getTypesViaApi().then((response) => {
+      return response.body.entityTypes.find(
+        (entityType) => entityType.label === type,
+      ).id;
     });
   },
 

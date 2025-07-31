@@ -60,7 +60,7 @@ describe('Data Export', () => {
             `cypress/fixtures/${authorityUUIDsFileName}`,
             authorityInstance.id,
           );
-
+          cy.wait(5000);
           MarcAuthorities.getMarcAuthoritiesViaApi({
             query: `id="${authorityInstance.id}"`,
           }).then((authorities) => {

@@ -1,14 +1,14 @@
-import permissions from '../../support/dictionary/permissions';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import { getLongDelay } from '../../support/utils/cypressTools';
-import FileManager from '../../support/utils/fileManager';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
+import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
+import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
+import FileManager from '../../../support/utils/fileManager';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const folioInstance = {

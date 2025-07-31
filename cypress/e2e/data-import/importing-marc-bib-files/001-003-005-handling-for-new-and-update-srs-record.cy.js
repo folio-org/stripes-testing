@@ -255,6 +255,7 @@ describe('Data Import', () => {
           InventoryViewSource.close();
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InventorySearchAndFilter.selectSearchResultItem();
           InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.checkIsInstanceUpdated();
           // verify table data in marc bibliographic source

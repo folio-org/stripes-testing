@@ -37,6 +37,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudClassificationIdentifierTypes.gui,
               ]).then((userProperties) => {
                 userData = userProperties;

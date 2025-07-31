@@ -46,7 +46,7 @@ describe('Fees&Fines', () => {
 
         cy.getAdminToken()
           .then(() => {
-            cy.getMaterialTypes({ limit: 1 }).then(({ id }) => {
+            cy.getDefaultMaterialType().then(({ id }) => {
               materialType = { id };
             });
             cy.getLoanTypes({ limit: 1, query: 'name="Course reserves"' }).then((body) => {

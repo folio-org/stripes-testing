@@ -23,52 +23,52 @@ const classificationTestData = [
   {
     name: optionNames[0],
     id: CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-    value: `${randomLetters}4468.179`,
+    value: `${randomLetters}388.14`,
   },
   {
     name: optionNames[1],
     id: CLASSIFICATION_IDENTIFIER_TYPES.CANADIAN_CLASSIFICATION,
-    value: `${randomLetters}K468.1790`,
+    value: `${randomLetters}K347.9445`,
   },
   {
     name: optionNames[2],
     id: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
-    value: `${randomLetters}8468.179`,
+    value: `${randomLetters}839.83`,
   },
   {
     name: optionNames[3],
     id: CLASSIFICATION_IDENTIFIER_TYPES.GDC,
-    value: `${randomLetters}A 46.81:F 79/4/681 Glacier`,
+    value: `${randomLetters}A 13.28:F 61/2/982 Glacier`,
   },
   {
     name: optionNames[4],
     id: CLASSIFICATION_IDENTIFIER_TYPES.LC,
-    value: `${randomLetters}BJ4981.C79`,
+    value: `${randomLetters}BJ1533.C5`,
   },
   {
     name: optionNames[5],
     id: CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
-    value: `${randomLetters}JK468179`,
+    value: `${randomLetters}JK608`,
   },
   {
     name: optionNames[6],
     id: CLASSIFICATION_IDENTIFIER_TYPES.NATIONAL_AGRICULTURAL_LIBRARY,
-    value: `${randomLetters}TRANSL468179`,
+    value: `${randomLetters}TRANSL17827`,
   },
   {
     name: optionNames[7],
     id: CLASSIFICATION_IDENTIFIER_TYPES.NLM,
-    value: `${randomLetters}N468a 1790`,
+    value: `${randomLetters}N972a 1968`,
   },
   {
     name: optionNames[8],
     id: CLASSIFICATION_IDENTIFIER_TYPES.SUDOC,
-    value: `${randomLetters}L46s:Oc8/2/790`,
+    value: `${randomLetters}L33s:Oc1/2/996`,
   },
   {
     name: optionNames[9],
     id: CLASSIFICATION_IDENTIFIER_TYPES.UDC,
-    value: `${randomLetters}468.179.4-68`,
+    value: `${randomLetters}821.113.4-15`,
   },
 ];
 

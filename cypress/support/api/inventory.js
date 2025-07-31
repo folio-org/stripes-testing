@@ -73,8 +73,7 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
     method: 'DELETE',
   });
 });
-// TODO: update tests where cypress env is still used
-// TODO: move to the related fragment
+
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {
   cy.okapiRequest({
     path: 'material-types',
@@ -84,6 +83,43 @@ Cypress.Commands.add('getMaterialTypes', (searchParams) => {
     Cypress.env('materialTypes', response.body.mtypes);
     return response.body.mtypes[0];
   });
+});
+
+Cypress.Commands.add('getBookMaterialType', () => {
+  if (!Cypress.env('BOOK_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="book"' }).then((materialType) => {
+      Cypress.env('BOOK_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('BOOK_MATERIAL_TYPE');
+  }
+});
+
+Cypress.Commands.add('getTextMaterialType', () => {
+  if (!Cypress.env('TEXT_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="text"' }).then((materialType) => {
+      Cypress.env('TEXT_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('TEXT_MATERIAL_TYPE');
+  }
+});
+
+Cypress.Commands.add('getDvdMaterialType', () => {
+  if (!Cypress.env('DVD_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialType) => {
+      Cypress.env('DVD_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('DVD_MATERIAL_TYPE');
+  }
+});
+
+Cypress.Commands.add('getDefaultMaterialType', () => {
+  return cy.getBookMaterialType();
 });
 
 // TODO: update tests where cypress env is still used

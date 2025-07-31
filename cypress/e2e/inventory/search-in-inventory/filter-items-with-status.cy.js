@@ -25,7 +25,7 @@ describe('Inventory', () => {
         cy.login(userProperties.username, userProperties.password);
         cy.getAdminToken()
           .then(() => {
-            cy.getMaterialTypes({ query: 'name="book"' }).then((res) => {
+            cy.getBookMaterialType().then((res) => {
               testData.materialType = res.id;
             });
             cy.getLocations({ limit: 1 }).then((res) => {

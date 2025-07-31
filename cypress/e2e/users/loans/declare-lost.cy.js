@@ -77,7 +77,7 @@ describe('Loans', () => {
             }).then((loanType) => {
               testData.loanTypeId = loanType.id;
             });
-            cy.getMaterialTypes({ limit: 1 });
+            cy.getDefaultMaterialType();
             cy.getInstanceTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });

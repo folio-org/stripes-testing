@@ -6,16 +6,17 @@ import {
   Callout,
   KeyValue,
   Link,
+  MessageBanner,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
-  MessageBanner,
   Pane,
   Section,
   Tooltip,
   matching,
 } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
@@ -23,7 +24,6 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
-import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -56,6 +56,9 @@ const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings
 const versionHistoryButton = Button({ icon: 'clock' });
 const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
+const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
+const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -123,7 +126,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1500);
+  cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
 
@@ -362,9 +365,9 @@ export default {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
   },
 
-  openHoldingView: () => {
+  openHoldingView: (actionsShown = true) => {
     cy.do(Button('View holdings').click());
-    cy.expect(actionsButton.exists());
+    if (actionsShown) cy.expect(actionsButton.exists());
   },
 
   openHoldingItem({ name, barcode, shouldOpen = true }) {
@@ -624,7 +627,7 @@ export default {
   },
 
   addHoldings: () => {
-    cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
+    cy.do(addHoldingsButton.click());
     InventoryNewHoldings.waitLoading();
   },
 
@@ -642,6 +645,11 @@ export default {
   exportInstanceMarc: () => {
     cy.wait(1000);
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
+  },
+
+  exportInstanceMarcButtonAbsent: () => {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
   },
 
   setRecordForDeletion: () => {
@@ -893,5 +901,29 @@ export default {
     if (code) matchingString += code;
     if (source) matchingString += source;
     cy.expect(formatsList.find(MultiColumnListRow(including(matchingString))).exists());
+  },
+
+  verifyAddHoldingsButtonIsAbsent() {
+    cy.expect(addHoldingsButton.absent());
+  },
+
+  verifyAddItemButtonIsAbsent({ holdingName } = {}) {
+    const holdingSection = rootSection.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).absent());
+  },
+
+  verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        classificationAccordion
+          .find(listClassifications)
+          .find(MultiColumnListCell({ columnIndex: 1, content: classificationNumber }))
+          .find(clipboardIcon)
+          .click(),
+      );
+      cy.expect(Callout(clipboardCopyCalloutText(classificationNumber)).exists());
+    }).then(() => {
+      cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
+    });
   },
 };
