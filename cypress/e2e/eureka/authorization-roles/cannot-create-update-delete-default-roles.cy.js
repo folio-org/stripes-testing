@@ -77,14 +77,20 @@ describe('Eureka', () => {
           );
           console.log('C794509 [BEFORE block] after assignCapabilitiesToExistingUser');
           cy.log('C794509 [BEFORE block] after assignCapabilitiesToExistingUser');
-          cy.login(testData.user.username, testData.user.password);
-          TopMenuNavigation.navigateToApp(
-            APPLICATION_NAMES.SETTINGS,
-            SETTINGS_SUBSECTION_AUTH_ROLES,
-          );
-          console.log('C794509 [BEFORE block] after login');
-          cy.log('C794509 [BEFORE block] after login');
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              SETTINGS_SUBSECTION_AUTH_ROLES,
+            );
+            console.log('C794509 [BEFORE block] after login');
+            cy.log('C794509 [BEFORE block] after login');
+            AuthorizationRoles.waitContentLoading();
+            cy.reload();
+          }, 20_000);
           AuthorizationRoles.waitContentLoading();
+          console.log('C794509 [BEFORE block] after authn/refresh');
+          cy.log('C794509 [BEFORE block] after authn/refresh');
         });
       });
 
