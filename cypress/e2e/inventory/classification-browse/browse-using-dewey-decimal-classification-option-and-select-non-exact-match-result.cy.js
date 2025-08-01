@@ -116,8 +116,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468145 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468145'] },
+      'C794535 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794535'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,

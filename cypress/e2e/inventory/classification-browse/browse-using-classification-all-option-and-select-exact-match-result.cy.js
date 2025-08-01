@@ -108,8 +108,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466323 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466323'] },
+      'C794531 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794531'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
