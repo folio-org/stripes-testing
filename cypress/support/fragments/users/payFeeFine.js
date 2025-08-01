@@ -13,10 +13,14 @@ const confirmationModal = Modal(including('Confirm fee/fine'));
 const amountTextfield = rootModal.find(TextField({ id: 'amount' }));
 const submitButton = rootModal.find(Button({ id: 'submit-button' }));
 const confirmButton = confirmationModal.find(Button('Confirm'));
+const warningModal = Modal({ id: 'warning-modal' });
 
 export default {
   waitLoading: () => {
     cy.expect(rootModal.exists());
+  },
+  waitWarningLoading: () => {
+    cy.expect(warningModal.exists());
   },
   checkAmount: (amount) => cy.expect(amountTextfield.has({ value: amount.toFixed(2) })),
   setPaymentMethod: ({ name: paymentMethodName }) => {
@@ -52,5 +56,13 @@ export default {
   }),
   verifySaveIsDisabled: () => {
     cy.expect(rootModal.find(Button({ id: 'submit-button' })).is({ disabled: true }));
+  },
+
+  verifyContinueIsDisabled: () => {
+    cy.expect(warningModal.find(Button('Continue')).is({ disabled: true }));
+  },
+
+  verifyDeselectToContinueText: () => {
+    cy.expect(warningModal.find(HTML(including('Deselect to continue'))).exists());
   },
 };

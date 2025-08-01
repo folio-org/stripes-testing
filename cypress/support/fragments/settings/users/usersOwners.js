@@ -11,6 +11,7 @@ import {
   ValueChipRoot,
   HTML,
   including,
+  Callout,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import { getTestEntityValue } from '../../../utils/stringTools';
@@ -22,6 +23,7 @@ import SettingsPane, {
 } from '../settingsPane';
 
 const defaultServicePoints = ['Circ Desk 1', 'Circ Desk 2', 'Online'];
+const associatedServicePoint = MultiSelect({ ariaLabelledby: 'associated-service-point-label' });
 
 const fillOwner = ({ name, description, servicePoint }, rowIndex = 2) => {
   const index = rowIndex - startRowIndex;
@@ -33,11 +35,7 @@ const fillOwner = ({ name, description, servicePoint }, rowIndex = 2) => {
   }
   cy.wait(500);
   if (servicePoint) {
-    cy.do(
-      tableWithOwners
-        .find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' }))
-        .select(servicePoint),
-    );
+    cy.do(associatedServicePoint.select(servicePoint));
   }
   cy.wait(500);
 };
@@ -103,6 +101,11 @@ export default {
     SettingsPane.clickSaveBtn();
     cy.expect(cy.expect(tableWithOwners.find(MultiColumnListCell(name)).exists()));
   },
+
+  clickSaveBtn() {
+    cy.do(Button('Save').click());
+  },
+
   editOwner(owner, { name, description }) {
     cy.then(() => tableWithOwners.find(MultiColumnListCell(owner)).row()).then((rowIndex) => {
       SettingsPane.clickEditBtn({ rowIndex });
@@ -110,6 +113,14 @@ export default {
       SettingsPane.clickSaveBtn({ rowIndex });
     });
   },
+
+  startEditOwner(owner, { name, description }) {
+    cy.then(() => tableWithOwners.find(MultiColumnListCell(owner)).row()).then((rowIndex) => {
+      SettingsPane.clickEditBtn({ rowIndex });
+      fillOwner({ name, description }, rowIndex);
+    });
+  },
+
   deleteOwner(owner) {
     if (owner) {
       cy.then(() => tableWithOwners.find(MultiColumnListCell(owner)).row()).then((rowIndex) => {
@@ -122,11 +133,7 @@ export default {
     cy.expect(Modal('Delete Fee/fine owner').absent());
   },
   checkUsedServicePoints(usedServicePoints) {
-    cy.do(
-      tableWithOwners
-        .find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' }))
-        .open(),
-    );
+    cy.do(associatedServicePoint.open());
     usedServicePoints.forEach((userServicePoint) => cy.expect(MultiSelectOption(userServicePoint).absent()));
   },
   unselectExistingServicePoint(usedServicePoint) {
@@ -172,19 +179,11 @@ export default {
   },
 
   checkFreeServicePointPresence(freeServicePoint) {
-    cy.do(
-      tableWithOwners
-        .find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' }))
-        .open(),
-    );
+    cy.do(associatedServicePoint.open());
     cy.expect(MultiSelectOption(freeServicePoint).exists());
   },
   multiCheckFreeServicePointPresence(servicePoints) {
-    cy.do(
-      tableWithOwners
-        .find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' }))
-        .open(),
-    );
+    cy.do(associatedServicePoint.open());
     servicePoints.forEach((servicePoint) => {
       cy.expect(MultiSelectOption(servicePoint.name).exists());
     });
@@ -216,6 +215,49 @@ export default {
       path: `owners/${owner.id}`,
       body: getAddServicePointsToOwnerPayload(owner, servicePoints),
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  verifyMultiSelectAppearance() {
+    cy.do(associatedServicePoint.open());
+    cy.wait(500);
+    cy.expect(HTML({ className: including('multiSelectMenu') }).exists());
+    cy.do(associatedServicePoint.close());
+  },
+
+  selectServicePoint(servicePointName) {
+    cy.do(MultiSelectOption(servicePointName).click());
+  },
+
+  selectMultipleServicePoints(servicePointName) {
+    cy.do(associatedServicePoint.open());
+    cy.do(
+      HTML({ className: including('multiSelectMenu') })
+        .find(MultiSelectOption(servicePointName))
+        .click(),
+    );
+    cy.do(associatedServicePoint.close());
+    cy.wait(1000);
+    this.removeServicePoint();
+    cy.wait(500);
+  },
+
+  removeServicePoint() {
+    cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifySuccessfulCallout(type) {
+    cy.expect(Callout(including(type)).exists());
+  },
+
+  verifyRemovedServicePoint(owner, servicePointName) {
+    cy.then(() => tableWithOwners.find(MultiColumnListCell(owner)).row()).then((rowIndex) => {
+      cy.expect(
+        tableWithOwners
+          .find(EditableListRow({ index: rowIndex }))
+          .find(HTML({ text: including(servicePointName) }))
+          .absent(),
+      );
     });
   },
 };
