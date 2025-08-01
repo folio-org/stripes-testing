@@ -110,8 +110,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468140 Select exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468140'] },
+      'C794533 Select exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794533'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
