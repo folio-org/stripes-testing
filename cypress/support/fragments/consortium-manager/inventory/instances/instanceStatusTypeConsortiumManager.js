@@ -1,11 +1,11 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
-import ConsortiumManagerApp from '../../consortiumManagerApp';
+import { MultiColumnListHeader, NavListItem, Spinner } from '../../../../../../interactors';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
+const paneTitle = 'Instance status type';
+const optionName = 'Instance status types';
 const id = uuid();
-const newButton = Button('+ New');
 
 export default {
   createViaApi(type) {
@@ -74,12 +74,13 @@ export default {
   },
 
   waitLoading() {
-    ConsortiaControlledVocabularyPaneset.waitLoading('Instance status type');
+    ConsortiaControlledVocabularyPaneset.waitLoading(paneTitle);
   },
 
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Instance status types');
-    cy.expect(newButton.is({ disabled: false }));
+    cy.expect(Spinner().absent());
+    cy.do(NavListItem(optionName).click());
+    this.waitLoading();
     ['Name', 'Code', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
