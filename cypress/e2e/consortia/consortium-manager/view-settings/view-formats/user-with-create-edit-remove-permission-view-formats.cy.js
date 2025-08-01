@@ -1,10 +1,7 @@
 import moment from 'moment';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_ACTIONS,
-  CAPABILITY_TYPES,
-} from '../../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -47,25 +44,6 @@ describe('Consortia', () => {
           },
         };
 
-        const capabSetsToAssignCentral = [
-          {
-            type: CAPABILITY_TYPES.DATA,
-            resource: 'UI-Consortia-Settings Consortium-Manager',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            type: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Inventory Settings Instance-Formats',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-        ];
-        const capabSetsToAssignMembers = [
-          {
-            type: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Inventory Settings Instance-Formats',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-        ];
         let tempUserC410719;
 
         before('Create test data', () => {
@@ -80,14 +58,8 @@ describe('Consortia', () => {
           });
 
           cy.setTenant(Affiliations.College);
-          cy.createTempUser([]).then((userProperties) => {
+          cy.createTempUser([Permissions.crudFormats.gui]).then((userProperties) => {
             tempUserC410719 = userProperties;
-            // Set up capabilities in College (member-1) tenant - user's home tenant
-            cy.assignCapabilitiesToExistingUser(
-              tempUserC410719.userId,
-              [],
-              capabSetsToAssignMembers,
-            );
             Formats.createViaApi(testData.collegeLocalFormat).then((formatId) => {
               testData.collegeLocalFormat.id = formatId.body.id;
             });
@@ -95,19 +67,16 @@ describe('Consortia', () => {
             cy.resetTenant();
             // Assign affiliations: user created in College (member-1), affiliated with Central and University (member-2)
             cy.assignAffiliationToUser(Affiliations.University, tempUserC410719.userId);
-            cy.assignCapabilitiesToExistingUser(
-              tempUserC410719.userId,
-              [],
-              capabSetsToAssignCentral,
-            );
+            cy.assignPermissionsToExistingUser(tempUserC410719.userId, [
+              Permissions.consortiaSettingsConsortiumManagerEdit.gui,
+              Permissions.crudFormats.gui,
+            ]);
 
-            // Set up capabilities in University (member-2) tenant
+            // Set up permissions in University (member-2) tenant
             cy.setTenant(Affiliations.University);
-            cy.assignCapabilitiesToExistingUser(
-              tempUserC410719.userId,
-              [],
-              capabSetsToAssignMembers,
-            );
+            cy.assignPermissionsToExistingUser(tempUserC410719.userId, [
+              Permissions.crudFormats.gui,
+            ]);
             Formats.createViaApi(testData.universityLocalFormat).then((formatId) => {
               testData.universityLocalFormat.id = formatId.body.id;
             });
