@@ -714,6 +714,12 @@ export default {
     internal: 'ui-data-export.edit',
     gui: 'Data export: Can upload files, export, download files and view logs',
   },
+  // TODO: move to capability when it will be implemented
+  consortiaCentralAll: {
+    internal: 'consortia.data-import.central-record-update.all',
+    gui: 'All Data Import shared record update permissions',
+  },
+
   // Loans
   loansAll: {
     internal: 'ui-users.loans.all',
