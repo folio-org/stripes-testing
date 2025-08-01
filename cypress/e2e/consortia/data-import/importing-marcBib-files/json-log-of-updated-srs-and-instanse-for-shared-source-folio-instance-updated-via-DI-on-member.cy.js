@@ -131,7 +131,7 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(testData.user.userId);
-        InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       });
     });
 
