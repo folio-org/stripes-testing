@@ -15,6 +15,7 @@ import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
@@ -106,12 +107,15 @@ describe('Invoices', () => {
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiInvoicesPayInvoices.gui,
+      permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.ordersPath);
     });
   });
 
@@ -122,7 +126,7 @@ describe('Invoices', () => {
 
   it(
     'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

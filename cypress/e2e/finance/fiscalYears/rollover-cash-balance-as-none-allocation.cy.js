@@ -203,7 +203,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C376611 Rollover allocation with "None" option selected in "Rollover budget value" dropdown (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
