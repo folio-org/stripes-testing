@@ -94,7 +94,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
             InventoryInstance.openHoldingsAccordion(location.name);
             InventoryInstance.openItemByBarcodeAndIndex('No barcode');
             InventoryItems.edit();
@@ -103,7 +103,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
             InventoryInstance.openHoldingsAccordion(location.name);
             InventoryInstance.openItemByBarcodeAndIndex('No barcode');
             InventoryItems.edit();
@@ -112,7 +112,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
             InventoryInstance.openHoldingsAccordion(location.name);
             InventoryInstance.openItemByBarcodeAndIndex('No barcode');
             InventoryItems.edit();
@@ -121,7 +121,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
           });
 
           TopMenuNavigation.navigateToApp('Check in');
