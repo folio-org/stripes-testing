@@ -388,6 +388,10 @@ export default {
     cy.expect(exportInstanceMarcButton.absent());
   },
 
+  selectInTransitItemsReportCsvOption() {
+    cy.do(Button({ id: 'dropdown-clickable-get-report' }).click());
+  },
+
   verifyToastNotificationAfterExportInstanceMarc(recordHrid) {
     const currentDate = DateTools.getFormattedDate({ date: new Date() });
 

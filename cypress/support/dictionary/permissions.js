@@ -325,6 +325,11 @@ export default {
     internal: 'ui-inventory.settings.displaySettings',
     gui: 'Settings (Inventory): Can view and edit general settings',
   },
+  // TODO: move to capability when it will be implemented
+  inventoryCreateAndDownloadInTransitItemsReport: {
+    internal: 'ui-inventory.items.in-transit-report.create',
+    gui: 'Inventory: Create and download In transit items report',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
