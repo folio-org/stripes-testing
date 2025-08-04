@@ -1,7 +1,9 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -9,7 +11,8 @@ import Users from '../../../support/fragments/users/users';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      permanentLocationUI: LOCATION_NAMES.ANNEX_UI,
+      firstLocationUI: LOCATION_NAMES.ANNEX_UI,
+      secondLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
       itemBarcode: uuid(),
     };
 
@@ -22,7 +25,7 @@ describe('Inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${testData.permanentLocationUI}"` }).then((locations) => {
+          cy.getLocations({ query: `name="${testData.firstLocationUI}"` }).then((locations) => {
             testData.locationsId = locations.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -54,6 +57,16 @@ describe('Inventory', () => {
             ],
           }).then((specialInstanceIds) => {
             testData.testInstanceIds = specialInstanceIds;
+
+            cy.getLocations({ query: `name="${testData.secondLocationUI}"` }).then((locations) => {
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.testInstanceIds.instanceId,
+                  permanentLocationId: locations.id,
+                  sourceId: folioSource.id,
+                });
+              });
+            });
           });
         });
 
@@ -77,18 +90,35 @@ describe('Inventory', () => {
     });
 
     it(
-      'C519981 Check "Move items within an Instance" action for Instance with one holding (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C519981'] },
+      'C519985 Check "Move items within an Instance" action for Instance with more than one holding (folijet)',
+      { tags: ['extendedPath', 'folijet', 'C519985'] },
       () => {
         InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.moveItemsWithinAnInstance();
 
         const isEnubled = true;
-        InstanceRecordView.verifyMoveToButtonState(testData.permanentLocationUI, isEnubled);
-        InstanceRecordView.openHoldingsAccordion(testData.permanentLocationUI);
-        InstanceRecordView.verifyIsItemCreated(testData.itemBarcode);
-        InstanceRecordView.verifyMoveToButtonState(testData.permanentLocationUI, isEnubled);
+        InstanceRecordView.verifyMoveToButtonState(testData.firstLocationUI, isEnubled);
+        InventoryInstance.checkHoldingsTableContent({
+          name: testData.firstLocationUI,
+          records: [{ barcode: testData.itemBarcode, status: ITEM_STATUS_NAMES.AVAILABLE }],
+          columnIndex: 2,
+        });
+        InventoryInstance.moveItemToAnotherHolding({
+          fromHolding: testData.firstLocationUI,
+          toHolding: testData.secondLocationUI,
+          shouldOpen: false,
+          itemMoved: true,
+        });
+        InventoryInstance.checkHoldingsTableContent({
+          name: testData.firstLocationUI,
+        });
+        InventoryInstance.checkHoldingsTableContent({
+          name: testData.secondLocationUI,
+          records: [{ barcode: testData.itemBarcode, status: ITEM_STATUS_NAMES.AVAILABLE }],
+          columnIndex: 2,
+          shouldOpen: true,
+        });
       },
     );
   });

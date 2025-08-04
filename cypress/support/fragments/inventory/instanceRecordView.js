@@ -900,16 +900,16 @@ export default {
     cy.do(Button({ id: 'move-instance-items' }).click());
   },
 
-  verifyMoveToButtonState(isEnubled = true) {
+  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
     if (isEnubled) {
       cy.expect(
-        rootSection
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
           .find(Button({ id: including('clickable-move-holdings-') }))
           .has({ disabled: true }),
       );
     } else {
       cy.expect(
-        rootSection
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
           .find(Button({ id: including('clickable-move-holdings-') }))
           .has({ disabled: false }),
       );
