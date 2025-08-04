@@ -70,6 +70,7 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -199,6 +200,7 @@ describe('Bulk-edit', () => {
         verifyFileContent(changedRecordsFileName, modifiedValueSets);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
