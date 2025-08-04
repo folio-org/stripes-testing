@@ -73,10 +73,7 @@ describe('Inventory', () => {
           });
         });
 
-      cy.createTempUser([
-        Permissions.inventoryCreateAndDownloadInTransitItemsReport.gui,
-        Permissions.uiInventoryViewInstances.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password, {
@@ -95,13 +92,10 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466097 Check "In transit items report (CSV)" option in Actions menu (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C466097'] },
+      'C466098 Check "In transit items report (CSV)" option is NOT present in Actions menu without permission (folijet)',
+      { tags: ['extendedPath', 'folijet', 'C466098'] },
       () => {
-        InventoryInstances.validateOptionInActionsMenu('In transit items report (CSV)', true);
-        InventoryInstances.selectInTransitItemsReportCsvOption();
-        const present = true;
-        FileManager.verifyFileIncludes('InTransit.csv', [testData.itemBarcode], present);
+        InventoryInstances.validateOptionInActionsMenu('In transit items report (CSV)', false);
       },
     );
   });
