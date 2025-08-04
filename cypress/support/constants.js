@@ -792,6 +792,195 @@ export const INVENTORY_008_FIELD_S_L_DROPDOWN = {
   2: '2 - Integrated entry',
 };
 
+export const AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
+  GEOSUBD: 'Geo Subd',
+  ROMAN: 'Roman',
+  LANG: 'Lang',
+  KINDREC: 'Kind rec',
+  CATRULES: 'CatRules',
+  SHSYS: 'SH Sys',
+  SERIES: 'Series',
+  NUMBSERIES: 'Numb Series',
+  MAINUSE: 'Main use',
+  SUBJUSE: 'Subj use',
+  SERIESUSE: 'Series use',
+  SUBDTYPE: 'Subd type',
+  GOVTAG: 'Govt Ag',
+  REFEVAL: 'RefEval',
+  RECUPD: 'RecUpd',
+  PERSNAME: 'Pers Name',
+  LEVELEST: 'Level Est',
+  MODRECEST: 'Mod Rec Est',
+  SOURCE: 'Source',
+};
+
+export const AUTHORITY_008_FIELD_GEOSUBD_DROPDOWN = {
+  SL: '\\ - Not subdivided geographically',
+  D: 'd - Subdivided geographically-direct',
+  I: 'i - Subdivided geographically-indirect',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_ROMAN_DROPDOWN = {
+  A: 'a - International standard',
+  B: 'b - National standard',
+  C: 'c - National library association standard',
+  D: 'd - National library or bibliographic agency standard',
+  E: 'e - Local standard',
+  F: 'f - Standard of unknown origin',
+  G: 'g - Conventional romanization or conventional form of name in language of cataloging agency',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_LANG_DROPDOWN = {
+  SL: '\\ - No information provided',
+  B: 'b - English and French',
+  E: 'e - English only',
+  F: 'f - French only',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_KINDREC_DROPDOWN = {
+  A: 'a - Established heading',
+  B: 'b - Untraced reference',
+  C: 'c - Traced reference',
+  D: 'd - Subdivision',
+  E: 'e - Node label',
+  F: 'f - Established heading and subdivision',
+  G: 'g - Reference and subdivision',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_CATRULES_DROPDOWN = {
+  A: 'a - Earlier rules',
+  B: 'b - AACR 1',
+  C: 'c - AACR 2',
+  D: 'd - AACR 2 compatible heading',
+  Z: 'z - Other',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SHSYS_DROPDOWN = {
+  A: 'a - Library of Congress Subject Headings',
+  B: "b - Library of Congress Children's and Young Adults' Subject Headings",
+  C: 'c - Medical Subject Headings',
+  D: 'd - National Agricultural Library subject authority file',
+  K: 'k - Canadian Subject Headings',
+  N: 'n - Not applicable',
+  R: 'r - Art and Architecture Thesaurus',
+  S: 's - Sears List of Subject Heading',
+  V: 'v - Répertoire de vedettes-matière',
+  Z: 'z - Other',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SERIES_DROPDOWN = {
+  A: 'a - Monographic series',
+  B: 'b - Multipart item',
+  C: 'c - Series-like phrase',
+  N: 'n - Not applicable',
+  Z: 'z - Other',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_NUMBSERIES_DROPDOWN = {
+  A: 'a - Numbered',
+  B: 'b - Unnumbered',
+  C: 'c - Numbering varies',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_MAINUSE_DROPDOWN = {
+  A: 'a - Appropriate',
+  B: 'b - Not appropriate',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SUBJUSE_DROPDOWN = {
+  A: 'a - Appropriate',
+  B: 'b - Not appropriate',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SERIESUSE_DROPDOWN = {
+  A: 'a - Appropriate',
+  B: 'b - Not appropriate',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SUBDTYPE_DROPDOWN = {
+  A: 'a - Topical',
+  B: 'b - Form',
+  C: 'c - Chronological',
+  D: 'd - Geographic',
+  E: 'e - Language',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_GOVTAG_DROPDOWN = {
+  SL: '\\ - Not a government agency',
+  A: 'a - Autonomous or semi-autonomous component',
+  C: 'c - Multilocal',
+  F: 'f - Federal/national',
+  I: 'i - International intergovernmental',
+  L: 'l - Local',
+  M: 'm - Multistate',
+  O: 'o - Government agency-type undetermined',
+  S: 's - State, provincial, territorial, dependent, etc.',
+  U: 'u - Unknown if heading is government agency',
+  Z: 'z - Other',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_REFEVAL_DROPDOWN = {
+  A: 'a - Tracings are consistent with the heading',
+  B: 'b - Tracings are not necessarily consistent with the heading',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_RECUPD_DROPDOWN = {
+  A: 'a - Record can be used',
+  B: 'b - Record is being updated',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_PERSNAME_DROPDOWN = {
+  A: 'a - Differentiated personal name',
+  B: 'b - Undifferentiated personal name',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_LEVELEST_DROPDOWN = {
+  A: 'a - Fully established',
+  B: 'b - Memorandum',
+  C: 'c - Provisional',
+  D: 'd - Preliminary',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_MODREC_DROPDOWN = {
+  SL: '\\ - Not modified',
+  S: 's - Shortened',
+  X: 'x - Missing characters',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SOURCE_DROPDOWN = {
+  SL: '\\ - National bibliographic agency',
+  S: 'c - Cooperative cataloging program',
+  D: 'd - Other',
+  U: 'u - Unknown',
+  NO: '| - No attempt to code',
+};
+
 export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
