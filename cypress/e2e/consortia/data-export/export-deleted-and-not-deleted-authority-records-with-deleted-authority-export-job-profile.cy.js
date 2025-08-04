@@ -112,8 +112,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C554642 ECS | Export deleted and not deleted Authority records from Central tenant with Deleted authority export job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C554642'] },
+      'C554642 ECS | Export deleted and not deleted Authority records from Central tenant with Deleted authority export job profile (consortia) (firebird)',
+      { tags: ['criticalPathECS', 'firebird', 'C554642'] },
       () => {
         // Step 1: Upload .csv file with UUIDs
         ExportFile.uploadFile(authorityUUIDsFileName);
