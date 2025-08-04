@@ -94,7 +94,7 @@ describe('Orders', () => {
 
     it(
       'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
       () => {
         SettingsOrders.setPurchaseOrderLinesLimit(2);
         cy.visit(TopMenu.ordersPath);

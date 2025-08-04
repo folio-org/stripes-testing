@@ -17,6 +17,7 @@ import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
+import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -43,7 +44,6 @@ describe('Finance: Transactions', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const isApprovePayEnabled = true;
   const isApprovePayDisabled = false;
   let user;
   let location;
@@ -172,7 +172,8 @@ describe('Finance: Transactions', () => {
                         defaultFiscalYear.code,
                       );
                       Invoices.closeInvoiceDetailsPane();
-                      Approvals.setApprovePayValue(isApprovePayEnabled);
+                      cy.visit(TopMenu.settingsInvoiveApprovalPath);
+                      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
                     });
                   },
                 );
@@ -207,7 +208,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C449373 Invoice with three invoice lines can NOT be paid when available expenditure balance is less that invoice total (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

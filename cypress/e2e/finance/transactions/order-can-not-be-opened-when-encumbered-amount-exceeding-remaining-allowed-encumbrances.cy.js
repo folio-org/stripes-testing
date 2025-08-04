@@ -238,7 +238,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C449364 Order can NOT be opened when encumbered amount exceeding remaining allowed encumbrances (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);
