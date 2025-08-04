@@ -48,7 +48,7 @@ describe('MARC', () => {
 
       before('Creating user and uploading files', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375231');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375231Beethoven');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,

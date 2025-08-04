@@ -67,6 +67,7 @@ describe('Data Export', () => {
         );
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(callout);
+        ExportFieldMappingProfiles.scrollDownIfListOfResultsIsLong();
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(mappingProfile.name);
         SettingsDataExport.verifyPageTitle('Data export settings - Field mapping profiles - FOLIO');
         ExportJobProfiles.clickProfileNameFromTheList(mappingProfile.name);
@@ -77,6 +78,7 @@ describe('Data Export', () => {
           mappingProfile.newDescription,
         );
         ExportFieldMappingProfiles.saveMappingProfile();
+        ExportFieldMappingProfiles.scrollDownIfListOfResultsIsLong();
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(mappingProfile.newName);
         ExportFieldMappingProfiles.clickProfileNameFromTheList(mappingProfile.newName);
         SettingsDataExport.verifyPageTitle(

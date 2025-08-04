@@ -178,6 +178,17 @@ export default {
     cy.do(checkInButton.click());
   },
 
+  openActions() {
+    cy.wait(1000);
+    cy.do(availableActionsButton.click());
+    cy.wait(500);
+  },
+
+  clickLoanDetailsOption() {
+    cy.do(loanDetailsButton.click());
+    cy.wait(1000);
+  },
+
   openLoanDetails(username) {
     cy.wait(1000);
     cy.do(availableActionsButton.click());

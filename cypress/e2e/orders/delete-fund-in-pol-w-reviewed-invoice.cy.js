@@ -150,7 +150,8 @@ describe('Orders', () => {
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
-          name: testData.fund.name,
+          name: testData.fund.code,
+          expenseClass: '-',
           currentEncumbrance: '-',
           initialEncumbrance: '-',
         },

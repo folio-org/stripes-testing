@@ -140,6 +140,10 @@ describe('Check in', () => {
           CheckInPane.verifyResultCells();
           CheckInPane.checkResultsInTheRow(checkInResultsData);
           CheckInActions.checkActionsMenuOptions();
+          // workaround for UICHKOUT-960
+          CheckInActions.openActions();
+          CheckInActions.clickLoanDetailsOption();
+          CheckInActions.openCheckInPane();
           CheckInActions.openLoanDetails(userData.username);
           CheckInActions.openCheckInPane();
           CheckInActions.openPatronDetails(userData.username);

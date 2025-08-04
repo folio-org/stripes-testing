@@ -9,6 +9,7 @@ import {
   KeyValue,
   List,
   ListItem,
+  MessageBanner,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -547,7 +548,7 @@ export default {
   },
 
   hasSaveError(errorMessage) {
-    cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
+    cy.expect(rootSection.find(MessageBanner()).has({ textContent: errorMessage }));
   },
   startFeeFineAdding() {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());

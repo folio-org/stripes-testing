@@ -59,6 +59,7 @@ describe('Data Export', () => {
       () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.scrollIfListOfResultsIsLong('top');
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
 

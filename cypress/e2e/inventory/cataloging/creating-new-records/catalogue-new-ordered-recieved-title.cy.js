@@ -29,7 +29,7 @@ describe('Inventory', () => {
     'Cataloging -> Creating new records',
     {
       retries: {
-        runMode: 1,
+        runMode: 0,
       },
     },
     () => {

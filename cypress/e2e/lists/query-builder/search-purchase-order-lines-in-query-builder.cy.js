@@ -46,7 +46,7 @@ describe('Lists', () => {
         operator: QUERY_OPERATIONS.EQUAL,
         filedType: 'select',
         value: 'False',
-        query: 'po.approved == false',
+        query: 'po.approved == False',
       },
       {
         testCaseId: 'C440058',
@@ -63,8 +63,8 @@ describe('Lists', () => {
         field: 'POL exchange rate',
         operator: QUERY_OPERATIONS.GREATER_THAN,
         filedType: 'input',
-        value: '10',
-        query: 'pol_exchange_rate > 10',
+        value: '0',
+        query: 'pol_exchange_rate > 0',
       },
       {
         testCaseId: 'C442846',
@@ -91,7 +91,7 @@ describe('Lists', () => {
         operator: QUERY_OPERATIONS.LESS_THAN,
         filedType: 'input',
         value: '12/12/2050',
-        query: 'po.updated_at < 12/12/50',
+        query: 'po.updated_at < 12/12/2050',
       },
       {
         testCaseId: 'C451553',
@@ -100,7 +100,7 @@ describe('Lists', () => {
         operator: QUERY_OPERATIONS.NOT_IN,
         filedType: 'input',
         value: 'test',
-        query: 'pol.id not in [test]',
+        query: 'pol.id not in test',
       },
     ];
 

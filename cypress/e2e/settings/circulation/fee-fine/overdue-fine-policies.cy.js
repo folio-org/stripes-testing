@@ -251,6 +251,12 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       });
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(instanceData.itemBarcode);
+
+      // workaround for UICHKOUT-960
+      CheckInActions.openActions();
+      CheckInActions.clickLoanDetailsOption();
+      CheckInActions.openCheckInPane();
+
       CheckOutActions.openLoanDetails();
       CheckOutActions.changeDueDateToPast(minutes);
 

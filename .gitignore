@@ -19,3 +19,5 @@ videos
 .env
 report.txt
 scripts/update_permission_names/permissions_backups/*
+
+mcp.json

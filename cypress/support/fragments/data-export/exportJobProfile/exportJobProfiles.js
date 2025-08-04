@@ -40,7 +40,7 @@ export default {
     });
   },
 
-  scrollDownIfListOfResultsIsLong() {
+  scrollIfListOfResultsIsLong(direction = 'bottom') {
     cy.wait(2000);
     // Scroll in case the list of results is long
     const scrollableSelector = '#search-results-list [class^=mclScrollable]';
@@ -50,13 +50,13 @@ export default {
       const hasVerticalScrollbar = $element.get(0).scrollHeight > $element.get(0).clientHeight;
 
       if (hasVerticalScrollbar) {
-        cy.get(scrollableSelector).scrollTo('bottom');
+        cy.get(scrollableSelector).scrollTo(direction);
       }
     });
   },
 
   verifyJobProfileInTheTable(jobProfileName) {
-    this.scrollDownIfListOfResultsIsLong();
+    this.scrollIfListOfResultsIsLong();
 
     cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })));
   },
@@ -101,7 +101,7 @@ export default {
   }),
 
   verifyDefaultProfiles() {
-    this.scrollDownIfListOfResultsIsLong();
+    this.scrollIfListOfResultsIsLong();
 
     cy.expect([
       MultiColumnListRow(including('Default authority export job profile')).exists(),

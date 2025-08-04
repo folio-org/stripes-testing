@@ -59,10 +59,14 @@ describe('MARC', () => {
     });
 
     beforeEach(() => {
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
+        cy.reload();
+        InventorySearchAndFilter.waitLoading();
+      }, 20_000);
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
       InventorySearchAndFilter.selectViewHoldings();
       // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.

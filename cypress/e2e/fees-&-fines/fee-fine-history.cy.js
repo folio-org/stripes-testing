@@ -1,7 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import AppPaths from '../../support/fragments/app-paths';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
@@ -9,12 +8,16 @@ import RefundReasons from '../../support/fragments/settings/users/refundReasons'
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
+import TopMenu from '../../support/fragments/topMenu';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFine from '../../support/fragments/users/payFeeFine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Fees&Fines', () => {
   describe(
@@ -136,11 +139,19 @@ describe('Fees&Fines', () => {
         () => {
           // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(60000);
+          cy.wait(10000);
           cy.login(userData.username, userData.password, {
-            path: AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id),
-            waiter: FeeFinesDetails.waitLoading,
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
           });
+
+          UsersSearchPane.searchByKeywords(userData.username);
+          UsersSearchPane.selectUserFromList(userData.username);
+          UsersCard.waitLoading();
+          UsersCard.openFeeFines();
+          UsersCard.viewAllFeesFines();
+          UserAllFeesFines.clickOnRowByIndex(0);
+
           FeeFinesDetails.openActions();
           FeeFinesDetails.openPayModal();
           PayFeeFine.checkAmount(feeFineAccount.amount);
