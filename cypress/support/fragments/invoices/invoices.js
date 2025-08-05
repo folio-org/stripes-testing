@@ -653,6 +653,10 @@ export default {
     ]);
   },
 
+  verifyStatus: (status) => {
+    cy.get('#pane-invoiceLineDetails').should('contain', status);
+  },
+
   confirmInvoiceDeletion: () => {
     cy.do(
       Button('Delete', {
