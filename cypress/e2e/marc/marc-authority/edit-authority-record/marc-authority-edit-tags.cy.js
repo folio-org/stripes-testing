@@ -15,7 +15,7 @@ describe('MARC', () => {
         authority: {
           title: 'C375090DiCaprio, Leonardo',
           type: 'Authorized',
-          searchInput: 'C375090Di Caprio',
+          searchInput: 'C375090DiCaprio',
           searchOption: 'Keyword',
         },
         authority2: {
@@ -47,29 +47,32 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority.searchInput);
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority2.searchInput);
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
-              });
-            },
-          );
-        });
+        cy.then(() => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority.searchInput);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority2.searchInput);
+        }).then(() => {
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
+                });
+              },
+            );
+          });
 
-        cy.createTempUser([
-          Permissions.dataImportUploadAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+          cy.createTempUser([
+            Permissions.dataImportUploadAll.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
       });

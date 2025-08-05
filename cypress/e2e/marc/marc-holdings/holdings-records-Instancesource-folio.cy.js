@@ -27,7 +27,7 @@ describe('MARC', () => {
       });
       it(
         'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345406'] },
+        { tags: ['smoke', 'folijet', 'shiftLeft', 'C345406'] },
         () => {
           InventoryInstance.createHoldingsRecord();
           InventoryInstance.openHoldingView();
