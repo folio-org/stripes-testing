@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -19,7 +23,7 @@ const testData = {
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
   tag005value: '20240804120000.0',
   campusName: 'City Campus',
-  locationName: 'SECOND FLOOR (KU/CC/DI/2) ',
+  locationName: LOCATION_NAMES.MAIN_LIBRARY,
 };
 
 let instanceId;
@@ -36,9 +40,11 @@ describe('MARC', () => {
         testData.userProperties = createdUserProperties;
         InventoryInstances.deleteFullInstancesByTitleViaApi(testData.instanceTitle);
         cy.getAdminToken().then(() => {
-          cy.getLocations({ limit: 1 }).then((location) => {
-            testData.location = location;
-          });
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+            (location) => {
+              testData.location = location;
+            },
+          );
         });
         DataImport.uploadFileViaApi(
           testData.marc,
