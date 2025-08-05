@@ -26,6 +26,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import SearchHelper from '../finance/financeHelper';
 import OrganizationDetails from './organizationDetails';
+import DateTools from '../../utils/dateTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -298,6 +299,14 @@ export default {
       ftpSection.find(TextField('Username')).fillIn('folio'),
       ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
+    ]);
+    cy.do([
+      Checkbox({
+        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
+      }).click(),
+      schedulingSection.find(Select('Schedule period*')).choose('Daily'),
+      schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
+      schedulingSection.find(TextField('Time*')).fillIn(DateTools.getUTCDateForScheduling()),
     ]);
     cy.do(saveAndClose.click());
     cy.wait(4000);

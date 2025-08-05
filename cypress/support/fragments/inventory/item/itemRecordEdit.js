@@ -21,7 +21,7 @@ const itemEditForm = HTML({ className: including('itemForm-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
 
 const cancelBtn = itemEditForm.find(Button({ id: 'cancel-item-edit' }));
-const saveAndCloseBtn = itemEditForm.find(Button({ id: 'clickable-save-item' }));
+const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
 
 const adminDataFields = {
   barcode: administrativeDataSection.find(TextField('Barcode')),
