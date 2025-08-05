@@ -32,7 +32,7 @@ describe('Organizations', () => {
     'C421981 Making existing Organization a Donor and vice versa (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-       Organizations.searchByParameters('Name', organization.name);
+      Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.addDonorToOrganization();
