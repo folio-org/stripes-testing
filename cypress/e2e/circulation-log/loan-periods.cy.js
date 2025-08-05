@@ -90,8 +90,8 @@ describe('Circulation log', () => {
       ]).then((userProperties) => {
         userData = userProperties;
         cy.getMaterialTypes({ limit: 3 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
+          .then(() => {
+            materialTypes = Cypress.env('materialTypes');
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 3,

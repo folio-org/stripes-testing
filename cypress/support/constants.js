@@ -1112,9 +1112,11 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   RELEVANCE: 'Relevance',
 };
 export const STAFF_SLIP_NAMES = {
+  DUE_DATE_RECEIPT: 'Due date receipt',
   HOLD: 'Hold',
   PICK_SLIP: 'Pick slip',
   REQUEST_DELIVERY: 'Request delivery',
+  SEARCH_SLIP_HOLD_REQUESTS: 'Search slip (Hold requests)',
   TRANSIT: 'Transit',
 };
 

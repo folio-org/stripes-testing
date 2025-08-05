@@ -104,4 +104,23 @@ export default {
       });
     });
   },
+  checkUnknownUserInMetadata() {
+    this.findPane().then((pane) => {
+      cy.expect(
+        pane.find(Button(matching(/^Record last updated: \d{1,2}\/\d{1,2}\/\d{2,4}/))).exists(),
+      );
+      cy.do(pane.find(Button(including('Record last updated'))).click());
+      cy.wait(1000);
+      cy.expect([
+        pane.find(MetaSection({ updatedByText: including('Source: Unknown user') })).exists(),
+        pane
+          .find(
+            MetaSection({
+              createdText: matching(/^Record created: \d{1,2}\/\d{1,2}\/\d{2,4}/),
+            }),
+          )
+          .exists(),
+      ]);
+    });
+  },
 };
