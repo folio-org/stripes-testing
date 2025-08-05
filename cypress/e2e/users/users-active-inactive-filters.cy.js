@@ -150,7 +150,7 @@ describe('Users', () => {
     });
 
     it(
-      'C375239 Verify text on fee/fines popup (volaris) (extendedPath)',
+      'C375239 Verify text on fee/fines popup (volaris)',
       { tags: ['extendedPath', 'volaris', 'C375239'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.targetUser.username);

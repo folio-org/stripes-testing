@@ -42,7 +42,7 @@ describe('Settings', () => {
     });
 
     it(
-      'C503131 Verify that you can associate service points with Fee/fine owners (volaris) (extendedPath)',
+      'C503131 Verify that you can associate service points with Fee/fine owners (volaris)',
       { tags: ['extendedPath', 'volaris', 'C503131'] },
       () => {
         UsersOwners.startNewLineAdding();
