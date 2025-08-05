@@ -43,7 +43,7 @@ const uriTextarea = TextArea({ ariaLabel: 'URI' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
-    cy.do(rootForm.find(Button('Save & close')).click());
+    cy.do(Button('Save & close').click());
 
     if (holdingSaved) {
       InteractorsTools.checkCalloutMessage(
@@ -57,7 +57,7 @@ export default {
     cy.expect(callNumberField.exists());
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
-  closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
+  closeWithoutSave: () => cy.do(Button('Cancel').click()),
   fillHoldingFields({ permanentLocation, callNumber, holdingsNote, holdingType } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);

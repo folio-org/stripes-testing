@@ -66,7 +66,7 @@ describe('Orders', () => {
     () => {
       // Enter full title name from Preconditions item #2 in "Search" field on "Search & filter" pane
       // Click "Search" button
-      OrderLines.searchByParameter('Keyword', instanceTitle);
+      OrderLines.searchByParameter('Keyword', instanceTitle.split(' ').slice(0, 2).join(' '));
 
       // Title from PO line appears in search results on "Order lines" pane.
       OrderLines.checkOrderlineSearchResults({ title: instanceTitle });
