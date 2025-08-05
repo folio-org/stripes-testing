@@ -22,9 +22,11 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
-      cy.visit(TopMenu.inventoryPath);
     });
 
     afterEach('Delete all data', () => {

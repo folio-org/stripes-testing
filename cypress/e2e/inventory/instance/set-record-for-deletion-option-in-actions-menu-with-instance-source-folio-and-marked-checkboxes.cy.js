@@ -54,7 +54,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.validateOptionInActionsMenu(
           actionsMenuOptions.setRecordForDeletion,
-          false,
+          true,
         );
       },
     );

@@ -281,16 +281,16 @@ export default {
     cy.expect(bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists());
   },
 
-  verifySetCriteriaPaneItems(query = true) {
+  verifySetCriteriaPaneItems(query = true, logs = true) {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-      setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
     ]);
     this.recordTypesAccordionExpanded(true);
     this.dragAndDropAreaExists(true);
     this.isDragAndDropAreaDisabled(true);
     if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
+    if (logs) cy.expect(setCriteriaPane.find(logsToggle).exists());
   },
 
   verifySetCriteriaPaneElements() {
@@ -1316,7 +1316,10 @@ export default {
   },
 
   dragAndDropAreaExists(exists) {
-    cy.expect(HTML('Drag and drop').has({ visible: exists }));
+    cy.expect([
+      HTML('Drag and drop').has({ visible: exists }),
+      setCriteriaPane.find(HTML('Select a file with record identifiers.')).exists(),
+    ]);
   },
 
   isDragAndDropAreaDisabled(isDisabled) {

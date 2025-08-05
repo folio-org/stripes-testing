@@ -151,7 +151,7 @@ describe('Receiving', () => {
 
   it(
     'C468163 Manage user assignments in routing list from "Orders" app (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

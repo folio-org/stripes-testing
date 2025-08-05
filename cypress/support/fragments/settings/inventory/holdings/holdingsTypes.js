@@ -32,7 +32,7 @@ export default {
 
   verifyConsortiumHoldingsTypeInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -53,7 +53,7 @@ export default {
 
   verifyLocalHoldingsTypeInTheList({ name, source = 'local', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),

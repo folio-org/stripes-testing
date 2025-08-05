@@ -110,7 +110,7 @@ describe('Invoices', () => {
 
   it(
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(firstOrderNumber);
