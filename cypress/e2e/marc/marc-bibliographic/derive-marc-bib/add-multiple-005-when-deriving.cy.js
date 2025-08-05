@@ -31,19 +31,16 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFileViaApi(
-                testData.marcFile.marc,
-                testData.marcFile.fileName,
-                testData.marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdRecordIDs.push(record[testData.marcFile.propertyName].id);
-                });
-              });
-            },
-          );
+
+          DataImport.uploadFileViaApi(
+            testData.marcFile.marc,
+            testData.marcFile.fileName,
+            testData.marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdRecordIDs.push(record[testData.marcFile.propertyName].id);
+            });
+          });
         });
       });
 
@@ -63,7 +60,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C496210 Add multiple 005s when deriving "MARC Bibliographic" record (spitfire) (TaaS)',
+        'C496210 Add multiple 005s when deriving "MARC Bibliographic" record (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C496210'] },
         () => {
           // #1 Open the "Instance" record view and derive new MARC bib

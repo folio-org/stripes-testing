@@ -6,8 +6,6 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -20,6 +18,8 @@ const testData = {
   instanceTitle: 'C496215The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
   tag005value: '20240804120000.0',
+  campusName: 'City Campus',
+  locationName: 'SECOND FLOOR (KU/CC/DI/2) ',
 };
 
 let instanceId;
@@ -34,19 +34,13 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-
+        InventoryInstances.deleteFullInstancesByTitleViaApi(testData.instanceTitle);
         cy.getAdminToken().then(() => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-            testData.servicePointId = servicePoint.id;
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(testData.servicePointId)).then(
-              (res) => {
-                testData.location = res;
-              },
-            );
+          cy.getLocations({ limit: 1 }).then((location) => {
+            testData.location = location;
+            console.log(testData.location);
           });
         });
-
-        cy.getAdminToken();
         DataImport.uploadFileViaApi(
           testData.marc,
           testData.fileName,
@@ -71,7 +65,7 @@ describe('MARC', () => {
     });
 
     it(
-      'C496215 Add multiple 005s when creating "MARC Holdings" record (spitfire) (TaaS)',
+      'C496215 Add multiple 005s when creating "MARC Holdings" record (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C496215'] },
       () => {
         // #1 Navigate to Instance and click "Actions" → "+Add MARC holdings record"
@@ -82,7 +76,11 @@ describe('MARC', () => {
         InventoryInstance.goToMarcHoldingRecordAdding();
 
         // #2 Fill in "852" subfield with $b value and save location
-        QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
+        QuickMarcEditor.fillInHoldingsLocationForm(
+          testData.location,
+          testData.campusName,
+          testData.locationName,
+        );
 
         // #3 Click on the "+" (Add a new field) icon
         QuickMarcEditor.addEmptyFields(5);
@@ -99,8 +97,8 @@ describe('MARC', () => {
         QuickMarcEditor.pressSaveAndClose();
         HoldingsRecordView.waitLoading();
 
-        // #7 Click "Actions" → "Edit in QuickMARC"
-        HoldingsRecordView.editInQuickMarc();
+        // #7 Click "Actions" → "View Source"
+        HoldingsRecordView.viewSource();
 
         // Verify only one "005" field is displayed with system-generated value
         QuickMarcEditor.verifyNoFieldWithContent(testData.tag005value);

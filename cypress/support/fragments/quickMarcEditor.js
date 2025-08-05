@@ -409,6 +409,10 @@ const holdingsLocationModal = Modal('Select permanent location');
 const holdingsLocationInstitutionSelect = holdingsLocationModal.find(Select('Institution'));
 const holdingsLocationCampusSelect = holdingsLocationModal.find(Select('Campus'));
 const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library'));
+const holdingsLocationSelect = holdingsLocationModal.find(
+  Button({ name: 'locationId', disabled: false }),
+);
+const holdingsLocationOption = '[data-test-selection-option-segment="true"]';
 const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
@@ -2467,6 +2471,33 @@ export default {
           .exists(),
         holdingsLocationSaveButton.has({ disabled: false }),
       ]);
+      cy.do(holdingsLocationSaveButton.click());
+      cy.expect(holdingsLocationModal.absent());
+    });
+  },
+
+  fillInHoldingsLocationForm(locationObject, campusName, locationName) {
+    Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
+      const institutionName = institution.name;
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+      cy.do(holdingsLocationInstitutionSelect.choose(institutionName));
+      // wait until values applied in dropdowns
+      cy.wait(3000);
+      if (campusName) {
+        cy.do(holdingsLocationCampusSelect.choose(campusName));
+        cy.wait(3000);
+        cy.expect(holdingsLocationSelect.exists());
+      }
+
+      if (locationName) {
+        cy.do(holdingsLocationSelect.click());
+        cy.wait(1000);
+        cy.get(holdingsLocationOption).contains(locationName).click();
+        cy.wait(1000);
+      }
+      cy.do(holdingsLocationSaveButton.click());
+      cy.wait(1000);
       cy.do(holdingsLocationSaveButton.click());
       cy.expect(holdingsLocationModal.absent());
     });
