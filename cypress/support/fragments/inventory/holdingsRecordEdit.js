@@ -57,7 +57,7 @@ export default {
     cy.expect(callNumberField.exists());
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
-  closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
+  closeWithoutSave: () => cy.do(Button('Cancel').click()),
   fillHoldingFields({ permanentLocation, callNumber, holdingsNote, holdingType } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);
