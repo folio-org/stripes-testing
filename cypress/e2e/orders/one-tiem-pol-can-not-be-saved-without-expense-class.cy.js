@@ -118,7 +118,7 @@ describe('Orders', () => {
 
   it(
     'C402773 PO line for "One-time" order can not be saved when "Expense class" field is empty (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createApprovedOrderForRollover(order, true).then((firstOrderResponse) => {
         order.id = firstOrderResponse.id;
