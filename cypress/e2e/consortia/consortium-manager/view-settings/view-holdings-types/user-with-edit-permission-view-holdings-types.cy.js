@@ -2,7 +2,9 @@ import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiaControlledVocabularyPaneset, {
+  actionIcons,
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
@@ -21,19 +23,19 @@ describe('Consortia', () => {
         const testData = {
           centralSharedHoldingsType: {
             payload: {
-              name: getTestEntityValue('C411479_centralSharedHoldingsType'),
+              name: getTestEntityValue('C411480_centralSharedHoldingsType'),
             },
           },
           centralLocalHoldingsType: {
-            name: getTestEntityValue('C411479_centralLocalHoldingsType'),
+            name: getTestEntityValue('C411480_centralLocalHoldingsType'),
             source: 'local',
           },
           collegeLocalHoldingsType: {
-            name: getTestEntityValue('C411479_collegeLocalHoldingsType'),
+            name: getTestEntityValue('C411480_collegeLocalHoldingsType'),
             source: 'local',
           },
           universityLocalHoldingsType: {
-            name: getTestEntityValue('C411479_universityLocalHoldingsType'),
+            name: getTestEntityValue('C411480_universityLocalHoldingsType'),
             source: 'local',
           },
         };
@@ -41,6 +43,7 @@ describe('Consortia', () => {
         const constants = {
           source: {
             consortium: 'consortium',
+            local: 'local',
           },
           memberLibraries: {
             all: 'All',
@@ -75,29 +78,33 @@ describe('Consortia', () => {
               });
             })
             .then(() => {
-              cy.resetTenant();
-              cy.createTempUser([
-                Permissions.consortiaSettingsConsortiumManagerView.gui,
-                Permissions.inventoryCRUDHoldingsTypes.gui,
-              ]).then((userProperties) => {
-                testData.user = userProperties;
+              cy.setTenant(Affiliations.College);
+              cy.createTempUser([Permissions.inventoryCRUDHoldingsTypes.gui]).then(
+                (userProperties) => {
+                  testData.user = userProperties;
 
-                cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-                cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
-                cy.setTenant(Affiliations.College);
-                cy.assignPermissionsToExistingUser(testData.user.userId, [
-                  Permissions.inventoryCRUDHoldingsTypes.gui,
-                ]);
-                cy.setTenant(Affiliations.University);
-                cy.assignPermissionsToExistingUser(testData.user.userId, [
-                  Permissions.inventoryCRUDHoldingsTypes.gui,
-                ]);
-              });
+                  cy.resetTenant();
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+                  cy.assignPermissionsToExistingUser(testData.user.userId, [
+                    Permissions.consortiaSettingsConsortiumManagerEdit.gui,
+                    Permissions.inventoryCRUDHoldingsTypes.gui,
+                  ]);
+                  cy.setTenant(Affiliations.University);
+                  cy.assignPermissionsToExistingUser(testData.user.userId, [
+                    Permissions.inventoryCRUDHoldingsTypes.gui,
+                  ]);
+                },
+              );
             })
             .then(() => {
               cy.resetTenant();
-              cy.login(testData.user.username, testData.user.password);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.user.username, testData.user.password);
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                cy.reload();
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              }, 20_000);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
               // Without waiter, permissions aren't loading
               cy.wait(10000);
             });
@@ -108,28 +115,37 @@ describe('Consortia', () => {
           cy.getAdminToken();
           HoldingsTypesConsortiumManager.deleteViaApi(testData.centralSharedHoldingsType);
           HoldingsTypes.deleteViaApi(testData.centralLocalHoldingsType.id);
-          Users.deleteViaApi(testData.user.userId);
           cy.setTenant(Affiliations.College);
+          Users.deleteViaApi(testData.user.userId);
           HoldingsTypes.deleteViaApi(testData.collegeLocalHoldingsType.id);
           cy.setTenant(Affiliations.University);
           HoldingsTypes.deleteViaApi(testData.universityLocalHoldingsType.id);
         });
 
         it(
-          'C411479 User with "Consortium manager: Can view existing settings" permission is able to view the list of holdings types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['extendedPathECS', 'thunderjet', 'C411479'] },
+          'C411480 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of holdings types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+          { tags: ['extendedPathECS', 'thunderjet', 'C411480'] },
           () => {
-            // User opens "Consortium manager" app
+            // User opens "Consortium manager" app (already logged in and switched to central tenant)
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.verifyStatusOfConsortiumManager();
             // User expands "Members selection" accordion
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
+
+            // Uncheck University tenant
+            ConsortiumManagerApp.clickSelectMembers();
+            SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
+            SelectMembers.checkMember(tenantNames.university, false);
+            SelectMembers.verifyStatusOfSelectMembersModal(3, 2, false);
+            SelectMembers.saveAndClose();
+            ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
+
             // User clicks on "Inventory" settings
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             // User clicks on "Holdings" > "Holdings types"
             HoldingsTypesConsortiumManager.choose();
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
             // User sees central tenant shared holdings type
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
@@ -152,6 +168,7 @@ describe('Consortia', () => {
                 `${moment().format('l')} by`,
                 tenantNames.central,
               ],
+              [actionIcons.edit, actionIcons.trash],
             );
             // Verify College local holdings type appears
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
@@ -163,26 +180,20 @@ describe('Consortia', () => {
                 `${moment().format('l')} by`,
                 tenantNames.college,
               ],
+              [actionIcons.edit, actionIcons.trash],
             );
-            // Verify University local holdings type appears
-            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            // Verify University local holdings type absent
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
               testData.universityLocalHoldingsType.name,
-              tenantNames.university,
-              [
-                testData.universityLocalHoldingsType.name,
-                '',
-                `${moment().format('l')} by`,
-                tenantNames.university,
-              ],
             );
 
-            // Uncheck central tenant
+            // Uncheck College tenant
             ConsortiumManagerApp.clickSelectMembers();
-            SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
-            SelectMembers.checkMember(tenantNames.central, false);
             SelectMembers.verifyStatusOfSelectMembersModal(3, 2, false);
+            SelectMembers.checkMember(tenantNames.college, false);
+            SelectMembers.verifyStatusOfSelectMembersModal(3, 1, false);
             SelectMembers.saveAndClose();
-            ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
+            ConsortiumManagerApp.verifyStatusOfConsortiumManager(1);
 
             // User sees central tenant shared holdings type
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
@@ -195,31 +206,25 @@ describe('Consortia', () => {
                 constants.memberLibraries.all,
               ],
             );
-            // Verify central tenant local holdings type does not appear
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            // Verify central tenant local holdings type appears
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
               testData.centralLocalHoldingsType.name,
+              tenantNames.central,
+              [
+                testData.centralLocalHoldingsType.name,
+                '',
+                `${moment().format('l')} by`,
+                tenantNames.central,
+              ],
+              [actionIcons.edit, actionIcons.trash],
             );
-            // Verify College local holdings type appears
-            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            // Verify College local holdings type does not appear
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
               testData.collegeLocalHoldingsType.name,
-              tenantNames.college,
-              [
-                testData.collegeLocalHoldingsType.name,
-                '',
-                `${moment().format('l')} by`,
-                tenantNames.college,
-              ],
             );
-            // Verify University local holdings type appears
-            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            // Verify University local holdings type absent
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
               testData.universityLocalHoldingsType.name,
-              tenantNames.university,
-              [
-                testData.universityLocalHoldingsType.name,
-                '',
-                `${moment().format('l')} by`,
-                tenantNames.university,
-              ],
             );
           },
         );
