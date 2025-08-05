@@ -22,7 +22,7 @@ describe('MARC', () => {
           searchOption: 'Keyword',
           searchValue: 'Fail PASS (editable) test',
           placeholderMessage: 'Fail PASS (editable) test would be here',
-          authorityMarkedValue: 'Dowland, John',
+          authorityMarkedValue: 'C380763Dowland, John',
           tag240rowindex: 28,
           authority100FieldValue:
             'C380763Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
