@@ -45,7 +45,6 @@ describe('MARC', () => {
         });
       });
 
-      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,

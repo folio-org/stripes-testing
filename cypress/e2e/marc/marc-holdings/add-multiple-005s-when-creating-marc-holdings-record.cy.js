@@ -38,7 +38,6 @@ describe('MARC', () => {
         cy.getAdminToken().then(() => {
           cy.getLocations({ limit: 1 }).then((location) => {
             testData.location = location;
-            console.log(testData.location);
           });
         });
         DataImport.uploadFileViaApi(
