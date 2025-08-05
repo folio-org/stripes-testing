@@ -158,6 +158,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(4000);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.deleteValuesIn008Boxes();
