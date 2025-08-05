@@ -41,11 +41,11 @@ describe('Orders', () => {
       ],
     };
     const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
-    const instanceStatus = 'Cataloged';
+    const instanceStatus = 'Uncataloged';
     const otherInstanceStatus = 'Other';
-    const instanceType = 'cartographic image';
+    const instanceType = 'cartographic dataset';
     const otherInstanceType = 'other';
-    const loanType = 'Can circulate';
+    const loanType = 'Reading room';
     const selectedLoanType = 'Selected';
 
     let orderNumber;
