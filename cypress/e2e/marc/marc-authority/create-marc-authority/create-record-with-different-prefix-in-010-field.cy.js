@@ -65,6 +65,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag('001', '');
           QuickMarcEditor.checkFourthBoxEditable(1, false);
 
+          MarcAuthority.setValid008DropdownValues();
+
           MarcAuthority.addNewFieldAfterExistingByTag(
             newField010.previousFieldTag,
             newField010.tag,
