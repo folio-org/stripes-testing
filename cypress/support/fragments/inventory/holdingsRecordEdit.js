@@ -43,7 +43,7 @@ const uriTextarea = TextArea({ ariaLabel: 'URI' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
-    cy.do(rootForm.find(Button('Save & close')).click());
+    cy.do(Button('Save & close').click());
 
     if (holdingSaved) {
       InteractorsTools.checkCalloutMessage(
