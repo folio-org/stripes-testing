@@ -14,7 +14,7 @@ export default {
     cy.do(Selection('Temporary').choose(temporaryLocation));
   },
   saveAndClose: () => {
-    cy.do(rootForm.find(Button('Save & close')).click());
+    cy.do(Button('Save & close').click());
     cy.expect(rootForm.absent());
   },
   waitLoading: () => {
