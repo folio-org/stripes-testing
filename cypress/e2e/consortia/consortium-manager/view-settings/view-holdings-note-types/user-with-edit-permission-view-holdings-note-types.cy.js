@@ -8,9 +8,9 @@ import ConsortiaControlledVocabularyPaneset, {
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import HoldingsTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/holdings/holdingsTypesConsortiumManager';
+import HoldingsNoteTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/holdings/holdingsNoteTypesConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import HoldingsTypes from '../../../../../support/fragments/settings/inventory/holdings/holdingsTypes';
+import HoldingsNoteTypes from '../../../../../support/fragments/settings/inventory/holdings/holdingsNoteTypes';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
@@ -19,23 +19,23 @@ import ConsortiumManager from '../../../../../support/fragments/settings/consort
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('View settings', () => {
-      describe('View Holdings types', () => {
+      describe('View Holdings note types', () => {
         const testData = {
-          centralSharedHoldingsType: {
+          centralSharedHoldingsNoteType: {
             payload: {
-              name: getTestEntityValue('C411480_centralSharedHoldingsType'),
+              name: getTestEntityValue('C411458_centralSharedHoldingsNoteType'),
             },
           },
-          centralLocalHoldingsType: {
-            name: getTestEntityValue('C411480_centralLocalHoldingsType'),
+          centralLocalHoldingsNoteType: {
+            name: getTestEntityValue('C411458_centralLocalHoldingsNoteType'),
             source: 'local',
           },
-          collegeLocalHoldingsType: {
-            name: getTestEntityValue('C411480_collegeLocalHoldingsType'),
+          collegeLocalHoldingsNoteType: {
+            name: getTestEntityValue('C411458_collegeLocalHoldingsNoteType'),
             source: 'local',
           },
-          universityLocalHoldingsType: {
-            name: getTestEntityValue('C411480_universityLocalHoldingsType'),
+          universityLocalHoldingsNoteType: {
+            name: getTestEntityValue('C411458_universityLocalHoldingsNoteType'),
             source: 'local',
           },
         };
@@ -53,33 +53,39 @@ describe('Consortia', () => {
         before('Create test data', () => {
           cy.getAdminToken()
             .then(() => {
-              HoldingsTypesConsortiumManager.createViaApi(testData.centralSharedHoldingsType).then(
-                (newHoldingsType) => {
-                  testData.centralSharedHoldingsType = newHoldingsType;
+              HoldingsNoteTypesConsortiumManager.createViaApi(
+                testData.centralSharedHoldingsNoteType,
+              ).then((newHoldingsNoteType) => {
+                testData.centralSharedHoldingsNoteType = newHoldingsNoteType;
+              });
+            })
+            .then(() => {
+              cy.resetTenant();
+              HoldingsNoteTypes.createViaApi(testData.centralLocalHoldingsNoteType).then(
+                (response) => {
+                  testData.centralLocalHoldingsNoteType.id = response.body.id;
                 },
               );
             })
             .then(() => {
-              cy.resetTenant();
-              HoldingsTypes.createViaApi(testData.centralLocalHoldingsType).then((response) => {
-                testData.centralLocalHoldingsType.id = response.body.id;
-              });
-            })
-            .then(() => {
               cy.setTenant(Affiliations.College);
-              HoldingsTypes.createViaApi(testData.collegeLocalHoldingsType).then((response) => {
-                testData.collegeLocalHoldingsType.id = response.body.id;
-              });
+              HoldingsNoteTypes.createViaApi(testData.collegeLocalHoldingsNoteType).then(
+                (response) => {
+                  testData.collegeLocalHoldingsNoteType.id = response.body.id;
+                },
+              );
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
-              HoldingsTypes.createViaApi(testData.universityLocalHoldingsType).then((response) => {
-                testData.universityLocalHoldingsType.id = response.body.id;
-              });
+              HoldingsNoteTypes.createViaApi(testData.universityLocalHoldingsNoteType).then(
+                (response) => {
+                  testData.universityLocalHoldingsNoteType.id = response.body.id;
+                },
+              );
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              cy.createTempUser([Permissions.inventoryCRUDHoldingsTypes.gui]).then(
+              cy.createTempUser([Permissions.inventoryCRUDHoldingsNoteTypes.gui]).then(
                 (userProperties) => {
                   testData.user = userProperties;
 
@@ -87,11 +93,11 @@ describe('Consortia', () => {
                   cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
                   cy.assignPermissionsToExistingUser(testData.user.userId, [
                     Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                    Permissions.inventoryCRUDHoldingsTypes.gui,
+                    Permissions.inventoryCRUDHoldingsNoteTypes.gui,
                   ]);
                   cy.setTenant(Affiliations.University);
                   cy.assignPermissionsToExistingUser(testData.user.userId, [
-                    Permissions.inventoryCRUDHoldingsTypes.gui,
+                    Permissions.inventoryCRUDHoldingsNoteTypes.gui,
                   ]);
                 },
               );
@@ -113,118 +119,131 @@ describe('Consortia', () => {
         after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          HoldingsTypesConsortiumManager.deleteViaApi(testData.centralSharedHoldingsType);
-          HoldingsTypes.deleteViaApi(testData.centralLocalHoldingsType.id);
+          HoldingsNoteTypesConsortiumManager.deleteViaApi(testData.centralSharedHoldingsNoteType);
+          HoldingsNoteTypes.deleteViaApi(testData.centralLocalHoldingsNoteType.id);
           cy.setTenant(Affiliations.College);
           Users.deleteViaApi(testData.user.userId);
-          HoldingsTypes.deleteViaApi(testData.collegeLocalHoldingsType.id);
+          HoldingsNoteTypes.deleteViaApi(testData.collegeLocalHoldingsNoteType.id);
           cy.setTenant(Affiliations.University);
-          HoldingsTypes.deleteViaApi(testData.universityLocalHoldingsType.id);
+          HoldingsNoteTypes.deleteViaApi(testData.universityLocalHoldingsNoteType.id);
         });
 
         it(
-          'C411480 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of holdings types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['extendedPathECS', 'thunderjet', 'C411480'] },
+          'C411458 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of holdings note types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+          { tags: ['extendedPathECS', 'thunderjet', 'C411458'] },
           () => {
-            // User opens "Consortium manager" app (already logged in and switched to central tenant)
+            // Step 1: Click "Consortium manager" app and set up members selection
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.verifyStatusOfConsortiumManager();
-            // User expands "Members selection" accordion
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
-            // Uncheck University tenant
+            // Step 2: Click "Select members" button to verify modal
             ConsortiumManagerApp.clickSelectMembers();
             SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
+
+            // Step 3: Uncheck University tenant (member-2)
             SelectMembers.checkMember(tenantNames.university, false);
             SelectMembers.verifyStatusOfSelectMembersModal(3, 2, false);
+
+            // Step 4: Save selection with 2 members
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
 
-            // User clicks on "Inventory" settings
+            // Step 5: Navigate to Holdings note types
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            // User clicks on "Holdings" > "Holdings types"
-            HoldingsTypesConsortiumManager.choose();
+            HoldingsNoteTypesConsortiumManager.choose();
+            // New button should be displayed (edit permissions)
             ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
-            // User sees central tenant shared holdings type
+            // Step 6: Verify central shared holdings note type
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedHoldingsType.payload.name,
+              testData.centralSharedHoldingsNoteType.payload.name,
               constants.source.consortium,
               [
-                testData.centralSharedHoldingsType.payload.name,
+                testData.centralSharedHoldingsNoteType.payload.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
               ],
             );
-            // User sees central tenant local holdings type
+
+            // Step 7: Verify central local holdings note type with edit actions
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralLocalHoldingsType.name,
+              testData.centralLocalHoldingsNoteType.name,
               tenantNames.central,
               [
-                testData.centralLocalHoldingsType.name,
+                testData.centralLocalHoldingsNoteType.name,
                 '',
                 `${moment().format('l')} by`,
                 tenantNames.central,
               ],
               [actionIcons.edit, actionIcons.trash],
             );
-            // Verify College local holdings type appears
+
+            // Step 8: Verify College local holdings note type with edit actions
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.collegeLocalHoldingsType.name,
+              testData.collegeLocalHoldingsNoteType.name,
               tenantNames.college,
               [
-                testData.collegeLocalHoldingsType.name,
+                testData.collegeLocalHoldingsNoteType.name,
                 '',
                 `${moment().format('l')} by`,
                 tenantNames.college,
               ],
               [actionIcons.edit, actionIcons.trash],
             );
-            // Verify University local holdings type absent
+
+            // Step 9: Verify University local holdings note type is NOT present
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              testData.universityLocalHoldingsType.name,
+              testData.universityLocalHoldingsNoteType.name,
             );
 
-            // Uncheck College tenant
+            // Step 10: Click "Select members" button again
             ConsortiumManagerApp.clickSelectMembers();
             SelectMembers.verifyStatusOfSelectMembersModal(3, 2, false);
+
+            // Step 11: Uncheck College tenant (member-1)
             SelectMembers.checkMember(tenantNames.college, false);
             SelectMembers.verifyStatusOfSelectMembersModal(3, 1, false);
+
+            // Step 12: Save selection with only central tenant
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(1);
 
-            // User sees central tenant shared holdings type
+            // Step 13: Verify central shared holdings note type still present
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedHoldingsType.payload.name,
+              testData.centralSharedHoldingsNoteType.payload.name,
               constants.source.consortium,
               [
-                testData.centralSharedHoldingsType.payload.name,
+                testData.centralSharedHoldingsNoteType.payload.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
               ],
             );
-            // Verify central tenant local holdings type appears
+
+            // Step 14: Verify central local holdings note type still present with edit actions
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralLocalHoldingsType.name,
+              testData.centralLocalHoldingsNoteType.name,
               tenantNames.central,
               [
-                testData.centralLocalHoldingsType.name,
+                testData.centralLocalHoldingsNoteType.name,
                 '',
                 `${moment().format('l')} by`,
                 tenantNames.central,
               ],
               [actionIcons.edit, actionIcons.trash],
             );
-            // Verify College local holdings type does not appear
+
+            // Step 15: Verify College local holdings note type is NOT present
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              testData.collegeLocalHoldingsType.name,
+              testData.collegeLocalHoldingsNoteType.name,
             );
-            // Verify University local holdings type absent
+
+            // Step 16: Verify University local holdings note type is NOT present
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              testData.universityLocalHoldingsType.name,
+              testData.universityLocalHoldingsNoteType.name,
             );
           },
         );
