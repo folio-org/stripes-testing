@@ -1476,7 +1476,7 @@ export default {
   verifyFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
     );
   },
@@ -1529,6 +1529,79 @@ export default {
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-MultiLvl-text',
       'Multipart resource record level',
+    );
+  },
+
+  verifyMarcAuth008DropdownsHoverTexts() {
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Geo Subd-text',
+      'Direct or indirect geographic subdivision',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Roman-text',
+      'Romanization scheme',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Lang-text',
+      'Language of catalog',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Kind rec-text', 'Kind of record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Cat Rules-text',
+      'Descriptive cataloging rules',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-SH Sys-text',
+      'Subject heading system/thesaurus',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Series-text', 'Type of series');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Numb Series-text',
+      'Numbered or unnumbered series',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Main use-text',
+      'Heading use – main or added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Subj use-text',
+      'Heading use – subject added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Series use-text',
+      'Heading use – series added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Type Subd-text',
+      'Type of subject subdivision',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Govt Ag-text',
+      'Type of government agency',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-RefEval-text',
+      'Reference evaluation',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-RecUpd-text',
+      'Record update in process',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Pers Name-text',
+      'Undifferentiated personal name',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Level Est-text',
+      'Level of establishment',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Mod Rec Est-text',
+      'Modified record',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Source-text',
+      'Cataloging source',
     );
   },
 
@@ -1684,9 +1757,13 @@ export default {
   },
 
   check008FieldLabels(labels) {
-    labels.forEach((label) => {
-      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
-    });
+    if (Array.isArray(labels)) {
+      labels.forEach((label) => {
+        cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
+      });
+    } else {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(labels) }).exists());
+    }
   },
 
   checkReplacedVoidValuesInTag008Holdings() {
