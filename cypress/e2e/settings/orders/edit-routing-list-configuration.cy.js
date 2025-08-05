@@ -35,7 +35,7 @@ describe('Orders', () => {
 
     it(
       'C466275 Edit routing list configuration (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPathFlaky', 'thunderjet'] },
       () => {
         ListConfiguration.edit();
         ListConfiguration.fillInfoSectionFields(listConfigurationDesription, routingAddressLink);

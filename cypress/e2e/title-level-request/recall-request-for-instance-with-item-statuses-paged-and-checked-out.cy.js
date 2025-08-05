@@ -91,7 +91,7 @@ describe('Create Item or Title level request', () => {
         }).then((loanType) => {
           instanceData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })

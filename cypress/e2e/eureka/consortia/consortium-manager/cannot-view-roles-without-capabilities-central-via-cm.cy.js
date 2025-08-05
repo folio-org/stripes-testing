@@ -92,6 +92,7 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.university);
         AuthorizationRoles.waitContentLoading(true);
         AuthorizationRoles.checkRoleFound(testData.universityRoleName);
+        AuthorizationRoles.closeAllCalloutsIfShown();
         // Step 3: Try to view Central tenant roles
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.verifyAccessErrorShown();

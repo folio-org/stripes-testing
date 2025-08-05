@@ -25,7 +25,7 @@ describe('Consortia', () => {
         const firstSubjectType = {
           name: `C594404 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
-          consortiaUser: 'System, System user - mod-consortia-keycloak ',
+          consortiaUser: 'System, System user - mod-consortia-keycloak',
           memberLbrares: 'All',
         };
         const secondSubjectType = {
@@ -37,6 +37,7 @@ describe('Consortia', () => {
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerShare.gui,
+            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
             Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
           ]).then((userProperties) => {
             user = userProperties;

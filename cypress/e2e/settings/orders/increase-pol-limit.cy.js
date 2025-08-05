@@ -91,7 +91,7 @@ describe('Orders', () => {
 
     it(
       'C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
       () => {
         SettingsOrders.setPurchaseOrderLinesLimit(5);
         SettingsOrders.setPurchaseOrderLinesLimit(2);

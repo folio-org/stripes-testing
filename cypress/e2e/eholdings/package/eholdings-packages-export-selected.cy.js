@@ -48,7 +48,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C354000 Export all selected titles in a "Package". Export all "Package" and "Titles" fields selected by default settings (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C354000'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C354000'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Book');

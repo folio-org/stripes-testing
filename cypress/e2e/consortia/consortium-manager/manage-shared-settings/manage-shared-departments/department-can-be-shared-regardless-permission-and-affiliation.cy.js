@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import moment from 'moment';
 import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
@@ -32,15 +33,22 @@ describe('Consortia', () => {
           name: getTestEntityValue('Shared_department_5'),
           code: '',
         };
+        const initialDepartmentCentral = {
+          code: getTestEntityValue('centralLocalDepartment_code'),
+          id: uuid(),
+          name: getTestEntityValue('centralLocalDepartment_name'),
+        };
 
         before('Create users data', () => {
           cy.getAdminToken()
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.departmentsAll.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
+                Departments.createViaApi(initialDepartmentCentral);
                 cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
                 cy.setTenant(Affiliations.College);
                 cy.assignPermissionsToExistingUser(userAData.userId, [
@@ -78,6 +86,7 @@ describe('Consortia', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userAData.userId);
           Users.deleteViaApi(userBData.userId);
+          Departments.deleteViaApi(initialDepartmentCentral.id);
           Departments.getViaApi({
             limit: 1,
             query: `name=="${sharedDepartment4.name}"`,
@@ -97,7 +106,7 @@ describe('Consortia', () => {
 
         it(
           'C407740 Department can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C407740'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

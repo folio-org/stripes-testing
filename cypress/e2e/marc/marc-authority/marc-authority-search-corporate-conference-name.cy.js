@@ -141,7 +141,7 @@ describe('MARC', () => {
 
     before('Create data, user', () => {
       cy.getAdminToken();
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C409445');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C409445*');
       DataImport.uploadFileViaApi(
         authorityFile,
         `${authorityFile.split('.')[0]}.${getRandomPostfix()}.mrc`,

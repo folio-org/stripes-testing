@@ -116,7 +116,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })
@@ -213,7 +213,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C5557 C3613 Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: ['vega', 'smoke', 'C5557', 'C3613'] },
+    { tags: ['vega', 'smokeFlaky', 'C5557', 'C3613'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationOverdueFinePoliciesPath,

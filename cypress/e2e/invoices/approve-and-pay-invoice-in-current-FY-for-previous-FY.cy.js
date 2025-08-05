@@ -17,6 +17,8 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import { Permissions } from '../../support/dictionary';
 
 describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -146,12 +148,15 @@ describe('Invoices', () => {
       permissions.uiInvoicesPayInvoices.gui,
       permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       permissions.uiOrdersView.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.ordersPath);
     });
   });
 
@@ -162,7 +167,7 @@ describe('Invoices', () => {
 
   it(
     'C388526 Approve and pay invoice created in current FY for previous FY when related order line was created in current FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

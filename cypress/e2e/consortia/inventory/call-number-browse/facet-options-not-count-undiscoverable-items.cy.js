@@ -77,7 +77,7 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
       InventoryInstances.getLoanTypes().then((loanTypes) => {
         testData.loanTypeId = loanTypes[0].id;
       });
-      InventoryInstances.getMaterialTypes().then((materialTypes) => {
+      cy.getMaterialTypes().then((materialTypes) => {
         testData.materialTypeId = materialTypes[0].id;
       });
       [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {

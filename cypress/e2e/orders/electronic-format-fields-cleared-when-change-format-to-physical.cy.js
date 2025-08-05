@@ -30,7 +30,7 @@ describe('Orders', () => {
           Locations.createViaApi(testData.location);
         })
         .then(() => {
-          cy.getMaterialTypes({ limit: 1 }).then(({ id: materialTypeId }) => {
+          cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
             testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
             testData.orderLine = {
               ...BasicOrderLine.getDefaultOrderLine(),

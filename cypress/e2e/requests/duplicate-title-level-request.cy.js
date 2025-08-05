@@ -59,7 +59,7 @@ describe('Title Level Request', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           itemData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        cy.getDefaultMaterialType().then((res) => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
@@ -158,7 +158,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350561 Check that the user can Duplicate request (Title level request) (vega)',
-    { tags: ['extendedPath', 'vega', 'C350561'] },
+    { tags: ['extendedPathFlaky', 'vega', 'C350561'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

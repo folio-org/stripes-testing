@@ -7,6 +7,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -65,13 +66,16 @@ describe('Invoices', () => {
       Permissions.uiInvoicesApproveInvoices.gui,
       Permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
       Permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.invoicesPath);
     });
   });
 
@@ -83,7 +87,7 @@ describe('Invoices', () => {
 
   it(
     'C380406 Approve and pay invoice with currency different from default when "Export to accounting" option is active (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Click "Vendor invoice number" link for Invoice from Preconditions
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

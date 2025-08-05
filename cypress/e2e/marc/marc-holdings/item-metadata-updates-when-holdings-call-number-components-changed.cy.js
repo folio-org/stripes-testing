@@ -51,7 +51,7 @@ describe('MARC', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           testData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        cy.getDefaultMaterialType().then((res) => {
           testData.materialTypeId = res.id;
         });
         // upload a marc file for creating new instance

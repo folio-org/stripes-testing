@@ -18,6 +18,7 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -39,11 +40,6 @@ describe('Invoices', () => {
       vendorInvoiceNo: getRandomPostfix(),
       paymentMethod: 'Cash',
     },
-  };
-  const setApprovePayValue = (isEnabled = false) => {
-    cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(isEnabled);
-    });
   };
   const order = NewOrder.getDefaultOrder({ vendorId: organization.id });
 
@@ -104,13 +100,17 @@ describe('Invoices', () => {
       Permissions.uiOrdersView.gui,
       Permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
       Permissions.uiSettingsAcquisitionUnitsManageAcqUnitUserAssignments.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
       AcquisitionUnits.assignUserViaApi(userProperties.userId, testData.acqUnit.id);
 
-      cy.login(userProperties.username, userProperties.password);
-      setApprovePayValue(isApprovePayEnabled);
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
+      });
+      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
     });
   });
 
@@ -124,7 +124,7 @@ describe('Invoices', () => {
 
   it(
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

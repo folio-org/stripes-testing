@@ -89,9 +89,9 @@ describe('Circulation log', () => {
         Permissions.checkinAll.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-        InventoryInstances.getMaterialTypes({ limit: 3 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
+        cy.getMaterialTypes({ limit: 3 })
+          .then(() => {
+            materialTypes = Cypress.env('materialTypes');
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 3,

@@ -70,7 +70,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476719 Filter "Instance" records by "Language" filter/facet',
+        'C476719 Filter "Instance" records by "Language" filter/facet (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C476719'] },
         () => {
           // 1. Expand Language facet, verify options and counters

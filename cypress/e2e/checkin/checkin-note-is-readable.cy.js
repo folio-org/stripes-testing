@@ -21,9 +21,9 @@ describe('Accessibility', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
-        InventoryInstances.getMaterialTypes({ limit: 1 })
-          .then((materialTypes) => {
-            const materialType = materialTypes[0];
+        cy.getDefaultMaterialType()
+          .then((mt) => {
+            const materialType = mt;
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 itemsProperties: { materialType: { id: materialType.id } },

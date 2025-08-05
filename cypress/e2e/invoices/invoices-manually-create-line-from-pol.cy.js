@@ -69,7 +69,7 @@ describe(
       cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
         orderLine.locations[0].locationId = location.id;
       });
-      cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+      cy.getBookMaterialType().then((materialType) => {
         orderLine.physical.materialType = materialType.id;
       });
       cy.loginAsAdmin();

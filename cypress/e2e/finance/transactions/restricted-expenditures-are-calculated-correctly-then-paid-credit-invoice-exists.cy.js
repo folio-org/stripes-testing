@@ -22,6 +22,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
+import { Permissions } from '../../../support/dictionary';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -108,7 +110,7 @@ describe('Finance: Transactions', () => {
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
 
-              cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+              cy.getDefaultMaterialType().then((mtype) => {
                 cy.getAcquisitionMethodsApi({
                   query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
                 }).then((params) => {
@@ -206,12 +208,15 @@ describe('Finance: Transactions', () => {
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
       permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.invoicesPath);
     });
   });
 

@@ -24,6 +24,7 @@ import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { CodeTools, DateTools, StringTools } from '../../support/utils';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', { retries: { runMode: 1 } }, () => {
   const isApprovePayEnabled = true;
@@ -108,14 +109,17 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiInvoicesPayInvoices.gui,
       Permissions.uiOrdersView.gui,
+      Permissions.invoiceSettingsAll.gui,
       ...permissions,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
+      cy.visit(TopMenu.ordersPath);
     });
   };
 
@@ -172,7 +176,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
       it(
         'C388520: Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
         () => {
           // Click on "PO number" link on "Orders" pane
           const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -387,7 +391,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
       it(
         'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
         () => {
           // Click on "PO number" link on "Orders" pane
           const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

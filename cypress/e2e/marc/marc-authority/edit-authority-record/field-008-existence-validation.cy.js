@@ -41,33 +41,33 @@ describe('MARC', () => {
           'Mod Rec Est',
           'Source',
         ],
-        tag008BoxValues: [
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-        ],
         tag110: '110',
         tag110Value: '$a DC Talk (Musical group).$t Jesus freaks.$l Afrikaans test',
         calloutMessage:
           'This record has successfully saved and is in process. Changes may not appear immediately.',
         errorCalloutMessage: 'Field 008 is required.',
         initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
+      };
+      const dropdownSelections = {
+        'Geo Subd': 'd',
+        Roman: 'a',
+        Lang: 'b',
+        'Kind rec': 'a',
+        'Cat Rules': 'a',
+        'SH Sys': 'a',
+        Series: 'a',
+        'Numb Series': 'a',
+        'Main use': 'a',
+        'Subj use': 'a',
+        'Series use': 'a',
+        'Type Subd': 'a',
+        'Govt Ag': 'a',
+        RefEval: 'a',
+        RecUpd: 'a',
+        'Pers Name': 'a',
+        'Level Est': 'a',
+        'Mod Rec Est': 'a',
+        Source: 'a',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFiles = [
@@ -156,22 +156,17 @@ describe('MARC', () => {
 
           // #9 Restore value in tag box with "008"
           QuickMarcEditor.updateExistingTagValue(testData.tag008RowIndex, testData.tag008);
-
+          MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections, 5);
           // #10 Click "Save & keep editing" button
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
 
-          // #11 Delete all characters from boxes of "008" field
-          testData.expected008BoxesSets.forEach((box) => {
-            QuickMarcEditor.updateValueOf008BoxByBoxName(box, '');
-          });
-
-          // #12 Click "Save & close" button
+          // #11 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessage);
 
-          // #13 - #14 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)
+          // #12 - #13 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');
           MarcAuthority.edit();
           cy.wait('@editMarc').then((res) => {

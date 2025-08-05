@@ -30,6 +30,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
               ]).then((userProperties) => {
                 userData = userProperties;
@@ -68,7 +69,7 @@ describe('Consortia', () => {
 
         it(
           'C410954 User with "Consortium manager: Can share settings to all members" permission is able to add/edit mode of issuance shared to all affiliated tenants in "Consortium manager" app  (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410954'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
@@ -144,7 +145,7 @@ describe('Consortia', () => {
 
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyListIsEmpty();
-            // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
             cy.visit(SettingsMenu.modesOfIssuancePath);
             cy.wait(4000);

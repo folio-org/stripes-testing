@@ -76,7 +76,7 @@ describe('Bulk-edit', () => {
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 instance.loanTypeId = res[0].id;
               });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+              cy.getDefaultMaterialType().then((res) => {
                 instance.materialTypeId = res.id;
               });
               const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();

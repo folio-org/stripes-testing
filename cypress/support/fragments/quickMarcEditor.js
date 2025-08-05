@@ -8,6 +8,7 @@ import {
   Modal,
   Callout,
   TextField,
+  Spinner,
   and,
   some,
   Pane,
@@ -408,6 +409,10 @@ const holdingsLocationModal = Modal('Select permanent location');
 const holdingsLocationInstitutionSelect = holdingsLocationModal.find(Select('Institution'));
 const holdingsLocationCampusSelect = holdingsLocationModal.find(Select('Campus'));
 const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library'));
+const holdingsLocationSelect = holdingsLocationModal.find(
+  Button({ name: 'locationId', disabled: false }),
+);
+const holdingsLocationOption = '[data-test-selection-option-segment="true"]';
 const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
@@ -808,6 +813,7 @@ export default {
 
   confirmUnlinkingField() {
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+    cy.expect(Spinner().absent());
   },
 
   cancelUnlinkingField() {
@@ -1197,6 +1203,7 @@ export default {
         QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
         QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
         QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).absent(),
+        cy.expect(Spinner().absent()),
       ]);
     } else {
       cy.expect([
@@ -1218,6 +1225,7 @@ export default {
         QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
         QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
         QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+        cy.expect(Spinner().absent()),
       ]);
     }
   },
@@ -1468,7 +1476,7 @@ export default {
   verifyFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
     );
   },
@@ -1521,6 +1529,79 @@ export default {
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-MultiLvl-text',
       'Multipart resource record level',
+    );
+  },
+
+  verifyMarcAuth008DropdownsHoverTexts() {
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Geo Subd-text',
+      'Direct or indirect geographic subdivision',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Roman-text',
+      'Romanization scheme',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Lang-text',
+      'Language of catalog',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Kind rec-text', 'Kind of record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Cat Rules-text',
+      'Descriptive cataloging rules',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-SH Sys-text',
+      'Subject heading system/thesaurus',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Series-text', 'Type of series');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Numb Series-text',
+      'Numbered or unnumbered series',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Main use-text',
+      'Heading use – main or added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Subj use-text',
+      'Heading use – subject added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Series use-text',
+      'Heading use – series added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Type Subd-text',
+      'Type of subject subdivision',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Govt Ag-text',
+      'Type of government agency',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-RefEval-text',
+      'Reference evaluation',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-RecUpd-text',
+      'Record update in process',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Pers Name-text',
+      'Undifferentiated personal name',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Level Est-text',
+      'Level of establishment',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Mod Rec Est-text',
+      'Modified record',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Source-text',
+      'Cataloging source',
     );
   },
 
@@ -1676,9 +1757,13 @@ export default {
   },
 
   check008FieldLabels(labels) {
-    labels.forEach((label) => {
-      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
-    });
+    if (Array.isArray(labels)) {
+      labels.forEach((label) => {
+        cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
+      });
+    } else {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(labels) }).exists());
+    }
   },
 
   checkReplacedVoidValuesInTag008Holdings() {
@@ -2463,6 +2548,33 @@ export default {
           .exists(),
         holdingsLocationSaveButton.has({ disabled: false }),
       ]);
+      cy.do(holdingsLocationSaveButton.click());
+      cy.expect(holdingsLocationModal.absent());
+    });
+  },
+
+  fillInHoldingsLocationForm(locationObject, campusName, locationName) {
+    Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
+      const institutionName = institution.name;
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+      cy.do(holdingsLocationInstitutionSelect.choose(institutionName));
+      // wait until values applied in dropdowns
+      cy.wait(3000);
+      if (campusName) {
+        cy.do(holdingsLocationCampusSelect.choose(campusName));
+        cy.wait(3000);
+        cy.expect(holdingsLocationSelect.exists());
+      }
+
+      if (locationName) {
+        cy.do(holdingsLocationSelect.click());
+        cy.wait(1000);
+        cy.get(holdingsLocationOption).contains(locationName).click();
+        cy.wait(1000);
+      }
+      cy.do(holdingsLocationSaveButton.click());
+      cy.wait(1000);
       cy.do(holdingsLocationSaveButton.click());
       cy.expect(holdingsLocationModal.absent());
     });

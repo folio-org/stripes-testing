@@ -164,7 +164,7 @@ describe('Data Import', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               testData.materialTypeId = res.id;
             });
           })

@@ -32,6 +32,11 @@ export default {
     cy.expect(newButton.is({ disabled: status }));
   },
 
+  verifyNewButtonShown(isShown = true) {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
+  },
+
   verifyEditModeIsActive() {
     this.verifyNewButtonDisabled();
     cy.expect([
@@ -85,7 +90,8 @@ export default {
 
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: including(record[0]), isContainer: true
+      content: including(record[0]),
+      isContainer: true,
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
@@ -116,7 +122,8 @@ export default {
   // use for searching identifiers array
   verifyRecordInTheListForMultipleRecords(identifiers, record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: and(including(identifiers[0]), including(identifiers[1])), isContainer: true
+      content: and(including(identifiers[0]), including(identifiers[1])),
+      isContainer: true,
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(

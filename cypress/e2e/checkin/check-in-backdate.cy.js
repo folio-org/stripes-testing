@@ -93,11 +93,6 @@ describe('Check in backdate', () => {
       // Time returned is time entered
       CheckInActions.checkTimeReturned(0, itemEditedReturnTime);
 
-      // workaround for UICHKIN-483
-      CheckInActions.openActions();
-      CheckInActions.clickLoanDetailsOption();
-      CheckInActions.openCheckInPane();
-
       // Under Actions click on loan details
       CheckInActions.openLoanDetails(userData.username);
       // Return date/time are the values entered at check in

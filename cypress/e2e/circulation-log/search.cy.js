@@ -37,7 +37,7 @@ describe('Circulation log', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getLoanTypes({ limit: 1 });
-          cy.getMaterialTypes({ limit: 1 });
+          cy.getDefaultMaterialType({ limit: 1 });
           cy.getLocations({ limit: 1 });
           cy.getHoldingTypes({ limit: 1 });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {

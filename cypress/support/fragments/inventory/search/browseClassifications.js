@@ -46,7 +46,9 @@ export default {
 
   verifyNumberOfTitlesInRow(rowIndex, itemCount) {
     cy.expect(
-      MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).has({ content: itemCount.toString() }),
+      MultiColumnListCell({ row: rowIndex, column: 'Number of titles' }).has({
+        content: itemCount.toString(),
+      }),
     );
   },
 
@@ -69,11 +71,15 @@ export default {
     if (isShown) {
       cy.expect([
         paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
+        paneIntanceDetails.find(MultiColumnListHeader('Title')).exists(),
+        paneIntanceDetails.find(MultiColumnListHeader('Contributors')).exists(),
         paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
       ]);
     } else {
       cy.expect([
         paneIntanceDetails.find(MultiColumnListHeader('Classification')).absent(),
+        paneIntanceDetails.find(MultiColumnListHeader('Title')).exists(),
+        paneIntanceDetails.find(MultiColumnListHeader('Contributors')).exists(),
         paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).absent(),
       ]);
     }

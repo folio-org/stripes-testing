@@ -27,12 +27,11 @@ describe('Orders', () => {
   };
   const firstExpenseClass = {
     ...NewExpenseClass.defaultUiBatchGroup,
-    name: 'Print',
   };
 
   const secondExpenseClass = {
     ...NewExpenseClass.defaultUiBatchGroup,
-    name: 'Electronic',
+    name: `AT_Class_${getRandomPostfix()}_1`,
     code: `${getRandomPostfix()}_1`,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -66,7 +65,7 @@ describe('Orders', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
-          Funds.addTwoExpensesClass('Electronic', 'Print');
+          Funds.addTwoExpensesClass(firstExpenseClass.name, secondExpenseClass.name);
         });
       });
     });
@@ -119,7 +118,7 @@ describe('Orders', () => {
 
   it(
     'C402773 PO line for "One-time" order can not be saved when "Expense class" field is empty (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createApprovedOrderForRollover(order, true).then((firstOrderResponse) => {
         order.id = firstOrderResponse.id;

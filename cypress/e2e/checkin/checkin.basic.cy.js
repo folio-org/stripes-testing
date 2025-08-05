@@ -60,7 +60,7 @@ describe('Check in', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               itemData.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               itemData.materialTypeId = res.id;
               itemData.materialTypeName = res.name;
               checkInResultsData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
@@ -140,11 +140,6 @@ describe('Check in', () => {
           CheckInPane.verifyResultCells();
           CheckInPane.checkResultsInTheRow(checkInResultsData);
           CheckInActions.checkActionsMenuOptions();
-
-          // workaround for UICHKIN-483
-          CheckInActions.openActions();
-          CheckInActions.clickLoanDetailsOption();
-          CheckInActions.openCheckInPane();
 
           CheckInActions.openLoanDetails(userData.username);
           CheckInActions.openCheckInPane();
