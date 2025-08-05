@@ -9,7 +9,7 @@ export default {
   },
 
   // Data capabilities
-  uiUsers: {
+  uiUsersView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users',
     action: CAPABILITY_ACTIONS.VIEW,
