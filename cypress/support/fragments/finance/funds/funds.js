@@ -63,6 +63,7 @@ const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: '7' });
 const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '6' });
 const resetButton = Button({ id: 'reset-funds-filters' });
+const resetTransactionFiltersButton = Button({ id: 'reset-transactions-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
@@ -525,6 +526,11 @@ export default {
     cy.expect(MultiColumnListCell(transactionType).absent());
   },
 
+  chooseTransactionType: (option) => {
+    cy.do(Accordion('Type').clickHeader());
+    cy.do(Accordion('Type').find(Checkbox(option)).click());
+  },
+
   increaseAllocation: () => {
     cy.do([
       actionsButton.click(),
@@ -801,6 +807,11 @@ export default {
   resetFundFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
+  },
+
+  resetTransactionFilters: () => {
+    cy.do(resetTransactionFiltersButton.click());
+    cy.expect(resetTransactionFiltersButton.is({ disabled: true }));
   },
 
   closeFundDetails: () => {
