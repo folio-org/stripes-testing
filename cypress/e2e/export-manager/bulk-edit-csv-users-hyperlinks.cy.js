@@ -42,8 +42,8 @@ describe('Export Manager', () => {
   });
 
   it(
-    'C365102 Verify hyperlink on the "JobID" column -- Local approach (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C365102'] },
+    'C788682 Verify hyperlink on the "JobID" column -- Local approach (firebird) (TaaS)',
+    { tags: ['extendedPath', 'firebird', 'C788682'] },
     () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

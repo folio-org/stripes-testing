@@ -74,8 +74,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C353972'] },
+      'C788696 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C788696'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

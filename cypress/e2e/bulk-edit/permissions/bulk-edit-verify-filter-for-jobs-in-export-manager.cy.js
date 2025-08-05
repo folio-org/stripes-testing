@@ -51,8 +51,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C366546 Verify filter for bulk edit jobs in Export Manager (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C366546'] },
+      'C788686 Verify filter for bulk edit jobs in Export Manager (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird', 'C788686'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.waitLoading();

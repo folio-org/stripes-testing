@@ -14,7 +14,7 @@ export default {
     cy.do(Selection('Temporary').choose(temporaryLocation));
   },
   saveAndClose: () => {
-    cy.do(rootForm.find(Button('Save & close')).click());
+    cy.do(Button('Save & close').click());
     cy.expect(rootForm.absent());
   },
   waitLoading: () => {
@@ -36,7 +36,7 @@ export default {
     cy.do(TextArea({ name: 'callNumberSuffix' }).fillIn(callNumberSuffix));
   },
   close: () => {
-    cy.do(rootForm.find(Button({ icon: 'times' })).click());
+    cy.do(Button({ icon: 'times' }).click());
     cy.expect(rootForm.absent());
   },
 };
