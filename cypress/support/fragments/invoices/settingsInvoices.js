@@ -136,4 +136,16 @@ export default {
   checkApproveAndPayCheckboxIsDisabled: () => {
     cy.expect(Checkbox({ name: 'isApprovePayEnabled' }).disabled());
   },
+
+  checkApproveAndPayCheckboxIfNeeded: () => {
+    const checkbox = Checkbox({ name: 'isApprovePayEnabled' });
+    cy.expect(checkbox.exists());
+    cy.do(checkbox.checkIfNotSelected());
+    cy.get('#clickable-save-config').then(($btn) => {
+      if (!$btn.is(':disabled') && $btn.attr('aria-disabled') !== 'true') {
+        cy.wrap($btn).click();
+      }
+    });
+    cy.wait(2000);
+  },
 };
