@@ -377,6 +377,14 @@ export default {
     );
   },
 
+  verifyOperationHrid(runByUsername, operationHrid) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content: operationHrid }))
+        .exists(),
+    );
+  },
+
   verifyEditingColumnValue(runByUsername, content) {
     cy.expect(
       ListRow({ text: including(runByUsername) })
