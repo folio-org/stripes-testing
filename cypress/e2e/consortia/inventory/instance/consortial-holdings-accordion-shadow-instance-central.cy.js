@@ -118,7 +118,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
         InstanceRecordView.expandMemberSubHoldings('College');
         InstanceRecordView.openHoldingsAccordion(testData.collegeLocation.name);
-        InstanceRecordView.verifyIsItemCreated(testData.itemBarcode);
+        InventoryInstance.checkIsItemCreated(testData.itemBarcode);
       },
     );
   });
