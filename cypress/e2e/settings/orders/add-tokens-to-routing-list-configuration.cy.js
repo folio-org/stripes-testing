@@ -46,6 +46,7 @@ describe('Orders', () => {
         ListConfiguration.clickOnAddTokensInBody();
         ListConfiguration.selectToken('routingList.name');
         ListConfiguration.addToken();
+        ListConfiguration.clickOnAddTokensInBody();
         ListConfiguration.selectToken('routingList.notes');
         ListConfiguration.cancelAddToken();
         ListConfiguration.cancelAndKeepEditing();

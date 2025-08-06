@@ -59,7 +59,7 @@ describe('Consortia', () => {
       UserEdit.openEdit();
       UsersCard.affiliationsAccordionIsAbsent();
       UserEdit.verifyUserPermissionsAccordion();
-      UserEdit.cancelEdit();
+      UserEdit.cancelChanges();
       Users.verifyUserDetailsPane();
       UsersCard.affiliationsAccordionIsAbsent();
     },
