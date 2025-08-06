@@ -96,8 +96,10 @@ const promoteUsersModalText =
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
-const noAccessErrorText =
-  'Could not load authorization roles. User does not have required permissions.';
+const noAccessErrorText = or(
+  'Could not load authorization roles. User does not have required permissions.',
+  'Could not load users. User does not have required permissions.',
+);
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');

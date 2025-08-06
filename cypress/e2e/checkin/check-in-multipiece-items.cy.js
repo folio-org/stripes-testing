@@ -21,13 +21,13 @@ describe('Check In', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
-        InventoryInstances.getMaterialTypes({ limit: 1 })
-          .then((materialTypeRes) => {
-            materialType = materialTypeRes[0].name;
-            itemProps.push(MultipieceCheckIn.getItemProps(1, false, false, materialType));
-            itemProps.push(MultipieceCheckIn.getItemProps(3, true, false, materialType));
-            itemProps.push(MultipieceCheckIn.getItemProps(2, true, true, materialType));
-            itemProps.push(MultipieceCheckIn.getItemProps(0, false, true, materialType));
+        cy.getDefaultMaterialType()
+          .then((mt) => {
+            materialType = mt;
+            itemProps.push(MultipieceCheckIn.getItemProps(1, false, false, materialType.name));
+            itemProps.push(MultipieceCheckIn.getItemProps(3, true, false, materialType.name));
+            itemProps.push(MultipieceCheckIn.getItemProps(2, true, true, materialType.name));
+            itemProps.push(MultipieceCheckIn.getItemProps(0, false, true, materialType.name));
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 4,

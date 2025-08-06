@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { Button, Modal } from '../../../../../interactors';
+import { Button, Modal, Pane } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -110,6 +110,9 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
     cy.wait(4000);
   },
+  closeItemInHeader() {
+    cy.do(Pane({ id: 'item-view-pane' }).dismiss());
+  },
   getItemViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -142,7 +145,7 @@ export default {
   }) {
     cy.then(() => {
       cy.getLoanTypes({ limit: 1 });
-      cy.getMaterialTypes({ limit: 1 });
+      cy.getDefaultMaterialType();
     }).then(() => {
       const item = {
         id: uuid(),

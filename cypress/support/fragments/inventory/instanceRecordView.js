@@ -57,6 +57,8 @@ const versionHistoryButton = Button({ icon: 'clock' });
 const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
 const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
+const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -707,7 +709,7 @@ export default {
   verifyIsItemCreated: (itemBarcode) => {
     cy.expect(
       rootSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(MultiColumnListCell({ columnIndex: 2, content: itemBarcode }))
         .find(Button(including(itemBarcode)))
         .exists(),
     );
@@ -892,6 +894,29 @@ export default {
     cy.do(versionHistoryButton.click());
   },
 
+  moveItemsWithinAnInstance() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.wait(500);
+    cy.do(Button({ id: 'move-instance-items' }).click());
+  },
+
+  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
+    if (isEnubled) {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+          .find(Button({ id: including('clickable-move-holdings-') }))
+          .has({ disabled: true }),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+          .find(Button({ id: including('clickable-move-holdings-') }))
+          .has({ disabled: false }),
+      );
+    }
+  },
+  // clickable-move-holdings-38e72617-9faa-47d3-a791-1baeca7d0d86
+
   verifyInstanceFormat(category, term, code, source) {
     let matchingString = category;
     if (!term) matchingString += 'No value set-';
@@ -908,5 +933,20 @@ export default {
   verifyAddItemButtonIsAbsent({ holdingName } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).absent());
+  },
+
+  verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        classificationAccordion
+          .find(listClassifications)
+          .find(MultiColumnListCell({ columnIndex: 1, content: classificationNumber }))
+          .find(clipboardIcon)
+          .click(),
+      );
+      cy.expect(Callout(clipboardCopyCalloutText(classificationNumber)).exists());
+    }).then(() => {
+      cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
+    });
   },
 };

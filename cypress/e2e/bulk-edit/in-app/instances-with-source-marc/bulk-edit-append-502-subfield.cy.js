@@ -37,7 +37,7 @@ describe(
   },
   () => {
     describe('In-app approach', () => {
-      before('create test data', () => {
+      beforeEach('create test data', () => {
         instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
         fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
         marcInstance = {
@@ -99,7 +99,7 @@ describe(
         });
       });
 
-      after('delete test data', () => {
+      afterEach('delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);

@@ -38,7 +38,7 @@ export default {
     cy.do(TextArea({ name: 'callNumberSuffix' }).fillIn(callNumberSuffix));
   },
   close: () => {
-    cy.do(rootForm.find(Button({ icon: 'times' })).click());
+    cy.do(Button({ icon: 'times' }).click());
     cy.expect(rootForm.absent());
   },
 };

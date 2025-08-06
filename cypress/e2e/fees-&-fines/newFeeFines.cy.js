@@ -73,7 +73,7 @@ describe('Fees&Fines', () => {
                 });
               });
 
-              cy.getMaterialTypes({ query: 'name="book"' }).then((res) => {
+              cy.getBookMaterialType().then((res) => {
                 testData.materialTypeId = res.id;
               });
               cy.getLocations({ limit: 1 }).then((res) => {

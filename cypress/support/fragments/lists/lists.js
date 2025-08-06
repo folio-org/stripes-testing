@@ -22,6 +22,7 @@ import {
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 
+const listInformationAccording = Accordion('List information');
 const listNameTextField = TextField({ name: 'listName' });
 const listDescriptionTextArea = TextArea({ name: 'description' });
 const saveButton = Button('Save');
@@ -93,6 +94,14 @@ const UI = {
         cy.log('"View updated list" didn\'t appear');
       }
     });
+  },
+
+  clickOnListInformationAccordion() {
+    cy.do(listInformationAccording.click());
+  },
+
+  expandListInformationAccordion() {
+    cy.do(listInformationAccording.open());
   },
 
   openActions() {
@@ -858,6 +867,15 @@ const API = {
       });
   },
 
+  getQueryViaApi(queryId, searchParameters) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `query/${queryId}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: searchParameters,
+    });
+  },
+
   createViaApi(list) {
     const newList = JSON.parse(JSON.stringify(list));
     return this.getTypesViaApi().then((response) => {
@@ -915,10 +933,25 @@ const API = {
     );
   },
 
+  getVersionApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'fqm/version',
+    });
+  },
+
   getTypesViaApi() {
     return cy.okapiRequest({
       method: 'GET',
       path: 'entity-types',
+    });
+  },
+
+  getTypeIdByNameViaApi(type) {
+    return this.getTypesViaApi().then((response) => {
+      return response.body.entityTypes.find(
+        (entityType) => entityType.label === type,
+      ).id;
     });
   },
 

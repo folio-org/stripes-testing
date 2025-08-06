@@ -792,4 +792,21 @@ export default {
     ]);
     cy.do(actionsButton.click());
   },
+
+  verifyLastUpdatedDate() {
+    const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+    cy.expect(
+      Accordion({ headline: 'Update information' })
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .exists(),
+    );
+  },
+
+  verifyLastUpdatedSource(userName) {
+    cy.expect(
+      Accordion({ headline: 'Update information' })
+        .find(HTML(including(`Source: ${userName}`)))
+        .exists(),
+    );
+  },
 };
