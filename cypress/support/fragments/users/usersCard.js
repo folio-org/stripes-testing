@@ -509,7 +509,7 @@ export default {
 
   startBlock: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('New block').click());
+    cy.do(Button('Create block').click());
   },
 
   openTagsPane: () => {
