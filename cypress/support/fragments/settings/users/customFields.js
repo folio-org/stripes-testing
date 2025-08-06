@@ -12,8 +12,10 @@ import {
 } from '../../../../../interactors';
 
 const customFieldsPane = Pane('Custom fields');
+const editCustomFieldsPane = Pane('Edit custom fields');
 const editNewButton = Button({ href: '/settings/users/custom-fields/edit' });
 const addCustomFieldDropdown = Dropdown('Add custom field');
+const addOptionButton = Button('Add option');
 const saveAndCloseButton = Button('Save & close');
 const saveLoseDataButton = Button('Save & lose data');
 const fieldLabel = TextField('Field label*');
@@ -33,6 +35,14 @@ export default {
     cy.expect(customFieldsPane.find(Section({ label: including(name) })).exists());
   },
 
+  verifyEditCustomFieldsPaneIsOpen() {
+    cy.expect(editCustomFieldsPane.exists());
+  },
+
+  verifyAddCustomFieldButtonIsActive() {
+    cy.expect(addCustomFieldDropdown.exists());
+  },
+
   addMultiSelectCustomField(data) {
     this.clickEditNewButton();
     cy.do([
@@ -42,7 +52,32 @@ export default {
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
       saveAndCloseButton.click(),
     ]);
-    // Wait for changes to be saved and reflected
+    cy.wait(15000);
+  },
+
+  fillMultiSelectCustomFieldOnly(data) {
+    cy.do([
+      addCustomFieldDropdown.choose('Multi-select'),
+      TextField('Field label*').fillIn(data.fieldLabel),
+      MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(data.label1),
+      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
+    ]);
+  },
+
+  clickAddOptionButton() {
+    cy.do(addOptionButton.click());
+  },
+
+  fillOptionInRow(rowIndex, optionText) {
+    cy.do(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+        .find(TextField())
+        .fillIn(optionText),
+    );
+  },
+
+  clickSaveAndClose() {
+    cy.do(saveAndCloseButton.click());
     cy.wait(15000);
   },
   clickEditNewButton() {

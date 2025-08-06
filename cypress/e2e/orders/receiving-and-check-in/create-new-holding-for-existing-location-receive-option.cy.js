@@ -31,8 +31,8 @@ describe('Orders', () => {
         }).location;
 
         Locations.createViaApi(testData.location).then((location) => {
-          InventoryInstances.getMaterialTypes().then((materialTypes) => {
-            testData.materialType = materialTypes[0];
+          cy.getDefaultMaterialType().then((mt) => {
+            testData.materialType = mt;
           });
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances: testData.folioInstances,
@@ -88,7 +88,7 @@ describe('Orders', () => {
   describe('Receiving and Check-in', () => {
     it(
       'C375241 Create new holdings for already existing location when receiving item by "Receive" option (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Click on the Order
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

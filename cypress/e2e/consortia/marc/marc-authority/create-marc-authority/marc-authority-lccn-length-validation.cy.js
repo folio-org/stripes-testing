@@ -70,6 +70,7 @@ describe('MARC', () => {
               // Step 2: Select authority file (LCNAF)
               MarcAuthority.checkSourceFileSelectShown();
               MarcAuthority.selectSourceFile(authorityFile);
+              MarcAuthority.setValid008DropdownValues();
 
               // Step 3: Add 100 field
               QuickMarcEditor.addNewField('100', `$a ${authorityHeading}`, 3);

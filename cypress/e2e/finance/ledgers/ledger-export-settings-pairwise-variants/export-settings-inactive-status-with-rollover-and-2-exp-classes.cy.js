@@ -136,6 +136,7 @@ describe('Finance: Ledgers', () => {
         'None',
         'Allocation',
       );
+      cy.wait(4000);
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);

@@ -90,7 +90,7 @@ describe('Bulk-edit', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        cy.getDefaultMaterialType().then((res) => {
           materialTypeId = res.id;
         });
         InventoryHoldings.getHoldingsFolioSource()

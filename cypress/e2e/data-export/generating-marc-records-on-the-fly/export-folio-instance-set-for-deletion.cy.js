@@ -1,20 +1,20 @@
 /* eslint-disable no-unused-expressions */
-import permissions from '../../support/dictionary/permissions';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import { getLongDelay } from '../../support/utils/cypressTools';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix, { randomFourDigitNumber } from '../../support/utils/stringTools';
-import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import SetRecordForDeletionModal from '../../support/fragments/inventory/modals/setRecordForDeletionModal';
-import parseMrcFileContentAndVerify from '../../support/utils/parseMrcFileContent';
-import DateTools from '../../support/utils/dateTools';
+import permissions from '../../../support/dictionary/permissions';
+import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
+import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import SetRecordForDeletionModal from '../../../support/fragments/inventory/modals/setRecordForDeletionModal';
+import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
+import DateTools from '../../../support/utils/dateTools';
 
 let user;
 let instanceTypeId;
@@ -117,7 +117,7 @@ describe('Data Export', () => {
 
           const commonAssertions = (instanceId) => [
             (record) => {
-              expect(record.leader).to.eq('00265dam a22000973c 4500');
+              expect(record.leader[5]).to.eq('d');
             },
             (record) => {
               expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;

@@ -167,7 +167,7 @@ describe('Inventory', () => {
             instances[0].loanTypeId = res[0].id;
             instances[0].loanTypeName = res[0].name;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             instances[0].materialTypeId = res.id;
           });
           const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -287,7 +287,7 @@ describe('Inventory', () => {
 
     it(
       'C405530 Verify that call numbers of other types are not displayed in browse result list for certain call number type when user uses pagination buttons (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C405530', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C405530', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

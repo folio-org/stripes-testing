@@ -383,6 +383,11 @@ export default {
     cy.do([actionsButton.click(), exportInstanceMarcButton.click()]);
   },
 
+  exportInstanceMarcButtonAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect(exportInstanceMarcButton.absent());
+  },
+
   verifyToastNotificationAfterExportInstanceMarc(recordHrid) {
     const currentDate = DateTools.getFormattedDate({ date: new Date() });
 
@@ -456,7 +461,7 @@ export default {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
+        cy.getDefaultMaterialType();
         cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
@@ -546,7 +551,7 @@ export default {
     cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
+        cy.getDefaultMaterialType();
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="MARC")' }).then(
@@ -840,8 +845,8 @@ export default {
         this.getLoanTypes().then((loanTypes) => {
           types.loanTypeId = loanTypes[0].id;
         });
-        this.getMaterialTypes().then((materialTypes) => {
-          types.materialTypeId = materialTypes[0].id;
+        cy.getDefaultMaterialType().then((mt) => {
+          types.materialTypeId = mt.id;
         });
       })
       .then(() => {
@@ -905,7 +910,7 @@ export default {
         this.getLoanTypes().then((loanTypes) => {
           types.loanTypeId = loanTypes[0].id;
         });
-        this.getMaterialTypes().then((materialTypes) => {
+        this.getDefaultMaterialType().then((materialTypes) => {
           types.materialTypeId = materialTypes[0].id;
         });
       })

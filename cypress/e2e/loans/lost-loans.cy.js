@@ -87,7 +87,7 @@ describe('Loans', () => {
         userData.source = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
 
         cy.getAdminToken().then(async () => {
-          InventoryInstances.getMaterialTypes({ limit: 4 })
+          cy.getMaterialTypes({ limit: 4 })
             .then((materialTypesRes) => {
               materialTypes = materialTypesRes;
 
@@ -196,7 +196,7 @@ describe('Loans', () => {
 
     it(
       'C10949 Close declared lost loan (set cost lost item fees) (vega) (TaaS)',
-      { tags: ['criticalPath', 'vega', 'C10949'] },
+      { tags: ['criticalPathFlaky', 'vega', 'C10949'] },
       () => {
         const comment = 'Declare lost';
         // Navigate to open loan "A".

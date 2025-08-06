@@ -117,7 +117,7 @@ describe('Export Manager', () => {
 
       it(
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
         () => {
           Orders.selectOrderLines();
           Orders.resetFiltersIfActive();

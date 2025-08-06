@@ -84,7 +84,7 @@ describe('Inventory', () => {
             });
           }
         });
-        cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+        cy.getBookMaterialType().then((materialType) => {
           materialTypeId = materialType.id;
         });
         ServicePoints.createViaApi(firstServicePoint);

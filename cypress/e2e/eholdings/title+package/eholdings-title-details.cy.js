@@ -50,10 +50,15 @@ describe('eHoldings', () => {
       'C360543 Check the content of "Title information" accordion in "Title" detail record (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C360543'] },
       () => {
-        cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+          });
+          cy.reload();
+          EHoldingsTitlesSearch.waitLoading();
+        }, 20_000);
+
         cy.visit(`${TopMenu.eholdingsPath}/titles/41327`);
         EHoldingsTitle.waitLoading(testData.title);
         EHoldingsTitle.checkTitleInformationField('Alternate title(s)', testData.alternateTitles);

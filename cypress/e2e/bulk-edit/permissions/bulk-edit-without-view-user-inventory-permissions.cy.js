@@ -78,7 +78,7 @@ describe('Bulk-edit', () => {
 
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneItems(false);
+        BulkEditSearchPane.verifySetCriteriaPaneItems(false, true);
         BulkEditSearchPane.verifyRecordTypesAccordion();
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Users');
         userIdentifiers.forEach((identifier) => {

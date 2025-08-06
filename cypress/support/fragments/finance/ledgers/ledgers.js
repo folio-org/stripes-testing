@@ -18,6 +18,7 @@ import {
   MultiColumnListRow,
   HTML,
   including,
+  Callout,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -1137,6 +1138,19 @@ export default {
     InteractorsTools.checkCalloutMessage(`Export of ${ledger.name} data has started`);
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(`${ledger.name} data was successfully exported to CSV`);
+  },
+
+  closeAllVisibleCallouts: () => {
+    cy.get('[class^=calloutBase-]').then(($callouts) => {
+      if (!$callouts.length) return;
+      for (let i = 0; i < $callouts.length; i++) {
+        cy.do(
+          Callout({ id: $callouts[i].id })
+            .find(Button({ icon: 'times' }))
+            .click(),
+        );
+      }
+    });
   },
 
   checkPreparationExportSettings() {

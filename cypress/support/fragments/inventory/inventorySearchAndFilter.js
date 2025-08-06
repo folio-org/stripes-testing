@@ -81,7 +81,7 @@ const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-but
 const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
-const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
+const instancesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-find-records') });
 const getListHeader = (name) => inventorySearchResultsPane.find(MultiColumnListHeader(name));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
@@ -98,6 +98,7 @@ const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }))
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
+const clearIcon = Button({ icon: 'times-circle-solid' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1464,5 +1465,15 @@ export default {
     this.getAllValuesFromColumn(columnIndex).then((cellValues) => {
       cy.expect(cellValues).to.deep.equal(cellValues.sort());
     });
+  },
+
+  clearBrowseInputField() {
+    cy.do(browseSearchInputField.focus());
+    cy.do(browseSearchInputField.find(clearIcon).click());
+    this.checkBrowseSearchInputFieldContent('');
+  },
+
+  verifyBrowseFacetsNotDisplayed() {
+    cy.expect(searchAndFilterSection.find(Accordion()).absent());
   },
 };

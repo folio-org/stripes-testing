@@ -34,7 +34,7 @@ describe('Orders', () => {
           testData.locations.forEach((location) => Locations.createViaApi(location));
         })
         .then(() => {
-          cy.getMaterialTypes({ limit: 1 }).then(({ id: materialTypeId }) => {
+          cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
             testData.orderLine = {
               ...BasicOrderLine.getDefaultOrderLine(),
               cost: {

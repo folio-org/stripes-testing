@@ -57,6 +57,8 @@ const versionHistoryButton = Button({ icon: 'clock' });
 const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
 const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
+const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -124,7 +126,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(500);
+  cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
 
@@ -363,9 +365,9 @@ export default {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
   },
 
-  openHoldingView: () => {
+  openHoldingView: (actionsShown = true) => {
     cy.do(Button('View holdings').click());
-    cy.expect(actionsButton.exists());
+    if (actionsShown) cy.expect(actionsButton.exists());
   },
 
   openHoldingItem({ name, barcode, shouldOpen = true }) {
@@ -645,6 +647,11 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
+  exportInstanceMarcButtonAbsent: () => {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
+  },
+
   setRecordForDeletion: () => {
     cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
   },
@@ -903,5 +910,20 @@ export default {
   verifyAddItemButtonIsAbsent({ holdingName } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).absent());
+  },
+
+  verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        classificationAccordion
+          .find(listClassifications)
+          .find(MultiColumnListCell({ columnIndex: 1, content: classificationNumber }))
+          .find(clipboardIcon)
+          .click(),
+      );
+      cy.expect(Callout(clipboardCopyCalloutText(classificationNumber)).exists());
+    }).then(() => {
+      cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
+    });
   },
 };

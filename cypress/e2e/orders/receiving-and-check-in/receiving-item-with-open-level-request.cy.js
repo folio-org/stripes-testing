@@ -51,7 +51,7 @@ describe('Orders: Receiving and Check-in', () => {
               );
             })
             .then(() => {
-              cy.getMaterialTypes({ limit: 1 }).then(({ id: materialTypeId }) => {
+              cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
                 testData.order = NewOrder.getDefaultOrder({
                   vendorId: testData.organization.id,
                   manualPo: false,
@@ -125,7 +125,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C402765 Receiving an item with an open item level request (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPathFlaky', 'thunderjet'] },
     () => {
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

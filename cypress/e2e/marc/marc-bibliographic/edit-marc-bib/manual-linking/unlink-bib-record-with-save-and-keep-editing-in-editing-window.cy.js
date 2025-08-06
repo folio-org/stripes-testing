@@ -119,9 +119,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
               QuickMarcEditor.closeCallout();
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
               QuickMarcEditor.checkAfterSaveAndClose();
               cy.waitForAuthRefresh(() => {
                 cy.login(userData.username, userData.password, {
@@ -132,7 +130,6 @@ describe('MARC', () => {
                 InventoryInstances.waitContentLoading();
               }, 20_000);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
-              InventoryInstances.selectInstance();
             });
           });
         });
@@ -149,6 +146,7 @@ describe('MARC', () => {
           'C365599 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & keep editing" button in editing window (spitfire) (TaaS)',
           { tags: ['extendedPath', 'spitfire', 'C365599'] },
           () => {
+            InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.tag100RowIndex);
             QuickMarcEditor.verifySaveAndKeepEditingButtonDisabled();
@@ -167,10 +165,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
             QuickMarcEditor.checkLinkButtonExist(testData.tag100);
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
-            QuickMarcEditor.clickSaveAndKeepEditing();
-            QuickMarcEditor.closeCallout();
+            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            // QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
 
             QuickMarcEditor.clickLinkIconInTagField(testData.tag100RowIndex);
