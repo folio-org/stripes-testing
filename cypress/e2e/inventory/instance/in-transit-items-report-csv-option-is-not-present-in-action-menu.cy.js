@@ -24,11 +24,9 @@ describe('Inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-            (locations) => {
-              testData.locationsId = locations.id;
-            },
-          );
+          cy.getLocations({ query: `name="${testData.permanentLocationUI}"` }).then((locations) => {
+            testData.locationsId = locations.id;
+          });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             testData.loanTypeId = res[0].id;
           });
