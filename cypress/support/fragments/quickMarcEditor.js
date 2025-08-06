@@ -833,6 +833,8 @@ export default {
 
   cancelEditConfirmationPresented() {
     cy.expect(cancelEditConformModel.exists());
+    cy.expect(closeWithoutSavingBtn.exists());
+    cy.expect(cancelEditConfirmBtn.exists());
   },
 
   confirmEditCancel() {
@@ -3067,6 +3069,11 @@ export default {
   closeModalWithEscapeKey() {
     cy.get('[class^="modal-"]').type('{esc}');
     cy.expect(Modal().absent());
+  },
+
+  discardChangesWithEscapeKey(index) {
+    this.moveCursorToTagBox(index);
+    cy.get(`[data-row="record-row[${index}]"]`).type('{esc}');
   },
 
   verifyValidationCallout(warningCount, failCount = 0) {
