@@ -10,6 +10,21 @@ import { APPLICATION_NAMES } from '../support/constants';
 import UsersSearchPane from '../support/fragments/users/usersSearchPane';
 import UsersSearchResultsPane from '../support/fragments/users/usersSearchResultsPane';
 
+/*
+For these users, Eureka-specific capabilities need to be assigned.
+Such capabilities are not a part of the initial sets,
+so they are expected to be moved to hash-roles.
+*/
+const usersWithHashRoles = [
+  'c359587',
+  'c375072',
+  'c375076',
+  'c375077',
+  'c380503',
+  'c388524',
+  'c396393',
+];
+
 describe('Check roles for migrated users', () => {
   it(
     'C805757 Check roles for migrated users (eureka)',
@@ -20,15 +35,17 @@ describe('Check roles for migrated users', () => {
       Users.waitLoading();
 
       migrationUsers.forEach((user) => {
-        UsersSearchPane.searchByKeywords(MigrationData.getUsername(user.caseId));
+        const username = MigrationData.getUsername(user.caseId);
+        const rolesCount = usersWithHashRoles.includes(user.caseId) ? 2 : 1;
+        UsersSearchPane.searchByKeywords(username);
         UsersCard.verifyUserLastFirstNameInCard(
           MigrationData.getLastName(user.caseId),
           MigrationData.getFirstName(user.caseId),
         );
-        UsersCard.verifyUserRolesCounter('1');
+        UsersCard.verifyUserRolesCounter(`${rolesCount}`);
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([`migration_permission_set_${user.caseId}`]);
-        UsersCard.verifyUserRolesRowsCount(1);
+        UsersCard.verifyUserRolesRowsCount(rolesCount);
         UsersCard.close();
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
