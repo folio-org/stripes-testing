@@ -124,7 +124,7 @@ describe('Inventory', () => {
         HoldingsRecordView.checkTitle(`Holdings • ${testData.locationName}`);
         HoldingsRecordView.close();
         InventoryInstance.expandMemberSubSubHoldings(
-          'University',
+          Affiliations.University,
           testData.instanceIds.holdings[0].id,
         );
         InventoryInstance.openItemByBarcode(testData.itemBarcode);

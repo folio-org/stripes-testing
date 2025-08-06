@@ -13,7 +13,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Search', () => {
       const testData = {
-        marcValueShared: 'C410744 Shared DiCaprio',
+        marcValueShared: 'C410744 Shared Di Caprio',
         marcValueLocalM1: 'C410744 Local Member',
         marcValueLocalM2: 'C410744 Local Member 2',
         testId: 'C410744',
@@ -21,7 +21,7 @@ describe('MARC', () => {
           AUTHORIZED: 'Authorized',
           REFERENCE: 'Reference',
           AUTHREF: 'Auth/Ref',
-          authorizedSharedValue: 'C410744 Shared DiCaprio, Leonardo',
+          authorizedSharedValue: 'C410744 Shared Di Caprio, Leonardo',
           authorizedValueM1: 'C410744 Local Member 1 Jackson, Samuel L.',
           referenceValueShared: 'C410744 Shared Di Caprio, Leonardo (actor)',
           authRefValueShared: 'C410744 Shared Di Caprio, Leonardo (Titanic)',
@@ -99,6 +99,7 @@ describe('MARC', () => {
               });
             });
 
+            cy.resetTenant();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,

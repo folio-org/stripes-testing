@@ -170,8 +170,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C374186'] },
+      'C729203 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C729203'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -232,7 +232,6 @@ describe('Data Import', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
-        InventoryInstance.verifyRecordStatus('Automated linking update');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           59,

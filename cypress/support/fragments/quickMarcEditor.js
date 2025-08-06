@@ -40,6 +40,7 @@ import {
   MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
   AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
 } from '../constants';
+import InteractorsTools from '../utils/interactorsTools';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -2225,11 +2226,15 @@ export default {
   },
 
   closeAllCallouts() {
-    cy.get('[class^=calloutBase-]').each((callout) => {
-      const calloutId = callout.attr('id');
-      if (calloutId) {
-        cy.do(Callout({ id: calloutId }).dismiss());
-      }
+    cy.then(() => {
+      cy.get('[class^=calloutBase-]').each((callout) => {
+        const calloutId = callout.attr('id');
+        if (calloutId) {
+          cy.do(Callout({ id: calloutId }).dismiss());
+        }
+      });
+    }).then(() => {
+      InteractorsTools.checkNoCalloutsExist();
     });
   },
 
