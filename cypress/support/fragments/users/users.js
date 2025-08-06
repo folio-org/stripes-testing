@@ -441,4 +441,15 @@ export default {
       });
     cy.expect(userDetailsPane.find(KeyValue('Address Type')).has({ value: address }));
   },
+
+  verifyCountryOnUserDetailsPane(country) {
+    cy.contains('[class^=accordion]', 'Contact information')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Contact information').clickHeader());
+        }
+      });
+    cy.expect(userDetailsPane.find(KeyValue('Country')).has({ value: country }));
+  },
 };

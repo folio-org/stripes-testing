@@ -653,6 +653,14 @@ export default {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
   },
 
+  addAddressWithCountry(type = 'Home', country = 'Australia') {
+    cy.do([
+      Button('Add address').click(),
+      Select('Address Type*').choose(type),
+      Selection('Country').choose(country),
+    ]);
+  },
+
   addAddressWithoutType() {
     cy.do([Button('Add address').click()]);
     cy.wait(1000);
@@ -663,6 +671,7 @@ export default {
   },
 
   cancelAddressForm() {
+    // eslint-disable-next-line cypress/no-force
     cy.get('[data-test-delete-address-button="true"]').click({ force: true });
     cy.wait(1000);
   },
