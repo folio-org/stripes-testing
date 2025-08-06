@@ -1,5 +1,9 @@
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  MATERIAL_TYPE_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -74,7 +78,7 @@ describe('Inventory', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.collegeTenant.item.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` }).then((res) => {
               testData.collegeTenant.item.materialTypeId = res.id;
             });
           })
