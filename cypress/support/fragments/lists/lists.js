@@ -22,6 +22,7 @@ import {
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 
+const listInformationAccording = Accordion('List information');
 const listNameTextField = TextField({ name: 'listName' });
 const listDescriptionTextArea = TextArea({ name: 'description' });
 const saveButton = Button('Save');
@@ -93,6 +94,14 @@ const UI = {
         cy.log('"View updated list" didn\'t appear');
       }
     });
+  },
+
+  clickOnListInformationAccordion() {
+    cy.do(listInformationAccording.click());
+  },
+
+  expandListInformationAccordion() {
+    cy.do(listInformationAccording.open());
   },
 
   openActions() {
