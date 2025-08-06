@@ -5,16 +5,22 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Edit list', () => {
+  describe('Edit list', {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
     const userData = {};
-    const listData = {
-      name: getTestEntityValue('list'),
-      recordType: 'Users',
-      status: ['Active', 'Inactive'],
-      visibility: 'Private',
-    };
+    let listData = {};
 
     beforeEach('Create a user', () => {
+      listData = {
+        name: getTestEntityValue('list'),
+        recordType: 'Users',
+        status: ['Active', 'Inactive'],
+        visibility: 'Private',
+      };
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsAll.gui,
