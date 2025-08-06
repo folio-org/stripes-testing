@@ -69,6 +69,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
+          MarcAuthority.setValid008DropdownValues();
 
           // 3 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
