@@ -581,6 +581,10 @@ export default {
     cy.expect(Button('Add donor').absent());
   },
 
+  verifyBankingInformationAccordionIsAbsent: () => {
+    cy.expect(Section({ id: 'bankingInformationSection' }).absent());
+  },
+
   addDonorContactToOrganization: (contact) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
