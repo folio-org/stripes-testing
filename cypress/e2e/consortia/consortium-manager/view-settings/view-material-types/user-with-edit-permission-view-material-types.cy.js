@@ -2,15 +2,13 @@ import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-import ConsortiaControlledVocabularyPaneset, {
-  actionIcons,
-} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import ItemNoteTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
+import MaterialTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/items/materialTypesConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import ItemNoteTypes from '../../../../../support/fragments/settings/inventory/items/itemNoteTypes';
+import MaterialTypes from '../../../../../support/fragments/settings/inventory/materialTypes';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
@@ -19,23 +17,23 @@ import ConsortiumManager from '../../../../../support/fragments/settings/consort
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('View settings', () => {
-      describe('View Item note types', () => {
+      describe('View Material types', () => {
         const testData = {
-          centralSharedItemNoteType: {
+          centralSharedMaterialType: {
             payload: {
-              name: getTestEntityValue('C411437_centralSharedItemNoteType'),
+              name: getTestEntityValue('C411416_centralSharedMaterialType'),
             },
           },
-          centralLocalItemNoteType: {
-            name: getTestEntityValue('C411437_centralLocalItemNoteType'),
+          centralLocalMaterialType: {
+            name: getTestEntityValue('C411416_centralLocalMaterialType'),
             source: 'local',
           },
-          collegeLocalItemNoteType: {
-            name: getTestEntityValue('C411437_collegeLocalItemNoteType'),
+          collegeLocalMaterialType: {
+            name: getTestEntityValue('C411416_collegeLocalMaterialType'),
             source: 'local',
           },
-          universityLocalItemNoteType: {
-            name: getTestEntityValue('C411437_universityLocalItemNoteType'),
+          universityLocalMaterialType: {
+            name: getTestEntityValue('C411416_universityLocalMaterialType'),
             source: 'local',
           },
         };
@@ -53,94 +51,100 @@ describe('Consortia', () => {
         before('Create test data', () => {
           cy.getAdminToken()
             .then(() => {
-              ItemNoteTypesConsortiumManager.createViaApi(testData.centralSharedItemNoteType).then(
-                (newItemNoteType) => {
-                  testData.centralSharedItemNoteType = newItemNoteType;
+              MaterialTypesConsortiumManager.createViaApi(testData.centralSharedMaterialType).then(
+                (newMaterialType) => {
+                  testData.centralSharedMaterialType = newMaterialType;
                 },
               );
             })
             .then(() => {
               cy.resetTenant();
-              ItemNoteTypes.createItemNoteTypeViaApi(testData.centralLocalItemNoteType.name).then(
-                (id) => {
-                  testData.centralLocalItemNoteType.id = id;
+              MaterialTypes.createMaterialTypeViaApi(testData.centralLocalMaterialType).then(
+                ({ body }) => {
+                  testData.centralLocalMaterialType.id = body.id;
                 },
               );
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteType.name).then(
-                (id) => {
-                  testData.collegeLocalItemNoteType.id = id;
+              MaterialTypes.createMaterialTypeViaApi(testData.collegeLocalMaterialType).then(
+                ({ body }) => {
+                  testData.collegeLocalMaterialType.id = body.id;
                 },
               );
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
-              ItemNoteTypes.createItemNoteTypeViaApi(
-                testData.universityLocalItemNoteType.name,
-              ).then((id) => {
-                testData.universityLocalItemNoteType.id = id;
-              });
+              MaterialTypes.createMaterialTypeViaApi(testData.universityLocalMaterialType).then(
+                ({ body }) => {
+                  testData.universityLocalMaterialType.id = body.id;
+                },
+              );
             })
             .then(() => {
+              // Create user in member-1 tenant (College) as per preconditions
               cy.setTenant(Affiliations.College);
-              cy.createTempUser([Permissions.inventoryCRUDItemNoteTypes.gui]).then(
+              cy.createTempUser([Permissions.uiCreateEditDeleteMaterialTypes.gui]).then(
                 (userProperties) => {
                   testData.user = userProperties;
 
+                  // Assign affiliations to member-2 (University) tenant
                   cy.resetTenant();
-                  // Assign affiliations: user created in College (member-1), affiliated with Central and University (member-2)
                   cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+
+                  // Assign permissions in central tenant
                   cy.assignPermissionsToExistingUser(testData.user.userId, [
                     Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                    Permissions.inventoryCRUDItemNoteTypes.gui,
+                    Permissions.uiCreateEditDeleteMaterialTypes.gui,
                   ]);
 
-                  // Set up permissions in University (member-2) tenant
+                  // Assign permissions in member-2 (University) tenant
                   cy.setTenant(Affiliations.University);
                   cy.assignPermissionsToExistingUser(testData.user.userId, [
-                    Permissions.inventoryCRUDItemNoteTypes.gui,
+                    Permissions.uiCreateEditDeleteMaterialTypes.gui,
                   ]);
                 },
               );
+            })
+            .then(() => {
+              // Login to member-1 tenant and switch to central
+              cy.resetTenant();
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.user.username, testData.user.password);
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                cy.reload();
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              }, 20_000);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+              // Without waiter, permissions aren't loading
+              cy.wait(10000);
             });
         });
 
         after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          ItemNoteTypesConsortiumManager.deleteViaApi(testData.centralSharedItemNoteType);
-          ItemNoteTypes.deleteItemNoteTypeViaApi(testData.centralLocalItemNoteType.id);
+          MaterialTypesConsortiumManager.deleteViaApi(testData.centralSharedMaterialType);
+          MaterialTypes.deleteViaApi(testData.centralLocalMaterialType.id);
           cy.setTenant(Affiliations.College);
-          ItemNoteTypes.deleteItemNoteTypeViaApi(testData.collegeLocalItemNoteType.id);
+          MaterialTypes.deleteViaApi(testData.collegeLocalMaterialType.id);
           Users.deleteViaApi(testData.user.userId);
           cy.setTenant(Affiliations.University);
-          ItemNoteTypes.deleteItemNoteTypeViaApi(testData.universityLocalItemNoteType.id);
+          MaterialTypes.deleteViaApi(testData.universityLocalMaterialType.id);
         });
 
         it(
-          'C411437 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of item note types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['extendedPathECS', 'thunderjet', 'C411437'] },
+          'C411416 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of material types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+          { tags: ['extendedPathECS', 'thunderjet', 'C411416'] },
           () => {
-            cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.user.username, testData.user.password);
-              cy.reload();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            }, 20_000);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-            // Without waiter, permissions aren't loading
-            cy.wait(10000);
-
-            // Step 1: User opens "Consortium manager" app and selects all members
+            // Step 1: User opens "Consortium manager" app
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.verifyStatusOfConsortiumManager();
             // User expands "Members selection" accordion
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
-            // Step 2: Click "Select members" button to verify modal functionality
+            // Step 2: Click "Select members" button to verify modal behavior
             ConsortiumManagerApp.clickSelectMembers();
             SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
 
@@ -148,104 +152,104 @@ describe('Consortia', () => {
             SelectMembers.checkMember(tenantNames.university, false);
             SelectMembers.verifyStatusOfSelectMembersModal(3, 2, false);
 
-            // Step 4: Save selection and verify 2 members selected
+            // Step 4: Save selection
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
 
-            // Step 5: Navigate to Inventory > Item note types
+            // Step 5: User clicks on "Inventory" settings and "Material types"
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            ItemNoteTypesConsortiumManager.choose();
-            // New button SHOULD be displayed since user has create/edit/remove permission
+            MaterialTypesConsortiumManager.choose();
+            // New button should be displayed since user has create/edit/remove permissions
             ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
-            // Step 6: Verify central tenant shared item note type appears
+            // Step 6: User sees central tenant shared material type
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedItemNoteType.payload.name,
+              testData.centralSharedMaterialType.payload.name,
               constants.source.consortium,
               [
-                testData.centralSharedItemNoteType.payload.name,
+                testData.centralSharedMaterialType.payload.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
               ],
             );
 
-            // Step 7: Verify central tenant local item note type appears with edit/delete actions
+            // Step 7: User sees central tenant local material type with action icons
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralLocalItemNoteType.name,
+              testData.centralLocalMaterialType.name,
               tenantNames.central,
               [
-                testData.centralLocalItemNoteType.name,
+                testData.centralLocalMaterialType.name,
                 '',
                 `${moment().format('l')} by`,
                 tenantNames.central,
               ],
-              [actionIcons.edit, actionIcons.trash],
+              ['edit', 'trash'],
             );
 
-            // Step 8: Verify College local item note type appears with edit/delete actions
+            // Step 8: Verify College local material type appears with action icons
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.collegeLocalItemNoteType.name,
+              testData.collegeLocalMaterialType.name,
               tenantNames.college,
               [
-                testData.collegeLocalItemNoteType.name,
+                testData.collegeLocalMaterialType.name,
                 '',
                 `${moment().format('l')} by`,
                 tenantNames.college,
               ],
-              [actionIcons.edit, actionIcons.trash],
+              ['edit', 'trash'],
             );
 
-            // Step 9: Verify University local item note type does NOT appear (unselected)
+            // Step 9: Verify University local material type does NOT appear (unselected)
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              testData.universityLocalItemNoteType.name,
+              testData.universityLocalMaterialType.name,
             );
 
             // Step 10: Click "Select members" button again
             ConsortiumManagerApp.clickSelectMembers();
-            SelectMembers.verifyStatusOfSelectMembersModal(3, 2, false);
+            SelectMembers.verifyStatusOfSelectMembersModal(3, 2);
 
-            // Step 11: Uncheck member-1 (College) tenant - only central should remain
+            // Step 11: Uncheck member-1 (College) tenant
             SelectMembers.checkMember(tenantNames.college, false);
             SelectMembers.verifyStatusOfSelectMembersModal(3, 1, false);
 
-            // Step 12: Save selection and verify only 1 member selected
+            // Step 12: Save selection
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(1);
 
-            // Step 13: Verify central tenant shared item note type still appears
+            // Step 13: User sees central tenant shared material type
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedItemNoteType.payload.name,
+              testData.centralSharedMaterialType.payload.name,
               constants.source.consortium,
               [
-                testData.centralSharedItemNoteType.payload.name,
+                testData.centralSharedMaterialType.payload.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
               ],
             );
 
-            // Step 14: Verify central tenant local item note type still appears
+            // Step 14: User sees central tenant local material type with action icons
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralLocalItemNoteType.name,
+              testData.centralLocalMaterialType.name,
               tenantNames.central,
               [
-                testData.centralLocalItemNoteType.name,
+                testData.centralLocalMaterialType.name,
                 '',
                 `${moment().format('l')} by`,
                 tenantNames.central,
               ],
-              [actionIcons.edit, actionIcons.trash],
+              ['edit', 'trash'],
             );
 
-            // Step 15: Verify College local item note type does NOT appear (unselected)
+            // Step 15: Verify College local material type does NOT appear (unselected)
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              testData.collegeLocalItemNoteType.name,
+              testData.collegeLocalMaterialType.name,
             );
 
-            // Step 16: Verify University local item note type does NOT appear (unselected)
+            // Step 16: Verify University local material type does NOT appear (unselected)
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              testData.universityLocalItemNoteType.name,
+              testData.universityLocalMaterialType.name,
             );
           },
         );
