@@ -70,6 +70,7 @@ describe('MARC', () => {
                 });
               });
             });
+            cy.resetTenant();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
@@ -81,9 +82,9 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[0]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[0], true);
         cy.setTenant(Affiliations.College);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
       });
 
       it(
