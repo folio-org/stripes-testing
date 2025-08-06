@@ -12,7 +12,8 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      oclcNumberForImport: '1232123',
+      oclcNumberForImport: '1234568',
+      OCLCAuthentication: '100481406/PAOLF',
       instanceTitle: '',
     };
 
@@ -25,8 +26,8 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        // Permissions.settingsDataImportCanViewOnly.gui,
+        // Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.settingsDataImportCanViewOnly.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -35,9 +36,9 @@ describe('Inventory', () => {
         cy.assignPermissionsToExistingUser(testData.user.userId, [
           Permissions.uiInventorySingleRecordImport.gui,
           Permissions.inventoryAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-          Permissions.consortiaInventoryShareLocalInstance.gui,
-          // Permissions.settingsDataImportCanViewOnly.gui,
+          // Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+          // Permissions.consortiaInventoryShareLocalInstance.gui,
+          Permissions.settingsDataImportCanViewOnly.gui,
         ]);
         cy.resetTenant();
 
@@ -45,13 +46,15 @@ describe('Inventory', () => {
         cy.setTenant(Affiliations.University);
         cy.assignPermissionsToExistingUser(testData.user.userId, [
           Permissions.inventoryAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+          // Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         ]);
         cy.resetTenant();
 
-        cy.login(testData.user.username, testData.user.password);
+        // cy.login(testData.user.username, testData.user.password);
+        cy.loginAsAdmin();
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
       });
     });
