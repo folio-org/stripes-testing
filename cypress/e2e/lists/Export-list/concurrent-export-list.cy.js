@@ -8,8 +8,8 @@ describe('Lists', () => {
   describe('Export list', () => {
     let userData = {};
     const listData = {
-      name: `C411814-${getTestEntityValue('list')}`,
-      description: `C411814-${getTestEntityValue('desc')}`,
+      name: '',
+      description: '',
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -26,51 +26,38 @@ describe('Lists', () => {
       ])
         .then((userProperties) => {
           userData = userProperties;
-        })
-        .then(() => {
-          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
-            Lists.createQueryViaApi(query).then((createdQuery) => {
-              listData.queryId = createdQuery.queryId;
-              listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = fields;
-
-              Lists.createViaApi(listData)
-                .then((body) => {
-                  listData.version = body.version;
-                  listId = body.id;
-                })
-                .then(() => {
-                  Lists.waitForListToCompleteRefreshViaApi(listId);
-                });
-            });
-          });
         });
     });
 
     beforeEach('Reset list state', () => {
+      listData.name = `C411814-${getTestEntityValue('list')}`;
+      listData.description = `C411814-${getTestEntityValue('desc')}`;
       cy.getAdminToken();
-      Lists.getListByIdViaApi(listId)
-        .then((body) => {
-          listData.version = body.version;
-        })
-        .then(() => {
-          Lists.waitForListToCompleteRefreshViaApi(listId).then(() => {
-            Lists.editViaApi(listId, { ...listData, isActive: true, isPrivate: false }).then(() => {
-              Lists.getListByIdViaApi(listId)
-                .then((body) => {
-                  listData.version = body.version;
-                })
-                .then(() => {
-                  Lists.waitForListToCompleteRefreshViaApi(listId);
-                });
+      Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+        Lists.createQueryViaApi(query).then((createdQuery) => {
+          listData.queryId = createdQuery.queryId;
+          listData.fqlQuery = createdQuery.fqlQuery;
+          listData.fields = fields;
+
+          Lists.createViaApi(listData)
+            .then((body) => {
+              listData.version = body.version;
+              listId = body.id;
+            })
+            .then(() => {
+              Lists.waitForListToCompleteRefreshViaApi(listId);
             });
-          });
         });
+      });
     });
 
-    after('Delete test data', () => {
+    afterEach('Delete test list', () => {
       cy.getAdminToken();
-      Lists.deleteViaApi(listId);
+      Lists.deleteRecursivelyViaApi(listId);
+    });
+
+    after('Delete test user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 

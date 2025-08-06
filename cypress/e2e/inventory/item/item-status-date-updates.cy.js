@@ -101,8 +101,6 @@ describe.skip('Inventory', () => {
         effectiveLocationServicePoint.id,
         notEffectiveLocationServicePoint.id,
       ]).then(() => {
-        ServicePoints.deleteViaApi(effectiveLocationServicePoint.id);
-        ServicePoints.deleteViaApi(notEffectiveLocationServicePoint.id);
         Users.deleteViaApi(userForDeliveryRequest.userId);
       });
 
