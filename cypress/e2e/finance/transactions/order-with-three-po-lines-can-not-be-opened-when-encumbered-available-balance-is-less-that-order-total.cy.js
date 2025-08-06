@@ -137,7 +137,6 @@ describe('Finance: Transactions', () => {
                       },
                     };
                     Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                      console.log(firstOrderResponse);
                       firstOrder.id = firstOrderResponse.id;
                       firstOrderLine.purchaseOrderId = firstOrderResponse.id;
                       secondOrderLine.purchaseOrderId = firstOrderResponse.id;
