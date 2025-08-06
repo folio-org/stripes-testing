@@ -114,11 +114,26 @@ export default {
     resource: 'UI-Checkout',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  consortiaSharingRolesAllItemCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Sharing-Roles-All Item',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  consortiaSharingRolesAllItemDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Sharing-Roles-All Item',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Users Reset Password',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiConsortiaSettingsConsortiumManagerShare: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Consortia-Settings Consortium-Manager Share',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

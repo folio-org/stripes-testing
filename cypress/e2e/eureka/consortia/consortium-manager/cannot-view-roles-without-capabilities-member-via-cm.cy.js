@@ -21,7 +21,7 @@ describe('Eureka', () => {
       CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
       CapabilitySets.uiAuthorizationRolesSettingsAdmin,
     ];
-    const capabSetsToAssignCollege = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
+    const capabSetsToAssignCollege = [CapabilitySets.uiAuthorizationPoliciesSettingsAdmin];
     let userData;
 
     before('Create user, data', () => {
