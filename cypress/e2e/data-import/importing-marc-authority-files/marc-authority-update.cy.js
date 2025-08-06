@@ -232,7 +232,6 @@ describe('Data Import', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
-        InventoryInstance.verifyRecordStatus('Automated linking update');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           59,

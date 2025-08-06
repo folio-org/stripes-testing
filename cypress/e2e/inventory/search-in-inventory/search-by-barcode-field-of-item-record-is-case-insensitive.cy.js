@@ -99,9 +99,16 @@ describe('Inventory', () => {
           InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.barcode);
         });
         ServicePoints.deleteViaApi(testData.userServicePoint.id);
+        if (testData.defaultLocation?.id) {
+          Locations.deleteViaApi(testData.defaultLocation.id);
+        }
         Locations.deleteViaApi(testData.defaultLocation);
-        Users.deleteViaApi(testData.user.userId);
-        cy.deleteLoanType(testData.loanTypeId);
+        if (testData?.user?.userId) {
+          Users.deleteViaApi(testData.user.userId);
+        }
+        if (testData?.loanTypeId) {
+          cy.deleteLoanType(testData.loanTypeId);
+        }
       });
 
       it(
