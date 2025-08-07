@@ -129,6 +129,7 @@ describe('Bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(instanceUUIDsFileName);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 

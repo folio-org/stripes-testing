@@ -71,6 +71,7 @@ const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
 const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
 const selectActionForMarcInstanceDropdownFirst = Select({ name: 'name', dataActionIndex: '0' });
+const noteTypeSelection = Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -1064,18 +1065,16 @@ export default {
     this.verifyActionSelected('Change note type', rowIndex);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') }))
+        .find(noteTypeSelection)
         .has({ checkedOptionText: newType }),
     );
   },
 
   selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
-    cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(selectNoteHoldingTypeDropdown).choose(newType),
-    ]);
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(noteTypeSelection).choose(newType)]);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(selectNoteHoldingTypeDropdown)
+        .find(noteTypeSelection)
         .has({ checkedOptionText: newType }),
     );
   },
