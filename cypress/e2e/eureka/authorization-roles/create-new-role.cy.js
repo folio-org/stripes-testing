@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
@@ -72,13 +73,7 @@ describe('Eureka', () => {
         absentCapabilityTables: [CAPABILITY_TYPES.SETTINGS, CAPABILITY_TYPES.PROCEDURAL],
       };
 
-      const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.CREATE,
-        },
-      ];
+      const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesSettingsCreate];
 
       before('Creating user, login', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
