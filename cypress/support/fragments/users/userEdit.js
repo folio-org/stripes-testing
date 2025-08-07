@@ -224,6 +224,10 @@ export default {
     cy.do(statusSelect.choose(status));
   },
 
+  changePatronGroup(patronGroup) {
+    cy.do(addressSelect.choose(patronGroup));
+  },
+
   searchForPermission(permission) {
     cy.do(permissionsSearch.fillIn(permission));
     cy.expect(permissionsSearch.is({ value: permission }));
@@ -647,6 +651,36 @@ export default {
 
   addAddress(type = 'Home') {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+  },
+
+  addAddressWithCountry(type = 'Home', country = 'Australia') {
+    cy.do([
+      Button('Add address').click(),
+      Select('Address Type*').choose(type),
+      Selection('Country').choose(country),
+    ]);
+  },
+
+  addAddressWithoutType() {
+    cy.do([Button('Add address').click()]);
+    cy.wait(1000);
+  },
+
+  deleteAddress() {
+    cy.do(Button('Delete address').click());
+  },
+
+  cancelAddressForm() {
+    // eslint-disable-next-line cypress/no-force
+    cy.get('[data-test-delete-address-button="true"]').click({ force: true });
+    cy.wait(1000);
+  },
+
+  saveAndCloseStayOnEdit() {
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
+    cy.expect(userEditPane.exists());
   },
 
   editUsername(username) {
@@ -1113,5 +1147,22 @@ export default {
     const pluralType = type.toLowerCase() === 'proxy' ? 'proxies' : `${type.toLowerCase()}s`;
     const noRecordsText = `No ${pluralType} found`;
     cy.expect(proxySponsorAccordion.find(HTML(including(noRecordsText))).exists());
+  },
+
+  verifyAddressTypeError() {
+    cy.expect(HTML(including('Please select address type')).exists());
+  },
+
+  setExpirationDate() {
+    cy.do(setExpirationDateButton.click());
+  },
+
+  closeKeycloakModal() {
+    cy.expect(Modal('Keycloak user record').exists());
+    cy.do(
+      Modal('Keycloak user record')
+        .find(Button({ id: 'clickable-JIT-user-cancel' }))
+        .click(),
+    );
   },
 };
