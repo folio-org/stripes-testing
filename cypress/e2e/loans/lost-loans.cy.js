@@ -87,7 +87,7 @@ describe('Loans', () => {
         userData.source = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
 
         cy.getAdminToken().then(async () => {
-          cy.getMaterialTypes({ limit: 4 })
+          cy.getAllMaterialTypes({ limit: 4 })
             .then((materialTypesRes) => {
               materialTypes = materialTypesRes;
 

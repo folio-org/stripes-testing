@@ -1,4 +1,5 @@
 import Users from '../../../support/fragments/users/users';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import {
   AUTHORIZATION_POLICY_TYPES,
   AUTHORIZATION_POLICY_SOURCES,
@@ -12,10 +13,10 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Policies Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Policies', action: 'Manage' },
-        { type: 'Data', resource: 'Users', action: 'Manage' },
-        { type: 'Data', resource: 'User-Capabilities', action: 'Manage' },
+        CapabilitySets.uiAuthorizationPoliciesSettingsAdmin,
+        CapabilitySets.policies,
+        CapabilitySets.users,
+        CapabilitySets.userCapabilities,
       ];
 
       before('Create users', () => {

@@ -2,6 +2,8 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -10,19 +12,15 @@ describe('Eureka', () => {
     };
 
     const capabSetsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-      { type: 'Procedural', resource: 'UI-Users Reset Password', action: 'Execute' },
+      CapabilitySets.uiUsersView,
+      CapabilitySets.uiUsersEdit,
+      CapabilitySets.uiUsersResetPassword,
     ];
     const capabsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-      { type: 'Procedural', resource: 'UI-Users Reset Password', action: 'Execute' },
-      {
-        type: 'Procedural',
-        resource: 'Users-keycloak Password-Reset-Link Generate',
-        action: 'Execute',
-      },
+      Capabilities.uiUsersView,
+      Capabilities.uiUsersEdit,
+      Capabilities.uiUsersResetPassword,
+      Capabilities.usersKeycloakPasswordResetLinkGenerate,
     ];
 
     before('Create users', () => {

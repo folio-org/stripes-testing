@@ -4,12 +4,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import {
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-  AUTHORIZATION_ROLE_TYPES,
-  APPLICATION_NAMES,
-} from '../../../support/constants';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import { AUTHORIZATION_ROLE_TYPES, APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
@@ -30,30 +27,12 @@ describe('Eureka', () => {
       const defaultSystemRoles = [];
 
       const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.CREATE,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.EDIT,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.DELETE,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsCreate,
+        CapabilitySets.uiAuthorizationRolesSettingsEdit,
+        CapabilitySets.uiAuthorizationRolesSettingsDelete,
       ];
 
-      const capabsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-      ];
+      const capabsToAssign = [Capabilities.settingsEnabled];
 
       before('Create role, user', () => {
         cy.getAdminToken();

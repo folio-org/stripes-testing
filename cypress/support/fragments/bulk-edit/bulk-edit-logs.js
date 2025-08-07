@@ -63,6 +63,8 @@ const reviewingChangesCheckbox = Checkbox('Reviewing changes');
 const completedCheckbox = Checkbox('Completed');
 const completedWithErrorsCheckbox = Checkbox('Completed with errors');
 const failedCheckbox = Checkbox('Failed');
+const previousPaginationButton = Button('Previous');
+const nextPaginationButton = Button('Next');
 
 export default {
   resetAllBtnIsDisabled(isDisabled) {
@@ -375,6 +377,14 @@ export default {
     );
   },
 
+  verifyOperationHrid(runByUsername, operationHrid) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content: operationHrid }))
+        .exists(),
+    );
+  },
+
   verifyEditingColumnValue(runByUsername, content) {
     cy.expect(
       ListRow({ text: including(runByUsername) })
@@ -621,5 +631,17 @@ export default {
 
   verifyLogResultsFound() {
     cy.expect(logsResultPane.find(MultiColumnList()).exists());
+  },
+
+  verifyLogsPagination(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      logsResultPane.find(previousPaginationButton).has({ disabled: true }),
+      logsResultPane.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="prevNextPaginationContainer-"]')
+      .eq(0)
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
   },
 };

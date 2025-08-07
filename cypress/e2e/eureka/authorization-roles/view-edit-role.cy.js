@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -175,9 +176,7 @@ describe('Eureka', () => {
         (capab, index) => index > 6,
       );
 
-      const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Edit' },
-      ];
+      const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesSettingsEdit];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {

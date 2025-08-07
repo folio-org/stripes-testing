@@ -1,4 +1,5 @@
 import Users from '../../../support/fragments/users/users';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Login', () => {
@@ -9,7 +10,7 @@ describe('Eureka', () => {
     let roleId;
     let capabSetId;
 
-    const capabSetToAssign = { type: 'Data', resource: 'UI-Checkout', action: 'Manage' };
+    const capabSetToAssign = CapabilitySets.uiCheckout;
 
     before('Create user, get data', () => {
       cy.getAdminToken();
