@@ -79,6 +79,16 @@ export default {
     cy.expect(logsActionButton.absent());
   },
 
+  verifyLogActionsButtonAbsentInARow(jobHrid) {
+    cy.then(() => MultiColumnListCell({ content: jobHrid, column: 'ID' }).row()).then((index) => {
+      cy.expect(
+        MultiColumnListRow({ indexRow: `row-${index}` })
+          .find(logsActionButton)
+          .absent(),
+      );
+    });
+  },
+
   verifyCheckboxIsSelected(checkbox, isChecked = false) {
     cy.expect(Checkbox({ name: checkbox }).has({ checked: isChecked }));
   },
@@ -150,6 +160,17 @@ export default {
       .should('have.length.at.least', 1)
       .each((value) => {
         expect(value).to.eq(status);
+      });
+  },
+
+  verifyRecordTypesValues(
+    expectedRecordTypes = ['Inventory - instances', 'Inventory - instances (MARC)'],
+  ) {
+    cy.wait(2000);
+    BulkEditSearchPane.getMultiColumnListCellsValues(1)
+      .should('have.length.at.least', 1)
+      .each((value) => {
+        expect(expectedRecordTypes).to.include(value);
       });
   },
 
@@ -399,6 +420,16 @@ export default {
         .find(logsActionButton)
         .click(),
     );
+  },
+
+  clickActionsByJobHrid(jobHrid) {
+    cy.then(() => MultiColumnListCell({ content: jobHrid, column: 'ID' }).row()).then((index) => {
+      cy.do(
+        MultiColumnListRow({ indexRow: `row-${index}` })
+          .find(logsActionButton)
+          .click(),
+      );
+    });
   },
 
   verifyActionsRunBy(name) {
