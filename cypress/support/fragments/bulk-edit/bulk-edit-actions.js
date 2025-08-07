@@ -115,8 +115,12 @@ export default {
     cy.expect(startBulkEditLocalButton.absent());
   },
 
-  startBulkEditInstanceAbsent() {
-    cy.expect(startBulkEditInstanceButton.absent());
+  startBulkEditInstanceAbsent(isAbsent = true) {
+    if (isAbsent) {
+      cy.expect(startBulkEditInstanceButton.absent());
+    } else {
+      cy.expect(startBulkEditInstanceButton.exists());
+    }
   },
 
   closeBulkEditInAppForm() {
