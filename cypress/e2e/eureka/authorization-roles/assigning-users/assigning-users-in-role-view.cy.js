@@ -3,6 +3,8 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../../support/fragments/topMenu';
 import UsersCard from '../../../../support/fragments/users/usersCard';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
@@ -15,11 +17,11 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
+        CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
+        CapabilitySets.uiUsersRolesView,
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+      const capabsToAssign = [Capabilities.settingsEnabled];
 
       before('Create users, roles', () => {
         cy.getAdminToken();

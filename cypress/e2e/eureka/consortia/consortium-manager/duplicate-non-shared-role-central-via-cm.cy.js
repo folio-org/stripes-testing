@@ -13,6 +13,8 @@ import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { including } from '../../../../../interactors';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -37,31 +39,11 @@ describe('Eureka', () => {
     const roleCapabIds = [];
 
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
     ];
-    const capabSetsToAssignMember = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
-    const capabsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabSetsToAssignMember = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
+    const capabsToAssignCentral = [Capabilities.settingsEnabled];
 
     before('Create users, data', () => {
       cy.getAdminToken();

@@ -13,6 +13,8 @@ import {
   CAPABILITY_ACTIONS,
 } from '../../../../support/constants';
 import Users from '../../../../support/fragments/users/users';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -36,53 +38,19 @@ describe('Eureka', () => {
     const roleCapabilitySetsMember = roleCapabilitySets.slice(1);
 
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
-        action: CAPABILITY_ACTIONS.MANAGE,
-      },
-      {
-        type: CAPABILITY_TYPES.PROCEDURAL,
-        resource: 'UI-Consortia-Settings Consortium-Manager Share',
-        action: CAPABILITY_ACTIONS.EXECUTE,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'Consortia Sharing-Roles-All Item',
-        action: CAPABILITY_ACTIONS.CREATE,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsEdit,
+      CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerShare,
+      CapabilitySets.consortiaSharingRolesAllItemCreate,
     ];
 
     const capabSetsToAssignMember = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
-        action: CAPABILITY_ACTIONS.MANAGE,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsEdit,
+      CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
     ];
 
-    const capabsToAssignMember = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabsToAssignMember = [Capabilities.settingsEnabled];
 
     const capabSetIds = [];
     let userData;
