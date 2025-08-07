@@ -57,8 +57,22 @@ export default {
     waitClick();
   },
 
+  searchByBarcode(barcode) {
+    cy.do([
+      Select({ id: 'input-user-search-qindex' }).choose('Barcode'),
+      TextField({ id: 'input-user-search' }).fillIn(barcode),
+      Button({ id: 'submit-user-search' }).click(),
+    ]);
+    waitClick();
+  },
+
   selectUserFromList: (userName) => {
-    cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+    cy.do(
+      Pane({ id: 'users-search-results-pane' })
+        .find(MultiColumnListCell(including(userName)))
+        .click(),
+    );
+    cy.wait(1000);
   },
 
   openUser(userName) {

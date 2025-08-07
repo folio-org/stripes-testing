@@ -13,6 +13,7 @@ import {
   MultiColumnListCell,
   Pane,
   PaneHeader,
+  Link,
   Section,
   Select,
   Spinner,
@@ -451,5 +452,19 @@ export default {
         }
       });
     cy.expect(userDetailsPane.find(KeyValue('Country')).has({ value: country }));
+  },
+
+  expandLoansAccordion() {
+    cy.contains('[class^=accordion]', 'Loans')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Loans').clickHeader());
+        }
+      });
+  },
+
+  clickOpenLoansLink() {
+    cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
 };
