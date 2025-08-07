@@ -33,13 +33,12 @@ describe('Organizations', () => {
   let userA;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({
       path: TopMenu.settingsBankingInformationPath,
       waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
     });
     SettingsOrganizations.selectBankingInformation();
-    SettingsOrganizations.enableBankingInformation();
+    SettingsOrganizations.checkenableBankingInformationIfNeeded();
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
@@ -66,15 +65,10 @@ describe('Organizations', () => {
       AuthorizationRoles.clickAssignUsersButton();
       AuthorizationRoles.selectUserInModal(userA.username);
       AuthorizationRoles.clickSaveInAssignModal();
-      cy.login(userA.username, userA.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
     });
   });
 
   after(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
@@ -86,7 +80,7 @@ describe('Organizations', () => {
 
     cy.visit(TopMenu.settingsBankingInformationPath);
     SettingsOrganizations.selectBankingInformation();
-    SettingsOrganizations.enableBankingInformation();
+    SettingsOrganizations.uncheckenableBankingInformationIfChecked();
 
     Users.deleteViaApi(userA.userId);
   });
@@ -95,6 +89,10 @@ describe('Organizations', () => {
     'C423516 User cannot view banking information without banking information permission (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      cy.login(userA.username, userA.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
