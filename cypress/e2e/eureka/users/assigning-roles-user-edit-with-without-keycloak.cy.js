@@ -12,6 +12,8 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import Modals from '../../../support/fragments/modals';
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -25,16 +27,16 @@ describe('Eureka', () => {
     const userIds = [];
 
     const capabSetsToAssign = [
-      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users Roles', action: 'Manage' },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.rolesUsers,
+      CapabilitySets.uiUsersView,
+      CapabilitySets.uiUsersRolesManage,
     ];
 
     const capabsToAssign = [
-      { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
+      Capabilities.settingsEnabled,
+      Capabilities.usersKeycloakAuthUsersItem,
+      Capabilities.usersKeycloakAuthUsersItemCreate,
     ];
 
     before('Create users, roles', () => {

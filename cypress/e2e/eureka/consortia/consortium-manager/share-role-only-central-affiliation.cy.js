@@ -4,16 +4,13 @@ import SelectMembers from '../../../../support/fragments/consortium-manager/moda
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-  AUTHORIZATION_ROLE_TYPES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES, AUTHORIZATION_ROLE_TYPES } from '../../../../support/constants';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -22,34 +19,12 @@ describe('Eureka', () => {
       roleName: `AT_C523612_UserRole_${randomPostfix}`,
     };
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'Consortia Sharing-Roles-All Item',
-        action: CAPABILITY_ACTIONS.CREATE,
-      },
-      {
-        type: CAPABILITY_TYPES.PROCEDURAL,
-        resource: 'UI-Consortia-Settings Consortium-Manager Share',
-        action: CAPABILITY_ACTIONS.EXECUTE,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsEdit,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerShare,
+      CapabilitySets.consortiaSharingRolesAllItemCreate,
     ];
-    const capabsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabsToAssignCentral = [Capabilities.settingsEnabled];
     const testUser = {};
 
     before('Create user, data', () => {

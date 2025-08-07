@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
@@ -45,21 +46,9 @@ describe('Eureka', () => {
       );
 
       const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings Admin',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Capabilities',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Role-Capability-Sets',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
       before('Create role, user', () => {

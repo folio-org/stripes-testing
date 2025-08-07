@@ -6,6 +6,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -32,7 +33,7 @@ describe('Eureka', () => {
 
     const roleToRemove = testData.allRoleNamesSorted[6];
 
-    const capabSetsForTestUser = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
+    const capabSetsForTestUser = [CapabilitySets.uiUsersRolesManage];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
