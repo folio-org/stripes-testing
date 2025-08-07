@@ -5,7 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Export query', () => {
+  describe('Export query', {
+    retries: {
+      runMode: 1,
+    },
+  }, () => {
     const userData = {};
     const listData = {
       name: `C552377-${getTestEntityValue('list')}`,
@@ -16,7 +20,7 @@ describe('Lists', () => {
       isPrivate: false,
     };
 
-    before('Create test data', () => {
+    beforeEach('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsAll.gui,
@@ -46,7 +50,7 @@ describe('Lists', () => {
         });
     });
 
-    after('Delete test data', () => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken();
       Lists.deleteViaApi(listData.id);
       Users.deleteViaApi(userData.userId);

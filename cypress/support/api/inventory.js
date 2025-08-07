@@ -74,14 +74,20 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
   });
 });
 
-Cypress.Commands.add('getMaterialTypes', (searchParams) => {
-  cy.okapiRequest({
+Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
+  return cy.okapiRequest({
     path: 'material-types',
     searchParams,
     isDefaultSearchParamsRequired: false,
   }).then((response) => {
     Cypress.env('materialTypes', response.body.mtypes);
-    return response.body.mtypes[0];
+    return response.body.mtypes;
+  });
+});
+
+Cypress.Commands.add('getMaterialTypes', (searchParams) => {
+  return cy.getAllMaterialTypes(searchParams).then((materialTypes) => {
+    return materialTypes.length ? materialTypes[0] : null;
   });
 });
 
