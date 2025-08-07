@@ -86,14 +86,14 @@ const searchCases = [
   // Step 5-18: LCCN searches for specific heading types
   {
     searchOption: 'LCCN',
-    query: 'fst01133536',
+    query: 'fst01133536_409440',
     expected: [
       { authRef: 'Authorized', heading: 'AT_C409440 Named Event 147', type: 'Named Event' },
     ],
   },
   {
     searchOption: 'LCCN',
-    query: 'D01355568',
+    query: 'D01355568_409440',
     expected: [
       {
         authRef: 'Authorized',
@@ -104,47 +104,47 @@ const searchCases = [
   },
   {
     searchOption: 'LCCN',
-    query: 'n  80126296',
+    query: 'n  80126296_409440',
     expected: [
       { authRef: 'Authorized', heading: 'AT_C409440 Personal name 100', type: 'Personal Name' },
     ],
   },
   {
     searchOption: 'LCCN',
-    query: 'nr 98013926',
+    query: 'nr 98013926_409440',
     expected: [
       { authRef: 'Authorized', heading: 'AT_C409440 Corporate name 110', type: 'Corporate Name' },
     ],
   },
   {
     searchOption: 'LCCN',
-    query: 'ns2012061368',
+    query: 'ns2012061368_409440',
     expected: [
       { authRef: 'Authorized', heading: 'AT_C409440 Conference Name 111', type: 'Conference Name' },
     ],
   },
   {
     searchOption: 'LCCN',
-    query: 'gf83700634',
+    query: 'gf83700634_409440',
     expected: [
       { authRef: 'Authorized', heading: 'AT_C409440 Uniform title 130', type: 'Uniform Title' },
     ],
   },
   {
     searchOption: 'LCCN',
-    query: 'sj 85074240',
+    query: 'sj 85074240_409440',
     expected: [{ authRef: 'Authorized', heading: 'AT_C409440 Subject 150', type: 'Topical' }],
   },
   {
     searchOption: 'LCCN',
-    query: 'aat 85057894',
+    query: 'aat 85057894_409440',
     expected: [
       { authRef: 'Authorized', heading: 'AT_C409440 Geographic name 151', type: 'Geographic Name' },
     ],
   },
   {
     searchOption: 'LCCN',
-    query: 'dg2011026439',
+    query: 'dg2011026439_409440',
     expected: [{ authRef: 'Authorized', heading: 'AT_C409440 Genre 155', type: 'Genre' }],
   },
 ];
