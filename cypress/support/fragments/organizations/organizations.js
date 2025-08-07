@@ -15,6 +15,7 @@ import {
   SearchField,
   Section,
   Select,
+  Selection,
   SelectionOption,
   Spinner,
   TextArea,
@@ -585,6 +586,10 @@ export default {
     cy.expect(Section({ id: 'bankingInformationSection' }).absent());
   },
 
+  verifyBankingInformationAccordionIsPresent: () => {
+    cy.expect(Section({ id: 'bankingInformationSection' }).exists());
+  },
+
   addDonorContactToOrganization: (contact) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
@@ -650,6 +655,16 @@ export default {
     );
   },
 
+  checkBankInformationIsEmpty: () => {
+    cy.do(Button('Banking information').click());
+
+    cy.expect(
+      Section({ id: 'bankingInformationSection' })
+        .find(KeyValue({ value: /.*/ }))
+        .absent(),
+    );
+  },
+
   addContactToOrganization: (contact) => {
     cy.do([
       openContactSectionButton.click(),
@@ -691,6 +706,14 @@ export default {
     cy.do(
       Modal({ id: 'cancel-editing-confirmation' })
         .find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }))
+        .click(),
+    );
+  },
+
+  closeWithoutSaving: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
   },
@@ -919,6 +942,29 @@ export default {
       TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
       TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
         bankingInformation.accountNumber,
+      ),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  addFullBankingInformation: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      bankingInformationAddButton.click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+      TextField({ name: 'bankingInformation[0].transitNumber' }).fillIn(
+        bankingInformation.transitNumber,
+      ),
+      TextField({ name: 'bankingInformation[0].notes' }).fillIn(bankingInformation.notes),
+      Selection({ name: 'bankingInformation[0].categoryId' }).choose(
+        bankingInformation.addressCategory,
+      ),
+      Selection({ name: 'bankingInformation[0].accountTypeId' }).choose(
+        bankingInformation.accountType,
       ),
     ]);
     cy.do(saveAndClose.click());

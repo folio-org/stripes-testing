@@ -22,6 +22,10 @@ const defaultTypes = {
   name: `autotest_type_name_${getRandomPostfix()}`,
   status: 'Active',
 };
+const defaultAccountTypes = {
+  id: uuid(),
+  name: `autotest_type_name_${getRandomPostfix()}`,
+};
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
 function getEditableListRow(rowNumber) {
@@ -30,6 +34,7 @@ function getEditableListRow(rowNumber) {
 export default {
   defaultCategories,
   defaultTypes,
+  defaultAccountTypes,
   getDefaultOrganizationType() {
     return { id: uuid(), name: `autotest_type_name_${getRandomPostfix()}`, status: 'Active' };
   },
@@ -90,6 +95,18 @@ export default {
     cy.wait(2000);
   },
 
+  ensureAccountTypesExist: (number) => {
+    cy.get('[data-row-index^="row-"]', { timeout: 5000 }).should(($rows) => {
+      expect($rows.length).to.be.at.least(number);
+    });
+  },
+
+  ensureCategoriesExist: (number) => {
+    cy.get('#editList-categories [data-row-index^="row-"]', { timeout: 5000 })
+      .its('length')
+      .should('be.gte', number);
+  },
+
   editCategory(categoryName, oldCategoryName) {
     cy.do(
       MultiColumnListCell({ content: oldCategoryName }).perform((element) => {
@@ -131,6 +148,10 @@ export default {
     cy.do(NavListItem('Types').click());
   },
 
+  selectAccountTypes: () => {
+    cy.do(NavListItem('Account types').click());
+  },
+
   createCategoriesViaApi(categories) {
     return cy
       .okapiRequest({
@@ -150,10 +171,31 @@ export default {
       })
       .then(({ body }) => body);
   },
+  createAccountTypesViaApi(types) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'organizations-storage/banking-account-types',
+        body: types,
+      })
+      .then(({ body }) => body);
+  },
   deleteOrganizationTypeViaApi(organizationTypeId) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `organizations-storage/organization-types/${organizationTypeId}`,
+    });
+  },
+  deleteOrganizationCategoriesViaApi(organizationCategoryId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `organizations-storage/categories/${organizationCategoryId}`,
+    });
+  },
+  deleteOrganizationAccountTypeViaApi(organizationAccountTypeId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `organizations-storage/banking-account-types/${organizationAccountTypeId}`,
     });
   },
 };

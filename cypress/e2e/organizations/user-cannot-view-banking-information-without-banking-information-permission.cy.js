@@ -42,7 +42,7 @@ describe('Organizations', () => {
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+      cy.visit(TopMenu.organizationsPath);
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
@@ -70,12 +70,6 @@ describe('Organizations', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.editOrganization();
-    Organizations.deleteBankingInformation();
-    Organizations.closeDetailsPane();
     Organizations.deleteOrganizationViaApi(organization.id);
 
     cy.visit(TopMenu.settingsBankingInformationPath);
