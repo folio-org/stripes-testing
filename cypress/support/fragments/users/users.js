@@ -467,4 +467,8 @@ export default {
   clickOpenLoansLink() {
     cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
+
+  clickClosedLoansLink() {
+    cy.do(Link({ id: 'clickable-viewclosedloans' }).click());
+  },
 };
