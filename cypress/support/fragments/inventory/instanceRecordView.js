@@ -709,7 +709,7 @@ export default {
   verifyIsItemCreated: (itemBarcode) => {
     cy.expect(
       rootSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(MultiColumnListCell({ columnIndex: 2, content: itemBarcode }))
         .find(Button(including(itemBarcode)))
         .exists(),
     );
@@ -893,6 +893,29 @@ export default {
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
   },
+
+  moveItemsWithinAnInstance() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.wait(500);
+    cy.do(Button({ id: 'move-instance-items' }).click());
+  },
+
+  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
+    if (isEnubled) {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+          .find(Button({ id: including('clickable-move-holdings-') }))
+          .has({ disabled: true }),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+          .find(Button({ id: including('clickable-move-holdings-') }))
+          .has({ disabled: false }),
+      );
+    }
+  },
+  // clickable-move-holdings-38e72617-9faa-47d3-a791-1baeca7d0d86
 
   verifyInstanceFormat(category, term, code, source) {
     let matchingString = category;

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -37,7 +38,14 @@ describe('Consortia', () => {
           },
         };
 
-        const consortiumSource = 'consortium';
+        const constants = {
+          source: {
+            consortium: 'consortium',
+          },
+          memberLibraries: {
+            all: 'All',
+          },
+        };
 
         before('Create test data', () => {
           cy.getAdminToken()
@@ -124,29 +132,49 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
             // User sees central tenant shared holdings type
-            HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
-              name: testData.centralSharedHoldingsType.payload.name,
-              source: consortiumSource,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.centralSharedHoldingsType.payload.name,
+              constants.source.consortium,
+              [
+                testData.centralSharedHoldingsType.payload.name,
+                constants.source.consortium,
+                `${moment().format('l')} by`,
+                constants.memberLibraries.all,
+              ],
+            );
             // User sees central tenant local holdings type
-            HoldingsTypes.verifyLocalHoldingsTypeInTheList({
-              name: testData.centralLocalHoldingsType.name,
-              source: testData.centralLocalHoldingsType.source,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.centralLocalHoldingsType.name,
+              tenantNames.central,
+              [
+                testData.centralLocalHoldingsType.name,
+                '',
+                `${moment().format('l')} by`,
+                tenantNames.central,
+              ],
+            );
             // Verify College local holdings type appears
-            HoldingsTypes.verifyLocalHoldingsTypeInTheList({
-              name: testData.collegeLocalHoldingsType.name,
-              source: testData.collegeLocalHoldingsType.source,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.collegeLocalHoldingsType.name,
+              tenantNames.college,
+              [
+                testData.collegeLocalHoldingsType.name,
+                '',
+                `${moment().format('l')} by`,
+                tenantNames.college,
+              ],
+            );
             // Verify University local holdings type appears
-            HoldingsTypes.verifyLocalHoldingsTypeInTheList({
-              name: testData.universityLocalHoldingsType.name,
-              source: testData.universityLocalHoldingsType.source,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.universityLocalHoldingsType.name,
+              tenantNames.university,
+              [
+                testData.universityLocalHoldingsType.name,
+                '',
+                `${moment().format('l')} by`,
+                tenantNames.university,
+              ],
+            );
 
             // Uncheck central tenant
             ConsortiumManagerApp.clickSelectMembers();
@@ -157,27 +185,42 @@ describe('Consortia', () => {
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
 
             // User sees central tenant shared holdings type
-            HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
-              name: testData.centralSharedHoldingsType.payload.name,
-              source: consortiumSource,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.centralSharedHoldingsType.payload.name,
+              constants.source.consortium,
+              [
+                testData.centralSharedHoldingsType.payload.name,
+                constants.source.consortium,
+                `${moment().format('l')} by`,
+                constants.memberLibraries.all,
+              ],
+            );
             // Verify central tenant local holdings type does not appear
-            HoldingsTypes.verifyHoldingsTypesAbsentInTheList({
-              name: testData.centralLocalHoldingsType.name,
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+              testData.centralLocalHoldingsType.name,
+            );
             // Verify College local holdings type appears
-            HoldingsTypes.verifyLocalHoldingsTypeInTheList({
-              name: testData.collegeLocalHoldingsType.name,
-              source: testData.collegeLocalHoldingsType.source,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.collegeLocalHoldingsType.name,
+              tenantNames.college,
+              [
+                testData.collegeLocalHoldingsType.name,
+                '',
+                `${moment().format('l')} by`,
+                tenantNames.college,
+              ],
+            );
             // Verify University local holdings type appears
-            HoldingsTypes.verifyLocalHoldingsTypeInTheList({
-              name: testData.universityLocalHoldingsType.name,
-              source: testData.universityLocalHoldingsType.source,
-              actions: [],
-            });
+            ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+              testData.universityLocalHoldingsType.name,
+              tenantNames.university,
+              [
+                testData.universityLocalHoldingsType.name,
+                '',
+                `${moment().format('l')} by`,
+                tenantNames.university,
+              ],
+            );
           },
         );
       });

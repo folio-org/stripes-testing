@@ -965,7 +965,7 @@ const API = {
   deleteRecursivelyViaApi(id) {
     recurse(
       () => this.deleteViaApi(id),
-      (response) => response.status === 204,
+      (response) => response.status === 204 || response.body.code === 'delete-list.not.found',
       {
         limit: 3,
         timeout: 30 * 1000,
