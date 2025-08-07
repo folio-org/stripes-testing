@@ -15,7 +15,7 @@ describe('Staff slips', () => {
 
   it(
     'C347901 Staff clips settings (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C347901'] },
+    { tags: ['smokeFlaky', 'vega', 'system', 'shiftLeft', 'C347901'] },
     () => {
       StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.HOLD);
       StaffSlip.edit(STAFF_SLIP_NAMES.HOLD);
