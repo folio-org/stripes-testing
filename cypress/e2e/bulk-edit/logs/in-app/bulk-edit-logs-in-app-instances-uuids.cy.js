@@ -123,7 +123,7 @@ describe('Bulk-edit', () => {
             `${unsuppressedFolioItem.instanceId},false,false,`,
             `${marcInstanceIds[1]},false,false,`,
           ]);
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
           BulkEditActions.selectOption('Staff suppress');
           BulkEditSearchPane.verifyInputLabel('Staff suppress');

@@ -250,7 +250,7 @@ describe('Bulk-edit', () => {
           });
 
           // Step 5: Open FOLIO Instances bulk edit form
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();

@@ -248,7 +248,7 @@ describe('Bulk-edit', () => {
               'Notes',
               `Reproduction note;${params.notesInitialValue.reproductionUpperCase};true|Reproduction note;${params.notesInitialValue.reproductionLowerCase};false`,
             );
-            BulkEditActions.openStartBulkEditInstanceForm();
+            BulkEditActions.openStartBulkEditFolioInstanceForm();
             BulkEditActions.verifyInitialStateBulkEditForm();
 
             if (params.action === 'Replace') {

@@ -180,7 +180,7 @@ describe('Bulk-edit', () => {
         ]);
 
         // Step 6: Click "Actions" menu and select "FOLIO Instances"
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyInitialStateBulkEditForm();
 
         // Step 7: Select "Reproduction note" and "Change note type" to "Administrative note"
@@ -233,7 +233,7 @@ describe('Bulk-edit', () => {
 
         // Step 12: Click "Actions" menu and select "FOLIO Instances"
         BulkEditActions.openActions();
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyInitialStateBulkEditForm();
 
         // Step 13: Select "Administrative note" and "Change note type" to "With note"

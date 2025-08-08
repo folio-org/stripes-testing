@@ -106,7 +106,7 @@ describe('Bulk-edit', () => {
           });
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.openActions();
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.addItemNote('Administrative note', 'adminNote');
           BulkEditActions.confirmChanges();
           BulkEditActions.commitChanges();

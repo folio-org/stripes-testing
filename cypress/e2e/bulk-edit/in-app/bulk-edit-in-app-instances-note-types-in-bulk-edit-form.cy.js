@@ -110,7 +110,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
           instance.title,
         );
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();

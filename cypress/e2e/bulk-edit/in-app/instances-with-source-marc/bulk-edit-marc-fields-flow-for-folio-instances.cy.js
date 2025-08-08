@@ -129,7 +129,7 @@ describe('Bulk-edit', () => {
 
         // Step 8: Open FOLIO Instances bulk edit form
         BulkEditActions.openActions();
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyInitialStateBulkEditForm();
         BulkEditActions.verifyConfirmButtonDisabled(true);
 

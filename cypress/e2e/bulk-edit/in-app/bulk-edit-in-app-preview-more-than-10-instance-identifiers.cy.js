@@ -109,7 +109,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
-        BulkEditActions.startBulkEditInstanceAbsent(false);
+        BulkEditActions.startBulkEditFolioInstanceAbsent(false);
         BulkEditSearchPane.verifySearchColumnNameTextFieldExists();
 
         // Step 5: Download matched records (CSV)

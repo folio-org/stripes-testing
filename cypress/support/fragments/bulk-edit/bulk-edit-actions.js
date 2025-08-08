@@ -85,7 +85,7 @@ export default {
     cy.do(startBulkEditLocalButton.click());
   },
 
-  openStartBulkEditInstanceForm() {
+  openStartBulkEditFolioInstanceForm() {
     cy.do(startBulkEditFolioInstanceButton.click());
     cy.wait(2000);
   },
@@ -119,7 +119,7 @@ export default {
     cy.expect(startBulkEditLocalButton.absent());
   },
 
-  startBulkEditInstanceAbsent(isAbsent = true) {
+  startBulkEditFolioInstanceAbsent(isAbsent = true) {
     if (isAbsent) {
       cy.expect(startBulkEditFolioInstanceButton.absent());
     } else {
