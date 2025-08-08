@@ -665,7 +665,6 @@ export default {
     );
     cy.wait(1000);
     cy.do(multiSelect.select(including(option)));
-    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
