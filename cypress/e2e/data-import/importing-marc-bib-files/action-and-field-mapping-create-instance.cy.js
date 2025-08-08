@@ -144,7 +144,7 @@ describe('Data Import', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
           InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);

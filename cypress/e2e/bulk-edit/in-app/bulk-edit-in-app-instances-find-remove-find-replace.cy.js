@@ -348,7 +348,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
           0,
           'No',
@@ -374,7 +374,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
           0,
           'No',

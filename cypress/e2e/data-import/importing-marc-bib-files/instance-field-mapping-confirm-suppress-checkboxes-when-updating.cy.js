@@ -177,7 +177,7 @@ describe('Data Import', () => {
           InstanceRecordEdit.markAsStaffSuppress();
           InstanceRecordEdit.saveAndClose();
           InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         });
         // create mapping profile for update
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
@@ -231,9 +231,9 @@ describe('Data Import', () => {
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(hrid);
           InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyNotMarkAssuppressFromDiscavery();
-          InstanceRecordView.verifyMarkedAsStaffSuppressed();
-          InstanceRecordView.verifyMarkedAsPreviouslyHeld();
+          InstanceRecordView.verifyInstanceIsMarkedAsSuppressedFromDiscovery(false);
+          InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();
+          InstanceRecordView.verifyInstanceIsMarkedAsPreviouslyHeld();
           InstanceRecordView.edit();
           InstanceRecordEdit.verifyDiscoverySuppressCheckbox(false);
           InstanceRecordEdit.verifyStaffSuppressCheckbox(checked);

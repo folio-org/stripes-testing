@@ -155,7 +155,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(instance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMarkedAsStaffSuppressed();
+        InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();
       },
     );
   });

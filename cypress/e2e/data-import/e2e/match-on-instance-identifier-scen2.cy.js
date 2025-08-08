@@ -197,7 +197,7 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.UPDATED);
         Logs.clickOnHotLink(1, 3, RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-        InstanceRecordView.verifyMarkAsSuppressed();
+        InstanceRecordView.verifyMarkAsStaffSuppressedWarning();
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
       },

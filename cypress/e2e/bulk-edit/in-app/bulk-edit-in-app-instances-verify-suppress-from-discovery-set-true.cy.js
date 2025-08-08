@@ -392,7 +392,7 @@ describe('Bulk-edit', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InventoryInstances.selectInstance();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         });
 
         const instanceTitlesWithHolding = [

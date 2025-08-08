@@ -289,9 +289,9 @@ describe('Bulk-edit', () => {
               InventoryInstance.verifyInstanceTitle(instance.title);
 
               if (suppressFromDiscoveryParam.newValue === 'true') {
-                InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+                InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
               } else {
-                InstanceRecordView.verifyNotMarkAsStaffSuppressed();
+                InstanceRecordView.verifyMarkAsStaffSuppressedWarning(false);
               }
 
               InventorySearchAndFilter.selectViewHoldings();

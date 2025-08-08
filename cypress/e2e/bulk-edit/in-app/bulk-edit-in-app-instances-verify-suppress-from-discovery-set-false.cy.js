@@ -401,7 +401,7 @@ describe('Bulk-edit', () => {
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InventoryInstances.selectInstance();
           cy.wait(1000);
-          InstanceRecordView.verifyNotMarkAsStaffSuppressed();
+          InstanceRecordView.verifyMarkAsStaffSuppressedWarning(false);
         });
 
         const instanceTitlesWithHolding = [

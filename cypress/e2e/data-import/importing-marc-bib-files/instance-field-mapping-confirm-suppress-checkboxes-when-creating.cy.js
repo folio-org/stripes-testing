@@ -134,9 +134,9 @@ describe('Data Import', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
-          InstanceRecordView.verifyNotMarkAsStaffSuppressed();
-          InstanceRecordView.verifyNotMarkAsPreviouslyHeld();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
+          InstanceRecordView.verifyMarkAsStaffSuppressedWarning(false);
+          InstanceRecordView.verifyInstanceIsMarkedAsPreviouslyHeld(false);
           InstanceRecordView.edit();
           InstanceRecordEdit.waitLoading();
           InstanceRecordEdit.verifyDiscoverySuppressCheckbox(checked);

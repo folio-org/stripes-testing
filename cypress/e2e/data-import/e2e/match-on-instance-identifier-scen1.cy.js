@@ -196,7 +196,7 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.NO_ACTION);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);

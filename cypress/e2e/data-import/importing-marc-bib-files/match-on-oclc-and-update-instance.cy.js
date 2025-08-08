@@ -306,7 +306,7 @@ describe('Data Import', () => {
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
           InstanceRecordView.verifyInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           InstanceRecordView.verifyStatisticalCode(itemsForUpdateInstance.statisticalCodeUI);
           InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);

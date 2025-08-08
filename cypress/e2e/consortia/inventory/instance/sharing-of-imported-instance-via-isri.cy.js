@@ -71,7 +71,6 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
         InventoryInstance.checkExpectedMARCSource();
-        cy.pause();
         InventoryInstance.shareInstance();
         InventoryInstance.waitLoading();
 

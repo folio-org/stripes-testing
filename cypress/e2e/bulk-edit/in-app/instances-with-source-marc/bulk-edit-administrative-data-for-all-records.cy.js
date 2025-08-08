@@ -336,7 +336,7 @@ describe('Bulk-edit', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.verifyAdministrativeNote(administrativeNoteText);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.verifyStatisticalCodeTypeAndName('No value set-', 'No value set-');
         InventoryInstance.viewHoldings();
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
