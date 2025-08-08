@@ -9,7 +9,6 @@ import LoansPage from '../../support/fragments/loans/loansPage';
 import Checkout from '../../support/fragments/checkout/checkout';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('Effective call number column is sortable', () => {
@@ -20,7 +19,7 @@ describe('Effective call number column is sortable', () => {
       description: 'Patron_group_description',
     },
     servicePoint: {},
-    defaultLocation: {},
+    location: {},
     folioInstances: InventoryInstances.generateFolioInstances({
       count: 2,
       itemsProperties: [
@@ -37,8 +36,8 @@ describe('Effective call number column is sortable', () => {
         testData.patronGroup.id = patronGroupResponse;
         ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
           testData.servicePoint = sp;
-          testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-          Location.createViaApi(testData.defaultLocation).then((location) => {
+          cy.getLocations({ limit: 1 }).then((location) => {
+            testData.location = location;
             InventoryInstances.createFolioInstancesViaApi({
               folioInstances: testData.folioInstances,
               location,
@@ -90,12 +89,6 @@ describe('Effective call number column is sortable', () => {
     });
     Users.deleteViaApi(testData.user.userId);
     PatronGroups.deleteViaApi(testData.patronGroup.id);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
   });
 
   it(
