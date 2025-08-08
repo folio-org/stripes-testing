@@ -11,36 +11,31 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
 
-describe('Users', () => {
+describe('Effective call number column is sortable', () => {
   const testData = {
     user: {},
     patronGroup: {
       name: getTestEntityValue('PatronGroup'),
       description: 'Patron_group_description',
     },
-    testUser: {
-      personal: {
-        lastName: getTestEntityValue('TestUser'),
-        email: 'test@folio.org',
-      },
-      status: 'Active',
-      preferredContact: 'Email',
-      effectiveCallNumber1: {
-        prefix: '055',
-        number: '1234562',
-      },
-      effectiveCallNumber2: {
-        prefix: '056',
-        number: '1234562',
-      },
+    effectiveCallNumber1: {
+      prefix: '055',
+      number: '1234562',
+    },
+    effectiveCallNumber2: {
+      prefix: '056',
+      number: '1234562',
     },
     servicePoint: {},
     defaultLocation: {},
-    folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
+    folioInstances: InventoryInstances.generateFolioInstances({
+      count: 2,
+      itemsProperties: [
+        { itemLevelCallNumber: '1234562', itemLevelCallNumberPrefix: '055' },
+        { itemLevelCallNumber: '1234562', itemLevelCallNumberPrefix: '056' },
+      ],
+    }),
   };
 
   before('Create test data', () => {
@@ -48,8 +43,8 @@ describe('Users', () => {
     PatronGroups.createViaApi(testData.patronGroup.name, testData.patronGroup.description).then(
       (patronGroupResponse) => {
         testData.patronGroup.id = patronGroupResponse;
-        testData.servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-        ServicePoints.createViaApi(testData.servicePoint).then(() => {
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          testData.servicePoint = sp;
           testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
           Location.createViaApi(testData.defaultLocation).then((location) => {
             InventoryInstances.createFolioInstancesViaApi({
@@ -58,66 +53,36 @@ describe('Users', () => {
             });
           });
         });
-        cy.createTempUser([Permissions.uiUsersViewLoans.gui, Permissions.inventoryAll.gui]).then(
-          (userProperties) => {
-            testData.user = userProperties;
-            cy.createTempUser([], testData.patronGroup.name).then((testUserProperties) => {
-              testData.testUser.username = testUserProperties.username;
-              testData.testUser.userId = testUserProperties.userId;
-              testData.testUser.barcode = testUserProperties.barcode;
-              UserEdit.addServicePointViaApi(testData.servicePoint.id, testUserProperties.userId);
-              Checkout.checkoutItemViaApi({
-                itemBarcode: testData.folioInstances[0].barcodes[0],
-                servicePointId: testData.servicePoint.id,
-                userBarcode: testUserProperties.barcode,
-              });
-              CheckInActions.checkinItemViaApi({
-                itemBarcode: testData.folioInstances[0].barcodes[0],
-                servicePointId: testData.servicePoint.id,
-              });
-              Checkout.checkoutItemViaApi({
-                itemBarcode: testData.folioInstances[1].barcodes[0],
-                servicePointId: testData.servicePoint.id,
-                userBarcode: testUserProperties.barcode,
-              });
-              CheckInActions.checkinItemViaApi({
-                itemBarcode: testData.folioInstances[1].barcodes[0],
-                servicePointId: testData.servicePoint.id,
-              });
-              cy.login(testData.user.username, testData.user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter(
-                'Barcode',
-                testData.folioInstances[0].barcodes[0],
-              );
-              ItemRecordView.waitLoading();
-              ItemRecordView.openItemEditForm(testData.folioInstances[0].instanceTitle);
-              ItemRecordEdit.addEffectiveCallNumber(
-                testData.testUser.effectiveCallNumber1.prefix,
-                testData.testUser.effectiveCallNumber1.number,
-              );
-              ItemRecordEdit.saveAndClose({ itemSaved: true });
-              ItemRecordView.closeItemEditForm();
+        cy.createTempUser(
+          [Permissions.uiUsersViewLoans.gui, Permissions.inventoryAll.gui],
+          testData.patronGroup.name,
+        ).then((userProperties) => {
+          testData.user = userProperties;
+          UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.user.userId);
 
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter(
-                'Barcode',
-                testData.folioInstances[1].barcodes[0],
-              );
-              ItemRecordView.waitLoading();
-              ItemRecordView.openItemEditForm(testData.folioInstances[1].instanceTitle);
-              ItemRecordEdit.addEffectiveCallNumber(
-                testData.testUser.effectiveCallNumber2.prefix,
-                testData.testUser.effectiveCallNumber2.number,
-              );
-              ItemRecordEdit.saveAndClose({ itemSaved: true });
-              ItemRecordView.closeItemEditForm();
-            });
-          },
-        );
+          Checkout.checkoutItemViaApi({
+            itemBarcode: testData.folioInstances[0].barcodes[0],
+            servicePointId: testData.servicePoint.id,
+            userBarcode: testData.user.barcode,
+          });
+          CheckInActions.checkinItemViaApi({
+            itemBarcode: testData.folioInstances[0].barcodes[0],
+            servicePointId: testData.servicePoint.id,
+          });
+          Checkout.checkoutItemViaApi({
+            itemBarcode: testData.folioInstances[1].barcodes[0],
+            servicePointId: testData.servicePoint.id,
+            userBarcode: testData.user.barcode,
+          });
+          CheckInActions.checkinItemViaApi({
+            itemBarcode: testData.folioInstances[1].barcodes[0],
+            servicePointId: testData.servicePoint.id,
+          });
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
+        });
       },
     );
   });
@@ -132,9 +97,7 @@ describe('Users', () => {
       });
     });
     Users.deleteViaApi(testData.user.userId);
-    Users.deleteViaApi(testData.testUser.userId);
     PatronGroups.deleteViaApi(testData.patronGroup.id);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -148,9 +111,7 @@ describe('Users', () => {
     { tags: ['extendedPath', 'volaris', 'C440072'] },
     () => {
       // Step 1: Search for test user by barcode
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByBarcode(testData.testUser.barcode);
+      UsersSearchPane.searchByBarcode(testData.user.barcode);
 
       // Step 2: Expand Loans accordion and click on closed loans
       Users.expandLoansAccordion();
