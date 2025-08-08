@@ -518,6 +518,15 @@ export default {
     })
     .then((response) => response.body.id),
 
+  createBankingInformationViaApi: (bankingInformation) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/banking-information',
+      body: bankingInformation,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -927,6 +936,12 @@ export default {
   saveOrganization: () => {
     cy.do(saveAndClose.click());
     cy.wait(4000);
+  },
+
+  checkAvailableActionsInTheActionsField: () => {
+    cy.do(actionsButton.click());
+    cy.expect(editButton.absent());
+    cy.expect(deleteButton.absent());
   },
 
   varifySaveOrganizationCalloutMessage: (organization) => {
