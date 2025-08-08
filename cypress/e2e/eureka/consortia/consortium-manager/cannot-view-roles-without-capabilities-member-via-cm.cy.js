@@ -4,14 +4,11 @@ import SelectMembers from '../../../../support/fragments/consortium-manager/moda
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -21,24 +18,10 @@ describe('Eureka', () => {
       collegeRoleName: `AT_C503095_UserRole_College_${randomPostfix}`,
     };
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
     ];
-    const capabSetsToAssignCollege = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Authorization-Roles Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabSetsToAssignCollege = [CapabilitySets.uiAuthorizationPoliciesSettingsAdmin];
     let userData;
 
     before('Create user, data', () => {

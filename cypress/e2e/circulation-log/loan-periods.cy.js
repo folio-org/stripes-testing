@@ -89,9 +89,9 @@ describe('Circulation log', () => {
         Permissions.checkinAll.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-        cy.getMaterialTypes({ limit: 3 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
+        cy.getAllMaterialTypes({ limit: 3 })
+          .then((mt) => {
+            materialTypes = mt;
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 3,
@@ -163,6 +163,7 @@ describe('Circulation log', () => {
         const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
         // Navigate to checkout page
         cy.visit(TopMenu.checkOutPath);
+        cy.wait(5000);
         // Enter patron and item that meet the criteria of the circulation rule
         CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
         const itemDueDate = new Date(DateTools.getTomorrowDay());

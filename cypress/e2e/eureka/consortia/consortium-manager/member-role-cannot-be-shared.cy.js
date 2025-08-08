@@ -4,52 +4,25 @@ import SelectMembers from '../../../../support/fragments/consortium-manager/moda
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const roleName = `AT_C523604_RoleA_${randomPostfix}`;
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'Consortia Sharing-Roles-All Item',
-        action: CAPABILITY_ACTIONS.CREATE,
-      },
-      {
-        type: CAPABILITY_TYPES.PROCEDURAL,
-        resource: 'UI-Consortia-Settings Consortium-Manager Share',
-        action: CAPABILITY_ACTIONS.EXECUTE,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
+      CapabilitySets.consortiaSharingRolesAllItemCreate,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerShare,
     ];
     const capabilitySetsToAssignMember = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'Consortia Sharing-Roles-All Item',
-        action: CAPABILITY_ACTIONS.CREATE,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.consortiaSharingRolesAllItemCreate,
     ];
     let userData;
 

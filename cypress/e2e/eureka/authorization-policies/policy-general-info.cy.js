@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationPolicies from '../../../support/fragments/settings/authorization-policies/authorizationPolicies';
 import DateTools from '../../../support/utils/dateTools';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import {
   AUTHORIZATION_POLICY_TYPES,
   AUTHORIZATION_POLICY_SOURCES,
@@ -40,9 +41,9 @@ describe('Eureka', () => {
       updatedPolicyBody.name = testData.updatedPolicyName;
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Policies Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Policies', action: 'Manage' },
-        { type: 'Data', resource: 'Users', action: 'Manage' },
+        CapabilitySets.uiAuthorizationPoliciesSettingsAdmin,
+        CapabilitySets.policies,
+        CapabilitySets.users,
       ];
 
       before(() => {

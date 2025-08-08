@@ -7,6 +7,8 @@ import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -23,12 +25,12 @@ describe('Eureka', () => {
         };
 
         const capabSetsToAssign = [
-          { type: 'Data', resource: 'UI-Users', action: 'Create' },
-          { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
+          CapabilitySets.uiUsersCreate,
+          CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
         ];
         const capabsToAssign = [
-          { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-          { type: 'Data', resource: 'Users-Bl Users-By-Username Item', action: 'View' },
+          Capabilities.settingsEnabled,
+          Capabilities.usersBlUsersByUsernameItem,
         ];
 
         before('Create user, role, login', () => {

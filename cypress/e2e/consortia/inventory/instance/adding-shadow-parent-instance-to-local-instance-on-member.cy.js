@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
@@ -8,7 +9,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {

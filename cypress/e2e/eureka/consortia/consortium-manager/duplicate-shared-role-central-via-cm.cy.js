@@ -14,6 +14,8 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import { including } from '../../../../../interactors';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -37,31 +39,11 @@ describe('Eureka', () => {
     const roleCapabIds = [];
 
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
     ];
-    const capabSetsToAssignMember = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
-    const capabsToAssignMember = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabSetsToAssignMember = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
+    const capabsToAssignMember = [Capabilities.settingsEnabled];
     const assignUserCentral = {};
     const assignUserCollege = {};
 

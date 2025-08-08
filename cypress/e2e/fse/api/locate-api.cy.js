@@ -104,4 +104,24 @@ describe('fse-locate-integration - API', () => {
       });
     },
   );
+
+  it(
+    `TC195975 - check Locate - DCB configuration ${Cypress.env('LOCATE_HOST')}`,
+    { tags: ['fse', 'api', 'locate', 'dcb'] },
+    () => {
+      const dcbVars = [
+        Cypress.env('KEYCLOAK_SECRET'),
+        Cypress.env('KEYCLOAK_ADMIN_PASSWORD'),
+        Cypress.env('OPENRS_SERVICE_HOST'),
+        Cypress.env('OPENRS_AUTH_HOST'),
+        Cypress.env('OPENRS_LOCATE_SERVICE_HOST'),
+      ];
+      // check that all env variables for Locate-DCB integration are there
+      dcbVars.forEach((val) => {
+        assert.isNotNull(val);
+        assert.isDefined(val);
+        assert.isNotEmpty(val);
+      });
+    },
+  );
 });

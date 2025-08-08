@@ -94,6 +94,7 @@ export default {
         matching(new RegExp(InstanceStates.itemSavedSuccessfully)),
       );
     }
+    cy.wait(2000);
   },
 
   fillItemRecordFields({ barcode, materialType, copyNumber, loanType } = {}) {
@@ -137,5 +138,12 @@ export default {
         .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
+  },
+
+  addEffectiveCallNumber: (numberPrefix, number) => {
+    cy.do([
+      TextArea({ id: 'additem_callnumberprefix' }).fillIn(numberPrefix),
+      TextArea({ id: 'additem_callnumber' }).fillIn(number),
+    ]);
   },
 };
