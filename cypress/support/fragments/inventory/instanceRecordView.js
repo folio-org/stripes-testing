@@ -520,7 +520,7 @@ export default {
   verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
     cy.expect(
       Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
-        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
         .find(HTML(including(itemBarcode)))
         .exists(),
     );
