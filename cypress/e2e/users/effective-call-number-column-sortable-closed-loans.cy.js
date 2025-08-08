@@ -19,14 +19,6 @@ describe('Effective call number column is sortable', () => {
       name: getTestEntityValue('PatronGroup'),
       description: 'Patron_group_description',
     },
-    effectiveCallNumber1: {
-      prefix: '055',
-      number: '1234562',
-    },
-    effectiveCallNumber2: {
-      prefix: '056',
-      number: '1234562',
-    },
     servicePoint: {},
     defaultLocation: {},
     folioInstances: InventoryInstances.generateFolioInstances({
