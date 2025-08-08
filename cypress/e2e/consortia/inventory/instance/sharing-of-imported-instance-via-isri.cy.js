@@ -71,32 +71,33 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
         InventoryInstance.checkExpectedMARCSource();
+        cy.pause();
         InventoryInstance.shareInstance();
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-          InventoryInstance.waitLoading();
-        }, 20_000);
+        InventoryInstance.waitLoading();
+
+        cy.reload();
+        InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceHRID = initialInstanceHrId;
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
+          InventoryInstance.waitLoading();
+          InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
+          InventoryInstance.checkExpectedMARCSource();
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
+          InventoryInstance.waitLoading();
+          InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
+          InventoryInstance.checkExpectedMARCSource();
         });
-
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
-        InventoryInstance.waitLoading();
-        InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
-        InventoryInstance.checkExpectedMARCSource();
-
-        ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
-        InventoryInstance.waitLoading();
-        InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
-        InventoryInstance.checkExpectedMARCSource();
       },
     );
   });
