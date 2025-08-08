@@ -45,7 +45,7 @@ const marcInstanceFields = [
 ];
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();

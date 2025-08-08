@@ -36,7 +36,7 @@ describe(
     },
   },
   () => {
-    describe('In-app approach', () => {
+    describe('Instances with source MARC', () => {
       beforeEach('create test data', () => {
         instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
         fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);

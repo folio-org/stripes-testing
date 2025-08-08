@@ -32,7 +32,7 @@ const errorMessage =
   'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();
