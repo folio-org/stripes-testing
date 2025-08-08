@@ -153,6 +153,12 @@ export default {
 
     return openLoans && this.verifyQuantityOfOpenAndClaimReturnedLoans(openLoans, returnedLoans);
   },
+
+  expandLoansAccordion() {
+    cy.do(loansAccordion.clickHeader());
+    cy.expect(loansAccordion.has({ open: true }));
+  },
+
   expandNotesSection({ details = '' } = {}) {
     cy.do(notesSection.clickHeader());
 

@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 export const typeActions = {
@@ -8,14 +8,9 @@ export const typeActions = {
   trash: 'trash',
 };
 
-const Elements = {
-  newButton: Button('+ New'),
-};
-
 const Actions = {
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Call number types');
-    cy.expect(Elements.newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

@@ -1,14 +1,14 @@
 import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import Users from '../../../../support/fragments/users/users';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {

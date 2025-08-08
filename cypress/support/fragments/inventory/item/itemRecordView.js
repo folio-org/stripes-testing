@@ -594,6 +594,11 @@ export default {
 
   verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(KeyValue('Effective call number').has({ value: effectiveCallNumber })),
 
+  closeItemEditForm() {
+    cy.do(Button({ icon: 'times' }).click());
+    cy.wait(1000);
+  },
+
   expandAll() {
     cy.do(Button('Expand all').click());
     cy.wait(1000);

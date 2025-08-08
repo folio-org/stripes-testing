@@ -120,6 +120,11 @@ export default {
     });
     // Need to avoid robotic clicks
     cy.wait(1000);
+    cy.expect(
+      Accordion({ id: accordion })
+        .find(Checkbox({ disabled: true }))
+        .absent(),
+    );
     cy.do(Checkbox(checkboxOption).click());
   },
 
