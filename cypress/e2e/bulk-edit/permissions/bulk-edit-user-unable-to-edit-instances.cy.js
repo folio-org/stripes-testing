@@ -88,7 +88,7 @@ describe(
           BulkEditSearchPane.verifyMatchedResults(item.instanceHRID);
           BulkEditSearchPane.verifyPaneRecordsCount('1 instance');
           BulkEditActions.openActions();
-          BulkEditActions.startBulkEditInstanceAbsent();
+          BulkEditActions.startBulkEditFolioInstanceAbsent();
           BulkEditActions.downloadMatchedRecordsExists();
         },
       );

@@ -50,7 +50,7 @@ const downloadErrorsButton = Button('Download errors (CSV)');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
-const startBulkEditInstanceButton = Button('FOLIO Instances');
+const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
@@ -71,6 +71,7 @@ const subField = TextField({ name: 'subfield' });
 const dataField = TextArea({ name: 'value' });
 const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
 const selectActionForMarcInstanceDropdownFirst = Select({ name: 'name', dataActionIndex: '0' });
+const noteTypeSelection = Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -84,8 +85,8 @@ export default {
     cy.do(startBulkEditLocalButton.click());
   },
 
-  openStartBulkEditInstanceForm() {
-    cy.do(startBulkEditInstanceButton.click());
+  openStartBulkEditFolioInstanceForm() {
+    cy.do(startBulkEditFolioInstanceButton.click());
     cy.wait(2000);
   },
 
@@ -100,7 +101,10 @@ export default {
   },
 
   verifyStartBulkEditOptions() {
-    cy.expect([startBulkEditInstanceButton.exists(), startBulkEditMarcInstanceButton.exists()]);
+    cy.expect([
+      startBulkEditFolioInstanceButton.exists(),
+      startBulkEditMarcInstanceButton.exists(),
+    ]);
   },
 
   verifyOptionsLength(optionsLength, count) {
@@ -115,11 +119,11 @@ export default {
     cy.expect(startBulkEditLocalButton.absent());
   },
 
-  startBulkEditInstanceAbsent(isAbsent = true) {
+  startBulkEditFolioInstanceAbsent(isAbsent = true) {
     if (isAbsent) {
-      cy.expect(startBulkEditInstanceButton.absent());
+      cy.expect(startBulkEditFolioInstanceButton.absent());
     } else {
-      cy.expect(startBulkEditInstanceButton.exists());
+      cy.expect(startBulkEditFolioInstanceButton.exists());
     }
   },
 
@@ -347,6 +351,11 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
+    cy.wait(1000);
+  },
+
+  closeBulkEditForm() {
+    cy.do(bulkEditPane.find(Button({ icon: 'times' })).click());
     cy.wait(1000);
   },
 
@@ -1064,18 +1073,16 @@ export default {
     this.verifyActionSelected('Change note type', rowIndex);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') }))
+        .find(noteTypeSelection)
         .has({ checkedOptionText: newType }),
     );
   },
 
   selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
-    cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(selectNoteHoldingTypeDropdown).choose(newType),
-    ]);
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(noteTypeSelection).choose(newType)]);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(selectNoteHoldingTypeDropdown)
+        .find(noteTypeSelection)
         .has({ checkedOptionText: newType }),
     );
   },
@@ -1148,6 +1155,10 @@ export default {
     cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
     cy.wait(1000);
+  },
+
+  clickConfirmChangesButton() {
+    cy.do(confirmChangesButton.click());
   },
 
   saveAndClose() {
@@ -1576,6 +1587,22 @@ export default {
     cy.expect(areYouSureForm.absent());
   },
 
+  verifyAreYouSureFormWhenUsingMarcFieldsFlowForFolioInstance() {
+    cy.expect(areYouSureForm.exists());
+    cy.expect(
+      areYouSureForm.find(MessageBanner()).has({
+        textContent: 'No instances can be updated because none have source MARC.',
+      }),
+    );
+    cy.expect(areYouSureForm.find(HTML('Preview of records to be changed')).exists());
+    cy.expect(areYouSureForm.find(HTML('The list contains no items')).exists());
+    this.verifyCloseAreYouSureModalButtonDisabled(false);
+    this.verifyKeepEditingButtonDisabled(false);
+    this.verifyDownloadPreviewButtonDisabled(true);
+    cy.expect(areYouSureForm.find(downloadPreviewInMarcFormatButton).has({ disabled: true }));
+    cy.expect(areYouSureForm.find(commitChanges).has({ disabled: true }));
+  },
+
   verifyOptionsFilterInFocus() {
     const inputElement = 'input[placeholder="Filter options list"]';
     cy.get(inputElement).click();
@@ -1903,6 +1930,15 @@ export default {
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(TextArea({ ariaLabel: 'Data' }))
         .has({ value }),
+    );
+  },
+
+  verifyDataColumnAbsent(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ ariaLabel: 'Data' }))
+        .absent(),
     );
   },
 

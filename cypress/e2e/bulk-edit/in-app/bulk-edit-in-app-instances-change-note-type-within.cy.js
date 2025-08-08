@@ -144,7 +144,7 @@ describe(
             folioItem.instanceId,
             marcInstance.instanceId,
           ]);
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [
             folioItem.instanceId,
             marcInstance.instanceId,

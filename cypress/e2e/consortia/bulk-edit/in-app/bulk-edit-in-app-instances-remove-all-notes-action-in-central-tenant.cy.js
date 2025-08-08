@@ -201,7 +201,7 @@ describe('Bulk-edit', () => {
             'Notes',
             `Dissertation note;${notes.dissertationStaffOnly};true|Dissertation note;${notes.dissertation};false`,
           );
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
           BulkEditActions.noteRemoveAll(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
