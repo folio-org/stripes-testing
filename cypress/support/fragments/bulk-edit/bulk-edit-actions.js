@@ -1905,6 +1905,15 @@ export default {
     );
   },
 
+  verifyDataColumnAbsent(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ ariaLabel: 'Data' }))
+        .absent(),
+    );
+  },
+
   fillInSecondDataTextAreaForMarcInstance(value, rowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
