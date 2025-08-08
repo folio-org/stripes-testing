@@ -323,7 +323,7 @@ describe('Data Import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
         FileDetails.checkHoldingsQuantityInSummaryTable('1', '1');
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
         });

@@ -488,7 +488,7 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.searchInstanceByHRID(instance.hrid);
             InventoryInstances.selectInstance();
             cy.wait(1000);
-            InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+            InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
 
             if (instance.hasHolding) {
               InventorySearchAndFilter.selectViewHoldings();

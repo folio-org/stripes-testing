@@ -1,23 +1,23 @@
 /* eslint-disable no-unused-expressions */
+import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
+import FileManager from '../../../../support/utils/fileManager';
+import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let user;
 const marcInstance = {
