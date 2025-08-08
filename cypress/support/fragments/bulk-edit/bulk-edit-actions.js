@@ -50,7 +50,7 @@ const downloadErrorsButton = Button('Download errors (CSV)');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
-const startBulkEditInstanceButton = Button('FOLIO Instances');
+const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
@@ -86,7 +86,7 @@ export default {
   },
 
   openStartBulkEditInstanceForm() {
-    cy.do(startBulkEditInstanceButton.click());
+    cy.do(startBulkEditFolioInstanceButton.click());
     cy.wait(2000);
   },
 
@@ -101,7 +101,10 @@ export default {
   },
 
   verifyStartBulkEditOptions() {
-    cy.expect([startBulkEditInstanceButton.exists(), startBulkEditMarcInstanceButton.exists()]);
+    cy.expect([
+      startBulkEditFolioInstanceButton.exists(),
+      startBulkEditMarcInstanceButton.exists(),
+    ]);
   },
 
   verifyOptionsLength(optionsLength, count) {
@@ -118,9 +121,9 @@ export default {
 
   startBulkEditInstanceAbsent(isAbsent = true) {
     if (isAbsent) {
-      cy.expect(startBulkEditInstanceButton.absent());
+      cy.expect(startBulkEditFolioInstanceButton.absent());
     } else {
-      cy.expect(startBulkEditInstanceButton.exists());
+      cy.expect(startBulkEditFolioInstanceButton.exists());
     }
   },
 
@@ -348,6 +351,11 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
+    cy.wait(1000);
+  },
+
+  closeBulkEditForm() {
+    cy.do(bulkEditPane.find(Button({ icon: 'times' })).click());
     cy.wait(1000);
   },
 
@@ -1149,6 +1157,10 @@ export default {
     cy.wait(1000);
   },
 
+  clickConfirmChangesButton() {
+    cy.do(confirmChangesButton.click());
+  },
+
   saveAndClose() {
     cy.do(saveAndCloseButton.click());
   },
@@ -1573,6 +1585,22 @@ export default {
 
   verifyAreYouSureFormAbsents() {
     cy.expect(areYouSureForm.absent());
+  },
+
+  verifyAreYouSureFormWhenUsingMarcFieldsFlowForFolioInstance() {
+    cy.expect(areYouSureForm.exists());
+    cy.expect(
+      areYouSureForm.find(MessageBanner()).has({
+        textContent: 'No instances can be updated because none have source MARC.',
+      }),
+    );
+    cy.expect(areYouSureForm.find(HTML('Preview of records to be changed')).exists());
+    cy.expect(areYouSureForm.find(HTML('The list contains no items')).exists());
+    this.verifyCloseAreYouSureModalButtonDisabled(false);
+    this.verifyKeepEditingButtonDisabled(false);
+    this.verifyDownloadPreviewButtonDisabled(true);
+    cy.expect(areYouSureForm.find(downloadPreviewInMarcFormatButton).has({ disabled: true }));
+    cy.expect(areYouSureForm.find(commitChanges).has({ disabled: true }));
   },
 
   verifyOptionsFilterInFocus() {
