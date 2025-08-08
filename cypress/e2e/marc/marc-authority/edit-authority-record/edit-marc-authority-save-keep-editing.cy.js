@@ -148,6 +148,7 @@ describe('MARC', () => {
 
           // Save edits and verify view updated
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -160,6 +161,7 @@ describe('MARC', () => {
 
           // Save added field and verify view updated
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -175,6 +177,7 @@ describe('MARC', () => {
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.closeAllCallouts();
 
           // // Confirm deletion and verify view updated
           QuickMarcEditor.checkFieldAbsense();
@@ -197,6 +200,7 @@ describe('MARC', () => {
 
           // Save field reordering and verify view updated
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,

@@ -914,8 +914,8 @@ export default {
         this.getLoanTypes().then((loanTypes) => {
           types.loanTypeId = loanTypes[0].id;
         });
-        this.getDefaultMaterialType().then((materialTypes) => {
-          types.materialTypeId = materialTypes[0].id;
+        cy.getDefaultMaterialType().then((materialType) => {
+          types.materialTypeId = materialType.id;
         });
       })
       .then(() => {
