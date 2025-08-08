@@ -20,7 +20,6 @@ describe('Effective call number column is sortable', () => {
     },
     servicePoint: {},
     location: {},
-    permanentLocation: {},
     folioInstances: InventoryInstances.generateFolioInstances({
       count: 2,
       itemsProperties: [
@@ -46,7 +45,6 @@ describe('Effective call number column is sortable', () => {
           testData.user = userProperties;
           cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
             testData.location = res;
-            testData.permanentLocation = res.name;
             InventoryInstances.createFolioInstancesViaApi({
               folioInstances: testData.folioInstances,
               location: res,
