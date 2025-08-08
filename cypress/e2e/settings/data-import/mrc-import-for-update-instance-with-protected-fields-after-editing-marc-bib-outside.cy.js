@@ -227,6 +227,7 @@ describe('Data Import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        cy.wait(1500);
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '650\t',

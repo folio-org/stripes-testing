@@ -185,7 +185,7 @@ describe('Bulk-edit', () => {
           });
 
           // Step 5-10: Open in-app bulk edit form and perform Find/Replace for upper-case admin note
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
           BulkEditActions.noteReplaceWith(
             'Administrative note',
@@ -378,7 +378,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
           BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
           BulkEditActions.openActions();
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
 
           // Step 21: Find/Remove for lower-case admin note
           BulkEditActions.noteRemove(

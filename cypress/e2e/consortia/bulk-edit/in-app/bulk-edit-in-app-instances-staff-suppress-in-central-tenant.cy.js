@@ -196,7 +196,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditActions.openStartBulkEditInstanceForm();
+            BulkEditActions.openStartBulkEditFolioInstanceForm();
             BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
@@ -298,7 +298,7 @@ describe('Bulk-edit', () => {
                 });
 
                 BulkEditActions.openActions();
-                BulkEditActions.openStartBulkEditInstanceForm();
+                BulkEditActions.openStartBulkEditFolioInstanceForm();
                 BulkEditActions.selectOption(staffSuppressOption);
                 BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
                 BulkEditActions.selectAction(actions.setFalse);

@@ -188,7 +188,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(uncheckedColumn);
         });
 
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.selectOption(noteTypes.bibliographyNote);
         BulkEditSearchPane.verifyInputLabel(noteTypes.bibliographyNote);
         BulkEditActions.verifyTheActionOptions(actionOptions);

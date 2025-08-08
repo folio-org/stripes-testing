@@ -214,7 +214,7 @@ describe('Bulk-edit', () => {
             'Notes',
             `Reproduction note;${notes.reproduction};true|Action note;${notes.action};false`,
           );
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
           BulkEditActions.changeNoteType(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,

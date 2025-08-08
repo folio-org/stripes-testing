@@ -297,6 +297,7 @@ describe('Data Import', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.clearSearchField();
       Orders.searchByParameter('PO number', number);
+      cy.wait(5000);
       Orders.selectFromResultsList(number);
       OrderDetails.openPolDetails(title);
       OrderLines.openReceiving();
