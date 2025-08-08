@@ -1,13 +1,13 @@
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InstanceRecordView, {
-  actionsMenuOptions,
-} from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import FileManager from '../../../../support/utils/fileManager';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -16,12 +16,12 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
+        testData.instanceId = instanceData.instanceId;
       });
 
       cy.createTempUser([
-        Permissions.uiInventoryViewCreateInstances.gui,
-        Permissions.consortiaInventoryShareLocalInstance.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -34,22 +34,27 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      Users.deleteViaApi(testData.user.userId);
+      FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+      cy.resetTenant();
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      });
     });
 
     it(
-      'C411343 (CONSORTIA) Check the "Share local instance" button on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C411343'] },
+      'C409470 (CONSORTIA) Verify the "Export instance (MARC)" button on Central tenant Instance page (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C409470'] },
       () => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.validateOptionInActionsMenu(
-          actionsMenuOptions.moveItemsWithinAnInstance,
-          false,
+        InstanceRecordView.exportInstanceMarc();
+        FileManager.verifyFile(
+          InventoryActions.verifyInstancesMARCFileName,
+          'QuickInstanceExport*',
+          InventoryActions.verifyInstancesMARC,
+          [[testData.instanceId]],
         );
       },
     );

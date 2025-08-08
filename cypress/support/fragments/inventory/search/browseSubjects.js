@@ -423,12 +423,7 @@ export default {
             .exists(),
           resultTable
             .find(MultiColumnListRow({ indexRow: index }))
-            .find(
-              MultiColumnListCell({
-                columnIndex: 1,
-                content: matching(new RegExp(`^(${subject.firstSource}|${subject.secondSource})$`)),
-              }),
-            )
+            .find(MultiColumnListCell({ columnIndex: 1, content: subject.source }))
             .exists(),
           resultTable
             .find(MultiColumnListRow({ indexRow: index }))
