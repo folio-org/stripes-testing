@@ -2,6 +2,8 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -15,11 +17,9 @@ describe('Eureka', () => {
           promotePath: '/users-keycloak/auth-users',
         };
 
-        const capabSetsToAssign = [
-          { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
-        ];
+        const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesUsersSettingsManage];
 
-        const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+        const capabsToAssign = [Capabilities.settingsEnabled];
 
         before('Create data', () => {
           cy.getAdminToken().then(() => {

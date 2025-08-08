@@ -8,6 +8,8 @@ import AuthorizationRoles, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -17,9 +19,9 @@ describe('Eureka', () => {
       roleBName: `AT_C627435_UserRole_B_${getRandomPostfix()}`,
     };
 
-    const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
+    const capabSetsToAssign = [CapabilitySets.uiUsersRolesManage];
 
-    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+    const capabsToAssign = [Capabilities.settingsEnabled];
 
     before('Create users, roles', () => {
       cy.getAdminToken();

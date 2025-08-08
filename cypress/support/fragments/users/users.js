@@ -13,6 +13,7 @@ import {
   MultiColumnListCell,
   Pane,
   PaneHeader,
+  Link,
   Section,
   Select,
   Spinner,
@@ -429,5 +430,45 @@ export default {
       Dropdown('Actions').find(Button()).click(),
       Button({ id: 'clickable-newuser' }).click(),
     ]);
+  },
+
+  verifyAddressOnUserDetailsPane(address) {
+    cy.contains('[class^=accordion]', 'Contact information')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Contact information').clickHeader());
+        }
+      });
+    cy.expect(userDetailsPane.find(KeyValue('Address Type')).has({ value: address }));
+  },
+
+  verifyCountryOnUserDetailsPane(country) {
+    cy.contains('[class^=accordion]', 'Contact information')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Contact information').clickHeader());
+        }
+      });
+    cy.expect(userDetailsPane.find(KeyValue('Country')).has({ value: country }));
+  },
+
+  expandLoansAccordion() {
+    cy.contains('[class^=accordion]', 'Loans')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Loans').clickHeader());
+        }
+      });
+  },
+
+  clickOpenLoansLink() {
+    cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
+  },
+
+  clickClosedLoansLink() {
+    cy.do(Link({ id: 'clickable-viewclosedloans' }).click());
   },
 };

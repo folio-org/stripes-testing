@@ -2,6 +2,9 @@ import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -99,7 +102,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.shareLocalInstance,
+          false,
+        );
       },
     );
 
@@ -119,7 +125,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.shareLocalInstance,
+          false,
+        );
       },
     );
 
@@ -135,7 +144,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.shareLocalInstance,
+          false,
+        );
       },
     );
 
@@ -155,7 +167,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.shareLocalInstance,
+          false,
+        );
       },
     );
   });

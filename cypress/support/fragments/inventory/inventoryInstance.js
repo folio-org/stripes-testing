@@ -216,7 +216,7 @@ const openItemByBarcode = (itemBarcode) => {
   cy.wait(500);
   cy.do(
     instanceDetailsSection
-      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
@@ -1418,11 +1418,6 @@ export default {
     cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
     cy.wait(2000);
-  },
-
-  checkShareLocalInstanceButtonIsAbsent() {
-    cy.do(actionsButton.click());
-    cy.expect([Button({ id: 'share-local-instance' }).absent()]);
   },
 
   checkInstanceHeader(header) {

@@ -8,6 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -18,12 +20,12 @@ describe('Eureka', () => {
     };
 
     const capabSetsToAssign = [
-      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.rolesUsers,
+      CapabilitySets.uiUsersRolesView,
     ];
 
-    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+    const capabsToAssign = [Capabilities.settingsEnabled];
 
     before('Create users, roles', () => {
       cy.getAdminToken();

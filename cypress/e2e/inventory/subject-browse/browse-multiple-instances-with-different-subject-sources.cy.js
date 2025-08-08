@@ -16,9 +16,8 @@ describe('Inventory', () => {
       user: {},
       subject: {
         indexRow: 0,
-        name: 'Short stories',
-        firstSource: 'Library of Congress Subject Headings',
-        secondSource: "Library of Congress Children's and Young Adults' Subject Headings",
+        name: 'Short stories, American',
+        source: 'Library of Congress Subject Headings',
         type: 'Topical term',
       },
     };
@@ -74,7 +73,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
         cy.wait(3000);
-        BrowseSubjects.searchBrowseSubjects('Short stories');
+        BrowseSubjects.searchBrowseSubjects('Short stories, American');
         cy.wait(3000);
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
         BrowseSubjects.openInstance(testData.subject);
@@ -82,7 +81,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstanceSubject({
           indexRow: testData.subject.indexRow,
           subjectHeadings: testData.subject.name,
-          subjectSource: testData.subject.secondSource,
+          subjectSource: testData.subject.source,
           subjectType: testData.subject.type,
         });
       },
