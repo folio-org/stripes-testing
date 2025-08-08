@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'corporateNameTitle',
           tag811: '811',
           authorityMarkedValue: 'C375086 Delaware Symposium on Language Studies.',
           seriesValue:
@@ -122,6 +123,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib811InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag811);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);

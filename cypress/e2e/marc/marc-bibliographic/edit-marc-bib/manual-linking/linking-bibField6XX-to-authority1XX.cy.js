@@ -114,7 +114,7 @@ describe('MARC', () => {
 
         const bib6XXAfterLinkingToAuth1XX = [
           {
-            browseSearchOption: 'personalNameTitle',
+            browseSearchOption: 'nameTitle',
             browseValue:
               'C377026 Black Panther Numeration (Fictitious character) second title Dates associated with a name Miscellaneous information Attribution qualifier Fuller form of name Date of a work Medium Form subheading Language of a work Medium of performance for music Number of part/section of a work Arranged statement for music Name of part/section of a work Key for music Version Wakanda Forever Form subdivision General subdivision Chronological subdivision Geographic subdivision',
             searchValue: 'C377026 Black Panther Numeration (Fictitious character) Dates',
@@ -129,7 +129,7 @@ describe('MARC', () => {
             seventhBox: '$4 .prt $2 test',
           },
           {
-            browseSearchOption: 'corporateNameTitle',
+            browseSearchOption: 'nameTitle',
             browseValue:
               'C377026 Radio Roma. Hrvatski program Location of meeting Date of meeting or treaty signing Date of a work Miscellaneous information Medium Form subheading Language of a work Medium of performance for music Number of part/section/meeting Arranged statement for music Name of part/section of a work Key for music Version Title of a work Form subdivision General subdivision Chronological subdivision Geographic subdivision',
             searchValue: 'C377026 Radio Roma. Hrvatski program Location of meeting Date',
@@ -144,7 +144,7 @@ describe('MARC', () => {
             seventhBox: '',
           },
           {
-            browseSearchOption: 'corporateNameTitle',
+            browseSearchOption: 'nameTitle',
             browseValue:
               'C377026 Roma Council Location of meeting Date Subordinate unit Date of a work Inf Medium Form subheading Language of a work Nou Name of meeting following jurisdiction name entry element Name of part/section of a work Version Title of a work',
             searchValue: 'C377026 Roma Council Location of meeting Date of meeting',
