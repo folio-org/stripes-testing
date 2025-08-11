@@ -2082,7 +2082,7 @@ export default {
           cy.wrap(rowEl)
             .find('[class*="subRow-"]')
             .eq(subRowIndex)
-            .find('select[name="action"]')
+            .find('select[name="name"]')
             .eq(1)
             .select(action);
         }),
