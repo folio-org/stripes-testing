@@ -153,6 +153,12 @@ export default {
 
     return openLoans && this.verifyQuantityOfOpenAndClaimReturnedLoans(openLoans, returnedLoans);
   },
+
+  expandLoansAccordion() {
+    cy.do(loansAccordion.clickHeader());
+    cy.expect(loansAccordion.has({ open: true }));
+  },
+
   expandNotesSection({ details = '' } = {}) {
     cy.do(notesSection.clickHeader());
 
@@ -722,6 +728,52 @@ export default {
   openExtendedInformationAccordion() {
     cy.do(extendedInfoSection.clickHeader());
     cy.wait(1000);
+  },
+
+  verifyExtendedInformationFieldsPresence() {
+    cy.expect([
+      KeyValue('Date enrolled').exists(),
+      KeyValue('External system ID').exists(),
+      KeyValue('Birth date').exists(),
+      KeyValue('Folio number').exists(),
+
+      KeyValue('Request preferences').exists(),
+      KeyValue('Default pickup service point').exists(),
+      KeyValue('Fulfillment preference').exists(),
+      KeyValue('Default delivery address').exists(),
+
+      KeyValue('Department name').exists(),
+      KeyValue('Username').exists(),
+    ]);
+  },
+
+  verifyPronounsOnUserDetailsPane(pronouns) {
+    cy.expect(rootSection.find(KeyValue('Pronouns')).has({ value: `${pronouns}` }));
+  },
+
+  verifyPronounsFieldEmpty() {
+    cy.expect(rootSection.find(KeyValue('Pronouns')).has({ value: '' }));
+  },
+
+  verifyFullNameAndPronouns(
+    status,
+    lastName,
+    preferredName = 'preferredName',
+    testMiddleName = 'testMiddleName',
+    pronouns = '',
+  ) {
+    cy.expect(
+      Section({ id: 'pane-userdetails' })
+        .find(HTML(`${lastName}, ${preferredName} ${testMiddleName}`))
+        .exists(),
+    );
+    if (status === 'with') {
+      cy.expect(
+        Section({ id: 'pane-userdetails' })
+          .find(HTML(`(${pronouns})`))
+          .exists(),
+      );
+    }
   },
 
   openProxySponsorAccordion() {

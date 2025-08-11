@@ -12,7 +12,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       issnOption: 'ISSN',
-      defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
+      defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
       issnPositiveSearchQueries: ['0040-782X', '0040-782x', '0040-782*', '*-782x'],
       issnNegativeSearchQuery: '0040-782A',
       searchResults: [

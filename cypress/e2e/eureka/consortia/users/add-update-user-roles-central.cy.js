@@ -3,14 +3,12 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import UserEdit from '../../../../support/fragments/users/userEdit';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -25,21 +23,9 @@ describe('Eureka', () => {
         collegeRoleNameC: `AT_C514902_UserRole_M1C_${randomPostfix}`,
       };
 
-      const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Users Roles',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
-      ];
+      const capabSetsToAssign = [CapabilitySets.uiUsersRolesManage];
 
-      const capabsToAssign = [
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Consortia User-Tenants Collection',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-      ];
+      const capabsToAssign = [Capabilities.consortiaUserTenantsCollection];
 
       const testUser = {};
       const assignUser = {};

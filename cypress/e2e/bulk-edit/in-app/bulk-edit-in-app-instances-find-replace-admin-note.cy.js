@@ -107,7 +107,7 @@ describe('Bulk-edit', () => {
           folioItem.instanceId,
           marcInstance.instanceId,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteReplaceWith('Administrative note', adminNotes.upper, newAdminNote);

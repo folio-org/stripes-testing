@@ -170,7 +170,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 9;
+    const hrIdColumnIndex = 8;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {

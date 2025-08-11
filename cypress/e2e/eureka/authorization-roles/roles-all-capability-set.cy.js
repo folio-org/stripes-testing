@@ -3,6 +3,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -60,35 +62,13 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.EDIT,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.CREATE,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.DELETE,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsView,
+        CapabilitySets.uiAuthorizationRolesSettingsEdit,
+        CapabilitySets.uiAuthorizationRolesSettingsCreate,
+        CapabilitySets.uiAuthorizationRolesSettingsDelete,
       ];
 
-      const capabsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-      ];
+      const capabsToAssign = [Capabilities.settingsEnabled];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {

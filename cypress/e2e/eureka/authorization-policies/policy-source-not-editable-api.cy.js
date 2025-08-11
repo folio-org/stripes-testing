@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import {
   AUTHORIZATION_POLICY_TYPES,
   AUTHORIZATION_POLICY_SOURCES,
@@ -41,9 +42,9 @@ describe('Eureka', () => {
       policyBBody.name = testData.policyBName;
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Policies Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Policies', action: 'Manage' },
-        { type: 'Data', resource: 'Users', action: 'Manage' },
+        CapabilitySets.uiAuthorizationPoliciesSettingsAdmin,
+        CapabilitySets.policies,
+        CapabilitySets.users,
       ];
 
       before('Create users', () => {

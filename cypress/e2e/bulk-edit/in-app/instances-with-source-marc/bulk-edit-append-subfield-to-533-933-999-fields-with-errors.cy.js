@@ -46,7 +46,7 @@ const marcInstanceFields = [
 ];
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();
@@ -242,6 +242,7 @@ describe('Bulk-edit', () => {
 
         // Step 16: Inventory app - verify no changes
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

@@ -203,7 +203,7 @@ describe('Bulk-edit', () => {
             'Notes',
             `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false|${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
           );
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
           BulkEditActions.markAsStaffOnly(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,

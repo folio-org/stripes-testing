@@ -148,6 +148,12 @@ describe('Data Import', () => {
       };
 
       beforeEach('Create test data and login', () => {
+        cy.getAdminToken();
+        StatisticalCodes.createViaApi().then((resp) => {
+          statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
+          statisticalCodeId = resp.id;
+        });
+
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.settingsDataImportEnabled.gui,
@@ -165,9 +171,6 @@ describe('Data Import', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          StatisticalCodes.createViaApi().then((resp) => {
-            statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
-          });
           cy.login(user.username, user.password, {
             path: SettingsMenu.mappingProfilePath,
             waiter: FieldMappingProfiles.waitLoading,

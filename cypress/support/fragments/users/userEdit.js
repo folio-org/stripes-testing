@@ -120,6 +120,7 @@ const confirmButton = Button('Confirm');
 const promoteUserModalText = 'This operation will create new record in Keycloak for';
 const userRolesEmptyText = 'No user roles found';
 const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
+const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
@@ -204,6 +205,60 @@ export default {
     cy.do(preferredFirstName.fillIn(prefFirstName));
   },
 
+  changePronouns(pronouns) {
+    cy.do(pronounsField.fillIn(pronouns));
+  },
+
+  fillPronouns(pronouns) {
+    cy.do(pronounsField.fillIn(pronouns));
+    cy.wait(500);
+    cy.expect(pronounsField.has({ value: pronouns }));
+  },
+
+  clearPronounsField() {
+    cy.do(pronounsField.clear());
+    cy.wait(500);
+  },
+
+  focusPronounsField() {
+    cy.do(pronounsField.focus());
+    cy.wait(500);
+    cy.expect(pronounsField.has({ focused: true }));
+  },
+
+  verifyPronounsFieldInFocus() {
+    cy.wait(500);
+    cy.expect(pronounsField.has({ focused: true }));
+  },
+
+  verifyPronounsFieldPresent() {
+    cy.wait(500);
+    cy.expect(pronounsField.exists());
+  },
+
+  verifyPronounsFieldValue(value) {
+    cy.expect(pronounsField.has({ value }));
+    cy.wait(500);
+  },
+
+  verifySaveButtonActive() {
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  },
+
+  verifyUserFullNameWithPronouns(
+    lastName,
+    preferredName = 'preferredName',
+    testMiddleName = 'testMiddleName',
+    pronouns,
+  ) {
+    cy.expect(
+      userEditPane
+        .find(HTML(including(`${lastName}, ${preferredName} ${testMiddleName}`)))
+        .exists(),
+    );
+    cy.expect(userEditPane.find(HTML(including(`(${pronouns})`))).exists());
+  },
+
   changeUserType(type = 'Patron') {
     cy.do(selectRequestType.choose(type));
   },
@@ -222,6 +277,10 @@ export default {
 
   changeStatus(status) {
     cy.do(statusSelect.choose(status));
+  },
+
+  changePatronGroup(patronGroup) {
+    cy.do(addressSelect.choose(patronGroup));
   },
 
   searchForPermission(permission) {
@@ -508,6 +567,13 @@ export default {
     cy.expect(rootPane.absent());
   },
 
+  saveAndCloseWithConfirmation() {
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
+    cy.expect(rootPane.absent());
+  },
+
   confirmChangingUserType() {
     cy.wait(1000);
     cy.do(Modal().find(Button('Confirm')).click());
@@ -647,6 +713,36 @@ export default {
 
   addAddress(type = 'Home') {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+  },
+
+  addAddressWithCountry(type = 'Home', country = 'Australia') {
+    cy.do([
+      Button('Add address').click(),
+      Select('Address Type*').choose(type),
+      Selection('Country').choose(country),
+    ]);
+  },
+
+  addAddressWithoutType() {
+    cy.do([Button('Add address').click()]);
+    cy.wait(1000);
+  },
+
+  deleteAddress() {
+    cy.do(Button('Delete address').click());
+  },
+
+  cancelAddressForm() {
+    // eslint-disable-next-line cypress/no-force
+    cy.get('[data-test-delete-address-button="true"]').click({ force: true });
+    cy.wait(1000);
+  },
+
+  saveAndCloseStayOnEdit() {
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
+    cy.expect(userEditPane.exists());
   },
 
   editUsername(username) {
@@ -1113,5 +1209,22 @@ export default {
     const pluralType = type.toLowerCase() === 'proxy' ? 'proxies' : `${type.toLowerCase()}s`;
     const noRecordsText = `No ${pluralType} found`;
     cy.expect(proxySponsorAccordion.find(HTML(including(noRecordsText))).exists());
+  },
+
+  verifyAddressTypeError() {
+    cy.expect(HTML(including('Please select address type')).exists());
+  },
+
+  setExpirationDate() {
+    cy.do(setExpirationDateButton.click());
+  },
+
+  closeKeycloakModal() {
+    cy.expect(Modal('Keycloak user record').exists());
+    cy.do(
+      Modal('Keycloak user record')
+        .find(Button({ id: 'clickable-JIT-user-cancel' }))
+        .click(),
+    );
   },
 };

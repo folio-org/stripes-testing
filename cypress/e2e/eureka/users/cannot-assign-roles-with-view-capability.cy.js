@@ -5,6 +5,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -12,10 +13,7 @@ describe('Eureka', () => {
       roleName: `AT_C627241_UserRole_${getRandomPostfix()}`,
     };
 
-    const capabSetsToAssign = [
-      { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-    ];
+    const capabSetsToAssign = [CapabilitySets.uiUsersRolesView, CapabilitySets.uiUsersEdit];
 
     before('Create users, role', () => {
       cy.getAdminToken();

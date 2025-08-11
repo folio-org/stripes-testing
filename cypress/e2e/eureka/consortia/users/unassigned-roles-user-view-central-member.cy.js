@@ -10,6 +10,8 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -23,14 +25,14 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.rolesUsers,
+        CapabilitySets.uiUsersRolesView,
       ];
 
       const capabsToAssign = [
-        { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-        { type: 'Data', resource: 'Consortia User-Tenants Collection', action: 'View' },
+        Capabilities.settingsEnabled,
+        Capabilities.consortiaUserTenantsCollection,
       ];
 
       before('Create users, roles', () => {

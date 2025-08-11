@@ -1,5 +1,8 @@
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -48,12 +51,15 @@ describe('Inventory', () => {
 
     it(
       'C411334 (CONSORTIA) Check the "Share local instance" button without permission on a local Source = FOLIO Instance on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411334'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.shareLocalInstance,
+          false,
+        );
       },
     );
   });

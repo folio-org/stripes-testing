@@ -87,7 +87,7 @@ const errorMessage =
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();

@@ -66,7 +66,7 @@ const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName,
 const warningMessage = 'No change in MARC fields required';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.getAdminToken();

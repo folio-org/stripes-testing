@@ -297,7 +297,7 @@ describe('Bulk-edit', () => {
           ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [invalidInstanceId]);
         });
 
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
