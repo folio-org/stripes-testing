@@ -139,7 +139,7 @@ describe('Loans', () => {
 
     it(
       'C10959 Loans: Claim returned (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C10959'] },
+      { tags: ['smokeBroken', 'vega', 'system', 'shiftLeftBroken', 'C10959'] },
       () => {
         const selectedItems = [];
         let claimedReturnedLoansQuantity;

@@ -60,7 +60,7 @@ describe('Reading Room Access', () => {
 
   it(
     'C466237 User can view reading room access permission (volaris)',
-    { tags: ['smoke', 'volaris', 'C466237'] },
+    { tags: ['smokeBroken', 'volaris', 'C466237'] },
     () => {
       UsersSearchPane.searchByUsername(testData.userWithoutPermissions.username);
       UsersSearchPane.waitLoading();

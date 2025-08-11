@@ -54,7 +54,7 @@ describe('Users', () => {
 
     it(
       'C442795 Verify that profile picture and associated update options display appropriately with Users: Can view, edit, and delete profile pictures (volaris)',
-      { tags: ['smoke', 'volaris', 'C442795'] },
+      { tags: ['smokeBroken', 'volaris', 'C442795'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         cy.wait(2000);

@@ -47,7 +47,7 @@ describe('Users', () => {
 
     it(
       'C446093 Update profile picture via local storage (volaris)',
-      { tags: ['smoke', 'volaris', 'C446093'] },
+      { tags: ['smokeBroken', 'volaris', 'C446093'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();

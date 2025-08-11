@@ -48,7 +48,7 @@ describe('Users', () => {
 
     it(
       'C446007 Verify Profile Picture Deletion Upon Confirmation (volaris)',
-      { tags: ['smoke', 'volaris', 'C446007'] },
+      { tags: ['smokeBroken', 'volaris', 'C446007'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();

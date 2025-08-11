@@ -59,7 +59,7 @@ describe('Reading Room Access', () => {
 
   it(
     'C466238 User can create edit and remove reading room access permission (volaris)',
-    { tags: ['smoke', 'volaris', 'C466238'] },
+    { tags: ['smokeBroken', 'volaris', 'C466238'] },
     () => {
       UsersSearchPane.searchByUsername(testData.userWithoutPermissions.username);
       UsersSearchPane.waitLoading();

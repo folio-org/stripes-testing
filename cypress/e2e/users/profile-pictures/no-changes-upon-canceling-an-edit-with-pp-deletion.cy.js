@@ -48,7 +48,7 @@ describe('Users', () => {
 
     it(
       'C446009 Verify no changes upon canceling an edit with profile picture deletion (volaris)',
-      { tags: ['smoke', 'volaris', 'C446009'] },
+      { tags: ['smokeBroken', 'volaris', 'C446009'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();

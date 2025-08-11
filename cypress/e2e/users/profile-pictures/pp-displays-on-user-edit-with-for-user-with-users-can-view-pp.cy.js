@@ -55,7 +55,7 @@ describe('Users', () => {
 
     it(
       'C442796 Verify that profile picture displays on user edit with for user with Users: Can view profile pictures (volaris)',
-      { tags: ['smoke', 'volaris', 'C442796'] },
+      { tags: ['smokeBroken', 'volaris', 'C442796'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         cy.wait(2000);
