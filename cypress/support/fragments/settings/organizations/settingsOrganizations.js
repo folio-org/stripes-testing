@@ -28,9 +28,11 @@ const defaultAccountTypes = {
 };
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
+
 function getEditableListRow(rowNumber) {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
 }
+
 export default {
   defaultCategories,
   defaultTypes,
@@ -197,5 +199,145 @@ export default {
       method: 'DELETE',
       path: `organizations-storage/banking-account-types/${organizationAccountTypeId}`,
     });
+  },
+
+  checkBankingAccountTypesTableContent(typeName) {
+    const grid = '#editList-bankingAccountTypes';
+    cy.get(`${grid} [role="row"][aria-rowindex]:not([aria-rowindex="1"])`)
+      .filter((_, row) => {
+        const nameCell = row.querySelector('[role="gridcell"]');
+        return nameCell && nameCell.textContent.trim() === typeName;
+      })
+      .should('have.length', 1);
+  },
+
+  checkNewAccountTypeButtonExists() {
+    cy.expect(Button({ id: 'clickable-add-bankingAccountTypes' }).exists());
+  },
+
+  clickEditAccountType(typeName) {
+    cy.do(
+      MultiColumnListCell({ content: typeName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(getEditableListRow(rowNumber).find(editIconButton).click());
+      }),
+    );
+  },
+
+  checkEditFieldState(typeName) {
+    cy.get('#editList-bankingAccountTypes')
+      .find('input[type="text"]')
+      .should('have.value', typeName);
+    cy.get('[data-type-button="cancel"]').should('be.enabled');
+    cy.get('button[id^="clickable-save-bankingAccountTypes-"]').should('be.disabled');
+  },
+
+  clearAccountTypeField(typeName) {
+    const grid = '#editList-bankingAccountTypes';
+    cy.get(`${grid} input[type="text"]`)
+      .should('be.enabled')
+      .should('have.value', typeName)
+      .clear({ force: true })
+      .blur();
+    cy.get(`${grid} input[type="text"]`).should('have.attr', 'aria-invalid', 'true');
+    cy.get(`${grid} [class*="feedbackError"]`)
+      .should('be.visible')
+      .and('contain.text', 'Please fill this in to continue');
+    cy.get('button[id^="clickable-save-bankingAccountTypes-"]').should('be.disabled');
+  },
+
+  fillAccountTypeName(name) {
+    cy.get('#editList-bankingAccountTypes').find('input[type="text"]').clear().type(name)
+      .blur();
+  },
+
+  saveAccountTypeChanges() {
+    cy.get('button[id^="clickable-save-bankingAccountTypes-"]').click();
+  },
+
+  checkRowActionButtons(typeName) {
+    cy.do(
+      MultiColumnListCell({ content: typeName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.expect(getEditableListRow(rowNumber).find(editIconButton).exists());
+        cy.expect(getEditableListRow(rowNumber).find(trashIconButton).exists());
+        cy.expect(getEditableListRow(rowNumber).find(editIconButton).is({ disabled: false }));
+        cy.expect(getEditableListRow(rowNumber).find(trashIconButton).is({ disabled: false }));
+      }),
+    );
+  },
+
+  cancelAccountTypeChanges() {
+    cy.get('button[id^="clickable-cancel-bankingAccountTypes-"]').click();
+  },
+
+  clickDeleteAccountType(typeName) {
+    cy.do(
+      MultiColumnListCell({ content: typeName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(getEditableListRow(rowNumber).find(trashIconButton).click());
+      }),
+    );
+  },
+
+  checkDeleteAccountTypeModal(typeName) {
+    cy.get('#delete-controlled-vocab-entry-confirmation')
+      .should('be.visible')
+      .within(() => {
+        cy.contains(`The account type ${typeName} will be deleted.`).should('be.visible');
+        cy.get('#clickable-delete-controlled-vocab-entry-confirmation-confirm')
+          .should('be.visible')
+          .and('be.enabled');
+        cy.get('#clickable-delete-controlled-vocab-entry-confirmation-cancel')
+          .should('be.visible')
+          .and('be.enabled');
+      });
+  },
+
+  cancelDeleteAccountType() {
+    cy.get('#clickable-delete-controlled-vocab-entry-confirmation-cancel').click();
+    cy.get('#delete-controlled-vocab-entry-confirmation').should('not.exist');
+  },
+
+  deleteAccountType(typeName) {
+    cy.do(
+      MultiColumnListCell({ content: typeName.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber).find(trashIconButton).click(),
+          Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click(),
+        ]);
+      }),
+    );
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage(
+      `The account type ${typeName.name} was successfully deleted`,
+    );
+  },
+
+  checkAccountTypeAbsent(typeName) {
+    cy.get('#editList-bankingAccountTypes')
+      .should('exist')
+      .find(`[data-row-inner*="${typeName}"]`)
+      .should('not.exist');
+  },
+
+  clickNewButton() {
+    cy.do(Button({ id: 'clickable-add-bankingAccountTypes' }).click());
+  },
+
+  checkNewAccountTypeRow() {
+    cy.get('#editList-bankingAccountTypes')
+      .find('input[type="text"]')
+      .should('have.attr', 'placeholder', 'name');
+    cy.get('button[id^="clickable-cancel-bankingAccountTypes"]').should('be.enabled');
+    cy.get('button[id^="clickable-save-bankingAccountTypes"]').should('be.disabled');
+  },
+
+  checkDuplicateNameValidation() {
+    cy.get('div[class^="feedbackError-"]')
+      .should('be.visible')
+      .and('contain.text', 'Account type must be unique.');
+    cy.get('button[id^="clickable-save-bankingAccountTypes"]').should('be.disabled');
   },
 };
