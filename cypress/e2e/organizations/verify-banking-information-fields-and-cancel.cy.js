@@ -95,7 +95,7 @@ describe('Organizations', () => {
       Organizations.selectOrganization(organization.name);
       Organizations.verifyBankingInformationAccordionIsPresent();
       Organizations.editOrganization();
-      Organizations.addBankingInformation(bankingInformation);
+      Organizations.fillINBankingInformationSection(bankingInformation);
       Organizations.cancelOrganization();
       Organizations.keepEditingOrganization();
       Organizations.cancelOrganization();
