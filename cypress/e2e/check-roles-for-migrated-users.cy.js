@@ -11,18 +11,17 @@ import UsersSearchPane from '../support/fragments/users/usersSearchPane';
 import UsersSearchResultsPane from '../support/fragments/users/usersSearchResultsPane';
 
 /*
-For these users, Eureka-specific capabilities need to be assigned.
-Such capabilities are not a part of the initial sets,
-so they are expected to be moved to hash-roles.
+These users have hash-roles due to EUREKA-798
+Uncomment in case this will be deemed a non-issue
 */
 const usersWithHashRoles = [
-  'c359587',
-  'c375072',
-  'c375076',
-  'c375077',
-  'c380503',
-  'c388524',
-  'c396393',
+  // 'c359587',
+  // 'c375072',
+  // 'c375076',
+  // 'c375077',
+  // 'c380503',
+  // 'c388524',
+  // 'c396393',
 ];
 
 describe('Check roles for migrated users', () => {
