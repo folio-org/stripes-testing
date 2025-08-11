@@ -27,10 +27,12 @@ describe('Organizations Settings', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-    cy.visit(TopMenu.settingsBankingInformationPath);
+    cy.loginAsAdmin({
+      path: TopMenu.settingsBankingInformationPath,
+      waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+    });
     SettingsOrganizations.uncheckenableBankingInformationIfChecked();
+    Users.deleteViaApi(user.userId);
   });
 
   it('C422088 Delete account type (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {

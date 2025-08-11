@@ -31,12 +31,13 @@ describe('Organizations Settings', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.settingsBankingInformationPath,
+      waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+    });
+    SettingsOrganizations.uncheckenableBankingInformationIfChecked();
     Users.deleteViaApi(user.userId);
     SettingsOrganizations.deleteOrganizationAccountTypeViaApi(existingAccountType.id);
-    cy.visit(TopMenu.settingsBankingInformationPath);
-    SettingsOrganizations.selectBankingInformation();
-    SettingsOrganizations.uncheckenableBankingInformationIfChecked();
   });
 
   it(

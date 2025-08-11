@@ -30,12 +30,13 @@ describe('Organizations Settings', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.settingsBankingInformationPath,
+      waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+    });
+    SettingsOrganizations.uncheckenableBankingInformationIfChecked();
     Users.deleteViaApi(user.userId);
     SettingsOrganizations.deleteOrganizationAccountTypeViaApi(accountType.id);
-    cy.visit(TopMenu.settingsBankingInformationPath);
-    SettingsOrganizations.selectBankingInformation();
-    SettingsOrganizations.uncheckenableBankingInformationIfChecked();
   });
 
   it('C422087 Edit account type (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
