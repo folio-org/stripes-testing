@@ -963,6 +963,17 @@ export default {
     cy.wait(4000);
   },
 
+  fillINBankingInformationSection: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      bankingInformationAddButton.click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+    ]);
+  },
+
   addFullBankingInformation: (bankingInformation) => {
     cy.do([
       bankingInformationButton.click(),

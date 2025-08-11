@@ -95,7 +95,6 @@ describe('Organizations', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(userA.userId);
-    cy.deleteCapabilitySetsFromRoleApi(testData.role.id);
     cy.deleteAuthorizationRoleApi(testData.role.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
