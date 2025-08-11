@@ -42,6 +42,11 @@ export default {
     resource: 'UI-Authorization-Policies Settings Admin',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsHoldingsSourcesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Holdings-Sources',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {
