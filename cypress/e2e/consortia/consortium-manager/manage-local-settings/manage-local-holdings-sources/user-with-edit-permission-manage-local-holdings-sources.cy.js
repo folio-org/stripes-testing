@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -18,6 +17,7 @@ import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import HoldingsSources from '../../../../../support/fragments/settings/inventory/holdings/holdingsSources';
+import CapabilitySets from '../../../../../support/dictionary/capabilitySets';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -28,30 +28,31 @@ describe('Consortia', () => {
           sourceName: `AT_C648482_HoldingsSource_${getRandomPostfix()}`,
           editedSourceName: `AT_C648482_HoldingsSource_${getRandomPostfix()}_edited`,
         };
+        const capabSetsToAssignCentral = [
+          CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
+          CapabilitySets.uiInventorySettingsHoldingsSourcesView,
+        ];
+        const capabSetsToAssignMember = [CapabilitySets.uiInventorySettingsHoldingsSourcesView];
 
         before('Create test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
-          cy.createTempUser([Permissions.inventoryCRUDHoldingsSources.gui]).then(
-            (userProperties) => {
-              user = userProperties;
+          cy.createTempUser([]).then((userProperties) => {
+            user = userProperties;
+            cy.assignCapabilitiesToExistingUser(user.userId, [], capabSetsToAssignMember);
 
-              cy.resetTenant();
-              cy.assignPermissionsToExistingUser(user.userId, [
-                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                Permissions.inventoryCRUDHoldingsSources.gui,
-              ]);
+            cy.resetTenant();
+            cy.assignCapabilitiesToExistingUser(user.userId, [], capabSetsToAssignCentral);
 
-              cy.waitForAuthRefresh(() => {
-                cy.login(user.username, user.password);
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                cy.reload();
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-              }, 20_000);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-            },
-          );
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              cy.reload();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            }, 20_000);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          });
         });
 
         after('Delete test data', () => {
