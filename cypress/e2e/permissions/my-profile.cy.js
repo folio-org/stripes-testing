@@ -47,6 +47,7 @@ describe('Permissions', () => {
           MyProfile.waitLoading();
           MyProfile.openChangePassword();
           ChangePassword.waitLoading();
+          cy.logout();
         },
       );
 
@@ -69,6 +70,7 @@ describe('Permissions', () => {
 
           ChangePassword.typeConfirmPassword('bB1!');
           ChangePassword.verifyConfirmPasswordMessage(ChangePassword.messages.mismatch);
+          cy.logout();
         },
       );
 
