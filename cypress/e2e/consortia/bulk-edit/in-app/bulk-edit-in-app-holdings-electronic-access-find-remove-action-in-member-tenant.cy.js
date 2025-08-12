@@ -12,9 +12,10 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import UrlRelationship from '../../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import UrlRelationshipConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/instances-holdings-items/urlRelationshipConsortiumManager';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 let user;
 let instanceTypeId;
@@ -57,6 +58,10 @@ const electronicAccessTableHeaders =
   'URL relationshipURILink textMaterials specifiedURL public note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
+const userPermissions = [
+  permissions.bulkEditEdit.gui,
+  permissions.uiInventoryViewCreateEditHoldings.gui,
+];
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -70,79 +75,79 @@ describe('Bulk-edit', () => {
             sharedUrlRelationshipData = newUrlRelationship;
           })
           .then(() => {
-            cy.withinTenant(Affiliations.College, () => {
-              cy.createTempUser([
-                permissions.bulkEditEdit.gui,
-                permissions.uiInventoryViewCreateEditHoldings.gui,
-              ]).then((userProperties) => {
-                user = userProperties;
+            cy.createTempUser(userPermissions).then((userProperties) => {
+              user = userProperties;
 
-                cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-                  instanceTypeId = instanceTypeData[0].id;
-                });
-                cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-                  locationId = res.id;
-                });
-                InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                  sourceId = folioSource.id;
-                });
+              cy.assignAffiliationToUser(Affiliations.College, user.userId);
+              cy.setTenant(Affiliations.College);
+              cy.assignPermissionsToExistingUser(user.userId, userPermissions);
 
-                // create local url relationship in College
-                UrlRelationship.createViaApi({
-                  name: localUrlRelationship.name,
-                  source: 'local',
-                }).then((response) => {
-                  localUrlRelationship.id = response.id;
-                  // create folio instance
-                  InventoryInstances.createFolioInstanceViaApi({
-                    instance: {
-                      instanceTypeId,
-                      title: folioInstance.title,
-                    },
-                  }).then((createdInstanceData) => {
-                    folioInstance.id = createdInstanceData.instanceId;
-                    // create marc instance
-                    cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                      marcInstance.id = instanceId;
-                      // create holdings in College tenant for both instances
-                      instances.forEach((instance) => {
-                        InventoryHoldings.createHoldingRecordViaApi({
-                          instanceId: instance.id,
-                          permanentLocationId: locationId,
-                          electronicAccess: [
-                            {
-                              ...electronicAccessFields,
-                              relationshipId: sharedUrlRelationshipData.settingId,
-                            },
-                            {
-                              ...electronicAccessFields,
-                              relationshipId: localUrlRelationship.id,
-                            },
-                          ],
-                          sourceId,
-                        }).then((holding) => {
-                          holdingIds.push(holding.id);
-                          holdingHrids.push(holding.hrid);
-                        });
-                        cy.wait(1000);
+              cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+                instanceTypeId = instanceTypeData[0].id;
+              });
+              cy.getLocations({ query: 'name="DCB"' }).then((res) => {
+                locationId = res.id;
+              });
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                sourceId = folioSource.id;
+              });
+
+              // create local url relationship in College
+              UrlRelationship.createViaApi({
+                name: localUrlRelationship.name,
+                source: 'local',
+              }).then((response) => {
+                localUrlRelationship.id = response.id;
+                // create folio instance
+                InventoryInstances.createFolioInstanceViaApi({
+                  instance: {
+                    instanceTypeId,
+                    title: folioInstance.title,
+                  },
+                }).then((createdInstanceData) => {
+                  folioInstance.id = createdInstanceData.instanceId;
+                  // create marc instance
+                  cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                    marcInstance.id = instanceId;
+                    // create holdings in College tenant for both instances
+                    instances.forEach((instance) => {
+                      InventoryHoldings.createHoldingRecordViaApi({
+                        instanceId: instance.id,
+                        permanentLocationId: locationId,
+                        electronicAccess: [
+                          {
+                            ...electronicAccessFields,
+                            relationshipId: sharedUrlRelationshipData.settingId,
+                          },
+                          {
+                            ...electronicAccessFields,
+                            relationshipId: localUrlRelationship.id,
+                          },
+                        ],
+                        sourceId,
+                      }).then((holding) => {
+                        holdingIds.push(holding.id);
+                        holdingHrids.push(holding.hrid);
                       });
+                      cy.wait(1000);
+                    });
 
-                      cy.then(() => {
-                        FileManager.createFile(
-                          `cypress/fixtures/${holdingUUIDsFileName}`,
-                          `${holdingIds.join('\n')}`,
-                        );
-                      });
+                    cy.then(() => {
+                      FileManager.createFile(
+                        `cypress/fixtures/${holdingUUIDsFileName}`,
+                        `${holdingIds.join('\n')}`,
+                      );
                     });
                   });
                 });
-
-                cy.resetTenant();
-                cy.login(user.username, user.password, {
-                  path: TopMenu.bulkEditPath,
-                  waiter: BulkEditSearchPane.waitLoading,
-                });
               });
+
+              cy.resetTenant();
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             });
           });
       });
@@ -245,7 +250,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption('URL relationship');
 
           // Step 8: Select "Find (full field search)" action
-          BulkEditActions.selectSecondAction('Find (full field search)');
+          BulkEditActions.selectAction('Find (full field search)');
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 9: Check displayed URL relationship types (should only show local)
@@ -273,7 +278,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex);
             BulkEditActions.selectOption(filter.option, rowIndex);
-            BulkEditActions.selectSecondAction('Find', rowIndex);
+            BulkEditActions.selectAction('Find', rowIndex);
             BulkEditActions.fillInFirstTextArea(filter.value, rowIndex);
             BulkEditActions.selectSecondAction('Remove', rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);
