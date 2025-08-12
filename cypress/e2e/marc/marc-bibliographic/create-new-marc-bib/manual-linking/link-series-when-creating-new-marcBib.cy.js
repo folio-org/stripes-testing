@@ -109,9 +109,11 @@ describe('MARC', () => {
 
         after('Deleting created user and data', () => {
           cy.getAdminToken();
-          Users.deleteViaApi(userData.userId);
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422129');
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[3]);
+          if (userData?.userId) {
+            Users.deleteViaApi(userData.userId);
+          }
         });
 
         it(

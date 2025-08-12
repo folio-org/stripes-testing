@@ -126,7 +126,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374167*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374167');
 
       // create Match profile
       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)

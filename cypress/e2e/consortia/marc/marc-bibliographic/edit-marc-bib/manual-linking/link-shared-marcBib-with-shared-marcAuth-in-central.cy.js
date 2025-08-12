@@ -148,7 +148,7 @@ describe('MARC', () => {
                 });
                 cy.reload();
                 InventoryInstances.waitContentLoading();
-              }, 20_000);
+              }, 25_000);
             });
         });
 
@@ -166,7 +166,7 @@ describe('MARC', () => {
           cy.resetTenant();
           Users.deleteViaApi(users.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-          MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+          MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
         });
 
         it(

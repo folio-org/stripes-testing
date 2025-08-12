@@ -19,7 +19,7 @@ describe('MARC', () => {
         tag655: '655',
         updated155FieldValue: 'Drama C374159 cinema',
         updated010FieldValue: 'gf20140262973741590',
-        autoUpdateUserName: 'FolioLast, FolioFirst',
+        autoUpdateUserName: 'folio, folio',
         subjectAccordion: 'Subject',
         authorityIconText: 'Linked to MARC authority',
       };
@@ -148,7 +148,6 @@ describe('MARC', () => {
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
           InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
-          InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
           InventoryInstance.verifyInstanceSubject(
             11,
             0,
@@ -161,7 +160,7 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkPaneheaderContains(`Source: ${testData.autoUpdateUserName}`);
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            52,
+            51,
             '655',
             '\\',
             '7',

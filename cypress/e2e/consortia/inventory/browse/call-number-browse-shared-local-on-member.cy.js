@@ -134,7 +134,7 @@ describe('Inventory', () => {
       servicePoint: ServicePoints.getDefaultServicePoint(),
       defaultLocation: {},
     };
-    const tenants = [tenantNames.college];
+    const tenants = [Affiliations.College];
     const removeInstancesByTitle = (title) => {
       [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
@@ -155,14 +155,16 @@ describe('Inventory', () => {
       });
 
       cy.then(() => {
-        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-          testData.folioSourceId = folioSource.id;
-        });
-        InventoryInstances.getLoanTypes().then((loanTypes) => {
-          testData.loanTypeId = loanTypes[0].id;
-        });
-        InventoryInstances.getMaterialTypes().then((materialTypes) => {
-          testData.materialTypeId = materialTypes[0].id;
+        cy.withinTenant(Affiliations.College, () => {
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            testData.folioSourceId = folioSource.id;
+          });
+          InventoryInstances.getLoanTypes().then((loanTypes) => {
+            testData.loanTypeId = loanTypes[0].id;
+          });
+          InventoryInstances.getMaterialTypes().then((materialTypes) => {
+            testData.materialTypeId = materialTypes[0].id;
+          });
         });
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {

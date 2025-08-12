@@ -114,8 +114,9 @@ export default {
   },
 
   selectLocation(locationName) {
-    // need to scroll down if the list of locations is long
-    this.scrollListOfResults('bottom');
+    // need to scroll if the list of locations is long
+    this.scrollListOfResults('center');
+    this.scrollListOfResults('left');
     cy.do(selectLocationsModal.find(MultiColumnListCell({ content: locationName })).click());
   },
 
