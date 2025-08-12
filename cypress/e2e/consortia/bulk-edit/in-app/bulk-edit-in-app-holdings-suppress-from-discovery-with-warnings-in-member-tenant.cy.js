@@ -215,8 +215,8 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
 
           // Step 7: Select 'Set false' option
-          BulkEditActions.selectSecondAction(actions.setFalse);
-          BulkEditActions.verifySecondActionSelected(actions.setFalse);
+          BulkEditActions.selectAction(actions.setFalse);
+          BulkEditActions.verifyActionSelected(actions.setFalse);
           BulkEditActions.applyToItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
