@@ -34,7 +34,6 @@ describe(
           barcode: getRandomPostfix(),
         };
 
-        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditView.gui,
           permissions.bulkEditUpdateRecords.gui,

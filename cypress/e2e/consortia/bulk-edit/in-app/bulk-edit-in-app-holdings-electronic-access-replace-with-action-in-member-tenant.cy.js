@@ -244,7 +244,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption('URL relationship');
 
           // Step 8: Select "Replace with" action
-          BulkEditActions.selectSecondAction('Replace with');
+          BulkEditActions.selectAction('Replace with');
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 9: Check displayed URL relationship types (should only show local)
@@ -271,8 +271,8 @@ describe('Bulk-edit', () => {
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex);
             BulkEditActions.selectOption(filter.option, rowIndex);
-            BulkEditActions.selectSecondAction('Replace with', rowIndex);
-            BulkEditActions.fillInSecondTextArea(filter.value, rowIndex);
+            BulkEditActions.selectAction('Replace with', rowIndex);
+            BulkEditActions.fillInFirstTextArea(filter.value, rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);
           });
 

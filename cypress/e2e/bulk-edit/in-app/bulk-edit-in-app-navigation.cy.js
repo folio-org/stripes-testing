@@ -58,7 +58,7 @@ describe('Bulk-edit', () => {
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         cy.reload();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
+        BulkEditSearchPane.waitLoading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
