@@ -262,6 +262,7 @@ describe('Patron notices', () => {
 
       afterEach('Deleting created entities', () => {
         cy.getAdminToken();
+        cy.waitForAuthRefresh(() => {}, 20_000);
         UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
           testData.userServicePoint.id,
         ]);
@@ -361,7 +362,17 @@ describe('Patron notices', () => {
           // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(100000);
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.circulationLogPath,
+              waiter: SearchPane.waitLoading,
+            });
+            cy.reload();
+          }, 20_000);
+
           SearchPane.searchByUserBarcode(userData.barcode);
+
           SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
         },
       );
