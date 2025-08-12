@@ -10,6 +10,18 @@ export const reasonsActions = {
   trash: 'trash',
 };
 export default {
+  getHoldingsSourcesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'holdings-sources',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.holdingsRecordsSources;
+      });
+  },
   createViaApi: (body) => {
     return cy
       .okapiRequest({
@@ -26,6 +38,7 @@ export default {
     method: 'DELETE',
     path: `holdings-sources/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
   verifyConsortiumHoldingsSourcesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });

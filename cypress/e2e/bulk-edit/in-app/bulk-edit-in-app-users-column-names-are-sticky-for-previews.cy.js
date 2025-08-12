@@ -60,8 +60,10 @@ describe(
       beforeEach('create test data', () => {
         cy.clearLocalStorage();
         userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+        testUsers.length = 0;
+        validUsersUUIds.length = 0;
+        invalidUserUUIDs.length = 0;
 
-        cy.getAdminToken();
         cy.then(() => {
           for (let i = 0; i < recordsNumber; i++) {
             cy.createTempUser([]).then((userProperties) => {

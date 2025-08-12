@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
@@ -37,12 +38,12 @@ export default {
     else cy.expect(newButton.absent());
   },
 
-  verifyEditModeIsActive() {
+  verifyEditModeIsActive(isSaveActive = true) {
     this.verifyNewButtonDisabled();
     cy.expect([
-      MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(TextField()).exists(),
+      MultiColumnList().find(TextField()).exists(),
       cancelButton.is({ disabled: false }),
-      saveButton.is({ disabled: false }),
+      saveButton.is({ disabled: !isSaveActive }),
     ]);
   },
 
