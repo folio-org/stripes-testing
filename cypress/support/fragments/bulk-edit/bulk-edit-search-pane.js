@@ -68,6 +68,12 @@ const formMap = {
 };
 export const subjectsTableHeaders = ['Subject headings', 'Subject source', 'Subject type'];
 export const classificationsTableHeaders = ['Classification identifier type', 'Classification'];
+export const publicationTableHeaders = [
+  'Publisher',
+  'Publisher role',
+  'Place of publication',
+  'Publication date',
+];
 export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCESSIBILITY_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
@@ -1510,6 +1516,51 @@ export default {
     this.verifyClassificationColumnHeadersInForm(formType, instanceIdentifier);
 
     const expectedValues = [classificationIdentifierTypeValue, classificationValue];
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(miniRowIndex)
+          .find('td')
+          .each(($cell, index) => {
+            cy.wrap($cell).should('have.text', expectedValues[index]);
+          });
+      },
+    );
+  },
+
+  verifyPublicationColumnHeadersInForm(formType, instanceIdentifier) {
+    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        cy.get('[class^="EmbeddedTable-"]')
+          .eq(rowIndex)
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            publicationTableHeaders.forEach((header, index) => {
+              expect(headerCells.eq(index).text()).to.equal(header);
+            });
+          });
+      },
+    );
+  },
+
+  verifyPublicationTableInForm(
+    formType,
+    instanceIdentifier,
+    publisher,
+    publisherRole,
+    placeOfPublication,
+    publicationDate,
+    miniRowIndex = 1,
+  ) {
+    this.verifyPublicationColumnHeadersInForm(formType, instanceIdentifier);
+
+    const expectedValues = [publisher, publisherRole, placeOfPublication, publicationDate];
 
     cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
