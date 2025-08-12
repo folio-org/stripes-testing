@@ -18,6 +18,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'corporateNameTitle',
           tag711: '711',
           contributor: 'C375082 Mostly Mozart Festival. sonet',
           linkedIconText: 'Linked to MARC authority',
@@ -117,6 +118,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib711FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag711);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorityBrowse.searchBy(marcFiles[1].searchOption, marcFiles[1].authorityHeading);

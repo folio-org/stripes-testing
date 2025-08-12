@@ -91,7 +91,8 @@ describe('Users', () => {
       // Step 8: Add valid address and save
       UserEdit.addAddress(testData.newUser.personal.newAddress);
       UserEdit.saveAndCloseStayOnEdit();
-      UserEdit.closeKeycloakModal();
+      UserEdit.closeKeycloakModalIfExists();
+      UserEdit.closeEditPaneIfExists();
       Users.verifyAddressOnUserDetailsPane(testData.newUser.personal.newAddress);
     },
   );

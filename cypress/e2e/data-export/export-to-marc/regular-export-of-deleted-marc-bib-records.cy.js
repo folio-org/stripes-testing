@@ -40,9 +40,43 @@ describe(
   () => {
     describe('Export to MARC', () => {
       beforeEach('create test data', () => {
-        marcInstances = [...Array(numberOfInstances)].map(() => ({
-          title: `AT_C494361_MarcInstance_${getRandomPostfix()}`,
-        }));
+        marcInstances = [...Array(numberOfInstances)].map(() => {
+          const title = `AT_C494361_MarcInstance_${getRandomPostfix()}`;
+          return {
+            title,
+            marcBibFields: [
+              {
+                tag: '008',
+                content: {
+                  Type: '\\',
+                  BLvl: '\\',
+                  DtSt: '\\',
+                  Date1: '\\\\\\\\',
+                  Date2: '\\\\\\\\',
+                  Ctry: '\\\\\\',
+                  Lang: 'eng',
+                  MRec: '\\',
+                  Srce: '\\',
+                  Ills: ['\\', '\\', '\\', '\\'],
+                  Audn: '\\',
+                  Form: '\\',
+                  Cont: ['\\', '\\', '\\', '\\'],
+                  GPub: '\\',
+                  Conf: '\\',
+                  Fest: '\\',
+                  Indx: '\\',
+                  LitF: '\\',
+                  Biog: '\\',
+                },
+              },
+              {
+                tag: '245',
+                content: `$a ${title}`,
+                indicators: ['1', '0'],
+              },
+            ],
+          };
+        });
         fileName = `AT_C494361_TestFile${getRandomPostfix()}.csv`;
 
         cy.createTempUser([
@@ -54,7 +88,10 @@ describe(
           user = userProperties;
 
           marcInstances.forEach((instance) => {
-            cy.createSimpleMarcBibViaAPI(instance.title).then((instanceId) => {
+            cy.createMarcBibliographicViaAPI(
+              QuickMarcEditor.defaultValidLdr,
+              instance.marcBibFields,
+            ).then((instanceId) => {
               instance.uuid = instanceId;
 
               FileManager.appendFile(`cypress/fixtures/${fileName}`, `${instance.uuid}\n`);

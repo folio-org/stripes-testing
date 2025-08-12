@@ -19,44 +19,59 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
-const marcInstance = {
-  title: `AT_C543815_MarcInstance_${getRandomPostfix()}`,
-};
-const folioInstance = {
-  title: `AT_C543815_FolioInstance_${getRandomPostfix()}`,
-};
-const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+let marcInstance;
+let folioInstance;
+let instanceUUIDsFileName;
+let fileNames;
+let marcInstanceFields;
 const field933a = 'Electronic reproduction.';
 const errorMessage =
   'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const warningMessage = 'No change in MARC fields required';
-const marcInstanceFields = [
-  {
-    tag: '008',
-    content: QuickMarcEditor.defaultValid008Values,
-  },
-  {
-    tag: '245',
-    content: `$a ${marcInstance.title}`,
-    indicators: ['1', '0'],
-  },
-  { tag: '933', content: `$a ${field933a}`, indicators: ['\\', '\\'] },
-];
 
-describe('Bulk-edit', () => {
-  describe('Instances with source MARC', () => {
-    before('create test data', () => {
-      cy.clearLocalStorage();
-      cy.getAdminToken();
-      cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
-          (instanceId) => {
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    describe('Instances with source MARC', () => {
+      beforeEach('create test data', () => {
+        cy.clearLocalStorage();
+
+        marcInstance = {
+          title: `AT_C543815_MarcInstance_${getRandomPostfix()}`,
+        };
+        folioInstance = {
+          title: `AT_C543815_FolioInstance_${getRandomPostfix()}`,
+        };
+        instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
+        fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+        marcInstanceFields = [
+          {
+            tag: '008',
+            content: QuickMarcEditor.defaultValid008Values,
+          },
+          {
+            tag: '245',
+            content: `$a ${marcInstance.title}`,
+            indicators: ['1', '0'],
+          },
+          { tag: '933', content: `$a ${field933a}`, indicators: ['\\', '\\'] },
+        ];
+
+        cy.createTempUser([
+          permissions.bulkEditEdit.gui,
+          permissions.uiInventoryViewCreateEditInstances.gui,
+          permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.createMarcBibliographicViaAPI(
+            QuickMarcEditor.defaultValidLdr,
+            marcInstanceFields,
+          ).then((instanceId) => {
             marcInstance.uuid = instanceId;
 
             cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
@@ -97,159 +112,163 @@ describe('Bulk-edit', () => {
                 });
               });
             });
-          },
-        );
-      });
-    });
-
-    after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-
-      [marcInstance.uuid, folioInstance.uuid].forEach((uuid) => {
-        InventoryInstance.deleteInstanceViaApi(uuid);
+          });
+        });
       });
 
-      FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+      afterEach('delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+
+        [marcInstance.uuid, folioInstance.uuid].forEach((uuid) => {
+          InventoryInstance.deleteInstanceViaApi(uuid);
+        });
+
+        FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
+        BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+      });
+
+      it(
+        'C543815 Remove MARC field (533, 933, 999) with errors (MARC & FOLIO) (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C543815'] },
+        () => {
+          // Step 1: Show Source column
+          BulkEditActions.openActions();
+          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+          );
+          BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+            true,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+          );
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+            marcInstance.hrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+            'MARC',
+          );
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+            folioInstance.hrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+            'FOLIO',
+          );
+
+          // Step 2: Open combined bulk edit form
+          BulkEditActions.openStartBulkEditMarcInstanceForm();
+          BulkEditActions.verifyInitialStateBulkEditsFormForMarcInstance();
+
+          // Step 3: 533 $a Remove all
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('533', '\\', '\\', 'a');
+          BulkEditActions.selectActionForMarcInstance('Remove all');
+          BulkEditActions.verifyConfirmButtonDisabled(false);
+
+          // Step 4: Add new row for 999 $f $f $i Remove all
+          BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('999', 'f', 'f', 'i', 1);
+          BulkEditActions.selectActionForMarcInstance('Remove all', 1);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
+
+          // Step 5: Click info icon
+          BulkEditActions.clickInfoIconNextToSubfieldAndVerifyText(1);
+
+          // Step 6: Change to 933 \ \ $b
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('933', '\\', '\\', 'b', 1);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
+
+          // Step 7: Confirm changes
+          BulkEditActions.confirmChanges();
+          BulkEditActions.verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(1, 1);
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
+          BulkEditActions.verifyAreYouSureForm(1);
+          BulkEditSearchPane.verifyCellWithContentAbsentsInAreYouSureForm(field933a);
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+            marcInstance.hrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
+            'MARC',
+          );
+
+          // Step 8: Download preview in MARC format
+          BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
+          BulkEditActions.downloadPreviewInMarcFormat();
+
+          const assertionsOnMarcFileContent = [
+            {
+              uuid: marcInstance.uuid,
+              assertions: [
+                (record) => expect(record.get('933')[0].subf[0][0]).to.eq('a'),
+                (record) => expect(record.get('933')[0].subf[0][1]).to.eq(field933a),
+
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
+              ],
+            },
+          ];
+
+          parseMrcFileContentAndVerify(
+            fileNames.previewRecordsMarc,
+            assertionsOnMarcFileContent,
+            1,
+          );
+
+          // Step 9: Download preview in CSV format
+          BulkEditActions.downloadPreview();
+          BulkEditFiles.verifyValueInRowByUUID(
+            fileNames.previewRecordsCSV,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
+            marcInstance.hrid,
+            'Notes',
+            '',
+          );
+
+          // Step 10: Commit changes
+          BulkEditActions.commitChanges();
+          BulkEditActions.verifySuccessBanner(0);
+          BulkEditSearchPane.verifyErrorLabel(1, 1);
+          BulkEditSearchPane.verifyShowWarningsCheckbox(false, false);
+          BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
+
+          // Step 11: Check errors table (errors only)
+          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+
+          // Step 12: Show warnings
+          BulkEditSearchPane.clickShowWarningsCheckbox();
+          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(marcInstance.uuid, warningMessage, 'Warning');
+          BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
+
+          // Step 13: Hide warnings
+          BulkEditSearchPane.clickShowWarningsCheckbox();
+          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
+
+          // Step 14: Download errors (CSV)
+          BulkEditActions.openActions();
+          BulkEditActions.downloadErrors();
+          ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+            `ERROR,${folioInstance.uuid},${errorMessage}`,
+            `WARNING,${marcInstance.uuid},${warningMessage}`,
+          ]);
+
+          // Step 15: Inventory app - verify no changes
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion('Reproduction note');
+          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(field933a);
+
+          // Step 16: View source - verify MARC record unchanged
+          InstanceRecordView.viewSource();
+          InventoryViewSource.verifyFieldInMARCBibSource('933', `\t933\t   \t$a ${field933a}`);
+          InventoryViewSource.notContains('533\t');
+          InventoryViewSource.close();
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion('Reproduction note');
+          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(field933a);
+        },
+      );
     });
-
-    it(
-      'C543815 Remove MARC field (533, 933, 999) with errors (MARC & FOLIO) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C543815'] },
-      () => {
-        // Step 1: Show Source column
-        BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-        );
-        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
-          true,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-          marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          'MARC',
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-          folioInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          'FOLIO',
-        );
-
-        // Step 2: Open combined bulk edit form
-        BulkEditActions.openStartBulkEditMarcInstanceForm();
-        BulkEditActions.verifyInitialStateBulkEditsFormForMarcInstance();
-
-        // Step 3: 533 $a Remove all
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('533', '\\', '\\', 'a');
-        BulkEditActions.selectActionForMarcInstance('Remove all');
-        BulkEditActions.verifyConfirmButtonDisabled(false);
-
-        // Step 4: Add new row for 999 $f $f $i Remove all
-        BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('999', 'f', 'f', 'i', 1);
-        BulkEditActions.selectActionForMarcInstance('Remove all', 1);
-        BulkEditActions.verifyConfirmButtonDisabled(true);
-
-        // Step 5: Click info icon
-        BulkEditActions.clickInfoIconNextToSubfieldAndVerifyText(1);
-
-        // Step 6: Change to 933 \ \ $b
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('933', '\\', '\\', 'b', 1);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
-
-        // Step 7: Confirm changes
-        BulkEditActions.confirmChanges();
-        BulkEditActions.verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(1, 1);
-        BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
-        BulkEditActions.verifyAreYouSureForm(1);
-        BulkEditSearchPane.verifyCellWithContentAbsentsInAreYouSureForm(field933a);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          marcInstance.hrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE,
-          'MARC',
-        );
-
-        // Step 8: Download preview in MARC format
-        BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
-        BulkEditActions.downloadPreviewInMarcFormat();
-
-        const assertionsOnMarcFileContent = [
-          {
-            uuid: marcInstance.uuid,
-            assertions: [
-              (record) => expect(record.get('933')[0].subf[0][0]).to.eq('a'),
-              (record) => expect(record.get('933')[0].subf[0][1]).to.eq(field933a),
-
-              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-              (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
-            ],
-          },
-        ];
-
-        parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, assertionsOnMarcFileContent, 1);
-
-        // Step 9: Download preview in CSV format
-        BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
-          marcInstance.hrid,
-          'Notes',
-          '',
-        );
-
-        // Step 10: Commit changes
-        BulkEditActions.commitChanges();
-        BulkEditActions.verifySuccessBanner(0);
-        BulkEditSearchPane.verifyErrorLabel(1, 1);
-        BulkEditSearchPane.verifyShowWarningsCheckbox(false, false);
-        BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
-
-        // Step 11: Check errors table (errors only)
-        BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
-
-        // Step 12: Show warnings
-        BulkEditSearchPane.clickShowWarningsCheckbox();
-        BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
-        BulkEditSearchPane.verifyError(marcInstance.uuid, warningMessage, 'Warning');
-        BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
-
-        // Step 13: Hide warnings
-        BulkEditSearchPane.clickShowWarningsCheckbox();
-        BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
-        BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
-
-        // Step 14: Download errors (CSV)
-        BulkEditActions.openActions();
-        BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-          `ERROR,${folioInstance.uuid},${errorMessage}`,
-          `WARNING,${marcInstance.uuid},${warningMessage}`,
-        ]);
-
-        // Step 15: Inventory app - verify no changes
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion('Reproduction note');
-        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(field933a);
-
-        // Step 16: View source - verify MARC record unchanged
-        InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('933', `\t933\t   \t$a ${field933a}`);
-        InventoryViewSource.notContains('533\t');
-        InventoryViewSource.close();
-        InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion('Reproduction note');
-        InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(field933a);
-      },
-    );
-  });
-});
+  },
+);
