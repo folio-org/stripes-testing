@@ -88,6 +88,7 @@ describe('Data Export', () => {
         QuickMarcEditor.checkPaneheaderContains('New shared MARC authority record');
         MarcAuthority.checkSourceFileSelectShown();
         MarcAuthority.selectSourceFile(LC_NAME_AUTHORITY_FILE);
+        MarcAuthority.setValid008DropdownValues();
 
         newFields.forEach((newField) => {
           MarcAuthority.addNewFieldAfterExistingByTag(

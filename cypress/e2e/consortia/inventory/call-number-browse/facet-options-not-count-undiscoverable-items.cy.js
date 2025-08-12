@@ -77,8 +77,8 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
       InventoryInstances.getLoanTypes().then((loanTypes) => {
         testData.loanTypeId = loanTypes[0].id;
       });
-      cy.getMaterialTypes().then((materialTypes) => {
-        testData.materialTypeId = materialTypes[0].id;
+      cy.getMaterialTypes().then((materialType) => {
+        testData.materialTypeId = materialType.id;
       });
       [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
@@ -178,7 +178,7 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
   });
 
   it(
-    '"Shared" facet doesn\'t count Instances with "Call number" value on browse pane when "Call number" has not discoverable call number type',
+    'C656327 "Shared" facet doesn\'t count Instances with "Call number" value on browse pane when "Call number" has not discoverable call number type',
     { tags: ['criticalPathECS', 'spitfire', 'C656327'] },
     () => {
       // Step 1: Run a browse using "Library of Congress classification"
