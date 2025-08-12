@@ -372,7 +372,6 @@ describe('Patron notices', () => {
           }, 20_000);
 
           SearchPane.searchByUserBarcode(userData.barcode);
-
           SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
         },
       );
