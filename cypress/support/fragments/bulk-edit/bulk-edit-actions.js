@@ -159,7 +159,8 @@ export default {
 
   selectAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-0' }))
         .choose(actionName),
     );
