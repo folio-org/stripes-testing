@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'uniformTitle',
           tag730: '730',
           linkedIconText: 'Linked to MARC authority',
           bib730AfterUnlinking: [
@@ -113,6 +114,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib730FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag730);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
