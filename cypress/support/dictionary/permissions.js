@@ -1162,6 +1162,10 @@ export default {
     internal: 'ui-inventory.settings.statistical-codes',
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
+  uiSettingsStatisticalCodeTypesCreateEditDelete: {
+    internal: 'ui-inventory.settings.statistical-code-types',
+    gui: 'Settings (Inventory): Create, edit, delete statistical code types',
+  },
   uiSettingsHRIDHandlingCreateEditDelete: {
     internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
