@@ -175,6 +175,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            cy.setTenant(Affiliations.University);
             BrowseContributors.waitForContributorToAppear(
               linkingTagAndValues.authorityHeading,
               true,
