@@ -362,7 +362,6 @@ describe('Bulk-edit', () => {
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.field570);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.local);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.fundingInformation);

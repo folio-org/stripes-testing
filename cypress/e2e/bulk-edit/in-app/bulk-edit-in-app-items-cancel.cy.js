@@ -94,10 +94,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyAreYouSureForm(1, item.itemId);
         BulkEditActions.clickX();
         BulkEditActions.closeBulkEditInAppForm();
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-        }, 20_000);
-
+        cy.reload();
+        cy.wait(3000);
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
