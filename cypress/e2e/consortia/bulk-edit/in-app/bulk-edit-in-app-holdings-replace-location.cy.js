@@ -348,7 +348,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption('Temporary holdings location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary holdings location', 1);
           BulkEditActions.verifyConfirmButtonDisabled(true);
-          BulkEditActions.selectSecondAction('Replace with', 1);
+          BulkEditActions.selectAction('Replace with', 1);
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup(1);
           SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);

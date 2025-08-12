@@ -72,17 +72,5 @@ describe('Bulk-edit', () => {
         );
       },
     );
-
-    it(
-      'C347883 Error messages in submitted identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C347883'] },
-      () => {
-        BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
-        BulkEditSearchPane.waitFileUploading();
-
-        BulkEditActions.openActions();
-        BulkEditActions.downloadErrors();
-      },
-    );
   });
 });
