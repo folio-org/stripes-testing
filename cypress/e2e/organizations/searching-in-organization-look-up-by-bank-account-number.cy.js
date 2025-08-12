@@ -41,7 +41,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
         waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
       });
       SettingsOrganizations.selectBankingInformation();
-      SettingsOrganizations.enableBankingInformation();
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
 
       cy.visit(TopMenu.organizationsPath);
       Organizations.waitLoading();
@@ -101,7 +101,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
 
     cy.visit(TopMenu.settingsBankingInformationPath);
     SettingsOrganizations.waitLoadingOrganizationSettings();
-    SettingsOrganizations.enableBankingInformation();
+    SettingsOrganizations.uncheckenableBankingInformationIfChecked();
 
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(C423432User.userId);

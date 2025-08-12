@@ -45,7 +45,7 @@ describe('Orders', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     Organizations.createOrganizationViaApi(firstOrganization).then((responseFirstOrganization) => {
       firstOrganization.id = responseFirstOrganization;
       Organizations.createOrganizationViaApi(secondOrganization).then(
@@ -61,7 +61,6 @@ describe('Orders', () => {
               Funds.createViaApi(defaultFund).then((fundResponse) => {
                 defaultFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(defaultFund.name);
                 Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
@@ -71,7 +70,6 @@ describe('Orders', () => {
         },
       );
     });
-    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -80,7 +78,7 @@ describe('Orders', () => {
     });
 
     defaultOrder.vendor = firstOrganization.name;
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
