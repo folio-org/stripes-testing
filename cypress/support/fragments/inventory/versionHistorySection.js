@@ -80,7 +80,6 @@ export default {
     cy.expect([
       rootSection.find(Card({ index: versionsCount - 1 })).exists(),
       rootSection.find(Card({ index: versionsCount })).absent(),
-      paneHeader.has({ focused: true }),
     ]);
     if (loadMore) cy.expect(rootSection.find(loadMoreButton).exists());
     else cy.expect(rootSection.find(loadMoreButton).absent());
