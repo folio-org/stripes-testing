@@ -23,7 +23,7 @@ describe('Consortia', () => {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'No set value- ',
+          user: 'No value set-',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
@@ -154,19 +154,16 @@ describe('Consortia', () => {
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
-              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
-              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
-              { actions: ['edit', 'trash'] },
             );
 
             ConsortiumManager.clickSelectMembers();
@@ -187,13 +184,11 @@ describe('Consortia', () => {
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
-              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
-              { actions: ['edit', 'trash'] },
             );
           },
         );

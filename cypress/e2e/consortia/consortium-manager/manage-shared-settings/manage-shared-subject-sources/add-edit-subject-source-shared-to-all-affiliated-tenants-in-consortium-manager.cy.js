@@ -75,7 +75,6 @@ describe('Consortia', () => {
 
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectSources.choose();
-            ConsortiumSubjectSources.clickNewButton();
             ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
               subjectSource.name,
               'unique',
@@ -83,6 +82,7 @@ describe('Consortia', () => {
             ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSource.name);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSource.name,
+              user: subjectSource.consortiaUser,
               actions: ['edit', 'trash'],
             });
 
@@ -129,11 +129,12 @@ describe('Consortia', () => {
               subjectSource.name,
               editedSubjectSource.name,
               subjectSource.source,
-              user,
+              subjectSource.consortiaUser,
               tenantNames.central,
             );
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: editedSubjectSource.name,
+              user: editedSubjectSource.consortiaUser,
               actions: ['edit', 'trash'],
             });
 

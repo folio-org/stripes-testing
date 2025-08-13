@@ -1395,7 +1395,7 @@ export default {
   checkIsItemCreated: (itemBarcode) => {
     cy.expect(
       instanceDetailsSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
         .find(Button(including(itemBarcode)))
         .exists(),
     );

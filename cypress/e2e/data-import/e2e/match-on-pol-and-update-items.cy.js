@@ -295,9 +295,13 @@ describe('Data Import', () => {
 
     const checkReceivedPiece = (number, title) => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.waitLoading();
+      Orders.resetFiltersIfActive();
       Orders.clearSearchField();
+      cy.wait(1500);
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
+      OrderDetails.waitLoading();
       OrderDetails.openPolDetails(title);
       OrderLines.openReceiving();
       Receiving.checkIsPiecesCreated(title);

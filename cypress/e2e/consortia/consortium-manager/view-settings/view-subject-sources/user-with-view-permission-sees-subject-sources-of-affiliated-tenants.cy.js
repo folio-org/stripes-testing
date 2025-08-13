@@ -148,19 +148,16 @@ describe('Consortia', () => {
               localSubjectSourceOnCentral.name,
               localSubjectSourceOnCentral.memberLibraries,
               localSubjectSourceOnCentral.source,
-              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnCollege.name,
               localSubjectSourceOnCollege.memberLibraries,
               localSubjectSourceOnCollege.source,
-              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnUniversity.name,
               localSubjectSourceOnUniversity.memberLibraries,
               localSubjectSourceOnUniversity.source,
-              { actions: ['edit', 'trash'] },
             );
 
             ConsortiumManager.clickSelectMembers();
@@ -177,13 +174,11 @@ describe('Consortia', () => {
               localSubjectSourceOnCollege.name,
               localSubjectSourceOnCollege.memberLibraries,
               localSubjectSourceOnCollege.source,
-              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnUniversity.name,
               localSubjectSourceOnUniversity.memberLibraries,
               localSubjectSourceOnUniversity.source,
-              { actions: ['edit', 'trash'] },
             );
           },
         );

@@ -89,28 +89,22 @@ describe('Data Import', () => {
 
     before('Create user and login', () => {
       cy.getAdminToken().then(() => {
-        [
-          'HIST',
-          'LATAMHIST',
-          'AFRICAHIST',
-          'ASIAHIST',
-          'MISCHIST',
-          'GIFTS-ONE-TIME',
-          'LATAMHIST',
-        ].forEach((code) => {
-          const budget = {
-            ...Budgets.getDefaultBudget(),
-            allocated: 1000,
-          };
-          FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
-            budget.fiscalYearId = resp.fiscalYears[0].id;
+        ['HIST', 'LATAMHIST', 'ASIAHIST', 'MISCHIST', 'GIFTS-ONE-TIME', 'LATAMHIST'].forEach(
+          (code) => {
+            const budget = {
+              ...Budgets.getDefaultBudget(),
+              allocated: 1000,
+            };
+            FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
+              budget.fiscalYearId = resp.fiscalYears[0].id;
 
-            Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
-              budget.fundId = body.funds[0].id;
-              Budgets.createViaApi(budget);
+              Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
+                budget.fundId = body.funds[0].id;
+                Budgets.createViaApi(budget);
+              });
             });
-          });
-        });
+          },
+        );
       });
 
       cy.createTempUser([

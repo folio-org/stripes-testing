@@ -369,7 +369,7 @@ function verifyHoldingsUpdated() {
 function verifyItemUpdated(itemBarcode) {
   cy.do(
     Section({ id: 'pane-instancedetails' })
-      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );

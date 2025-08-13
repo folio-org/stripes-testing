@@ -169,7 +169,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
 
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
@@ -216,7 +216,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           cy.wait(1000);
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
               Orders.deleteOrderViaApi(orderId[0].id);
@@ -255,7 +255,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           cy.wait(1000);
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();
@@ -301,7 +301,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           cy.wait(1000);
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
 
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
