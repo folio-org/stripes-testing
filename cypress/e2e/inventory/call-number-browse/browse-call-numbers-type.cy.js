@@ -153,7 +153,7 @@ describe('Inventory', () => {
 
     it(
       'C414972 Browsing call number types when "Number of titles" > 1 (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C414972', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C414972', 'eurekaPhase1'] },
       () => {
         const callNumber = folioInstances[1].items[0].itemLevelCallNumber;
         InventorySearchAndFilter.switchToBrowseTab();

@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'corporateNameTitle',
           tag610: '610',
           authorityMarkedValue: 'C374706 Radio "Vaticana". Hrvatski program',
           subjectValue: 'C374706 Radio "Vaticana". Hrvatski program test--Congresses',
@@ -46,7 +47,7 @@ describe('MARC', () => {
           testData.tag610,
           '2',
           '0',
-          '$a C374706 Radio Vaticana $v Congresses. $t "Vatican" $u test',
+          '$a C374706 Radio Vaticana $v Congresses. $u test',
         ];
         const bib610UnlinkedFieldValues = [
           18,
@@ -120,6 +121,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib610InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag610);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
