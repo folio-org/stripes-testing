@@ -39,7 +39,7 @@ describe(
     },
   },
   () => {
-    describe('In-app approach', () => {
+    describe('Instances with source MARC', () => {
       beforeEach('create test data', () => {
         marcInstance = {
           title: `AT_C506685_MarcInstance_${getRandomPostfix()}`,

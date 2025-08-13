@@ -329,6 +329,9 @@ describe('Inventory', () => {
         'C402777 Apply "Shared" facet when Browse for same Call number existing in different tenants (exact match) (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C402777'] },
         () => {
+          cy.wait(10_000); // wait for the same CN from all instances to be available
+          cy.setTenant(Affiliations.College);
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
           InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(
@@ -341,8 +344,6 @@ describe('Inventory', () => {
             'No',
             false,
           );
-          cy.setTenant(Affiliations.College);
-          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           BrowseSubjects.browse(callNumber);
           BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
           BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');

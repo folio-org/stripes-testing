@@ -300,6 +300,7 @@ describe('Data Import', () => {
       Orders.clearSearchField();
       cy.wait(1500);
       Orders.searchByParameter('PO number', number);
+      cy.wait(5000);
       Orders.selectFromResultsList(number);
       OrderDetails.waitLoading();
       OrderDetails.openPolDetails(title);

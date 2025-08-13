@@ -221,7 +221,7 @@ describe('Bulk-edit', () => {
         cy.get('@matchedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
         });
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.markAsStaffOnly('Action note');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.removeMarkAsStaffOnly('Reproduction note', 1);

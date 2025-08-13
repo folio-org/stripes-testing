@@ -42,6 +42,11 @@ export default {
     resource: 'UI-Authorization-Policies Settings Admin',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsHoldingsSourcesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Holdings-Sources',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {
@@ -123,6 +128,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Consortia Sharing-Roles-All Item',
     action: CAPABILITY_ACTIONS.DELETE,
+  },
+  uiOrganizationsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Organizations',
+    action: CAPABILITY_ACTIONS.VIEW,
   },
 
   // Procedural capability sets

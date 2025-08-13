@@ -180,6 +180,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );
@@ -219,6 +220,7 @@ describe('Data Import', () => {
           const orderNumber = initialNumber.replace(/-\d+$/, '');
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );
@@ -265,6 +267,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );
@@ -312,6 +315,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );

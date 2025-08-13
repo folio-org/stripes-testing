@@ -241,8 +241,9 @@ export default {
   searchTitles(searchValue, searchOption) {
     if (searchOption) this.selectTitleSearchOption(searchOption);
     cy.do(titlesSearchField.fillIn(searchValue));
+    cy.intercept('GET', '**/eholdings/packages/*/resources?**').as('getTitles');
     cy.get('input[type="search"]').type('{enter}');
-    cy.wait(1000);
+    cy.wait('@getTitles').its('response.statusCode').should('eq', 200);
     this.verifyTitlesSearchQuery(searchValue);
     cy.expect(titlesSection.find(Spinner()).absent());
   },

@@ -63,6 +63,7 @@ describe('Inventory', () => {
     ];
 
     before('Create user, data', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;

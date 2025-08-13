@@ -54,6 +54,10 @@ const collegeHoldingNoteType = {
 const instances = [folioInstance, marcInstance];
 const holdingHRIDsFileName = `holdingHRIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingHRIDsFileName, true);
+const userPermissions = [
+  permissions.bulkEditEdit.gui,
+  permissions.uiInventoryViewCreateEditHoldings.gui,
+];
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -67,89 +71,89 @@ describe('Bulk-edit', () => {
             centralSharedHoldingNoteTypeData = newHoldingNoteType;
           })
           .then(() => {
-            cy.withinTenant(Affiliations.College, () => {
-              cy.createTempUser([
-                permissions.bulkEditEdit.gui,
-                permissions.uiInventoryViewCreateEditHoldings.gui,
-              ]).then((userProperties) => {
-                user = userProperties;
+            cy.createTempUser(userPermissions).then((userProperties) => {
+              user = userProperties;
 
-                cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-                  instanceTypeId = instanceTypeData[0].id;
-                });
-                cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-                  locationId = res.id;
-                });
-                InventoryHoldings.getHoldingsFolioSource()
-                  .then((folioSource) => {
-                    sourceId = folioSource.id;
-                  })
-                  .then(() => {
-                    // create folio instance
-                    InventoryInstances.createFolioInstanceViaApi({
-                      instance: {
-                        instanceTypeId,
-                        title: folioInstance.title,
-                      },
-                    }).then((createdInstanceData) => {
-                      folioInstance.uuid = createdInstanceData.instanceId;
-                    });
-                  })
-                  .then(() => {
-                    // create marc instance
-                    cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                      marcInstance.uuid = instanceId;
-                    });
-                  })
-                  .then(() => {
-                    // create local holding note type in College tenant
-                    InventoryInstances.createHoldingsNoteTypeViaApi(collegeHoldingNoteType.name)
-                      .then((noteId) => {
-                        collegeHoldingNoteType.id = noteId;
-                      })
-                      .then(() => {
-                        // create holdings in College tenant
-                        instances.forEach((instance) => {
-                          InventoryHoldings.createHoldingRecordViaApi({
-                            instanceId: instance.uuid,
-                            permanentLocationId: locationId,
-                            sourceId,
-                            administrativeNotes: [notes.administrativeNoteText],
-                            notes: [
-                              {
-                                holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                                note: notes.sharedNoteText,
-                                staffOnly: false,
-                              },
-                              {
-                                holdingsNoteTypeId: collegeHoldingNoteType.id,
-                                note: notes.collegeLocalNoteText,
-                                staffOnly: false,
-                              },
-                            ],
-                          }).then((holding) => {
-                            collegeHoldingIds.push(holding.id);
-                            collegeHoldingHrids.push(holding.hrid);
-                          });
-                          cy.wait(1000);
-                        });
-                      });
-                  })
-                  .then(() => {
-                    FileManager.createFile(
-                      `cypress/fixtures/${holdingHRIDsFileName}`,
-                      `${collegeHoldingHrids.join('\n')}`,
-                    );
+              cy.assignAffiliationToUser(Affiliations.College, user.userId);
+              cy.setTenant(Affiliations.College);
+              cy.assignPermissionsToExistingUser(user.userId, userPermissions);
+
+              cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+                instanceTypeId = instanceTypeData[0].id;
+              });
+              cy.getLocations({ query: 'name="DCB"' }).then((res) => {
+                locationId = res.id;
+              });
+              InventoryHoldings.getHoldingsFolioSource()
+                .then((folioSource) => {
+                  sourceId = folioSource.id;
+                })
+                .then(() => {
+                  // create folio instance
+                  InventoryInstances.createFolioInstanceViaApi({
+                    instance: {
+                      instanceTypeId,
+                      title: folioInstance.title,
+                    },
+                  }).then((createdInstanceData) => {
+                    folioInstance.uuid = createdInstanceData.instanceId;
                   });
-
-                cy.resetTenant();
-                cy.login(user.username, user.password, {
-                  path: TopMenu.bulkEditPath,
-                  waiter: BulkEditSearchPane.waitLoading,
+                })
+                .then(() => {
+                  // create marc instance
+                  cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                    marcInstance.uuid = instanceId;
+                  });
+                })
+                .then(() => {
+                  // create local holding note type in College tenant
+                  InventoryInstances.createHoldingsNoteTypeViaApi(collegeHoldingNoteType.name)
+                    .then((noteId) => {
+                      collegeHoldingNoteType.id = noteId;
+                    })
+                    .then(() => {
+                      // create holdings in College tenant
+                      instances.forEach((instance) => {
+                        InventoryHoldings.createHoldingRecordViaApi({
+                          instanceId: instance.uuid,
+                          permanentLocationId: locationId,
+                          sourceId,
+                          administrativeNotes: [notes.administrativeNoteText],
+                          notes: [
+                            {
+                              holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
+                              note: notes.sharedNoteText,
+                              staffOnly: false,
+                            },
+                            {
+                              holdingsNoteTypeId: collegeHoldingNoteType.id,
+                              note: notes.collegeLocalNoteText,
+                              staffOnly: false,
+                            },
+                          ],
+                        }).then((holding) => {
+                          collegeHoldingIds.push(holding.id);
+                          collegeHoldingHrids.push(holding.hrid);
+                        });
+                        cy.wait(1000);
+                      });
+                    });
+                })
+                .then(() => {
+                  FileManager.createFile(
+                    `cypress/fixtures/${holdingHRIDsFileName}`,
+                    `${collegeHoldingHrids.join('\n')}`,
+                  );
                 });
+
+              cy.resetTenant();
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
               });
             });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           });
       });
 
