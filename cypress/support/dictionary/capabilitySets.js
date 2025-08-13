@@ -129,6 +129,11 @@ export default {
     resource: 'Consortia Sharing-Roles-All Item',
     action: CAPABILITY_ACTIONS.DELETE,
   },
+  uiOrganizationsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Organizations',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {

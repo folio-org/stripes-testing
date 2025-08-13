@@ -207,4 +207,8 @@ export default {
   verifyRecordNotInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
+
+  verifyShareCheckboxState({ isEnabled = true, isChecked = false } = {}) {
+    cy.expect([memberLibrariesShare.is({ disabled: !isEnabled, checked: isChecked })]);
+  },
 };
