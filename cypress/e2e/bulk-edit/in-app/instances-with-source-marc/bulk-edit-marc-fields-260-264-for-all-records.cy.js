@@ -28,6 +28,57 @@ const marcInstance = {
 };
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+const EXPECTED_PUBLICATIONS = [
+  {
+    publisher: 'U.S. Dept. of Energy,',
+    role: '-',
+    place: 'Oak Ridge, Tenn. :',
+    date: 'April 15, 1977.',
+  },
+  {
+    publisher: 'Xerox Films,',
+    role: 'Production',
+    place: 'New York :',
+    date: '1973.',
+  },
+  {
+    publisher: 'ABC Publishers,',
+    role: 'Publication',
+    place: '[Place of publication not identified] :',
+    date: '2009.',
+  },
+  {
+    publisher: 'Iverson Company',
+    role: 'Distribution',
+    place: 'Seattle :',
+    date: '-',
+  },
+  {
+    publisher: 'Kinsey Printing Company',
+    role: 'Manufacture',
+    place: 'Cambridge :',
+    date: '-',
+  },
+  {
+    publisher: '-',
+    role: '-',
+    place: '-',
+    date: '©2002',
+  },
+];
+const verifyAllPublicationsInForm = (formType) => {
+  EXPECTED_PUBLICATIONS.forEach((publication, index) => {
+    BulkEditSearchPane.verifyPublicationTableInForm(
+      formType,
+      marcInstance.hrid,
+      publication.publisher,
+      publication.role,
+      publication.place,
+      publication.date,
+      index + 1,
+    );
+  });
+};
 const marcInstanceFields = [
   {
     tag: '008',
@@ -141,7 +192,6 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
         BulkEditActions.fillInTagAndIndicatorsAndSubfield('264', '\\', '1', 'a', 1);
         BulkEditActions.addSubfieldActionForMarc('[Place of publication not identified] :', 1);
-
         BulkEditActions.selectSecondActionForMarcInstance('Additional subfield', 1);
         BulkEditActions.fillInSubfieldInSubRow('b', 1);
         BulkEditActions.fillInDataInSubRow('ABC Publishers,', 1);
@@ -184,65 +234,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1);
 
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          marcInstance.hrid,
-          'U.S. Dept. of Energy,',
-          '-',
-          'Oak Ridge, Tenn. :',
-          'April 15, 1977.',
-          1,
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          marcInstance.hrid,
-          'Xerox Films,',
-          'Production',
-          'New York :',
-          '1973.',
-          2, // Second row: 264 \0 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          marcInstance.hrid,
-          'ABC Publishers,',
-          'Publication',
-          '[Place of publication not identified] :',
-          '2009.',
-          3, // Third row: 264 \1 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          marcInstance.hrid,
-          'Iverson Company',
-          'Distribution',
-          'Seattle :',
-          '-',
-          4, // Fourth row: 264 \2 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          marcInstance.hrid,
-          'Kinsey Printing Company',
-          'Manufacture',
-          'Cambridge :',
-          '-',
-          5, // Fifth row: 264 \3 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          marcInstance.hrid,
-          '-',
-          '-',
-          '-',
-          '©2002',
-          6, // Sixth row: 264 \4 field
-        );
+        // Verify all publications in "Are you sure" form
+        verifyAllPublicationsInForm(BULK_EDIT_FORMS.ARE_YOU_SURE);
 
         // Step 11: Download preview in MARC format
         BulkEditActions.downloadPreviewInMarcFormat();
@@ -340,65 +333,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
 
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          marcInstance.hrid,
-          'U.S. Dept. of Energy,',
-          '-',
-          'Oak Ridge, Tenn. :',
-          'April 15, 1977.',
-          1, // First row: 260 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          marcInstance.hrid,
-          'Xerox Films,',
-          'Production',
-          'New York :',
-          '1973.',
-          2, // Second row: 264 \0 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          marcInstance.hrid,
-          'ABC Publishers,',
-          'Publication',
-          '[Place of publication not identified] :',
-          '2009.',
-          3, // Third row: 264 \1 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          marcInstance.hrid,
-          'Iverson Company',
-          'Distribution',
-          'Seattle :',
-          '-',
-          4, // Fourth row: 264 \2 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          marcInstance.hrid,
-          'Kinsey Printing Company',
-          'Manufacture',
-          'Cambridge :',
-          '-',
-          5, // Fifth row: 264 \3 field
-        );
-
-        BulkEditSearchPane.verifyPublicationTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          marcInstance.hrid,
-          '-',
-          '-',
-          '-',
-          '©2002',
-          6, // Sixth row: 264 \4 field
-        );
+        // Verify all publications in "Preview of records changed" form
+        verifyAllPublicationsInForm(BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED);
 
         // Step 14: Download changed records (MARC)
         BulkEditActions.openActions();
@@ -421,98 +357,41 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InstanceRecordView.waitLoading();
 
-        InstanceRecordView.verifyPublisher(
-          {
-            publisher: 'U.S. Dept. of Energy',
-            role: '-',
-            place: 'Oak Ridge, Tenn.',
-            date: 'April 15, 1977',
-          },
-          0,
-        );
-
-        // Verify 264 \0 field (Production)
-        InstanceRecordView.verifyPublisher(
-          {
-            publisher: 'Xerox Films',
-            role: 'Production',
-            place: 'New York',
-            date: '1973',
-          },
-          1,
-        );
-
-        // Verify 264 \1 field (Publication)
-        InstanceRecordView.verifyPublisher(
-          {
-            publisher: 'ABC Publishers',
-            role: 'Publication',
-            place: '[Place of publication not identified]',
-            date: '2009',
-          },
-          2,
-        );
-
-        // Verify 264 \2 field (Distribution)
-        InstanceRecordView.verifyPublisher(
-          {
-            publisher: 'Iverson Company',
-            role: 'Distribution',
-            place: 'Seattle',
-            date: '-',
-          },
-          3,
-        );
-
-        // Verify 264 \3 field (Manufacture)
-        InstanceRecordView.verifyPublisher(
-          {
-            publisher: 'Kinsey Printing Company',
-            role: 'Manufacture',
-            place: 'Cambridge',
-            date: '-',
-          },
-          4,
-        );
-
-        // Note: 264 \4 field contains only copyright date (©2002) without publisher/place
+        EXPECTED_PUBLICATIONS.forEach((publication, index) => {
+          InstanceRecordView.verifyPublisher(
+            {
+              publisher: publication.publisher.replace(/,$/, '').trim(),
+              role: publication.role,
+              place: publication.place.replace(/:$/, '').trim(),
+              date: publication.date.replace(/.$/, '').trim(),
+            },
+            index,
+          );
+        });
 
         // Step 17: View source to verify MARC record changes
         InventoryInstance.viewSource();
         InventoryViewSource.waitLoading();
-
-        // Verify 260 field is updated with new date (original field with $c changed)
         InventoryViewSource.verifyFieldInMARCBibSource(
           '260',
           '\t260\t   \t$a Oak Ridge, Tenn. : $b U.S. Dept. of Energy, $c April 15, 1977.',
         );
-
-        // Verify all 264 fields are present with correct content
-        // 264 \0 field: $a New York : $b Xerox Films, $c 1973.
         InventoryViewSource.verifyFieldInMARCBibSource(
           '264',
           '\t264\t  0\t$a New York : $b Xerox Films, $c 1973.',
         );
-
-        // 264 \1 field: $a [Place of publication not identified] : $b ABC Publishers, $c 2009.
         InventoryViewSource.verifyFieldInMARCBibSource(
           '264',
           '\t264\t  1\t$a [Place of publication not identified] : $b ABC Publishers, $c 2009.',
         );
-
-        // 264 \2 field: $a Seattle : $b Iverson Company (no date)
         InventoryViewSource.verifyFieldInMARCBibSource(
           '264',
           '\t264\t  2\t$a Seattle : $b Iverson Company',
         );
-
-        // 264 \3 field: $a Cambridge : $b Kinsey Printing Company (no date)
         InventoryViewSource.verifyFieldInMARCBibSource(
           '264',
           '\t264\t  3\t$a Cambridge : $b Kinsey Printing Company',
         );
-
-        // 264 \4 field: $c ©2002 (copyright date only)
         InventoryViewSource.verifyFieldInMARCBibSource('264', '\t264\t  4\t$c ©2002');
         InventoryViewSource.verifyFieldContent(
           3,
