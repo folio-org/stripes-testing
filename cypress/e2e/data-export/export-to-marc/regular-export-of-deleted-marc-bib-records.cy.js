@@ -143,7 +143,7 @@ describe(
             AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.D,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           InstanceRecordView.verifyInstanceIsSetForDeletion();
           InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchInstanceByTitle(marcInstances[2].title);

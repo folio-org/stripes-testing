@@ -60,7 +60,9 @@ describe('Bulk-edit', () => {
         cy.reload();
         BulkEditSearchPane.waitLoading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
-        BulkEditActions.openActions();
+        cy.waitForAuthRefresh(() => {
+          BulkEditActions.openActions();
+        });
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillExpirationDate(todayDate);
         BulkEditActions.confirmChanges();

@@ -2226,4 +2226,28 @@ export default {
         }),
     );
   },
+
+  verifyPaneRecordsCountInEditForm(value) {
+    cy.expect(bulkEditPane.find(Pane({ subtitle: `${value} records matched` })).exists());
+  },
+
+  verifyPatronGroupsAlphabeticalOrder() {
+    cy.wait(2000);
+    cy.do(
+      bulkPageSelections.patronGroup.perform((element) => {
+        const options = [...element.querySelectorAll('option')]
+          .map((option) => option.textContent)
+          .filter((text) => text && text !== 'Select patron group');
+
+        // Verify that options array is not empty
+        expect(options.length).to.be.greaterThan(0);
+
+        const sortedOptions = [...options].sort((a, b) => {
+          return a.localeCompare(b);
+        });
+
+        expect(options).to.deep.equal(sortedOptions);
+      }),
+    );
+  },
 };
