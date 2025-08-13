@@ -38,7 +38,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a C410818 Johnson, Samuel, $d 1709-1784',
-            '',
+            '$x Criticism and interpretation.',
             '$0 http://id.loc.gov/authorities/names/n78095825410818C410818',
             '',
           ],
@@ -189,11 +189,13 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(users.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-          for (let i = 1; i < 5; i++) {
-            MarcAuthority.deleteViaAPI(createdRecordIDs[i]);
-          }
+          createdRecordIDs.forEach((id) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
           cy.setTenant(Affiliations.College);
-          MarcAuthority.deleteViaAPI(createdRecordIDs[5]);
+          createdRecordIDs.forEach((id) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
           testData.collegeHoldings.forEach((holding) => {
             InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
           });
