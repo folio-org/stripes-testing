@@ -34,6 +34,7 @@ import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
+const closeEditPaneButton = Button({ icon: 'times' });
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
@@ -239,6 +240,26 @@ export default {
   verifyPronounsFieldValue(value) {
     cy.expect(pronounsField.has({ value }));
     cy.wait(500);
+  },
+
+  checkPronounsError(isPresent = true, message = 'Pronouns are limited to 300 characters') {
+    if (isPresent) {
+      cy.expect(pronounsField.has({ error: message, errorTextRed: true }));
+    } else {
+      cy.expect(pronounsField.has({ error: undefined }));
+    }
+  },
+
+  verifyPronounsNoError() {
+    this.checkPronounsError(false);
+  },
+
+  verifyPronounsError(message = 'Pronouns are limited to 300 characters') {
+    this.checkPronounsError(true, message);
+  },
+
+  verifyPronounsTextVisibleInEdit(text) {
+    cy.expect(userEditPane.find(HTML(including(text))).exists());
   },
 
   verifySaveButtonActive() {
@@ -567,7 +588,7 @@ export default {
     cy.expect(rootPane.absent());
   },
 
-  saveAndCloseWithConfirmation() {
+  saveAndCloseWithoutConfirmation() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
@@ -742,7 +763,14 @@ export default {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
-    cy.expect(userEditPane.exists());
+  },
+
+  closeEditPaneIfExists() {
+    cy.get('body').then(($body) => {
+      if ($body.find('section[class*="pane"]').length > 0) {
+        cy.do(closeEditPaneButton.click());
+      }
+    });
   },
 
   editUsername(username) {
@@ -1141,6 +1169,7 @@ export default {
   fillLastFirstNames(lastName, firstName) {
     cy.do(lastNameField.fillIn(lastName));
     if (firstName) cy.do(firstNameField.fillIn(firstName));
+    cy.wait(1000);
   },
 
   fillEmailAddress(email) {
@@ -1219,12 +1248,15 @@ export default {
     cy.do(setExpirationDateButton.click());
   },
 
-  closeKeycloakModal() {
-    cy.expect(Modal('Keycloak user record').exists());
-    cy.do(
-      Modal('Keycloak user record')
-        .find(Button({ id: 'clickable-JIT-user-cancel' }))
-        .click(),
-    );
+  closeKeycloakModalIfExists() {
+    cy.get('body').then(($body) => {
+      if ($body.find('[aria-label="Keycloak user record"]').length > 0) {
+        cy.do(
+          Modal('Keycloak user record')
+            .find(Button({ id: 'clickable-JIT-user-cancel' }))
+            .click(),
+        );
+      }
+    });
   },
 };
