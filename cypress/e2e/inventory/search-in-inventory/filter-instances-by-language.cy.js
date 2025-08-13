@@ -177,6 +177,7 @@ describe('Inventory', () => {
           });
 
           // 10. Open instance, verify language
+          cy.wait(1000);
           InventoryInstances.selectInstance();
           InventoryInstance.waitInventoryLoading();
           InventoryInstance.verifyInstanceLanguage(LANGUAGES[2].name);
