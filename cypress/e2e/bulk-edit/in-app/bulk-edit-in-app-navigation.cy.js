@@ -59,7 +59,6 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         cy.reload();
         BulkEditSearchPane.waitLoading();
-
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         cy.waitForAuthRefresh(() => {
           BulkEditActions.openActions();
