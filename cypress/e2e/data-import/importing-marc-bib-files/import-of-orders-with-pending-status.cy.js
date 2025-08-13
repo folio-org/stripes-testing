@@ -197,7 +197,7 @@ describe('Data Import', () => {
         OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
-          orderNumber = polNumber.replace('-1', '');
+          orderNumber = polNumber.replace(/-\d+$/, '');
         });
       },
     );
