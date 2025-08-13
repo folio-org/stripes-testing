@@ -415,7 +415,7 @@ describe('Inventory', () => {
 
     it(
       'C468155 Only one Classification identifier type could be found in the browse result list by "Classification (all)" browse option when only one Classification identifier type is selected in settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468155'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C468155'] },
       () => {
         BrowseClassifications.waitForClassificationNumberToAppear(
           testData.localInstnaceClassificationValue,
