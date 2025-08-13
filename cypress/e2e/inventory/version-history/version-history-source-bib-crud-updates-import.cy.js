@@ -209,22 +209,20 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -295,7 +293,7 @@ describe('MARC', () => {
 
       it(
         'C692124 Check "Version history" pane after CRUD fields, subfields, indicators in MARC bib record updated via "Data import" app (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C692124'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C692124'] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);

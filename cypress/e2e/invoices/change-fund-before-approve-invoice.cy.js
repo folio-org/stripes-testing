@@ -110,10 +110,15 @@ describe('Invoices', () => {
       permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsInvoiveApprovalPath,
-        waiter: SettingsInvoices.waitApprovalsLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsInvoiveApprovalPath,
+          waiter: SettingsInvoices.waitApprovalsLoading,
+        });
+        cy.reload();
+        SettingsInvoices.waitApprovalsLoading();
+      }, 20_000);
+
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
       cy.visit(TopMenu.ordersPath);
     });

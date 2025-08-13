@@ -52,6 +52,7 @@ describe('Inventory', () => {
         InstanceRecordEdit.verifyDateTypePlaceholderOptionSelected();
         InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.dateType);
         InstanceRecordEdit.saveAndClose();
+        InventoryInstance.waitLoading();
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
