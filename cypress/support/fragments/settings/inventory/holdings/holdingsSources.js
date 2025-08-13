@@ -3,7 +3,11 @@ import {
   including,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListHeader,
 } from '../../../../../../interactors';
+import SettingsPane from '../../settingsPane';
+
+const settingsOption = 'Holdings sources';
 
 export const reasonsActions = {
   edit: 'edit',
@@ -40,6 +44,15 @@ export default {
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   }),
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(MultiColumnListHeader(header).exists());
+    });
+  },
+  open() {
+    SettingsPane.selectSettingsTab(settingsOption);
+    this.waitLoading();
+  },
   verifyConsortiumHoldingsSourcesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
@@ -62,7 +75,7 @@ export default {
   },
 
   verifyLocalHoldingsSourcesInTheList({ name, source = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
