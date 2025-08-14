@@ -29,6 +29,8 @@ const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
   instanceUuid: 'Holdings — Instance UUID',
+  holdingsHrid: 'Holdings — HRID',
+  holdingsUuid: 'Holdings — UUID',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
