@@ -91,6 +91,7 @@ const donorSection = Section({ id: 'isDonor' });
 const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
 const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
+const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
 
 export default {
   waitLoading: () => {
@@ -228,6 +229,16 @@ export default {
         toggleButtonIsDonor.click(),
       ]);
     }
+  },
+
+  selectCreatedByFiler: (createdBy) => {
+    cy.do([
+      toggleButtonCreatedBy.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(createdBy),
+      searchButtonInModal.click(),
+      MultiColumnListRow({ index: 0 }).click(),
+    ]);
   },
 
   checkOrganizationFilter: () => {
@@ -431,6 +442,16 @@ export default {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true })); // Actual : true
     cy.wait(3000);
+  },
+
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
   },
 
   checkSearchResults: (organization) => {
