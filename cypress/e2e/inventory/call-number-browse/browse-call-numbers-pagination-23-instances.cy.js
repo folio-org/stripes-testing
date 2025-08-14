@@ -74,6 +74,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        for (let i = 1; i <= 23; i++) {
+          BrowseCallNumber.waitForCallNumberToAppear(`test ${testData.randomPostfix} ${300 + i}`);
+        }
         InventorySearchAndFilter.browseSearch(`test ${testData.randomPostfix} 305`);
         BrowseCallNumber.valueInResultTableIsHighlighted(`test ${testData.randomPostfix} 305`);
         for (let i = 1; i <= 23; i++) {

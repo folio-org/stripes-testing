@@ -474,6 +474,17 @@ export default {
     cy.wait(4000);
     cy.expect(ordersList.find(Link(orderNumber)).exists());
   },
+
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
+  },
+
   checkSearchResultsWithClosedOrder: (orderNumber) => {
     cy.wait(4000);
     cy.expect(

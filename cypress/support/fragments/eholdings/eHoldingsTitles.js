@@ -19,7 +19,7 @@ export default {
     cy.expect(resultSection.find(PaneHeader('Loading...')).absent());
     cy.expect(
       resultSection
-        .find(ListItem({ className: including('list-item-'), index: 1 }).find(Button()))
+        .find(ListItem({ className: including('list-item-'), index: 0 }).find(Button()))
         .exists(),
     );
   },

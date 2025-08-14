@@ -96,7 +96,6 @@ describe('MARC', () => {
       'C358991 Verify that field which moved above "852" retains all values in the subfield text box when edit "MARC Holdings" record (Spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C358991'] },
       () => {
-        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();

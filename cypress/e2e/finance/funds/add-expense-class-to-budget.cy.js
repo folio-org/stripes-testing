@@ -4,7 +4,6 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
@@ -19,11 +18,10 @@ describe('ui-finance: Funds', () => {
     allocated: 100,
   };
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
-
+    NewExpenseClass.createViaApi(firstExpenseClass).then((expenseClassResponse) => {
+      firstExpenseClass.id = expenseClassResponse;
+    });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultBudget.fiscalYearId = firstFiscalYearResponse.id;
@@ -31,7 +29,6 @@ describe('ui-finance: Funds', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
           defaultBudget.fundId = fundResponse.fund.id;
@@ -52,15 +49,8 @@ describe('ui-finance: Funds', () => {
     Funds.deleteBudgetViaActions();
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
     Funds.checkIsBudgetDeleted();
-
     Funds.deleteFundViaApi(defaultFund.id);
-
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.deleteExpenseClass(firstExpenseClass);
-
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
-
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    SettingsFinance.deleteViaApi(firstExpenseClass.id);
   });
 
   it(

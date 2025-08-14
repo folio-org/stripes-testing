@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C503057 Cannot save "MARC bibliographic" record without a value in "245" field (spitfire)',
-        { tags: ['smoke', 'spitfire', 'C503057'] },
+        { tags: ['smokeBroken', 'spitfire', 'C503057'] },
         () => {
           InventoryInstances.searchByTitle(instanceId);
           InventoryInstances.selectInstance();
