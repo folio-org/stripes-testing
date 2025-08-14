@@ -57,6 +57,7 @@ export const itemFieldValues = {
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
+  externalSystemId: 'User — External system ID',
   firstName: 'User — First name',
   lastName: 'User — Last name',
   patronGroup: 'Patron group — Name',
@@ -64,6 +65,7 @@ export const usersFieldValues = {
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
   userId: 'User — User UUID',
+  userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
 };
@@ -210,6 +212,7 @@ export default {
   },
 
   selectOperator(selection, row = 0) {
+    cy.wait(1000);
     cy.do(
       RepeatableFieldItem({ index: row })
         .find(Select({ dataTestID: including('operator-option') }))
