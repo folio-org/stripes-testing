@@ -135,7 +135,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
-          orderNumber = polNumber.replace('-1', '');
+          orderNumber = polNumber.replace(/-\d+$/, '');
         });
         productIdentifiers.forEach((id) => {
           OrderLines.verifyProductIdentifier(id.identifier, id.productIdType, id.rowIndex);

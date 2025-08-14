@@ -124,7 +124,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          orderNumber = initialNumber.replace('-1', '');
+          orderNumber = initialNumber.replace(/-\d+$/, '');
         });
         OrderLines.checkCreatedInventoryInElectronicRecourceDetails('None');
       },

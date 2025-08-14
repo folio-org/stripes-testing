@@ -458,7 +458,7 @@ describe('Bulk-edit', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
           InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(
             0,
             'United States. Joint Committee on the Library',
@@ -489,7 +489,7 @@ describe('Bulk-edit', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         },
       );
     });

@@ -19,7 +19,7 @@ let userUUIDsFileName;
 const testUsers = [];
 const validUsersUUIds = [];
 const recordsNumber = 27;
-const invalidUserUUIDs = Array.from({ length: recordsNumber }, () => uuid());
+let invalidUserUUIDs;
 const columnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USERNAME,
   BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USER_ID,
@@ -60,8 +60,10 @@ describe(
       beforeEach('create test data', () => {
         cy.clearLocalStorage();
         userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+        invalidUserUUIDs = Array.from({ length: recordsNumber }, () => uuid());
+        testUsers.length = 0;
+        validUsersUUIds.length = 0;
 
-        cy.getAdminToken();
         cy.then(() => {
           for (let i = 0; i < recordsNumber; i++) {
             cy.createTempUser([]).then((userProperties) => {

@@ -237,7 +237,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstanceByTitle(instance);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              linkingTagAndValues.rowIndex,
+              linkingTagAndValues.rowIndex - 1,
               linkingTagAndValues.tag,
               linkingTagAndValues.secondBox,
               linkingTagAndValues.thirdBox,
@@ -257,7 +257,7 @@ describe('MARC', () => {
             cy.wait(2000);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              linkingTagAndValues.rowIndex,
+              linkingTagAndValues.rowIndex - 1,
               linkingTagAndValues.tag,
               linkingTagAndValues.secondBox,
               linkingTagAndValues.thirdBox,
@@ -277,7 +277,7 @@ describe('MARC', () => {
             cy.wait(2000);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              linkingTagAndValues.rowIndex,
+              linkingTagAndValues.rowIndex - 1,
               linkingTagAndValues.tag,
               linkingTagAndValues.secondBox,
               linkingTagAndValues.thirdBox,

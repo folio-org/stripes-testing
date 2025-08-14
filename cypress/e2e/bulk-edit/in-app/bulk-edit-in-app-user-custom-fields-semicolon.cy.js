@@ -15,9 +15,6 @@ import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
-
 let user;
 let secondUser;
 const customFieldData = {
@@ -73,6 +70,11 @@ describe('Bulk-edit', () => {
         changedRecordsFileName,
       );
       Users.deleteViaApi(user.userId);
+      cy.loginAsAdmin({
+        path: SettingsMenu.customFieldsPath,
+        waiter: CustomFields.waitLoading,
+      });
+      CustomFields.deleteCustomField(customFieldData.fieldLabel);
     });
 
     it(
@@ -158,10 +160,6 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        CustomFields.openTabFromInventorySettingsList();
-        CustomFields.deleteCustomField(customFieldData.fieldLabel);
       },
     );
   });
