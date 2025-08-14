@@ -34,6 +34,7 @@ import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
+const closeEditPaneButton = Button({ icon: 'times' });
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
@@ -120,6 +121,7 @@ const confirmButton = Button('Confirm');
 const promoteUserModalText = 'This operation will create new record in Keycloak for';
 const userRolesEmptyText = 'No user roles found';
 const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
+const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
@@ -202,6 +204,80 @@ export default {
   },
   changePreferredFirstName(prefFirstName) {
     cy.do(preferredFirstName.fillIn(prefFirstName));
+  },
+
+  changePronouns(pronouns) {
+    cy.do(pronounsField.fillIn(pronouns));
+  },
+
+  fillPronouns(pronouns) {
+    cy.do(pronounsField.fillIn(pronouns));
+    cy.wait(500);
+    cy.expect(pronounsField.has({ value: pronouns }));
+  },
+
+  clearPronounsField() {
+    cy.do(pronounsField.clear());
+    cy.wait(500);
+  },
+
+  focusPronounsField() {
+    cy.do(pronounsField.focus());
+    cy.wait(500);
+    cy.expect(pronounsField.has({ focused: true }));
+  },
+
+  verifyPronounsFieldInFocus() {
+    cy.wait(500);
+    cy.expect(pronounsField.has({ focused: true }));
+  },
+
+  verifyPronounsFieldPresent() {
+    cy.wait(500);
+    cy.expect(pronounsField.exists());
+  },
+
+  verifyPronounsFieldValue(value) {
+    cy.expect(pronounsField.has({ value }));
+    cy.wait(500);
+  },
+
+  checkPronounsError(isPresent = true, message = 'Pronouns are limited to 300 characters') {
+    if (isPresent) {
+      cy.expect(pronounsField.has({ error: message, errorTextRed: true }));
+    } else {
+      cy.expect(pronounsField.has({ error: undefined }));
+    }
+  },
+
+  verifyPronounsNoError() {
+    this.checkPronounsError(false);
+  },
+
+  verifyPronounsError(message = 'Pronouns are limited to 300 characters') {
+    this.checkPronounsError(true, message);
+  },
+
+  verifyPronounsTextVisibleInEdit(text) {
+    cy.expect(userEditPane.find(HTML(including(text))).exists());
+  },
+
+  verifySaveButtonActive() {
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  },
+
+  verifyUserFullNameWithPronouns(
+    lastName,
+    preferredName = 'preferredName',
+    testMiddleName = 'testMiddleName',
+    pronouns,
+  ) {
+    cy.expect(
+      userEditPane
+        .find(HTML(including(`${lastName}, ${preferredName} ${testMiddleName}`)))
+        .exists(),
+    );
+    cy.expect(userEditPane.find(HTML(including(`(${pronouns})`))).exists());
   },
 
   changeUserType(type = 'Patron') {
@@ -512,6 +588,13 @@ export default {
     cy.expect(rootPane.absent());
   },
 
+  saveAndCloseWithoutConfirmation() {
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
+    cy.expect(rootPane.absent());
+  },
+
   confirmChangingUserType() {
     cy.wait(1000);
     cy.do(Modal().find(Button('Confirm')).click());
@@ -680,7 +763,14 @@ export default {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
-    cy.expect(userEditPane.exists());
+  },
+
+  closeEditPaneIfExists() {
+    cy.get('body').then(($body) => {
+      if ($body.find('section[class*="pane"]').length > 0) {
+        cy.do(closeEditPaneButton.click());
+      }
+    });
   },
 
   editUsername(username) {
@@ -1079,6 +1169,7 @@ export default {
   fillLastFirstNames(lastName, firstName) {
     cy.do(lastNameField.fillIn(lastName));
     if (firstName) cy.do(firstNameField.fillIn(firstName));
+    cy.wait(1000);
   },
 
   fillEmailAddress(email) {
@@ -1157,12 +1248,15 @@ export default {
     cy.do(setExpirationDateButton.click());
   },
 
-  closeKeycloakModal() {
-    cy.expect(Modal('Keycloak user record').exists());
-    cy.do(
-      Modal('Keycloak user record')
-        .find(Button({ id: 'clickable-JIT-user-cancel' }))
-        .click(),
-    );
+  closeKeycloakModalIfExists() {
+    cy.get('body').then(($body) => {
+      if ($body.find('[aria-label="Keycloak user record"]').length > 0) {
+        cy.do(
+          Modal('Keycloak user record')
+            .find(Button({ id: 'clickable-JIT-user-cancel' }))
+            .click(),
+        );
+      }
+    });
   },
 };

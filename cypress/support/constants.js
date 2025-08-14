@@ -1274,6 +1274,15 @@ export const ITEM_NOTE_TYPES = {
   CHECK_OUT_NOTE: 'Check out note',
 };
 
+export const INSTANCE_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  BIBLIOGRAPHY_NOTE: 'Bibliography note',
+  COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  REPRODUCTION_NOTE: 'Reproduction note',
+  WITH_NOTE: 'With note',
+};
+
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',

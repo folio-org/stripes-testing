@@ -144,7 +144,7 @@ describe('Bulk-edit', () => {
           folioItem.instanceId,
           marcInstance.instanceId,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.changeNoteType('Administrative note', 'With note');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Reproduction note', 'Administrative note', 1);

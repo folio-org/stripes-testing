@@ -108,7 +108,7 @@ describe('Bulk-edit', () => {
           `,${adminNote},${folioItem.instanceName},`,
           `,${adminNote},${marcInstance.instanceName},`,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteRemove('Administrative note', '[administrative]');

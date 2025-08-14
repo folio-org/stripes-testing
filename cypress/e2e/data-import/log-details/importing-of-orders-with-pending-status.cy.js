@@ -196,7 +196,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace(/-\d/, '');
+            const orderNumber = initialNumber.replace(/-\d+$/, '');
 
             orderNumbers.push(orderNumber);
           });

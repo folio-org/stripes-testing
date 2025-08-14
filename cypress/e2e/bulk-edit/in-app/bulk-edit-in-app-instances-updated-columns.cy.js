@@ -69,7 +69,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.instanceId);
         BulkEditSearchPane.changeShowColumnCheckbox('Staff suppress');
         BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Staff suppress');
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.selectOption('Staff suppress');
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
         BulkEditActions.selectAction('Set false');

@@ -67,11 +67,7 @@ export default {
   },
 
   selectUserFromList: (userName) => {
-    cy.do(
-      Pane({ id: 'users-search-results-pane' })
-        .find(MultiColumnListCell(including(userName)))
-        .click(),
-    );
+    cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
     cy.wait(1000);
   },
 

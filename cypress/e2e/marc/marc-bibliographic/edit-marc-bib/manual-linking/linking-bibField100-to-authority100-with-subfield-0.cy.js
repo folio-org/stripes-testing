@@ -15,6 +15,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'personalNameTitle',
           tag100: '100',
           tag010: '010',
           tag240: '240',
@@ -103,6 +104,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
 
             InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();

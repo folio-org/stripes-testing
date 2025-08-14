@@ -356,7 +356,7 @@ export default {
 
     cy.do(
       holdingsSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: barcode }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: barcode }))
         .find(Button(including(barcode)))
         .click(),
     );
@@ -530,7 +530,7 @@ export default {
   verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
     cy.expect(
       Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
-        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
         .find(HTML(including(itemBarcode)))
         .exists(),
     );

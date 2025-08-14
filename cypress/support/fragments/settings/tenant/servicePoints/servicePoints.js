@@ -86,7 +86,8 @@ export default {
       .okapiRequest({
         path: 'service-points',
         searchParams,
-      }).then(({ body }) => body.servicepoints);
+      })
+      .then(({ body }) => body.servicepoints);
   },
 
   getCircDesk1ServicePointViaApi() {
@@ -96,7 +97,7 @@ export default {
         return servicePoints[0];
       });
     } else {
-      return Cypress.env(CIRC_DESK_1);
+      return cy.wrap(Cypress.env(CIRC_DESK_1));
     }
   },
   getCircDesk2ServicePointViaApi() {
@@ -106,7 +107,7 @@ export default {
         return servicePoints[0];
       });
     } else {
-      return Cypress.env(CIRC_DESK_2);
+      return cy.wrap(Cypress.env(CIRC_DESK_2));
     }
   },
   getOnlineServicePointViaApi() {
@@ -116,7 +117,7 @@ export default {
         return servicePoints[0];
       });
     } else {
-      return Cypress.env(ONLINE);
+      return cy.wrap(Cypress.env(ONLINE));
     }
   },
 

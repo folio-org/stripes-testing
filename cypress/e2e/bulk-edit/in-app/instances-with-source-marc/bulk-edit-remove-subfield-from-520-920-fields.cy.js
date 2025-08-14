@@ -50,7 +50,7 @@ describe(
     },
   },
   () => {
-    describe('In-app approach', () => {
+    describe('Instances with source MARC', () => {
       beforeEach('create test data', () => {
         marcInstance = {
           title: `AT_C523628_MarcInstance_${getRandomPostfix()}`,
@@ -93,7 +93,6 @@ describe(
         fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 
         cy.clearLocalStorage();
-        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,

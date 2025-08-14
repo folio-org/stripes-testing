@@ -220,6 +220,7 @@ describe('Title level Request', () => {
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       ConfirmItemInModal.confirmAwaitingPickUpModal();
 
+      cy.waitForAuthRefresh(() => {}, 20_000);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);

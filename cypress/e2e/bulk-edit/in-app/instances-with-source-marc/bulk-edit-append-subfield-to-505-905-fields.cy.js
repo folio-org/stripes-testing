@@ -65,7 +65,7 @@ describe(
     },
   },
   () => {
-    describe('In-app approach', () => {
+    describe('Instances with source MARC', () => {
       beforeEach('create test data', () => {
         postfix = getRandomPostfix();
         commonMarcFields = [

@@ -9,9 +9,10 @@ import DateTools from '../../../../utils/dateTools';
 
 const COLUMN_INDEX = {
   NAME: 0,
-  SOURCE: 1,
-  LAST_UPDATED: 2,
-  ACTIONS: 3,
+  CODE: 1,
+  SOURCE: 2,
+  LAST_UPDATED: 3,
+  ACTIONS: 4,
 };
 
 export const ACTION_BUTTONS = {

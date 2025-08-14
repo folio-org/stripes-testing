@@ -146,7 +146,7 @@ describe('Bulk-edit', () => {
           folioItem.instanceId,
           marcInstance.instanceId,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.noteRemove('Dissertation note', 'Test');
         BulkEditActions.addNewBulkEditFilterString();
