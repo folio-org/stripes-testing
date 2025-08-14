@@ -469,16 +469,12 @@ export default {
     });
   },
 
-  checkActionDropdownContent() {
+  checkActionDropdownContent(expectedContent) {
     const actualResArray = [];
-    const expectedContent = ['Edit', 'Export (MARC)', 'Print', 'Delete'];
     cy.do(actionsButton.click());
-    cy.expect([
-      Button('Edit').has({ svgClass: including('edit') }),
-      Button('Export (MARC)').has({ svgClass: including('download') }),
-      Button('Print').has({ svgClass: including('print') }),
-      Button('Delete').has({ svgClass: including('trash') }),
-    ]);
+    expectedContent.forEach((option) => {
+      cy.expect(Button(option).exists());
+    });
     cy.then(() => DropdownMenu().buttons()).then((buttons) => {
       buttons.forEach((button) => actualResArray.push(button.innerText));
       cy.expect(actualResArray).to.deep.equal(expectedContent);

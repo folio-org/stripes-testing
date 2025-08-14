@@ -278,12 +278,12 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceFolio.hrid);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyInstanceTitle(instanceFolio.instanceTitle);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
 
         InventorySearchAndFilter.searchInstanceByHRID(instanceMarc.hrid);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyInstanceTitle(instanceMarc.instanceTitle);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
         cy.wait(1000);
@@ -293,7 +293,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceMarcWithItem.hrid);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyInstanceTitle(instanceMarcWithItem.instanceTitle);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
         cy.wait(1000);
