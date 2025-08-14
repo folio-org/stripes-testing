@@ -25,15 +25,15 @@ describe('Invoices', () => {
     name: `autotest_2_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
   const thirdFiscalYear = {
     name: `autotest_3_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get2DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodStart: `${DateTools.get5DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get7DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -53,10 +53,10 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForThirdFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   const adjustmentDescription = `test_description${getRandomPostfix()}`;
   const barcode = FinanceHelp.getRandomBarcode();

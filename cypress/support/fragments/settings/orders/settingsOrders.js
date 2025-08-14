@@ -99,10 +99,42 @@ export default {
     this.fillRequiredFields(preffixInfo);
   },
 
+  createPrefixViaApi(prefixName) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/configuration/prefixes',
+        body: {
+          name: prefixName,
+          description: 'Test prefix',
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.id;
+      });
+  },
+
   createSuffix(suffixInfo) {
     cy.wait(6000);
     cy.do(Button({ id: 'clickable-add-suffixes' }).click());
     this.fillRequiredFields(suffixInfo);
+  },
+
+  createSuffixViaApi(suffixName) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/configuration/suffixes',
+        body: {
+          name: suffixName,
+          description: 'Test suffix',
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.id;
+      });
   },
 
   deletePrefix: (preffixInfo) => {
@@ -116,6 +148,14 @@ export default {
     InteractorsTools.checkCalloutMessage(`The prefix ${preffixInfo.name} was successfully deleted`);
   },
 
+  deletePrefixViaApi(prefixId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/configuration/prefixes/${prefixId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   deleteSuffix: (suffixInfo) => {
     cy.wait(6000);
     cy.do(
@@ -125,6 +165,14 @@ export default {
       }),
     );
     InteractorsTools.checkCalloutMessage(`The suffix ${suffixInfo.name} was successfully deleted`);
+  },
+
+  deleteSuffixViaApi(suffixId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/configuration/suffixes/${suffixId}`,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   selectInstanceStatus(status) {
