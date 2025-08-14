@@ -186,6 +186,10 @@ const verifyElectronicAccessAbsent = (rowNumber = 0) => {
   );
 };
 
+const clickActionsButton = () => {
+  cy.do(rootSection.find(actionsButton).click());
+};
+
 const waitLoading = () => {
   cy.wait(1000);
   cy.get('#pane-instancedetails').within(() => {
@@ -227,6 +231,7 @@ export const actionsMenuOptions = {
 
 export default {
   waitLoading,
+  clickActionsButton,
   getMultiColumnListCellsValues,
   verifyResourceTitle,
   verifyIndexTitle,
