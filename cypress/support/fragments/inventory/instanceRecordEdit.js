@@ -278,23 +278,23 @@ export default {
     cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
     cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
   },
-  verifyDiscoverySuppressCheckbox(isChecked = false) {
+  verifyDiscoverySuppressCheckbox(isChecked = false, isDisabled = false) {
     if (isChecked) {
-      cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: true }));
-    } else cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: false }));
+      cy.expect(supressFromDiscoveryCheckbox.has({ checked: true, disabled: isDisabled }));
+    } else cy.expect(supressFromDiscoveryCheckbox.has({ checked: false, disabled: isDisabled }));
   },
-  verifyStaffSuppressCheckbox(isChecked = false) {
+  verifyStaffSuppressCheckbox(isChecked = false, isDisabled = false) {
     if (isChecked) {
-      cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: true }));
-    } else cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: false }));
-  },
-  markAsStaffSuppress() {
-    cy.do(rootSection.find(Checkbox({ name: 'staffSuppress' })).click());
+      cy.expect(staffSuppressCheckbox.has({ checked: true, disabled: isDisabled }));
+    } else cy.expect(staffSuppressCheckbox.has({ checked: false, disabled: isDisabled }));
   },
   verifyPreviouslyHeldCheckbox(isChecked = false) {
     if (isChecked) {
-      cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
-    } else cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: false }));
+      cy.expect(previoslyHeldCheckbox.has({ checked: true }));
+    } else cy.expect(previoslyHeldCheckbox.has({ checked: false }));
+  },
+  markAsStaffSuppress() {
+    cy.do(rootSection.find(staffSuppressCheckbox).click());
   },
   editResourceTitle: (newTitle) => {
     cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
