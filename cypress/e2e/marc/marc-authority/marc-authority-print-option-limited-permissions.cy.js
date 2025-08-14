@@ -11,24 +11,26 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       authority: {
-        searchInput: 'Beatles',
+        searchInput: 'C375118 The Beatles',
         searchOption: 'Keyword',
       },
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       marcFiles: [
         {
-          marc: 'marcAuthFileForC380635.mrc',
+          marc: 'marcAuthFileForC375118.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
           propertyName: 'authority',
         },
       ],
-      expectedActions: ['Edit', 'Export (MARC)', 'Print', 'Delete'],
+      expectedActions: ['Edit', 'Print'],
     };
     const createdAuthorityIDs = [];
 
     before('Create test data', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375118*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('The Beatles');
       testData.marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(
           marcFile.marc,
@@ -44,8 +46,6 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -62,12 +62,13 @@ describe('MARC', () => {
       });
       Users.deleteViaApi(testData.userProperties.userId);
     });
+
     it(
-      'C380635 "Print" option is located below "Export (MARC)" option in "Actions" menu for "MARC authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C380635'] },
+      'C375118 "Print" option is located below "Edit" option in "Actions" menu for "MARC authority" record (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C375118'] },
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
-        MarcAuthorities.selectFirstRecord();
+        MarcAuthorities.selectTitle(testData.authority.searchInput);
         MarcAuthority.checkActionDropdownContent(testData.expectedActions);
       },
     );
