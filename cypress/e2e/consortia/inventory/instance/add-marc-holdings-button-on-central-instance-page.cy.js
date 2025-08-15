@@ -12,16 +12,17 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {
-      filePath: 'oneMarcBib.mrc',
-      marcFileName: `C409473 autotestFileName ${getRandomPostfix()}`,
+    const testData = {};
+    const marcFile = {
+      marc: 'oneMarcBib.mrc',
+      fileName: `C656297 testMarcFile${getRandomPostfix()}.mrc`,
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
-        testData.filePath,
-        testData.marcFileName,
+        marcFile.marc,
+        marcFile.fileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         testData.instanceId = response[0].instance.id;
