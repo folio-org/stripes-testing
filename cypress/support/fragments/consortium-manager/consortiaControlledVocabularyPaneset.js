@@ -211,4 +211,9 @@ export default {
   verifyShareCheckboxState({ isEnabled = true, isChecked = false } = {}) {
     cy.expect([memberLibrariesShare.is({ disabled: !isEnabled, checked: isChecked })]);
   },
+
+  clearTextField(placeholder) {
+    cy.do(TextField({ placeholder }).clear());
+    cy.expect(TextField({ placeholder }).has({ value: '' }));
+  },
 };

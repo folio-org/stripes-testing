@@ -47,6 +47,11 @@ export default {
     resource: 'UI-Inventory Settings Holdings-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsSubjectSourcesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Subject-Sources',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {
