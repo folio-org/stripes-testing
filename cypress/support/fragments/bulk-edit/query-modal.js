@@ -24,6 +24,7 @@ const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button(including('Select field'));
+const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
 
@@ -50,10 +51,15 @@ export const instanceFieldValues = {
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
+  instanceHrid: 'Instance — Instance HRID',
   instanceTitle: 'Instance — Resource title',
+  itemAccessionNumber: 'Item — Accession number',
+  itemBarcode: 'Item — Barcode',
   itemStatus: 'Item — Status',
+  itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
   holdingsId: 'Holding — UUID',
+  holdingsHrid: 'Holding — HRID',
   temporaryLocation: 'Temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
 };
@@ -361,7 +367,7 @@ export default {
   },
 
   verifyPreviewOfRecordsMatched() {
-    cy.expect([MultiColumnList().exists(), Button('Show columns').exists()]);
+    cy.expect([MultiColumnList().exists(), showColumnsButton.exists()]);
     this.testQueryDisabled(false);
     this.cancelDisabled(false);
     this.runQueryDisabled(false);
