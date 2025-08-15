@@ -798,11 +798,10 @@ export default {
   },
 
   checkKeyValue(label, value) {
-    // Special handling for Expiration date field to match UI format
     if (label === 'Expiration date') {
       const formatDateForUI = (dateString) => {
-        const [month, day, year] = dateString.split('/');
-        return `${parseInt(month, 10)}/${parseInt(day, 10)}/${year}`;
+        const [day, month, year] = dateString.split('/');
+        return `${day}/${month}/${year}`;
       };
 
       const uiFormattedDate = formatDateForUI(value);
@@ -876,5 +875,9 @@ export default {
         .find(HTML(including(`Source: ${userName}`)))
         .exists(),
     );
+  },
+
+  verifyUserDetailsPaneOpen() {
+    cy.expect(rootSection.exists());
   },
 };

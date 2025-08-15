@@ -72,6 +72,7 @@ describe('Users', () => {
   after('Cleanup', () => {
     cy.getAdminToken();
     cy.setDefaultLocaleApi();
+    PatronGroups.deleteViaApi(testData.patronGroup.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -106,7 +107,7 @@ describe('Users', () => {
       );
       cy.waitForAuthRefresh(() => {}, 20_000);
 
-      // Convert date to both possible formats for popup verification
+      // Convert date to UK format for popup verification
       const dateFormat = convertDateToBritishFormat(expectedDate);
 
       UserEdit.verifySetExpirationDatePopup(
