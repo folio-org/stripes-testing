@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  LOCATION_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -35,6 +36,7 @@ import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -42,16 +44,16 @@ describe('Data Import', () => {
     const testData = {
       sharedInstanceId: [],
       marcFile: {
-        marc: 'marcBibFileForC405528.mrc',
-        fileName: `C405528 testMarcFile${getRandomPostfix()}.mrc`,
-        exportedFileName: `C405528 exportedTestMarcFile${getRandomPostfix()}.mrc`,
-        modifiedMarcFile: `C405528 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
+        marc: 'marcBibFileForC411792.mrc',
+        fileName: `C411792 testMarcFile${getRandomPostfix()}.mrc`,
+        exportedFileName: `C411792 exportedTestMarcFile${getRandomPostfix()}.mrc`,
+        modifiedMarcFile: `C411792 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
       },
-      instanceTitle: 'C405528 Instance Shared Central',
-      updatedInstanceTitle: 'C405528 Instance Shared Central Updated',
+      instanceTitle: 'C411792 Instance Shared Central',
+      updatedInstanceTitle: 'C411792 Instance Shared Central Updated',
       field245: {
         tag: '245',
-        content: '$a C405528 Instance Shared Central Updated',
+        content: '$a C411792 Instance Shared Central Updated',
       },
       field500: {
         tag: '500',
@@ -59,16 +61,16 @@ describe('Data Import', () => {
       },
     };
     const mappingProfile = {
-      name: `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+      name: `C411792 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
-      name: `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+      name: `C411792 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_BIBLIOGRAPHIC',
     };
     const matchProfile = {
-      profileName: `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+      profileName: `C411792 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -83,7 +85,7 @@ describe('Data Import', () => {
       },
       recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
-    const jobProfileName = `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
+    const jobProfileName = `C411792 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -94,23 +96,24 @@ describe('Data Import', () => {
       ).then((response) => {
         testData.sharedInstanceId = response[0].instance.id;
       });
-
-      // create user A
-      cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
-        .then((userProperties) => {
-          users.userAProperties = userProperties;
+      cy.setTenant(Affiliations.College)
+        .then(() => {
+          cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
+            testData.location = res;
+          });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            testData.sourceId = folioSource.id;
+          });
         })
         .then(() => {
-          cy.assignAffiliationToUser(Affiliations.College, users.userAProperties.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(users.userAProperties.userId, [
-            Permissions.moduleDataImportEnabled.gui,
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-            Permissions.dataExportViewAddUpdateProfiles.gui,
-            Permissions.consortiaCentralAll.gui,
-          ]);
+          InventoryHoldings.createHoldingRecordViaApi({
+            instanceId: testData.sharedInstanceId,
+            permanentLocationId: testData.location.id,
+            sourceId: testData.sourceId,
+          }).then((holding) => {
+            testData.holdingsId = holding.id;
+          });
+
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
             (mappingProfileResponse) => {
               NewActionProfile.createActionProfileViaApi(
@@ -129,6 +132,26 @@ describe('Data Import', () => {
               });
             },
           );
+        });
+      cy.resetTenant();
+
+      // create user A
+      cy.getAdminToken();
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+        .then((userProperties) => {
+          users.userAProperties = userProperties;
+        })
+        .then(() => {
+          cy.assignAffiliationToUser(Affiliations.College, users.userAProperties.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(users.userAProperties.userId, [
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+            Permissions.dataExportViewAddUpdateProfiles.gui,
+            Permissions.consortiaCentralAll.gui,
+          ]);
           cy.resetTenant();
         });
 
@@ -157,19 +180,23 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
       FileManager.deleteFileFromDownloadsByMask(testData.marcFile.exportedFileName);
       cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(users.userAProperties.userId);
-      Users.deleteViaApi(users.userBProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
-      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
-      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+      cy.withinTenant(Affiliations.College, () => {
+        InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingsId);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(users.userAProperties.userId);
+        Users.deleteViaApi(users.userBProperties.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
+      });
     });
 
     it(
-      'C405528 User can update shared "MARC Bib" in member tenant via Data import and confirm in central & member tenants (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C405528'] },
+      'C411792 User can update Shadow "MARC Bib" Instance in member tenant via Data import (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C411792'] },
       () => {
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
