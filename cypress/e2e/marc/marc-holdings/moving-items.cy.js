@@ -143,8 +143,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C345404'] },
+      'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (folijet)',
+      { tags: ['smoke', 'folijet', 'C345404'] },
       () => {
         cy.wait(5000);
         InventoryActions.import();
