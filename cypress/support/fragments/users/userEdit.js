@@ -125,6 +125,7 @@ const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
+const createUserPane = Pane('Create User');
 
 let totalRows;
 
@@ -169,6 +170,7 @@ export default {
   },
   changeLastName(lastName) {
     cy.do(lastNameField.fillIn(lastName));
+    cy.wait(500);
   },
 
   changeFirstName(firstName) {
@@ -185,6 +187,20 @@ export default {
 
   changeExpirationDate(expirationDate) {
     cy.do(expirationDateField.fillIn(expirationDate));
+  },
+
+  verifyExpirationDateFieldValue(expectedDate) {
+    cy.expect(expirationDateField.has({ value: expectedDate }));
+  },
+
+  verifySetExpirationDatePopup(groupName, offsetDays, expectedDates) {
+    const modal = Modal('Set expiration date?');
+    cy.expect([
+      modal.exists(),
+      modal.find(HTML(including(`Library accounts with patron group ${groupName}`))).exists(),
+      modal.find(HTML(including(`expire in ${offsetDays} days`))).exists(),
+      modal.find(HTML(including(expectedDates))).exists(),
+    ]);
   },
 
   changeExternalSystemId(externalSystemId) {
@@ -302,6 +318,7 @@ export default {
 
   changePatronGroup(patronGroup) {
     cy.do(addressSelect.choose(patronGroup));
+    cy.wait(500);
   },
 
   searchForPermission(permission) {
@@ -1258,5 +1275,9 @@ export default {
         );
       }
     });
+  },
+
+  checkUserCreatePaneOpened() {
+    cy.expect(createUserPane.exists());
   },
 };

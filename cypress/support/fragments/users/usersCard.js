@@ -702,6 +702,7 @@ export default {
   close() {
     this.verifyUserInformationPresence();
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
+    cy.wait(500);
     cy.expect(rootSection.absent());
   },
 
