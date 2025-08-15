@@ -798,7 +798,18 @@ export default {
   },
 
   checkKeyValue(label, value) {
-    cy.expect(KeyValue(label, { value }).exists());
+    // Special handling for Expiration date field to match UI format
+    if (label === 'Expiration date') {
+      const formatDateForUI = (dateString) => {
+        const [month, day, year] = dateString.split('/');
+        return `${parseInt(month, 10)}/${parseInt(day, 10)}/${year}`;
+      };
+
+      const uiFormattedDate = formatDateForUI(value);
+      cy.expect(KeyValue(label, { value: uiFormattedDate }).exists());
+    } else {
+      cy.expect(KeyValue(label, { value }).exists());
+    }
   },
 
   verifyUserDetails(user) {

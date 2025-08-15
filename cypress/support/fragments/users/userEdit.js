@@ -190,6 +190,7 @@ export default {
   },
 
   verifyExpirationDateFieldValue(expectedDate) {
+    cy.wait(500);
     cy.expect(expirationDateField.has({ value: expectedDate }));
   },
 
