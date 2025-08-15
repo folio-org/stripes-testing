@@ -136,7 +136,7 @@ describe(
             TopMenuNavigation.navigateToApp('Inventory');
             InventoryInstances.searchByTitle(item.instanceName);
             InventoryInstances.selectInstance();
-            InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+            InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
 
             TopMenuNavigation.navigateToApp('Inventory');
             InventorySearchAndFilter.switchToItem();
