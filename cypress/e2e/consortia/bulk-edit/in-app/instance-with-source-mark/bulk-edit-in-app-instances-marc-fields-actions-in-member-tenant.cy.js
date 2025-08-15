@@ -88,7 +88,7 @@ const changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
 );
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
