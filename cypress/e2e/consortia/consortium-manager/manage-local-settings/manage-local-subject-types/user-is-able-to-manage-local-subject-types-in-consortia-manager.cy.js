@@ -144,6 +144,7 @@ describe('Consortia', () => {
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
             SubjectTypes.verifySubjectTypeExists({
               name: subjectType.name,
+              source: subjectType.source,
               user: user.lastName,
               actions: ['edit', 'trash'],
             });
@@ -172,6 +173,7 @@ describe('Consortia', () => {
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
             SubjectTypes.verifySubjectTypeExists({
               name: subjectType.editedName,
+              source: subjectType.source,
               user: user.lastName,
               actions: ['edit', 'trash'],
             });

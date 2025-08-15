@@ -1,20 +1,20 @@
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Permissions from '../../../../support/dictionary/permissions';
 import { CALL_NUMBER_TYPE_NAMES } from '../../../../support/constants';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
+import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 import { CallNumberTypes } from '../../../../support/fragments/settings/inventory/instances/callNumberTypes';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
 import users from '../../../../support/fragments/users/users';
-import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
-import inventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory - Call Number Browse: Facet options do not count undiscoverable items', () => {
   let callNumberTypes = null;
@@ -77,8 +77,8 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
       InventoryInstances.getLoanTypes().then((loanTypes) => {
         testData.loanTypeId = loanTypes[0].id;
       });
-      cy.getMaterialTypes().then((materialTypes) => {
-        testData.materialTypeId = materialTypes[0].id;
+      cy.getMaterialTypes().then((materialType) => {
+        testData.materialTypeId = materialType.id;
       });
       [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
@@ -178,7 +178,7 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
   });
 
   it(
-    '"Shared" facet doesn\'t count Instances with "Call number" value on browse pane when "Call number" has not discoverable call number type',
+    'C656327 "Shared" facet doesn\'t count Instances with "Call number" value on browse pane when "Call number" has not discoverable call number type',
     { tags: ['criticalPathECS', 'spitfire', 'C656327'] },
     () => {
       // Step 1: Run a browse using "Library of Congress classification"
@@ -203,7 +203,7 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
         InventorySearchAndFilter.byKeywords(folioInstancesMember[0].instanceTitle);
         InventorySearchAndFilter.byShared('No');
         InventorySearchAndFilter.selectSearchResultItem();
-        inventoryInstance.shareInstance();
+        InventoryInstance.shareInstance();
 
         // Step 5: Create a local Instance with non-LC call number
         cy.withinTenant(memberTenant.affiliation, () => {

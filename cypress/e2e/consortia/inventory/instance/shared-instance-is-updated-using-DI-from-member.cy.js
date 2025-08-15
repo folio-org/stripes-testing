@@ -131,6 +131,7 @@ describe('Inventory', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+            Permissions.consortiaCentralAll.gui,
           ]);
           cy.resetTenant();
 

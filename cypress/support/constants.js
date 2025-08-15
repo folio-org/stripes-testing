@@ -291,6 +291,7 @@ export const LOCATION_NAMES = {
   MAIN_LIBRARY_UI: 'Main Library',
   POPULAR_READING_COLLECTION: 'Popular Reading Collection (KU/CC/DI/P)',
   POPULAR_READING_COLLECTION_UI: 'Popular Reading Collection',
+  DCB_UI: 'DCB',
 };
 
 export const LOCATION_IDS = {

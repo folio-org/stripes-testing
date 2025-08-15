@@ -433,6 +433,7 @@ export default {
   },
 
   verifyAddressOnUserDetailsPane(address) {
+    cy.wait(2000);
     cy.contains('[class^=accordion]', 'Contact information')
       .invoke('attr', 'aria-expanded')
       .then((ariaExpanded) => {

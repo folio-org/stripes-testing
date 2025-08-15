@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'uniformTitle',
           tag630: '630',
           authorityMarkedValue: 'C375069 Marvel comics',
           subjectValue: 'C375069 Marvel comics ComiCon--Periodicals.--United States',
@@ -46,7 +47,7 @@ describe('MARC', () => {
           testData.tag630,
           '0',
           '7',
-          '$a C375069 Marvel comics. $2 fast $0 (OCoLC)fst01373594 $v Periodicals. $z United States $w 830',
+          '$a C375069 Marvel comics. $2 fast $v Periodicals. $z United States $w 830',
         ];
         const bib630UnlinkedFieldValues = [
           22,
@@ -117,6 +118,8 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib630InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag630);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);

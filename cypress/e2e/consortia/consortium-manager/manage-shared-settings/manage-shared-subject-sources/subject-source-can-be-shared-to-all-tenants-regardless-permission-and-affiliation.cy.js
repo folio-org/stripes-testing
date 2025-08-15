@@ -101,7 +101,7 @@ describe('Consortia', () => {
             );
             ConsortiumSubjectSources.clickCancelButton();
             ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
-              'Chronological term',
+              'Medical Subject Headings',
               'duplicate',
             );
             ConsortiumSubjectSources.clickCancelButton();

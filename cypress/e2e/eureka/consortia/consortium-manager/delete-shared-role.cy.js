@@ -13,6 +13,7 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import Capabilities from '../../../../support/dictionary/capabilities';
+import { including } from '../../../../../interactors';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -144,7 +145,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByUsername(assignUserCentral.username);
-        UsersSearchPane.selectUserFromList(assignUserCentral.username);
+        UsersSearchPane.selectUserFromList(including(`${assignUserCentral.username}, `));
         UsersCard.verifyUserRolesCounter('0');
 
         cy.waitForAuthRefresh(() => {
@@ -159,7 +160,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByUsername(assignUserCollege.username);
-        UsersSearchPane.selectUserFromList(assignUserCollege.username);
+        UsersSearchPane.selectUserFromList(including(`${assignUserCollege.username}, `));
         UsersCard.verifyUserRolesCounter('0');
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);

@@ -89,7 +89,7 @@ describe('MARC', () => {
           testData.tag650,
           '\\',
           '7',
-          '$a C380458 Oratory. $2 fast $0 http://id.worldcat.org/fast/fst01047214',
+          '$a C380458 Oratory. $2 fast $t test',
         ];
 
         const createdRecordIDs = [];
@@ -148,7 +148,6 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib650FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag650);
-            MarcAuthorities.switchToBrowse();
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorities.checkSearchOption('subject');
             MarcAuthorities.verifyEmptyAuthorityField();

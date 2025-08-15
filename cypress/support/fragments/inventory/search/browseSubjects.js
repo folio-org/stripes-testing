@@ -81,8 +81,24 @@ function getRowIndexesBySubjectName(subject) {
     .then(() => rowIndexes);
 }
 
+function getRowIndexesBySubjectAndSource(subject, subjectSource) {
+  const rowIndexes = [];
+  return cy
+    .get('#browse-results-list-browseSubjects')
+    .find('[data-row-index]')
+    .each(($row) => {
+      const subjectText = $row.find('[class*="mclCell-"]:nth-child(1)').first().text().trim();
+      const sourceText = $row.find('[class*="mclCell-"]:nth-child(2)').first().text().trim();
+      if (subjectText === subject && sourceText === subjectSource) {
+        rowIndexes.push($row.attr('data-row-index'));
+      }
+    })
+    .then(() => rowIndexes);
+}
+
 export default {
   getColumnsResults,
+  getRowIndexesBySubjectAndSource,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -414,7 +430,7 @@ export default {
 
   verifyDuplicateSubjectsWithDifferentSources: (subject) => {
     cy.wait(2000);
-    getRowIndexesBySubjectName(subject.name).then((rowIndexes) => {
+    getRowIndexesBySubjectAndSource(subject.name, subject.source).then((rowIndexes) => {
       rowIndexes.forEach((index) => {
         cy.expect([
           resultTable

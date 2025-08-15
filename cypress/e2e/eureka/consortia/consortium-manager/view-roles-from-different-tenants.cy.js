@@ -19,10 +19,10 @@ describe('Eureka', () => {
       universityRoleName: `AT_C422010_AuthPolicy_University_${randomPostfix}`,
     };
     const capabSetsToAssignCentral = [
-      CapabilitySets.uiAuthorizationPoliciesSettingsAdmin,
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
     ];
-    const capabSetsToAssignMembers = [CapabilitySets.uiAuthorizationPoliciesSettingsAdmin];
+    const capabSetsToAssignMembers = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
     let userData;
 
     before('Create users data', () => {

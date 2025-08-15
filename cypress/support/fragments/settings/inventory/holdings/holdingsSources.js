@@ -3,13 +3,29 @@ import {
   including,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListHeader,
 } from '../../../../../../interactors';
+import SettingsPane from '../../settingsPane';
+
+const settingsOption = 'Holdings sources';
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
 export default {
+  getHoldingsSourcesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'holdings-sources',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.holdingsRecordsSources;
+      });
+  },
   createViaApi: (body) => {
     return cy
       .okapiRequest({
@@ -26,7 +42,17 @@ export default {
     method: 'DELETE',
     path: `holdings-sources/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(MultiColumnListHeader(header).exists());
+    });
+  },
+  open() {
+    SettingsPane.selectSettingsTab(settingsOption);
+    this.waitLoading();
+  },
   verifyConsortiumHoldingsSourcesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
@@ -49,7 +75,7 @@ export default {
   },
 
   verifyLocalHoldingsSourcesInTheList({ name, source = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),

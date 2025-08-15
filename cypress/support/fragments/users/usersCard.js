@@ -751,6 +751,10 @@ export default {
     cy.expect(rootSection.find(KeyValue('Pronouns')).has({ value: `${pronouns}` }));
   },
 
+  verifyPronounsWrappedVisible(text) {
+    cy.expect(rootSection.find(HTML(including(text))).exists());
+  },
+
   verifyPronounsFieldEmpty() {
     cy.expect(rootSection.find(KeyValue('Pronouns')).has({ value: '' }));
   },

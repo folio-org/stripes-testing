@@ -159,7 +159,8 @@ export default {
 
   selectAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-0' }))
         .choose(actionName),
     );
@@ -234,7 +235,12 @@ export default {
   },
 
   deleteRow(rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
+    cy.do(
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(deleteBtn)
+        .click(),
+    );
   },
 
   deleteRowInBulkEditMarcInstancesAccordion(rowIndex = 0) {
@@ -365,6 +371,10 @@ export default {
 
   closeAreYouSureForm() {
     cy.do(closeAreYouSureModalButton.click());
+  },
+
+  clickEscButton() {
+    cy.do(Keyboard.escape());
   },
 
   openActions() {
@@ -1870,6 +1880,27 @@ export default {
     this.fillInSubfield(subfield, rowIndex);
   },
 
+  verifyTagAndIndicatorsAndSubfieldValues(tag, ind1, ind2, subfield, rowIndex = 0) {
+    cy.expect([
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(tagField)
+        .has({ value: tag }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind1Field)
+        .has({ value: ind1 }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind2Field)
+        .has({ value: ind2 }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ value: subfield }),
+    ]);
+  },
+
   fillInSecondSubfield(value, rowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
@@ -2052,7 +2083,7 @@ export default {
           cy.wrap(rowEl)
             .find('[class*="subRow-"]')
             .eq(subRowIndex)
-            .find('select[name="action"]')
+            .find('select[name="name"]')
             .eq(1)
             .select(action);
         }),
@@ -2193,6 +2224,30 @@ export default {
             .find('button[icon="info"]')
             .should('not.exist');
         }),
+    );
+  },
+
+  verifyPaneRecordsCountInEditForm(value) {
+    cy.expect(bulkEditPane.find(Pane({ subtitle: `${value} records matched` })).exists());
+  },
+
+  verifyPatronGroupsAlphabeticalOrder() {
+    cy.wait(2000);
+    cy.do(
+      bulkPageSelections.patronGroup.perform((element) => {
+        const options = [...element.querySelectorAll('option')]
+          .map((option) => option.textContent)
+          .filter((text) => text && text !== 'Select patron group');
+
+        // Verify that options array is not empty
+        expect(options.length).to.be.greaterThan(0);
+
+        const sortedOptions = [...options].sort((a, b) => {
+          return a.localeCompare(b);
+        });
+
+        expect(options).to.deep.equal(sortedOptions);
+      }),
     );
   },
 };

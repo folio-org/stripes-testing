@@ -44,6 +44,10 @@ const marcInstance = {
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
+const userPermissions = [
+  permissions.bulkEditEdit.gui,
+  permissions.uiInventoryViewCreateEditHoldings.gui,
+];
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -51,97 +55,97 @@ describe('Bulk-edit', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
         cy.getAdminToken();
-        cy.withinTenant(Affiliations.College, () => {
-          cy.createTempUser([
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]).then((userProperties) => {
-            user = userProperties;
 
-            cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-              instanceTypeId = instanceTypeData[0].id;
-            });
-            cy.getLocations({ limit: 1 }).then((res) => {
-              collegeLocation = res;
-            });
-            InventoryHoldings.getHoldingsFolioSource()
-              .then((folioSource) => {
-                holdingSource = folioSource.id;
-              })
-              .then(() => {
-                // create folio instance
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstance.title,
-                  },
-                }).then((createdInstanceData) => {
-                  folioInstance.id = createdInstanceData.instanceId;
-                });
-              })
-              .then(() => {
-                // create marc instance
-                cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                  marcInstance.id = instanceId;
-                });
-              })
-              .then(() => {
-                // create holdings for both instances
-                instances.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: instance.id,
-                    permanentLocationId: collegeLocation.id,
-                    sourceId: holdingSource,
-                    discoverySuppress: false,
-                  }).then((holding) => {
-                    instance.holdingId = holding.id;
-                    cy.getHoldings({
-                      limit: 1,
-                      query: `"instanceId"="${instance.id}"`,
-                    }).then((holdings) => {
-                      instance.holdingHrid = holdings[0].hrid;
-                    });
-                  });
-                  cy.wait(1000);
-                });
-              })
-              .then(() => {
-                // create items for both holdings
-                cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                  collegeMaterialTypeId = res.id;
-                });
-                cy.getLoanTypes({ limit: 1 }).then((res) => {
-                  collegeLoanTypeId = res[0].id;
-                });
-              })
-              .then(() => {
-                instances.forEach((instance) => {
-                  InventoryItems.createItemViaApi({
-                    barcode: instance.itemBarcode,
-                    holdingsRecordId: instance.holdingId,
-                    materialType: { id: collegeMaterialTypeId },
-                    permanentLoanType: { id: collegeLoanTypeId },
-                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    discoverySuppress: false,
-                  }).then((item) => {
-                    instance.itemId = item.id;
-                  });
-                  cy.wait(1000);
-                });
-              })
-              .then(() => {
-                FileManager.createFile(
-                  `cypress/fixtures/${holdingUUIDsFileName}`,
-                  `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
-                );
-              });
-            cy.resetTenant();
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        cy.createTempUser(userPermissions).then((userProperties) => {
+          user = userProperties;
+
+          cy.assignAffiliationToUser(Affiliations.College, user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(user.userId, userPermissions);
+
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+            instanceTypeId = instanceTypeData[0].id;
           });
+          cy.getLocations({ limit: 1 }).then((res) => {
+            collegeLocation = res;
+          });
+          InventoryHoldings.getHoldingsFolioSource()
+            .then((folioSource) => {
+              holdingSource = folioSource.id;
+            })
+            .then(() => {
+              // create folio instance
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId,
+                  title: folioInstance.title,
+                },
+              }).then((createdInstanceData) => {
+                folioInstance.id = createdInstanceData.instanceId;
+              });
+            })
+            .then(() => {
+              // create marc instance
+              cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                marcInstance.id = instanceId;
+              });
+            })
+            .then(() => {
+              // create holdings for both instances
+              instances.forEach((instance) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instance.id,
+                  permanentLocationId: collegeLocation.id,
+                  sourceId: holdingSource,
+                  discoverySuppress: false,
+                }).then((holding) => {
+                  instance.holdingId = holding.id;
+                  cy.getHoldings({
+                    limit: 1,
+                    query: `"instanceId"="${instance.id}"`,
+                  }).then((holdings) => {
+                    instance.holdingHrid = holdings[0].hrid;
+                  });
+                });
+                cy.wait(1000);
+              });
+            })
+            .then(() => {
+              // create items for both holdings
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                collegeMaterialTypeId = res.id;
+              });
+              cy.getLoanTypes({ limit: 1 }).then((res) => {
+                collegeLoanTypeId = res[0].id;
+              });
+            })
+            .then(() => {
+              instances.forEach((instance) => {
+                InventoryItems.createItemViaApi({
+                  barcode: instance.itemBarcode,
+                  holdingsRecordId: instance.holdingId,
+                  materialType: { id: collegeMaterialTypeId },
+                  permanentLoanType: { id: collegeLoanTypeId },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                  discoverySuppress: false,
+                }).then((item) => {
+                  instance.itemId = item.id;
+                });
+                cy.wait(1000);
+              });
+            })
+            .then(() => {
+              FileManager.createFile(
+                `cypress/fixtures/${holdingUUIDsFileName}`,
+                `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
+              );
+            });
+          cy.resetTenant();
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         });
       });
 
@@ -211,8 +215,8 @@ describe('Bulk-edit', () => {
 
           // Step 7-8: Select action
           BulkEditActions.verifyTheActionOptions(Object.values(actions));
-          BulkEditActions.selectSecondAction(actions.setTrue);
-          BulkEditActions.verifySecondActionSelected(actions.setTrue);
+          BulkEditActions.selectAction(actions.setTrue);
+          BulkEditActions.verifyActionSelected(actions.setTrue);
           BulkEditActions.applyToItemsRecordsCheckboxExists(true);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
@@ -316,8 +320,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption(suppressFromDiscovery);
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
-          BulkEditActions.selectSecondAction(actions.setFalse);
-          BulkEditActions.verifySecondActionSelected(actions.setFalse);
+          BulkEditActions.selectAction(actions.setFalse);
+          BulkEditActions.verifyActionSelected(actions.setFalse);
           BulkEditActions.applyToItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
