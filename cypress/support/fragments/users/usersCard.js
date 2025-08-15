@@ -702,6 +702,7 @@ export default {
   close() {
     this.verifyUserInformationPresence();
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
+    cy.wait(500);
     cy.expect(rootSection.absent());
   },
 
@@ -797,7 +798,17 @@ export default {
   },
 
   checkKeyValue(label, value) {
-    cy.expect(KeyValue(label, { value }).exists());
+    if (label === 'Expiration date') {
+      const formatDateForUI = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return `${day}/${month}/${year}`;
+      };
+
+      const uiFormattedDate = formatDateForUI(value);
+      cy.expect(KeyValue(label, { value: uiFormattedDate }).exists());
+    } else {
+      cy.expect(KeyValue(label, { value }).exists());
+    }
   },
 
   verifyUserDetails(user) {
@@ -864,5 +875,9 @@ export default {
         .find(HTML(including(`Source: ${userName}`)))
         .exists(),
     );
+  },
+
+  verifyUserDetailsPaneOpen() {
+    cy.expect(rootSection.exists());
   },
 };
