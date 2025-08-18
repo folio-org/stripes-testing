@@ -151,7 +151,8 @@ describe('eHoldings', () => {
           EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
           EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
           EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
-          EHoldingsPackage.verifyTitleFound('Advances in Civil Engineering');
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.subjectOption);
+          EHoldingsPackage.verifyTitleFound('Advanced Energy and Sustainability Research');
           EHoldingsPackageView.selectTitleRecord();
           EHoldingsTitle.verifySubjectIncludesValue('Engineering');
         });
