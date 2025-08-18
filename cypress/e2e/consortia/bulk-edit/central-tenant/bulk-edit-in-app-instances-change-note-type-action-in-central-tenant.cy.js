@@ -68,7 +68,7 @@ const errorReasonAdminNotes =
   'Change note type for administrative notes is not supported for MARC Instances.';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.getAdminToken();

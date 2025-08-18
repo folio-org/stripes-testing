@@ -25,7 +25,7 @@ const instances = [...Array(3)].map(() => ({
 }));
 
 describe('Bulk-edit', () => {
-  describe('Query', () => {
+  describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.getAdminToken();

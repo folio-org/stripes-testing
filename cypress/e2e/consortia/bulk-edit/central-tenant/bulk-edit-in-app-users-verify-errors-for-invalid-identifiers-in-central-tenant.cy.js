@@ -42,7 +42,7 @@ const errorsFromMatchingFileNameWithNames = BulkEditFiles.getErrorsFromMatchingF
 );
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.getAdminToken();

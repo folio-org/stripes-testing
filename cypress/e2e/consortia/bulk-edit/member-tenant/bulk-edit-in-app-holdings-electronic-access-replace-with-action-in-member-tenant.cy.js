@@ -58,7 +58,7 @@ const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Member tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();

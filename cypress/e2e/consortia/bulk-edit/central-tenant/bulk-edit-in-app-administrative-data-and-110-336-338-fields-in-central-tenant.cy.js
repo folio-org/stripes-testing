@@ -66,7 +66,7 @@ const warningAdminData = 'No change in administrative data required';
 const warningMarcFields = 'No change in MARC fields required';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();

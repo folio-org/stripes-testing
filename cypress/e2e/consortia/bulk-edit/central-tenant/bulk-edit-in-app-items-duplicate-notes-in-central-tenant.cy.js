@@ -49,7 +49,7 @@ const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();

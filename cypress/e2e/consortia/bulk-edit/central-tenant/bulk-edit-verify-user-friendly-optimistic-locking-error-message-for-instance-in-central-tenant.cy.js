@@ -28,7 +28,7 @@ const errorMessage =
   'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();

@@ -50,7 +50,7 @@ const warningReason =
   'No change in value for holdings record required, associated suppressed item(s) have been updated.';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Member tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();

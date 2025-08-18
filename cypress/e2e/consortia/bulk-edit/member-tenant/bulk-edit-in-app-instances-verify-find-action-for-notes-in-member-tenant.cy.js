@@ -54,7 +54,7 @@ const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName,
 const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Member tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.getAdminToken();

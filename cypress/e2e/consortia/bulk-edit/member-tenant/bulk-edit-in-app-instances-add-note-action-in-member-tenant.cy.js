@@ -46,7 +46,7 @@ const instances = [folioInstance, marcInstance];
 const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Member tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();

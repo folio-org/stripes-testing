@@ -64,7 +64,7 @@ const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileNa
 );
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Member tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
