@@ -13,11 +13,11 @@ describe('Users', () => {
   const testData = {
     user: {},
     selectedExpirationDate: '',
-    westernTimezone: 'Pacific/Midway',
+    westernTimezone: 'Pacific/Nauru',
     easternTimezone: 'Pacific/Auckland',
   };
 
-  before('Preconditions: user and test user', () => {
+  before('Preconditions: create user', () => {
     cy.getAdminToken().then(() => {
       cy.createTempUser([
         Permissions.uiUserEdit.gui,
