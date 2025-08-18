@@ -204,7 +204,7 @@ describe('Inventory', () => {
 
     it(
       'C594363 Verify that "Call number" browse is case-insensitive when call numbers are in Upper case (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C594363'] },
+      { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C594363'] },
       () => {
         // Wait for all call numbers to appear in browse
         callNumbers.forEach((callNumber) => {
