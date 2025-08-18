@@ -37,22 +37,13 @@ describe('Organizations', () => {
   });
 
   it('C729 Delete a contact person (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    // Step 1: Open organization details pane and edit
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
-
-    // Step 2: Expand "Contact people" accordion
     Organizations.openContactPeopleSection();
-
-    // Step 3: Remove contact
     Organizations.deleteContactFromContactPeople();
-
-    // Step 4: Save changes
     Organizations.saveOrganization();
     Organizations.varifySaveOrganizationCalloutMessage(organization);
-
-    // Verify contact is removed
     Organizations.openContactPeopleSection();
     Organizations.checkContactSectionIsEmpty();
   });
