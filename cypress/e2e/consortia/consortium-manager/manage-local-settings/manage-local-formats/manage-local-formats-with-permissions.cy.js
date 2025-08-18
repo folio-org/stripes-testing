@@ -1,20 +1,20 @@
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Permissions from '../../../../support/dictionary/permissions';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
-} from '../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
-} from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import ConfirmCreate from '../../../../support/fragments/consortium-manager/modal/confirm-create';
-import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
-import FormatsConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/instances/formatsConsortiumManager';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
+} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConfirmCreate from '../../../../../support/fragments/consortium-manager/modal/confirm-create';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import FormatsConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/formatsConsortiumManager';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 const testData = {
   newFormat: {

@@ -430,6 +430,7 @@ export default {
       Dropdown('Actions').find(Button()).click(),
       Button({ id: 'clickable-newuser' }).click(),
     ]);
+    cy.wait(500);
   },
 
   verifyAddressOnUserDetailsPane(address) {
