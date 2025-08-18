@@ -34,6 +34,7 @@ import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
+const closeEditPaneButton = Button({ icon: 'times' });
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
@@ -124,6 +125,7 @@ const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
+const createUserPane = Pane('Create User');
 
 let totalRows;
 
@@ -168,6 +170,7 @@ export default {
   },
   changeLastName(lastName) {
     cy.do(lastNameField.fillIn(lastName));
+    cy.wait(500);
   },
 
   changeFirstName(firstName) {
@@ -184,6 +187,21 @@ export default {
 
   changeExpirationDate(expirationDate) {
     cy.do(expirationDateField.fillIn(expirationDate));
+  },
+
+  verifyExpirationDateFieldValue(expectedDate) {
+    cy.wait(500);
+    cy.expect(expirationDateField.has({ value: expectedDate }));
+  },
+
+  verifySetExpirationDatePopup(groupName, offsetDays, expectedDates) {
+    const modal = Modal('Set expiration date?');
+    cy.expect([
+      modal.exists(),
+      modal.find(HTML(including(`Library accounts with patron group ${groupName}`))).exists(),
+      modal.find(HTML(including(`expire in ${offsetDays} days`))).exists(),
+      modal.find(HTML(including(expectedDates))).exists(),
+    ]);
   },
 
   changeExternalSystemId(externalSystemId) {
@@ -241,6 +259,26 @@ export default {
     cy.wait(500);
   },
 
+  checkPronounsError(isPresent = true, message = 'Pronouns are limited to 300 characters') {
+    if (isPresent) {
+      cy.expect(pronounsField.has({ error: message, errorTextRed: true }));
+    } else {
+      cy.expect(pronounsField.has({ error: undefined }));
+    }
+  },
+
+  verifyPronounsNoError() {
+    this.checkPronounsError(false);
+  },
+
+  verifyPronounsError(message = 'Pronouns are limited to 300 characters') {
+    this.checkPronounsError(true, message);
+  },
+
+  verifyPronounsTextVisibleInEdit(text) {
+    cy.expect(userEditPane.find(HTML(including(text))).exists());
+  },
+
   verifySaveButtonActive() {
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
   },
@@ -281,6 +319,7 @@ export default {
 
   changePatronGroup(patronGroup) {
     cy.do(addressSelect.choose(patronGroup));
+    cy.wait(500);
   },
 
   searchForPermission(permission) {
@@ -567,7 +606,7 @@ export default {
     cy.expect(rootPane.absent());
   },
 
-  saveAndCloseWithConfirmation() {
+  saveAndCloseWithoutConfirmation() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
@@ -742,7 +781,14 @@ export default {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
-    cy.expect(userEditPane.exists());
+  },
+
+  closeEditPaneIfExists() {
+    cy.get('body').then(($body) => {
+      if ($body.find('section[class*="pane"]').length > 0) {
+        cy.do(closeEditPaneButton.click());
+      }
+    });
   },
 
   editUsername(username) {
@@ -1141,6 +1187,7 @@ export default {
   fillLastFirstNames(lastName, firstName) {
     cy.do(lastNameField.fillIn(lastName));
     if (firstName) cy.do(firstNameField.fillIn(firstName));
+    cy.wait(1000);
   },
 
   fillEmailAddress(email) {
@@ -1219,12 +1266,19 @@ export default {
     cy.do(setExpirationDateButton.click());
   },
 
-  closeKeycloakModal() {
-    cy.expect(Modal('Keycloak user record').exists());
-    cy.do(
-      Modal('Keycloak user record')
-        .find(Button({ id: 'clickable-JIT-user-cancel' }))
-        .click(),
-    );
+  closeKeycloakModalIfExists() {
+    cy.get('body').then(($body) => {
+      if ($body.find('[aria-label="Keycloak user record"]').length > 0) {
+        cy.do(
+          Modal('Keycloak user record')
+            .find(Button({ id: 'clickable-JIT-user-cancel' }))
+            .click(),
+        );
+      }
+    });
+  },
+
+  checkUserCreatePaneOpened() {
+    cy.expect(createUserPane.exists());
   },
 };

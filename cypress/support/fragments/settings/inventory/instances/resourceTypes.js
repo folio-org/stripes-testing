@@ -5,7 +5,10 @@ import {
   MultiColumnListCell,
   NavListItem,
   Pane,
+  MultiColumnListHeader,
 } from '../../../../../../interactors';
+
+const rootPane = Pane('Resource types');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -28,9 +31,26 @@ export default {
     method: 'DELETE',
     path: `instance-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
+  getViaApi: (searchParams = { limit: 1 }) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'instance-types',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.instanceTypes;
+      });
+  },
+  waitLoading() {
+    ['Name', 'Code', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
   verifyConsortiumResourceTypesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -51,7 +71,7 @@ export default {
   },
 
   verifyLocalResourceTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -86,6 +106,7 @@ export default {
     ]);
   },
   choose() {
-    cy.do([NavListItem('Resource types').click(), Pane('Resource types').exists()]);
+    cy.do(NavListItem('Resource types').click());
+    this.waitLoading();
   },
 };

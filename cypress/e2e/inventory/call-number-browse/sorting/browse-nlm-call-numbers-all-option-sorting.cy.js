@@ -430,7 +430,7 @@ describe('Inventory', () => {
 
       it(
         'C477536 NLM call numbers are sorted alphabetically using "Call numbers (all)" browse option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C477536'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C477536'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

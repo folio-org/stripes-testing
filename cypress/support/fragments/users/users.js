@@ -430,9 +430,11 @@ export default {
       Dropdown('Actions').find(Button()).click(),
       Button({ id: 'clickable-newuser' }).click(),
     ]);
+    cy.wait(500);
   },
 
   verifyAddressOnUserDetailsPane(address) {
+    cy.wait(2000);
     cy.contains('[class^=accordion]', 'Contact information')
       .invoke('attr', 'aria-expanded')
       .then((ariaExpanded) => {

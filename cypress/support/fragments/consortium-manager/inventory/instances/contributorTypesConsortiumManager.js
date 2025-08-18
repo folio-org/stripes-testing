@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader, Spinner } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
@@ -77,7 +77,9 @@ export default {
   },
 
   choose() {
+    cy.expect(Spinner().absent());
     ConsortiumManagerApp.chooseSecondMenuItem('Contributor types');
+    this.waitLoading();
     ['Name', 'Code', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

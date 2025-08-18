@@ -207,7 +207,7 @@ describe('Inventory', () => {
 
       it(
         'C477558 Dewey call numbers are sorted alphabetically using "Call numbers (all)" browse option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C477558'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C477558'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

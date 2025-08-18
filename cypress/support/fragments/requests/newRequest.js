@@ -111,6 +111,7 @@ export default {
     cy.wait('@getUsers');
     cy.wait(1000);
     cy.do(selectRequestType.choose(newRequest.requestType));
+    cy.wait(1000);
   },
 
   choosePickupServicePoint(pickupServicePoint) {
