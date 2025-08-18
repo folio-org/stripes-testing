@@ -95,8 +95,13 @@ describe('Inventory', () => {
       "C651502 Create, Update, Delete Item's call number and verify browse result list (spitfire)",
       { tags: ['criticalPath', 'spitfire', 'C651502'] },
       () => {
-        cy.login(testData.user.username, testData.user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.searchByTitle(instanceId);
         InventoryInstances.selectInstanceById(instanceId);
         InventoryInstance.waitLoading();

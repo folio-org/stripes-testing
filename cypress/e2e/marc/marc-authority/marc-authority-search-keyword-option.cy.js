@@ -220,7 +220,7 @@ describe('MARC', () => {
 
     it(
       'C409439 Search for "MARC authority" records using "Keyword" search option (spitfire)',
-      { tags: ['extendedPath', 'C409439', 'spitfire'] },
+      { tags: ['criticalPath', 'C409439', 'spitfire'] },
       () => {
         MarcAuthorities.selectSearchOptionInDropdown(searchOption);
         MarcAuthoritiesSearch.verifySelectedSearchOption(searchOption);
