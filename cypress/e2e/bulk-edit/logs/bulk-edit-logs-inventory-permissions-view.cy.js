@@ -39,7 +39,7 @@ describe('Bulk-edit', () => {
           folioInstance.title,
           folioInstance.barcode,
         );
-
+        cy.wait(3000);
         cy.getInstance({
           limit: 1,
           expandAll: true,
