@@ -1697,4 +1697,18 @@ export default {
       cy.expect(areYouSureForm.find(MultiColumnListCell(content)).absent());
     });
   },
+
+  clickViewLatestVersionInErrorsAccordionByIdentifier(identifier) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.do(
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason' }))
+          .perform((el) => {
+            el.querySelector('a[target="_blank"]').removeAttribute('target');
+            el.querySelector('a').click();
+          }),
+      );
+    });
+  },
 };
