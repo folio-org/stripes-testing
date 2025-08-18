@@ -181,7 +181,15 @@ describe('Inventory', () => {
     it(
       'C451466 C451468 C451469 C451470 Call number of not valid format and with selected call number type can be found via browse (spitfire)',
       {
-        tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451468', 'C451466', 'C451469', 'C451470'],
+        tags: [
+          'criticalPathFlaky',
+          'spitfire',
+          'nonParallel',
+          'C451468',
+          'C451466',
+          'C451469',
+          'C451470',
+        ],
       },
       () => {
         folioInstances.forEach((instance) => {

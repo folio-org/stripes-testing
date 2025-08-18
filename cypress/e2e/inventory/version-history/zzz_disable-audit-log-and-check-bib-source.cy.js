@@ -61,22 +61,20 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistorySourceCardsData.forEach((cardData, index) => {
-                if (index) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistorySourceCardsData.forEach((cardData, index) => {
+              if (index) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
@@ -129,7 +127,7 @@ describe('Inventory', () => {
 
       it(
         'C655297 Check "Version history" pane after CRUD multiple repeatable fields and subfields in "MARC bibliographic" record via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C655297'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C655297'] },
         () => {
           InventoryInstance.viewSource();
           InventoryViewSource.verifyVersionHistoryButtonShown();
