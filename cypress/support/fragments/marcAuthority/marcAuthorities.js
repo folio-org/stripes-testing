@@ -136,7 +136,7 @@ const valid008FieldValues = {
   Lang: '\\',
   'Level Est': 'a',
   'Main use': 'a',
-  'Mod Rec Est': '\\',
+  'Mod Rec': '\\',
   'Numb Series': 'n',
   'Pers Name': 'a',
   RecUpd: 'a',

@@ -1597,10 +1597,7 @@ export default {
       'ui-quick-marc.record.fixedField-Level Est-text',
       'Level of establishment',
     );
-    this.verifyDropdownHoverText(
-      'ui-quick-marc.record.fixedField-Mod Rec Est-text',
-      'Modified record',
-    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Mod Rec-text', 'Modified record');
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-Source-text',
       'Cataloging source',
