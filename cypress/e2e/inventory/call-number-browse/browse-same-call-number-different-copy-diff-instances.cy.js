@@ -118,7 +118,7 @@ describe('Inventory', () => {
 
     it(
       'C651492 Browse for same call numbers with different copy numbers (enumeration data) which belongs to different instances (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C651492'] },
+      { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C651492'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

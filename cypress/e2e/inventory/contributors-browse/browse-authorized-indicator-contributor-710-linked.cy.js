@@ -78,10 +78,14 @@ describe('Inventory', () => {
         QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventorySearchAndFilter.switchToBrowseTab();
       });
     });
@@ -109,12 +113,8 @@ describe('Inventory', () => {
         BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authorityHeading);
 
         // Step 4: Click at "MARC authority" icon next to contributor value
-        cy.waitForAuthRefresh(() => {
-          BrowseSubjects.clickOnAuthorityIcon(authorityHeading);
-          MarcAuthority.waitLoading();
-          cy.reload();
-          MarcAuthority.waitLoading();
-        }, 20_000);
+        BrowseSubjects.clickOnAuthorityIcon(authorityHeading);
+        MarcAuthority.waitLoading();
 
         // Step 4a: Verify authority record detail view is opened and 110 field is highlighted
         MarcAuthority.verifyHeader(authorityHeading);

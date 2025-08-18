@@ -149,7 +149,7 @@ describe('Inventory', () => {
 
     it(
       'C468179 Browse for classifications of Instance which has each classification type using "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468179'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C468179'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {
