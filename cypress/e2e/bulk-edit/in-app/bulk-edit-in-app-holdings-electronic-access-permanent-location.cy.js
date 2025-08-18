@@ -197,7 +197,7 @@ describe('Bulk-edit', () => {
         );
 
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID, secondItem.holdingsHRID);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, LOCATION_NAMES.MAIN_LIBRARY_UI);

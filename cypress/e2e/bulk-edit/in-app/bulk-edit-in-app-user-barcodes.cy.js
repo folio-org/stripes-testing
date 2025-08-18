@@ -47,7 +47,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
       },
     );
@@ -61,7 +61,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const newEmailDomain = 'google.com';
         BulkEditActions.replaceEmail('folio.org', newEmailDomain);
         BulkEditActions.confirmChanges();
@@ -84,7 +84,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const newEmailDomain = 'google.com';
         BulkEditActions.replaceEmail('folio123.org', newEmailDomain);
         BulkEditActions.confirmChanges();

@@ -106,7 +106,7 @@ describe('Bulk-edit', () => {
         const tempLocation = 'Annex';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -131,7 +131,7 @@ describe('Bulk-edit', () => {
 
         const location = 'Annex';
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replacePermanentLocation(location, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

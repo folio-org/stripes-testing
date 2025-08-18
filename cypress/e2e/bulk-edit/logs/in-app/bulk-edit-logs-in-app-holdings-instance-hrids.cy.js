@@ -128,7 +128,7 @@ describe(
             BulkEditSearchPane.waitFileUploading();
             BulkEditActions.downloadMatchedResults();
             BulkEditActions.downloadErrors();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.clearTemporaryLocation('holdings', 0);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.replacePermanentLocation(

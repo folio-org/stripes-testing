@@ -134,7 +134,7 @@ describe('Bulk-edit', () => {
           'Check out note',
           'Action note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.noteRemoveAll('Administrative note');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteRemoveAll('Check in note', 1);

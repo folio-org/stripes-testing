@@ -60,7 +60,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.verifyUserBarcodesResultAccordion();
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
       },
     );
@@ -73,7 +73,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -94,7 +94,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
 
         BulkEditActions.confirmChanges();
@@ -118,7 +118,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(todayDate);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -140,7 +140,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyCalendarItem();
       },
     );
@@ -156,7 +156,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyCheckedDropdownMenuItem();
         BulkEditActions.verifyUncheckedDropdownMenuItem();
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, user.username);

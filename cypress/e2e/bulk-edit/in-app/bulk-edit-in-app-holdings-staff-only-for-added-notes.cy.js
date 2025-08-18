@@ -131,7 +131,7 @@ describe('Bulk-edit', () => {
           electronicAccess[0].materialsSpecification,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.addItemNote('Administrative note', notes.admin);
         BulkEditActions.verifyCheckboxAbsent();
         BulkEditActions.verifyConfirmButtonDisabled(false);

@@ -84,7 +84,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.itemId]);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
 
         const location = 'Annex';
@@ -99,7 +99,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.fillPermanentLoanType('Selected');
         BulkEditActions.verifyConfirmButtonDisabled(false);
@@ -115,7 +115,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.itemId);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.replacePermanentLocation(location);
 

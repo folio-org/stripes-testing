@@ -100,7 +100,7 @@ describe(
             const newLocation = 'Main Library';
             BulkEditActions.openActions();
             BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.replacePermanentLocation(newLocation, 'holdings', 1);

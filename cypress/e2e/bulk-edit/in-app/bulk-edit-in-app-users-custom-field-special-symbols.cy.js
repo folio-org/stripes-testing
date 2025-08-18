@@ -83,7 +83,7 @@ describe('Bulk-edit', () => {
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();

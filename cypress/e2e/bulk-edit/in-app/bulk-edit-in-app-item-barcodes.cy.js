@@ -82,7 +82,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation('Annex');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -101,7 +101,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.fillPermanentLoanType('Selected');
         BulkEditActions.verifyModifyLandingPageAfterModifying();
@@ -133,7 +133,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillTemporaryLoanType('Selected');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -163,7 +163,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.clearTemporaryLoanType();
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -194,7 +194,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPermanentLoanType();
         BulkEditActions.replaceWithIsDisabled();
       },
@@ -208,7 +208,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.clickOptionsSelection();
 
         const possibleActions = [

@@ -41,7 +41,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const oldEmailDomain = 'folio.org';
         const newEmailDomain = 'google.com';
         BulkEditActions.replaceEmail(oldEmailDomain, newEmailDomain);
