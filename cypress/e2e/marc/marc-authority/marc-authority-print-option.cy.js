@@ -23,6 +23,7 @@ describe('MARC', () => {
           propertyName: 'authority',
         },
       ],
+      expectedActions: ['Edit', 'Export (MARC)', 'Print', 'Delete'],
     };
     const createdAuthorityIDs = [];
 
@@ -67,7 +68,7 @@ describe('MARC', () => {
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
         MarcAuthorities.selectFirstRecord();
-        MarcAuthority.checkActionDropdownContent();
+        MarcAuthority.checkActionDropdownContent(testData.expectedActions);
       },
     );
   });
