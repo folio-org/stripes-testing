@@ -218,6 +218,11 @@ export default {
     cy.do(Checkbox('Pending').click());
   },
 
+  selectInactiveStatus: () => {
+    cy.wait(3000);
+    cy.do(Checkbox('Inactive').click());
+  },
+
   selectIsDonorFilter: (isDonor) => {
     if (isDonor === 'Yes') {
       cy.wait(3000);
@@ -570,6 +575,15 @@ export default {
     })
     .then((resp) => resp.body),
 
+  createContactViaApi: (contact) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/contacts',
+      body: contact,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -662,6 +676,10 @@ export default {
 
   deleteContact: () => {
     cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
+  },
+
+  deleteContactFromContactPeople: () => {
+    cy.get('button[data-test-unassign-contact="true"][aria-label="Unassign"]').click();
   },
 
   selectCategories: (category) => {
@@ -799,6 +817,13 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${contact.lastName}, ${contact.firstName}` }),
+    );
+  },
+
+  checkContactSectionIsEmpty: () => {
+    cy.get('#contactPeopleSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'The list contains no items',
     );
   },
 
