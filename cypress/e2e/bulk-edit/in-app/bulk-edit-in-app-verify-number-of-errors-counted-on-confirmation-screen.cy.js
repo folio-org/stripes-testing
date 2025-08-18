@@ -213,9 +213,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
 
         // Step 11: Reload page (F5)
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-        });
+        cy.reload();
         BulkEditSearchPane.waitLoading();
 
         BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);

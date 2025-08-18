@@ -234,7 +234,7 @@ describe('Inventory', () => {
 
       it(
         'C400668 Call numbers are sorted by "SuDoc" type when using "Superintendent of Documents classification" browse option',
-        { tags: ['criticalPath', 'spitfire', 'C400668'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C400668'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

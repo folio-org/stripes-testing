@@ -1,7 +1,15 @@
 import { including } from '@interactors/html';
-import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import {
+  Button,
+  EditableListRow,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  Pane,
+} from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
+
+const rootPane = Pane('Subject types');
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -57,6 +65,26 @@ export default {
       method: REQUEST_METHOD.DELETE,
       path: `subject-types/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
+  },
+
+  getSubjectTypesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'subject-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.subjectTypes;
+      });
+  },
+
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
     });
   },
 

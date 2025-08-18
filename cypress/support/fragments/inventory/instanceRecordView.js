@@ -67,7 +67,9 @@ const verifyIndexTitle = (value) => {
   cy.expect(KeyValue('Index title').has({ value }));
 };
 
-const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: including(sourceValue) }));
+const verifyInstanceSource = (sourceValue) => {
+  cy.expect(sourceKeyValue.has({ value: including(sourceValue) }));
+};
 
 const verifyInstanceStatusCode = (value) => {
   cy.expect(KeyValue('Instance status code').has({ value }));
@@ -83,32 +85,6 @@ const verifyCatalogedDate = (value) => {
 
 const verifyInstanceStatusTerm = (value) => {
   cy.expect(instanceStatusTermKeyValue.has({ value }));
-};
-
-const verifyMarkAsSuppressed = () => {
-  cy.expect(
-    rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).exists(),
-  );
-};
-
-const verifyMarkAsSuppressedFromDiscovery = () => {
-  cy.expect(
-    rootSection
-      .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
-      .exists(),
-  );
-};
-
-const verifyMarkAsSuppressedFromDiscoveryAndSuppressed = () => {
-  cy.expect(
-    rootSection
-      .find(
-        HTML(
-          including('Warning: Instance is marked suppressed from discovery and staff suppressed'),
-        ),
-      )
-      .exists(),
-  );
 };
 
 const verifyGeneralNoteContent = (content) => {
@@ -210,6 +186,9 @@ const getMultiColumnListCellsValues = (cell) => {
     })
     .then(() => cells);
 };
+const clickActionsButton = () => {
+  cy.do(rootSection.find(actionsButton).click());
+};
 
 export const actionsMenuOptions = {
   addMarcHoldingsRecord: 'Add MARC holdings record',
@@ -227,6 +206,7 @@ export const actionsMenuOptions = {
 
 export default {
   waitLoading,
+  clickActionsButton,
   getMultiColumnListCellsValues,
   verifyResourceTitle,
   verifyIndexTitle,
@@ -234,9 +214,6 @@ export default {
   verifyResourceType,
   verifyCatalogedDate,
   verifyInstanceStatusTerm,
-  verifyMarkAsSuppressed,
-  verifyMarkAsSuppressedFromDiscovery,
-  verifyMarkAsSuppressedFromDiscoveryAndSuppressed,
   verifyGeneralNoteContent,
   verifySrsMarcRecord,
   verifyImportedFieldExists,
@@ -296,8 +273,8 @@ export default {
 
   verifyQuantityOfItemsRelatedtoHoldings(holdingToBeOpened, quantityOfItems) {
     cy.do(
-      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).perform((el) => {
-        const items = el.querySelectorAll('div[class^="mclRow-"]').length;
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).perform((elem) => {
+        const items = elem.querySelectorAll('div[class^="mclRow-"]').length;
         expect(quantityOfItems).to.eq(items);
       }),
     );
@@ -379,7 +356,7 @@ export default {
 
     cy.do(
       holdingsSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: barcode }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: barcode }))
         .find(Button(including(barcode)))
         .click(),
     );
@@ -423,8 +400,8 @@ export default {
     let order;
     return cy
       .do(
-        MultiColumnListHeader({ content: title }).perform((el) => {
-          order = el.attributes.getNamedItem('aria-sort').value;
+        MultiColumnListHeader({ content: title }).perform((elem) => {
+          order = elem.attributes.getNamedItem('aria-sort').value;
         }),
       )
       .then(() => order);
@@ -459,14 +436,49 @@ export default {
     cy.expect(KeyValue('Publication range').has({ value }));
   },
 
-  verifyNotMarkAsStaffSuppressed() {
+  verifyMarkAsStaffSuppressedWarning(isDisplayed = true) {
     cy.wait(1000);
+    const element = rootSection.find(
+      HTML(including('Warning: Instance is marked staff suppressed')),
+    );
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
+  },
+
+  verifyMarkAsSuppressedFromDiscoveryWarning() {
     cy.expect(
-      rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).absent(),
+      rootSection
+        .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
+        .exists(),
     );
   },
 
-  verifyMarkedAsStaffSuppressed() {
+  verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning() {
+    cy.expect(
+      rootSection
+        .find(
+          HTML(
+            including('Warning: Instance is marked suppressed from discovery and staff suppressed'),
+          ),
+        )
+        .exists(),
+    );
+  },
+
+  verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning: () => {
+    cy.expect(
+      MessageBanner().has({
+        textContent:
+          'Warning: Instance is set for deletion, suppressed from discovery, and staff suppressed',
+      }),
+    );
+  },
+
+  verifyInstanceIsMarkedAsStaffSuppressed() {
     cy.expect(
       rootSection
         .find(adminDataAccordion)
@@ -475,46 +487,44 @@ export default {
     );
   },
 
-  verifyNotMarkAssuppressFromDiscavery() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Suppressed from discovery')))
-        .absent(),
-    );
+  verifyInstanceIsMarkedAsSuppressedFromDiscovery(isDisplayed = true) {
+    const element = rootSection
+      .find(adminDataAccordion)
+      .find(HTML(including('Suppressed from discovery')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
-  verifyMarkedAsPreviouslyHeld() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Previously held')))
-        .exists(),
-    );
+  verifyInstanceIsSetForDeletion(isDisplayed = true) {
+    const element = rootSection.find(adminDataAccordion).find(HTML(including('Set for deletion')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
-  verifyNotMarkAsPreviouslyHeld() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Previously held')))
-        .absent(),
-    );
+  verifyInstanceIsMarkedAsPreviouslyHeld(isDisplayed = true) {
+    const element = rootSection.find(adminDataAccordion).find(HTML(including('Previously held')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
   verifyClassification(classType, classification) {
-    cy.expect(
-      classificationAccordion
-        .find(listClassifications)
-        .find(MultiColumnListCell({ columnIndex: 0, content: classType }))
-        .exists(),
-    );
-    cy.expect(
-      classificationAccordion
-        .find(listClassifications)
-        .find(MultiColumnListCell({ columnIndex: 1, content: classification }))
-        .exists(),
-    );
+    const list = classificationAccordion.find(listClassifications);
+
+    cy.expect(list.find(MultiColumnListCell({ columnIndex: 0, content: classType })).exists());
+
+    cy.expect(list.find(MultiColumnListCell({ columnIndex: 1, content: classification })).exists());
   },
 
   verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
@@ -615,13 +625,13 @@ export default {
   },
 
   edit: () => {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.do(Button('Edit instance').click());
     InstanceRecordEdit.waitLoading();
   },
 
   moveHoldingsItemsToAnotherInstance: () => {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.do(Button('Move holdings/items to another instance').click());
     SelectInstanceModal.verifyModalExists();
   },
@@ -648,21 +658,12 @@ export default {
   },
 
   exportInstanceMarcButtonAbsent: () => {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
   },
 
   setRecordForDeletion: () => {
     cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
-  },
-
-  verifyInstanceIsSetForDeletion: () => {
-    cy.expect(
-      MessageBanner().has({
-        textContent:
-          'Warning: Instance is set for deletion, suppressed from discovery, and staff suppressed',
-      }),
-    );
   },
 
   markAsDeletedViaApi: (id) => {
@@ -724,7 +725,7 @@ export default {
   },
 
   verifyEditInstanceButtonIsEnabled() {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
   },
 
@@ -735,7 +736,7 @@ export default {
   },
 
   validateOptionInActionsMenu(optionName, shouldExist = true) {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     if (shouldExist) {
       cy.expect(Button(optionName).exists());
     } else {
@@ -895,7 +896,7 @@ export default {
   },
 
   moveItemsWithinAnInstance() {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.wait(500);
     cy.do(Button({ id: 'move-instance-items' }).click());
   },

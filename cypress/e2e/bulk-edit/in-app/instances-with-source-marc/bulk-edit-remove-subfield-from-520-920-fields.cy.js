@@ -93,7 +93,6 @@ describe(
         fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 
         cy.clearLocalStorage();
-        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,

@@ -135,6 +135,7 @@ describe('Data Import', () => {
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+            Permissions.consortiaCentralAll.gui,
           ]);
 
           cy.resetTenant();

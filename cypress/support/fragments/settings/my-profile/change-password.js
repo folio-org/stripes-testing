@@ -78,7 +78,9 @@ export default {
 
   fillPasswordFields(currentPassword, newPassword, confirmPassword) {
     this.typeCurrentPassword(currentPassword);
+    cy.wait(1000);
     this.typeNewPassword(newPassword);
+    cy.wait(1000);
     this.typeConfirmPassword(confirmPassword);
   },
 

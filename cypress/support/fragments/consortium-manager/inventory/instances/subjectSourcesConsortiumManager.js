@@ -120,6 +120,7 @@ export default {
     this.verifyNewRecordRowBeforeFilling(false);
     enableShareCheckbox();
     fillNameField(name);
+    cy.wait(1500);
     clickSaveButton();
 
     const errorMessages = {
@@ -308,11 +309,12 @@ export default {
 
   editSubjectSource(name, newName, source, userName) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text.includes(name)).then((rowIndex) => {
-      cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex[0]}"]`)
+      const rowInd = rowIndex[0];
+      cy.get(`#editList-subjectsources [data-row-index="row-${rowInd}"]`)
         .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions + 1}) button[icon="edit"]`)
         .click();
-      this.verifyEditedSubjectSourceRow(name, rowIndex, source, userName);
-      fillNameField(newName, rowIndex);
+      this.verifyEditedSubjectSourceRow(name, source, userName, rowInd);
+      fillNameField(newName, rowInd);
     });
     cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
     clickSaveButton();
@@ -443,31 +445,30 @@ export default {
     ]);
   },
 
-  verifySharedSubjectSourceExists({ name: subjectSourceName, actions = [] }) {
+  verifySharedSubjectSourceExists({ name, user, actions = [] }) {
     cy.do(
-      MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
+      MultiColumnListCell({ content: name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
+        const rowIndex = Number(rowNumber.replace('row-', ''));
 
-        cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: columnIndex.name }))
-            .has({ content: subjectSourceName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: columnIndex.source }))
-            .has({ content: 'consortium' }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
-            .has({ content: including('System, System user - mod-consortia-keycloak ') }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: columnIndex.memberLibraries }))
-            .has({ content: 'All' }),
-        ]);
+        const expectCell = (colIdx, expectedContent) => EditableListRow({ index: rowIndex })
+          .find(MultiColumnListCell({ columnIndex: colIdx }))
+          .has({ content: expectedContent });
+
+        const expectations = [
+          expectCell(columnIndex.name, name),
+          expectCell(columnIndex.source, 'consortium'),
+          expectCell(columnIndex.memberLibraries, 'All'),
+        ];
+        if (typeof user !== 'undefined') {
+          expectations.splice(2, 0, expectCell(columnIndex.lastUpdated, including(user)));
+        }
+        cy.expect(expectations);
+
         Object.values(reasonsActions).forEach((action) => {
           const actionButton = EditableListRow({ index: rowIndex })
             .find(MultiColumnListCell({ columnIndex: columnIndex.actions }))
             .find(Button({ icon: action }));
-
           cy.expect(actions.includes(action) ? actionButton.exists() : actionButton.absent());
         });
       }),

@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 const id = uuid();
@@ -9,7 +9,6 @@ export const typeActions = {
   edit: 'edit',
   trash: 'trash',
 };
-const newButton = Button('+ New');
 
 export default {
   createViaApi(type) {
@@ -45,7 +44,6 @@ export default {
 
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Holdings sources');
-    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

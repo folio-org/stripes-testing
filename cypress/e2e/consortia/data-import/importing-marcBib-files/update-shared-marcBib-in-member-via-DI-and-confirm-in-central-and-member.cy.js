@@ -109,6 +109,7 @@ describe('Data Import', () => {
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
             Permissions.dataExportViewAddUpdateProfiles.gui,
+            Permissions.consortiaCentralAll.gui,
           ]);
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
             (mappingProfileResponse) => {
@@ -154,6 +155,7 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
+      FileManager.deleteFileFromDownloadsByMask(testData.marcFile.exportedFileName);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userAProperties.userId);
