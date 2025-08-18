@@ -92,6 +92,11 @@ const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
 const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
 const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
+const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
+const updatedDateAccordion = Accordion({ id: 'metadata.updatedDate' });
+const startDateField = TextField({ name: 'startDate' });
+const endDateField = TextField({ name: 'endDate' });
+const applyButton = Button('Apply');
 
 export default {
   waitLoading: () => {
@@ -234,6 +239,16 @@ export default {
   selectCreatedByFiler: (createdBy) => {
     cy.do([
       toggleButtonCreatedBy.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(createdBy),
+      searchButtonInModal.click(),
+      MultiColumnListRow({ index: 0 }).click(),
+    ]);
+  },
+
+  selectUpdatedByFiler: (createdBy) => {
+    cy.do([
+      toggleButtonUpdatedBy.click(),
       Button('Find User').click(),
       TextField({ name: 'query' }).fillIn(createdBy),
       searchButtonInModal.click(),
@@ -548,6 +563,13 @@ export default {
     })
     .then((resp) => resp.body.id),
 
+  getOrganizationByIdViaApi: (organizationId) => cy
+    .okapiRequest({
+      method: 'GET',
+      path: `organizations-storage/organizations/${organizationId}`,
+    })
+    .then((resp) => resp.body),
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -589,6 +611,7 @@ export default {
       firstNameField.fillIn(contact.firstName),
       saveButtonInCotact.click(),
     ]);
+    cy.wait(2000);
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
@@ -708,6 +731,19 @@ export default {
     cy.wait(6000);
   },
 
+  addContactToOrganizationWithoutSaving: (contact) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(searchButtonInModal).click(),
+    ]);
+    cy.wait(6000);
+    SearchHelper.selectCheckboxFromResultsList();
+    cy.do([addContacsModal.find(saveButton).click()]);
+    cy.wait(6000);
+  },
+
   addIntrefaceToOrganization: (defaultInterface) => {
     cy.do([
       openInterfaceSectionButton.click(),
@@ -721,7 +757,7 @@ export default {
   },
 
   closeContact: () => {
-    cy.do(Section({ id: 'view-contact' }).find(timesButton).click());
+    cy.do(PaneHeader({ id: 'paneHeaderview-contact' }).find(timesButton).click());
   },
 
   closeInterface: () => {
@@ -944,6 +980,10 @@ export default {
     cy.do([organizationNameField.fillIn(`${organization.name}-edited`), saveAndClose.click()]);
   },
 
+  editOrganizationDescription: (organization) => {
+    cy.do([TextArea('Description').fillIn(`${organization.name}-edited`), saveAndClose.click()]);
+  },
+
   unAssignInterface: (defaultInterface) => {
     cy.do(openInterfaceSectionButton.click());
     cy.get('#interface-list')
@@ -1069,5 +1109,21 @@ export default {
     fields.forEach(({ label, conditions }) => {
       cy.expect(Button(label).has(conditions));
     });
+  },
+
+  filterByDateUpdated(startDate, endDate) {
+    cy.do([
+      updatedDateAccordion.clickHeader(),
+      updatedDateAccordion.find(startDateField).fillIn(startDate),
+      updatedDateAccordion.find(endDateField).fillIn(endDate),
+      updatedDateAccordion.find(applyButton).click(),
+    ]);
+  },
+
+  checkInvalidDateRangeMessage: (expected = 'Start date is greater than end date') => {
+    cy.get('div[role="alert"] [data-test-wrong-dates-order="true"]')
+      .should('be.visible')
+      .invoke('text')
+      .then((t) => expect(t.trim()).to.eq(expected));
   },
 };
