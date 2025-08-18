@@ -107,7 +107,7 @@ describe('Eureka', () => {
       { tags: ['smoke', 'eureka', 'C584520'] },
       () => {
         UsersSearchPane.searchByKeywords(userBodies[0].username);
-        UsersSearchPane.selectUserFromList(userBodies[0].username);
+        UsersSearchPane.clickOnUserRowContaining(userBodies[0].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
@@ -155,11 +155,10 @@ describe('Eureka', () => {
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
         );
-        UsersCard.close();
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(userBodies[0].username);
-        UsersSearchPane.selectUserFromList(userBodies[0].username);
+        UsersSearchPane.clickOnUserRowContaining(userBodies[0].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
@@ -206,7 +205,7 @@ describe('Eureka', () => {
         }
 
         UsersSearchPane.searchByKeywords(userBodies[2].username);
-        UsersSearchPane.selectUserFromList(userBodies[2].username);
+        UsersSearchPane.clickOnUserRowContaining(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
@@ -230,11 +229,10 @@ describe('Eureka', () => {
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
         );
-        UsersCard.close();
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(userBodies[2].username);
-        UsersSearchPane.selectUserFromList(userBodies[2].username);
+        UsersSearchPane.clickOnUserRowContaining(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
