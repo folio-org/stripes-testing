@@ -13,7 +13,7 @@ describe('Users', () => {
   const testData = {
     user: {},
     selectedExpirationDate: '',
-    westernTimezone: 'Pacific/Honolulu',
+    westernTimezone: 'Pacific/Midway',
     easternTimezone: 'Pacific/Auckland',
   };
 
@@ -33,8 +33,8 @@ describe('Users', () => {
         );
 
         cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+          path: SettingsMenu.tenantPath,
+          waiter: TenantPane.waitLoading,
         });
       });
     });
@@ -50,7 +50,14 @@ describe('Users', () => {
     'C770460 Expiration date is not affected by time zone change (volaris)',
     { tags: ['extendedPath', 'volaris', 'C770460'] },
     () => {
+      cy.waitForAuthRefresh(() => {}, 20_000);
+      TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
+      Localication.changeTimezone(testData.westernTimezone);
+      Localication.clickSaveButton();
+
       // Step 1: Click "Actions" -> "Edit" on user details pane
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(testData.user.username);
       UsersCard.waitLoading();
       UsersCard.verifyUserDetailsPaneOpen();
