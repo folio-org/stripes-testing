@@ -64,4 +64,10 @@ export default {
   verifyUploadFileButtonEnabled() {
     cy.expect(fileButton.has({ disabled: false }));
   },
+
+  verifyFileNameHighlightedInBlue(fileName) {
+    cy.get('#job-logs-list [class^=downloadFile-]')
+      .contains(fileName)
+      .should('have.css', 'color', 'rgb(47, 96, 159)');
+  },
 };
