@@ -7,7 +7,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import DateTools from '../../support/utils/dateTools';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
-import Localication from '../../support/fragments/settings/tenant/general/localication';
+import Localization from '../../support/fragments/settings/tenant/general/localization';
 
 describe('Users', () => {
   const testData = {
@@ -15,6 +15,7 @@ describe('Users', () => {
     selectedExpirationDate: '',
     westernTimezone: 'Pacific/Nauru',
     easternTimezone: 'Pacific/Auckland',
+    utcTimezone: 'UTC',
   };
 
   before('Preconditions: create user', () => {
@@ -52,8 +53,8 @@ describe('Users', () => {
     () => {
       cy.waitForAuthRefresh(() => {}, 20_000);
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
-      Localication.changeTimezone(testData.westernTimezone);
-      Localication.clickSaveButton();
+      Localization.changeTimezone(testData.westernTimezone);
+      Localization.clickSaveButton();
 
       // Step 1: Click "Actions" -> "Edit" on user details pane
       cy.visit(TopMenu.usersPath);
@@ -83,8 +84,8 @@ describe('Users', () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
 
       // Change Time zone to a more Eastern one (Pacific/Auckland)
-      Localication.changeTimezone(testData.easternTimezone);
-      Localication.clickSaveButton();
+      Localization.changeTimezone(testData.easternTimezone);
+      Localization.clickSaveButton();
 
       // Step 5: Return to "Users" app and open details pane for the same user
       cy.visit(TopMenu.usersPath);
@@ -100,6 +101,12 @@ describe('Users', () => {
       // Step 6: Click "Actions" -> "Edit" on user details pane / Check the "Expiration date" field on user edit page
       UserEdit.openEdit();
       UserEdit.verifyExpirationDateFieldValue(testData.selectedExpirationDate);
+
+      cy.visit(SettingsMenu.tenantPath);
+      TenantPane.waitLoading();
+      TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
+      Localization.changeTimezone(testData.utcTimezone);
+      Localization.clickSaveButton();
     },
   );
 });

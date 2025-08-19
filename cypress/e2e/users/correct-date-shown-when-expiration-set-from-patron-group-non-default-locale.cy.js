@@ -6,9 +6,9 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UserEdit from '../../support/fragments/users/userEdit';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
-import Localication, {
+import Localization, {
   LANGUAGES,
-} from '../../support/fragments/settings/tenant/general/localication';
+} from '../../support/fragments/settings/tenant/general/localization';
 import DateTools from '../../support/utils/dateTools';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 
@@ -81,9 +81,9 @@ describe('Users', () => {
     { tags: ['extendedPath', 'volaris', 'C692246'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
-      Localication.checkPaneContent();
-      Localication.changeLocalLanguage(LANGUAGES.BRITISH_ENGLISH);
-      Localication.clickSaveButton();
+      Localization.checkPaneContent();
+      Localization.changeLocalLanguage(LANGUAGES.BRITISH_ENGLISH);
+      Localization.clickSaveButton();
 
       // Step 1: open any active user
       cy.visit(TopMenu.usersPath);
@@ -105,7 +105,6 @@ describe('Users', () => {
         },
         'DD/MM/YYYY',
       );
-      cy.waitForAuthRefresh(() => {}, 20_000);
 
       // Convert date to UK format for popup verification
       const dateFormat = convertDateToBritishFormat(expectedDate);
