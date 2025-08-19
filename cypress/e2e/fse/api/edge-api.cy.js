@@ -194,28 +194,32 @@ describe('fse-edge', () => {
       cy.getAllRemoteStorageConfigurations().then((remoteConfigurations) => {
         // filter response by provider name - dematic like
         const dematicEmsid = remoteConfigurations.body.configurations.filter((config) => config.providerName.toLowerCase().includes('dematic'));
-        if (dematicEmsid[0].id) {
-          cy.getEdgeDematicAsrItems(dematicEmsid[0].id).then((itemsResponse) => {
-            cy.expect(itemsResponse.status).to.eq(200);
-            // Verify the Content-Type response header
-            cy.expect(itemsResponse.headers['content-type']).to.include('xml');
-            // Verify the response body contains valid XML
-            const responseBody = itemsResponse.body;
-            // Ensure response body include asrRequests XML declaration
-            expect(responseBody).to.include('<asrItems');
-          });
-          cy.getEdgeDematicAsrRequests(dematicEmsid[0].id).then((requestsResponse) => {
-            cy.expect(requestsResponse.status).to.eq(200);
-            // Verify the Content-Type response header
-            cy.expect(requestsResponse.headers['content-type']).to.include('xml');
-            // Verify the response body contains valid XML
-            const responseAsrRequestsBody = requestsResponse.body;
-            // Ensure response body include asrRequests XML declaration
-            expect(responseAsrRequestsBody).to.include('<asrRequests');
-          });
-        } else {
-          cy.log('No external storage id with Dematic type returned');
+
+        if (dematicEmsid.length === 0) {
+          cy.log(
+            'No external storage configuration with Dematic type found. Skipping edge-dematic test.',
+          );
+          return;
         }
+
+        cy.getEdgeDematicAsrItems(dematicEmsid[0].id).then((itemsResponse) => {
+          cy.expect(itemsResponse.status).to.eq(200);
+          // Verify the Content-Type response header
+          cy.expect(itemsResponse.headers['content-type']).to.include('xml');
+          // Verify the response body contains valid XML
+          const responseBody = itemsResponse.body;
+          // Ensure response body include asrRequests XML declaration
+          expect(responseBody).to.include('<asrItems');
+        });
+        cy.getEdgeDematicAsrRequests(dematicEmsid[0].id).then((requestsResponse) => {
+          cy.expect(requestsResponse.status).to.eq(200);
+          // Verify the Content-Type response header
+          cy.expect(requestsResponse.headers['content-type']).to.include('xml');
+          // Verify the response body contains valid XML
+          const responseAsrRequestsBody = requestsResponse.body;
+          // Ensure response body include asrRequests XML declaration
+          expect(responseAsrRequestsBody).to.include('<asrRequests');
+        });
       });
     },
   );
