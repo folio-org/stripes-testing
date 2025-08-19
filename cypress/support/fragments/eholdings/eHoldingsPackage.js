@@ -142,8 +142,11 @@ export default {
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
       cy.wait(500);
+      cy.intercept('PUT', '/eholdings/packages/*/tags').as('addTag');
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
-      cy.wait(500);
+      cy.wait('@addTag', { timeout: 5000 });
+      cy.expect(tagsSection.find(MultiSelect()).has({ selected: including(newTag) }));
+      cy.wait(3000);
       cy.do(tagsSection.find(MultiSelect()).close());
     });
     return newTag;

@@ -11,6 +11,8 @@ import {
 const rootModal = Modal({ id: 'payment-modal' });
 const confirmationModal = Modal(including('Confirm fee/fine'));
 const amountTextfield = rootModal.find(TextField({ id: 'amount' }));
+const submitButton = rootModal.find(Button({ id: 'submit-button' }));
+const confirmButton = confirmationModal.find(Button('Confirm'));
 
 export default {
   waitLoading: () => {
@@ -25,22 +27,12 @@ export default {
     cy.do(rootModal.find(TextArea({ name: 'comment' })).fillIn(comment));
   },
   submitAndConfirm: () => {
-    cy.wait(1000);
-    cy.do(rootModal.find(Button({ id: 'submit-button' })).click());
-    cy.wait(1000);
-    cy.expect(confirmationModal.exists());
-    cy.do(
-      confirmationModal
-        .find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') }))
-        .click(),
-    );
+    cy.do([submitButton.click(), confirmButton.click()]);
     cy.wait(1000);
   },
   checkPartialPayConfirmation: () => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
   setAmount(amount) {
-    cy.wait(500);
-    cy.do(amountTextfield.fillIn(amount.toString()));
-    cy.wait(500);
+    cy.get('input[name="amount"]').clear().wait(500).type(amount.toString());
   },
   back: () => cy.do(
     confirmationModal

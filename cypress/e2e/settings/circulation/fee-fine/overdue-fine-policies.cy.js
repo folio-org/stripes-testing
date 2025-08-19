@@ -226,6 +226,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       OverdueFinePolicies.checkCreatingForm();
       // TODO remove force option (Do not use force on click and type calls)
       OverdueFinePolicies.checkOverDueFineInCreating();
+      cy.waitForAuthRefresh(() => {}, 20_000);
       OverdueFinePolicies.fillGeneralInformation(overduePolicyProps);
       OverdueFinePolicies.save();
       OverdueFinePolicies.verifyCreatedFines(overduePolicyProps);
