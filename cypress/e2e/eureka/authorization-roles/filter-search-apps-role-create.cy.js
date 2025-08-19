@@ -4,8 +4,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles, {
   selectAppFilterOptions,
 } from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -15,18 +15,7 @@ describe('Eureka', () => {
         originalApplications: ['app-platform-minimal', 'app-platform-complete'],
         searchQuery: 'Complete',
         tenant: Cypress.env('OKAPI_TENANT'),
-        roleCapabilities: [
-          {
-            type: CAPABILITY_TYPES.DATA,
-            resource: 'Circulation Rules',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            type: CAPABILITY_TYPES.DATA,
-            resource: 'Capabilities',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-        ],
+        roleCapabilities: [Capabilities.circulationRulesView, Capabilities.capabilitiesManage],
         capabIds: [],
       };
 

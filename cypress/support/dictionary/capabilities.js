@@ -54,6 +54,11 @@ export default {
     resource: 'Circulation Rules',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  capabilitiesManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Capabilities',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capabilities
   uiUsersResetPassword: {
