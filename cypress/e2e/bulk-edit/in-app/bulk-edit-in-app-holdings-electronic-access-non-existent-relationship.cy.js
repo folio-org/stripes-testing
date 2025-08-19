@@ -89,7 +89,7 @@ describe('Bulk-edit', () => {
         const tempLocation = 'Online (E)';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

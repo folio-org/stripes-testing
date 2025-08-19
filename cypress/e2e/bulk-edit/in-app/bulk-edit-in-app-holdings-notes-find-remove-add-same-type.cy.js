@@ -99,7 +99,7 @@ describe('Bulk-edit', () => {
           'Electronic bookplate note',
           'Note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.noteRemove('Action note', notes.action);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Note', notes.note, 1);

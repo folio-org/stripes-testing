@@ -112,7 +112,7 @@ describe('Bulk-edit', () => {
           ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
             [`ERROR,${user.userId},${errorReason}`],
           ]);
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();

@@ -102,7 +102,7 @@ describe('Bulk-edit', () => {
           const suppressFromDiscovery = false;
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
           BulkEditActions.checkApplyToItemsRecordsCheckbox();
           BulkEditActions.addNewBulkEditFilterString();

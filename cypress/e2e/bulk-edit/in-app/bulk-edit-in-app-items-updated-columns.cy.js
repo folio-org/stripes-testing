@@ -117,7 +117,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(column);
         });
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.addItemNote('Administrative note', notes.admin);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.duplicateCheckInNote('in', 1);

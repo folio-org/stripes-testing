@@ -90,7 +90,7 @@ describe.skip('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         const location = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location);
         cy.intercept('preview?limit=10&step=EDIT').as('confirmChanges');
         BulkEditActions.confirmChanges();

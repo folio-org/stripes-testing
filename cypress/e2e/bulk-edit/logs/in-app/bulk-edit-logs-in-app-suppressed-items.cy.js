@@ -88,7 +88,7 @@ describe(
             BulkEditSearchPane.waitFileUploading();
 
             BulkEditActions.downloadMatchedResults();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.editSuppressFromDiscovery(false);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.fillPermanentLoanType('Selected', 1);

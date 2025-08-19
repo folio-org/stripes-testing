@@ -100,7 +100,7 @@ describe('Bulk-edit', () => {
 
         const tempLocation = 'Main Library';
         const permLocation = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 1);

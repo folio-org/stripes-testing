@@ -13,7 +13,8 @@ const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('Bulk-edit', () => {
-  describe('Csv approach',
+  describe(
+    'Csv approach',
     {
       retries: {
         runMode: 1,
@@ -67,7 +68,7 @@ describe('Bulk-edit', () => {
             newUserName,
           );
 
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.clickNext();
@@ -76,5 +77,6 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyChangedResults(newUserName);
         },
       );
-    });
+    },
+  );
 });

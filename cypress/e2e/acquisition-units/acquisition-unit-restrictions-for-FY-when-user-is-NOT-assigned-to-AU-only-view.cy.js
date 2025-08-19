@@ -12,7 +12,6 @@ describe('Acquisition Units', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({
       path: SettingsMenu.acquisitionUnitsPath,
       waiter: AcquisitionUnits.waitLoading,

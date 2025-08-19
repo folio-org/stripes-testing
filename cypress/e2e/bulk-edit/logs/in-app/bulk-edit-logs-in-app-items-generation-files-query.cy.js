@@ -129,7 +129,7 @@ describe('Bulk-edit', () => {
 
               // Step 2: Perform bulk edit so that part of Items records are edited and part are left unchanged
               BulkEditActions.openActions();
-              BulkEditActions.openInAppStartBulkEditFrom();
+              BulkEditActions.openStartBulkEditForm();
               BulkEditActions.verifyBulkEditsAccordionExists();
               BulkEditActions.verifyOptionsDropdown();
               BulkEditActions.verifyRowIcons();
