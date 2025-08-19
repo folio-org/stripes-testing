@@ -113,11 +113,11 @@ describe('MARC', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${marcFiles[1].editedFileName}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
       });
-      FileManager.deleteFile(`cypress/fixtures/${marcFiles[1].editedFileName}`);
     });
 
     it(
