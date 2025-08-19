@@ -1,0 +1,157 @@
+import Users from '../../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import AuthorizationRoles, {
+  selectAppFilterOptions,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
+
+describe('Eureka', () => {
+  describe('Settings', () => {
+    describe('Authorization roles', () => {
+      const testData = {
+        roleName: `AT_C825339_UserRole_${getRandomPostfix()}`,
+        originalApplications: ['app-platform-minimal', 'app-platform-complete'],
+        searchQuery: 'Complete',
+        tenant: Cypress.env('OKAPI_TENANT'),
+        roleCapabilities: [
+          {
+            type: CAPABILITY_TYPES.DATA,
+            resource: 'Circulation Rules',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            type: CAPABILITY_TYPES.DATA,
+            resource: 'Capabilities',
+            action: CAPABILITY_ACTIONS.MANAGE,
+          },
+        ],
+        capabIds: [],
+      };
+
+      const capabSetsToAssign = [
+        CapabilitySets.uiAuthorizationRolesSettingsCreate,
+        CapabilitySets.uiAuthorizationRolesSettingsEdit,
+      ];
+
+      const allTenantApplications = [];
+
+      before('Create role, user', () => {
+        cy.getAdminToken();
+        cy.getApplicationsForTenantApi(testData.tenant, false).then((appsResponse) => {
+          appsResponse.body.applicationDescriptors.forEach((appDescriptor) => {
+            allTenantApplications.push(appDescriptor.name);
+          });
+        });
+        cy.createTempUser([]).then((createdUserProperties) => {
+          testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+            testData.roleId = role.id;
+            testData.roleCapabilities.forEach((capability) => {
+              cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                testData.capabIds.push(capabId);
+              });
+            });
+          });
+        });
+      });
+
+      before('Assign capabilities and login', () => {
+        cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
+        });
+      });
+
+      afterEach('Delete user, role', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
+      });
+
+      it(
+        'C825339 [UIPSELAPP-14] Filtering and searching applications while editing role (eureka)',
+        { tags: ['criticalPath', 'eureka', 'C825339'] },
+        () => {
+          const newApplications = allTenantApplications.filter((app) => {
+            return (
+              !testData.originalApplications.includes(app) &&
+              app.includes(testData.searchQuery.toLowerCase())
+            );
+          });
+
+          AuthorizationRoles.searchRole(testData.roleName);
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
+          AuthorizationRoles.openForEdit();
+          AuthorizationRoles.clickSelectApplication();
+
+          AuthorizationRoles.verifySelectApplicationModal();
+          AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.SELECTED);
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[0],
+            true,
+            true,
+          );
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[1],
+            true,
+            true,
+          );
+          AuthorizationRoles.checkApplicationCountInModal(2);
+          AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
+          AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: false });
+
+          AuthorizationRoles.searchForAppInModal(testData.searchQuery);
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[1],
+            true,
+            true,
+          );
+          // TO DO: Uncomment after UIPSELAPP-14 is fixed:
+          // AuthorizationRoles.checkApplicationCountInModal(1);
+          AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
+
+          AuthorizationRoles.toggleFilterOptionInSelectAppModal(
+            selectAppFilterOptions.SELECTED,
+            false,
+          );
+          AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: true });
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[1],
+            true,
+            true,
+          );
+          AuthorizationRoles.checkApplicationShownInModal(newApplications[0], true, false);
+          AuthorizationRoles.checkApplicationCountInModal(1 + newApplications.length);
+          AuthorizationRoles.checkClearFilterButtonInSelectAppModal(false);
+
+          AuthorizationRoles.toggleFilterOptionInSelectAppModal(
+            selectAppFilterOptions.UNSELECTED,
+            true,
+          );
+          AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: true });
+          AuthorizationRoles.checkApplicationShownInModal(newApplications[0], true, false);
+          AuthorizationRoles.checkApplicationCountInModal(newApplications.length);
+          AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
+
+          AuthorizationRoles.toggleFilterOptionInSelectAppModal(
+            selectAppFilterOptions.UNSELECTED,
+            false,
+          );
+          AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: true });
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[1],
+            true,
+            true,
+          );
+          AuthorizationRoles.checkApplicationShownInModal(newApplications[0], true, false);
+          AuthorizationRoles.checkApplicationCountInModal(1 + newApplications.length);
+          AuthorizationRoles.checkClearFilterButtonInSelectAppModal(false);
+        },
+      );
+    });
+  });
+});
