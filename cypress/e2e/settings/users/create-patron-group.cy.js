@@ -40,9 +40,6 @@ describe('Users', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      PatronGroups.getGroupIdViaApi({ query: `group="${testData.groupName}"` }).then((id) => {
-        PatronGroups.deleteViaApi(id);
-      });
     });
 
     // https://folio-org.atlassian.net/browse/UIU-3189
@@ -94,9 +91,10 @@ describe('Users', () => {
         description: testData.groupDescription,
         expirationDateOffset: testData.expirationDateOffsetData.integerValue,
         date: testData.currentDate,
-        userName: `${testData.user.lastName}, ${testData.user.firstName}`,
+        // userName: `${testData.user.lastName}, ${testData.user.firstName}`,
         actions: ['edit', 'trash'],
       });
+      PatronGroups.deletePatronGroupViaTrashButton(testData.groupName);
     });
   });
 });
