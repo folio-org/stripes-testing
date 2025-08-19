@@ -1,31 +1,30 @@
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  LOCATION_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-// import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import HoldingsRecordView, {
-  actionsMenuOptions,
-} from '../../../../support/fragments/inventory/holdingsRecordView';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-// import Users from '../../../../support/fragments/users/users';
+import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Holdings', () => {
     const testData = {
-      instance: {},
-      user: {},
-      holdings: {},
+      filePath: 'oneMarcBib.mrc',
+      fileNameForCreateInstance: `C788750 autotestFile${getRandomPostfix()}.mrc`,
     };
-    const instanceMarc = {
-      instanceTitle: `C435917 first marc instance-${getRandomPostfix()}`,
-    };
-    const userPermissions = [
+    const userMemberTenantsPermissions = [
       Permissions.inventoryAll.gui,
       Permissions.uiInventoryUpdateOwnership.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
@@ -34,40 +33,36 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.getConsortiaId().then((consortiaId) => {
-        testData.consortiaId = consortiaId;
-      });
-      cy.withinTenant(Affiliations.College, () => {
-        // create MARC instance with Holding
-        cy.wrap()
+      DataImport.uploadFileViaApi(
+        testData.filePath,
+        testData.fileNameForCreateInstance,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.instanceHrid = response[0].instance.hrid;
+        testData.instanceId = response[0].instance.id;
+
+        cy.resetTenant();
+        cy.setTenant(Affiliations.College)
           .then(() => {
-            cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+            cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
               testData.location = res;
             });
           })
           .then(() => {
-            cy.createSimpleMarcBibViaAPI(instanceMarc.instanceTitle).then((instanceId) => {
-              instanceMarc.uuid = instanceId;
-
-              cy.getInstanceById(instanceId).then((instanceData) => {
-                instanceMarc.hrid = instanceData.hrid;
-
-                cy.createSimpleMarcHoldingsViaAPI(
-                  instanceData.id,
-                  instanceData.hrid,
-                  testData.location.code,
-                );
-              });
-
-              InventoryInstance.shareInstanceViaApi(
-                instanceMarc.uuid,
-                testData.consortiaId,
-                Affiliations.College,
-                Affiliations.Consortia,
+            cy.createSimpleMarcHoldingsViaAPI(
+              testData.instanceId,
+              testData.instanceHrid,
+              testData.location.code,
+            ).then(() => {
+              cy.getHoldings({ limit: 1, query: `"instanceId"="${testData.instanceId}"` }).then(
+                (holdings) => {
+                  testData.holding = holdings[0];
+                },
               );
             });
           });
       });
+
       cy.withinTenant(Affiliations.University, () => {
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.location = Locations.getDefaultLocation({
@@ -79,6 +74,7 @@ describe('Inventory', () => {
         });
       });
 
+      cy.resetTenant();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryUpdateOwnership.gui,
@@ -89,11 +85,10 @@ describe('Inventory', () => {
           cy.affiliateUserToTenant({
             tenantId: affiliation,
             userId: testData.user.userId,
-            permissions: userPermissions,
+            permissions: userMemberTenantsPermissions,
           });
         });
 
-        cy.resetTenant();
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
@@ -102,35 +97,32 @@ describe('Inventory', () => {
       });
     });
 
-    // after('Delete test data', () => {
-    //   cy.withinTenant(Affiliations.University, () => {
-    //     cy.deleteHoldingRecordViaApi(testData.holdings.id);
-    //     InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-    //     Locations.deleteViaApi(testData.location);
-    //   });
-    //   cy.withinTenant(Affiliations.Consortia, () => {
-    //     cy.getAdminToken();
-    //     Users.deleteViaApi(testData.user.userId);
-    //   });
-    // });
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      cy.setTenant(Affiliations.University);
+      cy.deleteHoldingRecordViaApi(testData.holding.id);
+      Locations.deleteViaApi(testData.location);
+      cy.withinTenant(Affiliations.Consortia, () => {
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        Users.deleteViaApi(testData.user.userId);
+      });
+    });
 
     it(
       'C788750 Update ownership of MARC holdings record which belongs to Shared MARC bib (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C788750'] },
       () => {
-        InventoryInstances.searchByTitle(instanceMarc.uuid);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
-        HoldingsRecordView.validateOptionInActionsMenu([
-          { optionName: actionsMenuOptions.updateOwnership, shouldExist: true },
-        ]);
         ['cancel', 'confirm'].forEach((action) => {
           HoldingsRecordView.updateOwnership(
             tenantNames.university,
             action,
-            testData.holdings.hrid,
+            testData.holding.hrid,
             tenantNames.college,
             testData.location.name,
           );
@@ -142,7 +134,10 @@ describe('Inventory', () => {
         InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
         InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
         InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
-        InstanceRecordView.editMarcBibliographicRecord();
+        InstanceRecordView.openHoldingView();
+        HoldingsRecordView.checkHoldingRecordViewOpened();
+        HoldingsRecordView.editInQuickMarc();
+        QuickMarcEditor.waitLoading();
       },
     );
   });
