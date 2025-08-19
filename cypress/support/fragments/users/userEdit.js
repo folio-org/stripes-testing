@@ -1194,6 +1194,58 @@ export default {
     cy.do(emailField.fillIn(email));
   },
 
+  expandContactInformationAccordion() {
+    cy.do(contactInformationAccordion.clickHeader());
+  },
+
+  verifyEmailCommunicationPreferencesField() {
+    cy.expect(MultiSelect('Preferred email communications').exists());
+  },
+
+  selectEmailCommunicationPreference(preference) {
+    cy.do(MultiSelect('Preferred email communications').choose(preference));
+  },
+
+  verifyEmailCommunicationPreferenceSelected(preferences) {
+    cy.expect(MultiSelect('Preferred email communications').has({ value: preferences }));
+  },
+
+  removeEmailCommunicationPreference(preference) {
+    cy.do(Button({ ariaLabel: `Remove ${preference}` }).click());
+  },
+
+  typeInEmailCommunicationPreferences(text) {
+    cy.do(MultiSelect('Preferred email communications').fillIn(text));
+  },
+
+  pressEnterInEmailCommunicationPreferences() {
+    cy.do(MultiSelect('Preferred email communications').press('Enter'));
+  },
+
+  verifyEmailCommunicationPreferencesDropdownExpanded() {
+    cy.expect(MultiSelect('Preferred email communications').has({ expanded: true }));
+  },
+
+  verifyEmailCommunicationPreferencesDropdownItemExists(item) {
+    cy.expect(
+      MultiSelect('Preferred email communications')
+        .find(HTML(including(item)))
+        .exists(),
+    );
+  },
+
+  verifyEmailCommunicationPreferencesDropdownItemAbsent(item) {
+    cy.expect(
+      MultiSelect('Preferred email communications')
+        .find(HTML(including(item)))
+        .absent(),
+    );
+  },
+
+  verifyRemoveButtonExists(preference) {
+    cy.expect(Button({ ariaLabel: `Remove ${preference}` }).exists());
+  },
+
   checkPromoteUserModal(lastName, firstName = '') {
     cy.expect([
       promoteUserModal.find(cancelButton).exists(),
@@ -1280,5 +1332,57 @@ export default {
 
   checkUserCreatePaneOpened() {
     cy.expect(createUserPane.exists());
+  },
+
+  changeBarcode(barcode) {
+    cy.do(barcodeField.fillIn(barcode));
+  },
+
+  verifyLastNameFieldValue(value) {
+    cy.expect(lastNameField.has({ value }));
+  },
+
+  verifyBarcodeFieldValue(value) {
+    cy.expect(barcodeField.has({ value }));
+  },
+
+  verifyUsernameFieldValue(value) {
+    cy.expect(usernameField.has({ value }));
+  },
+
+  verifyEmailFieldValue(value) {
+    cy.expect(emailField.has({ value }));
+  },
+
+  verifyToastMessage(message) {
+    cy.expect(HTML(including(message)).exists());
+  },
+
+  verifyEditUserPageClosed() {
+    cy.expect(rootPane.absent());
+  },
+
+  verifyRequiredFieldsFilled(lastName, barcode, username, email) {
+    this.verifyLastNameFieldValue(lastName);
+    this.verifyBarcodeFieldValue(barcode);
+    this.verifyUsernameFieldValue(username);
+    this.verifyEmailFieldValue(email);
+  },
+
+  fillRequiredFieldsForNewUser(lastName, patronGroup, barcode, userType, username, email) {
+    this.fillLastFirstNames(lastName);
+    this.changePatronGroup(patronGroup);
+    this.changeBarcode(barcode);
+    this.changeUserType(userType);
+    this.changeUsername(username);
+    this.fillEmailAddress(email);
+  },
+
+  verifyCreateUserPageOpened() {
+    cy.expect(createUserPane.exists());
+  },
+
+  verifyCreateUserPageClosed() {
+    cy.expect(createUserPane.absent());
   },
 };
