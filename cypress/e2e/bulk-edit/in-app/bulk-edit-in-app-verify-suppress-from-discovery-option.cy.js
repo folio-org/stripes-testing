@@ -92,7 +92,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
 
         // Click on "Actions" menu => Select the "Start bulk edit" element
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         // Click on "Select option" dropdown => Select "Suppress from discovery" option
         // Select "Set false" option and check checkbox displayed followed with the label "Apply to items records"

@@ -120,7 +120,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '', adjustedIndex);
         });
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.selectOption('URL public note');
         let possibleActions = ['Clear field', 'Find', 'Replace with'];

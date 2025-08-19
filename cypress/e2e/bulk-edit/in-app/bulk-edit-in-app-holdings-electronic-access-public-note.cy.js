@@ -87,7 +87,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifySpecificItemsMatched(publicNote);
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [publicNote]);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();

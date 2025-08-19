@@ -62,7 +62,7 @@ describe('Bulk-edit', () => {
           'Item temporary location',
         );
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.clearTemporaryLocation();
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.replacePermanentLocation(newLocation, 'item', 1);

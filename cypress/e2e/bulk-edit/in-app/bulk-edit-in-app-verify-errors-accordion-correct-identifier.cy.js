@@ -137,7 +137,7 @@ describe('Bulk-edit', () => {
           'temporaryLocation',
           true,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPaneTitleFileName(instanceHRIDFileName);

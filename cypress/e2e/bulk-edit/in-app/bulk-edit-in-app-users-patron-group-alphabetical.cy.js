@@ -51,7 +51,7 @@ describe('Bulk-edit', () => {
 
         // Step 4: Click "Actions" menu once the file uploading completes => Select "Start bulk edit"
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyPaneRecordsCountInEditForm('1 user');
         BulkEditSearchPane.verifyPaneTitleFileName(userBarcodesFileName);
 

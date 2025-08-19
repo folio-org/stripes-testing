@@ -70,7 +70,7 @@ describe(
           BulkEditSearchPane.waitFileUploading();
 
           BulkEditActions.openActions();
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.replaceItemStatus('Intellectual item');
           BulkEditActions.confirmChanges();
           BulkEditActions.commitChanges();

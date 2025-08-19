@@ -67,7 +67,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.clearTemporaryLocation();
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearPermanentLocation('item', 1);

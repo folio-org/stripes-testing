@@ -123,7 +123,7 @@ describe(
           BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
           const location = 'Online';
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.replaceTemporaryLocation(location, 'holdings');
 
           BulkEditActions.confirmChanges();

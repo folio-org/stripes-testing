@@ -81,7 +81,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceItemStatus('Available');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

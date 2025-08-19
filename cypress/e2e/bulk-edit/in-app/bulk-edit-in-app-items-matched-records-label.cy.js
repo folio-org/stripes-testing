@@ -83,7 +83,7 @@ describe('Bulk-edit', () => {
         const newLocation = 'Annex';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

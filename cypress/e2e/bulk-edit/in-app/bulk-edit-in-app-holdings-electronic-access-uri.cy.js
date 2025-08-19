@@ -86,7 +86,7 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [`;${item.uri};`]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.selectOption('URI');
         const possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);

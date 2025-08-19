@@ -80,7 +80,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

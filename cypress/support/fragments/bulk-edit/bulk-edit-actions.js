@@ -81,7 +81,7 @@ const bulkPageSelections = {
 };
 
 export default {
-  openStartBulkEditForm() {
+  openStartBulkEditLocalForm() {
     cy.do(startBulkEditLocalButton.click());
   },
 
@@ -95,7 +95,7 @@ export default {
     cy.wait(2000);
   },
 
-  openInAppStartBulkEditFrom() {
+  openStartBulkEditForm() {
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
   },

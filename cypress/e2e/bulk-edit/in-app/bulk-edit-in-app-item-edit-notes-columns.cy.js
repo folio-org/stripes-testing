@@ -114,7 +114,7 @@ describe('Bulk-edit', () => {
           'Electronic bookplate note',
           notes.electronicBookplateNote,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.removeMarkAsStaffOnly('Binding');
         BulkEditActions.addNewBulkEditFilterString();

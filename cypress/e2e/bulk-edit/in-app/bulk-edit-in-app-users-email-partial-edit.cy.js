@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         );
 
         // Step 4: Click "Actions" menu => Select the "Start bulk edit" element
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
 
         // Step 5: Click "Select Option" dropdown => Select "Email" option
