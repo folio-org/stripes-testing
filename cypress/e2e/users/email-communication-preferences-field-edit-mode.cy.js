@@ -29,7 +29,7 @@ describe('Users', () => {
   });
 
   it(
-    'C496142 Email Communication Preferences Field Edit mode (extended, volaris)',
+    'C496142 Email Communication Preferences Field Edit mode (volaris)',
     { tags: ['extendedPath', 'volaris', 'C496142'] },
     () => {
       // Step 1: Search for user from precondition #1 and open its details pane

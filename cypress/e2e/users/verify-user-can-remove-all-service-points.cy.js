@@ -52,7 +52,7 @@ describe('Users', () => {
   });
 
   it(
-    'C400650 Verify that user can remove all service points from a user (extended, volaris)',
+    'C400650 Verify that user can remove all service points from a user (volaris)',
     { tags: ['extendedPath', 'volaris', 'C400650'] },
     () => {
       // Step 1-2: Search for user from preconditions / Select "Actions" >> Select "Edit"
