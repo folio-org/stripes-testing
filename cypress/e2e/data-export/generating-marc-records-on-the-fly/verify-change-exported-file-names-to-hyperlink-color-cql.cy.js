@@ -82,7 +82,7 @@ describe('Data Export', () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             DataExportLogs.waitLoading();
             DataExportLogs.verifyDragAndDropAreaExists();
-            DataExportLogs.verifyUploadFileButtonEnabled();
+            DataExportLogs.verifyUploadFileButtonDisabled(false);
             DataExportLogs.verifyRunningAccordionExpanded();
             DataExportLogs.verifyViewAllLogsButtonEnabled();
 

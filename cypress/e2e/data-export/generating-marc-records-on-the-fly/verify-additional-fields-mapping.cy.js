@@ -94,7 +94,7 @@ describe('Data Export', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         DataExportLogs.waitLoading();
         DataExportLogs.verifyDragAndDropAreaExists();
-        DataExportLogs.verifyUploadFileButtonEnabled();
+        DataExportLogs.verifyUploadFileButtonDisabled(false);
         DataExportLogs.verifyRunningAccordionExpanded();
 
         // Step 5: Trigger the data export by clicking on the "or choose file" button and submitting .csv file with Instances UUIDs
