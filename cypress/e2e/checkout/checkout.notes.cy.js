@@ -13,6 +13,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
+import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
 
 describe('Check out', () => {
   let testData;
@@ -49,14 +50,14 @@ describe('Check out', () => {
         createdUserProperties.userId,
         instanceData.servicePoint.id,
       );
-      cy.login(testData.username, testData.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
-      });
       cy.waitForAuthRefresh(() => {
+        cy.login(testData.username, testData.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
         cy.reload();
         UsersSearchPane.waitLoading();
-      });
+      }, 20_000);
     });
   });
 
@@ -65,6 +66,7 @@ describe('Check out', () => {
     UsersSearchPane.waitLoading();
     UsersSearchPane.searchByUsername(testData.username);
     UsersSearchPane.waitLoading();
+    UsersSearchPane.openUser(testData.username);
     // Scroll down to "Notes" accordion button and click on it.
     UsersCard.openNotesSection();
     // Create Note 1
@@ -108,8 +110,9 @@ describe('Check out', () => {
       // Open user Details
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.resetAllFilters();
+      UsersSearchResultsPane.verifySearchPaneIsEmpty();
       UsersSearchPane.searchByUsername(testData.username);
-      UsersSearchPane.selectUserFromList(testData.username);
+      UsersSearchPane.openUser(testData.username);
       UsersSearchPane.waitLoading();
       // Scroll down to "Notes" accordion button and click on it.
       UsersCard.openNotesSection();
