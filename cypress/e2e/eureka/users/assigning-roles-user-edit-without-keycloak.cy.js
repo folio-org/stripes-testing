@@ -87,7 +87,7 @@ describe('Eureka', () => {
       { tags: ['smoke', 'eureka', 'shiftLeft', 'C627437'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.userBody.username);
-        UsersSearchPane.selectUserFromList(testData.userBody.username);
+        UsersSearchPane.clickOnUserRowContaining(testData.userBody.username);
         UsersCard.verifyUserLastFirstNameInCard(
           testData.userBody.personal.lastName,
           testData.userBody.personal.firstName,
@@ -137,11 +137,10 @@ describe('Eureka', () => {
           testData.userBody.personal.lastName,
           testData.userBody.personal.firstName,
         );
-        UsersCard.close();
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(testData.userBody.username);
-        UsersSearchPane.selectUserFromList(testData.userBody.username);
+        UsersSearchPane.clickOnUserRowContaining(testData.userBody.username);
         UsersCard.verifyUserLastFirstNameInCard(
           testData.userBody.personal.lastName,
           testData.userBody.personal.firstName,

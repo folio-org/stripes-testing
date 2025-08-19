@@ -77,9 +77,13 @@ describe('Inventory', () => {
       'C478253 Verify "fullCallNumber" generation when all "Call number" fields are filled in "Item" record (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C478253'] },
       () => {
-        cy.login(testData.user.username, testData.user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.searchByTitle(instanceData.id);
         InventoryInstances.selectInstanceById(instanceData.id);
 

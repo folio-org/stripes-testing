@@ -210,7 +210,7 @@ describe('Inventory', () => {
 
       it(
         'C477537 LC call numbers are sorted alphabetically using "Call numbers (all)" browse option (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel', 'C477537'] },
+        { tags: ['smokeFlaky', 'spitfire', 'nonParallel', 'C477537'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

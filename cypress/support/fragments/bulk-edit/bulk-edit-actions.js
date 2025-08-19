@@ -430,7 +430,7 @@ export default {
   },
 
   replaceWithIsDisabled(rowIndex = 0) {
-    cy.do([
+    cy.expect([
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ content: 'Replace with' }))
         .has({ disabled: true }),
@@ -449,6 +449,11 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
+    cy.expect([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Find' }))
+        .has({ disabled: true }),
+    ]);
     this.verifyConfirmButtonDisabled(true);
     cy.do(oldEmail.fillIn(oldEmailDomain));
     this.verifyConfirmButtonDisabled(true);

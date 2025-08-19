@@ -709,11 +709,7 @@ describe('Inventory', () => {
     let user;
 
     const search = (query, isNegative = true) => {
-      BrowseClassifications.waitForClassificationNumberToAppear(
-        testData.localInstnaceClassificationValue,
-        null,
-        !isNegative,
-      );
+      BrowseClassifications.waitForClassificationNumberToAppear(query, 'lc', !isNegative);
       InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
         testData.classificationOption,
       );
@@ -830,11 +826,6 @@ describe('Inventory', () => {
       'C468157 Only one Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468157'] },
       () => {
-        testData.folioInstances.forEach((folioInstance) => {
-          BrowseClassifications.waitForClassificationNumberToAppear(
-            folioInstance.classificationValue,
-          );
-        });
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });
