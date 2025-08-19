@@ -134,6 +134,29 @@ export default {
     );
   },
 
+  clickNewCategoriesButton() {
+    cy.do(Button({ id: 'clickable-add-categories' }).click());
+  },
+
+  fillCategoryName(name) {
+    cy.get('#editList-categories').find('input[type="text"]').clear().type(name)
+      .blur();
+  },
+
+  saveCategoryChanges() {
+    cy.get('button[id^="clickable-save-categories-"]').click();
+  },
+
+  checkCategoriesTableContent(typeName) {
+    const grid = '#editList-categories';
+    cy.get(`${grid} [role="row"][aria-rowindex]:not([aria-rowindex="1"])`)
+      .filter((_, row) => {
+        const nameCell = row.querySelector('[role="gridcell"]');
+        return nameCell && nameCell.textContent.trim() === typeName;
+      })
+      .should('have.length', 1);
+  },
+
   deleteType: (typeName) => {
     cy.do(
       MultiColumnListCell({ content: typeName.name }).perform((element) => {

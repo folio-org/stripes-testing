@@ -62,6 +62,28 @@ export default {
     cy.do(saveButton.click());
   },
 
+  uncheckUsercanEditPONumberIfChecked: () => {
+    cy.expect(editPoNumberCheckbox.exists());
+    cy.do(editPoNumberCheckbox.uncheckIfSelected());
+    cy.get('#clickable-save-config').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+      }
+    });
+    cy.wait(2000);
+  },
+
+  checkUsercaneditPONumberIfNeeded: () => {
+    cy.expect(editPoNumberCheckbox.exists());
+    cy.do(editPoNumberCheckbox.checkIfNotSelected());
+    cy.get('#clickable-save-config').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+      }
+    });
+    cy.wait(2000);
+  },
+
   userCanNotEditPONumber: () => {
     cy.wait(4000);
     cy.do(editPoNumberCheckbox.click());
