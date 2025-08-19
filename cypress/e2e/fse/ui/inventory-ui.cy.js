@@ -40,7 +40,7 @@ describe('fse-inventory - UI', () => {
 
   it(
     `TC195766 - check inventory classifications ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['ramsons', 'fse', 'ui', 'sanity', 'inventory'] },
+    { tags: ['ramsons', 'fse', 'ui', 'inventory'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       // check classification
