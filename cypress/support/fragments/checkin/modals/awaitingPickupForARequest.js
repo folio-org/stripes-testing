@@ -27,6 +27,7 @@ export default {
   },
   unselectCheckboxPrintSlipModified: () => {
     const checkBoxPreciseLocator = 'div[data-test-confirm-status-modal] input[type="checkbox"]';
+    cy.expect(Modal().find(Checkbox('Print slip')).exists());
     cy.get(checkBoxPreciseLocator).click();
   },
   checkModalMessage: (item) => {
