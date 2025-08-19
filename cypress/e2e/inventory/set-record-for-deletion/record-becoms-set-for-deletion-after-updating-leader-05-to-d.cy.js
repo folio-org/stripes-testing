@@ -108,7 +108,6 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${marcFile.exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${marcFile.modifiedMarcFile}`);
-      FileManager.deleteFile(`cypress/downloads/${marcFile.exportedFileName}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
@@ -129,6 +128,7 @@ describe('Inventory', () => {
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
 
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
           cy.wait(4000);
           ExportFile.downloadExportedMarcFile(marcFile.exportedFileName);
 
@@ -138,6 +138,7 @@ describe('Inventory', () => {
             ['01205cam'],
             [textForUpdateInMarcFile],
           );
+          FileManager.deleteFile(`cypress/downloads/${marcFile.exportedFileName}`);
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
