@@ -24,11 +24,11 @@ describe('MARC', () => {
             operator: 'Starts with',
             searchOption: 'Identifier (all)',
             expectedResults: [
-              { searchRecordName: 'Mental maps407730', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Maps407730', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Mappae mundi407730', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Mental map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pae mundi', type: 'Authorized', headingType: 'Genre' },
               {
-                searchRecordName: 'Upside-down maps407730',
+                searchRecordName: 'Upside-down map407730s',
                 type: 'Authorized',
                 headingType: 'Genre',
               },
@@ -36,46 +36,46 @@ describe('MARC', () => {
           },
           {
             booleanOperator: 'OR',
-            query: 'Map',
+            query: 'Map407730',
             operator: 'Starts with',
             searchOption: 'Genre',
             expectedResults: [
-              { searchRecordName: 'Maps407730', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Mappae mundi407730', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pae mundi', type: 'Authorized', headingType: 'Genre' },
               {
-                searchRecordName: 'Upside-down maps407730',
+                searchRecordName: 'Upside-down map407730s',
                 type: 'Authorized',
                 headingType: 'Genre',
               },
-              { searchRecordName: 'Mental maps407730', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Mappamundi', type: 'Reference', headingType: 'Genre' },
-              { searchRecordName: 'Maps mental', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Mappa mundi', type: 'Reference', headingType: 'Genre' },
+              { searchRecordName: 'Mental map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pamundi', type: 'Reference', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s mental', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pa mundi', type: 'Reference', headingType: 'Genre' },
             ],
           },
           {
             booleanOperator: 'OR',
-            query: 'Map',
+            query: 'Map407730',
             operator: 'Starts with',
             searchOption: "Children's subject heading",
             expectedResults: [
-              { searchRecordName: 'Maps407730', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Mappae mundi407730', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pae mundi', type: 'Authorized', headingType: 'Genre' },
               {
-                searchRecordName: 'Upside-down maps407730',
+                searchRecordName: 'Upside-down map407730s',
                 type: 'Authorized',
                 headingType: 'Genre',
               },
-              { searchRecordName: 'Mental maps407730', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Mappa mundi', type: 'Reference', headingType: 'Genre' },
-              { searchRecordName: 'Mappamundi', type: 'Reference', headingType: 'Genre' },
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Maps mental', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Mental map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pa mundi', type: 'Reference', headingType: 'Genre' },
+              { searchRecordName: 'Map407730pamundi', type: 'Reference', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s mental', type: 'Auth/Ref', headingType: 'Genre' },
               {
-                searchRecordName: 'Maps - Montessori method of education407730',
+                searchRecordName: 'Map407730s - Montessori method of education',
                 type: 'Authorized',
                 headingType: 'Topical',
               },
@@ -83,16 +83,16 @@ describe('MARC', () => {
           },
           {
             booleanOperator: 'AND',
-            query: 'Maps',
+            query: 'Map407730s',
             operator: 'Starts with',
             searchOption: 'Keyword',
             expectedResults: [
-              { searchRecordName: 'Maps', type: 'Authorized', headingType: 'Genre' },
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Maps mental', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Authorized', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s mental', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
               {
-                searchRecordName: 'Maps - Montessori method of education407730',
+                searchRecordName: 'Map407730s - Montessori method of education',
                 type: 'Authorized',
                 headingType: 'Topical',
               },
@@ -104,10 +104,10 @@ describe('MARC', () => {
             operator: 'Starts with',
             searchOption: 'Keyword',
             expectedResults: [
-              { searchRecordName: 'Maps', type: 'Auth/Ref', headingType: 'Genre' },
-              { searchRecordName: 'Maps mental', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s', type: 'Auth/Ref', headingType: 'Genre' },
+              { searchRecordName: 'Map407730s mental', type: 'Auth/Ref', headingType: 'Genre' },
               {
-                searchRecordName: 'Maps - Montessori method of education407730',
+                searchRecordName: 'Map407730s - Montessori method of education',
                 type: 'Authorized',
                 headingType: 'Topical',
               },
@@ -118,7 +118,7 @@ describe('MARC', () => {
 
       before(() => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*407730');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*407730*');
 
         DataImport.uploadFileViaApi(
           testData.marcFile.marc,
