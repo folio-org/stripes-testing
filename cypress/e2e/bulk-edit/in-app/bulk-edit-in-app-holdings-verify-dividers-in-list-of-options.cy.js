@@ -88,7 +88,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyGroupOptionsInSelectOptionsHoldingDropdown();
+        BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('holding');
       },
     );
   });

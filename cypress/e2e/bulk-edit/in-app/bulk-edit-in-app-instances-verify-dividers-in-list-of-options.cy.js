@@ -72,7 +72,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyGroupOptionsInSelectOptionsInstanceDropdown();
+        BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('instance');
         BulkEditActions.clickOptionsSelection();
         BulkEditActions.verifySelectOptionsInstanceSortedAlphabetically();
       },
