@@ -17,7 +17,7 @@ describe('Fees&Fines', () => {
     const testData = {};
     it(
       'C11020 Verify user information display when automated patron block "Maximum outstanding fee/fine balance" exists for patron (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C11020'] },
+      { tags: ['smokeBroken', 'vega', 'system', 'shiftLeft', 'C11020'] },
       () => {
         testData.chargeAmount = 100;
 
@@ -51,7 +51,10 @@ describe('Fees&Fines', () => {
                     defaultAmount: testData.chargeAmount,
                   }).then((manualCharge) => {
                     testData.manualChargeId = manualCharge.id;
-                    cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+                    cy.loginAsAdmin({
+                      path: TopMenu.usersPath,
+                      waiter: UsersSearchPane.waitLoading,
+                    });
                     UsersSearchPane.searchByLastName(testData.username);
                     UsersCard.startFeeFine();
                     UserCharge.fillRequiredFields(owner, manualCharge.feeFineType);
