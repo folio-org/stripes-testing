@@ -25,16 +25,20 @@ import {
   Select,
   Selection,
   SelectionOption,
+  MultiSelectOption,
   Spinner,
+  PaneHeader,
   TextArea,
   TextField,
+  ValueChipRoot,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
-const closeEditPaneButton = Button({ icon: 'times' });
+const createUserPane = Pane('Create User');
+const closeEditPaneButton = createUserPane.find(PaneHeader().find(Button({ icon: 'times' })));
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
@@ -125,7 +129,9 @@ const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
-const createUserPane = Pane('Create User');
+const preferredEmailCommunicationsSelect = MultiSelect({
+  ariaLabelledby: 'adduserPreferredEmailCommunication-label',
+});
 
 let totalRows;
 
@@ -303,6 +309,10 @@ export default {
 
   changePreferredContact(contact = 'Email') {
     cy.do(preferredContactSelect.choose(contact));
+  },
+
+  changeBarcode(barcode) {
+    cy.do(barcodeField.fillIn(barcode));
   },
 
   clearFirstName() {
@@ -789,6 +799,13 @@ export default {
         cy.do(closeEditPaneButton.click());
       }
     });
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
+    cy.wait(5000);
+    cy.expect(rootPane.absent());
   },
 
   editUsername(username) {
@@ -1194,6 +1211,53 @@ export default {
     cy.do(emailField.fillIn(email));
   },
 
+  verifyEmailCommunicationPreferencesField() {
+    cy.expect(preferredEmailCommunicationsSelect.exists());
+  },
+
+  selectEmailCommunicationPreference(preference) {
+    cy.do(preferredEmailCommunicationsSelect.choose(preference));
+  },
+
+  verifyEmailCommunicationPreferenceSelected(preferences) {
+    const preferencesArray = Array.isArray(preferences) ? preferences : [preferences];
+    preferencesArray.forEach((preference) => {
+      cy.expect(preferredEmailCommunicationsSelect.find(ValueChipRoot(preference)).exists());
+    });
+  },
+
+  removeEmailCommunicationPreference(preference) {
+    cy.do(
+      preferredEmailCommunicationsSelect
+        .find(ValueChipRoot(preference))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(1000);
+    cy.expect(preferredEmailCommunicationsSelect.find(ValueChipRoot(preference)).absent());
+  },
+
+  typeInEmailCommunicationPreferences(text) {
+    cy.do(preferredEmailCommunicationsSelect.fillIn(text));
+  },
+
+  pressEnter() {
+    cy.get('body').type('{enter}');
+  },
+
+  verifyEmailCommunicationPreferencesDropdownItemExists(item) {
+    cy.expect(preferredEmailCommunicationsSelect.find(MultiSelectOption(including(item))).exists());
+  },
+
+  verifyRemoveButtonExists(preference) {
+    cy.expect(
+      preferredEmailCommunicationsSelect
+        .find(ValueChipRoot(preference))
+        .find(Button({ icon: 'times' }))
+        .exists(),
+    );
+  },
+
   checkPromoteUserModal(lastName, firstName = '') {
     cy.expect([
       promoteUserModal.find(cancelButton).exists(),
@@ -1280,5 +1344,28 @@ export default {
 
   checkUserCreatePaneOpened() {
     cy.expect(createUserPane.exists());
+  },
+
+  verifyRequiredFieldsFilled(lastName, barcode, username, email) {
+    this.verifyLastNameFieldValue(lastName);
+    this.verifyBarcodeFieldValue(barcode);
+    this.verifyUsernameFieldValue(username);
+    this.verifyEmailFieldValue(email);
+  },
+
+  verifyLastNameFieldValue(value) {
+    cy.expect(lastNameField.has({ value }));
+  },
+
+  verifyUsernameFieldValue(value) {
+    cy.expect(usernameField.has({ value }));
+  },
+
+  verifyEmailFieldValue(value) {
+    cy.expect(emailField.has({ value }));
+  },
+
+  verifyBarcodeFieldValue(value) {
+    cy.expect(barcodeField.has({ value }));
   },
 };
