@@ -1735,6 +1735,104 @@ export default {
     });
   },
 
+  verifyGroupOptionsInSelectOptionsInstanceDropdown() {
+    this.clickOptionsSelection();
+
+    const expectedOptions = [
+      [
+        'Administrative note',
+        'Set records for deletion',
+        'Staff suppress',
+        'Statistical code',
+        'Suppress from discovery',
+      ],
+      [
+        'Accessibility note',
+        'Accumulation and Frequency of Use note',
+        'Action note',
+        'Additional Physical Form Available note',
+        'Awards note',
+        'Bibliography note',
+        'Binding Information note',
+        'Biographical or Historical Data',
+        'Cartographic Mathematical Data',
+        'Case File Characteristics note',
+        'Citation / References note',
+        'Copy and Version Identification note',
+        'Creation / Production Credits note',
+        'Cumulative Index / Finding Aides notes',
+        'Data quality note',
+        'Date / time and place of an event note',
+        'Dissertation note',
+        'Entity and Attribute Information note',
+        'Exhibitions note',
+        'Formatted Contents Note',
+        'Former Title Complexity note',
+        'Funding Information Note',
+        'General note',
+        'Geographic Coverage note',
+        'Immediate Source of Acquisition note',
+        'Information About Documentation note',
+        'Information related to Copyright Status',
+        'Issuing Body note',
+        'Language note',
+        'Linking Entry Complexity note',
+        'Local notes',
+        'Location of Originals / Duplicates note',
+        'Location of Other Archival Materials note',
+        'Methodology note',
+        'Numbering peculiarities note',
+        'Original Version note',
+        'Ownership and Custodial History note',
+        'Participant or Performer note',
+        'Preferred Citation of Described Materials note',
+        'Publications About Described Materials note',
+        'Reproduction note',
+        'Restrictions on Access note',
+        'Scale note for graphic material',
+        'Source of Description note',
+        'Study Program Information note',
+        'Summary',
+        'Supplement note',
+        'System Details note',
+        'Target Audience note',
+        'Terms Governing Use and Reproduction note',
+        'Type of computer file or data note',
+        'Type of report and period covered note',
+        'With note',
+      ],
+    ];
+    const expectedGroupLabels = ['Administrative data', 'Instance notes'];
+    const groupSelector = 'li[class*="groupLabel"]';
+
+    cy.get(groupSelector).each(($groupLabel, ind) => {
+      const labelName = $groupLabel.text();
+
+      expect(labelName).to.eq(expectedGroupLabels[ind]);
+
+      // verification that option can't be selected
+      cy.wrap($groupLabel).should('not.have.attr', 'aria-selected', 'false');
+
+      const optionTexts = [];
+
+      cy.wrap($groupLabel)
+        .nextUntil(groupSelector)
+        .filter('[class*="groupedOption"]')
+        .each(($option) => {
+          cy.wrap($option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          expectedOptions[ind].forEach((expectedOption) => {
+            expect(optionTexts).to.include(expectedOption);
+          });
+        });
+    });
+  },
+
   verifySelectLocationDisabled(rowIndex = 0, isDisabled = true) {
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })

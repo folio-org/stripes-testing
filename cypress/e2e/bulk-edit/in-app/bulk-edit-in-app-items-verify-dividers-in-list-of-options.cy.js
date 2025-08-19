@@ -51,6 +51,7 @@ describe('Bulk-edit', () => {
       { tags: ['extendedPath', 'firebird', 'C648460'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
