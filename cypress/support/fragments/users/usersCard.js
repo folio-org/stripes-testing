@@ -717,6 +717,10 @@ export default {
     });
   },
 
+  verifyNoServicePointsFound() {
+    cy.expect(servicePointsAccordion.find(HTML(including('No service points found'))).exists());
+  },
+
   openServicePointsAccordion() {
     cy.do(servicePointsAccordion.clickHeader());
     cy.wait(1000);

@@ -517,6 +517,19 @@ export default {
     cy.do(Modal().find(saveAndCloseBtn).click());
   },
 
+  removeAllServicePoints() {
+    cy.do(Button({ id: 'add-service-point-btn' }).click());
+
+    cy.get('input[type="checkbox"]:checked').then(($checkboxes) => {
+      $checkboxes.each((index, checkbox) => {
+        // eslint-disable-next-line cypress/no-force
+        cy.wrap(checkbox).uncheck({ force: true });
+      });
+    });
+
+    cy.do(Modal().find(saveAndCloseBtn).click());
+  },
+
   selectPreferableServicePoint(point) {
     cy.do(preferableServicePointSelect.choose(point));
   },
