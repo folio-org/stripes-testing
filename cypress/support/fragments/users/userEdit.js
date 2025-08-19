@@ -616,6 +616,10 @@ export default {
     });
   },
 
+  verifySaveButtonEnabled() {
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  },
+
   saveAndClose() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
