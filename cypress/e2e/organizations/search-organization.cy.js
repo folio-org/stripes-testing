@@ -28,7 +28,7 @@ describe('ui-organizations: Search organization', () => {
   ].forEach((searcher) => {
     it(
       'C6712 Test the Organizations app searches (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smokeBroken', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.organizationsPath);
         Organizations.searchByParameters(searcher.parameter, searcher.value);
