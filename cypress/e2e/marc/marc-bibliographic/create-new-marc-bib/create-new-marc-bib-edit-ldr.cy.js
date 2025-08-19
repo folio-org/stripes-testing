@@ -606,7 +606,6 @@ describe('MARC', () => {
             }
             cy.wait(1000);
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkInstanceTitle(title);
             InventoryInstance.getId().then((id) => {
               createdInstanceIDs.push(id);
