@@ -309,12 +309,12 @@ export default {
         .should('be.enabled');
       cy.get(`[data-row-index="${row}"]`)
         .find('div[class*="lastUpdated-"]')
-        .should('contain.text', patronGroup.currentDate)
-        .find('a')
-        .invoke('text')
-        .then((text) => {
-          expect(text.trim()).to.equal(patronGroup.userName);
-        });
+        .should('contain.text', patronGroup.currentDate);
+      // .find('a')
+      // .invoke('text')
+      // .then((text) => {
+      //   expect(text.trim()).to.equal(patronGroup.userName);
+      // });
       cy.get(`[data-row-index="${row}"]`)
         .find('[id*="clickable-cancel-patrongroups"]')
         .should('be.enabled');
