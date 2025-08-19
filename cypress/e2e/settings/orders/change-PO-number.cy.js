@@ -17,14 +17,18 @@ describe('Orders', () => {
     let user;
 
     beforeEach(() => {
-      cy.getAdminToken();
+      cy.loginAsAdmin({
+        path: TopMenu.settingsOrdersPath,
+        waiter: SettingsOrders.waitLoadingOrderSettings,
+      });
 
       Organizations.createOrganizationViaApi(organization).then((response) => {
         organization.id = response;
       });
       order.vendor = organization.name;
       order.orderType = 'One-time';
-      SettingsOrders.setUserCanEditPONumberViaApi(true);
+      SettingsOrders.selectContentInGeneralOrders('Edit');
+      SettingsOrders.checkUsercaneditPONumberIfNeeded();
       cy.createTempUser([
         permissions.uiSettingsOrdersCanViewAllSettings.gui,
         permissions.uiOrdersCreate.gui,
@@ -39,8 +43,12 @@ describe('Orders', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      SettingsOrders.setUserCanEditPONumberViaApi(false);
+      cy.loginAsAdmin({
+        path: TopMenu.settingsOrdersPath,
+        waiter: SettingsOrders.waitLoadingOrderSettings,
+      });
+      SettingsOrders.selectContentInGeneralOrders('Edit');
+      SettingsOrders.uncheckUsercanEditPONumberIfChecked();
       Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
       Users.deleteViaApi(user.userId);
