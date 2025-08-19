@@ -1833,6 +1833,56 @@ export default {
     });
   },
 
+  verifyGroupOptionsInSelectOptionsHoldingDropdown() {
+    this.clickOptionsSelection();
+
+    const expectedOptions = [
+      ['Administrative note', 'Suppress from discovery'],
+      ['Link text', 'Materials specified', 'URI', 'URL public note', 'URL relationship'],
+      [
+        'Action note',
+        'Binding',
+        'Copy note',
+        'Electronic bookplate',
+        'Note',
+        'Provenance',
+        'Reproduction',
+      ],
+      ['Permanent holdings location', 'Temporary holdings location'],
+    ];
+    const expectedGroupLabels = [
+      'Administrative data',
+      'Electronic access',
+      'Holdings notes',
+      'Location',
+    ];
+    const groupSelector = 'li[class*="groupLabel"]';
+
+    cy.get(groupSelector).each(($groupLabel, ind) => {
+      const labelName = $groupLabel.text();
+      expect(labelName).to.eq(expectedGroupLabels[ind]);
+
+      // verification that option can't be selected
+      cy.wrap($groupLabel).should('not.have.attr', 'aria-selected', 'false');
+      const optionTexts = [];
+      cy.wrap($groupLabel)
+        .nextUntil(groupSelector)
+        .filter('[class*="groupedOption"]')
+        .each(($option) => {
+          cy.wrap($option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          expectedOptions[ind].forEach((expectedOption) => {
+            expect(optionTexts).to.include(expectedOption);
+          });
+        });
+    });
+  },
+
   verifySelectLocationDisabled(rowIndex = 0, isDisabled = true) {
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
