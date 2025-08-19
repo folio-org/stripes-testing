@@ -119,7 +119,7 @@ describe(
             BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
             BulkEditSearchPane.waitFileUploading();
             BulkEditActions.downloadMatchedResults();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
 
             BulkEditActions.clearTemporaryLocation();
             BulkEditActions.addNewBulkEditFilterString();

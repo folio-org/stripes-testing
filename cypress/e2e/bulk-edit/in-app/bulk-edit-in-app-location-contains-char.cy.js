@@ -104,7 +104,7 @@ describe('Bulk-edit', () => {
           'Item temporary location',
         ]);
         // Click "Actions" menu => Select "Start Bulk edit" option
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         // Select "Temporary item location" from "Select option" dropdown => Select "Replace with" option from  "Select action" dropdown
         BulkEditActions.replaceTemporaryLocation(locationName);
         // Click on the "Plus" icon

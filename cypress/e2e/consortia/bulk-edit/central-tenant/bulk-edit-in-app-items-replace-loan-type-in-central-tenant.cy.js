@@ -400,7 +400,7 @@ describe('Bulk-edit', () => {
             marcInstance.barcodeInUniversity,
             marcInstanceItemInUniversityInitialHeaderValues,
           );
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();

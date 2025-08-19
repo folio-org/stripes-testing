@@ -64,7 +64,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [user.barcode]);
         BulkEditSearchPane.uncheckShowColumnCheckbox('Email', 'Expiration date', 'Patron group');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(futureDate);
         BulkEditActions.addNewBulkEditFilterString();
         const oldEmail = 'test@folio.org';

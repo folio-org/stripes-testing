@@ -147,7 +147,7 @@ describe(
             BulkEditSearchPane.verifyResultColumnTitles(columnName);
           });
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
           BulkEditActions.confirmChanges();

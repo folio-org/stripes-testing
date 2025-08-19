@@ -60,7 +60,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [`,${birthdate},`]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Birth date');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Birth date', birthdateSlashFormat);

@@ -48,7 +48,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyCheckedDropdownMenuItem();
         BulkEditActions.verifyUncheckedDropdownMenuItem();
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(DateTools.getFutureWeekDateObj());
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, user.username);

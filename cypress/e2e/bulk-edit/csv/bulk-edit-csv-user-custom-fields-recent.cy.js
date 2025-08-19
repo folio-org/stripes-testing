@@ -79,7 +79,7 @@ describe('Bulk-edit', () => {
           user.firstName,
           newFirstName,
         );
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();
@@ -112,7 +112,7 @@ describe('Bulk-edit', () => {
           newFirstName,
           anotherFirstName,
         );
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

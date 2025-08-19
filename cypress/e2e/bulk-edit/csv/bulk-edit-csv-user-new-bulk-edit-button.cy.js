@@ -46,7 +46,7 @@ describe('Bulk-edit', () => {
             'testPermFirst',
             newFirstName,
           );
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(uuidEditedFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.clickNext();
@@ -121,7 +121,7 @@ describe('Bulk-edit', () => {
           user.username,
           newUsername,
         );
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(barcodeEditedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

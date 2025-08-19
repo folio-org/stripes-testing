@@ -108,7 +108,7 @@ describe('Bulk-edit', () => {
           'Check in note',
           'Binding note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.changeNoteType('Check out note', 'Binding');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Copy note', 'Check in note', 1);

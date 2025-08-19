@@ -103,7 +103,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.itemId]);
         BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.addItemNote('Administrative note', notes.admin);
         BulkEditActions.verifyCheckboxAbsent();
         BulkEditActions.verifyConfirmButtonDisabled(false);

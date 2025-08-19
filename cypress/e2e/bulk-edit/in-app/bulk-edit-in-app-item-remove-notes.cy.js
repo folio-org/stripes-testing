@@ -104,7 +104,7 @@ describe('Bulk-edit', () => {
           'Electronic bookplate note',
           `${notes.electronicBookplateNote} | ${notes.electronicBookplateNoteStaffOnly} (staff only)`,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.noteRemove('Copy note', notes.copyNote);
         BulkEditActions.addNewBulkEditFilterString();

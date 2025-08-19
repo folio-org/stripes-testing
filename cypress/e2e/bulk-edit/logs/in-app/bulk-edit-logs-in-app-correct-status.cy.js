@@ -101,7 +101,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.openActions();
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.replaceItemStatus('Available');
           BulkEditActions.confirmChanges();
           cy.intercept('/bulk-operations/*').as('commitChanges');

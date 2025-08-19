@@ -51,7 +51,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         const oldEmail = user.personal.email;
         const newEmail = 'new_email@google.com';
