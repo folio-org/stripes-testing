@@ -17,9 +17,6 @@ describe('MARC', () => {
         authorityPrefix: 'n',
         field010Content: `$a n${getRandomPostfix()}`,
         field100Content: '$a C523594 Create MARC authority and check modal',
-        validationModalText:
-          "There might be a slight delay while the system is checking against the library's validation rules. You can continue to work with MARC authority in a different browser tab if needed.",
-        validationModalTitle: 'MARC validation rules check',
         successMessage: 'Record created.',
       };
       const LC_NAME_AUTHORITY_FILE = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
