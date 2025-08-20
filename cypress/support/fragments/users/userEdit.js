@@ -37,8 +37,6 @@ import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
-const createUserPane = Pane('Create User');
-const closeEditPaneButton = createUserPane.find(PaneHeader().find(Button({ icon: 'times' })));
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
@@ -129,6 +127,8 @@ const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
+const createUserPane = Pane('Create User');
+const closeEditPaneButton = createUserPane.find(PaneHeader().find(Button({ icon: 'times' })));
 const preferredEmailCommunicationsSelect = MultiSelect({
   ariaLabelledby: 'adduserPreferredEmailCommunication-label',
 });
@@ -1384,5 +1384,31 @@ export default {
 
   verifyBarcodeFieldValue(value) {
     cy.expect(barcodeField.has({ value }));
+  },
+
+  verifyUserTypeFieldValue(value) {
+    cy.expect(selectRequestType.has({ value }));
+  },
+
+  clearExpirationDateField() {
+    cy.do(expirationDateField.clear());
+  },
+
+  openExpirationDateCalendar() {
+    cy.do(expirationDateField.find(Button({ icon: 'calendar' })).click());
+  },
+
+  pickFutureDate() {
+    // Pick a date 30 days in the future
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 30);
+    const formattedDate = `${(futureDate.getMonth() + 1).toString().padStart(2, '0')}/${futureDate.getDate().toString().padStart(2, '0')}/${futureDate.getFullYear()}`;
+
+    cy.do(expirationDateField.fillIn(formattedDate));
+    return formattedDate;
+  },
+
+  verifyExpirationDateFieldCleared() {
+    cy.expect(expirationDateField.has({ value: '' }));
   },
 };
