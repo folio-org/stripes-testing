@@ -193,7 +193,9 @@ describe('Patron notices', () => {
       CirculationRules.deleteRuleViaApi(testData.addedRule);
       Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
         (requestResponse) => {
-          Requests.deleteRequestViaApi(requestResponse[0].id);
+          if (requestResponse?.[0]?.id) {
+            Requests.deleteRequestViaApi(requestResponse[0].id);
+          }
         },
       );
       NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
