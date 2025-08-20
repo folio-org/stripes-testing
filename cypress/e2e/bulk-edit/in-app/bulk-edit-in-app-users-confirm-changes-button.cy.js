@@ -43,7 +43,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.selectOption('Patron group');
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.addNewBulkEditFilterString();
@@ -64,7 +64,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.selectOption('Patron group');
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.addNewBulkEditFilterString();

@@ -49,6 +49,16 @@ export default {
     resource: 'Users-Bl Users-By-Username Item',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  circulationRulesView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Circulation Rules',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  capabilitiesManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Capabilities',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capabilities
   uiUsersResetPassword: {

@@ -68,13 +68,13 @@ describe('Bulk-edit', () => {
   describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
-      cy.getAdminToken();
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.bulkEditLogsView.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         permissions.bulkEditQueryView.gui,
+        permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -168,7 +168,7 @@ describe('Bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(marcInstance.uuid);
       FileManager.deleteFileFromDownloadsByMask(
         previewQueryFileNameCsv,
         previewQueryFileNameMrc,

@@ -67,7 +67,7 @@ describe('Bulk-edit', () => {
           user.firstName,
           newFirstName,
         );
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditActions.cancel();
         BulkEditSearchPane.verifyErrorLabel(1);
@@ -84,7 +84,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadErrorsExists();
         BulkEditActions.startBulkEditLocalButtonExists();
 
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();
@@ -104,7 +104,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadErrorsExists();
         BulkEditActions.startBulkEditLocalButtonExists();
 
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

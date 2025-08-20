@@ -21,6 +21,7 @@ const errorsInExportAccordion = Accordion({ headline: 'Errors in export' });
 const startedRunningAccordion = Accordion({ headline: 'Started running' });
 const endedRunningAccordion = Accordion({ headline: 'Ended running' });
 const jobProfileAccordion = Accordion({ headline: 'Job profile' });
+const userAccordion = Accordion({ headline: 'User' });
 const logsMainPane = Pane('Logs');
 const logsIcon = Image({ alt: 'Data export loader for MARC records' });
 const recordsFoundText = HTML({ id: 'paneHeaderdata-export-logs-pane-subtitle' });
@@ -92,6 +93,10 @@ export default {
 
   verifyJobProfileIsCollapsed() {
     cy.expect(jobProfileAccordion.has({ open: false }));
+  },
+
+  verifyUserAccordionIsCollapsed() {
+    cy.expect(userAccordion.has({ open: false }));
   },
 
   verifyLogsMainPane() {
@@ -168,5 +173,12 @@ export default {
 
   resetAll() {
     cy.do(resetAllButton.click());
+  },
+
+  verifyPaginatorExists() {
+    cy.get('div[class^="prevNextPaginationContainer-"]').within(() => {
+      cy.get('button[data-testid="prev-page-button"]').should('exist');
+      cy.get('button[data-testid="next-page-button"]').should('exist');
+    });
   },
 };

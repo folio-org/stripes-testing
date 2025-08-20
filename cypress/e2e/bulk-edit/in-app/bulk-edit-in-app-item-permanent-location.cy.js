@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item permanent location');
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replacePermanentLocation(newLocation, 'item');
         BulkEditActions.confirmChanges();
 

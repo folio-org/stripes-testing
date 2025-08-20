@@ -66,7 +66,7 @@ describe('Bulk-edit', () => {
           patronGroup,
           invalidPatronGroup,
         );
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

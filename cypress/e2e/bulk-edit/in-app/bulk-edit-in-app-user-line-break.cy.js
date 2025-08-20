@@ -100,7 +100,7 @@ describe(
           BulkEditSearchPane.verifyMatchedResults(...testUsersBarcodes);
           BulkEditActions.downloadMatchedResults();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
 
           BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
           BulkEditActions.confirmChanges();

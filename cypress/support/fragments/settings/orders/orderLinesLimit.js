@@ -1,28 +1,27 @@
 import uuid from 'uuid';
 
 const defaultPOLLimitConfig = {
-  module: 'ORDERS',
-  configName: 'poLines-limit',
+  key: 'poLines-limit',
   value: '1',
   id: uuid(),
 };
-const defaultSearchParams = { query: '(module==ORDERS and configName==poLines-limit)' };
+const defaultSearchParams = { query: '(key=poLines-limit)' };
 
 export default {
   getPOLLimit(searchParams) {
     return cy
       .okapiRequest({
-        path: 'configurations/entries',
+        path: 'orders-storage/settings',
         searchParams,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body }) => body.configs);
+      .then(({ body }) => body.settings);
   },
   createPOLLimit(config) {
     return cy
       .okapiRequest({
         method: 'POST',
-        path: 'configurations/entries',
+        path: 'orders-storage/settings',
         body: config,
       })
       .then(({ body }) => body);
@@ -30,7 +29,7 @@ export default {
   updatePOLLimit(config) {
     return cy.okapiRequest({
       method: 'PUT',
-      path: `configurations/entries/${config.id}`,
+      path: `orders-storage/settings/${config.id}`,
       body: config,
       isDefaultSearchParamsRequired: false,
     });

@@ -68,7 +68,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
         // Select the "Start bulk edit" element
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyBulkEditForm();
 
@@ -87,7 +87,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
 
         BulkEditActions.selectOption('Email');
@@ -113,7 +113,7 @@ describe('Bulk-edit', () => {
 
         // Click "Actions" menu
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyBulkEditForm();
