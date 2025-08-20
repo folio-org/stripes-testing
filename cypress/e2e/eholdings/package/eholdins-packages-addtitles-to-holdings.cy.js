@@ -41,8 +41,8 @@ describe('eHoldings', () => {
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
           cy.reload();
-          EHoldingsTitlesSearch.waitLoading();
         }, 20_000);
+        EHoldingsTitlesSearch.waitLoading();
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.openPackage();
