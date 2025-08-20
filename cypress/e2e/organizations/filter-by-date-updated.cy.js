@@ -18,10 +18,14 @@ const yesterday = DateTools.getFormattedDate({ date: d }, 'MM/DD/YYYY');
 
 describe('Organizations', () => {
   before('Create user and organization', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.organizationsPath,
-      waiter: Organizations.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+      cy.reload();
+      Organizations.waitLoading();
+    }, 20_000);
     cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((user) => {
       testData.user = user;
       NewOrganization.createViaApi(testData.organization).then((responseOrganization) => {
