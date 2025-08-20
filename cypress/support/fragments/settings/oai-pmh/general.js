@@ -1,5 +1,5 @@
 import { matching } from '@interactors/html';
-import { Checkbox, Pane, Select, TextArea, TextField, Button } from '../../../../interactors';
+import { Checkbox, Pane, Select, TextArea, TextField, Button } from '../../../../../interactors';
 
 const generalPane = Pane('General');
 const enableOaiServiceCheckbox = Checkbox('Enable OAI service');

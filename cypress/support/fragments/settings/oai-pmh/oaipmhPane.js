@@ -1,4 +1,4 @@
-import { NavListItem, Pane, Section } from '../../../../interactors';
+import { NavListItem, Pane, Section } from '../../../../../interactors';
 import Behavior from './behavior';
 
 const navPaneSection = Section({ id: 'app-settings-nav-pane' });
