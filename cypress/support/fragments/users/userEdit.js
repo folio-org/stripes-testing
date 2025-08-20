@@ -1397,11 +1397,34 @@ export default {
   },
 
   clearExpirationDateField() {
-    cy.do(expirationDateField.clear());
+    cy.do(expirationDateField.find(Button({ icon: 'times-circle-solid' })).click());
   },
 
   openExpirationDateCalendar() {
     cy.do(expirationDateField.find(Button({ icon: 'calendar' })).click());
+  },
+
+  convertDateFormat(dateString) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    const [month, day, year] = dateString.split('/');
+
+    const monthName = months[parseInt(month, 10) - 1];
+
+    return `${monthName} ${day}, ${year}`;
   },
 
   pickFutureDate() {

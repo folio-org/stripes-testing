@@ -14,7 +14,7 @@ describe('Users', () => {
     patronGroup: {
       name: getTestEntityValue('PatronGroup'),
       description: 'Patron_group_description',
-      expirationDateOffset: '30',
+      offsetDays: 30,
     },
     newUser: {
       personal: {
@@ -28,19 +28,21 @@ describe('Users', () => {
   before('Create test data', () => {
     cy.getAdminToken();
 
-    PatronGroups.createViaApi(testData.patronGroup.name, testData.patronGroup.description).then(
-      (patronGroupId) => {
-        testData.patronGroup.id = patronGroupId;
+    PatronGroups.createViaApi(
+      testData.patronGroup.name,
+      testData.patronGroup.description,
+      testData.patronGroup.offsetDays,
+    ).then((patronGroupId) => {
+      testData.patronGroup.id = patronGroupId;
 
-        cy.createTempUser([Permissions.uiUsersCreate.gui]).then((userProperties) => {
-          testData.user = userProperties;
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchPane.waitLoading,
-          });
+      cy.createTempUser([Permissions.uiUsersCreate.gui]).then((userProperties) => {
+        testData.user = userProperties;
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
         });
-      },
-    );
+      });
+    });
   });
 
   after('Delete test data', () => {
@@ -50,7 +52,7 @@ describe('Users', () => {
   });
 
   it(
-    'C503212 Date in "Expiration date" field can be picked after clearing the field with "x" icon on user create page (extended, volaris)',
+    'C503212 Date in "Expiration date" field can be picked after clearing the field with "x" icon on user create page (volaris)',
     { tags: ['extendedPath', 'volaris', 'C503212'] },
     () => {
       // Step 1: Click "Actions" -> "New" on users app main page
@@ -71,40 +73,38 @@ describe('Users', () => {
       UserEdit.changePatronGroup(
         `${testData.patronGroup.name} (${testData.patronGroup.description})`,
       );
-      UserEdit.setExpirationDate();
 
-      // Verify "Expiration date" field is populated with date in MM/DD/YYYY format
       const expectedDate = DateTools.getFormattedDate(
         {
-          date: DateTools.addDays(testData.patronGroup.expirationDateOffset),
+          date: DateTools.addDays(testData.patronGroup.offsetDays),
         },
-        'DD/MM/YYYY',
+        'MM/DD/YYYY',
       );
+      const formattedExpectedDate = UserEdit.convertDateFormat(expectedDate);
+      UserEdit.verifySetExpirationDatePopup(
+        testData.patronGroup.name,
+        testData.patronGroup.offsetDays,
+        formattedExpectedDate,
+      );
+      UserEdit.setExpirationDate();
       UserEdit.verifyExpirationDateFieldValue(expectedDate);
 
       // Step 4: Clear "Expiration date" field by clicking "x" icon
       UserEdit.clearExpirationDateField();
-
-      // Verify "Expiration date" field is cleared
       UserEdit.verifyExpirationDateFieldCleared();
 
       // Step 5: Click on "Calendar" icon in "Expiration date" field and pick any date in future
       UserEdit.openExpirationDateCalendar();
       const pickedDate = UserEdit.pickFutureDate();
-
-      // Verify datepicker is collapsed and selected date appears in "Expiration date" field
       UserEdit.verifyExpirationDateFieldValue(pickedDate);
 
       // Step 6: Click "Save & close" button on user edit page
       UserEdit.saveAndClose();
-
-      // Verify create user page is closed and new user details pane is displayed
-      // UserEdit.verifyCreateUserPageClosed();
       UsersCard.verifyUserDetailsPaneOpen();
 
-      // Verify "Expiration date" field has date set in step #5
+      const formattedExpectedDateCleared = DateTools.clearPaddingZero(pickedDate);
       UsersCard.openContactInformationAccordion();
-      UsersCard.checkKeyValue('Expiration date', pickedDate);
+      UsersCard.checkKeyValue('Expiration date', formattedExpectedDateCleared);
     },
   );
 });
