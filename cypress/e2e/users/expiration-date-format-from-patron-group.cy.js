@@ -49,8 +49,8 @@ describe('Users', () => {
   });
 
   it(
-    'C503010 Time format of "Expiration date" field in Users app is correct when derived from patron group expiration date (new user created) (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C503010'] },
+    'C503010 C503011 Time format of "Expiration date" field in Users app is correct when derived from patron group expiration date (new user created) (volaris)',
+    { tags: ['extendedPath', 'volaris', 'C503010', 'C503011'] },
     () => {
       // Step 1: Click on "Actions" button on Users app main page -> select "New" option
       Users.clickNewButton();
