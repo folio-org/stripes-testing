@@ -2170,6 +2170,20 @@ export default {
     );
   },
 
+  verifyInvalidValueInSubfieldOfSubRow(rowIndex = 0, subRowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('[class*="subfield-"]')
+            .should('have.text', 'Please check your input.');
+        }),
+    );
+  },
+
   fillInDataInSubRow(value, rowIndex = 0, subRowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
