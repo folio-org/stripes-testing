@@ -48,6 +48,7 @@ const selectAppSearchInput = selectApplicationModal.find(
 const selectAppSearchButton = selectApplicationModal.find(
   Button({ id: 'clickable-search-applications' }),
 );
+const selectAppResetAllButton = selectApplicationModal.find(Button({ id: 'clickable-reset-all' }));
 const saveButtonInModal = selectApplicationModal.find(
   Button({ dataTestID: 'submit-applications-modal' }),
 );
@@ -111,6 +112,7 @@ const createNameErrorText = 'Role could not be created: Failed to create keycloa
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 
+export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
 export default {
@@ -159,21 +161,22 @@ export default {
       saveButtonInModal.exists(),
       cancelButtonInModal.exists(),
       selectAppSearchButton.has({ disabled: true }),
+      selectAppResetAllButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
     ]);
   },
 
-  verifySelectApplicationModal: () => {
+  verifySelectApplicationModal() {
     cy.expect([
       saveButtonInModal.exists(),
       cancelButtonInModal.exists(),
-      selectAppSearchButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
       selectApplicationModal
         .find(MultiColumnListRow({ index: 0, isContainer: false }))
         .find(Checkbox())
         .exists(),
     ]);
+    this.checkButtonsEnabledInSelectAppModal({ resetAll: false, search: false });
   },
 
   selectApplicationInModal: (appName, isSelected = true) => {
@@ -194,8 +197,9 @@ export default {
     cy.expect(selectApplicationModal.absent());
   },
 
-  searchForAppInModal: (appName) => {
+  searchForAppInModal(appName) {
     cy.do([selectAppSearchInput.fillIn(appName), selectAppSearchButton.click()]);
+    this.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: true });
   },
 
   checkSaveButton: (enabled = true) => {
@@ -970,11 +974,48 @@ export default {
     cy.expect(Pane(roleName).find(typeKeyValue).has({ value: roleType }));
   },
 
-  checkApplicationShownInModal: (appName, isShown = true) => {
-    const targetCheckbox = selectApplicationModal
-      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
-      .find(Checkbox());
+  checkApplicationShownInModal: (appName, isShown = true, isSelected = null) => {
+    const targetRow = selectApplicationModal.find(
+      MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }),
+    );
+    const targetCheckbox = targetRow.find(Checkbox());
     if (isShown) cy.expect(targetCheckbox.exists());
-    else cy.expect(targetCheckbox.absent());
+    else cy.expect(targetRow.absent());
+    if (isSelected !== null) cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  checkButtonsEnabledInSelectAppModal: ({ resetAll = true, search = true } = {}) => {
+    cy.expect([
+      selectAppResetAllButton.has({ disabled: !resetAll }),
+      selectAppSearchButton.has({ disabled: !search }),
+    ]);
+  },
+
+  toggleFilterOptionInSelectAppModal: (optionName, isChecked = true) => {
+    const targetCheckbox = selectApplicationModal.find(Checkbox(optionName));
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: isChecked }));
+  },
+
+  clearFilterInSelectAppModal: () => {
+    cy.do(selectApplicationModal.find(clearFieldButton).click());
+    Object.values(selectAppFilterOptions).forEach((option) => {
+      cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+    });
+  },
+
+  checkClearFilterButtonInSelectAppModal: (isShown = true) => {
+    if (isShown) cy.expect(selectApplicationModal.find(clearFieldButton).exists());
+    else cy.expect(selectApplicationModal.find(clearFieldButton).absent());
+  },
+
+  checkApplicationCountInModal: (count) => {
+    if (count) cy.expect(selectApplicationModal.find(MultiColumnList()).has({ rowCount: count }));
+    else cy.expect(selectApplicationModal.find(MultiColumnListRow()).absent());
+  },
+
+  clickResetAllInSelectAppModal() {
+    cy.do(selectAppResetAllButton.click());
+    this.verifySelectApplicationModal();
   },
 };
