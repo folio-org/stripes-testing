@@ -465,7 +465,10 @@ export default {
   },
 
   cancelChanges() {
-    cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
+    cy.do(cancelButton.click());
+    cy.wait(1000);
+    cy.do(closeWithoutSavingButton.click());
+    cy.wait(1000);
   },
 
   cancelEdit() {

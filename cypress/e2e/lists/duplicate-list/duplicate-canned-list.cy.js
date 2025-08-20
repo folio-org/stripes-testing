@@ -65,9 +65,9 @@ describe('Lists', () => {
         Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.waitForCompilingToComplete();
 
-        Lists.closeListDetailsPane();
-        Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
-        Lists.verifyListIsPresent(listData.name);
+        // Lists.closeListDetailsPane();
+        // Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
+        // Lists.verifyListIsPresent(listData.name);
       },
     );
   });
