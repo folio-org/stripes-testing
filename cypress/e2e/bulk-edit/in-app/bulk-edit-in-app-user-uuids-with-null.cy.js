@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

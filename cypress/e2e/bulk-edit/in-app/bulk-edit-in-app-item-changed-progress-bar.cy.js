@@ -70,7 +70,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPermanentLoanType('Reading room');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

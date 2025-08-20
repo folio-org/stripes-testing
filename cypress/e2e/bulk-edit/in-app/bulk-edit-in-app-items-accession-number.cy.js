@@ -65,7 +65,7 @@ describe('Bulk-edit', () => {
         const newLocation = 'Online';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

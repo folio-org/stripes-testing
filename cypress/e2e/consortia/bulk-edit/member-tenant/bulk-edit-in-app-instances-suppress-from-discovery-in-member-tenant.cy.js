@@ -195,8 +195,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-            BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
             BulkEditActions.openActions();
             BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,

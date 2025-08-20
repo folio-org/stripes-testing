@@ -132,6 +132,8 @@ const closeEditPaneButton = createUserPane.find(PaneHeader().find(Button({ icon:
 const preferredEmailCommunicationsSelect = MultiSelect({
   ariaLabelledby: 'adduserPreferredEmailCommunication-label',
 });
+const resetExpirationDateButton = Button('Reset');
+const resetExpirationDateModal = Modal('Set expiration date?');
 
 let totalRows;
 
@@ -208,6 +210,10 @@ export default {
       modal.find(HTML(including(`expire in ${offsetDays} days`))).exists(),
       modal.find(HTML(including(expectedDates))).exists(),
     ]);
+  },
+
+  verifyActiveStatusField(expectedStatus) {
+    cy.expect(statusSelect.has({ value: expectedStatus }));
   },
 
   changeExternalSystemId(externalSystemId) {
@@ -1410,5 +1416,25 @@ export default {
 
   verifyExpirationDateFieldCleared() {
     cy.expect(expirationDateField.has({ value: '' }));
+  },
+
+  verifyUserHasExpiredMessage() {
+    cy.expect(HTML(including('User has expired')).exists());
+  },
+
+  clickResetExpirationDateButton() {
+    cy.do(resetExpirationDateButton.click());
+    cy.wait(500);
+  },
+
+  cancelResetExpirationDateModal() {
+    cy.do(resetExpirationDateModal.find(Button('Cancel')).click());
+    cy.wait(500);
+    cy.expect(resetExpirationDateModal.absent());
+    cy.wait(500);
+  },
+
+  verifyUserWillReactivateMessage() {
+    cy.expect(HTML(including('User will reactivate after saving')).exists());
   },
 };

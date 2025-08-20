@@ -148,7 +148,11 @@ export default {
     cy.do(okayButton.click());
     cy.expect(cannotDeleteModal.absent());
   },
-  createViaApi(patronGroup = defaultPatronGroup.group, description = 'Patron_group_description') {
+  createViaApi(
+    patronGroup = defaultPatronGroup.group,
+    description = 'Patron_group_description',
+    expirationOffsetInDays = '10',
+  ) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -157,7 +161,7 @@ export default {
         body: {
           group: patronGroup,
           desc: description,
-          expirationOffsetInDays: '10',
+          expirationOffsetInDays,
         },
       })
       .then((response) => {

@@ -1,8 +1,8 @@
 import { Permissions } from '../../../support/dictionary';
-import Localication, {
+import Localization, {
   LANGUAGES,
   NUMBERS,
-} from '../../../support/fragments/settings/tenant/general/localication';
+} from '../../../support/fragments/settings/tenant/general/localization';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -41,29 +41,29 @@ describe('Settings: Tenant', () => {
     () => {
       // Select "Language and localization" option
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
-      Localication.checkPaneContent();
+      Localization.checkPaneContent();
 
       // Click on the "Locale (for language display, date format etc.)" language
-      Localication.changeLocalLanguage(LANGUAGES.BRITISH_ENGLISH);
+      Localization.changeLocalLanguage(LANGUAGES.BRITISH_ENGLISH);
 
       // Click on the "Numbering system" dropdown and select "latn (0 1 2 3 4 5 6 7 8 9)" option => Click "Save" button
-      Localication.changeNumberingSystem(NUMBERS.LATN);
-      Localication.clickSaveButton();
+      Localization.changeNumberingSystem(NUMBERS.LATN);
+      Localization.clickSaveButton();
 
       // Click on the "Locale (for language display, date format etc.)" dropdown and select "English (Sweden) / English (Sweden)" language => Click "Save" button
-      Localication.changeLocalLanguage(LANGUAGES.SWEDEN_ENGLISH);
-      Localication.clickSaveButton();
+      Localization.changeLocalLanguage(LANGUAGES.SWEDEN_ENGLISH);
+      Localization.clickSaveButton();
 
       // Click on the "Numbering system" dropdown and select "arab" option => Click "Save" button
-      Localication.changeNumberingSystem(NUMBERS.ARAB);
-      Localication.clickSaveButton();
+      Localization.changeNumberingSystem(NUMBERS.ARAB);
+      Localization.clickSaveButton();
 
       // Click on the "Locale (for language display, date format etc.)" dropdown and select "American English/American English" language => Click "Save" button
-      Localication.changeLocalLanguage(LANGUAGES.AMERICAN_ENGLISH);
+      Localization.changeLocalLanguage(LANGUAGES.AMERICAN_ENGLISH);
 
       // Click on the "Numbering system" dropdown and select "---" (no) option => Click "Save" button
-      Localication.changeNumberingSystem(NUMBERS.NONE);
-      Localication.clickSaveButton();
+      Localization.changeNumberingSystem(NUMBERS.NONE);
+      Localization.clickSaveButton();
     },
   );
 });

@@ -61,7 +61,7 @@ describe('Bulk-edit', () => {
 
         // #3 Click "Actions" menu => Select "Start bulk edit"
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
 
         // #4 Select "Item status" option in the "Select option" dropdown

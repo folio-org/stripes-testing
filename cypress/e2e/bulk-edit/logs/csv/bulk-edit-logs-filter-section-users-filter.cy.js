@@ -84,7 +84,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.waitFileUploading();
 
             BulkEditActions.openActions();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.fillPatronGroup('staff (Staff Member)');
             BulkEditActions.confirmChanges();
             BulkEditActions.commitChanges();

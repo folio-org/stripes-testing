@@ -81,7 +81,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         const status = 'Intellectual item';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceItemStatus(status);
         BulkEditActions.confirmChanges();
 

@@ -21,6 +21,7 @@ import {
   TextArea,
   TextField,
   including,
+  MultiSelectMenu,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -97,6 +98,13 @@ const updatedDateAccordion = Accordion({ id: 'metadata.updatedDate' });
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
+const vendorInformationAccordion = Button({
+  id: 'accordion-toggle-button-vendorInformationSection',
+});
+const paymentMethodSection = Select('Payment method');
+const vendorTermsAccordion = Button({ id: 'accordion-toggle-button-agreementsSection' });
+const accountAccordion = Button({ id: 'accordion-toggle-button-accountsSection' });
+const accountStatus = Select('Account status*');
 
 export default {
   waitLoading: () => {
@@ -216,6 +224,11 @@ export default {
   selectPendingStatus: () => {
     cy.wait(3000);
     cy.do(Checkbox('Pending').click());
+  },
+
+  selectInactiveStatus: () => {
+    cy.wait(3000);
+    cy.do(Checkbox('Inactive').click());
   },
 
   selectIsDonorFilter: (isDonor) => {
@@ -484,11 +497,35 @@ export default {
   },
 
   selectVendor: () => {
-    cy.do([Checkbox('Vendor').click(), saveAndClose.click()]);
+    cy.do([Checkbox('Vendor').click()]);
   },
 
   deselectVendor: () => {
     cy.do([Checkbox('Vendor').click(), confirmButton.click(), saveAndClose.click()]);
+  },
+
+  addVendorInformation(vendorInformation) {
+    cy.do([
+      vendorInformationAccordion.click(),
+      paymentMethodSection.choose(vendorInformation.paymentMethod),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      vendorTermsAccordion.click(),
+      Button('Add').click(),
+      TextField({ name: 'agreements[0].name' }).fillIn(vendorInformation.vendorTermsName),
+      vendorTermsAccordion.click(),
+    ]);
+    cy.wait(4000);
+    cy.do(accountAccordion.click());
+    cy.get('button[data-test-add-account-button="true"]').click();
+    cy.do([
+      TextField({ name: 'accounts[0].name' }).fillIn(vendorInformation.accountName),
+      TextField({ name: 'accounts[0].accountNo' }).fillIn(vendorInformation.accountNumber),
+      accountStatus.choose(vendorInformation.accountStatus),
+      saveAndClose.click(),
+    ]);
+    cy.do(saveAndClose.click());
   },
 
   closeDetailsPane: () => {
@@ -570,6 +607,15 @@ export default {
     })
     .then((resp) => resp.body),
 
+  createContactViaApi: (contact) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/contacts',
+      body: contact,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -609,6 +655,22 @@ export default {
       addContacsModal.find(buttonNew).click(),
       lastNameField.fillIn(contact.lastName),
       firstNameField.fillIn(contact.firstName),
+      saveButtonInCotact.click(),
+    ]);
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
+  addNewContactWithCategory: (contact, category) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      MultiSelect({ label: 'Categories' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(category)).clickSegment(), // клик по сегменту с текстом
+      MultiSelect({ label: 'Categories' }).close(),
       saveButtonInCotact.click(),
     ]);
     cy.wait(2000);
@@ -664,6 +726,10 @@ export default {
     cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
 
+  deleteContactFromContactPeople: () => {
+    cy.get('button[data-test-unassign-contact="true"][aria-label="Unassign"]').click();
+  },
+
   selectCategories: (category) => {
     cy.do([
       MultiSelect().select(category),
@@ -692,7 +758,7 @@ export default {
   },
 
   openContactPeopleSection: () => {
-    cy.do(openContactSectionButton.click());
+    cy.do(Section({ id: 'contactPeopleSection' }).click());
   },
 
   openBankInformationSection: () => {
@@ -799,6 +865,13 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${contact.lastName}, ${contact.firstName}` }),
+    );
+  },
+
+  checkContactSectionIsEmpty: () => {
+    cy.get('#contactPeopleSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'The list contains no items',
     );
   },
 

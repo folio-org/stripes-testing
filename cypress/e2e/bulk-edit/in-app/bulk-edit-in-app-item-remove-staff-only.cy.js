@@ -86,7 +86,7 @@ describe('Bulk-edit', () => {
           'Check out note',
           'Check in note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.verifyItemOptions();
         BulkEditActions.verifyItemCheckInNoteActions();

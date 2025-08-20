@@ -109,7 +109,7 @@ describe('Bulk-edit', () => {
           electronicAccess[0].materialsSpecification,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.urlRelationshipReplaceWith(
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,

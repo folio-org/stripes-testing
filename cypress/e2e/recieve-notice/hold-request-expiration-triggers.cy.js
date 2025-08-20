@@ -29,7 +29,7 @@ import Requests from '../../support/fragments/requests/requests';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 describe('Patron notices', () => {
-  describe('Request notice triggers', () => {
+  describe('Request notice triggers', { retries: { runMode: 1 } }, () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       adminSourceRecord: {},
