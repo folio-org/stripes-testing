@@ -57,7 +57,8 @@ describe('Users', () => {
       UsersCard.waitLoading();
 
       // Verify expiration date field contains the past date / status is changed to Inactive
-      UsersCard.checkKeyValue('Expiration date', testData.pastDate);
+      const formattedPastDate = DateTools.clearPaddingZero(testData.pastDate);
+      UsersCard.checkKeyValue('Expiration date', formattedPastDate);
       UsersCard.checkKeyValue('Status', 'Inactive');
 
       // Step 5: close user details pane, reset search, and verify user is not found among active users
