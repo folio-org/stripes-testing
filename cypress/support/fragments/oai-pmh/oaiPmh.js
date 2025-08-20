@@ -1,5 +1,22 @@
-/* eslint-disable no-unused-expressions */
 export default {
+  getBaseUrl() {
+    const cachedBaseUrl = Cypress.env('OAI_PMH_BASE_URL');
+
+    if (cachedBaseUrl) {
+      return cachedBaseUrl;
+    }
+
+    return cy.getConfigByName('OAIPMH', 'general').then(({ configs }) => {
+      // Extract baseUrl from the configuration string
+      const configValue = JSON.parse(configs[0].value);
+      const fullBaseUrl = configValue.baseUrl;
+      const baseUrl = fullBaseUrl.replace(/^https?:\/\//, '').replace(/\/oai.*$/, '');
+
+      Cypress.env('OAI_PMH_BASE_URL', baseUrl);
+      return baseUrl;
+    });
+  },
+
   /**
    * Sends a GET request to the OAI-PMH GetRecord endpoint
    * @param {string} instanceUuid - The instance UUID to retrieve
@@ -7,23 +24,25 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   getRecordRequest(instanceUuid, metadataPrefix = 'marc21') {
-    const identifier = `oai:folio.org:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+    return this.getBaseUrl().then((baseUrl) => {
+      const identifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
 
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'oai/records',
-        searchParams: {
-          verb: 'GetRecord',
-          metadataPrefix,
-          identifier,
-        },
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: false,
-      })
-      .then((response) => {
-        return response.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'oai/records',
+          searchParams: {
+            verb: 'GetRecord',
+            metadataPrefix,
+            identifier,
+          },
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: true,
+        })
+        .then((response) => {
+          return response.body;
+        });
+    });
   },
 
   /**
