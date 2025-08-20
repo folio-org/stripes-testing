@@ -20,10 +20,16 @@ describe('Acquisition Units', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      cy.reload();
+      AcquisitionUnits.waitLoading();
+    }, 20_000);
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
     });
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
@@ -52,9 +58,6 @@ describe('Acquisition Units', () => {
       permissions.uiFinanceFinanceViewGroup.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-      });
 
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
