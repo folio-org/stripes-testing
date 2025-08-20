@@ -95,7 +95,7 @@ describe('Bulk-edit', () => {
           'Item temporary location',
           'Suppress from discovery',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const location = 'Online';
         BulkEditActions.replaceTemporaryLocation(location);
         BulkEditActions.addNewBulkEditFilterString();

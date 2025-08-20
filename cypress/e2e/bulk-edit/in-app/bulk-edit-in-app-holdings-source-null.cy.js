@@ -79,7 +79,7 @@ describe('Bulk-edit', () => {
         const location = 'Annex';
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Source');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

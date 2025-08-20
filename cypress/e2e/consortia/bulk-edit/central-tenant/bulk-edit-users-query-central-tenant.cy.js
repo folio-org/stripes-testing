@@ -105,7 +105,7 @@ describe('Bulk-edit', () => {
             );
 
             // Step 4: Click "Actions" menu => Select the "Start bulk edit" element
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();

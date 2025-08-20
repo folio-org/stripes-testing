@@ -78,7 +78,7 @@ describe('Data Export', () => {
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();
-        DataExportLogs.verifyUploadFileButtonEnabled();
+        DataExportLogs.verifyUploadFileButtonDisabled(false);
         DataExportLogs.verifyRunningAccordionExpanded();
 
         // Step 2: Trigger the data export by submitting .csv file with UUIDs of inventory instances

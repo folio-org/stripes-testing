@@ -75,7 +75,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         BulkEditSearchPane.verifyResultColumnTitles('Item temporary location');
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const tempLocation = 'Annex';
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'item', 0);
         BulkEditActions.confirmChanges();

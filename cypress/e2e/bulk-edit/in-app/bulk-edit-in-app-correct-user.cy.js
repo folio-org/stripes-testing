@@ -79,7 +79,7 @@ describe('Bulk-edit', () => {
 
         const newLocation = 'Online';
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
         cy.intercept('/bulk-operations/*').as('confirmChanges');
         BulkEditActions.confirmChanges();
@@ -108,7 +108,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
         cy.intercept('/bulk-operations/*').as('confirmChanges2');
         BulkEditActions.confirmChanges();

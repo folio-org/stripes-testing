@@ -171,11 +171,11 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
           `${noteText.checkOutNote} (staff only)`,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyGroupOptionsInSelectOptionsItemDropdown();
+        BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('item');
         BulkEditActions.clickOptionsSelection();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType(noteTypes.administrative, noteTypes.action);

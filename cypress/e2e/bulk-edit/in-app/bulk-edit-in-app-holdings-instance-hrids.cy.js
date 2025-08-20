@@ -73,7 +73,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(permanentLocation);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replacePermanentLocation(permanentLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

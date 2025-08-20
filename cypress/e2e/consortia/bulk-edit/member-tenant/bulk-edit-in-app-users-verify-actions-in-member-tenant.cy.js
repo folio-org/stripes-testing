@@ -117,7 +117,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.USER_ID,
               user.userId,
             );
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();

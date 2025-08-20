@@ -125,7 +125,10 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C436814*');
+            const titles = ['C436830*', 'C436821*', 'C436829*', 'C436814*'];
+            titles.forEach((title) => {
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+            });
             newMarcAuthoritySources.forEach((source) => {
               cy.createAuthoritySourceFileUsingAPI(
                 source.prefix,

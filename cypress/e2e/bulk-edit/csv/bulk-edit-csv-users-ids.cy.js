@@ -60,7 +60,7 @@ describe('Bulk-edit', () => {
         );
 
         // Upload bulk edit file
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

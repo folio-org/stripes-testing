@@ -103,7 +103,7 @@ describe(
 
             const suppressFromDiscovery = false;
             BulkEditActions.openActions();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
             BulkEditActions.checkApplyToItemsRecordsCheckbox();
             BulkEditActions.confirmChanges();

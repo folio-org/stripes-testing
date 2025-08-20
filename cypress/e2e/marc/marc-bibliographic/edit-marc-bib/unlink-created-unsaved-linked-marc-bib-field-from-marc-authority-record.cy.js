@@ -20,13 +20,13 @@ describe('MARC', () => {
       };
       const marcFiles = [
         {
-          marc: 'marcAutoFile1C366554.mrc',
+          marc: 'marcAuthFileC366554_1.mrc',
           fileName: `testMarcAuthFile1C366554.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
         },
         {
-          marc: 'marcAutoFile2C366554.mrc',
+          marc: 'marcAuthFileC366554_2.mrc',
           fileName: `testMarcAuthFile2C366554.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',

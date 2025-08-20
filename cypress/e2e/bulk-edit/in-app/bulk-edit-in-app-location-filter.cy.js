@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.typeInTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
         BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
@@ -78,7 +78,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         const location = 'Annex';
         BulkEditActions.typeInTemporaryLocationFilter(location);

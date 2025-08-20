@@ -50,7 +50,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();

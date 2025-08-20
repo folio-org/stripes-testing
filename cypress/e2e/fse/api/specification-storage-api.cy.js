@@ -8,7 +8,7 @@ describe('fse-specification-storage', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195707 - Get a collection of specifications for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['ramsons', 'fse', 'api', 'specification-storage', 'loc'] },
+    { tags: ['ramsons', 'fse', 'api', 'sanity', 'specification-storage', 'loc'] },
     () => {
       cy.checkSpecificationStorageApi().then((response) => {
         cy.expect(response.status).to.eq(200);
