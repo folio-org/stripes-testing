@@ -100,7 +100,7 @@ describe(
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
           BulkEditSearchPane.verifySpecificItemsMatched(textWithSpecialCharacters);
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [textWithSpecialCharacters]);
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.isSelectActionAbsent();

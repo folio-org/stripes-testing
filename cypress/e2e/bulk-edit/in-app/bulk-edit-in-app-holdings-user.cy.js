@@ -101,7 +101,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(holdingHRID);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         const permLocation = 'Main Library';
         BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 0);

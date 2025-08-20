@@ -89,7 +89,7 @@ describe.skip('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         const location = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location);
         cy.intercept('preview?limit=10&step=EDIT').as('confirmChanges');
         BulkEditActions.confirmChanges();

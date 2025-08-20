@@ -86,7 +86,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note');
         BulkEditSearchPane.verifyResultsUnderColumns('Action note', actionNote);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.verifyItemOptions();
         BulkEditActions.addItemNote('Action note', newActionNote);

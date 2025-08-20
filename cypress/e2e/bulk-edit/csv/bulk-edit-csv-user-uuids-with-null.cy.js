@@ -70,7 +70,7 @@ describe('Bulk-edit', () => {
           newFirstName,
         );
 
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

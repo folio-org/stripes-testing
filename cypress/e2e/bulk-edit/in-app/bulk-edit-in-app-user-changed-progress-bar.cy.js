@@ -49,7 +49,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
         BulkEditActions.fillExpirationDate(new Date());
         BulkEditActions.confirmChanges();

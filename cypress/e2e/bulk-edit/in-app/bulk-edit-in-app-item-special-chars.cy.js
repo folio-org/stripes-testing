@@ -69,7 +69,7 @@ describe('Bulk-edit', () => {
 
         const status = 'Intellectual item';
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceItemStatus(status);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, item.itemBarcode);
@@ -91,7 +91,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Instance (Title, Publisher, Publication date)',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceItemStatus(status);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, `${secondItem.instanceName}. MIT`);

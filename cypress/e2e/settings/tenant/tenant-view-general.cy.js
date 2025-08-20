@@ -1,7 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
-import Localication from '../../../support/fragments/settings/tenant/general/localication';
+import Localization from '../../../support/fragments/settings/tenant/general/localization';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -64,9 +64,9 @@ describe('Settings: Tenant', () => {
       TenantPane.waitLoading();
       // Click on "Language and localization" in the General subsection.
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
-      Localication.waitLoading();
-      Localication.checkPaneContent(false);
-      Localication.checkLockIcons();
+      Localization.waitLoading();
+      Localization.checkPaneContent(false);
+      Localization.checkLockIcons();
       // Click on "Service points" in the General subsection.
       TenantPane.selectTenant(TENANTS.SERVICE_POINTS);
       ServicePoints.servicePointExists(testData.servicePoint.name);

@@ -105,7 +105,7 @@ describe('Bulk-edit', () => {
 
         const location = 'Online';
         BulkEditActions.openActionsIfNotYet();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, location);
@@ -137,7 +137,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifySpecificItemsMatched(item.holdingHRID);
 
         const newLocation = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);

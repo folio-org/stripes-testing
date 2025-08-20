@@ -362,10 +362,10 @@ export default {
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   },
 
-  addDays(days) {
-    const date = new Date();
-    date.setDate(date.getDate() + days);
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  addDays(days, date = new Date()) {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + days);
+    return new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
   },
 
   getFutureWeekDateObj() {

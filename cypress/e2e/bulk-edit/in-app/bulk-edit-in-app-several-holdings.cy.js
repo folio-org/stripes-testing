@@ -97,7 +97,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(item.locationName, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

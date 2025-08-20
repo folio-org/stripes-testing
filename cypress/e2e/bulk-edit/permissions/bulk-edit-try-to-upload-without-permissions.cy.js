@@ -72,7 +72,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.verifyItemActionDropdownItems();
         BulkEditActions.downloadMatchedRecordsExists();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.replaceTemporaryLocation('Online');
         BulkEditActions.verifyModifyLandingPageAfterModifying();

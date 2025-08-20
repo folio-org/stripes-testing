@@ -99,7 +99,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Administrative note');
         BulkEditSearchPane.verifySpecificItemsMatched(note);
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         const location = 'Annex';
         BulkEditActions.replaceTemporaryLocation(location);

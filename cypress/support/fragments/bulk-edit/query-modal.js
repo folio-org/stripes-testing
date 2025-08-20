@@ -62,6 +62,7 @@ export const itemFieldValues = {
   holdingsHrid: 'Holding — HRID',
   temporaryLocation: 'Temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
+  materialTypeName: 'Material type — Name',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
