@@ -56,6 +56,10 @@ export default {
     cy.do(localeSelect.choose(language.name));
     cy.expect(localeSelect.has({ value: language.value }));
   },
+  changeTimezone(timezone) {
+    cy.do(timeZoneSelect.choose(timezone));
+    cy.expect(timeZoneSelect.has({ value: timezone }));
+  },
   changeNumberingSystem(system) {
     cy.do(numberingSystemSelect.choose(system.name));
     cy.expect(numberingSystemSelect.has({ value: system.value }));
