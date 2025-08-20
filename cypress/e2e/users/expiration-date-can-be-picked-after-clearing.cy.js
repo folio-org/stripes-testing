@@ -2,14 +2,15 @@ import { getTestEntityValue } from '../../support/utils/stringTools';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../support/fragments/users/userEdit';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import DateTools from '../../support/utils/dateTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Users', () => {
   const testData = {
+    user: {},
     patronGroup: {
       name: getTestEntityValue('PatronGroup'),
       description: 'Patron_group_description',
@@ -19,22 +20,24 @@ describe('Users', () => {
       personal: {
         lastName: getTestEntityValue('TestUser'),
         email: 'test@folio.org',
+        username: `username_${getTestEntityValue('TestUser')}`,
       },
-      preferredContact: 'Email',
     },
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
+
     PatronGroups.createViaApi(
       testData.patronGroup.name,
       testData.patronGroup.description,
       testData.patronGroup.offsetDays,
-    ).then((patronGroupResponse) => {
-      testData.patronGroup.id = patronGroupResponse;
+    ).then((patronGroupId) => {
+      testData.patronGroup.id = patronGroupId;
+
       cy.createTempUser([Permissions.uiUsersCreate.gui]).then((userProperties) => {
-        testData.newUser = userProperties;
-        cy.login(testData.newUser.username, testData.newUser.password, {
+        testData.user = userProperties;
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
         });
@@ -44,24 +47,33 @@ describe('Users', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(testData.newUser.userId);
+    Users.deleteViaApi(testData.user.userId);
     PatronGroups.deleteViaApi(testData.patronGroup.id);
   });
 
   it(
-    'C503010 C503011 Time format of "Expiration date" field in Users app is correct when derived from patron group expiration date (new user created) (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C503010', 'C503011'] },
+    'C503212 Date in "Expiration date" field can be picked after clearing the field with "x" icon on user create page (volaris)',
+    { tags: ['extendedPath', 'volaris', 'C503212'] },
     () => {
-      // Step 1: Click on "Actions" button on Users app main page -> select "New" option
+      // Step 1: Click "Actions" -> "New" on users app main page
       Users.clickNewButton();
       UserEdit.checkUserCreatePaneOpened();
 
-      // Step 2: Select patron group created in precondition #1 from "Patron group" dropdown
+      // Step 2: Fill in the following fields
+      UserEdit.changeLastName(testData.newUser.personal.lastName);
+      UserEdit.changeUserType('Patron');
+      UserEdit.changeUsername(testData.newUser.personal.username);
+      UserEdit.fillEmailAddress(testData.newUser.personal.email);
+      UserEdit.verifyLastNameFieldValue(testData.newUser.personal.lastName);
+      UserEdit.verifyUsernameFieldValue(testData.newUser.personal.username);
+      UserEdit.verifyEmailFieldValue(testData.newUser.personal.email);
+      UserEdit.verifyUserTypeFieldValue('patron');
+
+      // Step 3: Select patron group from precondition #1 from "Patron group" dropdown
       UserEdit.changePatronGroup(
         `${testData.patronGroup.name} (${testData.patronGroup.description})`,
       );
 
-      // Verify "Set expiration date?" popup appears with "Cancel" and "Set" buttons
       const expectedDate = DateTools.getFormattedDate(
         {
           date: DateTools.addDays(testData.patronGroup.offsetDays),
@@ -69,26 +81,29 @@ describe('Users', () => {
         'MM/DD/YYYY',
       );
       const formattedExpectedDate = UserEdit.convertDateFormat(expectedDate);
-
-      const formattedExpectedDateCleared = DateTools.clearPaddingZero(expectedDate);
-
       UserEdit.verifySetExpirationDatePopup(
         testData.patronGroup.name,
         testData.patronGroup.offsetDays,
         formattedExpectedDate,
       );
-
-      // Step 3: Click "Set" option on "Set expiration date?" popup
       UserEdit.setExpirationDate();
       UserEdit.verifyExpirationDateFieldValue(expectedDate);
 
-      // Step 4: Fill rest required fields on "Create User" page and click "Save & close" button
-      UserEdit.fillLastFirstNames(testData.newUser.personal.lastName);
-      UserEdit.fillEmailAddress(testData.newUser.personal.email);
-      UserEdit.changePreferredContact(testData.newUser.preferredContact);
-      UserEdit.saveAndClose();
+      // Step 4: Clear "Expiration date" field by clicking "x" icon
+      UserEdit.clearExpirationDateField();
+      UserEdit.verifyExpirationDateFieldCleared();
 
-      // Verify user is created successfully and "Expiration date" label contains date from step #3 in MM/DD/YYYY format
+      // Step 5: Click on "Calendar" icon in "Expiration date" field and pick any date in future
+      UserEdit.openExpirationDateCalendar();
+      const pickedDate = UserEdit.pickFutureDate();
+      UserEdit.verifyExpirationDateFieldValue(pickedDate);
+
+      // Step 6: Click "Save & close" button on user edit page
+      UserEdit.saveAndClose();
+      UsersCard.verifyUserDetailsPaneOpen();
+
+      const formattedExpectedDateCleared = DateTools.clearPaddingZero(pickedDate);
+      UsersCard.openContactInformationAccordion();
       UsersCard.checkKeyValue('Expiration date', formattedExpectedDateCleared);
     },
   );

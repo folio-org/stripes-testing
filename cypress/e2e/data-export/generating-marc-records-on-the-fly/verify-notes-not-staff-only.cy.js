@@ -93,7 +93,7 @@ describe('Data Export', () => {
       () => {
         // Step 1: Go to the "Data Export" app (already logged in from before block)
         DataExportLogs.verifyDragAndDropAreaExists();
-        DataExportLogs.verifyUploadFileButtonEnabled();
+        DataExportLogs.verifyUploadFileButtonDisabled(false);
         DataExportLogs.verifyRunningAccordionExpanded();
 
         // Step 2: Trigger the data export by clicking on the "or choose file" button and submitting .csv file
