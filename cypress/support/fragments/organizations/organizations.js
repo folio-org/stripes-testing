@@ -761,6 +761,10 @@ export default {
     cy.do(Section({ id: 'contactPeopleSection' }).click());
   },
 
+  openContactPeopleSectionInEditCard: () => {
+    cy.do(openContactSectionButton.click());
+  },
+
   openBankInformationSection: () => {
     cy.do(Button('Banking information').click());
   },
