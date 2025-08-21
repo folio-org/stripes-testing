@@ -175,7 +175,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyGroupOptionsInSelectOptionsItemDropdown();
+        BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('item');
         BulkEditActions.clickOptionsSelection();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType(noteTypes.administrative, noteTypes.action);

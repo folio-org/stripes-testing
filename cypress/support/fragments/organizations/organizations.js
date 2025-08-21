@@ -876,6 +876,7 @@ export default {
   },
 
   selectInterfaceType: (interfaceType) => {
+    // eslint-disable-next-line cypress/no-force
     cy.get('select[name="type"]').select(interfaceType, { force: true });
   },
 
