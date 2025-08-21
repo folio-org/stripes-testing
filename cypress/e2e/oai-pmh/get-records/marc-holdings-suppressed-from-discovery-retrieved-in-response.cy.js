@@ -20,7 +20,6 @@ const marcBibFile = {
   fileNameImported: `testMarcBibFileC375192.${getRandomPostfix()}.mrc`,
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 };
-
 const marcHoldingsFile = {
   marc: 'oneMarcHolding.mrc',
   fileNameImported: `testMarcHoldingsFileC375192.${getRandomPostfix()}.mrc`,
@@ -32,7 +31,7 @@ describe('OAI-PMH', () => {
   describe('Get records', () => {
     before('create test data', () => {
       cy.getAdminToken();
-      Behavior.updateBehaviorConfigViaApi(true, 'Source records storage', 'persistent', '200');
+      Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
 
       cy.createTempUser([
         permissions.inventoryAll.gui,
@@ -76,7 +75,6 @@ describe('OAI-PMH', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(marcInstance.id);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${marcHoldingsFile.editedFileName}`);
@@ -106,20 +104,40 @@ describe('OAI-PMH', () => {
         // Step 5: Close the Holdings detail window
         HoldingsRecordView.close();
 
-        cy.pause();
-
         // Step 6-7: Send OAI-PMH GetRecord request with marc21_withholdings metadata prefix and verify
         cy.getAdminToken();
-        OaiPmh.getRecordRequest(marcInstance.id).then((response) => {
-          cy.log(response);
-          // OaiPmh.verifyMarcField(response, '856', { ind1: '4', ind2: 'f' }, { t: '1' });
-          OaiPmh.verifyMarcField(response, '952', { ind1: 'f', ind2: 'f' }, { t: '1' });
-          OaiPmh.verifyMarcField(
-            response,
-            '999',
-            { ind1: 'f', ind2: 'f' },
-            { t: '0', i: marcInstance.id },
-          );
+        OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
+          const marcFieldsToVerify = [
+            {
+              field: '856',
+              indicators: { ind1: '4', ind2: '0' },
+              subfields: { t: '0' },
+            },
+            {
+              field: '856',
+              indicators: { ind1: '4', ind2: '2' },
+              subfields: { t: '1' },
+            },
+            {
+              field: '952',
+              indicators: { ind1: 'f', ind2: 'f' },
+              subfields: { t: '1' },
+            },
+            {
+              field: '999',
+              indicators: { ind1: 'f', ind2: 'f' },
+              subfields: { t: '0', i: marcInstance.id },
+            },
+          ];
+
+          marcFieldsToVerify.forEach((verification) => {
+            OaiPmh.verifyMarcField(
+              response,
+              verification.field,
+              verification.indicators,
+              verification.subfields,
+            );
+          });
         });
       },
     );
