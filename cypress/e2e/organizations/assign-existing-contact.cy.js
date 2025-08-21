@@ -1,20 +1,25 @@
-import permissions from '../../support/dictionary/permissions';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
 describe('Organizations', () => {
-  const organization = { ...NewOrganization.defaultUiOrganizations };
   const contact = { ...NewOrganization.defaultContact };
+  const organization = {
+    ...NewOrganization.defaultUiOrganizations,
+  };
   let user;
 
-  before(() => {
+  before('Create user, organization, and contact', () => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
+    Organizations.createOrganizationViaApi(organization).then((organizationId) => {
+      organization.id = organizationId;
     });
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+    Organizations.createContactViaApi(contact).then((contactId) => {
+      contact.id = contactId;
+    });
+    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -23,29 +28,20 @@ describe('Organizations', () => {
     });
   });
 
-  after(() => {
+  after('Delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
     Organizations.deleteOrganizationViaApi(organization.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C726 Edit contact from an organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    'C676 Assign existing contact to an organization record (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
-      Organizations.addNewContact(contact);
-      Organizations.closeContact();
       Organizations.addContactToOrganization(contact);
-      Organizations.checkContactIsAddToContactPeopleSection(contact);
-      Organizations.selectContact(contact);
-      Organizations.clickEdit();
-      Organizations.editFirstAndLastNameInContact(contact);
-      Organizations.closeContact();
-      contact.lastName = `${contact.lastName}-edited`;
-      contact.firstName = `${contact.firstName}-edited`;
       Organizations.checkContactIsAddToContactPeopleSection(contact);
     },
   );
