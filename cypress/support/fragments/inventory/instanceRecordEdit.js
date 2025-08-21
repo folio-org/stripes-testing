@@ -53,6 +53,7 @@ const date2Field = TextField({ name: 'dates.date2' });
 const dateTypePlaceholderOption = 'Select date type';
 const dateValueLengthErrorText = 'Date must contain four characters.';
 const saveAndKeepEditing = Button('Save & keep editing');
+const cancelButton = Button('Cancel');
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -567,5 +568,13 @@ export default {
         )
         .exists(),
     );
+  },
+
+  checkButtonsEnabled: ({ saveAndClose = true, saveKeepEditing = true, cancel = true } = {}) => {
+    cy.expect([
+      cancelButton.has({ disabled: !cancel }),
+      saveAndKeepEditing.has({ disabled: !saveKeepEditing }),
+      saveAndCloseButton.has({ disabled: !saveAndClose }),
+    ]);
   },
 };
