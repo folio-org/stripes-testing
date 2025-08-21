@@ -29,6 +29,8 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -101,6 +103,8 @@ describe('Data Import', () => {
       // wait for the action profile to be linked
       cy.wait(1000);
       NewJobProfile.saveAndClose();
+      FieldMappingProfileView.checkCalloutMessage('New record created:');
+      InteractorsTools.closeCalloutMessage();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
