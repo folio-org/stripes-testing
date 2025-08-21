@@ -8,28 +8,6 @@ import DateTools from '../../support/utils/dateTools';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 
-const convertDateFormat = (dateString) => {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  const [month, day, year] = dateString.split('/');
-
-  const monthName = months[parseInt(month, 10) - 1];
-
-  return `${monthName} ${day}, ${year}`;
-};
 describe('Users', () => {
   const testData = {
     patronGroup: {
@@ -71,8 +49,8 @@ describe('Users', () => {
   });
 
   it(
-    'C503010 Time format of "Expiration date" field in Users app is correct when derived from patron group expiration date (new user created) (extended, volaris)',
-    { tags: ['extendedPath', 'volaris', 'C503010'] },
+    'C503010 C503011 Time format of "Expiration date" field in Users app is correct when derived from patron group expiration date (new user created) (volaris)',
+    { tags: ['extendedPath', 'volaris', 'C503010', 'C503011'] },
     () => {
       // Step 1: Click on "Actions" button on Users app main page -> select "New" option
       Users.clickNewButton();
@@ -90,9 +68,9 @@ describe('Users', () => {
         },
         'MM/DD/YYYY',
       );
-      const formattedExpectedDate = convertDateFormat(expectedDate);
+      const formattedExpectedDate = UserEdit.convertDateFormat(expectedDate);
 
-      const formattedExpectedDateMMDDYYYY = DateTools.clearPaddingZero(expectedDate);
+      const formattedExpectedDateCleared = DateTools.clearPaddingZero(expectedDate);
 
       UserEdit.verifySetExpirationDatePopup(
         testData.patronGroup.name,
@@ -111,7 +89,7 @@ describe('Users', () => {
       UserEdit.saveAndClose();
 
       // Verify user is created successfully and "Expiration date" label contains date from step #3 in MM/DD/YYYY format
-      UsersCard.checkKeyValue('Expiration date', formattedExpectedDateMMDDYYYY);
+      UsersCard.checkKeyValue('Expiration date', formattedExpectedDateCleared);
     },
   );
 });

@@ -227,7 +227,7 @@ describe('Bulk-edit', () => {
 
         invalidInputs.forEach((input) => {
           BulkEditActions.fillInSubfieldInSubRow(input);
-          BulkEditActions.verifyInvalidValueInSecondSubfield();
+          BulkEditActions.verifyInvalidValueInSubfieldOfSubRow();
           BulkEditActions.verifyConfirmButtonDisabled(true);
         });
 

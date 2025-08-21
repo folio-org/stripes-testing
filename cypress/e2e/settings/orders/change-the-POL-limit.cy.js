@@ -4,13 +4,12 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Orders', () => {
   describe('Settings (Orders)', () => {
@@ -66,21 +65,16 @@ describe('Orders', () => {
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
         });
       });
     });
 
     after(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-      });
       cy.getAdminToken();
-      SettingsOrders.setPurchaseOrderLinesLimit(1);
+      OrderLinesLimit.setPOLLimit(1);
       Orders.deleteOrderViaApi(order.id);
-
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
@@ -88,7 +82,6 @@ describe('Orders', () => {
         location.libraryId,
         location.id,
       );
-
       Users.deleteViaApi(user.userId);
     });
 
@@ -96,8 +89,7 @@ describe('Orders', () => {
       'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
       { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
       () => {
-        SettingsOrders.setPurchaseOrderLinesLimit(2);
-        cy.visit(TopMenu.ordersPath);
+        OrderLinesLimit.setPOLLimit(2);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.createPOLineViaActions();
