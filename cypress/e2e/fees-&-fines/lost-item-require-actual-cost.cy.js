@@ -171,6 +171,7 @@ describe('Fees&Fines', () => {
       { tags: ['extendedPath', 'vega', 'C375286'] },
       () => {
         cy.visit(TopMenu.usersPath);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action
         UsersSearchPane.openLostItemsRequiringActualCostPane();
         // Select "Declared lost" in "Loss type" filter
