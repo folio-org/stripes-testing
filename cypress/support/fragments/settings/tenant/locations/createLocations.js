@@ -14,7 +14,7 @@ export default {
   selectRemoteStorage(value = 'RS1') {
     cy.do(Select('Remote storage*').choose(value));
   },
-  selectServicePoint(value = 'Online') {
+  selectServicePoint(value = 'Circ Desk 1') {
     cy.do([Select('Service point(s)').choose(value), Button('Add service point').click()]);
   },
   saveAndClose() {

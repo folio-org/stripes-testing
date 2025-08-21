@@ -31,8 +31,10 @@ describe('Fees&Fines', () => {
         userId = userProperties.userId;
         userName = userProperties.username;
         userProperties.expirationDate = expirationUserDate;
-        cy.login(userProperties.username, userProperties.password,
-          { path: SettingsMenu.patronBlockTemplates, waiter: () => cy.wait(5000) });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.patronBlockTemplates,
+          waiter: () => cy.wait(5000),
+        });
         PatronBlockTemplates.newPatronTemplate();
         PatronBlockTemplates.fillInPatronTemplateInformation(templateName, testDescription);
       });
@@ -48,6 +50,7 @@ describe('Fees&Fines', () => {
       PatronBlockTemplates.deletePatronTemplate();
       cy.getAdminToken();
       Users.deleteViaApi(userId);
+      cy.wait(3000);
     });
 
     it(
