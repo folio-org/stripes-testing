@@ -11,7 +11,6 @@ import {
   Pane,
   PaneContent,
   TextField,
-  matching,
   or,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
@@ -259,8 +258,6 @@ export default {
   confirmMultipleItemsCheckin(barcode) {
     cy.wait(1000);
     cy.do(checkInButtonInModal.click());
-    cy.wait(1000);
-    cy.do(Button({ id: matching('confirm-status-[0-9]+-close-button') }).click());
     cy.wait(1000);
     cy.expect(
       MultiColumnList({ id: 'list-items-checked-in' })
