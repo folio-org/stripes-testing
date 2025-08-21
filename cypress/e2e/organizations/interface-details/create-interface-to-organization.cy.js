@@ -1,10 +1,10 @@
-import permissions from '../../support/dictionary/permissions';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
+import permissions from '../../../support/dictionary/permissions';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
-describe('Organizations', () => {
+describe('Organizations --> Interface details', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultInterface = { ...NewOrganization.defaultInterface };
   let user;
