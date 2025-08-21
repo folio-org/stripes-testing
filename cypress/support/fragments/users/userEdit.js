@@ -329,6 +329,15 @@ export default {
     cy.expect(rootPane.absent());
   },
 
+  clickCloseWithoutSavingIfModalExists() {
+    cy.do(cancelButton.click());
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
+  },
+
   saveEditedUser() {
     cy.intercept('PUT', '/users/*').as('updateUser');
     this.saveAndClose();
