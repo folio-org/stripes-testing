@@ -900,4 +900,26 @@ export default {
   verifyUserDetailsPaneOpen() {
     cy.expect(rootSection.exists());
   },
+
+  checkNoNotesInAccordion() {
+    cy.expect(rootSection.find(HTML(including('No notes found'))).exists());
+  },
+
+  verifyNotesCounter(expectedCount) {
+    cy.expect([
+      notesAccordion.find(Spinner()).absent(),
+      notesAccordion.has({ counter: expectedCount }),
+    ]);
+  },
+
+  verifyNoteInAccordion({ title, details = '' } = {}) {
+    cy.expect(
+      notesAccordion.find(
+        MultiColumnListCell({
+          columnIndex: 1,
+          content: and(including(`Title: ${title}`), including(`Details: ${details}`)),
+        }),
+      ),
+    );
+  },
 };
