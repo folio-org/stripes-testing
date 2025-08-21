@@ -69,7 +69,6 @@ export default {
       return matchesTag && matchesInd1 && matchesInd2;
     });
 
-    // Verify subfields
     Object.entries(subfields).forEach(([subfieldCode, expectedValue]) => {
       const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
       const subfield = Array.from(subfieldsAll).find(
@@ -79,7 +78,7 @@ export default {
       // Assert that the subfield has the expected value
       expect(
         subfield.textContent,
-        `Subfield "${subfieldCode}" should have value "${expectedValue}"`,
+        `Subfield "${subfieldCode}" of ${tag} field should have value "${expectedValue}"`,
       ).to.equal(expectedValue);
     });
   },

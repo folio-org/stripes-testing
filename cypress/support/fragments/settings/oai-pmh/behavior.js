@@ -51,7 +51,7 @@ export default {
    * @param {string} suppressedRecordsProcessing - How suppressed records should be processed
    *   Possible values: "true", "false"
    * @param {string} recordsSource - Source for record retrieval
-   *   Possible values: "Source records storage", "Inventory", "Source record storage and Inventory"
+   *   Possible values: "Source record storage", "Inventory", "Source record storage and Inventory"
    * @param {string} deletedRecordsSupport - How deleted records should be handled
    *   Possible values: "persistent", "no", "transient"
    * @param {string} errorsProcessing - How errors should be processed
