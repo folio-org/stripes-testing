@@ -70,8 +70,7 @@ describe('eHoldings', () => {
 
           // test related with special data from Ebsco
           const selectedResource = {
-            title:
-              'Preparative biochemistry & biotechnology : an international journal for rapid communications',
+            title: 'Preparative Biochemistry &amp; Biotechnology',
             publicationType: 'Journal',
             package: 'Taylor & Francis',
           };
