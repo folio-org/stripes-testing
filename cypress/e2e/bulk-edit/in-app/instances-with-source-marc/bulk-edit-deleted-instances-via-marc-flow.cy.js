@@ -41,6 +41,7 @@ describe('Bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
