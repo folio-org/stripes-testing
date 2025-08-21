@@ -48,6 +48,7 @@ describe('MARC', () => {
           }).then(() => {
             DataImport.waitLoading();
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405544');
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
