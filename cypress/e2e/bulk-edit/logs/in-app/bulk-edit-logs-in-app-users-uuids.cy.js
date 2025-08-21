@@ -88,7 +88,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadMatchedResults();
           BulkEditActions.downloadErrors();
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditForm();
           BulkEditActions.fillPatronGroup('staff (Staff Member)');
 

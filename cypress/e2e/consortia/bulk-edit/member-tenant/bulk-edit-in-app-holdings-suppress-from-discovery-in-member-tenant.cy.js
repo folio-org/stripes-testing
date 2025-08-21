@@ -202,7 +202,7 @@ describe('Bulk-edit', () => {
           });
 
           // Step 5: Start bulk edit
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
@@ -312,7 +312,7 @@ describe('Bulk-edit', () => {
 
           // Step 15: Select 'Set false' option
           BulkEditActions.openActions();
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();

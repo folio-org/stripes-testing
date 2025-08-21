@@ -91,7 +91,7 @@ describe(
 
             const newLocation = 'Online';
 
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.replacePermanentLocation(newLocation, 'item', 1);

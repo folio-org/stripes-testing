@@ -757,6 +757,10 @@ export default {
     cy.do(buttonExportSelected.click());
   },
 
+  verifyExportSelectedRecordsButtonAbsent() {
+    cy.expect(buttonExportSelected.absent());
+  },
+
   verifyToastNotificationAfterExportAuthority() {
     const currentDate = DateTools.getFormattedDate({ date: new Date() });
 

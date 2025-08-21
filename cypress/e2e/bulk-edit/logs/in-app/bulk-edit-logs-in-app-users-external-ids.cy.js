@@ -68,7 +68,7 @@ describe('Bulk-edit', () => {
 
           BulkEditActions.downloadMatchedResults();
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditForm();
           const newEmailDomain = 'google.com';
           BulkEditActions.replaceEmail('folio.org', newEmailDomain);

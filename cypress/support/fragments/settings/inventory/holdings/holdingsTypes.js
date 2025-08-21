@@ -1,14 +1,18 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
+  Pane,
 } from '../../../../../../interactors';
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+const rootPane = Pane('Holdings types');
 
 export default {
   createViaApi: (body) => {
@@ -29,6 +33,23 @@ export default {
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   }),
+  getViaApi: (searchParams = { limit: 1 }) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'holdings-types',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.holdingsTypes;
+      });
+  },
+
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
 
   verifyConsortiumHoldingsTypeInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });

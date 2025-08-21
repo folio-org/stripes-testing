@@ -86,7 +86,7 @@ describe(
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.fillPatronGroup('staff (Staff Member)');
           BulkEditActions.confirmChanges();
           BulkEditActions.downloadPreview();
@@ -119,7 +119,7 @@ describe(
           BulkEditSearchPane.waitFileUploading();
 
           BulkEditActions.openActions();
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
           BulkEditActions.confirmChanges();
           BulkEditActions.downloadPreview();

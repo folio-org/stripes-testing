@@ -85,7 +85,7 @@ describe('Bulk-edit', () => {
                 BulkEditActions.openActions();
                 BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Addresses');
                 BulkEditSearchPane.verifyChangesUnderColumns('Addresses', addressType);
-                BulkEditActions.openInAppStartBulkEditFrom();
+                BulkEditActions.openStartBulkEditForm();
                 BulkEditActions.fillExpirationDate(todayDate);
                 BulkEditActions.addNewBulkEditFilterString();
                 BulkEditActions.fillPatronGroup('graduate (Graduate Student)', 1);

@@ -118,7 +118,7 @@ describe('Bulk-edit', () => {
           'Provenance note',
           'Reproduction note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.noteRemoveAll('Administrative note');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteRemoveAll('Binding', 1);

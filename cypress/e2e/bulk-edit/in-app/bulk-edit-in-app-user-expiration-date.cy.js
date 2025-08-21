@@ -58,7 +58,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Expiration date');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(futureDate);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Expiration date', futureDatewithSlashes);
@@ -83,7 +83,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(pastDate);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

@@ -58,7 +58,7 @@ describe('Bulk-edit', () => {
       () => {
         BulkEditSearchPane.verifyPaginatorInMatchedRecords(recordsNumber);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
 

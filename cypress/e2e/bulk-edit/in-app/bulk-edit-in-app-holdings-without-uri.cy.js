@@ -80,7 +80,7 @@ describe('Bulk-edit', () => {
         const supress = true;
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.editSuppressFromDiscovery(supress, 0, true);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings', 1);

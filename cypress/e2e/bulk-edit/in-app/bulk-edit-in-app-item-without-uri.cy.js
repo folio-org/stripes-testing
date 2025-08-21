@@ -69,7 +69,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.addItemNote('Note', note);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

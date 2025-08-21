@@ -22,6 +22,7 @@ import { ORDER_STATUSES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../suppo
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import { BasicOrderLine } from '../../support/fragments/orders';
+import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -84,7 +85,7 @@ describe('Invoices', () => {
           path: SettingsMenu.ordersPurchaseOrderLinesLimit,
           waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
         });
-        SettingsOrders.setPurchaseOrderLinesLimit(51);
+        OrderLinesLimit.setPOLLimit(51);
       });
     });
 
@@ -171,8 +172,7 @@ describe('Invoices', () => {
   after(() => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
+    OrderLinesLimit.setPOLLimit(1);
   });
 
   it(

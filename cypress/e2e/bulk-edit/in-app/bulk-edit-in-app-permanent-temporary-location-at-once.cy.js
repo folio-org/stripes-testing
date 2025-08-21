@@ -92,7 +92,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.verifyMatchedResults(item.firstBarcode);
         BulkEditSearchPane.verifyPaneRecordsCount('1 item');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         // Select "Temporary item location" from "Options" dropdown and "Replace with" option from "Select option" dropdown;
         const newLocation1 = 'Online';

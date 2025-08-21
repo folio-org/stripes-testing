@@ -51,7 +51,7 @@ describe.skip('Export Manager', () => {
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.openStartBulkEditForm();
       BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();

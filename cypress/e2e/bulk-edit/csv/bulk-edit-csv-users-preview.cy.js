@@ -73,7 +73,7 @@ describe(
             user.firstName,
             newFirstName,
           );
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
           BulkEditActions.cancel();
           BulkEditSearchPane.verifyErrorLabel(1);
@@ -81,7 +81,7 @@ describe(
           BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
           BulkEditActions.openActions();
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.clickNext();
