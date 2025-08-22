@@ -223,7 +223,7 @@ export default {
     cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(statusTerm));
+    cy.do(Select('Instance status term').choose(matching(new RegExp(`^${statusTerm}`))));
   },
   saveAndClose() {
     cy.wait(1500);
@@ -499,6 +499,10 @@ export default {
       date2Field.has({ value: date2 }),
       dateTypeSelect.has({ checkedOptionText: dateType }),
     ]);
+  },
+
+  verifyDateTypePlaceholderNotSelectable: () => {
+    cy.get('select[name="dates.dateTypeId"] option:first').should('be.disabled');
   },
 
   verifyDateFieldsValidationErrors: (date1Affected = true, date2Affected = true) => {
