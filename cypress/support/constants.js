@@ -1133,6 +1133,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     SOURCE: 'Source',
     RESOURCE_TITLE: 'Resource title',
     PREVIOUSLY_HELD: 'Previously held',
+    SET_FOR_DELETION: 'Set for deletion',
     CATALOGED_DATE: 'Cataloged date',
     INSTANCE_STATUS_TERM: 'Instance status term',
     MODE_OF_ISSUANCE: 'Mode of issuance',
