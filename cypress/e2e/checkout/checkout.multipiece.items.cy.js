@@ -75,7 +75,10 @@ describe('Check out', () => {
           testInstanceIds = specialInstanceIds;
         });
       });
-    cy.createTempUser([permissions.checkoutCirculatingItems.gui, permissions.uiInventoryViewInstances.gui])
+    cy.createTempUser([
+      permissions.checkoutCirculatingItems.gui,
+      permissions.uiInventoryViewInstances.gui,
+    ])
       .then((userProperties) => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaultServicePoint();
@@ -83,10 +86,7 @@ describe('Check out', () => {
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
-        cy.getUsers({
-          limit: 1,
-          query: `"personal.lastName"="${user.username}" and "active"="true"`,
-        }).then((users) => {
+        cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
           userBarcode = users[0].barcode;
         });
       });
