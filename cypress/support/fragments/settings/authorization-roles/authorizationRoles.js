@@ -203,26 +203,48 @@ export default {
     });
   },
 
-  selectCapabilitySetCheckbox: ({ table, application, resource, action }, isSelected = true) => {
-    const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
-      .find(MultiColumnListRow(`${application}${resource}`, { isContainer: false }))
-      .find(MultiColumnListCell({ column: action }))
-      .find(Checkbox({ isWrapper: false }));
-    cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
-    // wait for capabilities selection to be updated
-    cy.wait(1000);
+  selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
+    let targetRowIndex;
+    cy.do(
+      capabilitySetsAccordion
+        .find(capabilityTables[table])
+        .find(MultiColumnListCell(resource, { column: 'Resource' }))
+        .perform((el) => {
+          targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
+        }),
+    );
+    cy.then(() => {
+      const targetCheckbox = capabilitySetsAccordion
+        .find(capabilityTables[table])
+        .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
+        .find(MultiColumnListCell({ column: including(action) }))
+        .find(Checkbox({ isWrapper: false }));
+      cy.do(targetCheckbox.click());
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+      // wait for capabilities selection to be updated
+      cy.wait(1000);
+    });
   },
 
-  selectCapabilityCheckbox: ({ table, application, resource, action }, isSelected = true) => {
-    const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
-      .find(MultiColumnListRow(`${application}${resource}`, { isContainer: false }))
-      .find(MultiColumnListCell({ column: action }))
-      .find(Checkbox({ isWrapper: false }));
-    cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  selectCapabilityCheckbox: ({ table, resource, action }, isSelected = true) => {
+    let targetRowIndex;
+    cy.do(
+      capabilitiesAccordion
+        .find(capabilityTables[table])
+        .find(MultiColumnListCell(resource, { column: 'Resource' }))
+        .perform((el) => {
+          targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
+        }),
+    );
+    cy.then(() => {
+      const targetCheckbox = capabilitiesAccordion
+        .find(capabilityTables[table])
+        .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
+        .find(MultiColumnListCell({ column: including(action) }))
+        .find(Checkbox({ isWrapper: false }));
+      cy.do(targetCheckbox.click());
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+    });
   },
 
   verifyCapabilityCheckboxCheckedAndDisabled: ({ table, resource, action }) => {

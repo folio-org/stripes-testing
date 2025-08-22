@@ -103,6 +103,10 @@ const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
 const promoteUserModal = Modal('Keycloak user record');
 const confirmButton = Button('Confirm');
 const promoteUserModalText = 'This operation will create new record in Keycloak for';
+const barcodeField = TextField({ id: 'adduser_barcode' });
+const usernameField = TextField({ id: 'adduser_username' });
+const addressSelect = Select({ id: 'adduser_group' });
+const setExpirationDateButton = Button('Set');
 
 let totalRows;
 
@@ -657,20 +661,20 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi: (userData) => {
-    return cy
-      .do([
-        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
-        TextField({ name: 'barcode' }).fillIn(userData.barcode),
-        TextField({ name: 'username' }).fillIn(userData.username),
-        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-        saveAndCloseBtn.click(),
-      ])
-      .then(() => {
-        cy.intercept('/users').as('user');
-        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
-      });
+  enterValidValueToCreateViaUi: (userData, patronGroup) => {
+    cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
+    cy.do([
+      lastNameField.fillIn(userData.personal.lastName),
+      barcodeField.fillIn(userData.barcode),
+      usernameField.fillIn(userData.username),
+      emailField.fillIn(userData.personal.email),
+      addressSelect.choose(patronGroup),
+      setExpirationDateButton.click(),
+      saveAndCloseBtn.click(),
+    ]);
+    return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   verifyUserPermissionsAccordion(isShown = false) {

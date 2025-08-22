@@ -5,16 +5,20 @@ import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
+import { randomFourDigitNumber } from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('orders: Test PO filters', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  const orderPrefix = `pref${randomFourDigitNumber()}`;
+  const orderSuffix = `suf${randomFourDigitNumber()}`;
   const order = {
     ...NewOrder.defaultOneTimeOrder,
-    poNumberPrefix: 'pref',
-    poNumberSuffix: 'suf',
-    poNumber: `pref${generateItemBarcode()}suf`,
+    poNumberPrefix: orderPrefix,
+    poNumberSuffix: orderSuffix,
+    poNumber: `${orderPrefix}${randomFourDigitNumber()}${orderSuffix}`,
     reEncumber: true,
     manualPo: true,
     approved: true,
@@ -22,9 +26,19 @@ describe('orders: Test PO filters', () => {
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   let orderNumber;
+  let orderPrefixId;
+  let orderSuffixId;
 
   before(() => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
+    SettingsOrders.createPrefixViaApi(order.poNumberPrefix).then((prefixId) => {
+      orderPrefixId = prefixId;
+    });
+    SettingsOrders.createSuffixViaApi(order.poNumberSuffix).then((suffixId) => {
+      orderSuffixId = suffixId;
+    });
+
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -46,7 +60,8 @@ describe('orders: Test PO filters', () => {
           orderLine.purchaseOrderId = order.id;
           cy.createOrderLineApi(orderLine);
         });
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
@@ -60,11 +75,13 @@ describe('orders: Test PO filters', () => {
     cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
+    SettingsOrders.deletePrefixViaApi(orderPrefixId);
+    SettingsOrders.deleteSuffixViaApi(orderSuffixId);
   });
 
   [
     { filterActions: Orders.selectOpenStatusFilter },
-    { filterActions: Orders.selectPrefixFilter },
+    { filterActions: () => Orders.selectPrefixFilter(orderPrefix) },
     { filterActions: Orders.selectReEncumberFilter },
     { filterActions: Orders.selectOrderTypeFilter },
     {

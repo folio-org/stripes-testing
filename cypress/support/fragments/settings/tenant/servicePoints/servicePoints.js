@@ -40,16 +40,86 @@ const getDefaultServicePointWithPickUpLocation = ({ name, id } = {}) => {
   };
 };
 
+const CIRC_DESK_1 = 'Circ Desk 1';
+const CIRC_DESK_2 = 'Circ Desk 2';
+const ONLINE = 'Online';
+
+const defaultServicePoints = [CIRC_DESK_1, CIRC_DESK_2, ONLINE];
+
 export default {
+  CIRC_DESK_1,
+  CIRC_DESK_2,
+  ONLINE,
   defaultServicePoint,
+  defaultServicePoints,
   getDefaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
-  getViaApi: (searchParams) => cy
-    .okapiRequest({
-      path: 'service-points',
-      searchParams,
-    })
-    .then(({ body }) => body.servicepoints),
+
+  setupUserServicePointsMultiple(username, servicePointNames) {
+    cy.getUsers({ limit: 1, query: `"username"="${username}"` }).then((users) => {
+      this.getViaApi().then((servicePoints) => {
+        const servicePointIds = servicePointNames
+          .map((name) => servicePoints.find((sp) => sp.name.includes(name))?.id)
+          .filter(Boolean);
+        cy.getUserServicePoints(users[0].id).then((userServicePoints) => {
+          if (userServicePoints && userServicePoints.length > 0) {
+            this.changeServicePointPreferenceViaApi(
+              users[0].id,
+              servicePointIds,
+              servicePointIds[0],
+            );
+          } else {
+            this.addServicePointsViaApi(servicePointIds, users[0].id, servicePointIds[0]);
+          }
+          cy.wait(1000);
+        });
+      });
+    });
+  },
+
+  setupUserDefaultServicePoints(username) {
+    this.setupUserServicePointsMultiple(username, defaultServicePoints);
+  },
+
+  getViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'service-points',
+        searchParams,
+      })
+      .then(({ body }) => body.servicepoints);
+  },
+
+  getCircDesk1ServicePointViaApi() {
+    if (!Cypress.env(CIRC_DESK_1)) {
+      return this.getViaApi({ limit: 1, query: `name=="${CIRC_DESK_1}"` }).then((servicePoints) => {
+        Cypress.env(CIRC_DESK_1, servicePoints[0]);
+        return servicePoints[0];
+      });
+    } else {
+      return cy.wrap(Cypress.env(CIRC_DESK_1));
+    }
+  },
+  getCircDesk2ServicePointViaApi() {
+    if (!Cypress.env(CIRC_DESK_2)) {
+      return this.getViaApi({ limit: 1, query: `name=="${CIRC_DESK_2}"` }).then((servicePoints) => {
+        Cypress.env(CIRC_DESK_2, servicePoints[0]);
+        return servicePoints[0];
+      });
+    } else {
+      return cy.wrap(Cypress.env(CIRC_DESK_2));
+    }
+  },
+  getOnlineServicePointViaApi() {
+    if (!Cypress.env(ONLINE)) {
+      return this.getViaApi({ limit: 1, query: `name=="${ONLINE}"` }).then((servicePoints) => {
+        Cypress.env(ONLINE, servicePoints[0]);
+        return servicePoints[0];
+      });
+    } else {
+      return cy.wrap(Cypress.env(ONLINE));
+    }
+  },
 
   createViaApi: (servicePointParameters = defaultServicePoint) => cy.okapiRequest({
     path: 'service-points',
@@ -133,7 +203,6 @@ export default {
     ]);
     if (newCode) cy.do(TextField({ name: 'code' }).fillIn(newCode));
     if (newDisplayName) cy.do(TextField({ name: 'discoveryDisplayName' }).fillIn(newDisplayName));
-    cy.wait(3000);
     cy.do(saveAndCloseButton.click());
   },
 

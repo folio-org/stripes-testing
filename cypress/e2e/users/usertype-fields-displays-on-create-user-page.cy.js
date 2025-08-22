@@ -30,18 +30,16 @@ describe('Users', () => {
     },
   };
   before('Preconditions', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        servicePointId = servicePoints[0].id;
-      });
-
-      PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
-        patronGroup.id = patronGroupResponse;
-        PatronGroups.getGroupViaApi({ query: `group="${patronGroup.name}"` }).then((resp) => {
-          patronGroup.desc = resp.desc;
-          patronGroup.expirationOffsetInDays = resp.expirationOffsetInDays;
-          patronGroup.id = resp.id;
-        });
+    cy.getAdminToken();
+    ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+      servicePointId = servicePoint.id;
+    });
+    PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
+      patronGroup.id = patronGroupResponse;
+      PatronGroups.getGroupViaApi({ query: `group="${patronGroup.name}"` }).then((resp) => {
+        patronGroup.desc = resp.desc;
+        patronGroup.expirationOffsetInDays = resp.expirationOffsetInDays;
+        patronGroup.id = resp.id;
       });
 
       cy.createTempUser(
@@ -55,10 +53,14 @@ describe('Users', () => {
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
+          cy.reload();
+          UsersSearchPane.waitLoading();
+        }, 20_000);
       });
     });
   });
