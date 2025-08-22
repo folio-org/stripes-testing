@@ -16,7 +16,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -116,7 +115,7 @@ describe('Invoices', () => {
             });
           });
           defaultOrder.vendor = organization.name;
-          TopMenuNavigation.openAppFromDropdown('Orders');
+          cy.visit(TopMenu.ordersPath);
           Orders.selectOrdersPane();
           Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
@@ -137,8 +136,7 @@ describe('Invoices', () => {
             FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
               secondFiscalYear.id = secondFiscalYearResponse.id;
             });
-            // cy.visit(TopMenu.invoicesPath);
-            TopMenuNavigation.openAppFromDropdown('Invoices');
+            cy.visit(TopMenu.invoicesPath);
             Invoices.createRolloverInvoice(invoice, organization.name);
             Invoices.createInvoiceLineFromPol(orderNumber);
           });
