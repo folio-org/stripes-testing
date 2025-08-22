@@ -83,10 +83,7 @@ describe('Check out', () => {
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
-        cy.getUsers({
-          limit: 1,
-          query: `"personal.lastName"="${user.username}" and "active"="true"`,
-        }).then((users) => {
+        cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
           userBarcode = users[0].barcode;
         });
       });

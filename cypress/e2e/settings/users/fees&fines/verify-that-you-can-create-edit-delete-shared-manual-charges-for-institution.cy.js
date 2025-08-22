@@ -13,8 +13,8 @@ describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
     const owners = [
       { id: uuid(), owner: 'Shared' },
-      { id: uuid(), owner: 'Owners' },
-      { id: uuid(), owner: 'Owners2' },
+      { id: uuid(), owner: 'Owners_1' },
+      { id: uuid(), owner: 'Owners_2' },
     ];
     const feeFineType = [];
     const ownersData = [];
@@ -82,6 +82,7 @@ describe('Fees&Fines', () => {
         cy.visit(SettingsMenu.manualCharges);
         ManualCharges.waitLoading();
         ManualCharges.checkSelectedOwner(owners[0].owner);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         owners.forEach((owner) => {
           ManualCharges.checkOwnersDropdownIncludesOption(owner.owner);
         });

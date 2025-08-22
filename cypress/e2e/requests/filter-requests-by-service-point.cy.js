@@ -51,6 +51,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.filterRequestsByServicePoints(servicePointName);
+      cy.waitForAuthRefresh(() => {}, 20_000);
       Requests.selectFirstRequest(instanceData.instanceTitle);
       RequestDetail.checkRequesterInformation({
         lastName: requestData.requester.lastName,

@@ -54,7 +54,11 @@ describe('Permissions -> Circulation', () => {
       InteractorsTools.checkCalloutMessage(
         `The  ${newCancellationReason.name} was successfully created`,
       );
-      CancellationReason.verifyReasonInTheList(newCancellationReason);
+      CancellationReason.verifyReasonInTheList(
+        newCancellationReason,
+        newCancellationReason.description,
+        newCancellationReason.publicDescription,
+      );
 
       // Edit the cancellation reason
       CancellationReason.clickEditButtonForReason(newCancellationReason.name);
@@ -63,7 +67,11 @@ describe('Permissions -> Circulation', () => {
       InteractorsTools.checkCalloutMessage(
         `The  ${editCancellationReason.name} was successfully updated`,
       );
-      CancellationReason.verifyReasonInTheList(editCancellationReason);
+      CancellationReason.verifyReasonInTheList(
+        editCancellationReason,
+        editCancellationReason.description,
+        editCancellationReason.publicDescription,
+      );
 
       // Remove the cancellation reason
       CancellationReason.clickTrashButtonForReason(editCancellationReason.name);

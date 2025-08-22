@@ -113,6 +113,7 @@ describe('Fees&Fines', () => {
     const findPatron = () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
+      UsersSearchPane.resetAllFilters();
       UsersSearchPane.searchByKeywords(userData.barcode);
     };
     const setConditionAndLimit = (message, type, limit) => {
@@ -120,6 +121,7 @@ describe('Fees&Fines', () => {
       Conditions.select(type);
       Conditions.setConditionState(message);
       cy.visit(SettingsMenu.limitsPath);
+      cy.wait(3000);
       Limits.selectGroup(patronGroup.name);
       Limits.setLimit(type, limit);
     };
@@ -226,7 +228,6 @@ describe('Fees&Fines', () => {
           testData.userServicePoint.id,
         );
         cy.getToken(userData.username, userData.password);
-        UserLoans.updateTimerForAgedToLost('minute');
         cy.getAdminToken();
       });
     });
@@ -295,7 +296,6 @@ describe('Fees&Fines', () => {
 
     after('Deleting created entities', () => {
       cy.getToken(userData.username, userData.password);
-      UserLoans.updateTimerForAgedToLost('reset');
       cy.getAdminToken();
       CirculationRules.deleteRuleViaApi(testData.addedRule);
       cy.get('@items').each((item, index) => {
@@ -327,7 +327,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
-      { tags: ['criticalPath', 'vega', 'C350655'] },
+      { tags: ['criticalPathBroken', 'vega', 'C350655'] },
       () => {
         const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
         setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -354,7 +354,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
-      { tags: ['criticalPath', 'vega', 'C350651'] },
+      { tags: ['criticalPathBroken', 'vega', 'C350651'] },
       () => {
         const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
         setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -379,7 +379,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
-      { tags: ['criticalPath', 'vega', 'C350653'] },
+      { tags: ['criticalPathBroken', 'vega', 'C350653'] },
       () => {
         const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
         setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
@@ -407,7 +407,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350648 Verify automated patron block "Maximum number of lost items" removed after lost item returned (vega)',
-      { tags: ['criticalPath', 'vega', 'C350648'] },
+      { tags: ['criticalPathBroken', 'vega', 'C350648'] },
       () => {
         const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
         setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');

@@ -57,7 +57,7 @@ describe('Loans', () => {
               });
               cy.getUsers({
                 limit: 1,
-                query: `"personal.lastName"="${checkOutUser.username}" and "active"="true"`,
+                query: `"personal.lastName"="${checkOutUser.username}" and "active"=="true"`,
               });
             })
             .then(() => {
@@ -87,9 +87,11 @@ describe('Loans', () => {
               });
             })
             .then(() => {
-              cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
-                checkInUser.barcode = users[0].barcode;
-              });
+              cy.getUsers({ limit: 1, query: '"barcode"=" *" and "active"=="true"' }).then(
+                (users) => {
+                  checkInUser.barcode = users[0].barcode;
+                },
+              );
             });
         });
       });
