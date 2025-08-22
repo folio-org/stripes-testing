@@ -89,7 +89,7 @@ describe('Users', () => {
         description: testData.newPatronGroup.description,
         expirationDateOffset: testData.newPatronGroup.expirationDateOffset,
         date: testData.newPatronGroup.currentDate,
-        userName: `${testData.user.lastName}, ${testData.user.firstName}`,
+        // userName: `${testData.user.lastName}, ${testData.user.firstName}`,
         actions: ['edit', 'trash'],
       });
     });

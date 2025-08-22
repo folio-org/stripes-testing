@@ -44,7 +44,19 @@ export default {
     cy.do(Accordion({ id: 'statusFilterAccordion' }).find(Checkbox(status)).click());
   },
 
+  clickLoadMoreIfExists() {
+    cy.wait(5000);
+    cy.get('body').then(($body) => {
+      if ($body.find('button[id="lostItemsList-clickable-paging-button"]').length > 0) {
+        cy.do(Button('Load more').click({ force: true }));
+        cy.wait(1000);
+      }
+    });
+  },
+
   checkResultsLossType(instanceTitle, type) {
+    this.clickLoadMoreIfExists();
+    this.clickLoadMoreIfExists();
     cy.expect(
       ListRow(including(instanceTitle))
         .find(MultiColumnListCell({ column: 'Loss type' }))
