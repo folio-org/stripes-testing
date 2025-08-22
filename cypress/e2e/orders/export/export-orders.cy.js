@@ -7,30 +7,44 @@ import Organizations from '../../../support/fragments/organizations/organization
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import NewPreffixSuffix from '../../../support/fragments/settings/orders/newPreffixSuffix';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 
 describe('Orders', () => {
   describe('Export', () => {
     let user;
     const organization = { ...NewOrganization.defaultUiOrganizations };
+    const poNumberPrefix = { ...NewPreffixSuffix.defaultPreffix };
+    const poNumberSuffix = { ...NewPreffixSuffix.defaultSuffix };
     const order = {
       ...NewOrder.defaultOneTimeOrder,
-      poNumberPrefix: 'pref',
-      poNumberSuffix: 'suf',
-      poNumber: `pref${generateItemBarcode()}suf`,
+      poNumberPrefix: poNumberPrefix.name,
+      poNumberSuffix: poNumberSuffix.name,
+      poNumber: `${poNumberPrefix.name}${randomFourDigitNumber()}${poNumberSuffix.name}`,
       reEncumber: true,
       manualPo: true,
       approved: true,
     };
     let location;
     let servicePointId;
+    let orderPrefixId;
+    let orderSuffixId;
+
     before(() => {
+      cy.clearLocalStorage(); // Clear local storage to avoid issues with filters in test
       cy.getAdminToken();
+      SettingsOrders.createPrefixViaApi(order.poNumberPrefix).then((prefixId) => {
+        orderPrefixId = prefixId;
+      });
+      SettingsOrders.createSuffixViaApi(order.poNumberSuffix).then((suffixId) => {
+        orderSuffixId = suffixId;
+      });
 
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
@@ -96,6 +110,8 @@ describe('Orders', () => {
       Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
       Users.deleteViaApi(user.userId);
+      SettingsOrders.deletePrefixViaApi(orderPrefixId);
+      SettingsOrders.deleteSuffixViaApi(orderSuffixId);
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
@@ -103,6 +119,7 @@ describe('Orders', () => {
       'C196749 Export orders based on orders search (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
+        Orders.waitLoading();
         Orders.selectOpenStatusFilter();
         Orders.waitOrdersListLoading();
         Orders.exportResultsToCsv();

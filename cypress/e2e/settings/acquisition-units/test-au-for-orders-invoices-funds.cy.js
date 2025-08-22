@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import { FiscalYears, Funds, Ledgers } from '../../../support/fragments/finance';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
@@ -12,7 +13,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Acquisition Units', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -49,13 +49,9 @@ describe('Acquisition Units', () => {
   let user;
   let orderNumber;
   let location;
-  let adminName;
 
   before(() => {
     cy.getAdminToken();
-    cy.getAdminSourceRecord().then((adminSourceRecord) => {
-      adminName = adminSourceRecord;
-    });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
@@ -73,8 +69,8 @@ describe('Acquisition Units', () => {
         });
       });
     });
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
+    ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+      effectiveLocationServicePoint = servicePoint;
       NewLocation.createViaApi(
         NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
       ).then((locationResponse) => {
@@ -149,6 +145,11 @@ describe('Acquisition Units', () => {
     Orders.deleteOrderViaApi(defaultOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
+    AcquisitionUnits.getAcquisitionUnitViaApi({
+      query: `"name"="${defaultAcquisitionUnit.name}"`,
+    }).then((response) => {
+      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+    });
     cy.loginAsAdmin();
     TopMenuNavigation.openAppFromDropdown('Finance');
     FinanceHelp.selectFundsNavigation();
@@ -159,11 +160,6 @@ describe('Acquisition Units', () => {
     Funds.deleteFundViaActions();
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    AcquisitionUnits.getAcquisitionUnitViaApi({
-      query: `"name"="${defaultAcquisitionUnit.name}"`,
-    }).then((response) => {
-      AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
-    });
   });
 
   it(
@@ -175,7 +171,7 @@ describe('Acquisition Units', () => {
         waiter: AcquisitionUnits.waitLoading,
       });
       AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name, adminName);
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
       AcquisitionUnits.assignUser(user.username);
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
       FinanceHelp.selectFundsNavigation();

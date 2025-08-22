@@ -48,6 +48,7 @@ const localKbAdmin = '/local-kb-admin';
 const readingRoom = '/reading-room';
 const serials = '/serials-management/serials';
 const linkedDataEditor = '/linked-data-editor/search';
+const settingsBankingInformationPath = '/settings/organizations/banking-information';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -100,6 +101,7 @@ export default {
   readingRoom,
   serials,
   linkedDataEditor,
+  settingsBankingInformationPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

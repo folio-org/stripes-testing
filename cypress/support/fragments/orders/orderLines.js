@@ -1844,10 +1844,9 @@ export default {
   },
 
   editPOLInOrder: () => {
-    cy.do([
-      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
-      Button('Edit').click(),
-    ]);
+    cy.do(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click());
+    cy.wait(4000);
+    cy.do(Button('Edit').click());
     cy.wait(4000);
   },
 
@@ -2516,6 +2515,7 @@ export default {
 
   openDonorInformationSection() {
     cy.do(Button({ id: 'accordion-toggle-button-donorsInformation' }).click());
+    cy.wait(2000);
   },
 
   checkAddDonorButtomisActive() {
@@ -2550,15 +2550,11 @@ export default {
   },
 
   deleteDonor(donorName) {
-    cy.get('#donorsInformation')
-      .find('div[class^="mclRowFormatterContainer-"]')
-      .each((row) => {
-        cy.wrap(row).then(() => {
-          if (row.text().includes(donorName)) {
-            cy.wrap(row).find('button').click();
-          }
-        });
-      });
+    cy.get('#donorOrganizationIds')
+      .find('[data-row-index]')
+      .contains(donorName)
+      .closest('[data-row-index]')
+      .within(() => cy.get('button[aria-label="Unassign"]').click());
   },
 
   checkEmptyDonorList() {

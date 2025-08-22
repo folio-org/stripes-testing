@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
@@ -6,21 +7,20 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
-describe('ui-finance: Funds', () => {
+describe('Funds', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
-    name: `1_autotest_fund2_${getRandomPostfix()}`,
+    name: `autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: `2${getRandomPostfix()}`,
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
   const thirdFund = {
-    name: `1_autotest_fund3_${getRandomPostfix()}`,
+    name: `autotest_fund3_${getRandomPostfix()}`,
     code: `3${getRandomPostfix()}`,
     externalAccountNo: `32${getRandomPostfix()}`,
     fundStatus: 'Active',
@@ -62,16 +62,19 @@ describe('ui-finance: Funds', () => {
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
+        cy.reload();
+        Funds.waitLoading();
+      }, 20_000);
     });
   });
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    cy.getAdminToken();
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
@@ -80,11 +83,8 @@ describe('ui-finance: Funds', () => {
 
     Funds.deleteFundViaApi(firstFund.id);
     Funds.deleteFundViaApi(secondFund.id);
-
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-
     Users.deleteViaApi(user.userId);
   });
 

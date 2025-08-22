@@ -149,18 +149,26 @@ export default {
     cy.do(okayButton.click());
     cy.expect(cannotDeleteModal.absent());
   },
-  createViaApi: (patronGroup = defaultPatronGroup.group) => cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'groups',
-      isDefaultSearchParamsRequired: false,
-      body: {
-        group: patronGroup,
-        desc: `Patron_group_description${getRandomPostfix()}`,
-        expirationOffsetInDays: '10',
-      },
-    })
-    .then((response) => response.body.id),
+  createViaApi(
+    patronGroup = defaultPatronGroup.group,
+    description = 'Patron_group_description',
+    expirationOffsetInDays = '10',
+  ) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'groups',
+        isDefaultSearchParamsRequired: false,
+        body: {
+          group: patronGroup,
+          desc: description,
+          expirationOffsetInDays,
+        },
+      })
+      .then((response) => {
+        return response.body.id;
+      });
+  },
   deleteViaApi: (patronGroupId) => {
     cy.okapiRequest({
       method: 'DELETE',

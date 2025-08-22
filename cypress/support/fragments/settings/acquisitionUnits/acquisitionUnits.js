@@ -54,9 +54,9 @@ export default {
     cy.do(Button('New').click());
   },
 
-  fillInInfo(AUName, adminName) {
+  fillInInfo(AUName) {
     cy.do([nameTextField.fillIn(AUName), viewCheckbox.click(), saveAUButton.click()]);
-    this.assignAdmin(adminName);
+    this.assignAdmin();
     cy.wait(4000);
   },
 
@@ -80,10 +80,10 @@ export default {
     cy.wait(4000);
   },
 
-  assignAdmin: (adminName = Cypress.env('diku_login')) => {
+  assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn(adminName),
+      userSearchModal.find(searchTextField).fillIn(Cypress.env('diku_login')),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),

@@ -530,11 +530,11 @@ export default {
   selectClosedStatusFilter: () => {
     cy.do(Checkbox('Closed').click());
   },
-  selectPrefixFilter: () => {
+  selectPrefixFilter: (prefix) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-poNumberPrefix' }).click(),
       Button({ id: 'poNumberPrefix-selection' }).click(),
-      SelectionOption('pref').click(),
+      SelectionOption(prefix).click(),
     ]);
   },
   selectApprovedFilter: () => {
@@ -631,10 +631,11 @@ export default {
     ]);
   },
   selectFilterFundCodeUSHISTPOL: () => {
+    cy.wait(2000);
     cy.do([
       buttonFundCodeFilter.click(),
-      Button({ id: 'fundCode-selection' }).click(),
-      SelectionOption('USHIST').click(),
+      Button({ ariaControls: 'multiselect-option-list-fund-filter' }).click(),
+      MultiSelectOption(including('USHIST')).click(),
       buttonFundCodeFilter.click(),
     ]);
   },

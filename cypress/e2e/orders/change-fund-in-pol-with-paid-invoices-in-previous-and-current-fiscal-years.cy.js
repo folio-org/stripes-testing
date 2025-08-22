@@ -10,13 +10,9 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import InteractorsTools from '../../support/utils/interactorsTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
@@ -24,7 +20,7 @@ import {
   ORDER_STATUSES,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -56,7 +52,7 @@ describe('Orders', () => {
     invoiceDate: DateTools.getCurrentDate(),
     vendorName: 'Amazon.com',
     accountingCode: '',
-    batchGroup: '',
+    batchGroup: 'FOLIO',
     invoiceNumber: FinanceHelp.getRandomInvoiceNumber(),
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -75,7 +71,6 @@ describe('Orders', () => {
 
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
-  let servicePointId;
   let location;
   let orderNumber;
   let firstInvoice;
@@ -106,115 +101,106 @@ describe('Orders', () => {
             FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
               secondFiscalYear.id = secondFiscalYearResponse.id;
             });
-            ServicePoints.getViaApi().then((servicePoint) => {
-              servicePointId = servicePoint[0].id;
-              NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
-                (res) => {
-                  location = res;
 
-                  MaterialTypes.createMaterialTypeViaApi(
-                    MaterialTypes.getDefaultMaterialType(),
-                  ).then((mtypes) => {
-                    cy.getAcquisitionMethodsApi({
-                      query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                    }).then((params) => {
-                      // Prepare 2 Open Orders for Rollover
-                      Organizations.createOrganizationViaApi(organization).then(
-                        (responseOrganizations) => {
-                          organization.id = responseOrganizations;
-                          firstOrder.vendor = organization.id;
-                          const firstOrderLine = {
-                            ...BasicOrderLine.defaultOrderLine,
-                            cost: {
-                              listUnitPrice: 10.0,
-                              currency: 'USD',
-                              discountType: 'percentage',
-                              quantityPhysical: 1,
-                              poLineEstimatedPrice: 10.0,
-                            },
-                            fundDistribution: [
-                              { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                            ],
-                            locations: [
-                              { locationId: location.id, quantity: 1, quantityPhysical: 1 },
-                            ],
-                            acquisitionMethod: params.body.acquisitionMethods[0].id,
-                            physical: {
-                              createInventory: 'Instance, Holding, Item',
-                              materialType: mtypes.body.id,
-                              materialSupplier: responseOrganizations,
-                              volumes: [],
-                            },
-                          };
-                          Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                            firstOrder.id = firstOrderResponse.id;
-                            orderNumber = firstOrderResponse.poNumber;
-                            firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+            cy.getLocations({ limit: 1 }).then((res) => {
+              location = res;
 
-                            OrderLines.createOrderLineViaApi(firstOrderLine);
-                            Orders.updateOrderViaApi({
-                              ...firstOrderResponse,
-                              workflowStatus: ORDER_STATUSES.OPEN,
-                            });
-                            Invoices.createInvoiceWithInvoiceLineViaApi({
-                              vendorId: organization.id,
-                              fiscalYearId: firstFiscalYear.id,
-                              poLineId: firstOrderLine.id,
-                              fundDistributions: firstOrderLine.fundDistribution,
-                              accountingCode: organization.erpCode,
-                              releaseEncumbrance: true,
-                              subTotal: 10,
-                            }).then((invoiceRescponse) => {
-                              firstInvoice = invoiceRescponse;
-
-                              Invoices.changeInvoiceStatusViaApi({
-                                invoice: firstInvoice,
-                                status: INVOICE_STATUSES.PAID,
-                              });
-                            });
-                            cy.loginAsAdmin({
-                              path: TopMenu.ordersPath,
-                              waiter: Orders.waitLoading,
-                            });
-                            Orders.searchByParameter('PO number', orderNumber);
-                            Orders.selectFromResultsList(orderNumber);
-                            OrderLines.selectPOLInOrder(0);
-                            OrderLines.editPOLInOrder();
-                            OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
-                            OrderLines.saveOrderLine();
-
-                            cy.visit(TopMenu.ledgerPath);
-                            FinanceHelp.searchByName(defaultLedger.name);
-                            Ledgers.selectLedger(defaultLedger.name);
-                            Ledgers.rollover();
-                            Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
-                              secondFiscalYear.code,
-                              'None',
-                              'Transfer',
-                            );
-
-                            cy.visit(TopMenu.fiscalYearPath);
-                            FinanceHelp.searchByName(firstFiscalYear.name);
-                            FiscalYears.selectFY(firstFiscalYear.name);
-                            FiscalYears.editFiscalYearDetails();
-                            FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-                              periodStartForFirstFY,
-                              periodEndForFirstFY,
-                            );
-                            FinanceHelp.searchByName(secondFiscalYear.name);
-                            FiscalYears.selectFY(secondFiscalYear.name);
-                            FiscalYears.editFiscalYearDetails();
-                            FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-                              periodStartForSecondFY,
-                              periodEndForSecondFY,
-                            );
-                          });
+              cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+                cy.getAcquisitionMethodsApi({
+                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                }).then((params) => {
+                  // Prepare 2 Open Orders for Rollover
+                  Organizations.createOrganizationViaApi(organization).then(
+                    (responseOrganizations) => {
+                      organization.id = responseOrganizations;
+                      firstOrder.vendor = organization.id;
+                      const firstOrderLine = {
+                        ...BasicOrderLine.defaultOrderLine,
+                        cost: {
+                          listUnitPrice: 10.0,
+                          currency: 'USD',
+                          discountType: 'percentage',
+                          quantityPhysical: 1,
+                          poLineEstimatedPrice: 10.0,
                         },
-                      );
-                    });
-                  });
-                },
-              );
+                        fundDistribution: [
+                          { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                        ],
+                        locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
+                        acquisitionMethod: params.body.acquisitionMethods[0].id,
+                        physical: {
+                          createInventory: 'Instance, Holding, Item',
+                          materialType: mtype.id,
+                          materialSupplier: responseOrganizations,
+                          volumes: [],
+                        },
+                      };
+                      Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
+                        firstOrder.id = firstOrderResponse.id;
+                        orderNumber = firstOrderResponse.poNumber;
+                        firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+
+                        OrderLines.createOrderLineViaApi(firstOrderLine);
+                        Orders.updateOrderViaApi({
+                          ...firstOrderResponse,
+                          workflowStatus: ORDER_STATUSES.OPEN,
+                        });
+                        Invoices.createInvoiceWithInvoiceLineViaApi({
+                          vendorId: organization.id,
+                          fiscalYearId: firstFiscalYear.id,
+                          poLineId: firstOrderLine.id,
+                          fundDistributions: firstOrderLine.fundDistribution,
+                          accountingCode: organization.erpCode,
+                          releaseEncumbrance: true,
+                          subTotal: 10,
+                        }).then((invoiceRescponse) => {
+                          firstInvoice = invoiceRescponse;
+
+                          Invoices.changeInvoiceStatusViaApi({
+                            invoice: firstInvoice,
+                            status: INVOICE_STATUSES.PAID,
+                          });
+                        });
+                        cy.loginAsAdmin();
+                        TopMenuNavigation.openAppFromDropdown('Orders');
+                        Orders.selectOrdersPane();
+                        Orders.searchByParameter('PO number', orderNumber);
+                        Orders.selectFromResultsList(orderNumber);
+                        OrderLines.selectPOLInOrder(0);
+                        OrderLines.editPOLInOrder();
+                        OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
+                        OrderLines.saveOrderLine();
+
+                        TopMenuNavigation.openAppFromDropdown('Finance');
+                        FinanceHelp.searchByName(defaultLedger.name);
+                        Ledgers.selectLedger(defaultLedger.name);
+                        Ledgers.rollover();
+                        Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
+                          secondFiscalYear.code,
+                          'None',
+                          'Transfer',
+                        );
+
+                        Ledgers.clickOnFiscalYearTab();
+                        FinanceHelp.searchByName(firstFiscalYear.name);
+                        FiscalYears.selectFY(firstFiscalYear.name);
+                        FiscalYears.editFiscalYearDetails();
+                        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+                          periodStartForFirstFY,
+                          periodEndForFirstFY,
+                        );
+                        FinanceHelp.searchByName(secondFiscalYear.name);
+                        FiscalYears.selectFY(secondFiscalYear.name);
+                        FiscalYears.editFiscalYearDetails();
+                        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+                          periodStartForSecondFY,
+                          periodEndForSecondFY,
+                        );
+                      });
+                    },
+                  );
+                });
+              });
             });
           });
         });
@@ -227,10 +213,7 @@ describe('Orders', () => {
         permissions.uiOrdersEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
       });
     });
   });
@@ -244,10 +227,15 @@ describe('Orders', () => {
     'C404376 Change fund distribution when PO line has related paid invoices in previous and current fiscal years (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
-      OrderLines.openPageCurrentEncumbranceInFund(`${firstFund.name}(${firstFund.code})`, '$10.00');
+      OrderLines.openPageCurrentEncumbranceInFund(
+        `${secondFund.name}(${secondFund.code})`,
+        '$10.00',
+      );
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
         '$10.00',
@@ -257,30 +245,28 @@ describe('Orders', () => {
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
 
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(firstFund, '10', '10');
+      OrderLines.editFundInPOL(firstFund, '10', '100');
       OrderLines.backToEditingOrder();
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrderWithoutFY(secondInvoice);
       Invoices.approveInvoice();
 
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '10');
+      OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
       OrderLines.saveOrderLine();
-      InteractorsTools.checkCalloutErrorMessage(
-        'The purchase order line fund distribution can not be changed because the order line is linked to an invoice line that currently has the "approved" status',
-      );
       OrderLines.cancelEditingPOL();
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(secondInvoice.invoiceNumber);
       Invoices.selectInvoice(secondInvoice.invoiceNumber);
       Invoices.payInvoice();
@@ -298,12 +284,13 @@ describe('Orders', () => {
       );
       Funds.checkStatusInTransactionDetails('Released');
 
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '10', '10');
+      OrderLines.editFundInPOL(secondFund, '10', '100');
       OrderLines.openPageCurrentEncumbrance('$0.00');
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,

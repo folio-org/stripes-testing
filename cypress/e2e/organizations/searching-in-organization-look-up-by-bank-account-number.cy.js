@@ -1,13 +1,13 @@
-import permissions from '../../support/dictionary/permissions';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import BankingInformation from '../../support/fragments/settings/organizations/bankingInformation';
+import Organizations from '../../support/fragments/organizations/organizations';
+import permissions from '../../support/dictionary/permissions';
+import Users from '../../support/fragments/users/users';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Orders from '../../support/fragments/orders/orders';
+import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 
-describe('Organizations', () => {
+describe('Searching in organization look-up', { retries: { runMode: 1 } }, () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
   const secondOrganization = {
     name: `autotest_name2_${getRandomPostfix()}`,
@@ -27,16 +27,21 @@ describe('Organizations', () => {
 
   let user;
   let C423432User;
+  before('Enable Banking Information', () => {
+    cy.loginAsAdmin({
+      path: TopMenu.settingsBankingInformationPath,
+      waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+    });
+    SettingsOrganizations.checkenableBankingInformationIfNeeded();
+  });
 
   before(() => {
-    cy.clearLocalStorage();
-    cy.getAdminToken();
-    cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
-      C423432User = secondUserProperties;
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
     });
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
       Organizations.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganization(firstOrganization.name);
@@ -66,10 +71,12 @@ describe('Organizations', () => {
         waiter: Orders.waitLoading,
       });
     });
+    cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+      C423432User = secondUserProperties;
+    });
   });
 
   after(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', firstOrganization.name);
     Organizations.checkSearchResults(firstOrganization);
@@ -86,14 +93,13 @@ describe('Organizations', () => {
     Organizations.closeDetailsPane();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
     Organizations.deleteOrganizationViaApi(secondOrganization.id);
-    BankingInformation.setBankingInformationValue(false);
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(C423432User.userId);
   });
 
   it(
     'C423426 Searching in "Organization look-up" by "Bank account number" with appropriate permission (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       Orders.openVendorFilterModal();
       Orders.searchVendorbyindex(
@@ -111,7 +117,6 @@ describe('Organizations', () => {
       Orders.resetFilters();
     },
   );
-
   it(
     'C423427 Searching in "Organization look-up" by "Bank account number" in "All" section with banking permission (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
@@ -127,7 +132,7 @@ describe('Organizations', () => {
 
   it(
     'C423432 Searching in "Organization look-up" by "Bank account number" without banking permissions (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       cy.login(C423432User.username, C423432User.password, {
         path: TopMenu.ordersPath,

@@ -797,7 +797,6 @@ export default {
       Button({ id: 'fundDistributions-add-button' }).click(),
       Selection('Fund ID*').open(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
-      saveAndClose.click(),
     ]);
     cy.wait(2000);
     cy.do(saveAndClose.click());

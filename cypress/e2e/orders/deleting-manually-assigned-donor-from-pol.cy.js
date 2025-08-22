@@ -82,13 +82,14 @@ describe('Orders', () => {
 
     defaultOrder.vendor = firstOrganization.name;
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-
     Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
+      OrderLines.openDonorInformationSection();
+      OrderLines.addDonor(firstOrganization.name);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
         '40',
@@ -100,7 +101,6 @@ describe('Orders', () => {
       OrderLines.openDonorInformationSection();
       OrderLines.addDonor(secondOrganization.name);
       OrderLines.saveOrderLine();
-      cy.wait(4000);
     });
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
@@ -126,11 +126,9 @@ describe('Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.openDonorInformationSection();
       OrderLines.deleteDonor(firstOrganization.name);
-
       OrderLines.saveOrderLine();
       OrderLines.editPOLInOrder();
       OrderLines.openDonorInformationSection();
-
       OrderLines.deleteDonor(secondOrganization.name);
       OrderLines.saveOrderLine();
       OrderLines.editPOLInOrder();

@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   EditableListRow,
   MultiColumnListCell,
   NavListItem,
@@ -10,6 +11,7 @@ import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
+const enableBankingInformationCheckbox = Checkbox('Enable banking information');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
@@ -37,14 +39,16 @@ export default {
   checkButtonNewInTypesIsDisabled: () => {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
-        .find(Button({ id: 'clickable-add-types' })).absent(),
+        .find(Button({ id: 'clickable-add-types' }))
+        .absent(),
     );
   },
 
   checkButtonNewInCategoriesIsDisabled: () => {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
-        .find(Button({ id: 'clickable-add-categories' })).absent(),
+        .find(Button({ id: 'clickable-add-categories' }))
+        .absent(),
     );
   },
 
@@ -91,6 +95,17 @@ export default {
   },
   selectTypes: () => {
     cy.do(NavListItem('Types').click());
+  },
+
+  checkenableBankingInformationIfNeeded: () => {
+    cy.expect(enableBankingInformationCheckbox.exists());
+    cy.do(enableBankingInformationCheckbox.checkIfNotSelected());
+    cy.get('#clickable-save-contact-person-footer').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+      }
+    });
+    cy.wait(2000);
   },
 
   createCategoriesViaApi(categories) {
