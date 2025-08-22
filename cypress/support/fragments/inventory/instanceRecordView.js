@@ -478,6 +478,16 @@ export default {
     );
   },
 
+  verifyWarningMessage: () => {
+    cy.expect(
+      HTML(
+        including(
+          'You do not currently have permission to access details of shared instances. Contact your FOLIO administrator for more information.',
+        ),
+      ).exists(),
+    );
+  },
+
   verifyInstanceIsMarkedAsStaffSuppressed() {
     cy.expect(
       rootSection

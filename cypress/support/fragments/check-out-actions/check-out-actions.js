@@ -280,4 +280,7 @@ export default {
       HTML(including('No items have been entered yet')),
     ]);
   },
+  clickOnUserBarcodeLink: (barcode) => {
+    cy.do(Link(barcode).click());
+  },
 };

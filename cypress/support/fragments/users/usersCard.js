@@ -83,6 +83,7 @@ const lastNameField = KeyValue('Last name');
 const firstNameField = KeyValue('First name');
 const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 const closeIconButton = Button({ icon: 'times' });
+const preferredEmailCommunicationsField = KeyValue('Preferred email communications');
 
 export default {
   errors,
@@ -702,7 +703,7 @@ export default {
   close() {
     this.verifyUserInformationPresence();
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
-    cy.wait(500);
+    cy.wait(1000);
     cy.expect(rootSection.absent());
   },
 
@@ -714,6 +715,10 @@ export default {
     points.forEach((point) => {
       cy.expect(servicePointsAccordion.find(HTML(including(point))).exists());
     });
+  },
+
+  verifyNoServicePointsFound() {
+    cy.expect(servicePointsAccordion.find(HTML(including('No service points found'))).exists());
   },
 
   openServicePointsAccordion() {
@@ -877,7 +882,44 @@ export default {
     );
   },
 
+  verifyEmailCommunicationPreferencesField() {
+    cy.expect(Accordion('Contact information').find(preferredEmailCommunicationsField).exists());
+  },
+
+  verifyEmailCommunicationPreferenceSelected(preferences) {
+    const preferencesArray = Array.isArray(preferences) ? preferences : [preferences];
+    preferencesArray.forEach((preference) => {
+      cy.expect(preferredEmailCommunicationsField.find(HTML(including(preference))).exists());
+    });
+  },
+
+  verifyRemovedEmailCommunicationPreference(preference) {
+    cy.expect(preferredEmailCommunicationsField.find(HTML(including(preference))).absent());
+  },
+
   verifyUserDetailsPaneOpen() {
     cy.expect(rootSection.exists());
+  },
+
+  checkNoNotesInAccordion() {
+    cy.expect(rootSection.find(HTML(including('No notes found'))).exists());
+  },
+
+  verifyNotesCounter(expectedCount) {
+    cy.expect([
+      notesAccordion.find(Spinner()).absent(),
+      notesAccordion.has({ counter: expectedCount }),
+    ]);
+  },
+
+  verifyNoteInAccordion({ title, details = '' } = {}) {
+    cy.expect(
+      notesAccordion.find(
+        MultiColumnListCell({
+          columnIndex: 1,
+          content: and(including(`Title: ${title}`), including(`Details: ${details}`)),
+        }),
+      ),
+    );
   },
 };

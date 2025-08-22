@@ -1,8 +1,7 @@
 import uuid from 'uuid';
 
 const defaultPOLLimitConfig = {
-  module: 'ORDERS',
-  configName: 'poLines-limit',
+  key: 'poLines-limit',
   value: '1',
   id: uuid(),
 };
@@ -16,11 +15,11 @@ export default {
   getPOLLimitFromConfigEntries(searchParams) {
     return cy
       .okapiRequest({
-        path: 'configurations/entries',
+        path: 'orders-storage/settings',
         searchParams,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body }) => body.configs);
+      .then(({ body }) => body.settings);
   },
 
   getPOLLimit(searchParams = defaultSettingsSearchParams) {
@@ -37,7 +36,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'POST',
-        path: 'configurations/entries',
+        path: 'orders-storage/settings',
         body: config,
       })
       .then(({ body }) => body);
@@ -57,7 +56,7 @@ export default {
   updatePOLLimitConfigEntry(config) {
     return cy.okapiRequest({
       method: 'PUT',
-      path: `configurations/entries/${config.id}`,
+      path: `orders-storage/settings/${config.id}`,
       body: config,
       isDefaultSearchParamsRequired: false,
     });
