@@ -30,7 +30,7 @@ describe('MARC', () => {
           tag: '240',
           content: '$a Link test $0 no2018125588',
           marcValue:
-            'C569598 Stockholm International Film Festival Location of meeting Date of meeting or treaty signing Date of a work Form subheading Language of a work Number of part/section/meeting Name of part/section of a work Name of meeting following jurisdiction name entry element Version title',
+            'C569598 Stockholm International Film Festival Location of meeting Date of meeting or treaty signing Miscellaneous information Number of part/section/meeting Name of meeting following jurisdiction name entry element--Form subdivision--General subdivision--Chronological subdivision--Geographic subdivision',
           searchOption: 'Keyword',
         };
 

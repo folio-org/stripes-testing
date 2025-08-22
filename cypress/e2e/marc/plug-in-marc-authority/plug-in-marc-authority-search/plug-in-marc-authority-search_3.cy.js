@@ -27,14 +27,14 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'oneMarcBib.mrc',
-          fileName: `C380567 testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcFileForC359228.mrc',
-          fileName: `C380567 testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 5,
           propertyName: 'authority',
@@ -65,23 +65,15 @@ describe('MARC', () => {
               });
             });
           });
-          InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         });
-
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.preconditionUserId, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-        });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
 
       after('Deleting created user', () => {
@@ -113,7 +105,6 @@ describe('MARC', () => {
             'UXPROD-4394C380567 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg subk subv subx suby subz',
             'UXPROD-4394C380567 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subk subv subx suby subz subg',
           ];
-
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
