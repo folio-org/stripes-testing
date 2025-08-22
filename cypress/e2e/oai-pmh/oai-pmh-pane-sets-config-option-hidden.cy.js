@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import OaiPmh from '../../support/fragments/oai-pmh/oaipmhPane';
+import { OaiPmh } from '../../support/fragments/settings/oai-pmh';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';

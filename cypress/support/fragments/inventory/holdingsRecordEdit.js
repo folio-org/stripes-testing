@@ -3,6 +3,7 @@ import {
   Button,
   Callout,
   calloutTypes,
+  Checkbox,
   FieldSet,
   HTML,
   including,
@@ -254,5 +255,8 @@ export default {
     if (callNumberPrefix) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
     if (callNumberSuffix) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
     if (copyNumber) cy.do(TextField('Copy number').fillIn(copyNumber));
+  },
+  markAsSuppressedFromDiscovery() {
+    cy.do(Checkbox('Suppress from discovery').click());
   },
 };

@@ -54,7 +54,6 @@ describe('Groups', () => {
         Groups.createViaApi(firstGroup).then((firstGroupResponse) => {
           firstGroup.id = firstGroupResponse.id;
         });
-
         Groups.createViaApi(secondGroup).then((secondGroupResponse) => {
           secondGroup.id = secondGroupResponse.id;
         });
@@ -64,7 +63,6 @@ describe('Groups', () => {
           firstBudget.fundId = firstFundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
         });
-        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
           secondBudget.fundId = secondFundResponse.fund.id;
@@ -77,16 +75,19 @@ describe('Groups', () => {
       permissions.uiFinanceViewGroups.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
+        cy.reload();
+        Funds.waitLoading();
+      }, 20_000);
     });
   });
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    cy.getAdminToken();
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
