@@ -282,6 +282,18 @@ export const ACQUISITION_METHOD_NAMES = {
   TECHNICAL: 'Technical',
 };
 
+export const INSTITUTION_NAMES = {
+  KOBENHAVNS_UNIVERSITET: 'Københavns Universitet',
+};
+
+export const CAMPUS_NAMES = {
+  CITY_CAMPUS: 'City Campus',
+};
+
+export const LIBRARY_NAMES = {
+  DATALOGISK_INSTITUT: 'Datalogisk Institut',
+};
+
 export const LOCATION_NAMES = {
   ANNEX: 'Annex (KU/CC/DI/A)',
   ANNEX_UI: 'Annex',
@@ -291,6 +303,8 @@ export const LOCATION_NAMES = {
   MAIN_LIBRARY_UI: 'Main Library',
   POPULAR_READING_COLLECTION: 'Popular Reading Collection (KU/CC/DI/P)',
   POPULAR_READING_COLLECTION_UI: 'Popular Reading Collection',
+  SECOND_FLOOR: 'Second Floor (KU/CC/DI/2)',
+  SECOND_FLOOR_UI: 'Second Floor',
   DCB_UI: 'DCB',
 };
 

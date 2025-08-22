@@ -262,4 +262,20 @@ export default {
     if (enumeration) cy.do(TextArea('Enumeration').fillIn(enumeration));
     if (chronology) cy.do(TextArea('Chronology').fillIn(chronology));
   },
+
+  selectPermanentLocation(location) {
+    cy.do([
+      Button({ id: 'additem_permanentlocation' }).click(),
+      SelectionList().filter(location),
+      SelectionList().select(including(location)),
+    ]);
+  },
+
+  selectTemporaryLocation(location) {
+    cy.do([
+      Button({ id: 'additem_temporarylocation' }).click(),
+      SelectionList().filter(location),
+      SelectionList().select(including(location)),
+    ]);
+  },
 };
