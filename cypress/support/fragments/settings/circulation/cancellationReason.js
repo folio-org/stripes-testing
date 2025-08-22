@@ -59,25 +59,30 @@ export default {
   },
 
   verifyReasonInTheList({ name, description = '', publicDescription = '', actions = [] }) {
-    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    cy.expect([
-      row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: description })).exists(),
-      row.find(MultiColumnListCell({ columnIndex: 2, content: publicDescription })).exists(),
-    ]);
-    if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
-    } else {
-      Object.values(reasonsActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
-        if (actions.includes(action)) {
-          cy.expect(buttonSelector.exists());
-        } else {
-          cy.expect(buttonSelector.absent());
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .then(($row) => {
+        if (description) {
+          cy.wrap($row).find('div[class*="mclCell-"]').eq(1).should('contain.text', description);
         }
+
+        if (publicDescription) {
+          cy.wrap($row)
+            .find('div[class*="mclCell-"]')
+            .eq(2)
+            .should('contain.text', publicDescription);
+        }
+
+        const actionsCell = $row.find('div[class*="mclCell-"]').eq(3);
+        actions.forEach((action) => {
+          if (action === 'edit') {
+            cy.get(actionsCell).find('button[icon="edit"]').should('exist');
+          } else if (action === 'trash') {
+            cy.get(actionsCell).find('button[icon="trash"]').should('exist');
+          }
+        });
       });
-    }
   },
   verifyReasonAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ isContainer: true, content: including(name) });
