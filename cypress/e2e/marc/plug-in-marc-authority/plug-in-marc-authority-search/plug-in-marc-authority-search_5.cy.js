@@ -13,16 +13,14 @@ describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {
-        forC350569: {
-          searchOptionA: 'Name-title',
-          searchOptionB: 'Personal name',
-          typeOfHeadingA: 'Personal Name',
-          typeOfHeadingB: 'Corporate Name',
-          typeOfHeadingC: 'Conference Name',
-          value: 'C380569 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
-          valurMarked: 'C380569 Twain, Mark,',
-          type: 'Authorized',
-        },
+        searchOptionA: 'Name-title',
+        searchOptionB: 'Personal name',
+        typeOfHeadingA: 'Personal Name',
+        typeOfHeadingB: 'Corporate Name',
+        typeOfHeadingC: 'Conference Name',
+        value: 'C380569 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
+        valurMarked: 'C380569 Twain, Mark,',
+        type: 'Authorized',
       };
 
       const marcFileForC380569 = [
@@ -115,22 +113,19 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
-          MarcAuthorities.searchByParameter(testData.forC350569.searchOptionA, 'C380569');
+          MarcAuthorities.searchByParameter(testData.searchOptionA, '*');
           // wait for the results to be loaded.
           cy.wait(1000);
           MarcAuthorities.checkHeadingType(
-            testData.forC350569.type,
-            testData.forC350569.typeOfHeadingA,
-            testData.forC350569.typeOfHeadingB,
-            testData.forC350569.typeOfHeadingC,
+            testData.type,
+            testData.typeOfHeadingA,
+            testData.typeOfHeadingB,
+            testData.typeOfHeadingC,
           );
-          MarcAuthorities.selectTitle(testData.forC350569.value);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC350569.valurMarked);
-          MarcAuthorities.searchBy(testData.forC350569.searchOptionB, 'C380569');
-          MarcAuthorities.checkSingleHeadingType(
-            testData.forC350569.type,
-            testData.forC350569.typeOfHeadingA,
-          );
+          MarcAuthorities.selectTitle(testData.value);
+          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valurMarked);
+          MarcAuthorities.searchBy(testData.searchOptionB, '*');
+          MarcAuthorities.checkSingleHeadingType(testData.type, testData.typeOfHeadingA);
         },
       );
     });
