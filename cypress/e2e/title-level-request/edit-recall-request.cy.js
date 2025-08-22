@@ -59,7 +59,7 @@ describe(
           location,
         });
       });
-      cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
+      cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
         testData.requester = users[0];
       });
       firstItemBarcode = testData.folioInstances[0].barcodes[0];
