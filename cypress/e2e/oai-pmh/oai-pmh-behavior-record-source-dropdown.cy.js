@@ -1,6 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
-import { Behavior, OaiPmh } from '../../support/fragments/oai-pmh';
-import { SECTIONS } from '../../support/fragments/oai-pmh/oaipmhPane';
+import { Behavior, OaiPmh } from '../../support/fragments/settings/oai-pmh';
+import { SECTIONS } from '../../support/fragments/settings/oai-pmh/oaipmhPane';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';

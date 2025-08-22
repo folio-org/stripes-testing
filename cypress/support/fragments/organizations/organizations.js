@@ -94,6 +94,7 @@ const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button'
 const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
 const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
 const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
+const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
 const updatedDateAccordion = Accordion({ id: 'metadata.updatedDate' });
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
@@ -879,6 +880,10 @@ export default {
     cy.get('select[name="type"]').select(interfaceType, { force: true });
   },
 
+  addNoteToInterface: (note) => {
+    cy.do([TextArea({ name: 'notes' }).fillIn(note)]);
+  },
+
   clickSaveButton: () => {
     cy.do(saveButton.click());
   },
@@ -969,6 +974,10 @@ export default {
 
   checkInterfaceTypeIsAdd: (interfaceType) => {
     cy.expect(interfaceSection.find(KeyValue({ value: interfaceType })).exists());
+  },
+
+  checkInterfaceNoteIsAdd: (interfaceNote) => {
+    cy.expect(interfaceSection.find(KeyValue({ value: interfaceNote })).exists());
   },
 
   selectInterface: (defaultInterface) => {
@@ -1277,7 +1286,7 @@ export default {
 
   filterByDateUpdated(startDate, endDate) {
     cy.do([
-      updatedDateAccordion.clickHeader(),
+      toggleButtonDateUpdated.click(),
       updatedDateAccordion.find(startDateField).fillIn(startDate),
       updatedDateAccordion.find(endDateField).fillIn(endDate),
       updatedDateAccordion.find(applyButton).click(),
