@@ -1,27 +1,25 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import permissions from '../../support/dictionary/permissions';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Organizations', () => {
+  const contact = { ...NewOrganization.defaultContact };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
-    contacts: [],
   };
-  const contact = { ...NewOrganization.defaultContact };
   let user;
 
-  before('Create user and organization with contact', () => {
+  before('Create user, organization, and contact', () => {
     cy.getAdminToken();
+    Organizations.createOrganizationViaApi(organization).then((organizationId) => {
+      organization.id = organizationId;
+    });
     Organizations.createContactViaApi(contact).then((contactId) => {
       contact.id = contactId;
-      organization.contacts.push(contactId);
-      Organizations.createOrganizationViaApi(organization).then((orgId) => {
-        organization.id = orgId;
-      });
     });
-    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -37,17 +35,14 @@ describe('Organizations', () => {
   });
 
   it(
-    'C727 Unassign contact from an organization record (thunderjet)',
+    'C676 Assign existing contact to an organization record (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
-      Organizations.openContactPeopleSectionInEditCard();
-      Organizations.deleteContactFromContactPeople();
-      Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
-      Organizations.checkContactSectionIsEmpty();
+      Organizations.addContactToOrganization(contact);
+      Organizations.checkContactIsAddToContactPeopleSection(contact);
     },
   );
 });

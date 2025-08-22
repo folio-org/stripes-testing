@@ -40,7 +40,7 @@ describe('Organizations', () => {
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
-    Organizations.openContactPeopleSection();
+    Organizations.openContactPeopleSectionInEditCard();
     Organizations.deleteContactFromContactPeople();
     Organizations.saveOrganization();
     Organizations.varifySaveOrganizationCalloutMessage(organization);

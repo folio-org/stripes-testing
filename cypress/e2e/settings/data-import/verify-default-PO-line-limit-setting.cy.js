@@ -10,10 +10,10 @@ import FieldMappingProfileView from '../../../support/fragments/settings/dataImp
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -32,20 +32,11 @@ describe('Data Import', () => {
       recordType: 'ORDER',
       description: '',
     };
-    const randomNumber = randomTwoDigitNumber();
-    const defaultPurchaseOrderLinesLimit = '"1"';
 
     before('Create test data and login', () => {
       // Make sure that defaulted value is "1" in "Purchase order lines limit setting"
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPath,
-        waiter: SettingsOrders.waitLoadingOrderSettings,
-      });
-      SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
-      // First set to a random number, to make sure "Save" button is clickable
-      SettingsOrders.setPurchaseOrderLinesLimit(randomNumber);
-      SettingsOrders.setPurchaseOrderLinesLimit(1);
-
+      cy.getAdminToken();
+      OrderLinesLimit.setPOLLimit(1);
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.uiOrganizationsView.gui,
@@ -75,15 +66,13 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
         NewFieldMappingProfile.checkPreviouslyPopulatedDataIsDisplayed(mappingProfile);
         // #3 Check "Purchase order lines limit setting" field in "Order information" accordion
-        NewFieldMappingProfile.verifyDefaultPurchaseOrderLinesLimit(defaultPurchaseOrderLinesLimit);
+        NewFieldMappingProfile.verifyDefaultPurchaseOrderLinesLimit(1);
         // #4 Click "Save as profile & close" button
         NewFieldMappingProfile.save();
         FieldMappingProfileView.checkCalloutMessage('New record created:');
         FieldMappingProfileView.verifyMappingProfileOpened();
         // #5 Check "Purchase order lines limit setting" field in "Order information" accordion of the Settings details view screen
-        FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(
-          defaultPurchaseOrderLinesLimit,
-        );
+        FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(1);
       },
     );
   });
