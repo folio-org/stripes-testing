@@ -51,17 +51,6 @@ describe('Inventory', () => {
           testData.item.instanceName,
           testData.item.itemBarcode,
         );
-
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `contributors.name="${testData.inventoryTitle}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
       });
       testData.marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(

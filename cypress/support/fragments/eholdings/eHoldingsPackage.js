@@ -151,6 +151,7 @@ export default {
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
+      cy.expect(tagsSection.find(ValueChipRoot(newTag)).exists());
     });
     return newTag;
   },

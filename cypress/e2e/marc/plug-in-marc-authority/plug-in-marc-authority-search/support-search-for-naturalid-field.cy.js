@@ -55,16 +55,7 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
           [...testData.searchQueries, ...testData.searchQueriesOneResult].forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
@@ -147,6 +138,7 @@ describe('MARC', () => {
               testData.authorizedTypes.AUTHORIZED,
               testData.searchResultsOneResult[index],
             );
+            MarcAuthorities.clickResetAndCheck();
           });
         },
       );
