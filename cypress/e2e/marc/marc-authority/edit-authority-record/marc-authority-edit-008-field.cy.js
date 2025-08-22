@@ -75,7 +75,7 @@ describe('MARC', () => {
         RecUpd: 'a',
         'Pers Name': 'b',
         'Level Est': 'a',
-        'Mod Rec Est': 's',
+        'Mod Rec': 's',
         Source: 'd',
       };
       const geosubdDropdownOptions = Object.values(AUTHORITY_008_FIELD_GEOSUBD_DROPDOWN);
@@ -167,7 +167,7 @@ describe('MARC', () => {
           options: levelestDropdownOptions,
         },
         {
-          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.MODRECEST,
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.MODREC,
           options: modrecDropdownOptions,
         },
         {

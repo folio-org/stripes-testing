@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 const testData = {
   new100fieldRecordForFirstFile: getRandomPostfix(),
   new100fieldRecordForSecondFile: getRandomPostfix(),
-  field008Updated: { 'Geo Subd': 'b', RecUpd: 'a', 'Mod Rec Est': 's', Source: 'c' },
+  field008Updated: { 'Geo Subd': 'b', RecUpd: 'a', 'Mod Rec': 's', Source: 'c' },
   second008Field008Updated: { RefEval: 'a', RecUpd: 'a', 'Pers Name': 'b', 'Level Est': 'a' },
 };
 const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
