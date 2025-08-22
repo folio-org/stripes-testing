@@ -62,13 +62,17 @@ export default {
    * @param {string} xmlString - The XML response as a string.
    * @param {boolean} shouldBeDeleted - Whether the instance should be deleted (true) or not deleted (false).
    */
-  verifyInstanceStatus(xmlString, shouldBeDeleted = false) {
+  verifyInstanceStatus(xmlString, shouldBeDeleted = false, instanceId) {
     const xmlDoc = this._parseXmlString(xmlString);
     const header = xmlDoc.getElementsByTagName('header')[0];
     const status = header.getAttribute('status');
+    const identifier = header.getElementsByTagName('identifier')[0].textContent;
 
     if (shouldBeDeleted) {
       expect(status, 'Header status should be "deleted" for deleted instance').to.equal('deleted');
+      expect(identifier, 'Identifier should contain the instance UUID').to.equal(
+        `oai:${this.getBaseUrl()}:${Cypress.env('OKAPI_TENANT')}/${instanceId}`,
+      );
     } else {
       expect(status, 'Header status should be absent (null) for non-deleted instance').to.be.null;
     }
