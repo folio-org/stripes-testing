@@ -1,4 +1,16 @@
+/* eslint-disable no-unused-expressions */
 export default {
+  /**
+   * Private helper method to parse XML string into DOM document
+   * @param {string} xmlString - The XML response as a string
+   * @returns {Document} Parsed XML document
+   * @private
+   */
+  _parseXmlString(xmlString) {
+    const parser = new DOMParser();
+    return parser.parseFromString(xmlString, 'application/xml');
+  },
+
   getBaseUrl() {
     const cachedBaseUrl = Cypress.env('OAI_PMH_BASE_URL');
 
@@ -46,15 +58,31 @@ export default {
   },
 
   /**
-   * Helper function to verify MARC field and subfield values.
+   * Verifies the instance status in the OAI-PMH response header.
+   * @param {string} xmlString - The XML response as a string.
+   * @param {boolean} shouldBeDeleted - Whether the instance should be deleted (true) or not deleted (false).
+   */
+  verifyInstanceStatus(xmlString, shouldBeDeleted = false) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const header = xmlDoc.getElementsByTagName('header')[0];
+    const status = header.getAttribute('status');
+
+    if (shouldBeDeleted) {
+      expect(status, 'Header status should be "deleted" for deleted instance').to.equal('deleted');
+    } else {
+      expect(status, 'Header status should be absent (null) for non-deleted instance').to.be.null;
+    }
+  },
+
+  /**
+   * Verify MARC field and subfield values.
    * @param {string} xmlString - The XML response as a string.
    * @param {string} tag - The tag of the MARC field to verify (e.g., "999").
    * @param {Object} indicators - Object containing the indicators (e.g., { ind1: "f", ind2: "f" }).
    * @param {Object} subfields - Object where keys are subfield codes and values are expected values (e.g., { t: "0", i: "12345" }).
    */
   verifyMarcField(xmlString, tag, indicators = {}, subfields = {}) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
+    const xmlDoc = this._parseXmlString(xmlString);
 
     // Use the namespace URI for MARC21
     const namespaceURI = 'http://www.loc.gov/MARC21/slim';
