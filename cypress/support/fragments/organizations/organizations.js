@@ -94,6 +94,7 @@ const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button'
 const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
 const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
 const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
+const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
 const updatedDateAccordion = Accordion({ id: 'metadata.updatedDate' });
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
@@ -616,6 +617,15 @@ export default {
     })
     .then((resp) => resp.body.id),
 
+  createInterfaceViaApi: (iface) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/interfaces',
+      body: iface,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -648,6 +658,17 @@ export default {
     ]);
   },
 
+  addCategoryToContact: (category) => {
+    cy.do([
+      MultiSelect({ label: 'Categories' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(category)).clickSegment(),
+      MultiSelect({ label: 'Categories' }).close(),
+      saveButtonInCotact.click(),
+    ]);
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
   addNewContact: (contact) => {
     cy.do([
       openContactSectionButton.click(),
@@ -669,7 +690,7 @@ export default {
       lastNameField.fillIn(contact.lastName),
       firstNameField.fillIn(contact.firstName),
       MultiSelect({ label: 'Categories' }).open(),
-      MultiSelectMenu().find(MultiSelectOption(category)).clickSegment(), // клик по сегменту с текстом
+      MultiSelectMenu().find(MultiSelectOption(category)).clickSegment(),
       MultiSelect({ label: 'Categories' }).close(),
       saveButtonInCotact.click(),
     ]);
@@ -761,6 +782,10 @@ export default {
     cy.do(Section({ id: 'contactPeopleSection' }).click());
   },
 
+  openContactPeopleSectionInEditCard: () => {
+    cy.do(openContactSectionButton.click());
+  },
+
   openBankInformationSection: () => {
     cy.do(Button('Banking information').click());
   },
@@ -822,12 +847,45 @@ export default {
     cy.do([addInterfacesModal.find(saveButton).click(), saveAndClose.click()]);
   },
 
+  addIntrefaceToOrganizationAndClickClose: (defaultInterface) => {
+    cy.do([
+      openInterfaceSectionButton.click(),
+      interfaceSection.find(addInterfaceButton).click(),
+      addInterfacesModal.find(TextField({ name: 'query' })).fillIn(defaultInterface.name),
+      addInterfacesModal.find(searchButtonInModal).click(),
+    ]);
+    cy.wait(4000);
+    SearchHelper.selectCheckboxFromResultsList();
+    cy.do([addInterfacesModal.find(Button('Close')).click()]);
+  },
+
   closeContact: () => {
     cy.do(PaneHeader({ id: 'paneHeaderview-contact' }).find(timesButton).click());
   },
 
+  closeEditInterface: () => {
+    cy.do(PaneHeader({ id: 'paneHeaderedit-interface' }).find(timesButton).click());
+  },
+
   closeInterface: () => {
     cy.do(Section({ id: 'view-interface' }).find(timesButton).click());
+  },
+
+  openInterfaceSection: () => {
+    cy.do(openInterfaceSectionButton.click());
+  },
+
+  selectInterfaceType: (interfaceType) => {
+    // eslint-disable-next-line cypress/no-force
+    cy.get('select[name="type"]').select(interfaceType, { force: true });
+  },
+
+  addNoteToInterface: (note) => {
+    cy.do([TextArea({ name: 'notes' }).fillIn(note)]);
+  },
+
+  clickSaveButton: () => {
+    cy.do(saveButton.click());
   },
 
   cancelOrganization: () => {
@@ -868,6 +926,27 @@ export default {
     );
   },
 
+  checkCategoryIsAddToContactPeopleSection: (categories) => {
+    categories.forEach((cat) => {
+      cy.expect(
+        Section({ id: 'contactPeopleSection' })
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(cat) }),
+      );
+    });
+  },
+
+  clickContactRecord: (contact) => {
+    const fullName = `${contact.lastName}, ${contact.firstName}`;
+    cy.do(
+      Section({ id: 'contactPeopleSection' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0, content: fullName }))
+        .click(),
+    );
+  },
+
   checkContactSectionIsEmpty: () => {
     cy.get('#contactPeopleSection [data-test-accordion-wrapper="true"]').should(
       'contain.text',
@@ -881,9 +960,24 @@ export default {
     });
   },
 
+  checkInterfaceSectionIsEmpty: () => {
+    cy.get('#interfacesSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'No interface data available',
+    );
+  },
+
   checkInterfaceIsAdd: (defaultInterface) => {
     cy.do(openInterfaceSectionButton.click());
     cy.expect(interfaceSection.find(KeyValue({ value: defaultInterface.name })).exists());
+  },
+
+  checkInterfaceTypeIsAdd: (interfaceType) => {
+    cy.expect(interfaceSection.find(KeyValue({ value: interfaceType })).exists());
+  },
+
+  checkInterfaceNoteIsAdd: (interfaceNote) => {
+    cy.expect(interfaceSection.find(KeyValue({ value: interfaceNote })).exists());
   },
 
   selectInterface: (defaultInterface) => {
@@ -913,7 +1007,7 @@ export default {
     ]);
   },
 
-  editContact: () => {
+  clickEdit: () => {
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
@@ -1148,6 +1242,12 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
 
+  closeEditOrganizationPane: () => {
+    cy.get(
+      'div[data-test-pane-header="true"] button[data-test-pane-header-dismiss-button="true"]',
+    ).click();
+  },
+
   editBankingInformationName: (bankingInformationName) => {
     cy.do([
       bankingInformationButton.click(),
@@ -1186,7 +1286,7 @@ export default {
 
   filterByDateUpdated(startDate, endDate) {
     cy.do([
-      updatedDateAccordion.clickHeader(),
+      toggleButtonDateUpdated.click(),
       updatedDateAccordion.find(startDateField).fillIn(startDate),
       updatedDateAccordion.find(endDateField).fillIn(endDate),
       updatedDateAccordion.find(applyButton).click(),
