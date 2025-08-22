@@ -78,6 +78,7 @@ export default {
   addNatureOfContent,
   clickAddStatisticalCodeButton,
   chooseStatisticalCode,
+  dateTypePlaceholderOption,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([
