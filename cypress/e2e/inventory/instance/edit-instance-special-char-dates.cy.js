@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import { INSTANCE_DATE_TYPES } from '../../../support/constants';
@@ -10,11 +11,9 @@ import Permissions from '../../../support/dictionary/permissions';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      instanceTitle: `AT_C566513_FolioInstance_${getRandomPostfix()}`,
-      date1: '1995',
-      date2: '200u',
-      initialDateType: INSTANCE_DATE_TYPES.DETAILED,
-      dateTypePlaceHolder: InstanceRecordEdit.dateTypePlaceholderOption,
+      instanceTitle: `AT_C552530_FolioInstance_${getRandomPostfix()}`,
+      date1: '1$8 ',
+      date2: '\\3 4',
       defaultDateType: INSTANCE_DATE_TYPES.NO,
     };
 
@@ -22,34 +21,40 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          InventoryInstance.createInstanceViaApi({ instanceTitle: testData.instanceTitle }).then(
+            ({ instanceData }) => {
+              testData.instanceId = instanceData.instanceId;
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              InventoryInstances.searchByTitle(testData.instanceId);
+              InventoryInstances.selectInstanceById(testData.instanceId);
+            },
+          );
         },
       );
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
-      'C566513 Create Instance with selected "Select date type" value in "Date type" dropdown mannually (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C566513'] },
+      'C552530 Edit Instance without selected "Date type" and fields "Date 1" and "Date 2" filled by values with special characters (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C552530'] },
       () => {
-        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.edit();
 
-        InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
-        InstanceRecordEdit.verifyDateFieldsPresent();
-        InstanceRecordEdit.fillDates(undefined, undefined, testData.initialDateType);
+        InstanceRecordEdit.verifyDateFieldsValues();
         InstanceRecordEdit.fillDates(testData.date1, testData.date2, undefined);
-        InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.dateTypePlaceHolder);
         InstanceRecordEdit.saveAndClose();
-        InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
+        InstanceRecordEdit.verifySuccessfulMessage();
 
+        InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
         InstanceRecordView.verifyDates(testData.date1, testData.date2, testData.defaultDateType);
       },
     );
