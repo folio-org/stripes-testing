@@ -59,6 +59,7 @@ describe('Organizations', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Organizations.filterByDateUpdated(today, today);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
       Organizations.resetFilters();
       Organizations.filterByDateUpdated('01/01/2000', '12/31/2000');
@@ -66,6 +67,7 @@ describe('Organizations', () => {
       Organizations.filterByDateUpdated(today, yesterday);
       Organizations.checkInvalidDateRangeMessage();
       Organizations.filterByDateUpdated(yesterday, today);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
     },
   );
