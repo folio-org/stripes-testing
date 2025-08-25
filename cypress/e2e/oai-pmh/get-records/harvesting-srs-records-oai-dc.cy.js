@@ -4,7 +4,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
-const marcInstance = { title: `AT_C375965_MarcInstance_${getRandomPostfix()}` };
+const marcInstance = { title: `AT_C376984_MarcInstance_${getRandomPostfix()}` };
 const marcInstanceFields = [
   {
     tag: '008',
@@ -35,24 +35,14 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375965 GetRecord: Verify harvesting SRS records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375965'] },
+      'C376984 GetRecords: SRS instances are harvested (oai_dc) (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C376984'] },
       () => {
-        OaiPmh.getRecordRequest(marcInstance.id).then((response) => {
-          OaiPmh.verifyMarcField(
-            response,
-            marcInstance.id,
-            '999',
-            { ind1: 'f', ind2: 'f' },
-            { i: marcInstance.id },
-          );
-          OaiPmh.verifyMarcField(
-            response,
-            marcInstance.id,
-            '245',
-            { ind1: '1', ind2: '0' },
-            { a: marcInstance.title },
-          );
+        OaiPmh.getRecordRequest(marcInstance.id, 'oai_dc').then((response) => {
+          OaiPmh.verifyDublinCoreField(response, {
+            title: marcInstance.title,
+          });
+          OaiPmh.verifyOaiPmhRecordHeader(response, marcInstance.id, false, true);
         });
       },
     );
