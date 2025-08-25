@@ -108,6 +108,7 @@ describe('OAI-PMH', () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {
@@ -140,6 +141,7 @@ describe('OAI-PMH', () => {
           // Verify 952 field still shows Holdings call number (Item has no call number yet)
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {
@@ -176,6 +178,7 @@ describe('OAI-PMH', () => {
           // Verify 952 field now shows Item call number (Item call number takes precedence)
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {
