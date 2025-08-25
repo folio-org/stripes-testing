@@ -28,6 +28,7 @@ const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
+const numberOfItemsKeyValue = KeyValue('Number of items');
 
 function waitLoading() {
   cy.expect([holdingsRecordViewSection.exists()]);
@@ -377,4 +378,6 @@ export default {
     if (isShown) cy.expect(actionsButton.exists());
     else cy.expect(actionsButton.absent());
   },
+
+  checkNumberOfItems: (numberOfItems) => cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),
 };

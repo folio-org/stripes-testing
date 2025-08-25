@@ -392,6 +392,7 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+  PHYSICAL: 'Physical',
 };
 
 export const NOTE_TYPES = {
