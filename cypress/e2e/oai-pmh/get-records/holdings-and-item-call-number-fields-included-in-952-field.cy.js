@@ -78,7 +78,6 @@ describe('OAI-PMH', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
         Permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
