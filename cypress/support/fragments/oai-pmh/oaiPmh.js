@@ -103,8 +103,9 @@ export default {
    * @param {string} tag - The tag of the MARC field to verify (e.g., "999").
    * @param {Object} indicators - Object containing the indicators (e.g., { ind1: "f", ind2: "f" }).
    * @param {Object} subfields - Object where keys are subfield codes and values are expected values (e.g., { t: "0", i: "12345" }).
+   * @param {Array} absentSubfields - Array of subfield codes that should NOT exist (e.g., ["x", "y"]).
    */
-  verifyMarcField(xmlString, tag, indicators = {}, subfields = {}) {
+  verifyMarcField(xmlString, tag, indicators = {}, subfields = {}, absentSubfields = []) {
     const xmlDoc = this._parseXmlString(xmlString);
 
     // Use the namespace URI for MARC21
@@ -119,9 +120,9 @@ export default {
 
       return matchesTag && matchesInd1 && matchesInd2;
     });
+    const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
 
     Object.entries(subfields).forEach(([subfieldCode, expectedValue]) => {
-      const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
       const subfield = Array.from(subfieldsAll).find(
         (sf) => sf.getAttribute('code') === subfieldCode,
       );
@@ -131,6 +132,16 @@ export default {
         subfield.textContent,
         `Subfield "${subfieldCode}" of ${tag} field should have value "${expectedValue}"`,
       ).to.equal(expectedValue);
+    });
+
+    // Verify absent subfields
+    absentSubfields.forEach((subfieldCode) => {
+      const subfield = Array.from(subfieldsAll).find(
+        (sf) => sf.getAttribute('code') === subfieldCode,
+      );
+
+      expect(subfield, `Subfield "${subfieldCode}" should NOT exist in ${tag} field`).to.be
+        .undefined;
     });
   },
 
