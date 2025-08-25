@@ -15,7 +15,7 @@ export default {
     const cachedBaseUrl = Cypress.env('OAI_PMH_BASE_URL');
 
     if (cachedBaseUrl) {
-      return cachedBaseUrl;
+      return cy.wrap(cachedBaseUrl);
     }
 
     return cy.getConfigByName('OAIPMH', 'general').then(({ configs }) => {
@@ -58,23 +58,42 @@ export default {
   },
 
   /**
-   * Verifies the instance status in the OAI-PMH response header.
+   * Verifies the OAI-PMH record header including identifier and status.
    * @param {string} xmlString - The XML response as a string.
-   * @param {boolean} shouldBeDeleted - Whether the instance should be deleted (true) or not deleted (false).
+   * @param {string} instanceId - The instance UUID to verify in the identifier.
+   * @param {boolean} shouldBeDeleted - Whether the instance should have deleted status (default: false).
+   * @param {boolean} verifyIdentifier - Whether to verify the identifier format (default: true).
    */
-  verifyInstanceStatus(xmlString, shouldBeDeleted = false, instanceId) {
+  verifyOaiPmhRecordHeader(
+    xmlString,
+    instanceId,
+    shouldBeDeleted = false,
+    verifyIdentifier = true,
+  ) {
+    const expectedStatus = shouldBeDeleted ? 'deleted' : null;
+
     const xmlDoc = this._parseXmlString(xmlString);
     const header = xmlDoc.getElementsByTagName('header')[0];
-    const status = header.getAttribute('status');
-    const identifier = header.getElementsByTagName('identifier')[0].textContent;
 
-    if (shouldBeDeleted) {
-      expect(status, 'Header status should be "deleted" for deleted instance').to.equal('deleted');
-      expect(identifier, 'Identifier should contain the instance UUID').to.equal(
-        `oai:${this.getBaseUrl()}:${Cypress.env('OKAPI_TENANT')}/${instanceId}`,
-      );
+    // Verify status attribute
+    const status = header.getAttribute('status');
+    if (expectedStatus === null) {
+      expect(status, 'Header status should be absent (null) for active records').to.be.null;
     } else {
-      expect(status, 'Header status should be absent (null) for non-deleted instance').to.be.null;
+      expect(status, `Header status should be "${expectedStatus}"`).to.equal(expectedStatus);
+    }
+
+    // Verify identifier
+    if (verifyIdentifier) {
+      const identifierElement = header.getElementsByTagName('identifier')[0];
+      const identifier = identifierElement.textContent;
+
+      this.getBaseUrl().then((baseUrl) => {
+        const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceId}`;
+        expect(identifier, 'Identifier should match expected OAI format').to.equal(
+          expectedIdentifier,
+        );
+      });
     }
   },
 
@@ -111,6 +130,34 @@ export default {
       expect(
         subfield.textContent,
         `Subfield "${subfieldCode}" of ${tag} field should have value "${expectedValue}"`,
+      ).to.equal(expectedValue);
+    });
+  },
+
+  /**
+   * Verify Dublin Core field values in OAI-PMH oai_dc response.
+   * @param {string} xmlString - The XML response as a string.
+   * @param {Object} fields - Object where keys are Dublin Core element names and values are expected values (e.g., { title: "Sample Title", type: "Text", language: "eng" }).
+   */
+  verifyDublinCoreField(xmlString, fields = {}) {
+    const xmlDoc = this._parseXmlString(xmlString);
+
+    // Use the namespace URI for Dublin Core
+    const dcNamespaceURI = 'http://purl.org/dc/elements/1.1/';
+
+    Object.entries(fields).forEach(([elementName, expectedValue]) => {
+      // Find all Dublin Core elements with the specified name
+      const dcElements = xmlDoc.getElementsByTagNameNS(dcNamespaceURI, elementName);
+
+      if (dcElements.length === 0) {
+        throw new Error(`Dublin Core element "${elementName}" not found in the response`);
+      }
+
+      const element = dcElements[0];
+
+      expect(
+        element.textContent,
+        `Dublin Core element "${elementName}" should have value "${expectedValue}"`,
       ).to.equal(expectedValue);
     });
   },
