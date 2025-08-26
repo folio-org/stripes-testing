@@ -1,5 +1,6 @@
 import Users from '../../../../support/fragments/users/users';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -179,7 +180,12 @@ describe('Eureka', () => {
         cy.addRolesToNewUserApi(userA.userId, [roleUniversityId]);
 
         cy.resetTenant();
-        cy.login(tempUser.username, tempUser.password);
+        cy.waitForAuthRefresh(() => {
+          cy.login(tempUser.username, tempUser.password);
+          cy.reload();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        }, 20000);
       });
     });
 
@@ -200,7 +206,6 @@ describe('Eureka', () => {
       { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C552456'] },
       () => {
         // Step 1: Select all members
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.waitLoading();
         SelectMembers.selectAllMembers();
         ConsortiumManagerApp.verifyMembersSelected(3);
