@@ -215,6 +215,10 @@ export default {
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
   },
+  selectTemporaryLocation(location) {
+    this.openTemporaryLocation();
+    cy.do([SelectionList().filter(location), SelectionList().select(including(location))]);
+  },
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());

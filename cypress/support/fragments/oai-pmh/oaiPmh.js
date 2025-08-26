@@ -200,7 +200,7 @@ export default {
     const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
 
     Object.entries(subfields).forEach(([subfieldCode, expectedValue]) => {
-      const subfield = Array.from(subfieldsAll).find(
+      const subfield = Array.from(subfieldsAll).filter(
         (sf) => sf.getAttribute('code') === subfieldCode,
       );
 
@@ -209,10 +209,15 @@ export default {
           `Subfield "${subfieldCode}" not found in ${tag} field of record with UUID ${instanceUuid}`,
         );
       }
+      if (subfield.length > 1) {
+        throw new Error(
+          `Multiple subfields "${subfieldCode}" found in ${tag} field of record with UUID ${instanceUuid}`,
+        );
+      }
 
       // Assert that the subfield has the expected value
       expect(
-        subfield.textContent,
+        subfield[0].textContent,
         `Subfield "${subfieldCode}" of ${tag} field should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
       ).to.equal(expectedValue);
     });
