@@ -25,7 +25,7 @@ describe('Requests', () => {
   before(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
+        cy.getUsers({ limit: 1, query: '"barcode"=" *" and "active"=="true"' }).then((users) => {
           user.barcode = users[0].barcode;
         });
       })
@@ -57,8 +57,10 @@ describe('Requests', () => {
         testData.servicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
-      cy.login(requestUserData.username, requestUserData.password,
-        { path: TopMenu.requestsPath, waiter: () => cy.wait(2000) });
+      cy.login(requestUserData.username, requestUserData.password, {
+        path: TopMenu.requestsPath,
+        waiter: () => cy.wait(2000),
+      });
     });
   });
 
