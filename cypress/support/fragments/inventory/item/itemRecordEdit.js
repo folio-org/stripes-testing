@@ -125,12 +125,26 @@ export default {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(SelectionOption(including(temporarylocation))).exists());
   },
+  clearValueInPermanentLocation() {
+    cy.do([
+      permanentLocationDropdown.click(),
+      SelectionList().filter('Select location'),
+      SelectionList().select(including('Select location')),
+    ]);
+  },
   openPermanentLocation() {
     cy.do(permanentLocationDropdown.click());
   },
   verifyPermanentLocationItemExists: (permanentLocation) => {
     cy.expect(permanentLocationList.exists());
     cy.expect(permanentLocationList.find(SelectionOption(including(permanentLocation))).exists());
+  },
+  clearValueInTemporaryLocation() {
+    cy.do([
+      temporaryLocationDropdown.click(),
+      SelectionList().filter('Select location'),
+      SelectionList().select(including('Select location')),
+    ]);
   },
   closeCancelEditingModal: () => {
     cy.do(
