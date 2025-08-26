@@ -142,7 +142,7 @@ describe('Bulk-edit', () => {
           matchedRecordsFileName,
           defaultColumnHeaders,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE);
         cy.wait(1000);
         BulkEditActions.selectAction('Add note');

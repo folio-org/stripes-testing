@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'geographicName',
           tag651: '651',
           authorityMarkedValue: 'C375071 Clear Creek (Tex.)',
           subjectValue: 'C375071 Clear Creek (Tex.)--Place in Texas--Form',
@@ -46,14 +47,14 @@ describe('MARC', () => {
           testData.tag651,
           '\\',
           '0',
-          '$a C375071 Creek (Texas) $g Lake $v Form $3 papers',
+          '$a C375071 Creek (Texas) $g Lake $v Form $t test $3 papers',
         ];
         const bib651UnlinkedFieldValues = [
           20,
           testData.tag651,
           '\\',
           '0',
-          '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
+          '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $t test $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
         ];
         const bib651LinkedFieldValues = [
           20,
@@ -61,7 +62,7 @@ describe('MARC', () => {
           '\\',
           '0',
           '$a C375071 Clear Creek (Tex.) $g Place in Texas',
-          '$v Form',
+          '$v Form $t test',
           '$0 http://id.loc.gov/authorities/names/n79041362',
           '$3 papers',
         ];
@@ -121,6 +122,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib651InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag651);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);

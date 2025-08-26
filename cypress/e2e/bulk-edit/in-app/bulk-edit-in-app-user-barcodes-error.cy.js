@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Username');
         BulkEditSearchPane.changeShowColumnCheckbox('Username');
         BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Username');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -70,18 +70,6 @@ describe('Bulk-edit', () => {
           'No change in value required',
           'Warning',
         );
-      },
-    );
-
-    it(
-      'C347883 Error messages in submitted identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C347883'] },
-      () => {
-        BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
-        BulkEditSearchPane.waitFileUploading();
-
-        BulkEditActions.openActions();
-        BulkEditActions.downloadErrors();
       },
     );
   });

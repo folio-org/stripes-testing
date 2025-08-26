@@ -39,9 +39,11 @@ export const actionsButtons = {
 };
 
 export default {
-  defaultUi: {
-    name: `Test_notice_${getRandomPostfix()}`,
-    description: 'Created by autotest team',
+  getDefaultUI() {
+    return {
+      name: `Test_notice_${getRandomPostfix()}`,
+      description: 'Created by autotest team',
+    };
   },
 
   waitLoading() {

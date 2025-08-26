@@ -84,7 +84,7 @@ describe(
             BulkEditSearchPane.waitFileUploading();
 
             BulkEditActions.downloadMatchedResults();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
 
             const tempLocation = 'Annex';
             const permLocation = 'Main Library';

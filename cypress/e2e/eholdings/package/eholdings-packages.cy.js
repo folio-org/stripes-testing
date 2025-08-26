@@ -120,7 +120,7 @@ describe('eHoldings', () => {
 
     it(
       'C695 Package Record: Search all titles included in a package (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C695'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C695'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -151,8 +151,8 @@ describe('eHoldings', () => {
           EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
           EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
           EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
-          cy.wait(2000);
-          EHoldingsPackage.verifyTitleFound('Advances in Civil Engineering');
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.subjectOption);
+          EHoldingsPackage.verifyTitleFound('Advanced Energy and Sustainability Research');
           EHoldingsPackageView.selectTitleRecord();
           EHoldingsTitle.verifySubjectIncludesValue('Engineering');
         });

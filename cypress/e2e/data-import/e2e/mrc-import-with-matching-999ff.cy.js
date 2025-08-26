@@ -238,6 +238,7 @@ describe('Data Import', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InventorySearchAndFilter.selectSearchResultItem();
           InstanceRecordView.verifyInstancePaneExists();
           // ensure the fields created in Field mapping profile exists in inventory
           InventorySearchAndFilter.checkInstanceDetails();

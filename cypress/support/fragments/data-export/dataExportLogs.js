@@ -61,7 +61,13 @@ export default {
     cy.get('[data-testid="fileUploader-input"]').should('exist');
   },
 
-  verifyUploadFileButtonEnabled() {
-    cy.expect(fileButton.has({ disabled: false }));
+  verifyUploadFileButtonDisabled(isDisabled = true) {
+    cy.expect(fileButton.has({ disabled: isDisabled }));
+  },
+
+  verifyFileNameHighlightedInBlue(fileName) {
+    cy.get('#job-logs-list [class^=downloadFile-]')
+      .contains(fileName)
+      .should('have.css', 'color', 'rgb(47, 96, 159)');
   },
 };

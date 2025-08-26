@@ -101,7 +101,7 @@ describe('Inventory', () => {
 
     it(
       'C468246 Check LC sorting during browsing for Classification using Library of Congress classification option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C468246'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C468246'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

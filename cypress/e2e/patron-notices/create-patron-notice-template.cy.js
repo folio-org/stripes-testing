@@ -4,11 +4,17 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('Patron notices', () => {
   describe('Settings (Patron notices)', () => {
-    const patronNoticeTemplate = {
-      ...NewNoticePolicyTemplate.defaultUi,
-      category: NOTICE_CATEGORIES.loan,
+    let patronNoticeTemplate;
+
+    const generateTestData = () => {
+      patronNoticeTemplate = {
+        ...NewNoticePolicyTemplate.getDefaultUI(),
+        category: NOTICE_CATEGORIES.loan,
+      };
     };
+
     beforeEach('login', () => {
+      generateTestData();
       cy.loginAsAdmin({
         path: SettingsMenu.circulationPatronNoticeTemplatesPath,
         waiter: NewNoticePolicyTemplate.waitLoading,

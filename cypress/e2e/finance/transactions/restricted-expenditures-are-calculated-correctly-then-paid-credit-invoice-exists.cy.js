@@ -211,10 +211,14 @@ describe('Finance: Transactions', () => {
       Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.settingsInvoiveApprovalPath,
-        waiter: SettingsInvoices.waitApprovalsLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.settingsInvoiveApprovalPath,
+          waiter: SettingsInvoices.waitApprovalsLoading,
+        });
+        cy.reload();
+        SettingsInvoices.waitApprovalsLoading();
+      }, 20_000);
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
       cy.visit(TopMenu.invoicesPath);
     });

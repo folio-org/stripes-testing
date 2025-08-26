@@ -94,7 +94,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(item.hrid);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.clearTemporaryLocation();
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

@@ -91,7 +91,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', 'Note');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.holdingsUUID]);
         BulkEditActions.changeNoteType('Action note', 'Note');
         BulkEditActions.confirmChanges();

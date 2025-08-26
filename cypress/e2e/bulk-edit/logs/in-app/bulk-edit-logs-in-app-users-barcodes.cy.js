@@ -67,7 +67,7 @@ describe(
             BulkEditSearchPane.waitFileUploading();
             BulkEditActions.downloadMatchedResults();
 
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.verifyBulkEditForm();
             BulkEditActions.fillExpirationDate(newExpirationDate.date);
             BulkEditActions.addNewBulkEditFilterString();

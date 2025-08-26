@@ -242,7 +242,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
-          orderNumber = polNumber.replace('-1', '');
+          orderNumber = polNumber.replace(/-\d+$/, '');
         });
         OrderLines.checkQuantityPhysical('1');
         OrderLines.checkPhysicalQuantityInLocation(1);

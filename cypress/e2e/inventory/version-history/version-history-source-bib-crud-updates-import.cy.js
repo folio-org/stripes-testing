@@ -31,200 +31,209 @@ import FileManager from '../../../support/utils/fileManager';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Version history', () => {
-      const randomPostfix = getRandomPostfix();
-      const testData = {
-        instanceTitle: 'AT_C692124_MarcBibInstance',
-        date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
-        preUpdatedMarcFile: 'preUpdatedMarcFileC692124.mrc',
-        modifiedMarcFile: `modifiedMarcFileC692124${randomPostfix}.mrc`,
-        uploadModifiedMarcFile: `testUpdatedMarcFileC692124_${randomPostfix}.mrc`,
-        jobProfileName: `C692124 Update MARC Bib records matching by 001 ${randomPostfix}`,
-        ldrRegExp: /^\d{5}[a-zA-Z]{3}.{1}[a-zA-Z0-9]{8}.{3}4500$/,
-      };
-      const versionHistoryCardsData = [
-        {
-          isOriginal: false,
-          isCurrent: true,
-          changes: [
-            { text: 'Field 710', action: VersionHistorySection.fieldActions.ADDED },
-            { text: 'Field 650', action: VersionHistorySection.fieldActions.ADDED },
-            { text: 'Field 655', action: VersionHistorySection.fieldActions.ADDED },
-            { text: 'Field 100', action: VersionHistorySection.fieldActions.EDITED },
-            { text: 'Field LDR', action: VersionHistorySection.fieldActions.EDITED },
-            { text: 'Field 650', action: VersionHistorySection.fieldActions.REMOVED },
-            { text: 'Field 655', action: VersionHistorySection.fieldActions.REMOVED },
-            { text: 'Field 651', action: VersionHistorySection.fieldActions.REMOVED },
-            { text: 'Field 035', action: VersionHistorySection.fieldActions.REMOVED },
-          ],
-        },
-        { isOriginal: true, isCurrent: false },
-      ];
-      const changesModalData = [
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '710',
-          from: undefined,
-          to: '1  $a  Sutherland, John, $d 1983',
-        },
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '710',
-          from: undefined,
-          to: '1  $a  Zhang, Xinci. $d 1992',
-        },
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '650',
-          from: undefined,
-          to: ' 1 $a Female friendship $v Fiction. $v Novel $z without a Hero $v Book',
-        },
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '650',
-          from: undefined,
-          to: '00 $a Social class $v Non-Fiction.',
-        },
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '650',
-          from: undefined,
-          to: '11 $a Married women',
-        },
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '655',
-          from: undefined,
-          to: ' 0 $a England $v Fiction.',
-        },
-        {
-          action: VersionHistorySection.fieldActions.ADDED,
-          field: '655',
-          from: undefined,
-          to: ' 7 $a Satire. $3 lcsh',
-        },
-        {
-          action: VersionHistorySection.fieldActions.EDITED,
-          field: '100',
-          from: '1  $a Thackeray, William Makepeace, $d 1811-1863.',
-          to: '2  $a Thackeray, William Makepeace, 1811-1863 years $e Author $e Novelist',
-        },
-        {
-          action: VersionHistorySection.fieldActions.EDITED,
-          field: 'LDR',
-          from: testData.ldrRegExp,
-          to: testData.ldrRegExp,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '651',
-          from: ' 0 $a England $v Fiction.',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '650',
-          from: ' 0 $a Social classes $v Fiction.',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '650',
-          from: ' 0 $a British $z Europe $v Fiction.',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '650',
-          from: ' 0 $a Waterloo, Battle of, Waterloo, Belgium, 1815 $v Fiction.',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '650',
-          from: ' 0 $a Female friendship $v Fiction.',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '650',
-          from: ' 0 $a Married women $v Fiction.',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '655',
-          from: ' 7 $a Satire. $2 lcsh',
-          to: undefined,
-        },
-        {
-          action: VersionHistorySection.fieldActions.REMOVED,
-          field: '035',
-          from: '   $a 1233775',
-          to: undefined,
-        },
-      ];
-      const permissions = [
-        Permissions.uiInventoryViewInstances.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.moduleDataImportEnabled.gui,
-      ];
-      const marcFile = {
-        marc: 'marcBibFileC692124.mrc',
-        fileName: `testMarcFileC692124_${randomPostfix}.mrc`,
-        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      };
-      const mappingProfile = {
-        name: testData.jobProfileName,
-      };
-      const actionProfile = {
-        name: testData.jobProfileName,
-        action: 'UPDATE',
-        folioRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-      };
-      const matchProfile = {
-        profileName: testData.jobProfileName,
-        incomingRecordFields: {
-          field: '001',
-          in1: '',
-          in2: '',
-          subfield: '',
-        },
-        existingRecordFields: {
-          field: '001',
-          in1: '',
-          in2: '',
-          subfield: '',
-        },
-        recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-      };
-      const jobProfile = {
-        profileName: testData.jobProfileName,
-      };
+    describe('Version history', { retries: { runMode: 1 } }, () => {
+      let randomPostfix;
+      let testData;
+      let versionHistoryCardsData;
+      let changesModalData;
+      let permissions;
+      let marcFile;
+      let mappingProfile;
+      let actionProfile;
+      let matchProfile;
+      let jobProfile;
 
-      before('Create test data', () => {
+      beforeEach('Create test data', () => {
+        randomPostfix = getRandomPostfix();
+        testData = {
+          instanceTitle: 'AT_C692124_MarcBibInstance',
+          date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
+          preUpdatedMarcFile: 'preUpdatedMarcFileC692124.mrc',
+          modifiedMarcFile: `modifiedMarcFileC692124${randomPostfix}.mrc`,
+          uploadModifiedMarcFile: `testUpdatedMarcFileC692124_${randomPostfix}.mrc`,
+          jobProfileName: `C692124 Update MARC Bib records matching by 001 ${randomPostfix}`,
+          ldrRegExp: /^\d{5}[a-zA-Z]{3}.{1}[a-zA-Z0-9]{8}.{3}4500$/,
+        };
+        versionHistoryCardsData = [
+          {
+            isOriginal: false,
+            isCurrent: true,
+            changes: [
+              { text: 'Field 710', action: VersionHistorySection.fieldActions.ADDED },
+              { text: 'Field 650', action: VersionHistorySection.fieldActions.ADDED },
+              { text: 'Field 655', action: VersionHistorySection.fieldActions.ADDED },
+              { text: 'Field 100', action: VersionHistorySection.fieldActions.EDITED },
+              { text: 'Field LDR', action: VersionHistorySection.fieldActions.EDITED },
+              { text: 'Field 650', action: VersionHistorySection.fieldActions.REMOVED },
+              { text: 'Field 655', action: VersionHistorySection.fieldActions.REMOVED },
+              { text: 'Field 651', action: VersionHistorySection.fieldActions.REMOVED },
+              { text: 'Field 035', action: VersionHistorySection.fieldActions.REMOVED },
+            ],
+          },
+          { isOriginal: true, isCurrent: false },
+        ];
+        changesModalData = [
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '710',
+            from: undefined,
+            to: '1  $a  Sutherland, John, $d 1983',
+          },
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '710',
+            from: undefined,
+            to: '1  $a  Zhang, Xinci. $d 1992',
+          },
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '650',
+            from: undefined,
+            to: ' 1 $a Female friendship $v Fiction. $v Novel $z without a Hero $v Book',
+          },
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '650',
+            from: undefined,
+            to: '00 $a Social class $v Non-Fiction.',
+          },
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '650',
+            from: undefined,
+            to: '11 $a Married women',
+          },
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '655',
+            from: undefined,
+            to: ' 0 $a England $v Fiction.',
+          },
+          {
+            action: VersionHistorySection.fieldActions.ADDED,
+            field: '655',
+            from: undefined,
+            to: ' 7 $a Satire. $3 lcsh',
+          },
+          {
+            action: VersionHistorySection.fieldActions.EDITED,
+            field: '100',
+            from: '1  $a Thackeray, William Makepeace, $d 1811-1863.',
+            to: '2  $a Thackeray, William Makepeace, 1811-1863 years $e Author $e Novelist',
+          },
+          {
+            action: VersionHistorySection.fieldActions.EDITED,
+            field: 'LDR',
+            from: testData.ldrRegExp,
+            to: testData.ldrRegExp,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '651',
+            from: ' 0 $a England $v Fiction.',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '650',
+            from: ' 0 $a Social classes $v Fiction.',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '650',
+            from: ' 0 $a British $z Europe $v Fiction.',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '650',
+            from: ' 0 $a Waterloo, Battle of, Waterloo, Belgium, 1815 $v Fiction.',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '650',
+            from: ' 0 $a Female friendship $v Fiction.',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '650',
+            from: ' 0 $a Married women $v Fiction.',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '655',
+            from: ' 7 $a Satire. $2 lcsh',
+            to: undefined,
+          },
+          {
+            action: VersionHistorySection.fieldActions.REMOVED,
+            field: '035',
+            from: '   $a 1233775',
+            to: undefined,
+          },
+        ];
+        permissions = [
+          Permissions.uiInventoryViewInstances.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
+        ];
+        marcFile = {
+          marc: 'marcBibFileC692124.mrc',
+          fileName: `testMarcFileC692124_${randomPostfix}.mrc`,
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        };
+        mappingProfile = {
+          name: testData.jobProfileName,
+        };
+        actionProfile = {
+          name: testData.jobProfileName,
+          action: 'UPDATE',
+          folioRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+        };
+        matchProfile = {
+          profileName: testData.jobProfileName,
+          incomingRecordFields: {
+            field: '001',
+            in1: '',
+            in2: '',
+            subfield: '',
+          },
+          existingRecordFields: {
+            field: '001',
+            in1: '',
+            in2: '',
+            subfield: '',
+          },
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+        };
+        jobProfile = {
+          profileName: testData.jobProfileName,
+        };
+
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C692124');
 
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -269,6 +278,8 @@ describe('MARC', () => {
                   matchProfile.id,
                   actionProfile.id,
                 );
+                // Turn Version histoy feature on in case someone disabled it
+                cy.enableVersionHistoryFeature(true);
 
                 cy.waitForAuthRefresh(() => {
                   cy.login(testData.userProperties.username, testData.userProperties.password);
@@ -282,7 +293,7 @@ describe('MARC', () => {
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordId);
         Users.deleteViaApi(testData.userProperties.userId);
@@ -295,7 +306,7 @@ describe('MARC', () => {
 
       it(
         'C692124 Check "Version history" pane after CRUD fields, subfields, indicators in MARC bib record updated via "Data import" app (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C692124'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C692124'] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);

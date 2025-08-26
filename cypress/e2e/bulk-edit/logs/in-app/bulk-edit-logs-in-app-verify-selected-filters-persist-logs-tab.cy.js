@@ -69,7 +69,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
           BulkEditActions.openActions();
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.fillPatronGroup('staff (Staff Member)');
           BulkEditActions.confirmChanges();
           BulkEditActions.commitChanges();
@@ -87,7 +87,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.waitFileUploading();
           const newLocation = 'Online';
           BulkEditActions.openActions();
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
           BulkEditActions.confirmChanges();
           BulkEditActions.commitChanges();

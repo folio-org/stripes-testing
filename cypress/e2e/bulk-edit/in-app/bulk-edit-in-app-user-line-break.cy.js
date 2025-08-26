@@ -33,6 +33,9 @@ describe(
   () => {
     describe('In-app approach', () => {
       beforeEach('create test data', () => {
+        cy.clearLocalStorage();
+        testUsers.length = 0;
+        testUsersBarcodes.length = 0;
         userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
         customFieldName = `customFieldName-${getRandomPostfix()}`;
         customFieldText = `customFieldText\n${getRandomPostfix()}`;
@@ -97,7 +100,7 @@ describe(
           BulkEditSearchPane.verifyMatchedResults(...testUsersBarcodes);
           BulkEditActions.downloadMatchedResults();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
 
           BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
           BulkEditActions.confirmChanges();

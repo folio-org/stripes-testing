@@ -160,7 +160,7 @@ describe(
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [instance.holdingsUUID]);
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();

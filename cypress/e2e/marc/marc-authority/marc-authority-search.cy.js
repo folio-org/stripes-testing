@@ -102,7 +102,7 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       Users.deleteViaApi(testData.userPropertiesC409449.userId);
       createdRecordIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
+        MarcAuthority.deleteViaAPI(id, true);
       });
     });
 

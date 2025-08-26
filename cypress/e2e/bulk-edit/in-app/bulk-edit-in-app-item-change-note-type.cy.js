@@ -104,7 +104,7 @@ describe('Bulk-edit', () => {
           'Check in note',
           'Check out note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.changeNoteType('Administrative note', 'Provenance');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Action note', 'Electronic bookplate', 1);

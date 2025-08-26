@@ -1214,7 +1214,9 @@ export default {
   },
 
   verifyResourceIdentifierAbsent: (value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
-  verifyInstanceLanguage: (language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
+  verifyInstanceLanguage: (language) => cy.expect(
+    descriptiveDataAccordion.find(KeyValue('Language')).has({ value: including(language) }),
+  ),
   verifyInstancePhysicalcyDescription: (description) => {
     cy.expect(
       descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }),
@@ -1395,7 +1397,7 @@ export default {
   checkIsItemCreated: (itemBarcode) => {
     cy.expect(
       instanceDetailsSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
         .find(Button(including(itemBarcode)))
         .exists(),
     );

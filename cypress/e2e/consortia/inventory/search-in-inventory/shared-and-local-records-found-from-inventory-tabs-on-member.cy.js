@@ -55,6 +55,7 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
@@ -62,6 +63,7 @@ describe('Inventory', () => {
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
           cy.setTenant(Affiliations.University);
+          InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
           cy.assignPermissionsToExistingUser(users.userProperties.userId, [
             Permissions.uiInventoryViewInstances.gui,
           ]);
@@ -82,6 +84,7 @@ describe('Inventory', () => {
           });
 
           cy.setTenant(Affiliations.College);
+          InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
           InventoryInstance.createInstanceViaApi({
             instanceTitle: localM2FOLIOInstance.title,
           }).then((instanceDataLocal) => {

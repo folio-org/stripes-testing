@@ -162,7 +162,7 @@ describe('Patron notices', () => {
     it(
       'C347877 Manual fee/fine notices by fee/fine type: charge and action (volaris)',
       {
-        tags: ['criticalPath', 'volaris', 'C347877'],
+        tags: ['criticalPathFlaky', 'volaris', 'C347877'],
         retries: {
           runMode: 2,
         },

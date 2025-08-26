@@ -14,6 +14,11 @@ export const INVENTORY_SETTINGS_TABS = {
   DISPLAY_SETTINGS: 'Display settings',
   SUBJECT_SOURCES: 'Subject sources',
   SUBJECT_TYPES: 'Subject types',
+  FORMATS: 'Formats',
+  RESOURCE_TYPES: 'Resource types',
+  INSTANCE_STATUS_TYPES: 'Instance status types',
+  CONTRIBUTOR_TYPES: 'Contributor types',
+  HOLDINGS_TYPES: 'Holdings types',
 };
 
 export default {

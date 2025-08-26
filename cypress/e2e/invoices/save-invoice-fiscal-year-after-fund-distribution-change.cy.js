@@ -68,7 +68,6 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -77,12 +76,13 @@ describe('Invoices', () => {
       Ledgers.createViaApi(firstLedger).then((ledgerResponse) => {
         firstLedger.id = ledgerResponse.id;
         firstFund.ledgerId = firstLedger.id;
-
         Funds.createViaApi(firstFund).then((firstFundResponse) => {
           firstFund.id = firstFundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          cy.getAdminToken();
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            cy.reload();
+            Funds.waitLoading();
+          }, 20_000);
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -116,6 +116,7 @@ describe('Invoices', () => {
           });
           defaultOrder.vendor = organization.name;
           cy.visit(TopMenu.ordersPath);
+          Orders.selectOrdersPane();
           Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
             orderNumber = firstOrderResponse.poNumber;
@@ -131,7 +132,6 @@ describe('Invoices', () => {
             );
             OrderLines.backToEditingOrder();
             Orders.openOrder();
-
             secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
             FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
               secondFiscalYear.id = secondFiscalYearResponse.id;
@@ -155,10 +155,14 @@ describe('Invoices', () => {
         permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.invoicesPath,
-          waiter: Invoices.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.invoicesPath,
+            waiter: Invoices.waitLoading,
+          });
+          cy.reload();
+          Invoices.waitLoading();
+        }, 20_000);
       });
     });
   });

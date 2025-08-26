@@ -61,7 +61,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.downloadMatchedResults();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.editSuppressFromDiscovery(true);
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
