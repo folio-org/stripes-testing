@@ -91,7 +91,7 @@ describe('OAI-PMH', () => {
         InstanceRecordView.verifyInstanceIsSetForDeletion();
         cy.getAdminToken();
         OaiPmh.getRecordRequest(marcInstance.id).then((response) => {
-          OaiPmh.verifyInstanceStatus(response, true, marcInstance.id);
+          OaiPmh.verifyOaiPmhRecordHeader(response, marcInstance.id, true, true);
         });
       },
     );

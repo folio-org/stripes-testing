@@ -38,9 +38,15 @@ describe('OAI-PMH', () => {
         // Send OAI-PMH GetRecord request with marc21 metadata prefix
         cy.getAdminToken();
         OaiPmh.getRecordRequest(marcInstance.id).then((response) => {
-          OaiPmh.verifyMarcField(response, '999', { ind1: 'f', ind2: 'f' }, { i: marcInstance.id });
+          OaiPmh.verifyMarcField(
+            response,
+            marcInstance.id,
+            '999',
+            { ind1: 'f', ind2: 'f' },
+            { i: marcInstance.id },
+          );
           // Verify the header status is NOT set to "deleted" (status attribute should be absent)
-          OaiPmh.verifyInstanceStatus(response, false);
+          OaiPmh.verifyOaiPmhRecordHeader(response, marcInstance.id, false, true);
         });
       },
     );
