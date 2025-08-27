@@ -1092,7 +1092,7 @@ export default {
   deleteInstanceByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: {
           limit: 100,
           query: `title="${instanceTitle}"`,

@@ -92,10 +92,14 @@ describe('Inventory', () => {
     beforeEach('Create user, login', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.users.push(userProperties);
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 

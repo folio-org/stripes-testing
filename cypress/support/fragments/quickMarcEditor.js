@@ -2570,8 +2570,8 @@ export default {
     let timeCounter = 0;
     function checkBib() {
       cy.okapiRequest({
-        path: 'instance-storage/instances',
-        searchParams: { query: `(title all "${marcBibTitle}")` },
+        path: 'search/instances',
+        searchParams: { limit: 100, query: `title=="${marcBibTitle}"` },
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {
         if (body.instances[0] || timeCounter >= timeOutSeconds) {
