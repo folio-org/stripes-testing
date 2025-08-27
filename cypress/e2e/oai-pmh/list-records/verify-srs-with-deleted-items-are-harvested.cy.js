@@ -14,9 +14,9 @@ import { LOCATION_NAMES, ITEM_STATUS_NAMES, LOAN_TYPE_NAMES } from '../../../sup
 import DateTools from '../../../support/utils/dateTools';
 
 let user;
-const marcInstance = { title: `AT_C375968_MarcInstance_${getRandomPostfix()}` };
-const itemData = {
-  barcode: `AT_C375968_${getRandomPostfix()}`,
+const marcInstance = {
+  title: `AT_C375968_MarcInstance_${getRandomPostfix()}`,
+  itemBarcode: `barcode_${getRandomPostfix()}`,
 };
 
 describe('OAI-PMH', () => {
@@ -58,7 +58,7 @@ describe('OAI-PMH', () => {
 
                         InventoryItems.createItemViaApi({
                           holdingsRecordId: marcInstance.holdingsId,
-                          barcode: itemData.barcode,
+                          barcode: marcInstance.itemBarcode,
                           materialType: { id: materialTypeId },
                           permanentLoanType: { id: loanTypeId },
                           status: { name: ITEM_STATUS_NAMES.AVAILABLE },
@@ -102,7 +102,7 @@ describe('OAI-PMH', () => {
 
         // Step 2: Click on the Holdings accordion and click on the Item's barcode hyperlink
         InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
-        InventoryInstance.openItemByBarcodeAndIndex(itemData.barcode);
+        InventoryInstance.openItemByBarcodeAndIndex(marcInstance.itemBarcode);
         ItemRecordView.waitLoading();
 
         // Step 3: Click Actions button and select Delete element
@@ -113,7 +113,7 @@ describe('OAI-PMH', () => {
         // Step 4: Select Delete option in confirmation modal
         ConfirmDeleteItemModal.clickDeleteButton();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyItemBarcode(itemData.barcode, false);
+        InventoryInstance.verifyItemBarcode(marcInstance.itemBarcode, false);
 
         // Step 5: Send ListRecords request to verify SRS with deleted Item is harvested
         cy.getAdminToken();
