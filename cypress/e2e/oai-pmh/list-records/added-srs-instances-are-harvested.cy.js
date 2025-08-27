@@ -18,7 +18,6 @@ describe('OAI-PMH', () => {
       cy.getAdminToken();
       Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
 
-      // Import MARC Bibliographic record
       DataImport.uploadFileViaApi(...Object.values(marcBibFile)).then((response) => {
         marcInstanceId = response[0].instance.id;
       });
@@ -43,7 +42,6 @@ describe('OAI-PMH', () => {
             { i: marcInstanceId },
           );
         });
-
         OaiPmh.listRecordsRequest().then((response) => {
           OaiPmh.verifyOaiPmhRecordHeader(response, marcInstanceId, false, true);
           OaiPmh.verifyMarcField(
