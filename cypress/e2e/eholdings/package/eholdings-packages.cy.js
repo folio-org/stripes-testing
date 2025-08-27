@@ -121,9 +121,11 @@ describe('eHoldings', () => {
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsPackages.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: EHoldingsPackages.waitLoading,
+            });
           });
 
           EHoldingSearch.switchToPackages();

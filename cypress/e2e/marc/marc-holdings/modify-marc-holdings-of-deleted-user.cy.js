@@ -76,9 +76,11 @@ describe('MARC', () => {
             Permissions.uiUsersView.gui,
           ]).then((createdUserProperties) => {
             user.userBProperties = createdUserProperties;
-            cy.login(user.userBProperties.username, user.userBProperties.password, {
-              path: TopMenu.usersPath,
-              waiter: UsersSearchPane.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.userBProperties.username, user.userBProperties.password, {
+                path: TopMenu.usersPath,
+                waiter: UsersSearchPane.waitLoading,
+              });
             });
           });
         });

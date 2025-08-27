@@ -214,6 +214,10 @@ describe('Data Import', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+          }, 30_000);
         });
       });
     });

@@ -250,10 +250,10 @@ describe('MARC', () => {
               `${testData.marcAuthIcon}\n\t655\t  7\t$a C436830 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436830 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436830 Tate Britain (Gallery) $e organizer, $e host institution. $0 5131855 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436830 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436830 St. Louis Art Museum $e host institution. $0 1884704 $9`,
             );
           },
         );

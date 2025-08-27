@@ -177,6 +177,9 @@ describe('MARC', () => {
 
             cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+              }, 30_000);
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
