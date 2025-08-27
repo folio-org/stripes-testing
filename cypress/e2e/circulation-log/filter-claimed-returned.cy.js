@@ -75,16 +75,20 @@ describe('Circulation log', () => {
 
       SearchPane.searchByClaimedReturned();
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch({
+
+      const expectedItemData = {
         itemBarcode: item.ITEM_BARCODE,
         circAction: 'Claimed returned',
+      };
+
+      SearchPane.findResultRowIndexByContent(item.ITEM_BARCODE).then((rowIndex) => {
+        SearchPane.checkResultSearch(expectedItemData, rowIndex);
       });
       SearchPane.resetResults();
 
       SearchPane.searchByItemBarcode(item.ITEM_BARCODE);
-      SearchPane.checkResultSearch({
-        itemBarcode: item.ITEM_BARCODE,
-        circAction: 'Claimed returned',
+      SearchPane.findResultRowIndexByContent(item.ITEM_BARCODE).then((rowIndex) => {
+        SearchPane.checkResultSearch(expectedItemData, rowIndex);
       });
     },
   );

@@ -210,12 +210,12 @@ describe('Loans', () => {
           waiter: SearchPane.waitLoading,
         });
         SearchPane.setFilterOptionFromAccordion('loan', searchResultsData.circAction);
-        SearchPane.findResultRowIndexByContent(searchResultsData.circAction).then((rowIndex) => {
+        SearchPane.findResultRowIndexByContent(searchResultsData.itemBarcode).then((rowIndex) => {
           SearchPane.checkResultSearch(searchResultsData, rowIndex);
         });
         SearchPane.resetResults();
         SearchPane.searchByItemBarcode(testData.itemBarcodes[1]);
-        SearchPane.findResultRowIndexByContent(searchResultsData.circAction).then((rowIndex) => {
+        SearchPane.findResultRowIndexByContent(searchResultsData.itemBarcode).then((rowIndex) => {
           SearchPane.checkResultSearch(searchResultsData, rowIndex);
         });
       },

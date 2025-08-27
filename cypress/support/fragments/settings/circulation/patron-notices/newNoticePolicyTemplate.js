@@ -44,13 +44,6 @@ const descriptionField = TextArea({ id: 'input-patron-notice-description' });
 const bodyField = richTextEditor();
 const previewModal = Modal({ id: 'preview-modal' });
 
-const defaultUi = {
-  name: `Test_template_${getRandomPostfix()}`,
-  active: 'Yes',
-  description: 'Template created by autotest team',
-  subject: 'Subject_Test',
-  body: 'Test_email_body',
-};
 export const createNoticeTemplate = ({
   name = 'autotest_template_name',
   category = NOTICE_CATEGORIES.loan,
@@ -77,7 +70,15 @@ export const createNoticeTemplate = ({
 };
 
 export default {
-  defaultUi,
+  getDefaultUI() {
+    return {
+      name: `Test_template_${getRandomPostfix()}`,
+      active: 'Yes',
+      description: 'Template created by autotest team',
+      subject: 'Subject_Test',
+      body: 'Test_email_body',
+    };
+  },
 
   waitLoading() {
     cy.do(Link(titles.templates).click());
