@@ -52,7 +52,7 @@ describe('Data Import', () => {
         '0',
         '0',
         '$a C624349 Black Panther UPDATED using 999 ff s match $c (Fictitious character)',
-        '',
+        '$v Comic books, strips, etc.',
         '$0 http://id.loc.gov/authorities/names/n2016243491',
         '',
       ],
