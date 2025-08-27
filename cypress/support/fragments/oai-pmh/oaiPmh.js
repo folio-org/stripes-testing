@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-expressions */
+import DateTools from '../../utils/dateTools';
+
 export default {
   /**
    * Private helper method to parse XML string into DOM document
@@ -266,15 +268,11 @@ export default {
   /**
    * Sends a GET request to the OAI-PMH ListRecords endpoint
    * @param {string} metadataPrefix - The metadata format (default: 'marc21')
-   * @param {string} fromDate - Optional from date in YYYY-MM-DD format
-   * @param {string} untilDate - Optional until date in YYYY-MM-DD format
+   * @param {string} fromDate - Optional from date in YYYY-MM-DDTHH:mm:ssZ format
+   * @param {string} untilDate - Optional until date in YYYY-MM-DDTHH:mm:ssZ format
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listRecordsRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const currentTime = new Date();
-    const fromTime = new Date(currentTime.getTime() - 2 * 60 * 1000); // Current time minus 2 minutes
-    const untilTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // Current time plus 2 minutes
-
     const searchParams = {
       verb: 'ListRecords',
       metadataPrefix,
@@ -283,13 +281,13 @@ export default {
     if (fromDate) {
       searchParams.from = fromDate;
     } else {
-      searchParams.from = fromTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
     }
 
     if (untilDate) {
       searchParams.until = untilDate;
     } else {
-      searchParams.until = untilTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
     }
 
     return cy

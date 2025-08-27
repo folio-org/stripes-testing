@@ -38,7 +38,7 @@ describe('MARC', () => {
           'RecUpd',
           'Pers Name',
           'Level Est',
-          'Mod Rec Est',
+          'Mod Rec',
           'Source',
         ],
         tag110: '110',
@@ -66,7 +66,7 @@ describe('MARC', () => {
         RecUpd: 'a',
         'Pers Name': 'a',
         'Level Est': 'a',
-        'Mod Rec Est': 'a',
+        'Mod Rec': 'a',
         Source: 'a',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
