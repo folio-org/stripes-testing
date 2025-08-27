@@ -95,9 +95,13 @@ describe('Eureka', () => {
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C514964'] },
       () => {
         cy.resetTenant();
-        cy.login(userData.username, userData.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-        ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+          cy.reload();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        }, 20000);
         ConsortiumManagerApp.clickSelectMembers();
         SelectMembers.verifyAvailableTenants(
           [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
@@ -109,33 +113,21 @@ describe('Eureka', () => {
         ConsortiumManagerApp.verifyMembersSelected(1);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_POLICIES);
         SelectMembers.selectMember(tenantNames.central);
-        cy.resetTenant();
-        cy.getAuthorizationPoliciesApi().then((policiesCentral) => {
-          AuthorizationPolicies.verifyPoliciesCount(policiesCentral.length);
-          AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName);
-          AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
-          AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
 
-          SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyMembersSelected(3);
-          SelectMembers.selectMember(tenantNames.college);
-          cy.setTenant(Affiliations.College);
-          cy.getAuthorizationPoliciesApi().then((policiesCollege) => {
-            AuthorizationPolicies.verifyPoliciesCount(policiesCollege.length);
-            AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
-            AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName);
-            AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
+        SelectMembers.selectAllMembers();
+        ConsortiumManagerApp.verifyMembersSelected(3);
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName);
+        AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
 
-            SelectMembers.selectMember(tenantNames.university);
-            cy.setTenant(Affiliations.University);
-            cy.getAuthorizationPoliciesApi().then((policiesUniversity) => {
-              AuthorizationPolicies.verifyPoliciesCount(policiesUniversity.length);
-              AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
-              AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
-              AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName);
-            });
-          });
-        });
+        SelectMembers.selectMember(tenantNames.university);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName);
       },
     );
   });

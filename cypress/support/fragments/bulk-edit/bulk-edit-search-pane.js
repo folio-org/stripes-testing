@@ -581,6 +581,7 @@ export default {
     // it is needed to avoid triggering for previous page list
     cy.wait(3000);
     cy.expect(MultiColumnList().exists());
+    cy.wait(1000);
   },
 
   verifyCsvUploadModal(filename) {

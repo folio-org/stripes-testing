@@ -246,7 +246,7 @@ describe('Bulk-edit', () => {
             folioInstance.holdingHrid,
             initialHesderValue,
           );
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();

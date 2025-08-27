@@ -52,7 +52,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillTemporaryLoanType('Selected');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.fillPermanentLoanType('Reading room', 1);

@@ -63,7 +63,7 @@ describe('Bulk-edit', () => {
         cy.waitForAuthRefresh(() => {
           BulkEditActions.openActions();
         });
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(todayDate);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

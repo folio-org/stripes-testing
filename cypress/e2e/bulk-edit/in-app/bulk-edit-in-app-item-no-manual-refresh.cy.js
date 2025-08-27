@@ -74,7 +74,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPermanentLoanType('Reading room');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, item.itemBarcode);

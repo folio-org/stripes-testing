@@ -18,10 +18,14 @@ const yesterday = DateTools.getFormattedDate({ date: d }, 'MM/DD/YYYY');
 
 describe('Organizations', () => {
   before('Create user and organization', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.organizationsPath,
-      waiter: Organizations.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+      cy.reload();
+      Organizations.waitLoading();
+    }, 20_000);
     cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((user) => {
       testData.user = user;
       NewOrganization.createViaApi(testData.organization).then((responseOrganization) => {
@@ -55,6 +59,7 @@ describe('Organizations', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Organizations.filterByDateUpdated(today, today);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
       Organizations.resetFilters();
       Organizations.filterByDateUpdated('01/01/2000', '12/31/2000');
@@ -62,6 +67,7 @@ describe('Organizations', () => {
       Organizations.filterByDateUpdated(today, yesterday);
       Organizations.checkInvalidDateRangeMessage();
       Organizations.filterByDateUpdated(yesterday, today);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
     },
   );

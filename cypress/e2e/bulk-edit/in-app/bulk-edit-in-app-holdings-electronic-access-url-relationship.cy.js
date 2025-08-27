@@ -91,7 +91,7 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         ]);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();

@@ -74,7 +74,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.verifyMatchedResults(item.firstBarcode, item.secondBarcode);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         const newLocation = 'Annex';
         BulkEditActions.verifyModifyLandingPageBeforeModifying();

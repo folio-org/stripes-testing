@@ -90,7 +90,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
@@ -129,7 +129,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         cy.wait(500);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(today);
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();

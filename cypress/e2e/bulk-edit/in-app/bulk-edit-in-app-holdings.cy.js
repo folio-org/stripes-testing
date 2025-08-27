@@ -88,7 +88,7 @@ describe('Bulk-edit', () => {
         const location = 'Online';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -111,7 +111,7 @@ describe('Bulk-edit', () => {
         const permLocation = 'Main Library';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
         BulkEditActions.addNewBulkEditFilterString();
@@ -147,7 +147,7 @@ describe('Bulk-edit', () => {
         const tempLocation = 'SECOND FLOOR';
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

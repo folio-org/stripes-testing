@@ -68,7 +68,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         const location = 'Annex';
         const status = 'Intellectual item';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.replaceItemStatus(status, 1);

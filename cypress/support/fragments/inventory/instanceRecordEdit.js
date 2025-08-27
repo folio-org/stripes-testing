@@ -53,6 +53,7 @@ const date2Field = TextField({ name: 'dates.date2' });
 const dateTypePlaceholderOption = 'Select date type';
 const dateValueLengthErrorText = 'Date must contain four characters.';
 const saveAndKeepEditing = Button('Save & keep editing');
+const cancelButton = Button('Cancel');
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -77,6 +78,7 @@ export default {
   addNatureOfContent,
   clickAddStatisticalCodeButton,
   chooseStatisticalCode,
+  dateTypePlaceholderOption,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([
@@ -222,7 +224,7 @@ export default {
     cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(statusTerm));
+    cy.do(Select('Instance status term').choose(matching(new RegExp(`^${statusTerm}`))));
   },
   saveAndClose() {
     cy.wait(1500);
@@ -492,12 +494,21 @@ export default {
     cy.expect(dateTypeSelect.has({ checkedOptionText: dateTypePlaceholderOption }));
   },
 
-  verifyDateFieldsValues: (date1 = '', date2 = '', dateType = dateTypePlaceholderOption) => {
+  verifyDateFieldsValues: (
+    date1 = '',
+    date2 = '',
+    dateType = dateTypePlaceholderOption,
+    enabled = true,
+  ) => {
     cy.expect([
-      date1Field.has({ value: date1 }),
-      date2Field.has({ value: date2 }),
-      dateTypeSelect.has({ checkedOptionText: dateType }),
+      date1Field.has({ disabled: !enabled, value: date1 }),
+      date2Field.has({ disabled: !enabled, value: date2 }),
+      dateTypeSelect.has({ disabled: !enabled, checkedOptionText: dateType }),
     ]);
+  },
+
+  verifyDateTypePlaceholderNotSelectable: () => {
+    cy.get('select[name="dates.dateTypeId"] option:first').should('be.disabled');
   },
 
   verifyDateFieldsValidationErrors: (date1Affected = true, date2Affected = true) => {
@@ -567,5 +578,13 @@ export default {
         )
         .exists(),
     );
+  },
+
+  checkButtonsEnabled: ({ saveAndClose = true, saveKeepEditing = true, cancel = true } = {}) => {
+    cy.expect([
+      cancelButton.has({ disabled: !cancel }),
+      saveAndKeepEditing.has({ disabled: !saveKeepEditing }),
+      saveAndCloseButton.has({ disabled: !saveAndClose }),
+    ]);
   },
 };

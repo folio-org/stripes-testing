@@ -58,7 +58,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyPaneRecordsCount('1 item');
         //  Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         // Select "Permanent item location" from "Select option" dropdown => Select "Replace with" option from  "Select action" dropdown
         BulkEditActions.replacePermanentLocation(location);

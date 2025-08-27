@@ -81,7 +81,6 @@ describe('Orders', () => {
       organization.id = responseOrganizations;
     });
     order.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
 
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,

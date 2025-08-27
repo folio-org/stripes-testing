@@ -193,7 +193,7 @@ describe('Bulk-edit', () => {
 
         const newPermanentLoanType = 'Reading room';
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPermanentLoanType(newPermanentLoanType);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, instance.defaultLocation.name);

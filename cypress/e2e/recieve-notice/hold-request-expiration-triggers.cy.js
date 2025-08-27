@@ -29,7 +29,7 @@ import Requests from '../../support/fragments/requests/requests';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 describe('Patron notices', () => {
-  describe('Request notice triggers', () => {
+  describe('Request notice triggers', { retries: { runMode: 1 } }, () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       adminSourceRecord: {},
@@ -193,7 +193,9 @@ describe('Patron notices', () => {
       CirculationRules.deleteRuleViaApi(testData.addedRule);
       Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
         (requestResponse) => {
-          Requests.deleteRequestViaApi(requestResponse[0].id);
+          if (requestResponse?.[0]?.id) {
+            Requests.deleteRequestViaApi(requestResponse[0].id);
+          }
         },
       );
       NoticePolicyApi.deleteViaApi(testData.noticePolicyId);

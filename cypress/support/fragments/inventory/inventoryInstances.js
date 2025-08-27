@@ -997,7 +997,8 @@ export default {
                     holdingsRecordId: item.holdingsRecordId || holdingWithIds.id,
                   };
                   itemIds.push(itemWithIds.id);
-                  InventoryItems.createItemViaApi(itemWithIds).then(() => {
+                  InventoryItems.createItemViaApi(itemWithIds).then((createdItem) => {
+                    itemWithIds.hrid = createdItem.hrid;
                     instanceData.items.push(itemWithIds);
                   });
                 }),

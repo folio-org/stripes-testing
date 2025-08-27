@@ -242,7 +242,7 @@ describe('Bulk-edit', () => {
           });
 
           // Step 8-9: Open in-app bulk edit form and verify options
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
