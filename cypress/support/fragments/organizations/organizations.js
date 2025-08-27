@@ -253,11 +253,12 @@ export default {
     cy.expect(tagsPane.absent());
   },
 
-  tagFilter: () => {
+  selectTagFilter: (tag) => {
+    cy.wait(3000);
     cy.do([
-      Section({ id: 'org-filter-tags' }).find(Button('Tags')).click(),
-      Button({ className: 'multiSelectToggleButton---cD_fu' }).click(),
-      MultiSelectOption('^').click(),
+      Button({ id: 'accordion-toggle-button-tags' }).click(),
+      MultiSelect({ id: 'acq-tags-filter' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(tag)).clickSegment(),
     ]);
   },
 
@@ -677,6 +678,15 @@ export default {
       isDefaultSearchParamsRequired: false,
     })
     .then((resp) => resp.status),
+
+  createTagViaApi: (tag) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'tags',
+      body: typeof tag === 'string' ? { label: tag } : tag,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
 
   getTagByLabel(label) {
     const q = `label=="${label}"`;
