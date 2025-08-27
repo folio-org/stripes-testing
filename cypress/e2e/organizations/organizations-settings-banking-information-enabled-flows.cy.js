@@ -768,4 +768,52 @@ describe('Organizations', () => {
       },
     );
   });
+
+  describe('Create an account type', () => {
+    let user;
+    const accountType = {
+      name: `TestAccountType_${getRandomPostfix()}`,
+    };
+
+    before('Create user', () => {
+      cy.getAdminToken();
+      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.settingsOrganizationsPath,
+              waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            });
+            cy.reload();
+            SettingsOrganizations.waitLoadingOrganizationSettings();
+          }, 20_000);
+        },
+      );
+    });
+
+    after('Delete test data', () => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsOrganizationsPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.selectAccountTypes();
+      SettingsOrganizations.deleteAccountType(accountType);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C411687 Create an account type (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.clickNewButton();
+        SettingsOrganizations.clickOutsideAccountTypeField();
+        SettingsOrganizations.checkErrorMessage();
+        SettingsOrganizations.fillAccountTypeName(accountType.name);
+        SettingsOrganizations.saveAccountTypeChanges();
+        SettingsOrganizations.checkRowActionButtons(accountType.name);
+      },
+    );
+  });
 });
