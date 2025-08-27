@@ -119,8 +119,17 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 30_000);
         });
+
         InventoryInstances.searchByTitle('Bible');
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         testData.searchResults.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
         });
