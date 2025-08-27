@@ -95,7 +95,7 @@ const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformat
 const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
 const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
 const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
-const updatedDateAccordion = Accordion({ id: 'metadata.updatedDate' });
+const updatedDateAccordion = Section({ id: 'metadata.updatedDate' });
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -106,6 +106,8 @@ const paymentMethodSection = Select('Payment method');
 const vendorTermsAccordion = Button({ id: 'accordion-toggle-button-agreementsSection' });
 const accountAccordion = Button({ id: 'accordion-toggle-button-accountsSection' });
 const accountStatus = Select('Account status*');
+
+const tagsPane = Pane('Tags');
 
 export default {
   waitLoading: () => {
@@ -208,6 +210,47 @@ export default {
 
   organizationTagDetails: () => {
     cy.do([tagButton.click()]);
+  },
+
+  verifyTagsCount: (expected = 1) => {
+    cy.expect(Button({ id: 'clickable-show-tags' }).has({ text: including(String(expected)) }));
+  },
+
+  addTagToOrganization: (tag) => {
+    const tagsMs = MultiSelect({ id: 'input-tag' });
+    cy.do([tagsMs.open(), tagsMs.filter(tag)]);
+    cy.do(tagsMs.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including('Add tag for:')))
+        .click(),
+    );
+    cy.do(tagsMs.close());
+    InteractorsTools.checkCalloutMessage('New tag created');
+  },
+
+  selectAnyExistingTag: () => {
+    const tagsMs = MultiSelect({ id: 'input-tag' });
+    cy.do(tagsMs.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption({ index: 0 }))
+        .click(),
+    );
+    cy.do(tagsMs.close());
+  },
+
+  closeTagsPane() {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(1000);
+    cy.expect(tagsPane.absent());
   },
 
   tagFilter: () => {
@@ -626,6 +669,35 @@ export default {
     })
     .then((resp) => resp.body.id),
 
+  createInterfaceCredentialsViaApi: (interfaceId, credentials) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: `organizations-storage/interfaces/${interfaceId}/credentials`,
+      body: credentials,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.status),
+
+  getTagByLabel(label) {
+    const q = `label=="${label}"`;
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'tags',
+        searchParams: { query: q, limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((r) => r.body.tags?.[0] ?? null);
+  },
+
+  deleteTagById(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `tags/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -884,6 +956,16 @@ export default {
     cy.do([TextArea({ name: 'notes' }).fillIn(note)]);
   },
 
+  clickShowInterfaceCredentials: () => {
+    cy.do(Button('Show credentials').click());
+  },
+
+  verifyPasswordDisplayed(interfceCredentials) {
+    const { username, password } = interfceCredentials;
+    cy.expect(KeyValue('Username').has({ value: username }));
+    cy.expect(KeyValue('Password').has({ value: password }));
+  },
+
   clickSaveButton: () => {
     cy.do(saveButton.click());
   },
@@ -993,6 +1075,10 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-delete-interface-modal-confirm' }).click(),
     ]);
+  },
+
+  deleteInterfaceFromEditPage: () => {
+    cy.get('button[data-test-unassign-interface="true"][aria-label="Unassign"]').click();
   },
 
   selectContact: (contact) => {

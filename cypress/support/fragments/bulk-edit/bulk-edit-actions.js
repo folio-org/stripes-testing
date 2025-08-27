@@ -96,6 +96,7 @@ export default {
   },
 
   openStartBulkEditForm() {
+    cy.wait(1000);
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
   },

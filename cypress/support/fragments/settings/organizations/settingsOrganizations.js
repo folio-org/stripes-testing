@@ -13,6 +13,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
 const enableBankingInformationCheckbox = Checkbox('Enable banking information');
 const saveButton = Button('Save');
+const newCategory = Button('+ New');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
@@ -62,6 +63,7 @@ export default {
 
   selectCategories: () => {
     cy.do(NavListItem('Categories').click());
+    cy.wait(2000);
   },
 
   selectBankingInformation: () => {
@@ -135,7 +137,7 @@ export default {
   },
 
   clickNewCategoriesButton() {
-    cy.do(Button({ id: 'clickable-add-categories' }).click());
+    cy.do(newCategory.click());
   },
 
   fillCategoryName(name) {
@@ -144,7 +146,7 @@ export default {
   },
 
   saveCategoryChanges() {
-    cy.get('button[id^="clickable-save-categories-"]').click();
+    cy.do(Button('Save').click());
   },
 
   checkCategoriesTableContent(typeName) {
