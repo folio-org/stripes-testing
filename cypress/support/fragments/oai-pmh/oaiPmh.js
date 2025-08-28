@@ -311,10 +311,6 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listIdentifiersRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const currentTime = new Date();
-    const fromTime = new Date(currentTime.getTime() - 2 * 60 * 1000); // Current time minus 2 minutes
-    const untilTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // Current time plus 2 minutes
-
     const searchParams = {
       verb: 'ListIdentifiers',
       metadataPrefix,
@@ -323,13 +319,13 @@ export default {
     if (fromDate) {
       searchParams.from = fromDate;
     } else {
-      searchParams.from = fromTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
     }
 
     if (untilDate) {
       searchParams.until = untilDate;
     } else {
-      searchParams.until = untilTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
     }
 
     return cy
@@ -413,23 +409,43 @@ export default {
 
     // Find the header with matching instance UUID
     let foundHeader = null;
+    let foundIdentifier = null;
     for (let i = 0; i < headers.length; i++) {
       const header = headers[i];
       const identifier = header.getElementsByTagName('identifier')[0].textContent;
 
       if (identifier.includes(instanceUuid)) {
         foundHeader = header;
+        foundIdentifier = identifier;
         break;
       }
     }
+
+    if (!foundHeader) {
+      throw new Error(
+        `Identifier with UUID ${instanceUuid} not found in the ListIdentifiers response`,
+      );
+    }
+
+    // Verify the identifier format
+    this.getBaseUrl().then((baseUrl) => {
+      const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+      expect(
+        foundIdentifier,
+        `Identifier should match expected OAI format for UUID ${instanceUuid}`,
+      ).to.equal(expectedIdentifier);
+    });
 
     // Verify the deleted status
     const status = foundHeader.getAttribute('status');
 
     if (shouldBeDeleted) {
-      expect(status, 'Identifier should have deleted status').to.equal('deleted');
+      expect(status, `Identifier should have deleted status for UUID ${instanceUuid}`).to.equal(
+        'deleted',
+      );
     } else {
-      expect(status, 'Identifier should not have deleted status').to.be.null;
+      expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
+        .null;
     }
   },
 };
