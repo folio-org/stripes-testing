@@ -132,15 +132,9 @@ describe('Users', () => {
       UserEdit.saveAndCloseStayOnEdit();
       UserEdit.verifyPronounsError();
 
-      cy.waitForAuthRefresh(() => {
-        cy.reload();
-      }, 20_000);
-
       UserEdit.clearPronounsField();
       UserEdit.fillPronouns(testData.pronouns300Chars);
       UserEdit.verifyPronounsNoError();
-
-      cy.waitForAuthRefresh(() => {}, 20_000);
 
       UserEdit.saveAndCloseStayOnEdit();
       UserEdit.closeEditPaneIfExists();
