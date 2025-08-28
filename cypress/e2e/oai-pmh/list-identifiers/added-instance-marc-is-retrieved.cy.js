@@ -33,7 +33,7 @@ describe('OAI-PMH', () => {
       { tags: ['extendedPath', 'firebird', 'C375129'] },
       () => {
         OaiPmh.listIdentifiersRequest().then((response) => {
-          OaiPmh.verifyIdentifierInListResponse(response, marcInstanceId, false);
+          OaiPmh.verifyIdentifierInListResponse(response, marcInstanceId);
         });
       },
     );

@@ -64,7 +64,7 @@ describe('OAI-PMH', () => {
       () => {
         OaiPmh.listIdentifiersRequest('marc21_withholdings', holdingsAddedTimestamp).then(
           (response) => {
-            OaiPmh.verifyIdentifierInListResponse(response, marcInstance.id, false);
+            OaiPmh.verifyIdentifierInListResponse(response, marcInstance.id);
           },
         );
       },

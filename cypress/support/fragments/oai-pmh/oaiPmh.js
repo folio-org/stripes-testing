@@ -398,13 +398,19 @@ export default {
   },
 
   /**
-   * Verifies that an identifier exists in ListIdentifiers response and validates its format and status.
+   * Verifies identifier presence/absence in ListIdentifiers response and validates format and status when found.
    * Performs comprehensive verification including identifier format validation and deletion status checking.
    * @param {string} xmlString - The XML response as a string from ListIdentifiers request
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
-   * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false)
+   * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
+   * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
    */
-  verifyIdentifierInListResponse(xmlString, instanceUuid, shouldBeDeleted = false) {
+  verifyIdentifierInListResponse(
+    xmlString,
+    instanceUuid,
+    shouldExist = true,
+    shouldBeDeleted = false,
+  ) {
     const xmlDoc = this._parseXmlString(xmlString);
     const headers = xmlDoc.getElementsByTagName('header');
 
@@ -422,6 +428,16 @@ export default {
       }
     }
 
+    if (!shouldExist) {
+      // Verify the identifier should NOT exist (shouldBeDeleted is ignored in this case)
+      expect(
+        foundHeader,
+        `Identifier with UUID ${instanceUuid} should NOT be found in the ListIdentifiers response`,
+      ).to.be.null;
+      return;
+    }
+
+    // Verify the identifier should exist
     if (!foundHeader) {
       throw new Error(
         `Identifier with UUID ${instanceUuid} not found in the ListIdentifiers response`,

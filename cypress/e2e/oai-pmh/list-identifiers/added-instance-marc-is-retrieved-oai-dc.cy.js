@@ -32,7 +32,7 @@ describe('OAI-PMH', () => {
       { tags: ['extendedPath', 'firebird', 'C376982'] },
       () => {
         OaiPmh.listIdentifiersRequest('oai_dc').then((response) => {
-          OaiPmh.verifyIdentifierInListResponse(response, marcInstanceId, false);
+          OaiPmh.verifyIdentifierInListResponse(response, marcInstanceId);
         });
       },
     );
