@@ -398,10 +398,11 @@ export default {
   },
 
   /**
-   * Verifies that an identifier exists in ListIdentifiers response
-   * @param {string} xmlString - The XML response as a string
-   * @param {string} instanceUuid - The instance UUID to find
-   * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status
+   * Verifies that an identifier exists in ListIdentifiers response and validates its format and status.
+   * Performs comprehensive verification including identifier format validation and deletion status checking.
+   * @param {string} xmlString - The XML response as a string from ListIdentifiers request
+   * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
+   * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false)
    */
   verifyIdentifierInListResponse(xmlString, instanceUuid, shouldBeDeleted = false) {
     const xmlDoc = this._parseXmlString(xmlString);
