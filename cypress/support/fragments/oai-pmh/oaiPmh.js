@@ -13,6 +13,38 @@ export default {
     return parser.parseFromString(xmlString, 'application/xml');
   },
 
+  /**
+   * Private helper method to find a specific record by instanceUuid in OAI-PMH response
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to search for
+   * @returns {Element} The record element matching the instanceUuid
+   * @throws {Error} If no record with the specified UUID is found
+   * @private
+   */
+  _findRecordInResponseByUuid(xmlString, instanceUuid) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const records = xmlDoc.getElementsByTagName('record');
+
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i];
+      const header = record.getElementsByTagName('header')[0];
+
+      if (header) {
+        const identifierElement = header.getElementsByTagName('identifier')[0];
+
+        if (identifierElement) {
+          const identifier = identifierElement.textContent;
+
+          if (identifier.includes(instanceUuid)) {
+            return record;
+          }
+        }
+      }
+    }
+
+    throw new Error(`Record with UUID ${instanceUuid} not found in the response`);
+  },
+
   getBaseUrl() {
     const cachedBaseUrl = Cypress.env('OAI_PMH_BASE_URL');
 
@@ -74,34 +106,9 @@ export default {
     verifyIdentifier = true,
   ) {
     const expectedStatus = shouldBeDeleted ? 'deleted' : null;
-    const xmlDoc = this._parseXmlString(xmlString);
 
-    let targetHeader;
-
-    // Always search for the record by instanceUuid - works for both single and multi-record responses
-    const records = xmlDoc.getElementsByTagName('record');
-
-    for (let i = 0; i < records.length; i++) {
-      const record = records[i];
-      const header = record.getElementsByTagName('header')[0];
-
-      if (header) {
-        const identifierElement = header.getElementsByTagName('identifier')[0];
-
-        if (identifierElement) {
-          const identifier = identifierElement.textContent;
-
-          if (identifier.includes(instanceUuid)) {
-            targetHeader = header;
-            break;
-          }
-        }
-      }
-    }
-
-    if (!targetHeader) {
-      throw new Error(`Record header with UUID ${instanceUuid} not found in the response`);
-    }
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const targetHeader = targetRecord.getElementsByTagName('header')[0];
 
     // Verify status attribute
     const status = targetHeader.getAttribute('status');
@@ -150,39 +157,20 @@ export default {
     subfields = {},
     absentSubfields = [],
   ) {
-    const xmlDoc = this._parseXmlString(xmlString);
-
     // Use the namespace URI for MARC21
     const namespaceURI = 'http://www.loc.gov/MARC21/slim';
 
-    let targetRecordElement;
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
 
-    // Always search for the record by instanceUuid - works for both single and multi-record responses
-    const records = xmlDoc.getElementsByTagName('record');
-
-    for (let i = 0; i < records.length; i++) {
-      const record = records[i];
-      const header = record.getElementsByTagName('header')[0];
-
-      if (header) {
-        const identifierElement = header.getElementsByTagName('identifier')[0];
-
-        if (identifierElement) {
-          const identifier = identifierElement.textContent;
-
-          if (identifier.includes(instanceUuid)) {
-            const metadata = record.getElementsByTagName('metadata')[0];
-            if (metadata) {
-              targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
-            }
-            break;
-          }
-        }
-      }
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
     }
 
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
     if (!targetRecordElement) {
-      throw new Error(`Record with UUID ${instanceUuid} not found in the response`);
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
     }
 
     // Find all `datafield` elements within the target record
@@ -238,29 +226,38 @@ export default {
   },
 
   /**
-   * Verify Dublin Core field values in OAI-PMH oai_dc response.
+   * Verify Dublin Core field values in a specific record identified by instanceUuid.
+   * Works consistently for both single-record (GetRecord) and multi-record (ListRecords) responses.
    * @param {string} xmlString - The XML response as a string.
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {Object} fields - Object where keys are Dublin Core element names and values are expected values (e.g., { title: "Sample Title", type: "Text", language: "eng" }).
    */
-  verifyDublinCoreField(xmlString, fields = {}) {
-    const xmlDoc = this._parseXmlString(xmlString);
+  verifyDublinCoreField(xmlString, instanceUuid, fields = {}) {
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
 
     // Use the namespace URI for Dublin Core
     const dcNamespaceURI = 'http://purl.org/dc/elements/1.1/';
 
     Object.entries(fields).forEach(([elementName, expectedValue]) => {
-      // Find all Dublin Core elements with the specified name
-      const dcElements = xmlDoc.getElementsByTagNameNS(dcNamespaceURI, elementName);
+      // Find all Dublin Core elements with the specified name within the target record
+      const dcElements = metadata.getElementsByTagNameNS(dcNamespaceURI, elementName);
 
       if (dcElements.length === 0) {
-        throw new Error(`Dublin Core element "${elementName}" not found in the response`);
+        throw new Error(
+          `Dublin Core element "${elementName}" not found in record with UUID ${instanceUuid}`,
+        );
       }
 
       const element = dcElements[0];
 
       expect(
         element.textContent,
-        `Dublin Core element "${elementName}" should have value "${expectedValue}"`,
+        `Dublin Core element "${elementName}" should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
       ).to.equal(expectedValue);
     });
   },
@@ -349,37 +346,19 @@ export default {
    * @param {string} expectedValue - The expected value for position 05
    */
   verifyMarcLeaderPosition05Value(xmlString, instanceUuid, expectedValue) {
-    const xmlDoc = this._parseXmlString(xmlString);
     const namespaceURI = 'http://www.loc.gov/MARC21/slim';
 
-    let targetRecordElement;
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
 
-    // Always search for the record by instanceUuid - works for both single and multi-record responses
-    const records = xmlDoc.getElementsByTagName('record');
-
-    for (let i = 0; i < records.length; i++) {
-      const record = records[i];
-      const header = record.getElementsByTagName('header')[0];
-
-      if (header) {
-        const identifierElement = header.getElementsByTagName('identifier')[0];
-
-        if (identifierElement) {
-          const identifier = identifierElement.textContent;
-
-          if (identifier.includes(instanceUuid)) {
-            const metadata = record.getElementsByTagName('metadata')[0];
-            if (metadata) {
-              targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
-            }
-            break;
-          }
-        }
-      }
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
     }
 
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
     if (!targetRecordElement) {
-      throw new Error(`Record with UUID ${instanceUuid} not found in the response`);
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
     }
 
     const leader = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'leader')[0];
