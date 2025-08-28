@@ -14,7 +14,7 @@ describe('Inventory', () => {
       date1: '1995',
       date2: '200u',
       initialDateType: INSTANCE_DATE_TYPES.DETAILED,
-      dateTypePlaceHolder: 'Select date type',
+      dateTypePlaceHolder: InstanceRecordEdit.dateTypePlaceholderOption,
       defaultDateType: INSTANCE_DATE_TYPES.NO,
     };
 

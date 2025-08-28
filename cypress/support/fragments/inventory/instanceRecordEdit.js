@@ -78,6 +78,7 @@ export default {
   addNatureOfContent,
   clickAddStatisticalCodeButton,
   chooseStatisticalCode,
+  dateTypePlaceholderOption,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([
@@ -493,11 +494,16 @@ export default {
     cy.expect(dateTypeSelect.has({ checkedOptionText: dateTypePlaceholderOption }));
   },
 
-  verifyDateFieldsValues: (date1 = '', date2 = '', dateType = dateTypePlaceholderOption) => {
+  verifyDateFieldsValues: (
+    date1 = '',
+    date2 = '',
+    dateType = dateTypePlaceholderOption,
+    enabled = true,
+  ) => {
     cy.expect([
-      date1Field.has({ value: date1 }),
-      date2Field.has({ value: date2 }),
-      dateTypeSelect.has({ checkedOptionText: dateType }),
+      date1Field.has({ disabled: !enabled, value: date1 }),
+      date2Field.has({ disabled: !enabled, value: date2 }),
+      dateTypeSelect.has({ disabled: !enabled, checkedOptionText: dateType }),
     ]);
   },
 

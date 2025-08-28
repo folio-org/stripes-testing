@@ -44,11 +44,9 @@ describe('Settings: Tenant', () => {
 
   after('delete test data', () => {
     cy.getAdminToken();
-    cy.getAdminToken().then(() => {
-      Locations.deleteViaApi(testData.location);
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Users.deleteViaApi(user.userId);
-    });
+    Locations.deleteViaApi(testData.location);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it(

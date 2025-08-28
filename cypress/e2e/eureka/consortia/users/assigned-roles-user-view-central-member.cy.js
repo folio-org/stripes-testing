@@ -97,10 +97,14 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.testUser.userId);
-        cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.tempUser.username, testData.tempUser.password, {
+            path: TopMenu.usersPath,
+            waiter: Users.waitLoading,
+          });
+          cy.reload();
+          Users.waitLoading();
+        }, 20_000);
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
 
@@ -124,7 +128,6 @@ describe('Eureka', () => {
         { tags: ['criticalPathECS', 'eureka', 'C514892'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           UsersCard.verifyUserRolesCounter('0');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);

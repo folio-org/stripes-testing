@@ -27,60 +27,71 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
   describe('End to end scenarios for automation (Patron notices)', () => {
-    const noticePolicyTemplate = {
-      ...NewNoticePolicyTemplate.defaultUi,
-      category: NOTICE_CATEGORIES.loan,
-    };
-    const noticePolicy = {
-      ...NewNoticePolicy.defaultUi,
-      templateName: noticePolicyTemplate.name,
-      format: 'Email',
-      action: NOTICE_ACTIONS.checkin,
-      noticeName: NOTICE_CATEGORIES.loan.name,
-      noticeId: 'loan',
-    };
-    const patronGroup = {
-      name: 'groupToTestNoticeCheckout' + getRandomPostfix(),
-    };
-    const userData = {
-      personal: {
-        lastname: null,
-      },
-    };
-    const itemsData = {
-      itemsWithSeparateInstance: [
-        {
-          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
+    let noticePolicyTemplate;
+    let searchResultsData;
+    let testData;
+    let itemsData;
+    let userData;
+    let patronGroup;
+    let noticePolicy;
+
+    const generateTestData = () => {
+      noticePolicyTemplate = {
+        ...NewNoticePolicyTemplate.getDefaultUI(),
+        category: NOTICE_CATEGORIES.loan,
+      };
+      noticePolicy = {
+        ...NewNoticePolicy.getDefaultUI(),
+        templateName: noticePolicyTemplate.name,
+        format: 'Email',
+        action: NOTICE_ACTIONS.checkin,
+        noticeName: NOTICE_CATEGORIES.loan.name,
+        noticeId: 'loan',
+      };
+      patronGroup = {
+        name: 'groupToTestNoticeCheckout' + getRandomPostfix(),
+      };
+      userData = {
+        personal: {
+          lastname: null,
         },
-        {
-          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
-        },
-        {
-          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
-        },
-        {
-          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
-        },
-        {
-          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
-        },
-      ],
-    };
-    const testData = {
-      noticePolicyTemplateToken: 'item.title',
-      userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    };
-    const searchResultsData = {
-      userBarcode: null,
-      object: 'Notice',
-      circAction: 'Send',
-      // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-      servicePoint: testData.userServicePoint.name,
-      source: 'System',
-      desc: `Template: ${noticePolicyTemplate.name}. Triggering event: Check in.`,
+      };
+      itemsData = {
+        itemsWithSeparateInstance: [
+          {
+            instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
+          },
+          {
+            instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
+          },
+          {
+            instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
+          },
+          {
+            instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
+          },
+          {
+            instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
+          },
+        ],
+      };
+      testData = {
+        noticePolicyTemplateToken: 'item.title',
+        userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+      };
+      searchResultsData = {
+        userBarcode: null,
+        object: 'Notice',
+        circAction: 'Send',
+        // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+        servicePoint: testData.userServicePoint.name,
+        source: 'System',
+        desc: `Template: ${noticePolicyTemplate.name}. Triggering event: Check in.`,
+      };
     };
 
     beforeEach('Preconditions', () => {
+      generateTestData();
       itemsData.itemsWithSeparateInstance.forEach((item, index) => {
         item.barcode = generateUniqueItemBarcodeWithShift(index);
       });
