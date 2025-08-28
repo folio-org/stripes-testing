@@ -47,35 +47,11 @@ export default {
   },
 
   checkOutUser(userBarcode, otherParameter) {
-    if (otherParameter) {
-      // First try with otherParameter
-      cy.do([
-        TextField('Patron identifier').fillIn(otherParameter),
-        Pane('Scan patron card').find(Button('Enter')).click(),
-      ]);
-
-      // Check if there's an error message and retry with userBarcode if needed
-      cy.get('body').then(($body) => {
-        if ($body.text().match(/User with this .+ does not exist/)) {
-          // Clear the field and try with userBarcode
-          cy.do([
-            TextField('Patron identifier').fillIn(userBarcode),
-            Pane('Scan patron card').find(Button('Enter')).click(),
-            Button(userBarcode).exists(),
-          ]);
-        } else {
-          // Success with otherParameter
-          cy.do(Button(userBarcode).exists());
-        }
-      });
-    } else {
-      // Use userBarcode directly if no otherParameter
-      cy.do([
-        TextField('Patron identifier').fillIn(userBarcode),
-        Pane('Scan patron card').find(Button('Enter')).click(),
-        Button(userBarcode).exists(),
-      ]);
-    }
+    cy.do([
+      TextField('Patron identifier').fillIn(otherParameter || userBarcode),
+      Pane('Scan patron card').find(Button('Enter')).click(),
+      Button(userBarcode).exists(),
+    ]);
     this.waitForPatronSpinnerToDisappear();
   },
 
