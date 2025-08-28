@@ -4,13 +4,19 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
   describe('Settings (Patron notices)', () => {
-    const noticePolicy = { ...NewNoticePolicy.defaultUi };
-    const newNoticePolicy = {
-      name: `Test_notice_${getRandomPostfix()}`,
-      description: 'Created by autotest team',
+    let noticePolicy;
+    let newNoticePolicy;
+
+    const generateTestData = () => {
+      noticePolicy = NewNoticePolicy.getDefaultUI();
+      newNoticePolicy = {
+        name: `Test_notice_${getRandomPostfix()}`,
+        description: 'Created by autotest team',
+      };
     };
 
     beforeEach('login', () => {
+      generateTestData();
       cy.loginAsAdmin({
         path: SettingsMenu.circulationPatronNoticePoliciesPath,
         waiter: NewNoticePolicy.waitLoading,

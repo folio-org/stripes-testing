@@ -1,4 +1,4 @@
-import { Checkbox, Pane, TextField, Button } from '../../../../interactors';
+import { Checkbox, Pane, TextField, Button } from '../../../../../interactors';
 
 const technicalPane = Pane('Technical');
 const maxRecordPerResponseTextfield = TextField('Max records per response*');

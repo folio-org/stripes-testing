@@ -34,6 +34,7 @@ const itemDataFields = {
 
 const loanDataFields = {
   loanType: itemEditForm.find(Select({ id: 'additem_loanTypePerm' })),
+  temporaryLoanType: itemEditForm.find(Select({ id: 'additem_loanTypeTemp' })),
 };
 const addNoteBtn = Accordion('Item notes').find(Button('Add note'));
 
@@ -118,6 +119,10 @@ export default {
     cy.do(loanDataFields.loanType.choose(permanentLoanType));
     cy.expect(loanDataFields.loanType.has({ checkedOptionText: permanentLoanType }));
   },
+  addTemporaryLoanType: (temporaryLoanType) => {
+    cy.do(loanDataFields.temporaryLoanType.choose(temporaryLoanType));
+    cy.expect(loanDataFields.temporaryLoanType.has({ checkedOptionText: temporaryLoanType }));
+  },
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
   },
@@ -125,12 +130,26 @@ export default {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(SelectionOption(including(temporarylocation))).exists());
   },
+  clearValueInPermanentLocation() {
+    cy.do([
+      permanentLocationDropdown.click(),
+      SelectionList().filter('Select location'),
+      SelectionList().select(including('Select location')),
+    ]);
+  },
   openPermanentLocation() {
     cy.do(permanentLocationDropdown.click());
   },
   verifyPermanentLocationItemExists: (permanentLocation) => {
     cy.expect(permanentLocationList.exists());
     cy.expect(permanentLocationList.find(SelectionOption(including(permanentLocation))).exists());
+  },
+  clearValueInTemporaryLocation() {
+    cy.do([
+      temporaryLocationDropdown.click(),
+      SelectionList().filter('Select location'),
+      SelectionList().select(including('Select location')),
+    ]);
   },
   closeCancelEditingModal: () => {
     cy.do(
