@@ -13,6 +13,7 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
     Permissions.specificationStorageGetSpecificationIndicatorCodes.gui,
     Permissions.specificationStorageCreateSpecificationIndicatorCode.gui,
     Permissions.specificationStorageUpdateSpecificationIndicatorCode.gui,
+    Permissions.specificationStorageDeleteSpecificationIndicatorCode.gui,
   ];
 
   const EXPECTED_ERROR_MESSAGE =
@@ -146,6 +147,85 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
             // Step 4: Verify indicator codes didn't change
             verifyIndicatorCodesUnchanged(originalIndicatorCodes);
           });
+        });
+      });
+    },
+  );
+
+  it(
+    'C502994 Update Local Indicator code of Standard field for MARC authority spec (API) (spitfire)',
+    { tags: ['extendedPath', 'C502994', 'spitfire'] },
+    () => {
+      let createdIndicatorCodeId;
+      cy.getUserToken(user.username, user.password);
+
+      // Get all fields for the MARC authority specification
+      cy.getSpecificationFields(authoritySpecId).then((response) => {
+        standardField = findStandardField(response.body.fields, STANDARD_FIELD_TAG);
+        expect(standardField, `Standard field ${STANDARD_FIELD_TAG} exists`).to.exist;
+
+        // Get indicators for the standard field
+        cy.getSpecificationFieldIndicators(standardField.id).then((indicatorsResp) => {
+          // Get the first indicator
+          firstIndicator = indicatorsResp?.body?.indicators[0];
+          expect(firstIndicator, 'First indicator exists').to.exist;
+
+          // Cleanup: Remove any existing test indicator code from previous failed runs
+          cy.getSpecificationIndicatorCodes(firstIndicator.id).then((existingCodesResp) => {
+            const existingTestCode = existingCodesResp.body.codes.filter(
+              ({ code: { code } }) => code === 'z' || code === 'w',
+            );
+            existingTestCode.forEach((code) => {
+              cy.deleteSpecificationIndicatorCode(code.id).then((_cleanupResp) => {
+                cy.log('Cleaned up existing test indicator code from previous run');
+              });
+            });
+          });
+
+          // Create a local indicator code for testing
+          const createPayload = {
+            code: 'z',
+            label: 'AT_C502994_Test Local Code',
+            deprecated: false,
+          };
+
+          cy.createSpecificationIndicatorCode(firstIndicator.id, createPayload).then(
+            (createResp) => {
+              createdIndicatorCodeId = createResp.body.id;
+
+              // Step 1: Update all fields of the created local indicator code
+              const updatePayload = {
+                code: 'w',
+                label: 'Code 2 name updated',
+                deprecated: false,
+              };
+
+              cy.updateSpecificationIndicatorCode(createdIndicatorCodeId, updatePayload, true).then(
+                (updateResp) => {
+                  expect(updateResp.status, 'Step 1: Update local indicator code').to.eq(202);
+                  expect(updateResp.body.code).to.eq(updatePayload.code);
+                  expect(updateResp.body.label).to.eq(updatePayload.label);
+                  expect(updateResp.body.deprecated).to.eq(updatePayload.deprecated);
+
+                  // Step 2: Verify the indicator code was updated
+                  cy.getSpecificationIndicatorCodes(firstIndicator.id).then((verifyResp) => {
+                    validateApiResponse(verifyResp, 200);
+
+                    const updatedCode = verifyResp.body.codes.find(
+                      (code) => code.id === createdIndicatorCodeId,
+                    );
+                    expect(updatedCode.code, 'Code field updated').to.eq(updatePayload.code);
+                    expect(updatedCode.label, 'Label field updated').to.eq(updatePayload.label);
+                    expect(updatedCode.deprecated, 'Deprecated field updated').to.eq(
+                      updatePayload.deprecated,
+                    );
+
+                    cy.deleteSpecificationIndicatorCode(createdIndicatorCodeId);
+                  });
+                },
+              );
+            },
+          );
         });
       });
     },
