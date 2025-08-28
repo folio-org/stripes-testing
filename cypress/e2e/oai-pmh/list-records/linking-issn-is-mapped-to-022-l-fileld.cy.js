@@ -44,7 +44,6 @@ describe('OAI-PMH', () => {
       'C411725 ListRecords: SRS: Verify that "Linking ISSN" is mapped as "022$l" (firebird)',
       { tags: ['extendedPath', 'firebird', 'C411725'] },
       () => {
-        cy.getAdminToken();
         OaiPmh.listRecordsRequest().then((response) => {
           OaiPmh.verifyOaiPmhRecordHeader(response, marcInstance.id, false, true);
           OaiPmh.verifyMarcField(
