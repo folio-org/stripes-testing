@@ -70,7 +70,7 @@ describe('Bulk-edit', () => {
 
         const newLocation = 'Online';
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replacePermanentLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

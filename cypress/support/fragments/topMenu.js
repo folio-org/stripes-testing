@@ -53,6 +53,8 @@ const settingsBankingInformationPath = '/settings/organizations/banking-informat
 const settingsFinanceExpenseClassesPath = '/settings/finance/expense-classes';
 const settingsInvoiveApprovalPath = '/settings/invoice/approvals';
 const settingsOrganizationsPath = '/settings/organizations';
+const settingsOrdersPath = '/settings/orders';
+const oaPath = '/oa/publicationRequests';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -110,6 +112,8 @@ export default {
   settingsFinanceExpenseClassesPath,
   settingsInvoiveApprovalPath,
   settingsOrganizationsPath,
+  settingsOrdersPath,
+  oaPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

@@ -23,8 +23,14 @@ const memberDropdownButton = Button({ id: 'consortium-member-select' });
 const memberDropdownList = SelectionList({ id: 'sl-container-consortium-member-select' });
 
 export const messages = {
-  created: (name, members) => `${name} was successfully created for ${members} libraries.`,
-  updated: (name, members) => `${name} was successfully updated for ${members} libraries.`,
+  created: (name, members) => {
+    const libraryWord = members.includes(',') ? 'libraries' : 'library';
+    return `${name} was successfully created for ${members} ${libraryWord}.`;
+  },
+  updated: (name, members) => {
+    const libraryWord = members.includes(',') ? 'libraries' : 'library';
+    return `${name} was successfully updated for ${members} ${libraryWord}.`;
+  },
   deleted: (settingName, entityName) => `The ${settingName} ${entityName} was successfully deleted`,
   noPermission: (members) => `You do not have permissions at one or more members: ${members}`,
   pleaseFillIn: 'Please fill this in to continue',

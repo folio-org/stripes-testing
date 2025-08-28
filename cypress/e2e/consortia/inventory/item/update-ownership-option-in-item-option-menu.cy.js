@@ -52,22 +52,20 @@ describe('Inventory', () => {
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
       });
-      cy.withinTenant(Affiliations.College, () => {
+      cy.setTenant(Affiliations.College).then(() => {
         InventoryInstance.createInstanceViaApi()
           .then(({ instanceData }) => {
             testData.collegeTenant.instance = instanceData;
 
-            ServicePoints.getCircDesk1ServicePointViaApi().then(
-              (servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.collegeTenant.location = location;
-                  testData.collegeTenant.locationName = location.name;
-                });
-              },
-            );
+            ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+              const collegeLocationData = Locations.getDefaultLocation({
+                servicePointId: servicePoint.id,
+              }).location;
+              Locations.createViaApi(collegeLocationData).then((location) => {
+                testData.collegeTenant.location = location;
+                testData.collegeTenant.locationName = location.name;
+              });
+            });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
               testData.collegeTenant.holdings.sourceId = folioSource.id;
             });
@@ -95,65 +93,67 @@ describe('Inventory', () => {
               }).then((item) => {
                 testData.collegeTenant.item = item;
               });
-
-              InventoryInstance.shareInstanceViaApi(
-                testData.collegeTenant.instance.instanceId,
-                testData.consortiaId,
-                Affiliations.College,
-                Affiliations.Consortia,
-              );
             });
+
+            InventoryInstance.shareInstanceViaApi(
+              testData.collegeTenant.instance.instanceId,
+              testData.consortiaId,
+              Affiliations.College,
+              Affiliations.Consortia,
+            );
           });
       });
 
-      cy.withinTenant(Affiliations.University, () => {
-        ServicePoints.getCircDesk1ServicePointViaApi()
-          .then((servicePoint) => {
-            const universityFirstLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoint.id,
-            }).location;
-            const universitySecondLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoint.id,
-            }).location;
-            Locations.createViaApi(universityFirstLocationData).then((location) => {
-              testData.universityTenant.location1 = location;
-              testData.universityTenant.firstLocationName = location.name;
-            });
-            Locations.createViaApi(universitySecondLocationData).then((location) => {
-              testData.universityTenant.location2 = location;
-              testData.universityTenant.secondLocationName = location.name;
-            });
-            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-              testData.universityTenant.firstHoldings.sourceId = folioSource.id;
-            });
-            cy.getLoanTypes({ limit: 1 }).then((res) => {
-              testData.universityTenant.item.loanTypeId = res[0].id;
-            });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
-              testData.universityTenant.item.materialTypeId = res.id;
-            });
-          })
-          .then(() => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.collegeTenant.instance.instanceId,
-              permanentLocationId: testData.universityTenant.location1.id,
-              sourceId: testData.universityTenant.firstHoldings.sourceId,
-            }).then((holding) => {
-              testData.universityTenant.firstHoldings = holding;
+      cy.resetTenant();
+      cy.setTenant(Affiliations.University);
+      ServicePoints.getCircDesk1ServicePointViaApi()
+        .then((servicePoint) => {
+          const universityFirstLocationData = Locations.getDefaultLocation({
+            servicePointId: servicePoint.id,
+          }).location;
+          const universitySecondLocationData = Locations.getDefaultLocation({
+            servicePointId: servicePoint.id,
+          }).location;
+          Locations.createViaApi(universityFirstLocationData).then((location) => {
+            testData.universityTenant.location1 = location;
+            testData.universityTenant.firstLocationName = location.name;
+          });
+          Locations.createViaApi(universitySecondLocationData).then((location) => {
+            testData.universityTenant.location2 = location;
+            testData.universityTenant.secondLocationName = location.name;
+          });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            testData.universityTenant.firstHoldings.sourceId = folioSource.id;
+          });
+          cy.getLoanTypes({ limit: 1 }).then((res) => {
+            testData.universityTenant.item.loanTypeId = res[0].id;
+          });
+          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            testData.universityTenant.item.materialTypeId = res.id;
+          });
+        })
+        .then(() => {
+          InventoryHoldings.createHoldingRecordViaApi({
+            instanceId: testData.collegeTenant.instance.instanceId,
+            permanentLocationId: testData.universityTenant.location1.id,
+            sourceId: testData.universityTenant.firstHoldings.sourceId,
+          }).then((holding) => {
+            testData.universityTenant.firstHoldings = holding;
 
-              InventoryItems.createItemViaApi({
-                barcode: testData.universityTenant.item.barcode,
-                holdingsRecordId: testData.universityTenant.firstHoldings.id,
-                materialType: { id: testData.universityTenant.item.materialTypeId },
-                permanentLoanType: { id: testData.universityTenant.item.loanTypeId },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              }).then((item) => {
-                testData.universityTenant.item = item;
-              });
+            InventoryItems.createItemViaApi({
+              barcode: testData.universityTenant.item.barcode,
+              holdingsRecordId: testData.universityTenant.firstHoldings.id,
+              materialType: { id: testData.universityTenant.item.materialTypeId },
+              permanentLoanType: { id: testData.universityTenant.item.loanTypeId },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+            }).then((item) => {
+              testData.universityTenant.item = item;
             });
           });
-      });
+        });
+      cy.resetTenant();
 
+      cy.getAdminToken();
       cy.createTempUser(userPermissions).then((userProperties) => {
         testData.user = userProperties;
 

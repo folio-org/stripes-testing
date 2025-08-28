@@ -1162,11 +1162,9 @@ export default {
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
-    cy.do([
-      multiSelect.open(),
-      cy.wait(1000),
-      multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]),
-    ]);
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]));
   },
 
   checkSearchButtonEnabled() {
@@ -1475,5 +1473,11 @@ export default {
 
   verifyBrowseFacetsNotDisplayed() {
     cy.expect(searchAndFilterSection.find(Accordion()).absent());
+  },
+
+  clearSearchInputField() {
+    cy.do(inventorySearchAndFilter.focus());
+    cy.do(inventorySearchAndFilter.find(clearIcon).click());
+    this.checkSearchQueryText('');
   },
 };

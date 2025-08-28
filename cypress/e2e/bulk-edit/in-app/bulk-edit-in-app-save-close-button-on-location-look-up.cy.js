@@ -67,7 +67,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         // Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         // Select "Temporary item location" from  "Options" dropdown => Select "Replace with" option from  "Select action" dropdown
         BulkEditActions.replaceTemporaryLocation(locations);
         // Open "Select location" by clicking on "Location look-up" => Select  Item's Campus with just one location so that location is auto populated (e.g. "Online")

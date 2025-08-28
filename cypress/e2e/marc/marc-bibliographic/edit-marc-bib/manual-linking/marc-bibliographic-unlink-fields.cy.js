@@ -138,9 +138,8 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.authority700FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
+            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.checkCallout(testData.successMsg);
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
               linkedField.tag,
               linkedField.secondBox,

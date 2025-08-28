@@ -58,7 +58,7 @@ describe('Bulk-edit', () => {
           invalidDate,
         );
 
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

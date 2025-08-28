@@ -362,10 +362,10 @@ export default {
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   },
 
-  addDays(days) {
-    const date = new Date();
-    date.setDate(date.getDate() + days);
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  addDays(days, date = new Date()) {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + days);
+    return new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
   },
 
   getFutureWeekDateObj() {
@@ -577,5 +577,18 @@ export default {
     const minutes = String(now.getUTCMinutes()).padStart(2, '0');
 
     return `${year}${month}${day}${hours}${minutes}`;
+  },
+
+  getCurrentDateForOaiPmh(offsetMinutes = 0) {
+    // Format date as YYYY-MM-DDTHH:mm:ssZ
+    const now = new Date(Date.now() + offsetMinutes * 60 * 1000);
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
   },
 };

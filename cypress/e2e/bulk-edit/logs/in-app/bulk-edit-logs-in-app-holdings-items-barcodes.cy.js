@@ -113,7 +113,7 @@ describe('Bulk-edit', () => {
             'Instance (Title, Publisher, Publication date)',
           );
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.replaceTemporaryLocation(LOCATION_NAMES.MAIN_LIBRARY, 'holdings', 0);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.replacePermanentLocation(

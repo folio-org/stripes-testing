@@ -13,6 +13,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
 const enableBankingInformationCheckbox = Checkbox('Enable banking information');
 const saveButton = Button('Save');
+const newCategory = Button('+ New');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
@@ -62,6 +63,7 @@ export default {
 
   selectCategories: () => {
     cy.do(NavListItem('Categories').click());
+    cy.wait(2000);
   },
 
   selectBankingInformation: () => {
@@ -134,6 +136,29 @@ export default {
     );
   },
 
+  clickNewCategoriesButton() {
+    cy.do(newCategory.click());
+  },
+
+  fillCategoryName(name) {
+    cy.get('#editList-categories').find('input[type="text"]').clear().type(name)
+      .blur();
+  },
+
+  saveCategoryChanges() {
+    cy.do(Button('Save').click());
+  },
+
+  checkCategoriesTableContent(typeName) {
+    const grid = '#editList-categories';
+    cy.get(`${grid} [role="row"][aria-rowindex]:not([aria-rowindex="1"])`)
+      .filter((_, row) => {
+        const nameCell = row.querySelector('[role="gridcell"]');
+        return nameCell && nameCell.textContent.trim() === typeName;
+      })
+      .should('have.length', 1);
+  },
+
   deleteType: (typeName) => {
     cy.do(
       MultiColumnListCell({ content: typeName.name }).perform((element) => {
@@ -152,6 +177,7 @@ export default {
 
   selectAccountTypes: () => {
     cy.do(NavListItem('Account types').click());
+    cy.wait(2000);
   },
 
   createCategoriesViaApi(categories) {
@@ -251,6 +277,15 @@ export default {
       .blur();
   },
 
+  clickOutsideAccountTypeField() {
+    cy.get('#editList-bankingAccountTypes').find('input[type="text"]').blur();
+  },
+
+  checkErrorMessage(errorText = 'Please fill this in to continue') {
+    const grid = '#editList-bankingAccountTypes';
+    cy.get(`${grid} [class*="feedbackError"]`).should('be.visible').and('contain.text', errorText);
+  },
+
   saveAccountTypeChanges() {
     cy.get('button[id^="clickable-save-bankingAccountTypes-"]').click();
   },
@@ -324,6 +359,7 @@ export default {
 
   clickNewButton() {
     cy.do(Button({ id: 'clickable-add-bankingAccountTypes' }).click());
+    cy.wait(2000);
   },
 
   checkNewAccountTypeRow() {

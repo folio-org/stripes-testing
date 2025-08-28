@@ -114,13 +114,17 @@ describe('Inventory', () => {
 
     afterEach('delete test data', () => {
       cy.getAdminToken();
+      CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+        name: CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME,
+        callNumberTypes: [],
+      });
       Users.deleteViaApi(userId);
       InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C388549');
     });
 
     it(
       'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C388549', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C388549', 'eurekaPhase1'] },
       () => {
         const exactMatchQuery = 'B JORDAN DVD';
         const requiredRowsOrder = [

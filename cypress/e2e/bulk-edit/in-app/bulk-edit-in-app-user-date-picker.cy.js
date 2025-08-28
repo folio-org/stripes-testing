@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
         const nextWeekDate = DateTools.getFutureWeekDateObj();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(tomorrowDate);
         BulkEditActions.verifyPickedDate(tomorrowDate);
 
@@ -55,7 +55,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(user.username);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillExpirationDate(tomorrowDate);
         BulkEditActions.verifyPickedDate(tomorrowDate);
         BulkEditActions.clearPickedDate();

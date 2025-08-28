@@ -53,7 +53,7 @@ describe('Bulk-edit', () => {
           'testPermFirst',
           newName,
         );
-        BulkEditActions.openStartBulkEditForm();
+        BulkEditActions.openStartBulkEditLocalForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();

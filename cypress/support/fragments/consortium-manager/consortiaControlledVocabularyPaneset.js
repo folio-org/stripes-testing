@@ -207,4 +207,13 @@ export default {
   verifyRecordNotInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
+
+  verifyShareCheckboxState({ isEnabled = true, isChecked = false } = {}) {
+    cy.expect([memberLibrariesShare.is({ disabled: !isEnabled, checked: isChecked })]);
+  },
+
+  clearTextField(placeholder) {
+    cy.do(TextField({ placeholder }).clear());
+    cy.expect(TextField({ placeholder }).has({ value: '' }));
+  },
 };

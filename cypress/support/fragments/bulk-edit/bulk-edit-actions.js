@@ -81,7 +81,7 @@ const bulkPageSelections = {
 };
 
 export default {
-  openStartBulkEditForm() {
+  openStartBulkEditLocalForm() {
     cy.do(startBulkEditLocalButton.click());
   },
 
@@ -95,7 +95,8 @@ export default {
     cy.wait(2000);
   },
 
-  openInAppStartBulkEditFrom() {
+  openStartBulkEditForm() {
+    cy.wait(1000);
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
   },
@@ -159,7 +160,8 @@ export default {
 
   selectAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ dataTestID: 'select-actions-0' }))
         .choose(actionName),
     );
@@ -234,7 +236,12 @@ export default {
   },
 
   deleteRow(rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
+    cy.do(
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(deleteBtn)
+        .click(),
+    );
   },
 
   deleteRowInBulkEditMarcInstancesAccordion(rowIndex = 0) {
@@ -367,6 +374,10 @@ export default {
     cy.do(closeAreYouSureModalButton.click());
   },
 
+  clickEscButton() {
+    cy.do(Keyboard.escape());
+  },
+
   openActions() {
     cy.do(actionsBtn.click());
   },
@@ -420,7 +431,7 @@ export default {
   },
 
   replaceWithIsDisabled(rowIndex = 0) {
-    cy.do([
+    cy.expect([
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ content: 'Replace with' }))
         .has({ disabled: true }),
@@ -439,6 +450,11 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
+    cy.expect([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Find' }))
+        .has({ disabled: true }),
+    ]);
     this.verifyConfirmButtonDisabled(true);
     cy.do(oldEmail.fillIn(oldEmailDomain));
     this.verifyConfirmButtonDisabled(true);
@@ -1664,44 +1680,149 @@ export default {
     );
   },
 
-  verifyGroupOptionsInSelectOptionsItemDropdown() {
+  verifyGroupOptionsInSelectOptionsDropdown(type) {
     this.clickOptionsSelection();
 
-    const expectedOptions = [
-      ['Administrative note', 'Suppress from discovery'],
-      [
-        'Action note',
-        'Binding',
-        'Copy note',
-        'Electronic bookplate',
-        'Note',
-        'Provenance',
-        'Reproduction',
-      ],
-      [
-        'Check in note',
-        'Check out note',
-        'Item status',
-        'Permanent loan type',
-        'Temporary loan type',
-      ],
-      ['Permanent item location', 'Temporary item location'],
-    ];
-    const expectedGroupLabels = [
-      'Administrative data',
-      'Item notes',
-      'Loan and availability',
-      'Location',
-    ];
+    let expectedOptions;
+    let expectedGroupLabels;
+
+    switch (type) {
+      case 'item':
+        expectedOptions = [
+          ['Administrative note', 'Suppress from discovery'],
+          [
+            'Action note',
+            'Binding',
+            'Copy note',
+            'Electronic bookplate',
+            'Note',
+            'Provenance',
+            'Reproduction',
+          ],
+          [
+            'Check in note',
+            'Check out note',
+            'Item status',
+            'Permanent loan type',
+            'Temporary loan type',
+          ],
+          ['Permanent item location', 'Temporary item location'],
+        ];
+        expectedGroupLabels = [
+          'Administrative data',
+          'Item notes',
+          'Loan and availability',
+          'Location',
+        ];
+        break;
+
+      case 'instance':
+        expectedOptions = [
+          [
+            'Administrative note',
+            'Set records for deletion',
+            'Staff suppress',
+            'Statistical code',
+            'Suppress from discovery',
+          ],
+          [
+            'Accessibility note',
+            'Accumulation and Frequency of Use note',
+            'Action note',
+            'Additional Physical Form Available note',
+            'Awards note',
+            'Bibliography note',
+            'Binding Information note',
+            'Biographical or Historical Data',
+            'Cartographic Mathematical Data',
+            'Case File Characteristics note',
+            'Citation / References note',
+            'Copy and Version Identification note',
+            'Creation / Production Credits note',
+            'Cumulative Index / Finding Aides notes',
+            'Data quality note',
+            'Date / time and place of an event note',
+            'Dissertation note',
+            'Entity and Attribute Information note',
+            'Exhibitions note',
+            'Formatted Contents Note',
+            'Former Title Complexity note',
+            'Funding Information Note',
+            'General note',
+            'Geographic Coverage note',
+            'Immediate Source of Acquisition note',
+            'Information About Documentation note',
+            'Information related to Copyright Status',
+            'Issuing Body note',
+            'Language note',
+            'Linking Entry Complexity note',
+            'Local notes',
+            'Location of Originals / Duplicates note',
+            'Location of Other Archival Materials note',
+            'Methodology note',
+            'Numbering peculiarities note',
+            'Original Version note',
+            'Ownership and Custodial History note',
+            'Participant or Performer note',
+            'Preferred Citation of Described Materials note',
+            'Publications About Described Materials note',
+            'Reproduction note',
+            'Restrictions on Access note',
+            'Scale note for graphic material',
+            'Source of Description note',
+            'Study Program Information note',
+            'Summary',
+            'Supplement note',
+            'System Details note',
+            'Target Audience note',
+            'Terms Governing Use and Reproduction note',
+            'Type of computer file or data note',
+            'Type of report and period covered note',
+            'With note',
+          ],
+        ];
+        expectedGroupLabels = ['Administrative data', 'Instance notes'];
+        break;
+
+      case 'holding':
+        expectedOptions = [
+          ['Administrative note', 'Suppress from discovery'],
+          ['Link text', 'Materials specified', 'URI', 'URL public note', 'URL relationship'],
+          [
+            'Action note',
+            'Binding',
+            'Copy note',
+            'Electronic bookplate',
+            'Note',
+            'Provenance',
+            'Reproduction',
+          ],
+          ['Permanent holdings location', 'Temporary holdings location'],
+        ];
+        expectedGroupLabels = [
+          'Administrative data',
+          'Electronic access',
+          'Holdings notes',
+          'Location',
+        ];
+        break;
+
+      default:
+        throw new Error(
+          `Unknown dropdown type: ${type}. Supported types: 'item', 'instance', 'holding'`,
+        );
+    }
+
     const groupSelector = 'li[class*="groupLabel"]';
 
     cy.get(groupSelector).each(($groupLabel, ind) => {
       const labelName = $groupLabel.text();
-
       expect(labelName).to.eq(expectedGroupLabels[ind]);
 
-      const optionTexts = [];
+      // Verification for non-clickable groups
+      cy.wrap($groupLabel).should('not.have.attr', 'aria-selected', 'false');
 
+      const optionTexts = [];
       cy.wrap($groupLabel)
         .nextUntil(groupSelector)
         .filter('[class*="groupedOption"]')
@@ -1870,6 +1991,27 @@ export default {
     this.fillInSubfield(subfield, rowIndex);
   },
 
+  verifyTagAndIndicatorsAndSubfieldValues(tag, ind1, ind2, subfield, rowIndex = 0) {
+    cy.expect([
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(tagField)
+        .has({ value: tag }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind1Field)
+        .has({ value: ind1 }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind2Field)
+        .has({ value: ind2 }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ value: subfield }),
+    ]);
+  },
+
   fillInSecondSubfield(value, rowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
@@ -2029,6 +2171,20 @@ export default {
     );
   },
 
+  verifyInvalidValueInSubfieldOfSubRow(rowIndex = 0, subRowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .perform((rowEl) => {
+          cy.wrap(rowEl)
+            .find('[class*="subRow-"]')
+            .eq(subRowIndex)
+            .find('[class*="subfield-"]')
+            .should('have.text', 'Please check your input.');
+        }),
+    );
+  },
+
   fillInDataInSubRow(value, rowIndex = 0, subRowIndex = 0) {
     cy.do(
       bulkEditsMarcInstancesAccordion
@@ -2052,7 +2208,7 @@ export default {
           cy.wrap(rowEl)
             .find('[class*="subRow-"]')
             .eq(subRowIndex)
-            .find('select[name="action"]')
+            .find('select[name="name"]')
             .eq(1)
             .select(action);
         }),
@@ -2193,6 +2349,30 @@ export default {
             .find('button[icon="info"]')
             .should('not.exist');
         }),
+    );
+  },
+
+  verifyPaneRecordsCountInEditForm(value) {
+    cy.expect(bulkEditPane.find(Pane({ subtitle: `${value} records matched` })).exists());
+  },
+
+  verifyPatronGroupsAlphabeticalOrder() {
+    cy.wait(2000);
+    cy.do(
+      bulkPageSelections.patronGroup.perform((element) => {
+        const options = [...element.querySelectorAll('option')]
+          .map((option) => option.textContent)
+          .filter((text) => text && text !== 'Select patron group');
+
+        // Verify that options array is not empty
+        expect(options.length).to.be.greaterThan(0);
+
+        const sortedOptions = [...options].sort((a, b) => {
+          return a.localeCompare(b);
+        });
+
+        expect(options).to.deep.equal(sortedOptions);
+      }),
     );
   },
 };

@@ -71,7 +71,7 @@ describe('Eureka', () => {
         .join(' '),
     };
     const capabSetsToAssignCentral = [
-      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.uiAuthorizationPoliciesSettingsAdmin,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
     ];
     const capabSetsToAssignCollege = [CapabilitySets.uiAuthorizationPoliciesSettingsAdmin];

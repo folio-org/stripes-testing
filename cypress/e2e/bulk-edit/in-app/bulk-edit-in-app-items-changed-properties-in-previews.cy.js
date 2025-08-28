@@ -87,7 +87,7 @@ describe('Bulk-edit', () => {
         columnNames.forEach((column) => {
           BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(column);
         });
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.noteRemoveAll('Administrative note');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.duplicateCheckInNote('in', 1);

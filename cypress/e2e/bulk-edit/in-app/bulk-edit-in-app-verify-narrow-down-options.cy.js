@@ -84,7 +84,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         // Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.isDisabledRowIcons(true);
         //  Click "Select option" dropdown in "Options" column under "Bulk edits" accordion
         BulkEditActions.verifyItemOptions();

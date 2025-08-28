@@ -61,7 +61,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(holdingHRID);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.isSelectActionAbsent();
 

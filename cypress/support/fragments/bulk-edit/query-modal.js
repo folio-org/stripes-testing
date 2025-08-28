@@ -24,11 +24,14 @@ const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button(including('Select field'));
+const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
   instanceUuid: 'Holdings — Instance UUID',
+  holdingsHrid: 'Holdings — HRID',
+  holdingsUuid: 'Holdings — UUID',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
@@ -48,15 +51,22 @@ export const instanceFieldValues = {
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
+  instanceHrid: 'Instance — Instance HRID',
   instanceTitle: 'Instance — Resource title',
+  itemAccessionNumber: 'Item — Accession number',
+  itemBarcode: 'Item — Barcode',
   itemStatus: 'Item — Status',
+  itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
   holdingsId: 'Holding — UUID',
+  holdingsHrid: 'Holding — HRID',
   temporaryLocation: 'Temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
+  materialTypeName: 'Material type — Name',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
+  externalSystemId: 'User — External system ID',
   firstName: 'User — First name',
   lastName: 'User — Last name',
   patronGroup: 'Patron group — Name',
@@ -64,6 +74,7 @@ export const usersFieldValues = {
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
   userId: 'User — User UUID',
+  userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
 };
@@ -210,6 +221,7 @@ export default {
   },
 
   selectOperator(selection, row = 0) {
+    cy.wait(1000);
     cy.do(
       RepeatableFieldItem({ index: row })
         .find(Select({ dataTestID: including('operator-option') }))
@@ -356,7 +368,7 @@ export default {
   },
 
   verifyPreviewOfRecordsMatched() {
-    cy.expect([MultiColumnList().exists(), Button('Show columns').exists()]);
+    cy.expect([MultiColumnList().exists(), showColumnsButton.exists()]);
     this.testQueryDisabled(false);
     this.cancelDisabled(false);
     this.runQueryDisabled(false);

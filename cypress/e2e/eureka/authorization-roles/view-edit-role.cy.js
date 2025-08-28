@@ -87,17 +87,22 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Configuration Entries Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
             resource: 'Tags Collection',
             action: 'View',
           },
           {
             table: 'Settings',
             resource: 'Module Agreements Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Erm Settings',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Erm Settings Collection',
             action: 'View',
           },
         ],
@@ -158,8 +163,8 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Settings: 3,
-            Data: 10,
+            Settings: 5,
+            Data: 9,
           },
         },
         absentCapabilitySetTables: ['Procedural'],

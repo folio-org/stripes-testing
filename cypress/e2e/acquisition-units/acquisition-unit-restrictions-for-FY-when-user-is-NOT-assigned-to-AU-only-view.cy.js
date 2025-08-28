@@ -5,6 +5,7 @@ import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Acquisition Units', () => {
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -12,10 +13,16 @@ describe('Acquisition Units', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      cy.reload();
+      AcquisitionUnits.waitLoading();
+    }, 20_000);
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
     });
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
@@ -44,17 +51,14 @@ describe('Acquisition Units', () => {
       permissions.uiFinanceFinanceViewGroup.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-        defaultFiscalYear.id = firstFiscalYearResponse.id;
-      });
 
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
       AcquisitionUnits.assignAdmin();
       AcquisitionUnits.editAU();
       AcquisitionUnits.selectViewCheckbox();
-
-      cy.visit(TopMenu.fiscalYearPath);
+      TopMenuNavigation.openAppFromDropdown('Finance');
+      FinanceHelp.clickFiscalYearButton();
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.editFiscalYearDetails();

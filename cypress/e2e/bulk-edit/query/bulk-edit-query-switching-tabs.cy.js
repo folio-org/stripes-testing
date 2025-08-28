@@ -34,7 +34,6 @@ describe(
           barcode: getRandomPostfix(),
         };
 
-        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditView.gui,
           permissions.bulkEditUpdateRecords.gui,
@@ -47,18 +46,16 @@ describe(
           user = userProperties;
 
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-          ServicePoints.getCircDesk1ServicePointViaApi()
-            .then((servicePoint) => {
-              servicePointId = servicePoint.id;
-            })
-            .then(() => {
-              UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-              Checkout.checkoutItemViaApi({
-                itemBarcode: item.barcode,
-                servicePointId,
-                userBarcode: user.barcode,
-              });
+          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            servicePointId = servicePoint.id;
+
+            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+            Checkout.checkoutItemViaApi({
+              itemBarcode: item.barcode,
+              servicePointId,
+              userBarcode: user.barcode,
             });
+          });
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

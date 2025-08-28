@@ -163,6 +163,7 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
           QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+          QuickMarcEditor.closeAllCallouts();
 
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading2);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);

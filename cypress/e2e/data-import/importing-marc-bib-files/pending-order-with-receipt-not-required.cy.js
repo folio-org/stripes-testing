@@ -142,7 +142,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          orderNumber = initialNumber.replace('-1', '');
+          orderNumber = initialNumber.replace(/-\d+$/, '');
         });
         OrderLineDetails.checkOrderLineDetails({
           purchaseOrderLineInformation: [{ key: 'Receipt status', value: 'Receipt Not Required' }],

@@ -21,6 +21,7 @@ import {
   TextArea,
   TextField,
   including,
+  MultiSelectMenu,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -91,6 +92,22 @@ const donorSection = Section({ id: 'isDonor' });
 const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
 const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
+const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
+const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
+const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
+const updatedDateAccordion = Section({ id: 'metadata.updatedDate' });
+const startDateField = TextField({ name: 'startDate' });
+const endDateField = TextField({ name: 'endDate' });
+const applyButton = Button('Apply');
+const vendorInformationAccordion = Button({
+  id: 'accordion-toggle-button-vendorInformationSection',
+});
+const paymentMethodSection = Select('Payment method');
+const vendorTermsAccordion = Button({ id: 'accordion-toggle-button-agreementsSection' });
+const accountAccordion = Button({ id: 'accordion-toggle-button-accountsSection' });
+const accountStatus = Select('Account status*');
+
+const tagsPane = Pane('Tags');
 
 export default {
   waitLoading: () => {
@@ -195,11 +212,53 @@ export default {
     cy.do([tagButton.click()]);
   },
 
-  tagFilter: () => {
+  verifyTagsCount: (expected = 1) => {
+    cy.expect(Button({ id: 'clickable-show-tags' }).has({ text: including(String(expected)) }));
+  },
+
+  addTagToOrganization: (tag) => {
+    const tagsMs = MultiSelect({ id: 'input-tag' });
+    cy.do([tagsMs.open(), tagsMs.filter(tag)]);
+    cy.do(tagsMs.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including('Add tag for:')))
+        .click(),
+    );
+    cy.do(tagsMs.close());
+    InteractorsTools.checkCalloutMessage('New tag created');
+  },
+
+  selectAnyExistingTag: () => {
+    const tagsMs = MultiSelect({ id: 'input-tag' });
+    cy.do(tagsMs.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption({ index: 0 }))
+        .click(),
+    );
+    cy.do(tagsMs.close());
+  },
+
+  closeTagsPane() {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(1000);
+    cy.expect(tagsPane.absent());
+  },
+
+  selectTagFilter: (tag) => {
+    cy.wait(3000);
     cy.do([
-      Section({ id: 'org-filter-tags' }).find(Button('Tags')).click(),
-      Button({ className: 'multiSelectToggleButton---cD_fu' }).click(),
-      MultiSelectOption('^').click(),
+      Button({ id: 'accordion-toggle-button-tags' }).click(),
+      MultiSelect({ id: 'acq-tags-filter' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(tag)).clickSegment(),
     ]);
   },
 
@@ -210,6 +269,11 @@ export default {
   selectPendingStatus: () => {
     cy.wait(3000);
     cy.do(Checkbox('Pending').click());
+  },
+
+  selectInactiveStatus: () => {
+    cy.wait(3000);
+    cy.do(Checkbox('Inactive').click());
   },
 
   selectIsDonorFilter: (isDonor) => {
@@ -228,6 +292,26 @@ export default {
         toggleButtonIsDonor.click(),
       ]);
     }
+  },
+
+  selectCreatedByFiler: (createdBy) => {
+    cy.do([
+      toggleButtonCreatedBy.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(createdBy),
+      searchButtonInModal.click(),
+      MultiColumnListRow({ index: 0 }).click(),
+    ]);
+  },
+
+  selectUpdatedByFiler: (createdBy) => {
+    cy.do([
+      toggleButtonUpdatedBy.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(createdBy),
+      searchButtonInModal.click(),
+      MultiColumnListRow({ index: 0 }).click(),
+    ]);
   },
 
   checkOrganizationFilter: () => {
@@ -433,6 +517,16 @@ export default {
     cy.wait(3000);
   },
 
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
+  },
+
   checkSearchResults: (organization) => {
     cy.wait(4000);
     cy.expect(organizationsList.find(Link(organization.name)).exists());
@@ -448,11 +542,35 @@ export default {
   },
 
   selectVendor: () => {
-    cy.do([Checkbox('Vendor').click(), saveAndClose.click()]);
+    cy.do([Checkbox('Vendor').click()]);
   },
 
   deselectVendor: () => {
     cy.do([Checkbox('Vendor').click(), confirmButton.click(), saveAndClose.click()]);
+  },
+
+  addVendorInformation(vendorInformation) {
+    cy.do([
+      vendorInformationAccordion.click(),
+      paymentMethodSection.choose(vendorInformation.paymentMethod),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      vendorTermsAccordion.click(),
+      Button('Add').click(),
+      TextField({ name: 'agreements[0].name' }).fillIn(vendorInformation.vendorTermsName),
+      vendorTermsAccordion.click(),
+    ]);
+    cy.wait(4000);
+    cy.do(accountAccordion.click());
+    cy.get('button[data-test-add-account-button="true"]').click();
+    cy.do([
+      TextField({ name: 'accounts[0].name' }).fillIn(vendorInformation.accountName),
+      TextField({ name: 'accounts[0].accountNo' }).fillIn(vendorInformation.accountNumber),
+      accountStatus.choose(vendorInformation.accountStatus),
+      saveAndClose.click(),
+    ]);
+    cy.do(saveAndClose.click());
   },
 
   closeDetailsPane: () => {
@@ -527,6 +645,69 @@ export default {
     })
     .then((resp) => resp.body.id),
 
+  getOrganizationByIdViaApi: (organizationId) => cy
+    .okapiRequest({
+      method: 'GET',
+      path: `organizations-storage/organizations/${organizationId}`,
+    })
+    .then((resp) => resp.body),
+
+  createContactViaApi: (contact) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/contacts',
+      body: contact,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
+  createInterfaceViaApi: (iface) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/interfaces',
+      body: iface,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
+  createInterfaceCredentialsViaApi: (interfaceId, credentials) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: `organizations-storage/interfaces/${interfaceId}/credentials`,
+      body: credentials,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.status),
+
+  createTagViaApi: (tag) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'tags',
+      body: typeof tag === 'string' ? { label: tag } : tag,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
+  getTagByLabel(label) {
+    const q = `label=="${label}"`;
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'tags',
+        searchParams: { query: q, limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((r) => r.body.tags?.[0] ?? null);
+  },
+
+  deleteTagById(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `tags/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   editOrganization: () => {
     cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
@@ -559,6 +740,17 @@ export default {
     ]);
   },
 
+  addCategoryToContact: (category) => {
+    cy.do([
+      MultiSelect({ label: 'Categories' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(category)).clickSegment(),
+      MultiSelect({ label: 'Categories' }).close(),
+      saveButtonInCotact.click(),
+    ]);
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
   addNewContact: (contact) => {
     cy.do([
       openContactSectionButton.click(),
@@ -568,6 +760,23 @@ export default {
       firstNameField.fillIn(contact.firstName),
       saveButtonInCotact.click(),
     ]);
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
+  addNewContactWithCategory: (contact, category) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      MultiSelect({ label: 'Categories' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(category)).clickSegment(),
+      MultiSelect({ label: 'Categories' }).close(),
+      saveButtonInCotact.click(),
+    ]);
+    cy.wait(2000);
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
@@ -620,6 +829,10 @@ export default {
     cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
 
+  deleteContactFromContactPeople: () => {
+    cy.get('button[data-test-unassign-contact="true"][aria-label="Unassign"]').click();
+  },
+
   selectCategories: (category) => {
     cy.do([
       MultiSelect().select(category),
@@ -648,6 +861,10 @@ export default {
   },
 
   openContactPeopleSection: () => {
+    cy.do(Section({ id: 'contactPeopleSection' }).click());
+  },
+
+  openContactPeopleSectionInEditCard: () => {
     cy.do(openContactSectionButton.click());
   },
 
@@ -687,6 +904,19 @@ export default {
     cy.wait(6000);
   },
 
+  addContactToOrganizationWithoutSaving: (contact) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(searchButtonInModal).click(),
+    ]);
+    cy.wait(6000);
+    SearchHelper.selectCheckboxFromResultsList();
+    cy.do([addContacsModal.find(saveButton).click()]);
+    cy.wait(6000);
+  },
+
   addIntrefaceToOrganization: (defaultInterface) => {
     cy.do([
       openInterfaceSectionButton.click(),
@@ -699,12 +929,55 @@ export default {
     cy.do([addInterfacesModal.find(saveButton).click(), saveAndClose.click()]);
   },
 
+  addIntrefaceToOrganizationAndClickClose: (defaultInterface) => {
+    cy.do([
+      openInterfaceSectionButton.click(),
+      interfaceSection.find(addInterfaceButton).click(),
+      addInterfacesModal.find(TextField({ name: 'query' })).fillIn(defaultInterface.name),
+      addInterfacesModal.find(searchButtonInModal).click(),
+    ]);
+    cy.wait(4000);
+    SearchHelper.selectCheckboxFromResultsList();
+    cy.do([addInterfacesModal.find(Button('Close')).click()]);
+  },
+
   closeContact: () => {
-    cy.do(Section({ id: 'view-contact' }).find(timesButton).click());
+    cy.do(PaneHeader({ id: 'paneHeaderview-contact' }).find(timesButton).click());
+  },
+
+  closeEditInterface: () => {
+    cy.do(PaneHeader({ id: 'paneHeaderedit-interface' }).find(timesButton).click());
   },
 
   closeInterface: () => {
     cy.do(Section({ id: 'view-interface' }).find(timesButton).click());
+  },
+
+  openInterfaceSection: () => {
+    cy.do(openInterfaceSectionButton.click());
+  },
+
+  selectInterfaceType: (interfaceType) => {
+    // eslint-disable-next-line cypress/no-force
+    cy.get('select[name="type"]').select(interfaceType, { force: true });
+  },
+
+  addNoteToInterface: (note) => {
+    cy.do([TextArea({ name: 'notes' }).fillIn(note)]);
+  },
+
+  clickShowInterfaceCredentials: () => {
+    cy.do(Button('Show credentials').click());
+  },
+
+  verifyPasswordDisplayed(interfceCredentials) {
+    const { username, password } = interfceCredentials;
+    cy.expect(KeyValue('Username').has({ value: username }));
+    cy.expect(KeyValue('Password').has({ value: password }));
+  },
+
+  clickSaveButton: () => {
+    cy.do(saveButton.click());
   },
 
   cancelOrganization: () => {
@@ -745,15 +1018,58 @@ export default {
     );
   },
 
+  checkCategoryIsAddToContactPeopleSection: (categories) => {
+    categories.forEach((cat) => {
+      cy.expect(
+        Section({ id: 'contactPeopleSection' })
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(cat) }),
+      );
+    });
+  },
+
+  clickContactRecord: (contact) => {
+    const fullName = `${contact.lastName}, ${contact.firstName}`;
+    cy.do(
+      Section({ id: 'contactPeopleSection' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0, content: fullName }))
+        .click(),
+    );
+  },
+
+  checkContactSectionIsEmpty: () => {
+    cy.get('#contactPeopleSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'The list contains no items',
+    );
+  },
+
   checkDonorContactIsAdd: (contact, index = 0) => {
     cy.get('#privilegedDonorInformation [data-row-index="row-' + index + '"]').within(() => {
       cy.get('div[class*=mclCell-]').eq(0).contains(`${contact.lastName}, ${contact.firstName}`);
     });
   },
 
+  checkInterfaceSectionIsEmpty: () => {
+    cy.get('#interfacesSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'No interface data available',
+    );
+  },
+
   checkInterfaceIsAdd: (defaultInterface) => {
     cy.do(openInterfaceSectionButton.click());
     cy.expect(interfaceSection.find(KeyValue({ value: defaultInterface.name })).exists());
+  },
+
+  checkInterfaceTypeIsAdd: (interfaceType) => {
+    cy.expect(interfaceSection.find(KeyValue({ value: interfaceType })).exists());
+  },
+
+  checkInterfaceNoteIsAdd: (interfaceNote) => {
+    cy.expect(interfaceSection.find(KeyValue({ value: interfaceNote })).exists());
   },
 
   selectInterface: (defaultInterface) => {
@@ -771,6 +1087,10 @@ export default {
     ]);
   },
 
+  deleteInterfaceFromEditPage: () => {
+    cy.get('button[data-test-unassign-interface="true"][aria-label="Unassign"]').click();
+  },
+
   selectContact: (contact) => {
     cy.do([
       contactPeopleSection
@@ -783,7 +1103,7 @@ export default {
     ]);
   },
 
-  editContact: () => {
+  clickEdit: () => {
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
@@ -923,6 +1243,10 @@ export default {
     cy.do([organizationNameField.fillIn(`${organization.name}-edited`), saveAndClose.click()]);
   },
 
+  editOrganizationDescription: (organization) => {
+    cy.do([TextArea('Description').fillIn(`${organization.name}-edited`), saveAndClose.click()]);
+  },
+
   unAssignInterface: (defaultInterface) => {
     cy.do(openInterfaceSectionButton.click());
     cy.get('#interface-list')
@@ -1014,6 +1338,12 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
 
+  closeEditOrganizationPane: () => {
+    cy.get(
+      'div[data-test-pane-header="true"] button[data-test-pane-header-dismiss-button="true"]',
+    ).click();
+  },
+
   editBankingInformationName: (bankingInformationName) => {
     cy.do([
       bankingInformationButton.click(),
@@ -1048,5 +1378,21 @@ export default {
     fields.forEach(({ label, conditions }) => {
       cy.expect(Button(label).has(conditions));
     });
+  },
+
+  filterByDateUpdated(startDate, endDate) {
+    cy.do([
+      toggleButtonDateUpdated.click(),
+      updatedDateAccordion.find(startDateField).fillIn(startDate),
+      updatedDateAccordion.find(endDateField).fillIn(endDate),
+      updatedDateAccordion.find(applyButton).click(),
+    ]);
+  },
+
+  checkInvalidDateRangeMessage: (expected = 'Start date is greater than end date') => {
+    cy.get('div[role="alert"] [data-test-wrong-dates-order="true"]')
+      .should('be.visible')
+      .invoke('text')
+      .then((t) => expect(t.trim()).to.eq(expected));
   },
 };

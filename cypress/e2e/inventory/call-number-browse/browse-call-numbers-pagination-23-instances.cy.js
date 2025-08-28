@@ -62,10 +62,10 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.userId);
       testData.folioInstances.forEach(({ instanceId }) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
       });
+      Users.deleteViaApi(testData.userId);
     });
 
     it(

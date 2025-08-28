@@ -1,7 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
-import Localication from '../../../support/fragments/settings/tenant/general/localication';
+import Localization from '../../../support/fragments/settings/tenant/general/localization';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -63,7 +63,7 @@ describe('Tenant', () => {
         TenantPane.verifyPageTitle('Tenant settings - Addresses - FOLIO');
         // Click "Language and localization" option under "General" label
         TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
-        Localication.checkPaneContent(false);
+        Localization.checkPaneContent(false);
         // Verify opened page title format: HTML page title is "Tenant settings - Language and localization - FOLIO"
         TenantPane.verifyPageTitle('Tenant settings - Language and localization - FOLIO');
         // Click "Preferred plugins" option under "General" label

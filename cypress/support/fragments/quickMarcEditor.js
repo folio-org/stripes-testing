@@ -138,6 +138,7 @@ const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
 const buttonLink = Button({ icon: 'unlink' });
 const deleteFieldsModal = Modal({ id: 'quick-marc-confirm-modal' });
+const slowInternetConnectionModal = Modal({ id: 'quick-marc-validation-modal' });
 const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confirm-modal-cancel' });
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
@@ -896,6 +897,14 @@ export default {
     ]);
   },
 
+  simulateSlowNetwork(urlPattern, delayMs = 5000) {
+    cy.intercept('POST', urlPattern, (req) => {
+      req.reply((res) => {
+        return new Promise((resolve) => setTimeout(() => resolve(res), delayMs));
+      });
+    }).as('slowNetworkRequest');
+  },
+
   closeEditorPane() {
     cy.do(PaneHeader().find(closeButton).click());
     cy.expect([rootSection.absent(), instanceDetailsPane.exists()]);
@@ -1597,10 +1606,7 @@ export default {
       'ui-quick-marc.record.fixedField-Level Est-text',
       'Level of establishment',
     );
-    this.verifyDropdownHoverText(
-      'ui-quick-marc.record.fixedField-Mod Rec Est-text',
-      'Modified record',
-    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Mod Rec-text', 'Modified record');
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-Source-text',
       'Cataloging source',
@@ -3069,6 +3075,11 @@ export default {
   closeModalWithEscapeKey() {
     cy.get('[class^="modal-"]').type('{esc}');
     cy.expect(Modal().absent());
+  },
+
+  verifySlowInternetConnectionModal() {
+    cy.expect(slowInternetConnectionModal.exists());
+    cy.expect(Spinner().exists());
   },
 
   discardChangesWithEscapeKey(index) {

@@ -166,7 +166,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadMatchedResults();
           BulkEditActions.downloadErrors();
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.clearPermanentLocation('item', 0);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.replaceItemStatus('Missing', 1);
