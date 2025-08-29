@@ -8,12 +8,19 @@ import SettingsOrganizations from '../../support/fragments/settings/organization
 
 describe('Organizations', { retries: { runMode: 1 } }, () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
+  const secondOrganization = {
+    name: `autotest_name2_${getRandomPostfix()}`,
+    status: 'Active',
+    code: `autotest_code_${getRandomPostfix()}`,
+    isVendor: true,
+    erpCode: `2ERP-${getRandomPostfix()}`,
+  };
   const secondBankingInformation = {
-    name: `SecondBankInfo_${getRandomPostfix()}`,
+    name: `BankInfo_${getRandomPostfix()}`,
     accountNumber: getRandomPostfix(),
   };
   const firstBankingInformation = {
-    name: `FirstBankInfo_${getRandomPostfix()}`,
+    name: `BankInfo_${getRandomPostfix()}`,
     accountNumber: getRandomPostfix(),
   };
   let C423504User;
@@ -39,9 +46,20 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
       Organizations.closeDetailsPane();
       Organizations.resetFilters();
     });
+    Organizations.createOrganizationViaApi(secondOrganization).then(
+      (responseSecondOrganizations) => {
+        secondOrganization.id = responseSecondOrganizations;
+        Organizations.searchByParameters('Name', secondOrganization.name);
+        Organizations.checkSearchResults(secondOrganization);
+        Organizations.selectOrganization(secondOrganization.name);
+        Organizations.editOrganization();
+        Organizations.addBankingInformation(secondBankingInformation);
+        Organizations.closeDetailsPane();
+      },
+    );
     cy.createTempUser([
-      permissions.uiOrganizationsViewEditCreate.gui,
-      permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+      permissions.uiOrganizationsViewEdit.gui,
+      permissions.uiOrganizationsViewAndEditBankingInformation.gui,
     ]).then((secondUserProperties) => {
       C423504User = secondUserProperties;
     });
@@ -56,12 +74,19 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
     Organizations.deleteBankingInformation();
     Organizations.closeDetailsPane();
     Organizations.resetFilters();
+    Organizations.searchByParameters('Name', secondOrganization.name);
+    Organizations.checkSearchResults(secondOrganization);
+    Organizations.selectOrganization(secondOrganization.name);
+    Organizations.editOrganization();
+    Organizations.deleteBankingInformation();
+    Organizations.closeDetailsPane();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
+    Organizations.deleteOrganizationViaApi(secondOrganization.id);
     Users.deleteViaApi(C423504User.userId);
   });
 
   it(
-    'C423514 Deleting Banking information records from an Organization with "Organizations: View, edit, create and delete banking information" (thunderjet)',
+    'C423504 Viewing and editing "Banking information" record with "Organizations: View and edit banking information" permission (thunderjet)',
     { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       cy.login(C423504User.username, C423504User.password, {
@@ -71,12 +96,12 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
       Organizations.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganization(firstOrganization.name);
+      Organizations.buttonNewIsAbsent();
       Organizations.checkBankInformationExist(firstBankingInformation.name);
       Organizations.editOrganization();
-      Organizations.addSecondBankingInformation(secondBankingInformation);
-      Organizations.checkBankInformationExist(secondBankingInformation.name);
-      Organizations.editOrganization();
-      Organizations.removeBankingInfoByBankName(firstBankingInformation.name);
+      Organizations.editBankingInformationName(secondBankingInformation.name);
+      Organizations.checkBankingInformationAddButtonIsDisabled();
+      Organizations.saveOrganization();
       Organizations.checkBankInformationExist(secondBankingInformation.name);
     },
   );

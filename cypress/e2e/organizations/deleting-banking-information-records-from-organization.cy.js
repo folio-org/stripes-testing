@@ -4,8 +4,9 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 
-describe('Organizations', () => {
+describe('Organizations', { retries: { runMode: 1 } }, () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
   const secondBankingInformation = {
     name: `SecondBankInfo_${getRandomPostfix()}`,
@@ -18,10 +19,18 @@ describe('Organizations', () => {
   let C423504User;
 
   before(() => {
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      cy.reload();
+      SettingsOrganizations.waitLoadingOrganizationSettings();
+    }, 20_000);
+    SettingsOrganizations.checkenableBankingInformationIfNeeded();
+    cy.visit(TopMenu.organizationsPath);
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
       Organizations.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganization(firstOrganization.name);
@@ -39,7 +48,6 @@ describe('Organizations', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', firstOrganization.name);
     Organizations.checkSearchResults(firstOrganization);
@@ -53,8 +61,8 @@ describe('Organizations', () => {
   });
 
   it(
-    'C42351 Deleting Banking information records from an Organization with "Organizations: View, edit, create and delete banking information" (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    'C423514 Deleting Banking information records from an Organization with "Organizations: View, edit, create and delete banking information" (thunderjet)',
+    { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       cy.login(C423504User.username, C423504User.password, {
         path: TopMenu.organizationsPath,
@@ -68,7 +76,7 @@ describe('Organizations', () => {
       Organizations.addSecondBankingInformation(secondBankingInformation);
       Organizations.checkBankInformationExist(secondBankingInformation.name);
       Organizations.editOrganization();
-      Organizations.deleteBankingInformation();
+      Organizations.removeBankingInfoByBankName(firstBankingInformation.name);
       Organizations.checkBankInformationExist(secondBankingInformation.name);
     },
   );
