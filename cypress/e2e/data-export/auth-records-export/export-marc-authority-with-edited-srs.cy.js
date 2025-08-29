@@ -166,7 +166,7 @@ describe('Data Export', () => {
 
       // Step 5: Go to "MARC Authority" app
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-      cy.waitForAuthRefresh(() => {}, 20_000);
+      MarcAuthorities.waitLoading;
 
       // Step 6: Find MARC Authority from Preconditions
       MarcAuthorities.searchBeats('AT_C446040');
