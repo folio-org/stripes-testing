@@ -68,10 +68,11 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
         });

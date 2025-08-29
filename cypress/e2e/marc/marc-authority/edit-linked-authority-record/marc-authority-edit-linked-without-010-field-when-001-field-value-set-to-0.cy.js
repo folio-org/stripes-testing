@@ -145,9 +145,7 @@ describe('MARC', () => {
             testData.fieldForEditing.newValue,
           );
           QuickMarcEditor.checkContent(testData.fieldForEditing.newValue, 7);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthorities.checkFieldAndContentExistence(
             testData.fieldForEditing.tag,

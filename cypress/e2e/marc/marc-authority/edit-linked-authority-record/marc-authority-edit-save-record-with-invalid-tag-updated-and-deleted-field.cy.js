@@ -95,10 +95,7 @@ describe('MARC', () => {
               testData.tag600,
               testData.tag600RowIndex,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3_000);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3_000);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
           })
           .then(() => {
             cy.createTempUser([
