@@ -79,28 +79,34 @@ describe('MARC', () => {
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
 
-            cy.loginAsAdmin().then(() => {
-              cy.visit(TopMenu.inventoryPath).then(() => {
-                InventoryInstances.searchByTitle(createdRecordIDs[0]);
-                InventoryInstances.selectInstance();
-                InventoryInstance.editMarcBibliographicRecord();
-                linkableFields.forEach((tag) => {
-                  QuickMarcEditor.setRulesForField(tag, true);
-                });
-                preLinkedFields.forEach((field) => {
-                  QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
-                  MarcAuthorities.switchToSearch();
-                  InventoryInstance.verifySelectMarcAuthorityModal();
-                  InventoryInstance.searchResults(field.value);
-                  InventoryInstance.clickLinkButton();
-                  QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
-                });
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(1500);
-                QuickMarcEditor.pressSaveAndClose();
-                QuickMarcEditor.checkAfterSaveAndClose();
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
               });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
+
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
             });
+            preLinkedFields.forEach((field) => {
+              QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.searchResults(field.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
+            });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+
             cy.waitForAuthRefresh(() => {
               cy.login(userData.username, userData.password, {
                 path: TopMenu.inventoryPath,
@@ -181,10 +187,10 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
             );
             InventoryViewSource.contains(
               `${marcAuthIcon}\n\t655\t  2\t$a C388552 Autobiography $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,
