@@ -52,6 +52,7 @@ describe('MARC', () => {
               );
             },
           );
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority.searchInput);
           cy.login(testData.firstUser.username, testData.firstUser.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
@@ -75,10 +76,14 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
       });
     });
 

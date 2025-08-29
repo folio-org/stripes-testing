@@ -30,10 +30,14 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             user = userProperties;
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+              cy.reload();
+              MarcAuthorities.waitLoading();
+            }, 20_000);
           },
         );
       });

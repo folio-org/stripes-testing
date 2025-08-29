@@ -54,7 +54,7 @@ describe('Data Import', () => {
         '0',
         '0',
         '$a C374184 Marvel comics',
-        '',
+        '$v Catalogs.',
         '$0 http://id.loc.gov/authorities/names/n80026980',
         '',
       ],
@@ -117,7 +117,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374184*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
 
       // create Match profile
       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
