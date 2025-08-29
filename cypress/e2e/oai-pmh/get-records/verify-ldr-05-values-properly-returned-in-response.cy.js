@@ -162,7 +162,7 @@ describe('OAI-PMH', () => {
         // Step 16: Send ListIdentifiers request with marc21_withholdings
         cy.getAdminToken();
         OaiPmh.listIdentifiersRequest('marc21_withholdings').then((response) => {
-          OaiPmh.verifyIdentifierInListResponse(response, marcInstance.id, false);
+          OaiPmh.verifyIdentifierInListResponse(response, marcInstance.id);
         });
 
         // Step 17: Change LDR position 05 to "d"
@@ -181,7 +181,7 @@ describe('OAI-PMH', () => {
         // Step 19: Send ListIdentifiers request with marc21 - should show deleted
         cy.getAdminToken();
         OaiPmh.listIdentifiersRequest('marc21').then((response) => {
-          OaiPmh.verifyIdentifierInListResponse(response, marcInstance.id, true);
+          OaiPmh.verifyIdentifierInListResponse(response, marcInstance.id, true, true);
         });
 
         // Step 20: Change LDR position 05 to "a"
