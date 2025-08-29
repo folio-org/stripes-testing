@@ -4,6 +4,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import { randomizeArray } from '../../../support/utils/arrays';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -58,12 +59,12 @@ describe('Eureka', () => {
       else cy.addRolesToNewUserApi(testData.userA.userId, originalRoleIds);
       cy.waitForAuthRefresh(() => {
         cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-          waiter: UsersCard.waitLoading,
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
         });
         cy.reload();
       }, 20_000);
-      UsersCard.waitLoading();
+      Users.waitLoading();
     });
 
     after('Delete roles, users', () => {
@@ -79,6 +80,10 @@ describe('Eureka', () => {
       'C627440 [UIU-3301] Roles rows are sorted when viewing/editing a user while having ui-users.roles - Manage (eureka)',
       { tags: ['extendedPath', 'eureka', 'C627440'] },
       () => {
+        UsersSearchPane.searchByUsername(testData.userA.username);
+        UsersSearchPane.openUser(testData.userA.username);
+        UsersCard.waitLoading();
+
         UsersCard.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNamesOrdered(originalRoleNamesSorted);

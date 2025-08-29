@@ -125,7 +125,7 @@ describe('MARC', () => {
                 query: `naturalId="${id}*" and authRefType=="Authorized"`,
               }).then((records) => {
                 records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 });
               });
             });
@@ -168,7 +168,7 @@ describe('MARC', () => {
               if (index === 0) {
                 InventoryInstance.deleteInstanceViaApi(id);
               } else {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               }
             });
           });

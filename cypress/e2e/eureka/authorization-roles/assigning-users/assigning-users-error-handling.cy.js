@@ -63,12 +63,16 @@ describe('Eureka', () => {
                       cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
                       cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
                     }
-                    cy.loginAsAdmin();
-                    TopMenuNavigation.openAppFromDropdown(
-                      APPLICATION_NAMES.SETTINGS,
-                      SETTINGS_SUBSECTION_AUTH_ROLES,
-                    );
-                    AuthorizationRoles.waitContentLoading();
+                    cy.waitForAuthRefresh(() => {
+                      cy.loginAsAdmin();
+                      TopMenuNavigation.openAppFromDropdown(
+                        APPLICATION_NAMES.SETTINGS,
+                        SETTINGS_SUBSECTION_AUTH_ROLES,
+                      );
+                      AuthorizationRoles.waitContentLoading();
+                      cy.reload();
+                      AuthorizationRoles.waitContentLoading();
+                    }, 20_000);
                   });
                 });
               });
@@ -109,9 +113,6 @@ describe('Eureka', () => {
           InteractorsTools.checkCalloutExists(testData.putErrorMessage1, testData.errorCalloutType);
           InteractorsTools.checkCalloutExists(testData.putErrorMessage2, testData.errorCalloutType);
 
-          cy.reload();
-          cy.wait('@/authn/refresh', { timeout: 20_000 });
-          AuthorizationRoles.waitLoading();
           AuthorizationRoles.searchRole(testData.roleBName);
           AuthorizationRoles.clickOnRoleName(testData.roleBName);
           AuthorizationRoles.clickAssignUsersButton();
