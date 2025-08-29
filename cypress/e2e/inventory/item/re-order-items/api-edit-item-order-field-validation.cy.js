@@ -15,7 +15,7 @@ describe('Inventory', () => {
         folioInstances: InventoryInstances.generateFolioInstances({
           count: 1,
           instanceTitlePrefix,
-          holdholdingsCount: 1,
+          holdingsCount: 1,
           itemsCount: 0,
         }),
         errorMessage: 'Order should be a number',
