@@ -16,7 +16,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
     name: `FirstBankInfo_${getRandomPostfix()}`,
     accountNumber: getRandomPostfix(),
   };
-  let C423504User;
+  let user;
 
   before(() => {
     cy.waitForAuthRefresh(() => {
@@ -43,7 +43,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
       permissions.uiOrganizationsViewEditCreate.gui,
       permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
     ]).then((secondUserProperties) => {
-      C423504User = secondUserProperties;
+      user = secondUserProperties;
     });
   });
 
@@ -57,14 +57,14 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
     Organizations.closeDetailsPane();
     Organizations.resetFilters();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
-    Users.deleteViaApi(C423504User.userId);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
     'C423514 Deleting Banking information records from an Organization with "Organizations: View, edit, create and delete banking information" (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      cy.login(C423504User.username, C423504User.password, {
+      cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
       });
