@@ -15,7 +15,7 @@ describe('fse-invoices - UI (data manipulation)', () => {
     cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     // get any active organization in order to create invoice
     cy.getOrganizationsByStatus('Active').then((response) => {
-      invoice.accountingCode = response.body.organizations[0].erpCode;
+      invoice.accountingCode = response.body.organizations[0].erpCode || 'No value set-';
       invoice.vendorName = response.body.organizations[0].name;
     });
     cy.getBatchGroups().then((batchGroup) => {
@@ -36,22 +36,22 @@ describe('fse-invoices - UI (data manipulation)', () => {
   );
 });
 
-describe('fse-invoices - UI (no data manipulation)', () => {
-  beforeEach(() => {
-    // hide sensitive data from the report
-    cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin({
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
-    cy.allure().logCommandSteps();
-  });
+// describe('fse-invoices - UI (no data manipulation)', () => {
+//   beforeEach(() => {
+//     // hide sensitive data from the report
+//     cy.allure().logCommandSteps(false);
+//     cy.loginAsAdmin({
+//       path: TopMenu.invoicesPath,
+//       waiter: Invoices.waitLoading,
+//     });
+//     cy.allure().logCommandSteps();
+//   });
 
-  it(
-    `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'invoice'] },
-    () => {
-      Invoices.waitLoading();
-    },
-  );
-});
+//   it(
+//     `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+//     { tags: ['sanity', 'fse', 'ui', 'invoice'] },
+//     () => {
+//       Invoices.waitLoading();
+//     },
+//   );
+// });

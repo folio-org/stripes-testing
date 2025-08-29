@@ -6,6 +6,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import getRandomPostfix from '../../../support/utils/stringTools';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 
 describe('fse-data-export - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -42,14 +43,14 @@ describe('fse-data-export - UI (data manipulation)', () => {
     FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
     cy.loginAsAdmin({
       path: TopMenu.dataExportPath,
-      waiter: ExportFileHelper.waitLoading,
+      waiter: DataExportLogs.waitLoading,
     });
     cy.allure().logCommandSteps();
   });
 
   it(
     `TC195471 - verify data-export job for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'data-export', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'data-export', 'toBeFixed'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);

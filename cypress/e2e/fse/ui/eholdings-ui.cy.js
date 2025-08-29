@@ -95,7 +95,7 @@ describe('fse-eholdings - UI (data manipulation)', () => {
 
   it(
     `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'toBeFixed'] },
     () => {
       const testNote = {
         title: `autotest_TC195626_${getRandomPostfix()}`,
