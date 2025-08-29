@@ -2,7 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 
-describe('fse-invoices - UI for non-production tenants', () => {
+describe('fse-invoices - UI (data manipulation)', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('fse-invoices - UI for non-production tenants', () => {
 
   it(
     `TC195468 - create invoice for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'invoice'] },
+    { tags: ['nonProd', 'fse', 'ui', 'invoice', 'fse-user-journey'] },
     () => {
       Invoices.createDefaultInvoiceWithoutAddress(invoice);
       Invoices.checkCreatedInvoice(invoice);
@@ -36,7 +36,7 @@ describe('fse-invoices - UI for non-production tenants', () => {
   );
 });
 
-describe('fse-invoices - UI for prod tenants', () => {
+describe('fse-invoices - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

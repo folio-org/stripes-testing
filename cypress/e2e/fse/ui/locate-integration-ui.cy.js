@@ -1,7 +1,7 @@
 import LocateSearch from '../../../support/fragments/locate/locate-search';
 import LocateSearchResults from '../../../support/fragments/locate/locate-search-results';
 
-describe('fse-locate-integration - UI', () => {
+describe('fse-locate-integration - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report - get api token for folio
     cy.allure().logCommandSteps(false);

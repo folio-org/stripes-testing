@@ -7,7 +7,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 
-describe('fse-data-export - UI for production tenants', () => {
+describe('fse-data-export - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -27,7 +27,7 @@ describe('fse-data-export - UI for production tenants', () => {
   );
 });
 
-describe('fse-data-export - check data export job for non-production tenants', () => {
+describe('fse-data-export - UI (data manipulation)', () => {
   const fileName = `autoTestFileFse${getRandomPostfix()}.csv`;
   const item = {
     instanceName: `testFseAqa_${getRandomPostfix()}`,
@@ -49,7 +49,7 @@ describe('fse-data-export - check data export job for non-production tenants', (
 
   it(
     `TC195471 - verify data-export job for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'data-export'] },
+    { tags: ['nonProd', 'fse', 'ui', 'data-export', 'fse-user-journey'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);

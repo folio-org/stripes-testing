@@ -8,7 +8,7 @@ import EditAgreement from '../../../support/fragments/agreements/editAgreement';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 
-describe('fse-organizations - UI for production tenants', () => {
+describe('fse-organizations - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -28,7 +28,7 @@ describe('fse-organizations - UI for production tenants', () => {
   );
 });
 
-describe('fse-organizations - UI for non-production tenants', () => {
+describe('fse-organizations - UI (data manipulation)', () => {
   let agreementId;
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultInterface = { ...NewOrganization.defaultInterface };

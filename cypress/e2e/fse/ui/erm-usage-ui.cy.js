@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import ErmUsage from '../../../support/fragments/erm-usage/ermUsage';
 
-describe('fse-erm-usage - UI', () => {
+describe('fse-erm-usage - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
