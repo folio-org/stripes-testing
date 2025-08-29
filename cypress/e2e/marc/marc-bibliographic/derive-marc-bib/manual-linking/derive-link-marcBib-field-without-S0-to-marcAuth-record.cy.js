@@ -72,18 +72,8 @@ describe('MARC', () => {
 
         before('Creating test data', () => {
           // Make sure there are no duplicate authority records in the system
-          cy.getAdminToken().then(() => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C365595"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
-          });
+          cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authTitle);
           DataImport.uploadFileViaApi(
             testData.marcBibFile.marc,
             testData.marcBibFile.fileName,
