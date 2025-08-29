@@ -35,7 +35,9 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-            });
+              cy.reload();
+              MarcAuthorities.waitLoading();
+            }, 20_000);
           },
         );
       });

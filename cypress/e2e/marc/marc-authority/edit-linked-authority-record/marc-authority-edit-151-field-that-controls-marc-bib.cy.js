@@ -59,16 +59,7 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="374145" and (authRefType==("Authorized" or "Auth/Ref"))',
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374145 Clear Creek (Tex.)');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
