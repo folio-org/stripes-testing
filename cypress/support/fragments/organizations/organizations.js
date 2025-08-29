@@ -920,4 +920,14 @@ export default {
   checkBankingInformationAddButtonIsDisabled: () => {
     cy.expect(Button({ id: 'bankingInformation-add-button' }).has({ disabled: true }));
   },
+
+  removeBankingInfoByBankName: (bankName) => {
+    cy.do([bankingInformationButton.click()]);
+    cy.get(`input[value="${bankName}"]`)
+      .parents('[data-test-repeatable-field-list-item]')
+      .find('button[data-test-repeatable-field-remove-item-button]')
+      .click();
+    cy.do(saveAndClose.click());
+    cy.wait(500);
+  },
 };

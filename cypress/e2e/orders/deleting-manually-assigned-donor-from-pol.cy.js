@@ -88,6 +88,8 @@ describe('Orders', () => {
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
+      OrderLines.openDonorInformationSection();
+      OrderLines.addDonor(firstOrganization.name);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
         '40',

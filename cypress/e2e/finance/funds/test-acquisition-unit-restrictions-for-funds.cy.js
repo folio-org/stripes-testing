@@ -54,20 +54,30 @@ describe('ui-finance: Funds', () => {
     'C163928 Test acquisition unit restrictions for Fund records (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
+        });
+        cy.reload();
+        AcquisitionUnits.waitLoading();
+      }, 20_000);
+
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
       // Need to wait,while data is load
       cy.wait(2000);
       AcquisitionUnits.assignUser(userA.username);
 
-      cy.login(userA.username, userA.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userA.username, userA.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
+        cy.reload();
+        Funds.waitLoading();
+      }, 20_000);
+
       Funds.createFundWithAU(defaultfund, defaultLedger, defaultAcquisitionUnit.name);
 
       cy.loginAsAdmin({

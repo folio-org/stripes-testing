@@ -78,6 +78,28 @@ export default {
     );
   },
 
+  uncheckenableBankingInformationIfChecked: () => {
+    cy.expect(enableBankingInformationCheckbox.exists());
+    cy.do(enableBankingInformationCheckbox.uncheckIfSelected());
+    cy.get('#clickable-save-contact-person-footer').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+      }
+    });
+    cy.wait(2000);
+  },
+
+  checkenableBankingInformationIfNeeded: () => {
+    cy.expect(enableBankingInformationCheckbox.exists());
+    cy.do(enableBankingInformationCheckbox.checkIfNotSelected());
+    cy.get('#clickable-save-contact-person-footer').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+      }
+    });
+    cy.wait(2000);
+  },
+
   deleteCategory: (categoryName) => {
     cy.do(
       MultiColumnListCell({ content: categoryName.value }).perform((element) => {

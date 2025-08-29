@@ -52,7 +52,7 @@ describe('Invoices', () => {
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.get5DaysAfterTomorrowDateForFiscalYear();
+  const periodEndForSecondFY = DateTools.get5DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   let user;
   let orderNumber;
   let servicePointId;
