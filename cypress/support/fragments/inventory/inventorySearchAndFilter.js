@@ -1474,4 +1474,10 @@ export default {
   verifyBrowseFacetsNotDisplayed() {
     cy.expect(searchAndFilterSection.find(Accordion()).absent());
   },
+
+  clearSearchInputField() {
+    cy.do(inventorySearchAndFilter.focus());
+    cy.do(inventorySearchAndFilter.find(clearIcon).click());
+    this.checkSearchQueryText('');
+  },
 };
