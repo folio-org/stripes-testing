@@ -10,24 +10,20 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import Invoices from '../../support/fragments/invoices/invoices';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Finance', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -45,13 +41,12 @@ describe('Finance', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.get4DaysAfterTomorrowDateForFiscalYear();
-  const periodStartForSecondFY = DateTools.get5DaysAfterTomorrowDateForFiscalYear();
-  const periodEndForSecondFY = DateTools.get7DaysAfterTomorrowDateForFiscalYear();
+  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get7DaysAfterTomorrowDateForFiscalYearOnUIEdit();
 
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
-  let servicePointId;
   let location;
   let orderNumber;
 
@@ -80,12 +75,10 @@ describe('Finance', () => {
         });
       });
       cy.getAdminToken();
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-          location = res;
-        });
+      cy.getLocations({ limit: 1 }).then((res) => {
+        location = res;
       });
+
       // Create second Fiscal Year for Rollover
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
@@ -95,8 +88,7 @@ describe('Finance', () => {
         invoice.accountingCode = organization.erpCode;
       });
       defaultOrder.vendor = organization.name;
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
-      Orders.selectOrdersPane();
+      cy.visit(TopMenu.ordersPath);
       Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
         defaultOrder.id = firstOrderResponse.id;
         orderNumber = firstOrderResponse.poNumber;
@@ -112,11 +104,10 @@ describe('Finance', () => {
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+        cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoice(invoice, organization.name);
         Invoices.createInvoiceLineFromPol(orderNumber);
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
-        FinanceHelp.clickLedgerButton();
+        cy.visit(TopMenu.ledgerPath);
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -126,7 +117,7 @@ describe('Finance', () => {
           'Allocation',
         );
         Ledgers.closeRolloverInfo();
-        FinanceHelp.clickFiscalYearButton();
+        cy.visit(TopMenu.fiscalYearPath);
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
@@ -146,6 +137,7 @@ describe('Finance', () => {
         Invoices.selectInvoice(invoice.invoiceNumber);
         Invoices.editInvoice();
         Invoices.changeFY(secondFiscalYear.code);
+        cy.wait(2000); // wait for FY change to be applied
       });
     });
 
