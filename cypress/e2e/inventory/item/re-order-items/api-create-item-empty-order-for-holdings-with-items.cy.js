@@ -101,6 +101,8 @@ describe('Inventory', () => {
         'C808481 API | Create "Item" with empty "order" field when Instance has multiple Holdings with Items (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C808481'] },
         () => {
+          cy.getToken(user.username, user.password);
+
           const itemBodyBase = {
             status: {
               name: ITEM_STATUS_NAMES.AVAILABLE,

@@ -4,12 +4,13 @@ import { Permissions } from '../../../../support/dictionary';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
 describe('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C808478_FolioInstance_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C808494_FolioInstance_${randomPostfix}`;
       const testData = {
         folioInstances: InventoryInstances.generateFolioInstances({
           count: 1,
@@ -17,7 +18,6 @@ describe('Inventory', () => {
           holdingsCount: 1,
           itemsCount: 0,
         }),
-        errorMessage: 'Order should be a number',
       };
 
       let user;
@@ -25,10 +25,11 @@ describe('Inventory', () => {
       let materialType;
       let loanType;
       let holdingsRecordId;
+      const createdItemIds = [];
 
       before('Create test data', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C808478_FolioInstance');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C808494_FolioInstance');
 
         cy.then(() => {
           // Get required reference data
@@ -44,8 +45,8 @@ describe('Inventory', () => {
           cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
             materialType = res;
           });
-          // Create instance with holdings but no items
         }).then(() => {
+          // Create instance with holdings (no items)
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances: testData.folioInstances,
             location,
@@ -56,6 +57,7 @@ describe('Inventory', () => {
         cy.createTempUser([
           Permissions.uiInventoryViewInstances.gui,
           Permissions.uiInventoryViewCreateEditItems.gui,
+          Permissions.inventoryStorageBatchCreateUpdateItems.gui,
         ]).then((userProperties) => {
           user = userProperties;
         });
@@ -70,37 +72,51 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808478 API | "order" field validation in create "Item" request (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808478'] },
+        'C808494 API | Create multiple "Item" records with empty "order" field using batch endpoint (spitfire)',
+        {
+          tags: ['criticalPath', 'spitfire', 'C808494'],
+        },
         () => {
           cy.getToken(user.username, user.password);
 
-          const itemBodyBase = {
-            status: {
-              name: ITEM_STATUS_NAMES.AVAILABLE,
-            },
-            holdingsRecordId,
-            barcode: uuid(),
-            materialType: {
-              id: materialType.id,
-            },
-            permanentLoanType: {
-              id: loanType.id,
-            },
-          };
+          // Step 1: Create multiple items without order field using batch endpoint
+          const itemsToCreate = [];
 
-          [
-            { ...itemBodyBase, order: 'a' },
-            { ...itemBodyBase, order: '$' },
-            { ...itemBodyBase, order: '1b' },
-            { ...itemBodyBase, order: '1!' },
-            { ...itemBodyBase, order: '01' },
-            { ...itemBodyBase, order: '' },
-            { ...itemBodyBase, order: ' ' },
-          ].forEach((itemBody) => {
-            cy.createItem(itemBody, true).then((response) => {
-              expect(response.status).to.eq(422);
-              expect(response.body.errors[0].message).to.equal(testData.errorMessage);
+          // Create 5 items without order field
+          for (let i = 1; i <= 5; i++) {
+            const itemId = uuid();
+            createdItemIds.push(itemId);
+
+            itemsToCreate.push({
+              id: itemId,
+              holdingsRecordId,
+              barcode: itemId,
+              status: {
+                name: ITEM_STATUS_NAMES.AVAILABLE,
+              },
+              materialTypeId: materialType.id,
+              permanentLoanTypeId: loanType.id,
+              // Intentionally omitting order field to test auto-assignment
+            });
+          }
+
+          // Use the batch create API endpoint
+          cy.batchCreateItemsViaApi(itemsToCreate).then((response) => {
+            expect(response.status).to.eq(201);
+          });
+
+          // Step 2: Verify items are sorted by order field with sequence 1, 2, 3, 4, 5
+          InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
+            expect(items).to.have.length(5);
+
+            // Verify order field is auto-assigned with proper sequence
+            const orderValues = items.map((item) => item.order);
+            expect(orderValues).to.deep.equal([1, 2, 3, 4, 5]);
+
+            // Verify all created items are present
+            const returnedItemIds = items.map((item) => item.id);
+            createdItemIds.forEach((itemId) => {
+              expect(returnedItemIds).to.include(itemId);
             });
           });
         },

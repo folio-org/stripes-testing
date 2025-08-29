@@ -775,3 +775,21 @@ Cypress.Commands.add('toggleLccnDuplicateCheck', ({ enable = true }) => {
     }
   });
 });
+
+Cypress.Commands.add('batchCreateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
