@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import { Permissions } from '../../../../support/dictionary';
 import Users from '../../../../support/fragments/users/users';
@@ -9,7 +10,7 @@ describe('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C808483_FolioInstance_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C812846_FolioInstance_${randomPostfix}`;
       const testData = {
         folioInstances: InventoryInstances.generateFolioInstances({
           count: 1,
@@ -28,7 +29,7 @@ describe('Inventory', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C808483_FolioInstance');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C812846_FolioInstance');
 
         cy.then(() => {
           // Get required reference data
@@ -45,7 +46,7 @@ describe('Inventory', () => {
             materialType = res;
           });
         }).then(() => {
-          // Create instance with holdings
+          // Create instance with holdings (no items)
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances: testData.folioInstances,
             location,
@@ -70,6 +71,7 @@ describe('Inventory', () => {
         cy.createTempUser([
           Permissions.uiInventoryViewInstances.gui,
           Permissions.uiInventoryViewCreateEditItems.gui,
+          Permissions.inventoryStorageBatchCreateUpdateItems.gui,
         ]).then((userProperties) => {
           user = userProperties;
         });
@@ -84,68 +86,49 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808483 API | Edit "Item" with duplicated / last in the sequence / out of the sequence "order" value (spitfire)',
+        'C812846 API | Edit multiple "Item" records (empty "order" field) using batch endpoint (spitfire)',
         {
-          tags: ['extendedPath', 'spitfire', 'C808483'],
+          tags: ['extendedPath', 'spitfire', 'C812846'],
         },
         () => {
           cy.getToken(user.username, user.password);
-          // Use the 5th item (last one) for editing
-          const fifthItem = createdItems[4];
 
-          // Step 1: Update item to have duplicated order value (1)
-          cy.getItems({ query: `id=="${fifthItem.id}"` }).then((item) => {
-            const originalItem = item;
-            const updatedItemBody = {
-              ...originalItem,
-              order: 1, // Duplicate of first item's order
+          // Step 1: Update all 5 items using batch endpoint, removing order field
+          const itemsToUpdate = [];
+
+          createdItems.forEach((item) => {
+            const updatedItemData = {
+              id: item.id,
+              _version: item._version,
+              holdingsRecordId: item.holdingsRecordId,
+              barcode: uuid(), // Updated unique barcode
+              status: {
+                name: ITEM_STATUS_NAMES.AVAILABLE,
+              },
+              materialTypeId: materialType.id,
+              permanentLoanTypeId: loanType.id,
+              // Intentionally omitting order field to test auto-assignment
             };
-            InventoryItems.editItemViaApi(updatedItemBody).then((response) => {
-              expect(response.status).to.eq(204);
-            });
+
+            itemsToUpdate.push(updatedItemData);
           });
 
-          // Step 2: Verify items are sorted by order field and duplicates exist
+          // Use the batch update API endpoint
+          cy.batchUpdateItemsViaApi(itemsToUpdate).then((response) => {
+            expect(response.status).to.eq(201);
+          });
+
+          // Step 2: Verify items are sorted by order field with sequence 6, 7, 8, 9, 10
           InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
+            expect(items).to.have.length(5);
+            // Verify order field sequence: 6, 7, 8, 9, 10
             const orderValues = items.map((item) => item.order);
-            expect(orderValues).to.deep.equal([1, 1, 2, 3, 4]);
-          });
-
-          // Step 3: Update item to have last in sequence order value (5)
-          cy.getItems({ query: `id=="${fifthItem.id}"` }).then((item) => {
-            const currentItem = item;
-            const updatedItemBody = {
-              ...currentItem,
-              order: 5, // Last in sequence
-            };
-            InventoryItems.editItemViaApi(updatedItemBody).then((response) => {
-              expect(response.status).to.eq(204);
+            expect(orderValues).to.deep.equal([6, 7, 8, 9, 10]);
+            // Verify all original items are still present (by ID)
+            const returnedItemIds = items.map((item) => item.id);
+            createdItems.forEach((originalItem) => {
+              expect(returnedItemIds).to.include(originalItem.id);
             });
-          });
-
-          // Step 4: Verify items are sorted correctly (1, 2, 3, 4, 5)
-          InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
-            const orderValues = items.map((item) => item.order);
-            expect(orderValues).to.deep.equal([1, 2, 3, 4, 5]);
-          });
-
-          // Step 5: Update item to have out of sequence order value (1230)
-          cy.getItems({ query: `id=="${fifthItem.id}"` }).then((item) => {
-            const currentItem = item;
-            const updatedItemBody = {
-              ...currentItem,
-              order: 1230, // Out of sequence
-            };
-            InventoryItems.editItemViaApi(updatedItemBody).then((response) => {
-              expect(response.status).to.eq(204);
-            });
-          });
-
-          // Step 6: Verify final order sequence (1, 2, 3, 4, 1230)
-          cy.log('Step 6: Verify final order sequence 1, 2, 3, 4, 1230');
-          InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
-            const orderValues = items.map((item) => item.order);
-            expect(orderValues).to.deep.equal([1, 2, 3, 4, 1230]);
           });
         },
       );

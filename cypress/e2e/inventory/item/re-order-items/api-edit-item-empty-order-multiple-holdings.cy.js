@@ -106,6 +106,8 @@ describe('Inventory', () => {
           tags: ['extendedPath', 'spitfire', 'C808484'],
         },
         () => {
+          cy.getToken(user.username, user.password);
+
           const secondItem = holdingsAItems[1];
           const thirdItem = holdingsAItems[2];
 

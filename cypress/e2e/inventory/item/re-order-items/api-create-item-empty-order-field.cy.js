@@ -73,6 +73,8 @@ describe('Inventory', () => {
         'C808479 API | Create "Item" with empty "order" field (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C808479'] },
         () => {
+          cy.getToken(user.username, user.password);
+
           const itemBodyBase = {
             status: {
               name: ITEM_STATUS_NAMES.AVAILABLE,

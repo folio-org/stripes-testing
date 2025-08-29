@@ -86,6 +86,8 @@ describe('Inventory', () => {
         'C808480 API | Create "Item" with duplicated / last in the sequence / out of the sequence "order" value (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C808480'] },
         () => {
+          cy.getToken(user.username, user.password);
+
           const itemBodyBase = {
             status: {
               name: ITEM_STATUS_NAMES.AVAILABLE,
