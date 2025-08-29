@@ -133,6 +133,7 @@ describe('OAI-PMH', () => {
           marcFieldsToVerify.forEach((verification) => {
             OaiPmh.verifyMarcField(
               response,
+              marcInstance.id,
               verification.field,
               verification.indicators,
               verification.subfields,

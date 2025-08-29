@@ -41,6 +41,7 @@ describe('OAI-PMH', () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
           OaiPmh.verifyMarcField(
             response,
+            marcInstanceId,
             '999',
             { ind1: 'f', ind2: 'f' },
             { t: '1', i: marcInstanceId },

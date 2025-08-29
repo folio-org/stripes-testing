@@ -23,10 +23,14 @@ describe('Organizations --> Settings', () => {
       permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsOrganizationsPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsOrganizationsPath,
+          waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+        });
+        cy.reload();
+        SettingsOrganizations.waitLoadingOrganizationSettings();
+      }, 20_000);
     });
   });
 

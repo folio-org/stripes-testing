@@ -167,6 +167,7 @@ describe('Eureka', () => {
         cy.waitForAuthRefresh(() => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.reload();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();

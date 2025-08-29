@@ -392,6 +392,7 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+  PHYSICAL: 'Physical',
 };
 
 export const NOTE_TYPES = {
@@ -825,7 +826,7 @@ export const AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
   RECUPD: 'RecUpd',
   PERSNAME: 'Pers Name',
   LEVELEST: 'Level Est',
-  MODRECEST: 'Mod Rec Est',
+  MODREC: 'Mod Rec',
   SOURCE: 'Source',
 };
 

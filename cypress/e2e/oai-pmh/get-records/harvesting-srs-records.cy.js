@@ -39,9 +39,16 @@ describe('OAI-PMH', () => {
       { tags: ['extendedPath', 'firebird', 'C375965'] },
       () => {
         OaiPmh.getRecordRequest(marcInstance.id).then((response) => {
-          OaiPmh.verifyMarcField(response, '999', { ind1: 'f', ind2: 'f' }, { i: marcInstance.id });
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
+            '999',
+            { ind1: 'f', ind2: 'f' },
+            { i: marcInstance.id },
+          );
+          OaiPmh.verifyMarcField(
+            response,
+            marcInstance.id,
             '245',
             { ind1: '1', ind2: '0' },
             { a: marcInstance.title },

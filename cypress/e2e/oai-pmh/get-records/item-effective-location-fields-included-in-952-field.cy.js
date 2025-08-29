@@ -124,6 +124,7 @@ describe('OAI-PMH', () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {
@@ -152,6 +153,7 @@ describe('OAI-PMH', () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {
@@ -179,6 +181,7 @@ describe('OAI-PMH', () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {
@@ -204,6 +207,7 @@ describe('OAI-PMH', () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(
             response,
+            marcInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             {

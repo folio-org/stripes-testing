@@ -27,6 +27,7 @@ const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
 const tagsAccordion = Accordion('Tags');
+const hridKeyValue = KeyValue('Item HRID');
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -65,7 +66,7 @@ const findRowAndClickLink = (enumerationValue) => {
       cy.get('a').click();
     });
 };
-const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
+const getAssignedHRID = () => cy.then(() => hridKeyValue.value());
 const clickUpdateOwnership = () => {
   cy.do([actionsButton.click(), Button('Update ownership').click()]);
 };
@@ -612,4 +613,8 @@ export default {
   checkTagsCounter(count) {
     cy.expect(tagsAccordion.has({ counter: `${count}` }));
   },
+
+  verifyHrid: (hrid) => cy.expect(hridKeyValue.has({ value: hrid })),
+
+  verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),
 };

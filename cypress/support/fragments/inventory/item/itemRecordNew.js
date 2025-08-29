@@ -2,6 +2,7 @@ import { including } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Checkbox,
   FieldSet,
   HTML,
   Pane,
@@ -277,5 +278,26 @@ export default {
       SelectionList().filter(location),
       SelectionList().select(including(location)),
     ]);
+  },
+
+  markAsSuppressedFromDiscovery() {
+    cy.do(Checkbox('Suppress from discovery').click());
+  },
+
+  addElectronicAccessFields({
+    relationshipType,
+    uri,
+    linkText,
+    materialsSpecified,
+    urlPublicNote,
+  }) {
+    cy.do(addElectronicAccessBtn.click());
+    if (relationshipType) cy.do(Select('Relationship').choose(relationshipType));
+    if (uri) cy.do(TextArea({ ariaLabel: 'URI' }).fillIn(uri));
+    if (linkText) cy.do(TextArea({ ariaLabel: 'Link text' }).fillIn(linkText));
+    if (materialsSpecified) {
+      cy.do(TextArea({ ariaLabel: 'Materials specified' }).fillIn(materialsSpecified));
+    }
+    if (urlPublicNote) cy.do(TextArea({ ariaLabel: 'URL public note' }).fillIn(urlPublicNote));
   },
 };
