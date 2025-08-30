@@ -129,7 +129,7 @@ describe('Check out and Check in with End Session', () => {
       });
       cy.wait(1000);
 
-      CheckOutActions.checkOutUser(userData.barcode, userData.username);
+      CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, userData.patronGroup);
 
       CheckOutActions.checkOutItem(itemData.barcode);
