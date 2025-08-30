@@ -72,7 +72,9 @@ describe('Patron notices', () => {
       { tags: ['extendedPath', 'volaris', 'C387440'] },
       () => {
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
-        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();
+        const { lastName, firstName, middleName } = userData.personal;
+        const expectedCreator = `${lastName}, ${firstName} ${middleName}`;
+        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(expectedCreator);
       },
     );
   });
