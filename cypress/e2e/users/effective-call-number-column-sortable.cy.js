@@ -100,10 +100,6 @@ describe('Effective call number column is sortable', () => {
       LoansPage.clickEffectiveCallNumberHeader();
       LoansPage.verifyCallNumbersAscending();
 
-      cy.waitForAuthRefresh(() => {
-        cy.reload();
-      }, 20_000);
-
       // Step 5: Click on Effective call number string column header again for descending sort
       LoansPage.clickEffectiveCallNumberHeader();
       LoansPage.verifyCallNumbersDescending();
