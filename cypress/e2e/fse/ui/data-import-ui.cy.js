@@ -46,7 +46,7 @@ describe('fse-data-import - UI (no data manipulation)', () => {
 
   it(
     `TC195768 - check data-import file upload for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'data-import', 'fse-user-journey'] },
+    { tags: ['fse', 'ui', 'data-import', 'toBeFixed'] },
     () => {
       // upload small marc file
       const testData = {
@@ -112,7 +112,7 @@ describe('fse-data-import - UI (data manipulation)', () => {
   });
 
   it(
-    `TCxxxx - verify simple MARC data import for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196048 - verify simple MARC data import for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'data-import', 'fse-user-journey', 'nonProd'] },
     () => {
       DataImport.uploadFileViaApi('test-auth-file.mrc', fileName, jobProfileToRun).then(

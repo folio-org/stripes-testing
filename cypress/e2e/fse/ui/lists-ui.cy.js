@@ -46,7 +46,7 @@ describe('fse-lists - UI (data manipulation)', () => {
   });
 
   it(
-    `TCXXXX - verify lists creation for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196049 - verify lists creation for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'lists', 'nonProd', 'fse-user-journey'] },
     () => {
       Lists.openNewListPane();

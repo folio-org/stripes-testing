@@ -77,7 +77,7 @@ describe('fse-organizations - UI (data manipulation)', () => {
   before('Creating data', () => {
     cy.allure().logCommandSteps(false);
     cy.getAdminToken();
-    defaultAgreement.name += 'FSE_TEST_TCxxxxx';
+    defaultAgreement.name += 'FSE_TEST_TC195673';
     Agreements.createViaApi(defaultAgreement).then((agreement) => {
       agreementId = agreement.id;
     });
@@ -108,7 +108,7 @@ describe('fse-organizations - UI (data manipulation)', () => {
       Agreements.editAgreement();
       EditAgreement.waitLoading();
       cy.wait(1000);
-      EditAgreement.addOrganization(organization.name);
+      EditAgreement.addOrganization(organization.name, 'Content Provider');
       EditAgreement.waitLoading();
       EditAgreement.saveAndClose();
       // verify organizations added
