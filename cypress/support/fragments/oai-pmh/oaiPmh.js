@@ -184,7 +184,9 @@ export default {
     });
 
     if (!field) {
-      throw new Error(`MARC field ${tag} not found in record with UUID ${instanceUuid}`);
+      throw new Error(
+        `MARC field ${tag} with indicators ${JSON.stringify(indicators)} not found in record with UUID ${instanceUuid}`,
+      );
     }
 
     const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
