@@ -164,6 +164,54 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   );
 
   it(
+    'C499710 Create Subfield Code of Local Field (repeatable, required, deprecated) for MARC authority spec (API) (spitfire)',
+    { tags: ['C499710', 'criticalPath', 'spitfire'] },
+    () => {
+      cy.getUserToken(user.username, user.password);
+      const subfieldPayload = {
+        code: '3',
+        label: 'label of code 3',
+        repeatable: true,
+        required: true,
+        deprecated: true,
+      };
+      cy.createSpecificationFieldSubfield(fieldId, subfieldPayload)
+        .then((subfieldResp) => {
+          expect(subfieldResp.status).to.eq(201);
+          const subfieldBody = subfieldResp.body;
+          const createdSubfieldId = subfieldBody.id;
+          createdSubfieldIds.push(createdSubfieldId);
+
+          // Verify response body structure
+          expect(subfieldBody).to.include({
+            fieldId,
+            ...subfieldPayload,
+            scope: 'local',
+          });
+          expect(subfieldBody.id, 'Subfield has ID').to.exist;
+          expect(subfieldBody.metadata, 'Subfield has metadata').to.exist;
+        })
+        .then(() => {
+          // Step 2: Verify the subfield was created via GET request
+          cy.getSpecificationFieldSubfields(fieldId).then((getSubfieldsResp) => {
+            expect(getSubfieldsResp.status).to.eq(200);
+
+            // Find the created subfield
+            const found = getSubfieldsResp.body.subfields.find(
+              (sf) => sf.id === createdSubfieldIds[createdSubfieldIds.length - 1],
+            );
+            expect(found, 'Created subfield found in response').to.exist;
+            expect(found).to.include({
+              fieldId,
+              ...subfieldPayload,
+              scope: 'local',
+            });
+          });
+        });
+    },
+  );
+
+  it(
     'C506706 Cannot create Subfields for Local Field 002, 004, 009 of MARC authority spec (API) (spitfire)',
     { tags: ['extendedPath', 'C506706', 'spitfire'] },
     () => {
