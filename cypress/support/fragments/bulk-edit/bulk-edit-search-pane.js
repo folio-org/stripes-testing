@@ -416,6 +416,7 @@ export default {
 
   openLogsSearch() {
     cy.do(logsToggle.click());
+    cy.wait(2000);
   },
 
   recordTypesAccordionExpanded(expanded = true) {

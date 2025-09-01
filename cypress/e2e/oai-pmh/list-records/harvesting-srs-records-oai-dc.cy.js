@@ -115,7 +115,7 @@ describe('OAI-PMH', () => {
         // Step 6: Verify OAI-PMH harvesting with updated title
         cy.getAdminToken();
         OaiPmh.listRecordsRequest('oai_dc').then((response) => {
-          OaiPmh.verifyDublinCoreField(response, {
+          OaiPmh.verifyDublinCoreField(response, marcInstance.id, {
             title: editedTitle,
             creator: 'Weber, Carl Maria von,1786-1826.',
             type: 'text',

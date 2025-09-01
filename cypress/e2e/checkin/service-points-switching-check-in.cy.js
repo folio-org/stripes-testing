@@ -134,22 +134,24 @@ describe('Service Points Switching for Check In', () => {
       SearchPane.waitLoading();
 
       SearchPane.searchByItemBarcode(firstItem.barcode);
-      SearchPane.findResultRowIndexByContent(firstItem.barcode).then((rowIndex) => {
-        const expectedFirstItemData = {
-          itemBarcode: firstItem.barcode,
-          circAction: 'Checked in',
-          servicePoint: testData.servicePointA.name,
-        };
+
+      const expectedFirstItemData = {
+        itemBarcode: firstItem.barcode,
+        circAction: 'Checked in',
+        servicePoint: testData.servicePointA.name,
+      };
+      SearchPane.findResultRowIndexByContent(expectedFirstItemData.circAction).then((rowIndex) => {
         SearchPane.checkResultSearch(expectedFirstItemData, rowIndex);
       });
 
       SearchPane.searchByItemBarcode(secondItem.barcode);
-      SearchPane.findResultRowIndexByContent(secondItem.barcode).then((rowIndex) => {
-        const expectedSecondItemData = {
-          itemBarcode: secondItem.barcode,
-          circAction: 'Checked in',
-          servicePoint: testData.servicePointB.name,
-        };
+
+      const expectedSecondItemData = {
+        itemBarcode: secondItem.barcode,
+        circAction: 'Checked in',
+        servicePoint: testData.servicePointB.name,
+      };
+      SearchPane.findResultRowIndexByContent(expectedSecondItemData.circAction).then((rowIndex) => {
         SearchPane.checkResultSearch(expectedSecondItemData, rowIndex);
       });
     },

@@ -615,4 +615,6 @@ export default {
   },
 
   verifyHrid: (hrid) => cy.expect(hridKeyValue.has({ value: hrid })),
+
+  verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),
 };
