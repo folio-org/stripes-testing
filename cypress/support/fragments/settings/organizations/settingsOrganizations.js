@@ -177,6 +177,7 @@ export default {
 
   selectAccountTypes: () => {
     cy.do(NavListItem('Account types').click());
+    cy.wait(2000);
   },
 
   createCategoriesViaApi(categories) {
@@ -276,6 +277,15 @@ export default {
       .blur();
   },
 
+  clickOutsideAccountTypeField() {
+    cy.get('#editList-bankingAccountTypes').find('input[type="text"]').blur();
+  },
+
+  checkErrorMessage(errorText = 'Please fill this in to continue') {
+    const grid = '#editList-bankingAccountTypes';
+    cy.get(`${grid} [class*="feedbackError"]`).should('be.visible').and('contain.text', errorText);
+  },
+
   saveAccountTypeChanges() {
     cy.get('button[id^="clickable-save-bankingAccountTypes-"]').click();
   },
@@ -349,6 +359,7 @@ export default {
 
   clickNewButton() {
     cy.do(Button({ id: 'clickable-add-bankingAccountTypes' }).click());
+    cy.wait(2000);
   },
 
   checkNewAccountTypeRow() {
