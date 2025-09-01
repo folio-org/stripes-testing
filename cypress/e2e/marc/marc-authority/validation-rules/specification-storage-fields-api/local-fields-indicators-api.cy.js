@@ -170,6 +170,114 @@ describe('MARC Authority Validation Rules - Local Fields Indicators API', () => 
   );
 
   it(
+    'C499698 Cannot create Indicators for Local Field 002, 004, 009 of MARC authority spec (API) (spitfire)',
+    { tags: ['extendedPath', 'C499698', 'spitfire'] },
+    () => {
+      const controlFieldIds = {};
+
+      // First, create the three control fields (002, 004, 009)
+      const createControlField = (tag) => {
+        const controlFieldData = {
+          tag,
+          label: `AT_C499698_Control Field ${tag}`,
+          url: 'http://www.example.org/control-field.html',
+          repeatable: false,
+          required: false,
+          deprecated: false,
+        };
+
+        return cy
+          .getSpecificationFields(authoritySpecId)
+          .then((fieldsResp) => {
+            validateApiResponse(fieldsResp, 200);
+            const existingField = fieldsResp.body.fields.find(
+              (f) => f.tag === tag && f.scope === 'local',
+            );
+            if (existingField) {
+              cy.deleteSpecificationField(existingField.id, false);
+            }
+          })
+          .then(() => {
+            return cy
+              .createSpecificationField(authoritySpecId, controlFieldData)
+              .then((createResp) => {
+                validateApiResponse(createResp, 201);
+                controlFieldIds[tag] = createResp.body.id;
+                return createResp.body.id;
+              });
+          });
+      };
+
+      // Create all three control fields sequentially
+      createControlField('002').then(() => {
+        createControlField('004').then(() => {
+          createControlField('009').then(() => {
+            // Step 1: Attempt to create indicator for 002 field
+            const firstIndicatorPayload = {
+              order: 1,
+              label: 'Ind 1 name',
+            };
+
+            cy.createSpecificationFieldIndicator(
+              controlFieldIds['002'],
+              firstIndicatorPayload,
+              false,
+            ).then((firstResp) => {
+              expect(firstResp.status, 'Step 1: Cannot create indicator for 002 field').to.eq(400);
+              expect(firstResp.body.errors[0].message).to.contain(
+                'Cannot define indicators for 00X control fields.',
+              );
+
+              // Step 2: Attempt to create indicator for 004 field
+              const secondIndicatorPayload = {
+                order: 2,
+                label: 'Ind 2 name',
+              };
+
+              cy.createSpecificationFieldIndicator(
+                controlFieldIds['004'],
+                secondIndicatorPayload,
+                false,
+              ).then((secondResp) => {
+                expect(secondResp.status, 'Step 2: Cannot create indicator for 004 field').to.eq(
+                  400,
+                );
+                expect(secondResp.body.errors[0].message).to.contain(
+                  'Cannot define indicators for 00X control fields.',
+                );
+
+                // Step 3: Attempt to create indicator for 009 field
+                const thirdIndicatorPayload = {
+                  order: 1,
+                  label: 'Ind 1 name',
+                };
+
+                cy.createSpecificationFieldIndicator(
+                  controlFieldIds['009'],
+                  thirdIndicatorPayload,
+                  false,
+                ).then((thirdResp) => {
+                  expect(thirdResp.status, 'Step 3: Cannot create indicator for 009 field').to.eq(
+                    400,
+                  );
+                  expect(thirdResp.body.errors[0].message).to.contain(
+                    'Cannot define indicators for 00X control fields.',
+                  );
+
+                  // Cleanup: Delete all created control fields
+                  cy.deleteSpecificationField(controlFieldIds['002'], true);
+                  cy.deleteSpecificationField(controlFieldIds['004'], true);
+                  cy.deleteSpecificationField(controlFieldIds['009'], true);
+                });
+              });
+            });
+          });
+        });
+      });
+    },
+  );
+
+  it(
     'C502995 Update Indicator of Local field for MARC authority spec (API) (spitfire)',
     { tags: ['extendedPath', 'C502995', 'spitfire'] },
     () => {
