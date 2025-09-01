@@ -10,6 +10,7 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   const permissions = [
     Permissions.specificationStorageGetSpecificationFields.gui,
     Permissions.specificationStorageCreateSpecificationField.gui,
+    Permissions.specificationStorageDeleteSpecificationField.gui,
     Permissions.specificationStorageGetSpecificationFieldIndicators.gui,
     Permissions.specificationStorageCreateSpecificationFieldIndicator.gui,
     Permissions.specificationStorageGetSpecificationFieldSubfields.gui,
@@ -159,6 +160,113 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
             });
           });
         });
+    },
+  );
+
+  it(
+    'C506706 Cannot create Subfields for Local Field 002, 004, 009 of MARC authority spec (API) (spitfire)',
+    { tags: ['extendedPath', 'C506706', 'spitfire'] },
+    () => {
+      cy.getUserToken(user.username, user.password);
+      const controlFieldIds = {};
+
+      // First, create the three control fields (002, 004, 009)
+      const createControlField = (tag) => {
+        const controlFieldData = {
+          tag,
+          label: `AT_C506706_Control Field ${tag}`,
+          url: 'http://www.example.org/control-field.html',
+          repeatable: false,
+          required: false,
+          deprecated: false,
+        };
+
+        return cy
+          .getSpecificationFields(authSpecId)
+          .then((fieldsResp) => {
+            expect(fieldsResp.status).to.eq(200);
+            const existingField = fieldsResp.body.fields.find(
+              (f) => f.tag === tag && f.scope === 'local',
+            );
+            if (existingField) {
+              cy.deleteSpecificationField(existingField.id, false);
+            }
+          })
+          .then(() => {
+            return cy.createSpecificationField(authSpecId, controlFieldData).then((createResp) => {
+              expect(createResp.status).to.eq(201);
+              controlFieldIds[tag] = createResp.body.id;
+              return createResp.body.id;
+            });
+          });
+      };
+
+      // Create all three control fields sequentially
+      createControlField('002').then(() => {
+        createControlField('004').then(() => {
+          createControlField('009').then(() => {
+            // Step 1: Attempt to create subfield for 002 field
+            const firstSubfieldPayload = {
+              code: 'a',
+              label: 'Subfield a code name',
+            };
+
+            cy.createSpecificationFieldSubfield(
+              controlFieldIds['002'],
+              firstSubfieldPayload,
+              false,
+            ).then((firstResp) => {
+              expect(firstResp.status, 'Step 1: Cannot create subfield for 002 field').to.eq(400);
+              expect(firstResp.body.errors[0].message).to.contain(
+                'Cannot define subfields for 00X control fields.',
+              );
+
+              // Step 2: Attempt to create subfield for 004 field
+              const secondSubfieldPayload = {
+                code: 'b',
+                label: 'Subfield b code name',
+              };
+
+              cy.createSpecificationFieldSubfield(
+                controlFieldIds['004'],
+                secondSubfieldPayload,
+                false,
+              ).then((secondResp) => {
+                expect(secondResp.status, 'Step 2: Cannot create subfield for 004 field').to.eq(
+                  400,
+                );
+                expect(secondResp.body.errors[0].message).to.contain(
+                  'Cannot define subfields for 00X control fields.',
+                );
+
+                // Step 3: Attempt to create subfield for 009 field
+                const thirdSubfieldPayload = {
+                  code: 'd',
+                  label: 'Subfield d code name',
+                };
+
+                cy.createSpecificationFieldSubfield(
+                  controlFieldIds['009'],
+                  thirdSubfieldPayload,
+                  false,
+                ).then((thirdResp) => {
+                  expect(thirdResp.status, 'Step 3: Cannot create subfield for 009 field').to.eq(
+                    400,
+                  );
+                  expect(thirdResp.body.errors[0].message).to.contain(
+                    'Cannot define subfields for 00X control fields.',
+                  );
+
+                  // Cleanup: Delete all created control fields
+                  cy.deleteSpecificationField(controlFieldIds['002'], true);
+                  cy.deleteSpecificationField(controlFieldIds['004'], true);
+                  cy.deleteSpecificationField(controlFieldIds['009'], true);
+                });
+              });
+            });
+          });
+        });
+      });
     },
   );
 });
