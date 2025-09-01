@@ -109,6 +109,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(1, 1);
+        BulkEditSearchPane.clickShowWarningsCheckbox();
         BulkEditSearchPane.verifyReasonForError('Duplicate entry');
         BulkEditSearchPane.verifyReasonForError('No match found');
         BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
