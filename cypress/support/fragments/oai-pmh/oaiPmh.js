@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-expressions */
+import DateTools from '../../utils/dateTools';
+
 export default {
   /**
    * Private helper method to parse XML string into DOM document
@@ -9,6 +11,38 @@ export default {
   _parseXmlString(xmlString) {
     const parser = new DOMParser();
     return parser.parseFromString(xmlString, 'application/xml');
+  },
+
+  /**
+   * Private helper method to find a specific record by instanceUuid in OAI-PMH response
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to search for
+   * @returns {Element} The record element matching the instanceUuid
+   * @throws {Error} If no record with the specified UUID is found
+   * @private
+   */
+  _findRecordInResponseByUuid(xmlString, instanceUuid) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const records = xmlDoc.getElementsByTagName('record');
+
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i];
+      const header = record.getElementsByTagName('header')[0];
+
+      if (header) {
+        const identifierElement = header.getElementsByTagName('identifier')[0];
+
+        if (identifierElement) {
+          const identifier = identifierElement.textContent;
+
+          if (identifier.includes(instanceUuid)) {
+            return record;
+          }
+        }
+      }
+    }
+
+    throw new Error(`Record with UUID ${instanceUuid} not found in the response`);
   },
 
   getBaseUrl() {
@@ -72,34 +106,9 @@ export default {
     verifyIdentifier = true,
   ) {
     const expectedStatus = shouldBeDeleted ? 'deleted' : null;
-    const xmlDoc = this._parseXmlString(xmlString);
 
-    let targetHeader;
-
-    // Always search for the record by instanceUuid - works for both single and multi-record responses
-    const records = xmlDoc.getElementsByTagName('record');
-
-    for (let i = 0; i < records.length; i++) {
-      const record = records[i];
-      const header = record.getElementsByTagName('header')[0];
-
-      if (header) {
-        const identifierElement = header.getElementsByTagName('identifier')[0];
-
-        if (identifierElement) {
-          const identifier = identifierElement.textContent;
-
-          if (identifier.includes(instanceUuid)) {
-            targetHeader = header;
-            break;
-          }
-        }
-      }
-    }
-
-    if (!targetHeader) {
-      throw new Error(`Record header with UUID ${instanceUuid} not found in the response`);
-    }
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const targetHeader = targetRecord.getElementsByTagName('header')[0];
 
     // Verify status attribute
     const status = targetHeader.getAttribute('status');
@@ -148,39 +157,20 @@ export default {
     subfields = {},
     absentSubfields = [],
   ) {
-    const xmlDoc = this._parseXmlString(xmlString);
-
     // Use the namespace URI for MARC21
     const namespaceURI = 'http://www.loc.gov/MARC21/slim';
 
-    let targetRecordElement;
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
 
-    // Always search for the record by instanceUuid - works for both single and multi-record responses
-    const records = xmlDoc.getElementsByTagName('record');
-
-    for (let i = 0; i < records.length; i++) {
-      const record = records[i];
-      const header = record.getElementsByTagName('header')[0];
-
-      if (header) {
-        const identifierElement = header.getElementsByTagName('identifier')[0];
-
-        if (identifierElement) {
-          const identifier = identifierElement.textContent;
-
-          if (identifier.includes(instanceUuid)) {
-            const metadata = record.getElementsByTagName('metadata')[0];
-            if (metadata) {
-              targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
-            }
-            break;
-          }
-        }
-      }
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
     }
 
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
     if (!targetRecordElement) {
-      throw new Error(`Record with UUID ${instanceUuid} not found in the response`);
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
     }
 
     // Find all `datafield` elements within the target record
@@ -236,29 +226,38 @@ export default {
   },
 
   /**
-   * Verify Dublin Core field values in OAI-PMH oai_dc response.
+   * Verify Dublin Core field values in a specific record identified by instanceUuid.
+   * Works consistently for both single-record (GetRecord) and multi-record (ListRecords) responses.
    * @param {string} xmlString - The XML response as a string.
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {Object} fields - Object where keys are Dublin Core element names and values are expected values (e.g., { title: "Sample Title", type: "Text", language: "eng" }).
    */
-  verifyDublinCoreField(xmlString, fields = {}) {
-    const xmlDoc = this._parseXmlString(xmlString);
+  verifyDublinCoreField(xmlString, instanceUuid, fields = {}) {
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
 
     // Use the namespace URI for Dublin Core
     const dcNamespaceURI = 'http://purl.org/dc/elements/1.1/';
 
     Object.entries(fields).forEach(([elementName, expectedValue]) => {
-      // Find all Dublin Core elements with the specified name
-      const dcElements = xmlDoc.getElementsByTagNameNS(dcNamespaceURI, elementName);
+      // Find all Dublin Core elements with the specified name within the target record
+      const dcElements = metadata.getElementsByTagNameNS(dcNamespaceURI, elementName);
 
       if (dcElements.length === 0) {
-        throw new Error(`Dublin Core element "${elementName}" not found in the response`);
+        throw new Error(
+          `Dublin Core element "${elementName}" not found in record with UUID ${instanceUuid}`,
+        );
       }
 
       const element = dcElements[0];
 
       expect(
         element.textContent,
-        `Dublin Core element "${elementName}" should have value "${expectedValue}"`,
+        `Dublin Core element "${elementName}" should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
       ).to.equal(expectedValue);
     });
   },
@@ -266,15 +265,11 @@ export default {
   /**
    * Sends a GET request to the OAI-PMH ListRecords endpoint
    * @param {string} metadataPrefix - The metadata format (default: 'marc21')
-   * @param {string} fromDate - Optional from date in YYYY-MM-DD format
-   * @param {string} untilDate - Optional until date in YYYY-MM-DD format
+   * @param {string} fromDate - Optional from date in YYYY-MM-DDTHH:mm:ssZ format
+   * @param {string} untilDate - Optional until date in YYYY-MM-DDTHH:mm:ssZ format
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listRecordsRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const currentTime = new Date();
-    const fromTime = new Date(currentTime.getTime() - 2 * 60 * 1000); // Current time minus 2 minutes
-    const untilTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // Current time plus 2 minutes
-
     const searchParams = {
       verb: 'ListRecords',
       metadataPrefix,
@@ -283,13 +278,13 @@ export default {
     if (fromDate) {
       searchParams.from = fromDate;
     } else {
-      searchParams.from = fromTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
     }
 
     if (untilDate) {
       searchParams.until = untilDate;
     } else {
-      searchParams.until = untilTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
     }
 
     return cy
@@ -313,10 +308,6 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listIdentifiersRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const currentTime = new Date();
-    const fromTime = new Date(currentTime.getTime() - 2 * 60 * 1000); // Current time minus 2 minutes
-    const untilTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // Current time plus 2 minutes
-
     const searchParams = {
       verb: 'ListIdentifiers',
       metadataPrefix,
@@ -325,13 +316,13 @@ export default {
     if (fromDate) {
       searchParams.from = fromDate;
     } else {
-      searchParams.from = fromTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
     }
 
     if (untilDate) {
       searchParams.until = untilDate;
     } else {
-      searchParams.until = untilTime.toISOString().replace(/\.\d{3}Z$/, 'Z'); // YYYY-MM-DDTHH:mm:ssZ format without milliseconds
+      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
     }
 
     return cy
@@ -355,37 +346,19 @@ export default {
    * @param {string} expectedValue - The expected value for position 05
    */
   verifyMarcLeaderPosition05Value(xmlString, instanceUuid, expectedValue) {
-    const xmlDoc = this._parseXmlString(xmlString);
     const namespaceURI = 'http://www.loc.gov/MARC21/slim';
 
-    let targetRecordElement;
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
 
-    // Always search for the record by instanceUuid - works for both single and multi-record responses
-    const records = xmlDoc.getElementsByTagName('record');
-
-    for (let i = 0; i < records.length; i++) {
-      const record = records[i];
-      const header = record.getElementsByTagName('header')[0];
-
-      if (header) {
-        const identifierElement = header.getElementsByTagName('identifier')[0];
-
-        if (identifierElement) {
-          const identifier = identifierElement.textContent;
-
-          if (identifier.includes(instanceUuid)) {
-            const metadata = record.getElementsByTagName('metadata')[0];
-            if (metadata) {
-              targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
-            }
-            break;
-          }
-        }
-      }
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
     }
 
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
     if (!targetRecordElement) {
-      throw new Error(`Record with UUID ${instanceUuid} not found in the response`);
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
     }
 
     const leader = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'leader')[0];
@@ -404,34 +377,71 @@ export default {
   },
 
   /**
-   * Verifies that an identifier exists in ListIdentifiers response
-   * @param {string} xmlString - The XML response as a string
-   * @param {string} instanceUuid - The instance UUID to find
-   * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status
+   * Verifies identifier presence/absence in ListIdentifiers response and validates format and status when found.
+   * Performs comprehensive verification including identifier format validation and deletion status checking.
+   * @param {string} xmlString - The XML response as a string from ListIdentifiers request
+   * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
+   * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
+   * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
    */
-  verifyIdentifierInListResponse(xmlString, instanceUuid, shouldBeDeleted = false) {
+  verifyIdentifierInListResponse(
+    xmlString,
+    instanceUuid,
+    shouldExist = true,
+    shouldBeDeleted = false,
+  ) {
     const xmlDoc = this._parseXmlString(xmlString);
     const headers = xmlDoc.getElementsByTagName('header');
 
     // Find the header with matching instance UUID
     let foundHeader = null;
+    let foundIdentifier = null;
     for (let i = 0; i < headers.length; i++) {
       const header = headers[i];
       const identifier = header.getElementsByTagName('identifier')[0].textContent;
 
       if (identifier.includes(instanceUuid)) {
         foundHeader = header;
+        foundIdentifier = identifier;
         break;
       }
     }
+
+    if (!shouldExist) {
+      // Verify the identifier should NOT exist (shouldBeDeleted is ignored in this case)
+      expect(
+        foundHeader,
+        `Identifier with UUID ${instanceUuid} should NOT be found in the ListIdentifiers response`,
+      ).to.be.null;
+      return;
+    }
+
+    // Verify the identifier should exist
+    if (!foundHeader) {
+      throw new Error(
+        `Identifier with UUID ${instanceUuid} not found in the ListIdentifiers response`,
+      );
+    }
+
+    // Verify the identifier format
+    this.getBaseUrl().then((baseUrl) => {
+      const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+      expect(
+        foundIdentifier,
+        `Identifier should match expected OAI format for UUID ${instanceUuid}`,
+      ).to.equal(expectedIdentifier);
+    });
 
     // Verify the deleted status
     const status = foundHeader.getAttribute('status');
 
     if (shouldBeDeleted) {
-      expect(status, 'Identifier should have deleted status').to.equal('deleted');
+      expect(status, `Identifier should have deleted status for UUID ${instanceUuid}`).to.equal(
+        'deleted',
+      );
     } else {
-      expect(status, 'Identifier should not have deleted status').to.be.null;
+      expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
+        .null;
     }
   },
 };

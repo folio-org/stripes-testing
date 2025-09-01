@@ -35,12 +35,13 @@ export default {
     cy.wait(5000);
   },
 
-  editItemViaApi: (item) => {
+  editItemViaApi: (item, ignoreErrors = false) => {
     return cy.okapiRequest({
       method: 'PUT',
       path: `inventory/items/${item.id}`,
       body: item,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 
@@ -163,5 +164,22 @@ export default {
   },
   verifyNewRequestButtonIsAbsent() {
     cy.expect(newRequestButton.absent());
+  },
+  getItemsInHoldingsViaApi(
+    holdingsRecordId,
+    { limit = 100, sortBy = 'order/number/sort.ascending' } = {},
+  ) {
+    let requestQuery = `(holdingsRecordId==${holdingsRecordId})`;
+    if (sortBy) requestQuery += ` sortby ${sortBy}`;
+    return cy
+      .okapiRequest({
+        path: 'inventory/items-by-holdings-id',
+        searchParams: {
+          limit,
+          query: requestQuery,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.items);
   },
 };

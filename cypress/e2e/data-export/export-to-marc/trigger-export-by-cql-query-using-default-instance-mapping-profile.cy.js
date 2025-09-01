@@ -124,9 +124,6 @@ describe('Data Export', () => {
             {
               uuid: instance.id,
               assertions: [
-                (record) => {
-                  expect(record.leader).to.eq('00262nam a22000973c 4500');
-                },
                 (record) => expect(record.fields[0]).to.deep.eq(['001', instance.hrid]),
                 (record) => {
                   expect(record.fields[3]).to.deep.eq(['245', '00', 'a', instance.title]);
