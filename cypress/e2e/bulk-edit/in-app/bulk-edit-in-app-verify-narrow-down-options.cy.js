@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
 
     it.skip(
       'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C356778'] },
+      { tags: [] },
       () => {
         // TODO: improve how the options are checked
         const options = [

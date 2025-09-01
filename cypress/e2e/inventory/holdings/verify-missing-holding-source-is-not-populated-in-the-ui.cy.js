@@ -15,7 +15,8 @@ const testData = {
   },
 };
 
-describe('Inventory', () => {
+// obsolete from Ramsons
+describe.skip('Inventory', () => {
   describe('Holdings', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
@@ -68,7 +69,7 @@ describe('Inventory', () => {
 
     it(
       'C367931 Verify that missing holdings source is not populated in the UI with instances source (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C367931', 'eurekaPhase1'] },
+      { tags: [] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);
