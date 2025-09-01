@@ -109,6 +109,161 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
   });
 
   it(
+    'C499699 Create Local Indicator code of Standard Field for MARC authority spec (API) (spitfire)',
+    { tags: ['criticalPath', 'C499699', 'spitfire'] },
+    () => {
+      let createdIndicatorCode1Id;
+      let createdIndicatorCode2Id;
+
+      cy.getUserToken(user.username, user.password);
+
+      // Step 1: Find a standard field and get its indicators
+      cy.getSpecificationFields(authoritySpecId).then((fieldsResp) => {
+        validateApiResponse(fieldsResp, 200);
+
+        // Find a standard field that has indicators (e.g., 100)
+        standardField = findStandardField(fieldsResp.body.fields, STANDARD_FIELD_TAG);
+        expect(standardField, `Standard field ${STANDARD_FIELD_TAG} exists`).to.exist;
+
+        // Get indicators for the standard field
+        cy.getSpecificationFieldIndicators(standardField.id).then((indicatorsResp) => {
+          validateApiResponse(indicatorsResp, 200);
+          expect(
+            indicatorsResp.body.indicators,
+            'Standard field has indicators',
+          ).to.have.length.greaterThan(0);
+
+          const indicators = indicatorsResp.body.indicators;
+          const indicator1 = indicators.find((ind) => ind.order === 1);
+          const indicator2 = indicators.find((ind) => ind.order === 2);
+
+          expect(indicator1, 'Indicator 1 exists').to.exist;
+          expect(indicator2, 'Indicator 2 exists').to.exist;
+
+          // Step 2: Create indicator code for Indicator 1
+          const indicator1CodePayload = {
+            code: '9',
+            label: 'AT_C499699_Code 9 name',
+          };
+
+          cy.createSpecificationIndicatorCode(indicator1.id, indicator1CodePayload).then(
+            (code1Resp) => {
+              validateApiResponse(code1Resp, 201);
+              createdIndicatorCode1Id = code1Resp.body.id;
+
+              // Verify response body structure for indicator 1 code
+              expect(code1Resp.body).to.include({
+                indicatorId: indicator1.id,
+                code: indicator1CodePayload.code,
+                label: indicator1CodePayload.label,
+                deprecated: false,
+                scope: 'local',
+              });
+              expect(code1Resp.body.id, 'Indicator 1 code has ID').to.exist;
+              expect(code1Resp.body.metadata, 'Indicator 1 code has metadata').to.exist;
+
+              // Step 3: Create indicator code for Indicator 2
+              const indicator2CodePayload = {
+                code: '8',
+                label: 'AT_C499699_Code 8 name',
+              };
+
+              cy.createSpecificationIndicatorCode(indicator2.id, indicator2CodePayload).then(
+                (code2Resp) => {
+                  validateApiResponse(code2Resp, 201);
+                  createdIndicatorCode2Id = code2Resp.body.id;
+
+                  // Verify response body structure for indicator 2 code
+                  expect(code2Resp.body).to.include({
+                    indicatorId: indicator2.id,
+                    code: indicator2CodePayload.code,
+                    label: indicator2CodePayload.label,
+                    deprecated: false,
+                    scope: 'local',
+                  });
+                  expect(code2Resp.body.id, 'Indicator 2 code has ID').to.exist;
+                  expect(code2Resp.body.metadata, 'Indicator 2 code has metadata').to.exist;
+
+                  // Step 4: Verify indicator 1 codes exist via GET request
+                  cy.getSpecificationIndicatorCodes(indicator1.id).then((getCodes1Resp) => {
+                    validateApiResponse(getCodes1Resp, 200);
+
+                    // Response should contain both local (created) and standard (LOC) codes
+                    expect(getCodes1Resp.body.codes, 'Indicator 1 codes array exists').to.exist;
+                    expect(
+                      getCodes1Resp.body.codes,
+                      'Contains indicator 1 codes',
+                    ).to.have.length.greaterThan(0);
+
+                    // Find the created local code
+                    const foundLocalCode1 = getCodes1Resp.body.codes.find(
+                      (code) => code.id === createdIndicatorCode1Id,
+                    );
+                    expect(foundLocalCode1, 'Created indicator 1 code found in response').to.exist;
+                    expect(foundLocalCode1).to.include({
+                      indicatorId: indicator1.id,
+                      code: indicator1CodePayload.code,
+                      label: indicator1CodePayload.label,
+                      scope: 'local',
+                    });
+
+                    // Verify standard codes exist (from LOC)
+                    const standardCodes1 = getCodes1Resp.body.codes.filter(
+                      (code) => code.scope === 'standard',
+                    );
+                    expect(
+                      standardCodes1.length,
+                      'Indicator 1 contains standard codes from LOC',
+                    ).to.be.greaterThan(0);
+
+                    // Step 5: Verify indicator 2 codes exist via GET request
+                    cy.getSpecificationIndicatorCodes(indicator2.id).then((getCodes2Resp) => {
+                      validateApiResponse(getCodes2Resp, 200);
+
+                      // Response should contain both local (created) and standard (LOC) codes
+                      expect(getCodes2Resp.body.codes, 'Indicator 2 codes array exists').to.exist;
+                      expect(
+                        getCodes2Resp.body.codes,
+                        'Contains indicator 2 codes',
+                      ).to.have.length.greaterThan(0);
+
+                      // Find the created local code
+                      const foundLocalCode2 = getCodes2Resp.body.codes.find(
+                        (code) => code.id === createdIndicatorCode2Id,
+                      );
+                      expect(foundLocalCode2, 'Created indicator 2 code found in response').to
+                        .exist;
+                      expect(foundLocalCode2).to.include({
+                        indicatorId: indicator2.id,
+                        code: indicator2CodePayload.code,
+                        label: indicator2CodePayload.label,
+                        scope: 'local',
+                      });
+
+                      // Verify standard codes exist (from LOC)
+                      const standardCodes2 = getCodes2Resp.body.codes.filter(
+                        (code) => code.scope === 'standard',
+                      );
+                      expect(
+                        standardCodes2.length,
+                        'Indicator 2 contains standard codes from LOC',
+                      ).to.be.greaterThan(0);
+
+                      // Cleanup: Delete created indicator codes
+                      cy.deleteSpecificationIndicatorCode(createdIndicatorCode1Id);
+                      cy.deleteSpecificationIndicatorCode(createdIndicatorCode2Id);
+                    });
+                  });
+                },
+              );
+            },
+          );
+        });
+      });
+    },
+  );
+
+  it(
     'C502993 Cannot update Indicator Code of Standard Field for MARC authority spec (API) (spitfire)',
     { tags: ['criticalPath', 'C502993', 'spitfire'] },
     () => {
