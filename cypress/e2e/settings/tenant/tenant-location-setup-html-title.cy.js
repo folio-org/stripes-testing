@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import {
   Campuses,
@@ -16,21 +17,51 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
+const institution = Institutions.getDefaultInstitution({
+  name: `1_autotest_institution ${getRandomPostfix()}`,
+});
 const testData = {
-  servicePoint: ServicePoints.getDefaultServicePoint(),
   location: {},
 };
 
 describe('Settings: Tenant', () => {
   before('create test data', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.servicePoint);
-      const { institution, location } = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
+    cy.getAdminToken();
+
+    Institutions.createViaApi(institution).then((locinst) => {
+      testData.institutions = locinst;
+
+      const campus = Campuses.getDefaultCampuse({
+        name: `1_autotest_campus ${getRandomPostfix()}`,
+        institutionId: locinst.id,
       });
-      testData.institution = institution;
-      testData.location = location;
-      Locations.createViaApi(testData.location);
+      Campuses.createViaApi(campus).then((loccamp) => {
+        testData.campuses = loccamp;
+
+        const library = Libraries.getDefaultLibrary({ campusId: loccamp.id });
+        Libraries.createViaApi(library).then((loclib) => {
+          testData.libraries = loclib;
+
+          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePointData) => {
+            testData.servicePoint = servicePointData;
+
+            Locations.createViaApi({
+              id: uuid(),
+              code: `1_autotest_location_code-${getRandomPostfix()}`,
+              name: `1_autotest_location_name-${getRandomPostfix()}`,
+              isActive: true,
+              institutionId: locinst.id,
+              campusId: loccamp.id,
+              libraryId: loclib.id,
+              discoveryDisplayName: `1_autotest_location_discovery-${getRandomPostfix()}`,
+              servicePointIds: [servicePointData.id],
+              primaryServicePoint: servicePointData.id,
+            }).then((location) => {
+              testData.location = location;
+            });
+          });
+        });
+      });
     });
     cy.createTempUser([
       permissions.settingsTenantViewLocation.gui,
@@ -44,8 +75,12 @@ describe('Settings: Tenant', () => {
 
   after('delete test data', () => {
     cy.getAdminToken();
-    Locations.deleteViaApi(testData.location);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Locations.deleteViaApi({
+      id: testData.location.id,
+      campusId: testData.campuses.id,
+      libraryId: testData.libraries.id,
+      institutionId: testData.institutions.id,
+    });
     Users.deleteViaApi(user.userId);
   });
 
@@ -73,18 +108,18 @@ describe('Settings: Tenant', () => {
       Locations.waitLoading();
       TenantPane.verifyPageTitle('Tenant settings - Locations - FOLIO');
       Locations.selectOption('Institution', {
-        name: testData.location.institutionName,
-        id: testData.location.institutionId,
+        name: testData.institutions.name,
+        id: testData.institutions.id,
       });
       cy.wait(500);
       Locations.selectOption('Campus', {
-        name: testData.location.campusName,
-        id: testData.location.campusId,
+        name: testData.campuses.name,
+        id: testData.campuses.id,
       });
       cy.wait(500);
       Locations.selectOption('Library', {
-        name: testData.location.libraryName,
-        id: testData.location.libraryId,
+        name: testData.libraries.name,
+        id: testData.libraries.id,
       });
       cy.wait(500);
       Locations.openLocationDetails(testData.location.name);

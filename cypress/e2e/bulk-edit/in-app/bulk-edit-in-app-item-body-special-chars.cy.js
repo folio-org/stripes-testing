@@ -51,6 +51,9 @@ describe('Bulk-edit', () => {
             (itemData) => {
               item.hrid = itemData.hrid;
 
+              // need to wait created item note type to be saved
+              cy.wait(3000);
+
               itemData.notes = [
                 {
                   itemNoteTypeId: noteTypeId,
