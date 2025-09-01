@@ -48,16 +48,6 @@ describe('Permissions', () => {
       };
       const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
       const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
-      const permissionSetBody = {
-        displayName: getTestEntityValue('setName'),
-        description: getTestEntityValue('setDescription'),
-        subPermissions: [
-          permissions.uiUsersViewPermissionSets.internal,
-          permissions.uiUsersViewAllSettings.internal,
-        ],
-        mutable: true,
-        id: uuid(),
-      };
       const patronBlockTemplate = {
         name: getTestEntityValue('Template'),
         desc: getTestEntityValue('Description'),
@@ -97,9 +87,6 @@ describe('Permissions', () => {
       after('Deleting created entities', () => {
         cy.getAdminToken();
         PatronBlockTemplates.deleteViaApi(testData.patronBlockTemplateId);
-        if (permissionSetBody) {
-          PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
-        }
         UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
           testData.userServicePoint.id,
         ]);
