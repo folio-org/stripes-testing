@@ -24,7 +24,7 @@ let user;
 const marcInstance = {};
 const marcBibFile = {
   marc: 'marcBibFileForC375966.mrc',
-  fileNameImported: `testMarcBibFileC375970.${getRandomPostfix()}.mrc`,
+  fileNameImported: `testMarcBibFileC375966.${getRandomPostfix()}.mrc`,
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 };
 const marcHoldingsFile = {
