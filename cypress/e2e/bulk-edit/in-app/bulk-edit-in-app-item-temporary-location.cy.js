@@ -77,7 +77,7 @@ describe.skip('bulk-edit', () => {
 
     it(
       'C358977 Verify that 10 records returned in errors preview after updating records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358977'] },
+      { tags: [] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

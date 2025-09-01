@@ -73,6 +73,7 @@ export default {
     });
   },
   verifyPageTitle(title) {
+    cy.wait(1000);
     cy.title().should('eq', title);
   },
 };

@@ -22,6 +22,8 @@ import {
   TextField,
   including,
   MultiSelectMenu,
+  or,
+  PaneContent,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -33,6 +35,8 @@ import DateTools from '../../utils/dateTools';
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
 const summaryAccordionId = 'summarySection';
+const rootSection = PaneContent({ id: 'organizations-results-pane-content' });
+const organizationList = rootSection.find(MultiColumnList({ id: 'organizations-list' }));
 const contactPeopleDetails = MultiColumnList({ id: 'contact-list' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
@@ -92,7 +96,20 @@ const donorSection = Section({ id: 'isDonor' });
 const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
 const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
+const toggleOrganizationStatus = Button({ id: 'accordion-toggle-button-status' });
+const toggleOrganizationTypes = Button({
+  id: 'accordion-toggle-button-org-filter-organizationTypes',
+});
+const toggleOrganizationTags = Button({ id: 'accordion-toggle-button-tags' });
+const toggleButtonIsVendor = Button({ id: 'accordion-toggle-button-isVendor' });
+const toggleButtonCountry = Button({ id: 'accordion-toggle-button-plugin-country-filter' });
+const toggleButtonLanguage = Button({ id: 'accordion-toggle-button-plugin-language-filter' });
+const toggleButtonPaymentMethod = Button({ id: 'accordion-toggle-button-paymentMethod' });
+const toggleButtonAcquisitionMethod = Button({
+  id: 'accordion-toggle-button-org-filter-acqUnitIds',
+});
 const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
+const toggleButtonDateCreated = Button({ id: 'accordion-toggle-button-metadata.createdDate' });
 const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
 const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
 const updatedDateAccordion = Section({ id: 'metadata.updatedDate' });
@@ -109,9 +126,50 @@ const accountStatus = Select('Account status*');
 
 const tagsPane = Pane('Tags');
 
+const nextButton = Button('Next', { disabled: or(true, false) });
+const previousButton = Button('Previous', { disabled: or(true, false) });
+const contactStatusButton = Button({ id: 'accordion-toggle-button-inactive' });
+
 export default {
   waitLoading: () => {
     cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
+  },
+
+  verifySearchAndFilterPane() {
+    cy.expect([
+      toggleOrganizationStatus.exists(),
+      toggleOrganizationTypes.exists(),
+      toggleOrganizationTags.exists(),
+      toggleButtonIsDonor.exists(),
+      toggleButtonIsVendor.exists(),
+      toggleButtonCountry.exists(),
+      toggleButtonLanguage.exists(),
+      toggleButtonPaymentMethod.exists(),
+      toggleButtonAcquisitionMethod.exists(),
+      toggleButtonCreatedBy.exists(),
+      toggleButtonDateCreated.exists(),
+      toggleButtonUpdatedBy.exists(),
+      toggleButtonDateUpdated.exists(),
+    ]);
+  },
+
+  verifyPagination(numberOfRows) {
+    cy.expect([
+      previousButton.has({ disabled: or(true, false) }),
+      nextButton.has({ disabled: or(true, false) }),
+    ]);
+    cy.then(() => organizationList.rowCount()).then((rowsCount) => {
+      expect(rowsCount).to.lessThan(numberOfRows);
+    });
+  },
+
+  clickNextPaginationButton() {
+    cy.do(nextButton.click());
+    cy.wait(2000);
+  },
+
+  clickPreviousPaginationButton: () => {
+    cy.do(previousButton.click());
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -253,11 +311,12 @@ export default {
     cy.expect(tagsPane.absent());
   },
 
-  tagFilter: () => {
+  selectTagFilter: (tag) => {
+    cy.wait(3000);
     cy.do([
-      Section({ id: 'org-filter-tags' }).find(Button('Tags')).click(),
-      Button({ className: 'multiSelectToggleButton---cD_fu' }).click(),
-      MultiSelectOption('^').click(),
+      Button({ id: 'accordion-toggle-button-tags' }).click(),
+      MultiSelect({ id: 'acq-tags-filter' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(tag)).clickSegment(),
     ]);
   },
 
@@ -532,12 +591,12 @@ export default {
   },
 
   selectYesInIsVendor: () => {
-    cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('Yes').click()]);
+    cy.do([toggleButtonIsVendor.click(), Checkbox('Yes').click()]);
   },
 
   selectNoInIsVendor: () => {
     cy.wait(3000);
-    cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('No').click()]);
+    cy.do([toggleButtonIsVendor.click(), Checkbox('No').click()]);
   },
 
   selectVendor: () => {
@@ -581,7 +640,7 @@ export default {
   selectCountryFilter: () => {
     cy.wait(3000);
     cy.do([
-      Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
+      toggleButtonCountry.click(),
       Button({ id: 'addresses-selection' }).click(),
       SelectionOption('United States').click(),
     ]);
@@ -590,7 +649,7 @@ export default {
   selectLanguageFilter: () => {
     cy.wait(3000);
     cy.do([
-      Button({ id: 'accordion-toggle-button-plugin-language-filter' }).click(),
+      toggleButtonLanguage.click(),
       Button({ id: 'language-selection' }).click(),
       SelectionOption('English').click(),
     ]);
@@ -598,10 +657,7 @@ export default {
 
   selectCashInPaymentMethod: () => {
     cy.wait(3000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
-      Checkbox('Cash').click(),
-    ]);
+    cy.do([toggleButtonPaymentMethod.click(), Checkbox('Cash').click()]);
   },
 
   deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
@@ -660,6 +716,15 @@ export default {
     })
     .then((resp) => resp.body.id),
 
+  deleteContactViaApi: (id, { failOnStatusCode = true } = {}) => {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `organizations-storage/contacts/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
+    });
+  },
+
   createInterfaceViaApi: (iface) => cy
     .okapiRequest({
       method: 'POST',
@@ -677,6 +742,15 @@ export default {
       isDefaultSearchParamsRequired: false,
     })
     .then((resp) => resp.status),
+
+  createTagViaApi: (tag) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'tags',
+      body: typeof tag === 'string' ? { label: tag } : tag,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
 
   getTagByLabel(label) {
     const q = `label=="${label}"`;
@@ -892,6 +966,29 @@ export default {
     SearchHelper.selectCheckboxFromResultsList();
     cy.do([addContacsModal.find(saveButton).click(), Button('Save & close').click()]);
     cy.wait(6000);
+  },
+
+  filterContactsByStatus: (status) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      contactStatusButton.click(),
+      Checkbox(status).click(),
+    ]);
+    cy.wait(6000);
+  },
+
+  selectAllContactsOnPage: () => {
+    cy.get('[data-test-find-records-modal-select-all="true"]').click();
+  },
+
+  verifyTotalSelected(expected) {
+    cy.get('[data-test-find-records-modal-save="true"]')
+      .siblings('div')
+      .should(($div) => {
+        expect($div).to.have.length(1);
+        expect($div.text().trim()).to.eq(`Total selected: ${expected}`);
+      });
   },
 
   addContactToOrganizationWithoutSaving: (contact) => {
