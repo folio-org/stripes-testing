@@ -71,6 +71,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifySlowInternetConnectionModal();
 
           cy.wait('@slowNetworkRequest');
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
 
           QuickMarcEditor.confirmDeletingFields();
