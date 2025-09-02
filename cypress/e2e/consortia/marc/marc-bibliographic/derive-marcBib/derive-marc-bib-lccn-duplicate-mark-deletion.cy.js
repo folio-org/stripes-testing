@@ -14,7 +14,7 @@ describe('MARC', () => {
       describe('Consortia', () => {
         const testData = {
           bibFile: 'marcBibFileC569612.mrc',
-          lccnValues: ['vp58020562569612', 'pv19951911569612'],
+          lccnValues: ['vp58020562569612'],
         };
         const randomPostfix = getRandomPostfix();
         const marcInstanceTitle = `AT_C569612_MarcBibInstance_${randomPostfix}`;
@@ -49,7 +49,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C569612 Derive MARC bib record with "010 $a" subfield matched to others, marked as deleted records with "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
+          'C569612 Derive MARC bib record with "010 $a" subfield matched to others, marked as deleted records with "LCCN" field when duplicate LCCN check is enabled (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C569612'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed

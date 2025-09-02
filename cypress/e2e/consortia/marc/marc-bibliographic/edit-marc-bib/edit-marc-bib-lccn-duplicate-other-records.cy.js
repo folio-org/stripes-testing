@@ -16,16 +16,18 @@ describe('MARC', () => {
           bibFile: 'marcBibFileC514853.mrc',
           lccnValues: [
             '58020559514853',
-            '19951908514853',
             'vp  58020560514853 ',
             'vp58020560514853',
+            'vp 58020561514853',
+            'vp58020562514853',
+            'vp  58020562514853',
+          ],
+          canceledLccnValues: [
+            '19951908514853',
             'pv  19951909514853',
             'pv19951909514853',
-            'vp 58020561514853',
             'pv 19951910514853',
-            'vp58020562514853',
             'pv19951911514853',
-            'vp  58020562514853',
             'pv  19951911514853',
           ],
         };
@@ -62,7 +64,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C514853 Cannot save existing MARC bib record with value in "010 $a" subfield which matches to other records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
+          'C514853 Save existing MARC bib record with value in "010 $a" subfield which matches to other records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C514853'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed
@@ -116,11 +118,17 @@ describe('MARC', () => {
               QuickMarcEditor.waitLoading();
               QuickMarcEditor.updateLDR06And07Positions();
 
-              // Attempt to update "010 $a" with various LCCN and Canceled LCCN values
+              // Attempt to update "010 $a" with various LCCN values
               testData.lccnValues.forEach((lccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${lccnValue}`);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+              });
+
+              // Attempt to update "010 $a" with various Canceled LCCN values
+              testData.canceledLccnValues.forEach((canceledLccnValue) => {
+                QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnValue}`);
+                QuickMarcEditor.clickSaveAndKeepEditing();
               });
             });
           },
