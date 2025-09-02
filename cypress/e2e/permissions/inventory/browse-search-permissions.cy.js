@@ -52,8 +52,14 @@ describe('Permissions', () => {
       'C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
       { tags: ['smokeFlaky', 'thunderjet'] },
       () => {
-        cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
-        cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {
+          cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSearch(item.itemCallNumber);
@@ -70,8 +76,13 @@ describe('Permissions', () => {
       'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
       { tags: ['smoke', 'thunderjet'] },
       () => {
-        cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
-        cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {
+          cy.login(userWithAllPermissions.username, userWithAllPermissions.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+        }, 20_000);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSearch(item.itemCallNumber);
