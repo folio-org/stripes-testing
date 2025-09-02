@@ -3,7 +3,7 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../support/fragments/users/usersCard';
 
-describe('fse-users - UI', () => {
+describe('fse-users - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -19,13 +19,11 @@ describe('fse-users - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
       Users.waitLoading();
-      cy.getAdminUserId().then(
-        (id) => {
-          UsersSearchPane.searchByKeywords(id);
-          UsersSearchPane.openUser(id);
-          UsersCard.verifyUserCardOpened();
-        },
-      );
+      cy.getAdminUserId().then((id) => {
+        UsersSearchPane.searchByKeywords(id);
+        UsersSearchPane.openUser(id);
+        UsersCard.verifyUserCardOpened();
+      });
     },
   );
 });

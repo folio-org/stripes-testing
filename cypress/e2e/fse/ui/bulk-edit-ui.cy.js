@@ -2,7 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import BulkEditSearch from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
-describe('fse-bulk-edit - UI for productions tenants', () => {
+describe('fse-bulk-edit - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

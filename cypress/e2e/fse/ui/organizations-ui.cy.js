@@ -8,7 +8,7 @@ import EditAgreement from '../../../support/fragments/agreements/editAgreement';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 
-describe('fse-organizations - UI for production tenants', () => {
+describe('fse-organizations - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -28,7 +28,7 @@ describe('fse-organizations - UI for production tenants', () => {
   );
 });
 
-describe('fse-organizations - UI for non-production tenants', () => {
+describe('fse-organizations - UI (data manipulation)', () => {
   let agreementId;
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultInterface = { ...NewOrganization.defaultInterface };
@@ -77,7 +77,7 @@ describe('fse-organizations - UI for non-production tenants', () => {
   before('Creating data', () => {
     cy.allure().logCommandSteps(false);
     cy.getAdminToken();
-    defaultAgreement.name += 'FSE_TEST_TCxxxxx';
+    defaultAgreement.name += 'FSE_TEST_TC195673';
     Agreements.createViaApi(defaultAgreement).then((agreement) => {
       agreementId = agreement.id;
     });
@@ -108,7 +108,7 @@ describe('fse-organizations - UI for non-production tenants', () => {
       Agreements.editAgreement();
       EditAgreement.waitLoading();
       cy.wait(1000);
-      EditAgreement.addOrganization(organization.name);
+      EditAgreement.addOrganization(organization.name, 'Content Provider');
       EditAgreement.waitLoading();
       EditAgreement.saveAndClose();
       // verify organizations added
