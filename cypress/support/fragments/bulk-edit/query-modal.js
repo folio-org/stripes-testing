@@ -24,7 +24,7 @@ const runQueryAndSave = Button('Run query & save');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
-const selectFieldButton = Button(including('Select field'));
+const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
@@ -40,6 +40,7 @@ export const holdingsFieldValues = {
   notes: 'Holdings — Notes — Note',
 };
 export const instanceFieldValues = {
+  administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
@@ -51,6 +52,8 @@ export const instanceFieldValues = {
   statisticalCodeNames: 'Instance — Statistical code names',
   languages: 'Instance — Languages',
   noteType: 'Instance — Notes — Note type',
+  note: 'Instance — Notes — Note',
+  noteStaffOnly: 'Instance — Notes — Staff only',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -184,7 +187,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
-    cy.do(selectFieldButton.click());
+    this.clickSelectFieldButton();
     cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -196,6 +199,7 @@ export default {
 
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+    cy.wait(1000);
   },
 
   clickSelectFieldButton() {
