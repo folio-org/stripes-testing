@@ -6,7 +6,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('fse-marc-authority - UI', () => {
+describe('fse-marc-authority - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -26,7 +26,7 @@ describe('fse-marc-authority - UI', () => {
   );
 });
 
-describe('fse-marc-authority - UI for non-production tenants', () => {
+describe('fse-marc-authority - UI (data manipulation)', () => {
   const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
   const propertyName = 'authority';
   let fileName;
@@ -55,7 +55,7 @@ describe('fse-marc-authority - UI for non-production tenants', () => {
 
   it(
     `TC195688 - check import of "MARC Authority" record ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'data-import'] },
+    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'fse-user-journey'] },
     () => {
       DataImport.uploadFileViaApi(
         'corporate_name(prefix_in_010Sa)sc_02.mrc',

@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import CirculationLog from '../../../support/fragments/circulation-log/searchPane';
 
-describe('fse-circulation-log - UI', () => {
+describe('fse-circulation-log - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

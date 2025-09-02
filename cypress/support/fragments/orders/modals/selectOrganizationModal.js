@@ -12,6 +12,7 @@ export default {
   },
   findOrganization(organizationName) {
     cy.do([searchField.fillIn(organizationName), searchButton.click()]);
+    cy.wait(5000);
     SearchHelper.selectFromResultsList();
   },
   closeModal() {
