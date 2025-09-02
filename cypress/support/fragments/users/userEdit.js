@@ -818,7 +818,7 @@ export default {
 
   closeEditPaneIfExists() {
     cy.get('body').then(($body) => {
-      if ($body.find('section[class*="pane"]').length > 0) {
+      if ($body.find('section [data-test-pane-header-title]')?.textContent === 'Edit') {
         cy.do(closeEditPaneButton.click());
       }
     });

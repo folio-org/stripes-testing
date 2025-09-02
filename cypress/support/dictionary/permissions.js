@@ -330,6 +330,10 @@ export default {
     internal: 'ui-inventory.items.in-transit-report.create',
     gui: 'Inventory: Create and download In transit items report',
   },
+  inventoryStorageBatchCreateUpdateItems: {
+    internal: 'inventory-storage.items.batch.post',
+    gui: 'inventory storage - create or update a number of items',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {

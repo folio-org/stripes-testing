@@ -60,15 +60,14 @@ describe('Organizations', () => {
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.filterContactsByStatus('Inactive');
-      Organizations.verifyPagination();
+      Organizations.verifyPaginationInContactList();
       Organizations.resetFilters();
       Organizations.selectActiveStatus();
-      Organizations.verifyPagination();
+      Organizations.verifyPaginationInContactList();
       Organizations.selectAllContactsOnPage();
       Organizations.verifyTotalSelected(50);
-      Organizations.verifyPagination();
       Organizations.clickNextPaginationButton();
-      Organizations.verifyPagination();
+      Organizations.verifyPaginationInContactList();
       SearchHelper.selectCheckboxFromResultsList(0);
       SearchHelper.selectCheckboxFromResultsList(1);
       Organizations.verifyTotalSelected(52);
