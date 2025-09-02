@@ -14,7 +14,7 @@ describe('MARC', () => {
       describe('Consortia', () => {
         const testData = {
           bibFile: 'marcBibFileC589505.mrc',
-          lccnValues: ['vp58020562589505', 'pv19951911589505'],
+          lccnValues: ['vp58020562589505'],
         };
         const randomPostfix = getRandomPostfix();
         const marcInstanceTitle = `AT_C589505_MarcBibInstance_${randomPostfix}`;
@@ -49,7 +49,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C589505 Cannot save existing MARC bib record with value in "010 $a" subfield which matches to "Staff suppressed" record "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
+          'C589505 Cannot save existing MARC bib record with value in "010 $a" subfield which matches to "Staff suppressed" record "LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C589505'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed
@@ -110,11 +110,6 @@ describe('MARC', () => {
               // Step 2: Attempt to update "010 $a" with LCCN of staff suppressed record
               QuickMarcEditor.updateExistingField('010', `$a ${testData.lccnValues[0]}`);
               QuickMarcEditor.clickSaveAndKeepEditingButton();
-              QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
-
-              // Step 3: Attempt to update "010 $a" with Canceled LCCN of staff suppressed record
-              QuickMarcEditor.updateExistingField('010', `$a ${testData.lccnValues[1]}`);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
             });
           },

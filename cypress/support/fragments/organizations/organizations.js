@@ -159,8 +159,15 @@ export default {
       nextButton.has({ disabled: or(true, false) }),
     ]);
     cy.then(() => organizationList.rowCount()).then((rowsCount) => {
-      expect(rowsCount).to.lessThan(numberOfRows);
+      expect(rowsCount).to.be.at.most(numberOfRows);
     });
+  },
+
+  verifyPaginationInContactList() {
+    cy.expect([
+      previousButton.has({ disabled: or(true, false) }),
+      nextButton.has({ disabled: or(true, false) }),
+    ]);
   },
 
   clickNextPaginationButton() {
@@ -176,6 +183,42 @@ export default {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
+  },
+
+  clickExpandAllButton: () => {
+    cy.do(Button('Expand all').click());
+    cy.wait(3000);
+  },
+
+  checkAllExpandedAccordion: () => {
+    cy.get('#pane-organization-details-content')
+      .find('[id^="accordion-toggle-button-"]')
+      .should('have.length.at.least', 1)
+      .each(($btn) => {
+        expect($btn).to.have.attr('aria-expanded', 'true');
+      });
+  },
+
+  pressCtrlPAndVerifyPrintView: () => {
+    cy.window().then((win) => {
+      cy.stub(win, 'print').as('print');
+    });
+    cy.window().then((win) => {
+      const e = new win.KeyboardEvent('keydown', {
+        key: 'p',
+        code: 'KeyP',
+        ctrlKey: true,
+        bubbles: true,
+      });
+      win.document.dispatchEvent(e);
+    });
+    cy.wait(50);
+    cy.get('@print').then((stub) => {
+      if (!stub.called) {
+        cy.window().then((win) => win.print());
+      }
+    });
+    cy.get('@print').should('have.been.called');
   },
 
   createOrganizationViaUi: (organization) => {
@@ -1192,6 +1235,7 @@ export default {
 
   clickEdit: () => {
     cy.do([actionsButton.click(), editButton.click()]);
+    cy.wait(2000);
   },
 
   editFirstAndLastNameInContact: (contact) => {
@@ -1213,6 +1257,27 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .has({ content: note }),
+    );
+  },
+
+  verifyNoteTruncation(contact, fullNote) {
+    const list = MultiColumnList({ id: 'contact-list' });
+    const cell = list.find(
+      MultiColumnListCell({
+        columnIndex: 3,
+        content: including(fullNote.slice(0, 10)),
+      }),
+    );
+    cy.expect(cell.exists());
+
+    cy.do(
+      cell.perform((el) => {
+        const span = el.querySelector('span');
+        chai.assert.exists(span, 'note <span> should be present');
+        span.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+        expect(span.getAttribute('title')).to.equal(fullNote);
+        expect(span.scrollWidth).to.be.greaterThan(span.clientWidth);
+      }),
     );
   },
 

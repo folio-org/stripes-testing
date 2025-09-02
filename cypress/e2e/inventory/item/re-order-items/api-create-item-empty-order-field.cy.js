@@ -15,7 +15,7 @@ describe('Inventory', () => {
         folioInstances: InventoryInstances.generateFolioInstances({
           count: 1,
           instanceTitlePrefix,
-          holdholdingsCount: 1,
+          holdingsCount: 1,
           itemsCount: 0,
         }),
       };
@@ -73,6 +73,8 @@ describe('Inventory', () => {
         'C808479 API | Create "Item" with empty "order" field (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C808479'] },
         () => {
+          cy.getToken(user.username, user.password);
+
           const itemBodyBase = {
             status: {
               name: ITEM_STATUS_NAMES.AVAILABLE,
