@@ -20,6 +20,7 @@ const agreementsViewSection = Section({ id: 'pane-view-agreement' });
 const newButton = Button('New');
 const editButton = Button('Edit');
 const actionsButton = section.find(Button('Actions'));
+const actions = Button('Actions');
 const controllingLicense = Accordion({ id: 'controllingLicense' });
 
 const waitLoading = () => {
@@ -102,8 +103,7 @@ export default {
   },
 
   createAndCheckFields: (specialAgreement) => {
-    cy.do(agreementsSection.find(actionsButton).click());
-    cy.do(newButton.click());
+    cy.do([agreementsSection.find(actions).click(), newButton.click()]);
     NewAgreement.waitLoading();
     NewAgreement.checkSelectFields();
     NewAgreement.fill(specialAgreement);
@@ -111,7 +111,7 @@ export default {
   },
 
   editAgreement() {
-    cy.do(agreementsViewSection.find(actionsButton).click());
+    cy.do(agreementsViewSection.find(actions).click());
     cy.do(editButton.click());
   },
 

@@ -14,7 +14,7 @@ describe('Inventory', () => {
         folioInstances: InventoryInstances.generateFolioInstances({
           count: 1,
           instanceTitlePrefix,
-          holdholdingsCount: 1,
+          holdingsCount: 1,
           itemsCount: 0,
         }),
         errorMessage: 'Order should be a number',
@@ -73,6 +73,8 @@ describe('Inventory', () => {
         'C808478 API | "order" field validation in create "Item" request (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C808478'] },
         () => {
+          cy.getToken(user.username, user.password);
+
           const itemBodyBase = {
             status: {
               name: ITEM_STATUS_NAMES.AVAILABLE,
