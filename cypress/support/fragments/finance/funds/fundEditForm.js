@@ -176,7 +176,6 @@ export default {
       cy.get('[data-test-find-records-modal-select-all="true"]').should('not.be.checked');
       cy.get('#list-plugin-find-records').should('have.attr', 'role', 'grid');
 
-      // Пагинация: prev disabled, интервал "1 - X", next (в примере — disabled)
       cy.get('[data-testid="prev-page-button"]').should('be.disabled');
       cy.get('[data-testid="prev-page-button"]')
         .parent()
