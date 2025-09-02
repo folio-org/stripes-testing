@@ -48,6 +48,7 @@ export const instanceFieldValues = {
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
   languages: 'Instance — Languages',
+  noteType: 'Instance — Notes — Note type',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -290,6 +291,7 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.wait(1000);
   },
 
   removeValueFromMultiselect(text) {
