@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import LocalKbAdmin from '../../../support/fragments/local-kbAdmin/localKbAdmin';
 
-describe('fse-local-kbAdmin - UI', () => {
+describe('fse-local-kbAdmin - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

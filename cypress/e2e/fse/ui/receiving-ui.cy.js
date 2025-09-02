@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Receiving from '../../../support/fragments/receiving/receiving';
 
-describe('fse-receiving - UI', () => {
+describe('fse-receiving - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
