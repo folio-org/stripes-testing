@@ -67,13 +67,122 @@ const getHoldingNotesData = (holdingsNoteTypeId) => [
   },
 ];
 
+// Helper function to verify all notes for a holding
+const verifyHoldingNotes = (holding) => {
+  if (holding.notes) {
+    QueryModal.verifyNotesEmbeddedTableInQueryModal(holding.hrid, holding.notes);
+  } else {
+    // For holdings without notes, verify by HRID with empty notes column
+    QueryModal.verifyMatchedRecordsByIdentifier(holding.hrid, 'Holdings — Notes', '');
+  }
+};
+
+// Function to create expected holdings array
+const createExpectedHoldings = (holdingHrids) => [
+  {
+    hrid: holdingHrids[0],
+    notes: [
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate copies',
+        staffOnly: 'False',
+      },
+    ],
+  },
+  {
+    hrid: holdingHrids[1],
+    notes: [
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'no.1-29 copies duplicate',
+        staffOnly: 'False',
+        miniRowIndex: 1,
+      },
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate copies',
+        staffOnly: 'False',
+        miniRowIndex: 2,
+      },
+    ],
+  },
+  {
+    hrid: holdingHrids[2],
+    notes: [
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'no.1-29 copies duplicate',
+        staffOnly: 'False',
+        miniRowIndex: 1,
+      },
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate',
+        staffOnly: 'False',
+        miniRowIndex: 2,
+      },
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate copies',
+        staffOnly: 'True',
+        miniRowIndex: 3,
+      },
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate copies',
+        staffOnly: 'False',
+        miniRowIndex: 4,
+      },
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate copies no.1-29',
+        staffOnly: 'False',
+        miniRowIndex: 5,
+      },
+    ],
+  },
+  {
+    hrid: holdingHrids[3],
+    notes: [
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate',
+        staffOnly: 'False',
+        miniRowIndex: 1,
+      },
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'duplicate copies no.1-29',
+        staffOnly: 'False',
+        miniRowIndex: 2,
+      },
+    ],
+  },
+  {
+    hrid: holdingHrids[4],
+    notes: [
+      {
+        noteType: HOLDING_NOTE_TYPES.ACTION_NOTE,
+        note: 'copies duplicate',
+        staffOnly: 'False',
+        miniRowIndex: 1,
+      },
+    ],
+  },
+  {
+    hrid: holdingHrids[5],
+  },
+];
+
 describe('Bulk-edit', () => {
   describe('Query', () => {
     describe('Repeatable fields', () => {
       before('Create test data', () => {
+        cy.clearLocalStorage();
         cy.getAdminToken();
         // make sure there are no duplicate records in the system
         InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C805770');
+
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditItems.gui,
@@ -98,14 +207,14 @@ describe('Bulk-edit', () => {
                 cy.getLocations({ limit: 1 }).then((locations) => {
                   const locationId = locations.id;
 
-                  // Create holdings with required fields and notes
+                  // Generate holdings with required fields and notes
                   const holdingsWithRequiredFields = holdingNotesData.map((holding) => ({
                     holdingsTypeId: holdingTypeId,
                     permanentLocationId: locationId,
                     notes: holding.notes,
                   }));
 
-                  // Create instance with holdings using createFolioInstanceViaApi
+                  // Create instance with holdings
                   InventoryInstances.createFolioInstanceViaApi({
                     instance: {
                       instanceTypeId,
@@ -144,6 +253,9 @@ describe('Bulk-edit', () => {
         'C805770 Search holdings by Holdings — Notes — Note (all operators for free text field) (firebird)',
         { tags: ['smoke', 'firebird', 'C805770'] },
         () => {
+          // Create expected holdings for verification
+          const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);
+
           // Step 1: Verify operators for repeatable free text field
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkHoldingsRadio();
@@ -159,21 +271,24 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('duplicate copies');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.clickShowColumnsButton();
+          QueryModal.clickCheckboxInShowColumns('Holdings — Notes');
+          QueryModal.clickShowColumnsButton();
 
-          let expectedHoldingsToFindHrids = [
-            folioInstance.holdingHrids[0],
-            folioInstance.holdingHrids[1],
-            folioInstance.holdingHrids[2],
+          let expectedHoldingsToFind = [
+            expectedHoldings[0],
+            expectedHoldings[1],
+            expectedHoldings[2],
           ];
 
-          expectedHoldingsToFindHrids.forEach((hrid) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(hrid, 'Holdings — HRID', hrid);
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
           });
 
           let notExpectedToFindHoldingHrids = [
-            folioInstance.holdingHrids[3],
-            folioInstance.holdingHrids[4],
-            folioInstance.holdingHrids[5],
+            expectedHoldings[3].hrid,
+            expectedHoldings[4].hrid,
+            expectedHoldings[5].hrid,
           ];
 
           notExpectedToFindHoldingHrids.forEach((hrid) => {
@@ -190,99 +305,36 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFindHrids = [
-            folioInstance.holdingHrids[0],
-            folioInstance.holdingHrids[1],
-            folioInstance.holdingHrids[2],
-            folioInstance.holdingHrids[3],
-            folioInstance.holdingHrids[5],
+          expectedHoldingsToFind = [
+            expectedHoldings[0],
+            expectedHoldings[1],
+            expectedHoldings[2],
+            expectedHoldings[3],
+            expectedHoldings[5],
           ];
 
-          expectedHoldingsToFindHrids.forEach((hrid) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(hrid, 'Holdings — HRID', hrid);
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
           });
 
-          notExpectedToFindHoldingHrids = folioInstance.holdingHrids[4];
+          notExpectedToFindHoldingHrids = [expectedHoldings[4].hrid];
 
-          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(notExpectedToFindHoldingHrids);
+          notExpectedToFindHoldingHrids.forEach((hrid) => {
+            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+          });
 
           // Step 4: Verify Holdings — Notes column display
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Notes');
-          QueryModal.clickShowColumnsButton();
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[0],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            5,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            4,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'True',
-            3,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-            1,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            1,
-          );
-          QueryModal.verifyMatchedRecordsByIdentifier(
-            folioInstance.holdingHrids[5],
-            'Holdings — Notes',
-            '',
-          );
+          expectedHoldingsToFind = [
+            expectedHoldings[0],
+            expectedHoldings[1],
+            expectedHoldings[2],
+            expectedHoldings[3],
+            expectedHoldings[5],
+          ];
+
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
+          });
 
           // Step 5: Search using "contains" operator
           QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
@@ -290,86 +342,18 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFindHrids = [
-            folioInstance.holdingHrids[0],
-            folioInstance.holdingHrids[1],
-            folioInstance.holdingHrids[2],
-            folioInstance.holdingHrids[3],
+          expectedHoldingsToFind = [
+            expectedHoldings[0],
+            expectedHoldings[1],
+            expectedHoldings[2],
+            expectedHoldings[3],
           ];
 
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[0],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            5,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            4,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'True',
-            3,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-            1,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            1,
-          );
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
+          });
 
-          notExpectedToFindHoldingHrids = [
-            folioInstance.holdingHrids[4],
-            folioInstance.holdingHrids[5],
-          ];
+          notExpectedToFindHoldingHrids = [expectedHoldings[4].hrid, expectedHoldings[5].hrid];
 
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
@@ -381,86 +365,18 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFindHrids = [
-            folioInstance.holdingHrids[0],
-            folioInstance.holdingHrids[1],
-            folioInstance.holdingHrids[2],
-            folioInstance.holdingHrids[3],
+          expectedHoldingsToFind = [
+            expectedHoldings[0],
+            expectedHoldings[1],
+            expectedHoldings[2],
+            expectedHoldings[3],
           ];
 
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[0],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            5,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            4,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'True',
-            3,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-            1,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            1,
-          );
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
+          });
 
-          notExpectedToFindHoldingHrids = [
-            folioInstance.holdingHrids[4],
-            folioInstance.holdingHrids[5],
-          ];
+          notExpectedToFindHoldingHrids = [expectedHoldings[4].hrid, expectedHoldings[5].hrid];
 
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
@@ -472,20 +388,19 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFindHrids = folioInstance.holdingHrids[5];
+          // Verify empty holdings (index 5) - it will be found for null/empty search
+          expectedHoldingsToFind = [expectedHoldings[5]];
 
-          QueryModal.verifyMatchedRecordsByIdentifier(
-            expectedHoldingsToFindHrids,
-            'Holdings — HRID',
-            expectedHoldingsToFindHrids,
-          );
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
+          });
 
           notExpectedToFindHoldingHrids = [
-            folioInstance.holdingHrids[0],
-            folioInstance.holdingHrids[1],
-            folioInstance.holdingHrids[2],
-            folioInstance.holdingHrids[3],
-            folioInstance.holdingHrids[4],
+            expectedHoldings[0].hrid,
+            expectedHoldings[1].hrid,
+            expectedHoldings[2].hrid,
+            expectedHoldings[3].hrid,
+            expectedHoldings[4].hrid,
           ];
 
           notExpectedToFindHoldingHrids.forEach((hrid) => {
@@ -497,89 +412,21 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFindHrids = [
-            folioInstance.holdingHrids[0],
-            folioInstance.holdingHrids[1],
-            folioInstance.holdingHrids[2],
-            folioInstance.holdingHrids[3],
-            folioInstance.holdingHrids[4],
+          expectedHoldingsToFind = [
+            expectedHoldings[0],
+            expectedHoldings[1],
+            expectedHoldings[2],
+            expectedHoldings[3],
+            expectedHoldings[4],
           ];
 
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[0],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[1],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            5,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'False',
-            4,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies',
-            'True',
-            3,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[2],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'no.1-29 copies duplicate',
-            'False',
-            1,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate copies no.1-29',
-            'False',
-            2,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[3],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'duplicate',
-            'False',
-            1,
-          );
-          QueryModal.verifyNotesEmbeddedTableInQueryModal(
-            folioInstance.holdingHrids[4],
-            HOLDING_NOTE_TYPES.ACTION_NOTE,
-            'copies duplicate',
-            'False',
-            1,
-          );
+          expectedHoldingsToFind.forEach((holding) => {
+            verifyHoldingNotes(holding);
+          });
+
+          notExpectedToFindHoldingHrids = expectedHoldings[5].hrid;
+
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(notExpectedToFindHoldingHrids);
         },
       );
     });

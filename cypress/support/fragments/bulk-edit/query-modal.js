@@ -460,13 +460,12 @@ export default {
 
   verifyNotesEmbeddedTableInQueryModal(
     instanceIdentifier,
-    noteType,
-    note,
-    staffOnly,
-    miniRowIndex = 1,
+    expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
   ) {
-    const expectedValues = [noteType, note, staffOnly];
     const expectedHeaders = ['Note type', 'Note', 'Staff only'];
+
+    // Normalize input to always be an array
+    const notesToVerify = Array.isArray(expectedNotes) ? expectedNotes : [expectedNotes];
 
     cy.then(() => buildQueryModal.find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
@@ -484,14 +483,19 @@ export default {
               });
             });
 
-          // Verify table values
-          cy.get('[class^="DynamicTable-"]')
-            .find('tr')
-            .eq(miniRowIndex)
-            .find('td')
-            .each(($cell, index) => {
-              cy.wrap($cell).should('have.text', expectedValues[index]);
-            });
+          // Verify each note in the table
+          notesToVerify.forEach((noteObj, noteIndex) => {
+            const miniRowIndex = noteObj.miniRowIndex || noteIndex + 1;
+            const expectedValues = [noteObj.noteType, noteObj.note, noteObj.staffOnly];
+
+            cy.get('[class^="DynamicTable-"]')
+              .find('tr')
+              .eq(miniRowIndex)
+              .find('td')
+              .each(($cell, cellIndex) => {
+                cy.wrap($cell).should('have.text', expectedValues[cellIndex]);
+              });
+          });
         });
       },
     );
