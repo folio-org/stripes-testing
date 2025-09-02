@@ -1,15 +1,11 @@
 import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CALL_NUMBER_TYPE_NAMES,
-  BROWSE_CALL_NUMBER_OPTIONS,
-} from '../../../support/constants';
+import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
@@ -108,21 +104,26 @@ describe('Inventory', () => {
 
     after('Clean up', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
       InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitlePrefix);
       CallNumberBrowseSettings.assignCallNumberTypesViaApi({
         name: BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         callNumberTypes: [],
       });
+      Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C651492 Browse for same call numbers with different copy numbers (enumeration data) which belongs to different instances (spitfire)',
       { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C651492'] },
       () => {
-        cy.login(testData.user.username, testData.user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         // Switch to Browse tab and select Library of Congress classification
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
