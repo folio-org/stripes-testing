@@ -1,6 +1,6 @@
 const isEureka = Cypress.env('eureka');
 
-describe('fse-sso - UI', () => {
+describe('fse-sso - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

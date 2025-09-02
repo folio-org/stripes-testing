@@ -54,6 +54,10 @@ describe('Permissions', () => {
       });
 
       after('Deleting created entities', () => {
+        // Enable tags settings again to not break other tests in other threads
+        topMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TagsGeneral.changeEnableTagsStatus('enable');
+
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
         PatronGroups.deleteViaApi(patronGroup.id);
