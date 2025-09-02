@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('fse-orders - UI', () => {
+describe('fse-orders - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
