@@ -8,6 +8,8 @@ import {
   SelectionList,
   TextField,
   including,
+  MultiColumnList,
+  Modal,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -19,9 +21,10 @@ const fundEditForm = Section({ id: 'pane-fund-form' });
 const fundInfoSection = fundEditForm.find(Section({ id: 'information' }));
 const donorInfoSection = fundEditForm.find(Section({ id: 'donorInformation' }));
 const addDonorButton = donorInfoSection.find(Button({ id: 'fund.donorOrganizationIds-plugin' }));
+const donorsList = MultiColumnList({ id: 'fund.donorOrganizationIds' });
 
 const cancelButton = fundEditForm.find(Button('Cancel'));
-const saveAndCloseButton = fundEditForm.find(Button('Save & close'));
+const saveAndCloseButton = Button('Save & close');
 
 const fundSections = {
   'Fund information': fundInfoSection,
@@ -147,6 +150,53 @@ export default {
   clickSectionButton({ section }) {
     cy.do(section.toggle());
   },
+  verifyDonorModal() {
+    const modal = '[data-test-find-records-modal="true"]';
+
+    cy.get(modal).should('be.visible');
+    cy.get(`${modal} h1[data-test-headline="true"]`).should('have.text', 'Add donors');
+    cy.get(`${modal} [data-test-filter-pane="true"]`).within(() => {
+      cy.get('[data-test-pane-header-title="true"]').should('contain.text', 'Search & filter');
+      cy.get('#input-record-search').should('have.value', '');
+      cy.get('[data-test-single-search-form-submit="true"]').should('be.disabled');
+      cy.get('#reset-find-records-filters').should('exist');
+
+      cy.get('#accordion-toggle-button-org-filter-organizationTypes').should(
+        'have.attr',
+        'aria-expanded',
+        'false',
+      );
+      cy.get('#accordion-toggle-button-tags').should('have.attr', 'aria-expanded', 'false');
+      cy.get('#accordion-toggle-button-isVendor').should('have.attr', 'aria-expanded', 'false');
+    });
+
+    cy.get(`${modal} [data-test-results-pane="true"]`).within(() => {
+      cy.get('[data-test-pane-header-title="true"]').should('contain.text', 'Donors');
+      cy.get('[data-test-pane-header-sub="true"]').should('contain.text', 'records found');
+      cy.get('[data-test-find-records-modal-select-all="true"]').should('not.be.checked');
+      cy.get('#list-plugin-find-records').should('have.attr', 'role', 'grid');
+
+      cy.get('[data-testid="prev-page-button"]').should('be.disabled');
+      cy.get('[data-testid="prev-page-button"]')
+        .parent()
+        .invoke('text')
+        .should((t) => expect(t.trim()).to.match(/1\s*-\s*\d+/));
+      cy.get('[data-testid="next-page-button"]').should('be.enabled');
+    });
+  },
+  clickDonorNameByRow(rowIndex) {
+    cy.wait(4000);
+    cy.expect(donorsList.exists());
+    cy.do(
+      donorsList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ column: 'Name' }))
+        .perform((cell) => {
+          const link = cell.querySelector('[data-test-text-link], a');
+          link.click();
+        }),
+    );
+  },
   selectDropDownValue(label, option) {
     cy.do([
       Selection(including(label)).open(),
@@ -161,11 +211,20 @@ export default {
   clickSaveAndCloseButton({ fundSaved = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
+    cy.wait(4000);
 
     if (fundSaved) {
       InteractorsTools.checkCalloutMessage(States.fundSavedSuccessfully);
     }
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  keepEditingFund: () => {
+    cy.wait(3000);
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }))
+        .click(),
+    );
   },
 };
