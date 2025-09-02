@@ -10,6 +10,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
+import topMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -24,11 +26,9 @@ describe('Inventory', () => {
 
     before('Preconditions', () => {
       cy.getAdminToken().then(() => {
-        ServicePoints.getCircDesk1ServicePointViaApi().then(
-          (servicePoint) => {
-            servicePointId = servicePoint.id;
-          },
-        );
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          servicePointId = servicePoint.id;
+        });
         PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
           patronGroup.id = patronGroupResponse;
         });
@@ -50,6 +50,12 @@ describe('Inventory', () => {
     });
 
     after('Deleting created entities', () => {
+      // Let's enable tags settings, in case the test fails,
+      // to not break other tests in other threads
+      topMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      TagsGeneral.waitLoading();
+      TagsGeneral.changeEnableTagsStatus('enable');
+
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
       PatronGroups.deleteViaApi(patronGroup.id);
@@ -60,13 +66,13 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'volaris', 'C397329'] },
       () => {
         TagsGeneral.changeEnableTagsStatus('disable');
-        cy.visit(TopMenu.invoicesPath);
+        topMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.waitLoading();
         Invoices.selectStatusFilter('Open');
         InvoiceView.selectFirstInvoice();
         InvoiceView.verifyTagsIsAbsent();
 
-        cy.visit(SettingsMenu.tagsGeneralPath);
+        topMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         TagsGeneral.waitLoading();
         TagsGeneral.changeEnableTagsStatus('enable');
         cy.visit(TopMenu.invoicesPath);
