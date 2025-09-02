@@ -707,11 +707,7 @@ export default {
   },
 
   searchTag(tag) {
-    cy.wait(500);
-    cy.do([
-      tagsAccordionButton.click(),
-      MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
-    ]);
+    cy.do([MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag)]);
   },
 
   filterByTag(tag) {

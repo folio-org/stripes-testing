@@ -23,6 +23,7 @@ const resultSection = Section({ id: 'search-results' });
 const searchResultsList = resultSection.find(List({ testId: 'scroll-view-list' }));
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
+const createNewPackageButton = Button('New');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
@@ -52,6 +53,10 @@ export default {
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
     return packageName;
+  },
+
+  createNewPackage() {
+    cy.do(createNewPackageButton.click());
   },
 
   deletePackage: () => {

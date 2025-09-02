@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 
-describe('fse-requests - UI', () => {
+describe('fse-requests - UI (no data manipulation)', () => {
   let userData = {};
   let servicePointId;
 

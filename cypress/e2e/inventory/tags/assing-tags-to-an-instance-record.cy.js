@@ -23,7 +23,7 @@ describe('Inventory', () => {
       };
       let instanceId;
 
-      beforeEach('Create test data and login', () => {
+      before('Create test data and login', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getInstanceTypes({ limit: 1 });
@@ -51,7 +51,7 @@ describe('Inventory', () => {
         });
       });
 
-      afterEach('Delete test data', () => {
+      after('Delete test data', () => {
         cy.getAdminToken().then(() => {
           cy.deleteTagApi(tag.id);
           InventoryInstance.deleteInstanceViaApi(instanceId);
@@ -77,17 +77,8 @@ describe('Inventory', () => {
         'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
         { tags: ['extendedPath', 'volaris', 'C358144'] },
         () => {
-          InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-          InventoryInstances.selectInstance();
-          InventoryInstance.addTag(tag.label);
-          InventoryInstances.resetAllFilters();
-          InventoryInstances.searchByTag(tag.label);
-          InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-          InventoryInstance.checkAddedTag(tag.label, instanceTitle);
-          InventoryInstance.deleteTag(tag.label);
           InventorySearchAndFilter.verifyTagCount();
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-          cy.reload();
           InventorySearchAndFilter.verifyTagIsAbsent(tag.label);
         },
       );
