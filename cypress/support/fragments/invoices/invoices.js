@@ -1205,6 +1205,7 @@ export default {
   },
 
   selectStatusFilter: (status) => {
+    cy.wait(500);
     cy.do([
       invoiceFiltersSection
         .find(Section({ id: 'status' }))
