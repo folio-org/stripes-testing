@@ -66,6 +66,7 @@ export const itemFieldValues = {
   temporaryLocation: 'Temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
   materialTypeName: 'Material type — Name',
+  itemNotesStaffOnly: 'Items — Notes — Notes staff only',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -230,6 +231,7 @@ export default {
         .find(Select({ dataTestID: including('operator-option') }))
         .choose(selection),
     );
+    cy.wait(1000);
   },
 
   verifyOperatorsList(operators, row = 0) {
@@ -281,6 +283,7 @@ export default {
         .find(Select({ content: including('Select value') }))
         .choose(choice),
     );
+    cy.wait(1000);
   },
 
   fillInValueMultiselect(text, row = 0) {
