@@ -12,6 +12,7 @@ import {
   Selection,
   Spinner,
   TextField,
+  Checkbox,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
@@ -36,6 +37,7 @@ export const holdingsFieldValues = {
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
+  notes: 'Holdings — Notes — Note',
 };
 export const instanceFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -449,5 +451,58 @@ export default {
           .exists(),
       );
     });
+  },
+
+  verifyRecordWithIdentifierAbsentInResultTable(identifier, timeout = 2000) {
+    cy.wait(timeout);
+    cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
+  },
+
+  verifyNotesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    noteType,
+    note,
+    staffOnly,
+    miniRowIndex = 1,
+  ) {
+    const expectedValues = [noteType, note, staffOnly];
+    const expectedHeaders = ['Note type', 'Note', 'Staff only'];
+
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(instanceIdentifier)).row()).then(
+      (rowIndex) => {
+        // Find the DynamicTable specifically within this row
+        cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+          // Verify table headers
+          cy.get('[class^="DynamicTable-"]')
+            .find('tr')
+            .eq(0)
+            .then((headerRow) => {
+              const headerCells = headerRow.find('th');
+
+              expectedHeaders.forEach((header, index) => {
+                cy.wrap(headerCells.eq(index)).should('have.text', header);
+              });
+            });
+
+          // Verify table values
+          cy.get('[class^="DynamicTable-"]')
+            .find('tr')
+            .eq(miniRowIndex)
+            .find('td')
+            .each(($cell, index) => {
+              cy.wrap($cell).should('have.text', expectedValues[index]);
+            });
+        });
+      },
+    );
+  },
+
+  clickShowColumnsButton() {
+    cy.do(showColumnsButton.click());
+  },
+
+  clickCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).click());
+    cy.wait(2000);
   },
 };
