@@ -75,14 +75,16 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
 });
 
 Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
-  return cy.okapiRequest({
-    path: 'material-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  }).then((response) => {
-    Cypress.env('materialTypes', response.body.mtypes);
-    return response.body.mtypes;
-  });
+  return cy
+    .okapiRequest({
+      path: 'material-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      Cypress.env('materialTypes', response.body.mtypes);
+      return response.body.mtypes;
+    });
 });
 
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {
@@ -312,7 +314,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
 });
 
 // Depricated, use createFolioInstanceViaApi instead
-Cypress.Commands.add('createItem', (item) => {
+Cypress.Commands.add('createItem', (item, ignoreErrors = false) => {
   const { itemId = uuid() } = item;
   delete item.itemId;
   cy.okapiRequest({
@@ -323,6 +325,7 @@ Cypress.Commands.add('createItem', (item) => {
       ...item,
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then((res) => {
     return res;
   });
@@ -770,5 +773,23 @@ Cypress.Commands.add('toggleLccnDuplicateCheck', ({ enable = true }) => {
         },
       });
     }
+  });
+});
+
+Cypress.Commands.add('batchCreateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
   });
 });

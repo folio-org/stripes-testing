@@ -215,6 +215,10 @@ export default {
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
   },
+  selectTemporaryLocation(location) {
+    this.openTemporaryLocation();
+    cy.do([SelectionList().filter(location), SelectionList().select(including(location))]);
+  },
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());
@@ -263,11 +267,11 @@ export default {
     callNumberSuffix,
     copyNumber,
   }) {
-    if (callNumber) this.fillCallNumber(callNumber);
+    if (callNumber !== undefined) this.fillCallNumber(callNumber);
     if (callNumberType) this.chooseCallNumberType(callNumberType);
-    if (callNumberPrefix) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
-    if (callNumberSuffix) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
-    if (copyNumber) cy.do(TextField('Copy number').fillIn(copyNumber));
+    if (callNumberPrefix !== undefined) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
+    if (callNumberSuffix !== undefined) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
+    if (copyNumber !== undefined) cy.do(TextField('Copy number').fillIn(copyNumber));
   },
   markAsSuppressedFromDiscovery() {
     cy.do(Checkbox('Suppress from discovery').click());

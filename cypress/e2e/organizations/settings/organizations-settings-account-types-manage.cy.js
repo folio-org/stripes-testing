@@ -146,4 +146,45 @@ describe('Banking Information', () => {
       SettingsOrganizations.checkRowActionButtons(editedTypeName);
     });
   });
+
+  describe('Account type - is not displayed', () => {
+    let user;
+    const accountType = { ...SettingsOrganizations.defaultAccountTypes };
+
+    before('Create user', () => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.uncheckenableBankingInformationIfChecked();
+      SettingsOrganizations.createAccountTypesViaApi(accountType);
+      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsOrganizationsPath,
+            waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+          });
+        },
+      );
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C422063 "Account type" setting is NOT displayed when "Bank information" option is disabled (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet'] },
+      () => {
+        SettingsOrganizations.selectBankingInformation();
+        SettingsOrganizations.checkenableBankingInformationIfNeeded();
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.ensureAccountTypesExist(1);
+        SettingsOrganizations.selectBankingInformation();
+        SettingsOrganizations.uncheckenableBankingInformationIfChecked();
+      },
+    );
+  });
 });

@@ -77,7 +77,7 @@ describe.skip('bulk-edit', () => {
 
     it(
       'C358976 Verify preview after updating less than 10 records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358976'] },
+      { tags: [] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

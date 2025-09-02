@@ -143,8 +143,8 @@ const defaultAuthority = {
       defaultValue: 'a - Fully established',
       newValue: 'v',
     },
-    modRecEst: {
-      interactor: Select('Mod Rec Est'),
+    modRec: {
+      interactor: Select('Mod Rec'),
       defaultValue: '\\ - Not modified',
       newValue: 'v',
     },

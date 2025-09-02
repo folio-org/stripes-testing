@@ -97,45 +97,39 @@ export default {
   },
 
   getDayAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 2,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get2DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 3,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 3);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get3DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 4,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 4);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get4DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 5,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 5);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get5DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 6,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 6);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get7DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 8,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 8);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
@@ -162,11 +156,9 @@ export default {
   },
 
   getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + days);
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate(),
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + days + 1);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   getDayTomorrowDateForFiscalYear: () => {
@@ -210,10 +202,9 @@ export default {
   },
 
   getTwoPreviousDaysDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 2,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() - 2);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   getTwoPreviousDaysDateForFiscalYearOnUIEdit: () => {
@@ -238,10 +229,9 @@ export default {
   },
 
   getThreePreviousDaysDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 3,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() - 3);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   getThreePreviousDaysDateForFiscalYearOnUIEdit: () => {
@@ -577,5 +567,18 @@ export default {
     const minutes = String(now.getUTCMinutes()).padStart(2, '0');
 
     return `${year}${month}${day}${hours}${minutes}`;
+  },
+
+  getCurrentDateForOaiPmh(offsetMinutes = 0) {
+    // Format date as YYYY-MM-DDTHH:mm:ssZ
+    const now = new Date(Date.now() + offsetMinutes * 60 * 1000);
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
   },
 };
