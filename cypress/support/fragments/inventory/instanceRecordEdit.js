@@ -280,6 +280,9 @@ export default {
     cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
     cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
   },
+  clickDiscoverySuppressCheckbox() {
+    cy.do(supressFromDiscoveryCheckbox.click());
+  },
   verifyDiscoverySuppressCheckbox(isChecked = false, isDisabled = false) {
     if (isChecked) {
       cy.expect(supressFromDiscoveryCheckbox.has({ checked: true, disabled: isDisabled }));
