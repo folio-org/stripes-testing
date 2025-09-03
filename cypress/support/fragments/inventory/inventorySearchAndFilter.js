@@ -707,7 +707,24 @@ export default {
   },
 
   searchTag(tag) {
-    cy.do([MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag)]);
+    // If Tags filter is expanded, directly fill in the tag
+    // If Tags filter is collapsed, open it first then fill in the tag
+    cy.get('body').then(($body) => {
+      const tagsSection = $body.find('[data-test-accordion-section][id*="Tags"]');
+      if (tagsSection.length > 0) {
+        const contentWrap = tagsSection.find('[class^="content-wrap"]');
+        const isExpanded = contentWrap.length > 0 && contentWrap.hasClass('expanded');
+
+        if (isExpanded) {
+          cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag));
+        } else {
+          cy.do([
+            tagsAccordionButton.click(),
+            MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
+          ]);
+        }
+      }
+    });
   },
 
   filterByTag(tag) {
