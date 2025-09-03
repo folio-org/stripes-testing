@@ -225,6 +225,10 @@ export default {
     internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
+  uiInventoryMarcItemInProcessDefault: {
+    internal: 'ui-inventory.items.mark-in-process.execute',
+    gui: 'Inventory: Mark items in process',
+  },
   uiInventoryMarcItemIntellectual: {
     internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
@@ -333,6 +337,10 @@ export default {
   inventoryStorageBatchCreateUpdateItems: {
     internal: 'inventory-storage.items.batch.post',
     gui: 'inventory storage - create or update a number of items',
+  },
+  inventoryFastAddCreate: {
+    internal: 'ui-plugin-create-inventory-records.create',
+    gui: 'Fast add: Create',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
