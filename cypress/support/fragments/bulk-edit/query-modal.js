@@ -24,7 +24,7 @@ const runQueryAndSave = Button('Run query & save');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
-const selectFieldButton = Button(including('Select field'));
+const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
@@ -40,6 +40,7 @@ export const holdingsFieldValues = {
   notes: 'Holdings — Notes — Note',
 };
 export const instanceFieldValues = {
+  administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
@@ -50,6 +51,9 @@ export const instanceFieldValues = {
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
   languages: 'Instance — Languages',
+  noteType: 'Instance — Notes — Note type',
+  note: 'Instance — Notes — Note',
+  noteStaffOnly: 'Instance — Notes — Staff only',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -65,6 +69,7 @@ export const itemFieldValues = {
   temporaryLocation: 'Temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
   materialTypeName: 'Material type — Name',
+  itemNotesStaffOnly: 'Items — Notes — Notes staff only',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -182,7 +187,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
-    cy.do(selectFieldButton.click());
+    this.clickSelectFieldButton();
     cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -194,6 +199,7 @@ export default {
 
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+    cy.wait(1000);
   },
 
   clickSelectFieldButton() {
@@ -229,6 +235,7 @@ export default {
         .find(Select({ dataTestID: including('operator-option') }))
         .choose(selection),
     );
+    cy.wait(1000);
   },
 
   verifyOperatorsList(operators, row = 0) {
@@ -280,6 +287,7 @@ export default {
         .find(Select({ content: including('Select value') }))
         .choose(choice),
     );
+    cy.wait(1000);
   },
 
   fillInValueMultiselect(text, row = 0) {
@@ -292,6 +300,7 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.wait(1000);
   },
 
   removeValueFromMultiselect(text) {

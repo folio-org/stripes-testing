@@ -184,8 +184,8 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C805770');
 
         cy.createTempUser([
-          permissions.bulkEditEdit.gui,
-          permissions.uiInventoryViewCreateEditItems.gui,
+          permissions.bulkEditView.gui,
+          permissions.uiInventoryViewInstances.gui,
           permissions.bulkEditQueryView.gui,
         ]).then((userProperties) => {
           user = userProperties;
