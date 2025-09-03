@@ -54,6 +54,15 @@ const titlesSearchOptionSelect = titlesSection.find(
   Select({ dataTestID: 'field-to-search-select' }),
 );
 const titlesSearchField = titlesSection.find(TextField({ type: 'search' }));
+const cancelButton = Button('Cancel');
+const saveAndCloseButton = Button('Save & close');
+const unsavedChangesModal = Modal({ id: 'navigation-modal' });
+const unsavedChangesText = Modal().find(
+  HTML('Your changes have not been saved. Are you sure you want to leave this page?'),
+);
+const keepEditingButton = Modal().find(Button('Keep editing'));
+const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
+const closeIconButton = Button({ icon: 'times' });
 
 export default {
   waitLoading: (specialPackage) => {
@@ -300,5 +309,44 @@ export default {
         timeout: 30_000,
       },
     );
+  },
+
+  verifyButtonsDisabled: () => {
+    cy.expect(cancelButton.has({ disabled: true }));
+    cy.expect(saveAndCloseButton.has({ disabled: true }));
+  },
+
+  verifyButtonsEnabled: () => {
+    cy.expect(cancelButton.has({ disabled: false }));
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+  },
+
+  cancelChanges: () => {
+    cy.expect(cancelButton.exists());
+    cy.do(cancelButton.click());
+  },
+
+  verifyUnsavedChangesModalExists: () => {
+    cy.expect(unsavedChangesModal.exists());
+    cy.expect(unsavedChangesText.exists());
+  },
+
+  verifyUnsavedChangesModalNotExists: () => {
+    cy.expect(unsavedChangesModal.absent());
+  },
+
+  clickKeepEditing: () => {
+    cy.expect(keepEditingButton.exists());
+    cy.do(keepEditingButton.click());
+  },
+
+  clickContinueWithoutSaving: () => {
+    cy.expect(continueWithoutSavingButton.exists());
+    cy.do(continueWithoutSavingButton.click());
+  },
+
+  closeEditingWindow: () => {
+    cy.expect(closeIconButton.exists());
+    cy.do(closeIconButton.click());
   },
 };

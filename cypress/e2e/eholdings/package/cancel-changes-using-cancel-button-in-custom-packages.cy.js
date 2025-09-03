@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import EHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
@@ -46,21 +47,21 @@ describe('eHoldings', () => {
         EHoldingsPackages.createNewPackage();
         EHoldingsNewCustomPackage.waitLoading();
 
-        EHoldingsNewCustomPackage.verifyButtonsDisabled();
+        EHoldingsPackage.verifyButtonsDisabled();
         EHoldingsNewCustomPackage.fillInRequiredProperties(testData.customPackageName);
-        EHoldingsNewCustomPackage.verifyButtonsEnabled();
+        EHoldingsPackage.verifyButtonsEnabled();
 
-        EHoldingsNewCustomPackage.cancelChanges();
-        EHoldingsNewCustomPackage.verifyUnsavedChangesModalExists();
-        EHoldingsNewCustomPackage.clickKeepEditing();
+        EHoldingsPackage.cancelChanges();
+        EHoldingsPackage.verifyUnsavedChangesModalExists();
+        EHoldingsPackage.clickKeepEditing();
 
         EHoldingsNewCustomPackage.verifyNameFieldValue(testData.customPackageName);
-        EHoldingsNewCustomPackage.verifyButtonsEnabled();
+        EHoldingsPackage.verifyButtonsEnabled();
 
-        EHoldingsNewCustomPackage.cancelChanges();
-        EHoldingsNewCustomPackage.verifyUnsavedChangesModalExists();
+        EHoldingsPackage.cancelChanges();
+        EHoldingsPackage.verifyUnsavedChangesModalExists();
 
-        EHoldingsNewCustomPackage.clickContinueWithoutSaving();
+        EHoldingsPackage.clickContinueWithoutSaving();
         EHoldingsPackages.waitLoading();
       },
     );
