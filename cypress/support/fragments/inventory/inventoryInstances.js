@@ -422,19 +422,16 @@ export default {
     }
   },
   searchByTag: (tagName) => {
-    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
-    // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
+    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     cy.wait('@getTags');
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tagName));
-    // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.expect(MultiSelectOption(including(tagName)).exists());
     cy.do(
       MultiSelectMenu()
         .find(MultiSelectOption(including(tagName)))
         .click(),
     );
-    cy.wait(2000);
   },
 
   searchAndVerify(value) {
