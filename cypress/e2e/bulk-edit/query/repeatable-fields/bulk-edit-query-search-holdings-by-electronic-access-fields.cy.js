@@ -17,10 +17,9 @@ let user;
 let instanceTypeId;
 let holdingTypeId;
 let locationId;
-const electronicAccessTypesIds = {};
+const electronicAccessTypeIds = [];
 const folioInstance = {
   title: `AT_C805787_FolioInstance_${getRandomPostfix()}`,
-  holdingIds: [],
   holdingHrids: [],
 };
 
@@ -171,73 +170,64 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          // Get URL relationship IDs
-          UrlRelationship.getViaApi({
-            query: `name=="${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE}"`,
-          }).then((resourceRelData) => {
-            electronicAccessTypesIds.resourceRelationshipId = resourceRelData[0].id;
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+            instanceTypeId = instanceTypeData[0].id;
           });
-
-          UrlRelationship.getViaApi({
-            query: `name=="${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE}"`,
-          }).then((relatedResourceRelData) => {
-            electronicAccessTypesIds.relatedResourceRelationshipId = relatedResourceRelData[0].id;
+          cy.getHoldingTypes({ limit: 1 }).then((holdingTypeData) => {
+            holdingTypeId = holdingTypeData[0].id;
           });
+          cy.getLocations({ limit: 1 })
+            .then((location) => {
+              locationId = location.id;
+            })
+            .then(() => {
+              [
+                ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+                ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE,
+                ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
+              ].forEach((name) => {
+                UrlRelationship.getViaApi({
+                  query: `name=="${name}"`,
+                }).then((data) => {
+                  electronicAccessTypeIds.push(data[0].id);
+                });
+              });
+            })
+            .then(() => {
+              const holdingsElectronicAccessData = getHoldingsElectronicAccessData(
+                ...electronicAccessTypeIds,
+              );
 
-          UrlRelationship.getViaApi({
-            query: `name=="${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE}"`,
-          }).then((versionOfResourceRelData) => {
-            electronicAccessTypesIds.versionOfResourceRelationshipId =
-              versionOfResourceRelData[0].id;
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId,
+                  title: folioInstance.title,
+                },
+              }).then((createdInstance) => {
+                folioInstance.id = createdInstance.instanceId;
 
-            const holdingsElectronicAccessData = getHoldingsElectronicAccessData(
-              electronicAccessTypesIds.resourceRelationshipId,
-              electronicAccessTypesIds.relatedResourceRelationshipId,
-              electronicAccessTypesIds.versionOfResourceRelationshipId,
-            );
+                InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                  const sourceId = folioSource.id;
 
-            cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-              instanceTypeId = instanceTypeData[0].id;
-            });
-            cy.getHoldingTypes({ limit: 1 }).then((holdingTypeData) => {
-              holdingTypeId = holdingTypeData[0].id;
-            });
-            cy.getLocations({ limit: 1 })
-              .then((location) => {
-                locationId = location.id;
-              })
-              .then(() => {
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstance.title,
-                  },
-                }).then((createdInstance) => {
-                  folioInstance.id = createdInstance.instanceId;
-
-                  InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                    const sourceId = folioSource.id;
-
-                    // Create holdings with electronic access
-                    holdingsElectronicAccessData.forEach((holdingData) => {
-                      InventoryHoldings.createHoldingRecordViaApi({
-                        instanceId: folioInstance.id,
-                        permanentLocationId: locationId,
-                        holdingsTypeId: holdingTypeId,
-                        sourceId,
-                        electronicAccess: holdingData.electronicAccess,
-                      }).then((createdHolding) => {
-                        cy.getHoldings({ query: `id=${createdHolding.id}` }).then(
-                          (holdingResponse) => {
-                            folioInstance.holdingHrids.push(holdingResponse[0].hrid);
-                          },
-                        );
-                      });
+                  // Create holdings with electronic access
+                  holdingsElectronicAccessData.forEach((holdingData) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: folioInstance.id,
+                      permanentLocationId: locationId,
+                      holdingsTypeId: holdingTypeId,
+                      sourceId,
+                      electronicAccess: holdingData.electronicAccess,
+                    }).then((createdHolding) => {
+                      cy.getHoldings({ query: `id=${createdHolding.id}` }).then(
+                        (holdingResponse) => {
+                          folioInstance.holdingHrids.push(holdingResponse[0].hrid);
+                        },
+                      );
                     });
                   });
                 });
               });
-          });
+            });
 
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
@@ -355,10 +345,6 @@ describe('Bulk-edit', () => {
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
-
-          // Verify Holdings 3 and Holdings 4 are NOT displayed
-          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(folioInstance.holdingHrids[2]);
-          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(folioInstance.holdingHrids[3]);
         },
       );
     });
