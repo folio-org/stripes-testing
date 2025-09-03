@@ -1,31 +1,32 @@
 import permissions from '../../../support/dictionary/permissions';
-import EHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
 import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      customPackageName: `C423476_package_${getRandomPostfix()}`,
+      packageName: 'Wiley',
+      package: 'Wiley Online Library Originated From Wiley',
     };
 
     before('Creating user, logging in', () => {
       cy.createTempUser([
-        permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
+        permissions.moduleeHoldingsEnabled.gui,
         permissions.uieHoldingsRecordsEdit.gui,
-        permissions.uieHoldingsPackageTitleSelectUnselect.gui,
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: EHoldingsTitlesSearch.waitLoading,
+        });
         cy.waitForAuthRefresh(() => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
           cy.reload();
           EHoldingsTitlesSearch.waitLoading();
         });
@@ -38,30 +39,37 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C423476 Cancel changes made in not saved custom "Package" record using "X" icon (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423476'] },
+      'C423463 Cancel changes made in saved "Package" record using "Cancel" button (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C423463'] },
       () => {
         EHoldingSearch.switchToPackages();
-
         EHoldingsPackages.waitLoading();
-        EHoldingsPackages.createNewPackage();
-        EHoldingsNewCustomPackage.waitLoading();
 
+        EHoldingsPackagesSearch.byName(testData.packageName);
+        EHoldingsPackages.waitLoading();
+        EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
+
+        EHoldingsPackages.openPackage();
+        EHoldingsPackage.waitLoading(testData.package);
+        EHoldingsPackage.editProxyActions();
         EHoldingsPackage.verifyButtonsDisabled();
-        EHoldingsNewCustomPackage.fillInRequiredProperties(testData.customPackageName);
-        EHoldingsPackage.verifyButtonsEnabled();
-        EHoldingsNewCustomPackage.closeEditingWindow();
+        EHoldingsProviderEdit.changeProxy();
 
+        EHoldingsPackage.verifyButtonsEnabled();
+        EHoldingsPackage.cancelChanges();
         EHoldingsPackage.verifyUnsavedChangesModalExists();
+
         EHoldingsPackage.clickKeepEditing();
-
-        EHoldingsNewCustomPackage.verifyNameFieldValue(testData.customPackageName);
+        EHoldingsPackage.verifyUnsavedChangesModalNotExists();
         EHoldingsPackage.verifyButtonsEnabled();
 
-        EHoldingsPackage.closeEditingWindow();
+        EHoldingsPackage.cancelChanges();
         EHoldingsPackage.verifyUnsavedChangesModalExists();
-
         EHoldingsPackage.clickContinueWithoutSaving();
+
+        EHoldingsPackage.verifyUnsavedChangesModalNotExists();
+        EHoldingsPackageView.waitLoading();
+        EHoldingsPackage.closeEditingWindow();
 
         EHoldingsPackages.waitLoading();
       },

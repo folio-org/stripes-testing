@@ -1424,7 +1424,7 @@ export default {
 
     const monthName = months[parseInt(month, 10) - 1];
 
-    return `${monthName} ${day}, ${year}`;
+    return `${monthName} ${+day}, ${year}`;
   },
 
   pickFutureDate() {

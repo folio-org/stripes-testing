@@ -1076,10 +1076,10 @@ export default {
 
   addTag: (tagName) => {
     cy.do(tagButton.click());
-    // TODO: clarify with developers what should be waited
-    cy.wait(1500);
+    cy.intercept('PUT', '**/inventory/instances/*').as('addTag');
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
-    cy.wait(1500);
+    cy.wait('@addTag');
+    cy.wait(1000);
   },
 
   checkTagSelectedInDropdown(tag, isShown = true) {
@@ -1123,7 +1123,10 @@ export default {
   },
 
   deleteTag: (tagName) => {
+    cy.intercept('PUT', '**/inventory/instances/*').as('removeTag');
     cy.do(MultiSelect({ id: 'input-tag' }).find(closeTag).click());
+    cy.wait('@removeTag');
+    cy.wait(1000);
     cy.expect(
       MultiSelect({ id: 'input-tag' })
         .find(HTML(including(tagName)))
