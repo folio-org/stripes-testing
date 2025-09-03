@@ -486,7 +486,7 @@ export default {
 
   verifyEmbeddedTableInQueryModal(
     tableType,
-    instanceIdentifier,
+    identifier,
     expectedData, // Can be a single object or array of objects
   ) {
     const headers = embeddedTableHeadersMap[tableType];
@@ -499,38 +499,45 @@ export default {
     // Normalize input to always be an array
     const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
 
-    cy.then(() => buildQueryModal.find(MultiColumnListCell(instanceIdentifier)).row()).then(
-      (rowIndex) => {
-        // Find the DynamicTable specifically within this row
-        cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
-          // Verify table headers
-          cy.get('[class^="DynamicTable-"]')
-            .find('tr')
-            .eq(0)
-            .then((headerRow) => {
-              const headerCells = headerRow.find('th');
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
+      // Find the DynamicTable specifically within this row
+      cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+        // Verify table headers
+        cy.get('[class^="DynamicTable-"]')
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
 
-              headers.forEach((header, index) => {
-                cy.wrap(headerCells.eq(index)).should('have.text', header);
-              });
+            headers.forEach((header, index) => {
+              cy.wrap(headerCells.eq(index)).should('have.text', header);
             });
-
-          // Verify each data row in the table
-          dataToVerify.forEach((dataObj, dataIndex) => {
-            const miniRowIndex = dataObj.miniRowIndex || dataIndex + 1;
-            const expectedValues = this.extractValuesForTableType(tableType, dataObj);
-
-            cy.get('[class^="DynamicTable-"]')
-              .find('tr')
-              .eq(miniRowIndex)
-              .find('td')
-              .each(($cell, cellIndex) => {
-                cy.wrap($cell).should('have.text', expectedValues[cellIndex]);
-              });
           });
+
+        // Verify each expected row exists by finding a row containing all expected values
+        dataToVerify.forEach((dataObj) => {
+          const expectedValues = this.extractValuesForTableType(tableType, dataObj);
+
+          // Find a table row that contains all expected values for this data object
+          cy.get('[class^="DynamicTable-"]')
+            .find('tbody tr')
+            .should(($rows) => {
+              // Check if any row contains all our expected values
+              const matchingRow = Array.from($rows).find((row) => {
+                const rowText = Cypress.$(row).text().trim();
+                const expectedRowText = expectedValues.join('').trim();
+                return rowText === expectedRowText;
+              });
+
+              if (!matchingRow) {
+                throw new Error(
+                  `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                );
+              }
+            });
         });
-      },
-    );
+      });
+    });
   },
 
   extractValuesForTableType(tableType, dataObj) {

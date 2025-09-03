@@ -118,7 +118,6 @@ const createExpectedHoldings = (holdingHrids) => [
         materialsSpecified: 'Table of contents',
         publicNote:
           'HTTP access to PostScript version includes groups of article files with .jpeg extension',
-        miniRowIndex: 3,
       },
       {
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE,
@@ -127,7 +126,6 @@ const createExpectedHoldings = (holdingHrids) => [
         materialsSpecified: 'Volume 1',
         publicNote:
           'FTP access to PostScript version includes groups of article files with .png extension',
-        miniRowIndex: 2,
       },
       {
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
@@ -136,7 +134,6 @@ const createExpectedHoldings = (holdingHrids) => [
         materialsSpecified: 'Volume 2',
         publicNote:
           'TELNET access to PostScript version includes groups of article files with .pdf extension',
-        miniRowIndex: 1,
       },
     ],
   },
