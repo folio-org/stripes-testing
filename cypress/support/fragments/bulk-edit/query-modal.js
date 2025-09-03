@@ -29,6 +29,18 @@ const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
 
+// Embedded table headers mapping for different table types
+const embeddedTableHeadersMap = {
+  electronicAccess: [
+    'URL relationship',
+    'URI',
+    'Link text',
+    'Material specified',
+    'URL public note',
+  ],
+  notes: ['Note type', 'Note', 'Staff only'],
+};
+
 export const holdingsFieldValues = {
   instanceUuid: 'Holdings — Instance UUID',
   holdingsHrid: 'Holdings — HRID',
@@ -38,6 +50,11 @@ export const holdingsFieldValues = {
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
   notes: 'Holdings — Notes — Note',
+  electronicAccessLinkText: 'Holdings — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
+  electronicAccessURI: 'Holdings — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Holdings — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Holdings — Electronic access — URL relationship',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -467,14 +484,20 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
   },
 
-  verifyNotesEmbeddedTableInQueryModal(
+  verifyEmbeddedTableInQueryModal(
+    tableType,
     instanceIdentifier,
-    expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
+    expectedData, // Can be a single object or array of objects
   ) {
-    const expectedHeaders = ['Note type', 'Note', 'Staff only'];
+    const headers = embeddedTableHeadersMap[tableType];
+    if (!headers) {
+      throw new Error(
+        `Unknown table type: ${tableType}. Available types: ${Object.keys(embeddedTableHeadersMap).join(', ')}`,
+      );
+    }
 
     // Normalize input to always be an array
-    const notesToVerify = Array.isArray(expectedNotes) ? expectedNotes : [expectedNotes];
+    const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
 
     cy.then(() => buildQueryModal.find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
@@ -487,15 +510,15 @@ export default {
             .then((headerRow) => {
               const headerCells = headerRow.find('th');
 
-              expectedHeaders.forEach((header, index) => {
+              headers.forEach((header, index) => {
                 cy.wrap(headerCells.eq(index)).should('have.text', header);
               });
             });
 
-          // Verify each note in the table
-          notesToVerify.forEach((noteObj, noteIndex) => {
-            const miniRowIndex = noteObj.miniRowIndex || noteIndex + 1;
-            const expectedValues = [noteObj.noteType, noteObj.note, noteObj.staffOnly];
+          // Verify each data row in the table
+          dataToVerify.forEach((dataObj, dataIndex) => {
+            const miniRowIndex = dataObj.miniRowIndex || dataIndex + 1;
+            const expectedValues = this.extractValuesForTableType(tableType, dataObj);
 
             cy.get('[class^="DynamicTable-"]')
               .find('tr')
@@ -508,6 +531,41 @@ export default {
         });
       },
     );
+  },
+
+  extractValuesForTableType(tableType, dataObj) {
+    switch (tableType) {
+      case 'electronicAccess':
+        return [
+          dataObj.relationship,
+          dataObj.uri,
+          dataObj.linkText,
+          dataObj.materialsSpecified,
+          dataObj.publicNote,
+        ];
+      case 'notes':
+        return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+      default:
+        throw new Error(`Unknown table type: ${tableType}`);
+    }
+  },
+
+  verifyElectronicAccessEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedElectronicAccess, // Can be a single electronic access object or array of objects
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'electronicAccess',
+      instanceIdentifier,
+      expectedElectronicAccess,
+    );
+  },
+
+  verifyNotesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('notes', instanceIdentifier, expectedNotes);
   },
 
   clickShowColumnsButton() {
