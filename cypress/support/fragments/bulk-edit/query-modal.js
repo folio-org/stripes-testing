@@ -42,6 +42,7 @@ const embeddedTableHeadersMap = {
 };
 
 export const holdingsFieldValues = {
+  holdingsAdminNotes: 'Holdings — Administrative notes',
   instanceUuid: 'Holdings — Instance UUID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
@@ -50,6 +51,8 @@ export const holdingsFieldValues = {
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
   notes: 'Holdings — Notes — Note',
+  notesNoteType: 'Holdings — Notes — Notes type',
+  notesStaffOnly: 'Holdings — Notes — Staff only',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
