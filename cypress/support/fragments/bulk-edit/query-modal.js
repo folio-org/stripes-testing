@@ -24,12 +24,25 @@ const runQueryAndSave = Button('Run query & save');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
-const selectFieldButton = Button(including('Select field'));
+const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
 
+// Embedded table headers mapping for different table types
+const embeddedTableHeadersMap = {
+  electronicAccess: [
+    'URL relationship',
+    'URI',
+    'Link text',
+    'Material specified',
+    'URL public note',
+  ],
+  notes: ['Note type', 'Note', 'Staff only'],
+};
+
 export const holdingsFieldValues = {
+  holdingsAdminNotes: 'Holdings — Administrative notes',
   instanceUuid: 'Holdings — Instance UUID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
@@ -38,8 +51,16 @@ export const holdingsFieldValues = {
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
   notes: 'Holdings — Notes — Note',
+  notesNoteType: 'Holdings — Notes — Notes type',
+  notesStaffOnly: 'Holdings — Notes — Staff only',
+  electronicAccessLinkText: 'Holdings — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
+  electronicAccessURI: 'Holdings — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Holdings — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Holdings — Electronic access — URL relationship',
 };
 export const instanceFieldValues = {
+  administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
@@ -50,6 +71,9 @@ export const instanceFieldValues = {
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
   languages: 'Instance — Languages',
+  noteType: 'Instance — Notes — Note type',
+  note: 'Instance — Notes — Note',
+  noteStaffOnly: 'Instance — Notes — Staff only',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -65,6 +89,7 @@ export const itemFieldValues = {
   temporaryLocation: 'Temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
   materialTypeName: 'Material type — Name',
+  itemNotesStaffOnly: 'Items — Notes — Notes staff only',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -182,7 +207,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
-    cy.do(selectFieldButton.click());
+    this.clickSelectFieldButton();
     cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -194,6 +219,7 @@ export default {
 
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+    cy.wait(1000);
   },
 
   clickSelectFieldButton() {
@@ -229,6 +255,7 @@ export default {
         .find(Select({ dataTestID: including('operator-option') }))
         .choose(selection),
     );
+    cy.wait(1000);
   },
 
   verifyOperatorsList(operators, row = 0) {
@@ -280,6 +307,7 @@ export default {
         .find(Select({ content: including('Select value') }))
         .choose(choice),
     );
+    cy.wait(1000);
   },
 
   fillInValueMultiselect(text, row = 0) {
@@ -292,6 +320,7 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.wait(1000);
   },
 
   removeValueFromMultiselect(text) {
@@ -458,47 +487,95 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
   },
 
+  verifyEmbeddedTableInQueryModal(
+    tableType,
+    identifier,
+    expectedData, // Can be a single object or array of objects
+  ) {
+    const headers = embeddedTableHeadersMap[tableType];
+    if (!headers) {
+      throw new Error(
+        `Unknown table type: ${tableType}. Available types: ${Object.keys(embeddedTableHeadersMap).join(', ')}`,
+      );
+    }
+
+    // Normalize input to always be an array
+    const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
+
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
+      // Find the DynamicTable specifically within this row
+      cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+        // Verify table headers
+        cy.get('[class^="DynamicTable-"]')
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            headers.forEach((header, index) => {
+              cy.wrap(headerCells.eq(index)).should('have.text', header);
+            });
+          });
+
+        // Verify each expected row exists by finding a row containing all expected values
+        dataToVerify.forEach((dataObj) => {
+          const expectedValues = this.extractValuesForTableType(tableType, dataObj);
+
+          // Find a table row that contains all expected values for this data object
+          cy.get('[class^="DynamicTable-"]')
+            .find('tbody tr')
+            .should(($rows) => {
+              // Check if any row contains all our expected values
+              const matchingRow = Array.from($rows).find((row) => {
+                const rowText = Cypress.$(row).text().trim();
+                const expectedRowText = expectedValues.join('').trim();
+                return rowText === expectedRowText;
+              });
+
+              if (!matchingRow) {
+                throw new Error(
+                  `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                );
+              }
+            });
+        });
+      });
+    });
+  },
+
+  extractValuesForTableType(tableType, dataObj) {
+    switch (tableType) {
+      case 'electronicAccess':
+        return [
+          dataObj.relationship,
+          dataObj.uri,
+          dataObj.linkText,
+          dataObj.materialsSpecified,
+          dataObj.publicNote,
+        ];
+      case 'notes':
+        return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+      default:
+        throw new Error(`Unknown table type: ${tableType}`);
+    }
+  },
+
+  verifyElectronicAccessEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedElectronicAccess, // Can be a single electronic access object or array of objects
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'electronicAccess',
+      instanceIdentifier,
+      expectedElectronicAccess,
+    );
+  },
+
   verifyNotesEmbeddedTableInQueryModal(
     instanceIdentifier,
     expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
   ) {
-    const expectedHeaders = ['Note type', 'Note', 'Staff only'];
-
-    // Normalize input to always be an array
-    const notesToVerify = Array.isArray(expectedNotes) ? expectedNotes : [expectedNotes];
-
-    cy.then(() => buildQueryModal.find(MultiColumnListCell(instanceIdentifier)).row()).then(
-      (rowIndex) => {
-        // Find the DynamicTable specifically within this row
-        cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
-          // Verify table headers
-          cy.get('[class^="DynamicTable-"]')
-            .find('tr')
-            .eq(0)
-            .then((headerRow) => {
-              const headerCells = headerRow.find('th');
-
-              expectedHeaders.forEach((header, index) => {
-                cy.wrap(headerCells.eq(index)).should('have.text', header);
-              });
-            });
-
-          // Verify each note in the table
-          notesToVerify.forEach((noteObj, noteIndex) => {
-            const miniRowIndex = noteObj.miniRowIndex || noteIndex + 1;
-            const expectedValues = [noteObj.noteType, noteObj.note, noteObj.staffOnly];
-
-            cy.get('[class^="DynamicTable-"]')
-              .find('tr')
-              .eq(miniRowIndex)
-              .find('td')
-              .each(($cell, cellIndex) => {
-                cy.wrap($cell).should('have.text', expectedValues[cellIndex]);
-              });
-          });
-        });
-      },
-    );
+    this.verifyEmbeddedTableInQueryModal('notes', instanceIdentifier, expectedNotes);
   },
 
   clickShowColumnsButton() {
