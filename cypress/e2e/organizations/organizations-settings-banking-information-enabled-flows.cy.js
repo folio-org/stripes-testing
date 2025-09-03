@@ -816,4 +816,51 @@ describe('Organizations', () => {
       },
     );
   });
+
+  describe('User cannot edit banking information', () => {
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const bankingInformation = {
+      bankName: `Test Bank ${Date.now()}`,
+      bankAccountNumber: '1234567890',
+      transitNumber: '987654321',
+      notes: 'Test banking information',
+    };
+
+    before('Create user and organization with banking information', () => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((orgId) => {
+        organization.id = orgId;
+        bankingInformation.organizationId = orgId;
+        Organizations.createBankingInformationViaApi(bankingInformation);
+      });
+      cy.createTempUser([
+        permissions.uiOrganizationsView.gui,
+        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C423518 A user cannot edit banking information without organization edit permission (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet'] },
+      () => {
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsPresent();
+        Organizations.checkAvailableActionsInTheActionsField();
+      },
+    );
+  });
 });
