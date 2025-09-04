@@ -99,10 +99,12 @@ describe('MARC', () => {
           'C422126 Link "Contributor" fields when creating "MARC Bibliographic" record (spitfire)',
           { tags: ['criticalPath', 'spitfire', 'C422126'] },
           () => {
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
 
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

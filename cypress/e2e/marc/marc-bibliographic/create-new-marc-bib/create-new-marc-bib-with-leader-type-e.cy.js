@@ -39,11 +39,12 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
         ]).then((createdUserProperties) => {
           user.userProperties = createdUserProperties;
-
-          cy.login(user.userProperties.username, user.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.userProperties.username, user.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000);
         });
       });
 
