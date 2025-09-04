@@ -1286,6 +1286,7 @@ export const HOLDING_NOTE_TYPES = {
 };
 
 export const ITEM_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
   CHECK_IN_NOTE: 'Check in note',
   CHECK_OUT_NOTE: 'Check out note',
@@ -1294,9 +1295,12 @@ export const ITEM_NOTE_TYPES = {
 export const INSTANCE_NOTE_TYPES = {
   ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
+  LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
 };
 
