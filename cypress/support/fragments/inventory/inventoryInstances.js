@@ -1134,9 +1134,11 @@ export default {
         return res.body.instances;
       })
       .then((instances) => {
-        instances.forEach((instance) => {
-          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        if (instances && instances.length) {
+          instances.forEach((instance) => {
+            if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
+        }
       });
   },
 
