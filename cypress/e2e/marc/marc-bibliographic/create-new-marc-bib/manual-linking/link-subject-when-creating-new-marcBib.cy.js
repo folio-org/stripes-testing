@@ -96,10 +96,11 @@ describe('MARC', () => {
                 });
               });
             });
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
         });

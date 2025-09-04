@@ -96,9 +96,11 @@ describe('MARC', () => {
           'C422140 Create | Verify that created MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
           { tags: ['criticalPath', 'spitfire', 'C422140'] },
           () => {
-            cy.login(testData.userAData.username, testData.userAData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userAData.username, testData.userAData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

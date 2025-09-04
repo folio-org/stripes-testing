@@ -65,11 +65,12 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+            }, 20_000);
           });
         });
 

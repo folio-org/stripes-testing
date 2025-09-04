@@ -66,7 +66,7 @@ describe('MARC', () => {
     let location;
     let servicePointId;
 
-    before('Create user, data', () => {
+    before('Create user, data, and first holdings', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -86,23 +86,26 @@ describe('MARC', () => {
                 instanceIds.push(bib.id);
               });
             }
-          });
-        });
-      });
-    });
 
-    before('Create first holdings', () => {
-      cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} Initial`);
-      QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} Initial`).then((bib) => {
-        instanceIds.push(bib.id);
-        cy.createSimpleMarcHoldingsViaAPI(
-          bib.id,
-          bib.hrid,
-          location.code,
-          `${bibTitlePrefix} Initial`,
-        );
-        QuickMarcEditor.getCreatedMarcHoldings(bib.id, `${bibTitlePrefix} Initial`).then((hold) => {
-          holdingsIds.push(hold.id);
+            cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} Initial`).then(() => {
+              QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} Initial`).then((bib) => {
+                instanceIds.push(bib.id);
+                if (bib.hrid) {
+                  cy.createSimpleMarcHoldingsViaAPI(
+                    bib.id,
+                    bib.hrid,
+                    location.code,
+                    `${bibTitlePrefix} Initial`,
+                  );
+                  QuickMarcEditor.getCreatedMarcHoldings(bib.id, `${bibTitlePrefix} Initial`).then(
+                    (hold) => {
+                      holdingsIds.push(hold.id);
+                    },
+                  );
+                }
+              });
+            });
+          });
         });
       });
     });
