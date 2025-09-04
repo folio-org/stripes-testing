@@ -54,10 +54,12 @@ describe('MARC', () => {
         (createdUserProperties) => {
           user = createdUserProperties;
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+          }, 20_000);
           MarcAuthorities.switchToSearch();
         },
       );

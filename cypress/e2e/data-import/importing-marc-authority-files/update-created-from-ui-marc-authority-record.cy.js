@@ -154,11 +154,12 @@ describe('Data Import', () => {
         ManageAuthorityFiles.setAuthorityFileToActiveViaApi(
           DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
         );
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+        }, 20_000);
       });
     });
 

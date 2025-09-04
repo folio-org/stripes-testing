@@ -34,11 +34,12 @@ describe('Note creation', () => {
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
-
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: urlToEholdings,
+          waiter: NotesEholdings.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
