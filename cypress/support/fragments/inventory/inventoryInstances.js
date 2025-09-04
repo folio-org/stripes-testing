@@ -652,6 +652,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
+        if (!instances || !instances.length) return;
         instances.forEach((instance) => {
           cy.okapiRequest({
             path: `holdings-storage/holdings?query=instanceId==${instance.id}`,

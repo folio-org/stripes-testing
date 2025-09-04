@@ -1,7 +1,9 @@
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances, {
+  searchInstancesOptions,
+} from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
@@ -11,6 +13,9 @@ describe('Inventory', () => {
     describe('Correct page title inventory search', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
+        titleAllOption: searchInstancesOptions[2],
+        querySearchOption: searchInstancesOptions[17],
+        languageAccordionName: 'Language',
         user: {},
         instance: {
           title: `AT_C423409_FolioInstance_${randomPostfix}`,
@@ -79,7 +84,7 @@ describe('Inventory', () => {
 
           // Step 3: Do a query search
           InventorySearchAndFilter.selectSearchOptions(
-            'Query search',
+            testData.querySearchOption,
             testData.searchQueries.query,
           );
           InventorySearchAndFilter.clickSearch();
@@ -95,7 +100,7 @@ describe('Inventory', () => {
             0,
             testData.searchQueries.basic,
             'Contains all',
-            'Title (all)',
+            testData.titleAllOption,
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();
           cy.title().should('eq', testData.expectedTitles.advancedSearch);
@@ -106,13 +111,13 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 7: Select facets (using Language facet with English)
-          InventorySearchAndFilter.clickAccordionByName('Language');
+          InventorySearchAndFilter.clickAccordionByName(testData.languageAccordionName);
           InventorySearchAndFilter.selectMultiSelectFilterOption(
-            'Language',
+            testData.languageAccordionName,
             testData.instance.language,
           );
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            'Language',
+            testData.languageAccordionName,
             testData.instance.language,
           );
           cy.title().should('eq', testData.expectedTitles.default);
@@ -125,7 +130,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           InventorySearchAndFilter.checkSearchQueryText('');
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            'Language',
+            testData.languageAccordionName,
             testData.instance.language,
             false,
           );
@@ -138,11 +143,11 @@ describe('Inventory', () => {
 
           // Step 11: Select facets (using Language facet with English)
           InventorySearchAndFilter.selectMultiSelectFilterOption(
-            'Language',
+            testData.languageAccordionName,
             testData.instance.language,
           );
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            'Language',
+            testData.languageAccordionName,
             testData.instance.language,
           );
           cy.title().should('eq', testData.expectedTitles.all);
@@ -153,7 +158,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           InventorySearchAndFilter.checkSearchQueryText('');
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            'Language',
+            testData.languageAccordionName,
             testData.instance.language,
             false,
           );
