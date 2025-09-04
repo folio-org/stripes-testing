@@ -39,6 +39,11 @@ const embeddedTableHeadersMap = {
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
+  statementsForSupplements: [
+    'Statement for supplement',
+    'Statement for supplement public note',
+    'Statement for supplement staff note',
+  ],
 };
 
 export const holdingsFieldValues = {
@@ -51,8 +56,14 @@ export const holdingsFieldValues = {
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
   notes: 'Holdings — Notes — Note',
-  notesNoteType: 'Holdings — Notes — Notes type',
+  notesNoteType: 'Holdings — Notes — Note type',
   notesStaffOnly: 'Holdings — Notes — Staff only',
+  statementsForSupplementsStatement:
+    'Holdings — Statements for supplements — Statement for supplement',
+  statementsForSupplementsPublicNote:
+    'Holdings — Statements for supplements — Statement for supplement public note',
+  statementsForSupplementsStaffNote:
+    'Holdings — Statements for supplements — Statement for supplement staff note',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
@@ -555,6 +566,8 @@ export default {
         ];
       case 'notes':
         return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+      case 'statementsForSupplements':
+        return [dataObj.statement, dataObj.note, dataObj.staffNote];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -576,6 +589,17 @@ export default {
     expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
   ) {
     this.verifyEmbeddedTableInQueryModal('notes', instanceIdentifier, expectedNotes);
+  },
+
+  verifyStatementsForSupplementsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedStatements, // Can be a single statement object or array of statement objects, ex: { statement: 'test statement', note: 'test note', staffNote: 'test staff note' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'statementsForSupplements',
+      instanceIdentifier,
+      expectedStatements,
+    );
   },
 
   clickShowColumnsButton() {
