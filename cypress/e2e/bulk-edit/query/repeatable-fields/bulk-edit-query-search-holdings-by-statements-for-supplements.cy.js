@@ -13,10 +13,8 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 let user;
 const folioInstance = {
   title: `AT_C813660_FolioInstance_${getRandomPostfix()}`,
-  holdingHrids: [],
 };
-
-const getHoldingStatementsData = () => [
+const expectedHoldings = [
   {
     // Holdings 1
     holdingsStatementsForSupplements: [
@@ -71,53 +69,6 @@ const verifyStatementsForSupplements = (holding) => {
   );
 };
 
-// Function to create expected holdings array
-const createExpectedHoldings = (holdingHrids) => [
-  {
-    hrid: holdingHrids[0],
-    holdingsStatementsForSupplements: [
-      {
-        statement: 'Supplements 1910-1916',
-        note: 'Bound with other issues for the year',
-        staffNote: 'incomplete vols. unbound',
-      },
-    ],
-  },
-  {
-    hrid: holdingHrids[1],
-    holdingsStatementsForSupplements: [
-      {
-        statement: 'Supplements to v. 1-7 (1942-1948)',
-        note: 'bound in one volume',
-        staffNote: 'test',
-      },
-      {
-        statement: 'Supplements to v. 1-2 (1942-1944), 4-7 (1946-1948)',
-        note: 'Bound with other issues for the year',
-        staffNote: 'some issues incomplete',
-      },
-      {
-        statement: 'test',
-        note: 'test',
-        staffNote: 'test',
-      },
-    ],
-  },
-  {
-    hrid: holdingHrids[2],
-    holdingsStatementsForSupplements: [
-      {
-        statement: 'ca. 300 pieces',
-        note: 'bound in one volume',
-        staffNote: 'test',
-      },
-    ],
-  },
-  {
-    hrid: holdingHrids[3],
-  },
-];
-
 describe('Bulk-edit', () => {
   describe('Query', () => {
     describe('Repeatable fields', () => {
@@ -134,8 +85,6 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          const holdingStatementsData = getHoldingStatementsData();
-
           // Get instance type ID
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             const instanceTypeId = instanceTypeData[0].id;
@@ -149,7 +98,7 @@ describe('Bulk-edit', () => {
                 const locationId = locations.id;
 
                 // Generate holdings with required fields and statements
-                const holdingsWithRequiredFields = holdingStatementsData.map((holding) => ({
+                const holdingsWithRequiredFields = expectedHoldings.map((holding) => ({
                   holdingsTypeId: holdingTypeId,
                   permanentLocationId: locationId,
                   holdingsStatementsForSupplements: holding.holdingsStatementsForSupplements,
@@ -165,9 +114,10 @@ describe('Bulk-edit', () => {
                 }).then((createdInstanceData) => {
                   folioInstance.id = createdInstanceData.instanceId;
 
-                  createdInstanceData.holdingIds.forEach((holdingId) => {
+                  // Populate HRIDs in the expectedHoldings array
+                  createdInstanceData.holdingIds.forEach((holdingId, index) => {
                     cy.getHoldings({ query: `"id"="${holdingId.id}"` }).then((holding) => {
-                      folioInstance.holdingHrids.push(holding[0].hrid);
+                      expectedHoldings[index].hrid = holding[0].hrid;
                     });
                   });
                 });
@@ -192,9 +142,6 @@ describe('Bulk-edit', () => {
         'C813660 Search holdings by Statements for supplements fields (firebird)',
         { tags: ['criticalPath', 'firebird', 'C813660'] },
         () => {
-          // Create expected holdings for verification
-          const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);
-
           // Step 1: Verify Statements for supplements fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkHoldingsRadio();

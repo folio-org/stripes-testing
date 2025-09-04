@@ -13,10 +13,8 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 let user;
 const folioInstance = {
   title: `AT_C813667_FolioInstance_${getRandomPostfix()}`,
-  holdingHrids: [],
 };
-
-const getHoldingStatementsData = () => [
+const expectedHoldings = [
   {
     // Holdings 1
     holdingsStatementsForIndexes: [
@@ -71,53 +69,6 @@ const verifyStatementsForIndexes = (holding) => {
   );
 };
 
-// Function to create expected holdings array
-const createExpectedHoldings = (holdingHrids) => [
-  {
-    hrid: holdingHrids[0],
-    holdingsStatementsForIndexes: [
-      {
-        statement: '1937-1942, 1946-1968, plus 1969/1978 cumulative vol.',
-        note: 'bound at end of volume to which it applies',
-        staffNote: 'Ten year cumulative index',
-      },
-    ],
-  },
-  {
-    hrid: holdingHrids[1],
-    holdingsStatementsForIndexes: [
-      {
-        statement: '1937-1942',
-        note: 'bound in one volume',
-        staffNote: 'alphabetical index',
-      },
-      {
-        statement: '1969/1978',
-        note: 'Bound with other issues for the year',
-        staffNote: 'Ten year cumulative index',
-      },
-      {
-        statement: '1946-1968',
-        note: 'test',
-        staffNote: 'Index',
-      },
-    ],
-  },
-  {
-    hrid: holdingHrids[2],
-    holdingsStatementsForIndexes: [
-      {
-        statement: '1969-1978',
-        note: 'Mar. 1969 issue cut up as of Jan. 1978',
-        staffNote: 'ten year cumulative index covering the years 1969-1978',
-      },
-    ],
-  },
-  {
-    hrid: holdingHrids[3],
-  },
-];
-
 describe('Bulk-edit', () => {
   describe('Query', () => {
     describe('Repeatable fields', () => {
@@ -134,8 +85,6 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          const holdingStatementsData = getHoldingStatementsData();
-
           // Get instance type ID
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             const instanceTypeId = instanceTypeData[0].id;
@@ -149,7 +98,7 @@ describe('Bulk-edit', () => {
                 const locationId = locations.id;
 
                 // Generate holdings with required fields and statements
-                const holdingsWithRequiredFields = holdingStatementsData.map((holding) => ({
+                const holdingsWithRequiredFields = expectedHoldings.map((holding) => ({
                   holdingsTypeId: holdingTypeId,
                   permanentLocationId: locationId,
                   holdingsStatementsForIndexes: holding.holdingsStatementsForIndexes,
@@ -165,9 +114,10 @@ describe('Bulk-edit', () => {
                 }).then((createdInstanceData) => {
                   folioInstance.id = createdInstanceData.instanceId;
 
-                  createdInstanceData.holdingIds.forEach((holdingId) => {
+                  // Populate HRIDs in the expectedHoldings array
+                  createdInstanceData.holdingIds.forEach((holdingId, index) => {
                     cy.getHoldings({ query: `"id"="${holdingId.id}"` }).then((holding) => {
-                      folioInstance.holdingHrids.push(holding[0].hrid);
+                      expectedHoldings[index].hrid = holding[0].hrid;
                     });
                   });
                 });
@@ -192,9 +142,6 @@ describe('Bulk-edit', () => {
         'C813667 Search holdings by Statements for indexes fields (firebird)',
         { tags: ['criticalPath', 'firebird', 'C813667'] },
         () => {
-          // Create expected holdings for verification
-          const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);
-
           // Step 1: Verify Statements for indexes fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkHoldingsRadio();
