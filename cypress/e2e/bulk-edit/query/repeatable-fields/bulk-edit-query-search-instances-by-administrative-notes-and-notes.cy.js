@@ -60,7 +60,7 @@ const verifyAdministrativeNotes = (instance, expectedAdminNotes) => {
     const adminNotesText = expectedAdminNotes.join(' | ');
     QueryModal.verifyMatchedRecordsByIdentifier(
       instance.hrid,
-      'Instance — Administrative notes',
+      instanceFieldValues.administrativeNotes,
       adminNotesText,
     );
   }
