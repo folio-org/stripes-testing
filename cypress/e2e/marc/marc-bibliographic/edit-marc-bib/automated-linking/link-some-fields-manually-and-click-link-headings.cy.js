@@ -64,7 +64,7 @@ describe('MARC', () => {
             boxSecond: '\\',
             boxThird: '0',
             boxFourth: '$a C388504 Normal authors',
-            boxFifth: '',
+            boxFifth: '$z Jamaica $v Biography.',
             boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh99014708C388504',
             boxSeventh: '',
             linkHeadingsEnabledOrDisabled: () => {
@@ -87,7 +87,7 @@ describe('MARC', () => {
           '\\',
           '0',
           '$a C388504 Authors, Jamaican',
-          '',
+          '$y 21st century $v Biography.',
           '$0 http://id.loc.gov/authorities/subjects/sh85009933C388504',
           '',
         ];
@@ -134,7 +134,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
           });

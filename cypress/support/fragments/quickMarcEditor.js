@@ -2909,4 +2909,13 @@ export default {
     }
     cy.expect(Callout(and(...matchers)).exists());
   },
+
+  saveAndKeepEditingWithValidationWarnings() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
+    cy.do(saveAndKeepEditingBtn.click());
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    this.closeAllCallouts();
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: false }));
+    cy.do(saveAndKeepEditingBtn.click());
+  },
 };
