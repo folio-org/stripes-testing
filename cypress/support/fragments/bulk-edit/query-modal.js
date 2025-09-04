@@ -44,6 +44,11 @@ const embeddedTableHeadersMap = {
     'Statement for supplement public note',
     'Statement for supplement staff note',
   ],
+  statementsForIndexes: [
+    'Statement for indexes',
+    'Statement for indexes public note',
+    'Statement for indexes staff note',
+  ],
 };
 
 export const holdingsFieldValues = {
@@ -64,6 +69,11 @@ export const holdingsFieldValues = {
     'Holdings — Statements for supplements — Statement for supplement public note',
   statementsForSupplementsStaffNote:
     'Holdings — Statements for supplements — Statement for supplement staff note',
+  statementsForIndexesStatement: 'Holdings — Statements for indexes — Statement for indexes',
+  statementsForIndexesPublicNote:
+    'Holdings — Statements for indexes — Statement for indexes public note',
+  statementsForIndexesStaffNote:
+    'Holdings — Statements for indexes — Statement for indexes staff note',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
@@ -567,6 +577,7 @@ export default {
       case 'notes':
         return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
       case 'statementsForSupplements':
+      case 'statementsForIndexes':
         return [dataObj.statement, dataObj.note, dataObj.staffNote];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
@@ -597,6 +608,17 @@ export default {
   ) {
     this.verifyEmbeddedTableInQueryModal(
       'statementsForSupplements',
+      instanceIdentifier,
+      expectedStatements,
+    );
+  },
+
+  verifyStatementsForIndexesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedStatements, // Can be a single statement object or array of statement objects, ex: { statement: 'test statement', note: 'test note', staffNote: 'test staff note' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'statementsForIndexes',
       instanceIdentifier,
       expectedStatements,
     );
