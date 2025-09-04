@@ -24,10 +24,13 @@ describe('eHoldings', () => {
             Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
           ]).then((userProperties) => {
             user = userProperties;
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.eholdingsPath,
-              waiter: EHoldingsTitlesSearch.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.eholdingsPath,
+                waiter: EHoldingsTitlesSearch.waitLoading,
+              });
+            }, 20_000);
+            EHoldingsTitlesSearch.waitLoading();
           });
         });
     });

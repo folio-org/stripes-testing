@@ -199,7 +199,9 @@ export default {
   },
 
   selectClassificationIdentifierTypesDropdownOption(option) {
-    cy.do([cy.wait(500), MultiSelectMenu().find(MultiSelectOption(option)).click(), cy.wait(500)]);
+    cy.wait(500);
+    cy.do(MultiSelectMenu().find(MultiSelectOption(option)).clickSegment());
+    cy.wait(500);
   },
 
   /**

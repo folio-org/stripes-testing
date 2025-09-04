@@ -104,7 +104,7 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-            });
+            }, 20_000);
 
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
