@@ -112,6 +112,11 @@ export const itemFieldValues = {
   itemDiscoverySuppress: 'Item — Suppress from discovery',
   materialTypeName: 'Material type — Name',
   itemNotesStaffOnly: 'Items — Notes — Notes staff only',
+  electronicAccessLinkText: 'Items — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Items — Electronic access — Material specified',
+  electronicAccessURI: 'Items — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Items — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Items — Electronic access — URL relationship',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
