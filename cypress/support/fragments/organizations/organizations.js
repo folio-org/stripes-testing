@@ -1,3 +1,4 @@
+import { HTML } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -191,6 +192,8 @@ export default {
     cy.do(Button('Expand all').click());
     cy.wait(3000);
   },
+
+  verifyNoResultMessage: (noResultMessage) => cy.expect(rootSection.find(HTML(including(noResultMessage))).exists()),
 
   checkAllExpandedAccordion: () => {
     cy.get('#pane-organization-details-content')
@@ -449,15 +452,52 @@ export default {
     ]);
   },
 
-  fillScheduleInfo: () => {
+  clickSchedulingEDICheckbox: () => {
     cy.do([
       Checkbox({
         name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
       }).click(),
-      schedulingSection.find(Select('Schedule period')).choose('Daily'),
-      schedulingSection.find(TextField('Schedule frequency *')).fillIn('1'),
-      schedulingSection.find(TextField('Time *')).fillIn(DateTools.getUTCDateForScheduling()),
     ]);
+  },
+
+  fillScheduleInfo: (info) => {
+    cy.get('#scheduling').within(() => {
+      cy.contains('label', 'Schedule period')
+        .closest('[class^=select-]')
+        .find('select')
+        .select(String(info.period));
+
+      const setNativeValue = (input, value) => {
+        const proto = Object.getPrototypeOf(input);
+        const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+        setter.call(input, String(value));
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const blurInput = (input) => {
+        input.dispatchEvent(new Event('blur', { bubbles: true }));
+        input.dispatchEvent(new Event('focusout', { bubbles: true }));
+      };
+
+      cy.get('input[name$="scheduleDay"]').then(($inp) => {
+        const el = $inp[0];
+        setNativeValue(el, info.day);
+        blurInput(el);
+      });
+
+      cy.get('input[name$="scheduleTime"]')
+        .should('be.visible')
+        .then(($inp) => {
+          const el = $inp[0];
+          setNativeValue(el, '');
+          setNativeValue(el, String(info.time));
+          blurInput(el);
+        });
+    });
+  },
+
+  checkDayFieldError(expectedError = 'Value must be less than or equal to 31') {
+    cy.get('[class^=feedbackError]').should('contain.text', expectedError);
   },
 
   fillIntegrationInformation: (
@@ -541,6 +581,45 @@ export default {
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
       ftpSection.find(TextField('Server address')).fillIn(serverAddress),
       ftpSection.find(TextField('FTP port')).fillIn(FTPport),
+    ]);
+    cy.do(saveAndClose.click());
+  },
+
+  fillIntegrationInformationWithoutSchedulingWithDifferentInformation: (
+    integrationName,
+    integartionDescription,
+    vendorEDICode,
+    libraryEDICode,
+    accountNumber,
+    acquisitionMethod,
+  ) => {
+    cy.do([
+      Section({ id: 'integrationInfo' })
+        .find(TextField('Integration name*'))
+        .fillIn(integrationName),
+      TextArea('Description').fillIn(integartionDescription),
+      Select('Integration type*').choose('Ordering'),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({
+        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
+      }).click(),
+    ]);
+    cy.get(
+      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]',
+    ).select(accountNumber);
+    cy.get(
+      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]',
+    ).select(acquisitionMethod);
+    cy.do([
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(Select('FTP connection mode')).choose('Passive'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Username')).fillIn('folio'),
+      ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
+      ftpSection.find(TextField('Order directory')).fillIn('/files'),
     ]);
     cy.do(saveAndClose.click());
   },
