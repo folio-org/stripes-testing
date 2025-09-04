@@ -5,7 +5,7 @@ import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Organizations → Correct page title when Organization details pane is opened', () => {
+describe('Organizations', () => {
   let user;
   const resetFiltersMessage = 'Choose a filter or enter a search query to show results.';
   const organizations = [

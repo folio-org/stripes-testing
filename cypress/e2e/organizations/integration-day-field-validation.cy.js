@@ -6,7 +6,7 @@ import newOrganization from '../../support/fragments/organizations/newOrganizati
 import getRandomPostfix from '../../support/utils/stringTools';
 import DateTools from '../../support/utils/dateTools';
 
-describe('Organizations → Integration Day Field Validation', () => {
+describe('Organizations', () => {
   let user;
   const organization = {
     ...newOrganization.defaultUiOrganizations,
