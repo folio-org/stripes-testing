@@ -106,10 +106,10 @@ describe('MARC', () => {
 
       beforeEach('Visit MARC Authorities', () => {
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password);
-          cy.visit(TopMenu.marcAuthorities);
-          MarcAuthorities.waitLoading();
-          cy.reload();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
           MarcAuthorities.waitLoading();
         }, 20_000);
       });
@@ -147,9 +147,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save edits and verify view updated
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -161,9 +160,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save added field and verify view updated
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -176,11 +174,10 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save deletion and verify modal
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.closeAllCallouts();
 
           // // Confirm deletion and verify view updated
           QuickMarcEditor.checkFieldAbsense();
@@ -192,9 +189,7 @@ describe('MARC', () => {
 
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
 
@@ -204,9 +199,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save field reordering and verify view updated
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -222,13 +216,11 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save and close edit view
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.editedFieldsC360092[0].content);
           MarcAuthority.contains(testData.editedFieldsC360092[1].content);
-          MarcAuthority.checkTagInRow(5, '016');
+          MarcAuthority.checkTagInRow(4, '016');
         },
       );
 

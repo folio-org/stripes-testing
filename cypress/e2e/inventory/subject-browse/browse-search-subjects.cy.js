@@ -48,6 +48,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName);
         BrowseSubjects.searchBrowseSubjects(testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
         BrowseSubjects.clearSearchTextfield();

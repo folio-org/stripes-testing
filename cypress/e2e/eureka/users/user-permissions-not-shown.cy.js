@@ -27,7 +27,6 @@ describe('Eureka', () => {
             path: TopMenu.usersPath,
             waiter: Users.waitLoading,
           });
-          cy.reload();
         }, 20_000);
         Users.waitLoading();
       });
