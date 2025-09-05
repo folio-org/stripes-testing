@@ -282,12 +282,14 @@ export default {
       .find(Link(including(title)))
       .click(),
   ),
+
   selectRequest: (title, rowIndex) => cy.do(
     requestsPane
       .find(MultiColumnListCell({ row: rowIndex, content: title }))
       .find(Link(including(title)))
       .click(),
   ),
+
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })

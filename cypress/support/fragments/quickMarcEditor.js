@@ -596,6 +596,15 @@ export default {
       .should('be.oneOf', [201, 202]);
   },
 
+  saveAndCloseAfterFieldDelete() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
+    cy.do(saveAndCloseButton.click());
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    this.closeAllCallouts();
+    cy.wait(1000);
+    cy.do([saveAndCloseButton.click(), continueWithSaveButton.click()]);
+  },
+
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect(Callout(including(calloutMsg)).exists());
