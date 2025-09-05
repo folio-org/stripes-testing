@@ -17,11 +17,12 @@ describe('Invoices', () => {
 
   const updateInvoiceStatusAndLogin = ({ invoice, status }) => {
     Invoices.changeInvoiceStatusViaApi({ invoice, status });
-
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+      });
+    }, 20_000);
   };
 
   before('Create test data', () => {

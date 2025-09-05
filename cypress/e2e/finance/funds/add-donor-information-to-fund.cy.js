@@ -47,10 +47,12 @@ describe('Finance', () => {
     testData.fund = { ...Funds.getDefaultFund(), ledgerId: ledger.id };
 
     before('Login', () => {
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
+      }, 20_000);
     });
 
     after('Delete test Fund', () => {
@@ -116,11 +118,14 @@ describe('Finance', () => {
       cy.getAdminToken().then(() => {
         Funds.createViaApi(testData.fund);
       });
-
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
+        cy.reload();
+        Funds.waitLoading();
+      }, 20_000);
     });
 
     after('Delete test Fund', () => {

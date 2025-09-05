@@ -6,10 +6,12 @@ describe('Orders', () => {
     const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };
 
     before(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionMethodsPath,
-        waiter: AcquisitionMethods.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionMethodsPath,
+          waiter: AcquisitionMethods.waitLoading,
+        });
+      }, 20_000);
     });
 
     it(

@@ -58,11 +58,12 @@ describe('Invoices', () => {
 
     cy.createTempUser([Permissions.viewEditCreateInvoiceInvoiceLine.gui]).then((userProperties) => {
       testData.user = userProperties;
-
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

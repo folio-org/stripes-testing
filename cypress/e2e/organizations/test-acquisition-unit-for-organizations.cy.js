@@ -11,7 +11,6 @@ describe('ui-organizations: Organizations', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiOrganizationsAssignAcquisitionUnitsToNewOrganization.gui,
       permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
@@ -30,7 +29,9 @@ describe('ui-organizations: Organizations', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    }, 20_000);
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.deleteOrganization();
@@ -47,50 +48,62 @@ describe('ui-organizations: Organizations', () => {
     'C350693 Test acquisition unit restrictions for Organization records (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
+        });
+      }, 20_000);
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
       // Need to wait,while data is load
       cy.wait(2000);
       AcquisitionUnits.assignUser(user.username);
       cy.logout();
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      }, 20_000);
       Organizations.createOrganizationWithAU(organization, defaultAcquisitionUnit.name);
       Organizations.checkOrganizationInfo(organization);
       cy.logout();
 
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
+        });
+      }, 20_000);
       AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      }, 20_000);
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkZeroSearchResultsHeader();
       cy.logout();
 
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
+        });
+      }, 20_000);
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.selectViewCheckbox();
       cy.logout();
 
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      }, 20_000);
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
     },
