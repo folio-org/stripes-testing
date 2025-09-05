@@ -6,7 +6,7 @@ Cypress.Commands.add('getInstance', (searchParams) => {
     searchParams,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    return body.instances ? body.instances[0] : undefined;
+    return body.instances ? body.instances[0] : [];
   });
 });
 
