@@ -39,6 +39,7 @@ const embeddedTableHeadersMap = {
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
+  statements: ['Statement', 'Statement public note', 'Statement staff note'],
   statementsForSupplements: [
     'Statement for supplement',
     'Statement for supplement public note',
@@ -64,6 +65,9 @@ export const holdingsFieldValues = {
   notes: 'Holdings — Notes — Note',
   notesNoteType: 'Holdings — Notes — Notes type',
   notesStaffOnly: 'Holdings — Notes — Staff only',
+  statementsStatement: 'Holdings — Statements — Statement',
+  statementsPublicNote: 'Holdings — Statements — Statement public note',
+  statementsStaffNote: 'Holdings — Statements — Statement staff note',
   statementsForSupplementsStatement:
     'Holdings — Statements for supplements — Statement for supplement',
   statementsForSupplementsPublicNote:
@@ -586,6 +590,7 @@ export default {
         ];
       case 'notes':
         return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+      case 'statements':
       case 'statementsForSupplements':
       case 'statementsForIndexes':
         return [dataObj.statement, dataObj.note, dataObj.staffNote];
@@ -610,6 +615,13 @@ export default {
     expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
   ) {
     this.verifyEmbeddedTableInQueryModal('notes', instanceIdentifier, expectedNotes);
+  },
+
+  verifyStatementsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedStatements, // Can be a single statement object or array of statement objects, ex: { statement: 'test statement', note: 'test note', staffNote: 'test staff note' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('statements', instanceIdentifier, expectedStatements);
   },
 
   verifyStatementsForSupplementsEmbeddedTableInQueryModal(
