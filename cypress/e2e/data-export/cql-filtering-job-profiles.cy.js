@@ -16,9 +16,11 @@ describe('Data Export', () => {
     cy.createTempUser([Permissions.dataExportUploadExportDownloadFileViewLogs.gui]).then(
       (userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.dataExportPath,
+            waiter: DataExportLogs.waitLoading,
+          });
         });
         FileManager.createFile(
           `cypress/fixtures/${validFile}`,

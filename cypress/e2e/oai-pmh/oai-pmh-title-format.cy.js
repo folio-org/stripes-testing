@@ -11,9 +11,11 @@ describe('OAI-PMH', () => {
   before('Create test data', () => {
     cy.createTempUser([Permissions.oaipmhViewLogs.gui]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.oaiPmhPath,
-        waiter: OaiPmh.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: SettingsMenu.oaiPmhPath,
+          waiter: OaiPmh.waitLoading,
+        });
       });
     });
   });
