@@ -99,6 +99,14 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
+const searchDefaultColumnHeaders = [
+  'Title',
+  'Contributors',
+  'Publishers',
+  'Date',
+  'Relation',
+  'Instance HRID',
+];
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -707,7 +715,24 @@ export default {
   },
 
   searchTag(tag) {
-    cy.do([MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag)]);
+    // If Tags filter is expanded, directly fill in the tag
+    // If Tags filter is collapsed, open it first then fill in the tag
+    cy.get('body').then(($body) => {
+      const tagsSection = $body.find('[data-test-accordion-section][id*="Tags"]');
+      if (tagsSection.length > 0) {
+        const contentWrap = tagsSection.find('[class^="content-wrap"]');
+        const isExpanded = contentWrap.length > 0 && contentWrap.hasClass('expanded');
+
+        if (isExpanded) {
+          cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag));
+        } else {
+          cy.do([
+            tagsAccordionButton.click(),
+            MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
+          ]);
+        }
+      }
+    });
   },
 
   filterByTag(tag) {
@@ -1475,5 +1500,11 @@ export default {
     cy.do(inventorySearchAndFilter.focus());
     cy.do(inventorySearchAndFilter.find(clearIcon).click());
     this.checkSearchQueryText('');
+  },
+
+  validateSearchTableColumnsShown(columnHeaders = searchDefaultColumnHeaders) {
+    columnHeaders.forEach((header) => {
+      cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+    });
   },
 };
