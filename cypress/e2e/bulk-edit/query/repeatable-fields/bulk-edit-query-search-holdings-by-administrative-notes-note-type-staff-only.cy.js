@@ -64,7 +64,7 @@ const verifyAdministrativeNotes = (holding, expectedAdminNotes) => {
       : expectedAdminNotes;
     QueryModal.verifyMatchedRecordsByIdentifier(
       holding.hrid,
-      'Holdings — Administrative notes',
+      holdingsFieldValues.holdingsAdminNotes,
       adminNotesText,
     );
   }
