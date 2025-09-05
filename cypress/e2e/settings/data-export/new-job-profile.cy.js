@@ -57,7 +57,9 @@ describe('Data Export', () => {
       'C10953 Create a new job profile (firebird)',
       { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10953'] },
       () => {
-        ExportJobProfiles.goToJobProfilesTab();
+        cy.waitForAuthRefresh(() => {
+          ExportJobProfiles.goToJobProfilesTab();
+        });
         ExportJobProfiles.openNewJobProfileForm();
         ExportNewJobProfile.verifyNewJobProfileForm();
 

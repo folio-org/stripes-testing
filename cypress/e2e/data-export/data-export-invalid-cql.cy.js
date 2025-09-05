@@ -18,9 +18,11 @@ describe('Data Export', () => {
       permissions.dataExportUploadExportDownloadFileViewLogs.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.dataExportPath,
-        waiter: DataExportLogs.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
       });
       // Create file with invalid cql query
       FileManager.createFile(

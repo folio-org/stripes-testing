@@ -44,9 +44,11 @@ describe('bulk-edit', () => {
           holdingsHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdingsHRID);
         });
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.urlRelationshipPath,
-          waiter: UrlRelationship.waitloading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.urlRelationshipPath,
+            waiter: UrlRelationship.waitloading,
+          });
         });
       });
     });
