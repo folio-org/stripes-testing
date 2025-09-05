@@ -147,10 +147,8 @@ export default {
   },
 
   verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
-    cy.expect([
-      Accordion({ label: 'General information' }).exists(),
-      Button('General information').has({ ariaExpanded: 'true' }),
-    ]);
+    cy.expect(Accordion({ label: 'General information' }).exists());
+    cy.expect(Button('General information').has({ ariaExpanded: 'true' }));
     cy.do(Button(including('Record last updated')).click());
     cy.expect(MetaSection({ updatedByText: including(creator) }).exists());
   },
