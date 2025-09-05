@@ -7,33 +7,33 @@ import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const randomPostfix = getRandomPostfix();
-    const instanceTitlePrefix = `AT_C423411_FolioInstance_${randomPostfix}`;
+    const instanceTitlePrefix = `AT_C423412_FolioInstance_${randomPostfix}`;
     const testData = {
       keywordOption: 'Keyword (title, contributor, identifier)',
       querySearchOption: searchHoldingsOptions[10],
-      sourceAccordionName: 'Source',
+      statusAccordionName: 'Item status',
       folioInstance: InventoryInstances.generateFolioInstances({
         count: 1,
         instanceTitlePrefix: `${instanceTitlePrefix}_orig`,
         holdingsCount: 1,
-        itemsCount: 0,
+        itemsCount: 1,
       })[0],
       altInstance: InventoryInstances.generateFolioInstances({
         count: 1,
         instanceTitlePrefix: `${instanceTitlePrefix}_alt`,
         holdingsCount: 1,
-        itemsCount: 0,
+        itemsCount: 1,
       })[0],
       searchQueries: {
-        basic: 'AT_C423411_FolioInstance',
-        querySearch: 'title="AT_C423411_FolioInstance"',
+        basic: 'AT_C423412_FolioInstance',
+        querySearch: 'title="AT_C423412_FolioInstance"',
       },
-      sourceValue: INSTANCE_SOURCE_NAMES.FOLIO,
+      statusValue: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const advSearchGeneratedQuery = `keyword containsAll ${testData.searchQueries.basic}`;
     const getExpectedTitle = ({ query, title } = {}) => {
@@ -47,7 +47,7 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423411_FolioInstance');
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423412_FolioInstance');
 
       cy.then(() => {
         // Get required reference data
@@ -86,8 +86,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423411 Correct page title in Inventory Search ("Holdings" tab) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423411'] },
+      'C423412 Correct page title in Inventory Search ("Items" tab) (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C423412'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {
@@ -95,8 +95,8 @@ describe('Inventory', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
         }, 20_000);
-        InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.holdingsTabIsDefault();
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.itemTabIsDefault();
 
         // Steps 1, 2: Input any query in search input field → Click "Search" button and check title
         InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);
@@ -126,14 +126,14 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 7: Select any values in any facets on the first pane
-        InventorySearchAndFilter.clickAccordionByName(testData.sourceAccordionName);
-        InventorySearchAndFilter.selectOptionInExpandedFilter(
-          testData.sourceAccordionName,
-          testData.sourceValue,
+        InventorySearchAndFilter.clickAccordionByName(testData.statusAccordionName);
+        InventorySearchAndFilter.selectMultiSelectFilterOption(
+          testData.statusAccordionName,
+          testData.statusValue,
         );
-        InventorySearchAndFilter.verifyCheckboxInAccordion(
-          testData.sourceAccordionName,
-          testData.sourceValue,
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+          testData.statusAccordionName,
+          testData.statusValue,
           true,
         );
         cy.title().should('eq', getExpectedTitle());
@@ -145,9 +145,9 @@ describe('Inventory', () => {
         // Step 9: Click "Reset all" button
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.checkSearchQueryText('');
-        InventorySearchAndFilter.verifyCheckboxInAccordion(
-          testData.sourceAccordionName,
-          testData.sourceValue,
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+          testData.statusAccordionName,
+          testData.statusValue,
           false,
         );
         cy.title().should('eq', getExpectedTitle());
@@ -158,13 +158,13 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
 
         // Step 11: Select any values in any facets on the first pane
-        InventorySearchAndFilter.selectOptionInExpandedFilter(
-          testData.sourceAccordionName,
-          testData.sourceValue,
+        InventorySearchAndFilter.selectMultiSelectFilterOption(
+          testData.statusAccordionName,
+          testData.statusValue,
         );
-        InventorySearchAndFilter.verifyCheckboxInAccordion(
-          testData.sourceAccordionName,
-          testData.sourceValue,
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+          testData.statusAccordionName,
+          testData.statusValue,
           true,
         );
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
@@ -174,9 +174,9 @@ describe('Inventory', () => {
         // Step 12: Click "Reset all" button
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.checkSearchQueryText('');
-        InventorySearchAndFilter.verifyCheckboxInAccordion(
-          testData.sourceAccordionName,
-          testData.sourceValue,
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+          testData.statusAccordionName,
+          testData.statusValue,
           false,
         );
         cy.title().should('eq', getExpectedTitle());
