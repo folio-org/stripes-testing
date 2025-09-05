@@ -1,21 +1,44 @@
 describe('fse-edge', () => {
   // all test steps are hidden from report in order to hide sensitive edge related data (api key). TODO: update to hide only api key
 
+  // Helper to hide sensitive data
+  const safeTest = (testFn) => {
+    cy.allure().step('EDGE API test (sensitive data hidden)', () => {
+      try {
+        testFn();
+      } catch (e) {
+        let statusCode;
+        // Try to extract status code from error if available
+        if (e && e.response && e.response.status) {
+          statusCode = e.response.status;
+        } else if (e && e.status) {
+          statusCode = e.status;
+        }
+        cy.allure().logStep(
+          `Test failed. Sensitive data is hidden. Response status: ${statusCode ?? 'unknown'}`,
+        );
+        throw new Error(
+          `Test failed. Sensitive data is hidden. Response status: ${statusCode ?? 'unknown'}`,
+        );
+      }
+    });
+  };
+
   it(
     `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       cy.allure().logCommandSteps(false);
       cy.postEdgeErm().then((response) => {
         cy.expect(response.status).to.eq(200);
       });
-    },
+    }),
   );
 
   it(
     `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
       // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
 
@@ -45,47 +68,47 @@ describe('fse-edge', () => {
       cy.postEdgeNcip(requestBody).then((response) => {
         cy.expect(response.status).to.eq(200);
       });
-    },
+    }),
   );
 
   it(
     `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       cy.allure().logCommandSteps(false);
       cy.getEdgeOai().then((response) => {
         cy.expect(response.status).to.eq(200);
       });
-    },
+    }),
   );
 
   it(
     `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       cy.allure().logCommandSteps(false);
       cy.getEdgePatron().then((response) => {
         // check either 200 or 404 since not always there is a patron for default user
         cy.expect(response.status).to.be.oneOf([200, 404]);
       });
-    },
+    }),
   );
 
   it(
     `TC195414 - edge-orders verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-orders', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       cy.allure().logCommandSteps(false);
       cy.postEdgeOrders().then((response) => {
         cy.expect(response.status).to.eq(200);
       });
-    },
+    }),
   );
 
   it(
     `TC195633 - edge-orders gobi integration check for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-orders', 'nonProd', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
 
       const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
@@ -162,13 +185,13 @@ describe('fse-edge', () => {
       cy.postEdgeOrdersGobiIntegration(requestBody).then((response) => {
         cy.expect(response.status).to.eq(201);
       });
-    },
+    }),
   );
 
   it(
     `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-rtac', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
@@ -182,13 +205,13 @@ describe('fse-edge', () => {
           });
         }
       });
-    },
+    }),
   );
 
   it(
     `TC195958 - edge-dematic EMS integration verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-dematic', 'app-edge-complete'] },
-    () => {
+    () => safeTest(() => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
       cy.getAllRemoteStorageConfigurations().then((remoteConfigurations) => {
@@ -221,6 +244,6 @@ describe('fse-edge', () => {
           expect(responseAsrRequestsBody).to.include('<asrRequests');
         });
       });
-    },
+    }),
   );
 });
