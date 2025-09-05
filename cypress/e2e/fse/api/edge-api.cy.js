@@ -4,11 +4,8 @@ describe('fse-edge', () => {
   // Helper to hide sensitive data
   const safeTest = (testFn) => {
     cy.allure().step('EDGE API test (sensitive data hidden)', () => {
-      try {
-        testFn();
-      } catch (e) {
+      Cypress.Promise.try(() => testFn()).catch((e) => {
         let statusCode;
-        // Try to extract status code from error if available
         if (e && e.response && e.response.status) {
           statusCode = e.response.status;
         } else if (e && e.status) {
@@ -17,10 +14,11 @@ describe('fse-edge', () => {
         cy.allure().logStep(
           `Test failed. Sensitive data is hidden. Response status: ${statusCode ?? 'unknown'}`,
         );
+        // Explicitly fail the test
         throw new Error(
           `Test failed. Sensitive data is hidden. Response status: ${statusCode ?? 'unknown'}`,
         );
-      }
+      });
     });
   };
 
