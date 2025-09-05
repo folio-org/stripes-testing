@@ -52,8 +52,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490903 Generated "035" field displays in ascending fields order in overlaid via single record import "MARC bibliographic" record which doesn\'t have existing "035" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C490903'] },
+      'C490903 Generated "035" field displays in ascending fields order in overlaid via single record import "MARC bibliographic" record which doesn\'t have existing "035" field (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C490903'] },
       () => {
         InventoryInstances.searchByTitle(createdInstaceId);
         InventoryInstance.waitLoading();
