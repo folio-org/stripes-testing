@@ -658,13 +658,13 @@ export default {
             isDefaultSearchParamsRequired: false,
           })
             .then(({ body: { holdingsRecords } }) => {
-              holdingsRecords?.forEach((holding) => {
+              holdingsRecords.forEach((holding) => {
                 cy.okapiRequest({
                   path: `inventory/items-by-holdings-id?query=holdingsRecordId==${holding.id}`,
                   isDefaultSearchParamsRequired: false,
                 })
                   .then(({ body: { items } }) => {
-                    items?.forEach((item) => {
+                    items.forEach((item) => {
                       cy.deleteItemViaApi(item.id);
                     });
                   })
