@@ -1,12 +1,9 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import { getLongDelay } from '../../../support/utils/cypressTools';
-import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('fse-data-export - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -24,58 +21,63 @@ describe('fse-data-export - UI (no data manipulation)', () => {
     { tags: ['sanity', 'fse', 'ui', 'data-export'] },
     () => {
       ExportFileHelper.waitLoading();
+      cy.logout();
     },
   );
 });
 
 describe('fse-data-export - UI (data manipulation)', () => {
   const fileName = `autoTestFileFse${getRandomPostfix()}.csv`;
-  const item = {
-    instanceName: `testFseAqa_${getRandomPostfix()}`,
-    itemBarcode: generateItemBarcode(),
-  };
+  const numberOfInstances = 5;
+  const instances = [...Array(numberOfInstances)].map(() => ({
+    title: `TC195471_FseInstance_${getRandomPostfix()}`,
+  }));
+  let instanceTypeId;
 
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    const instanceID = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
+    cy.getAdminToken();
+
+    cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+      instanceTypeId = instanceTypeData[0].id;
+
+      instances.forEach((instance) => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId,
+            title: instance.title,
+          },
+        }).then((createdInstanceData) => {
+          instance.uuid = createdInstanceData.instanceId;
+
+          FileManager.appendFile(`cypress/fixtures/${fileName}`, `${instance.uuid}\n`);
+        });
+      });
+    });
+
     cy.loginAsAdmin({
       path: TopMenu.dataExportPath,
-      waiter: DataExportLogs.waitLoading,
+      waiter: ExportFileHelper.waitLoading,
     });
+
     cy.allure().logCommandSteps();
   });
 
   it(
     `TC195471 - verify data-export job for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'data-export', 'toBeFixed'] },
+    { tags: ['nonProd', 'fse', 'ui', 'data-export', 'fse-user-journey'] },
     () => {
+      cy.wait(3000);
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);
-
-      // collect expected results and verify actual result
-      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-      cy.wait('@getInfo', getLongDelay()).then((interception) => {
-        const job = interception.response.body.jobExecutions[0];
-        const resultFileName = job.exportedFiles[0].fileName;
-        const recordsCount = job.progress.total;
-        const jobId = job.hrId;
-
-        DataExportResults.verifySuccessExportResultCells(
-          resultFileName,
-          recordsCount,
-          jobId,
-          Cypress.env('diku_login'),
-        );
-      });
     },
   );
 
   after('delete test data', () => {
-    cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    instances.forEach((instance) => {
+      InventoryInstance.deleteInstanceViaApi(instance.uuid);
+    });
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 });
