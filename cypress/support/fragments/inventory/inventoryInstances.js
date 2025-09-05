@@ -658,14 +658,14 @@ export default {
             isDefaultSearchParamsRequired: false,
           })
             .then(({ body: { holdingsRecords } }) => {
-              holdingsRecords?.forEach((holding) => {
+              holdingsRecords.forEach((holding) => {
                 cy.okapiRequest({
                   path: `inventory/items-by-holdings-id?query=holdingsRecordId==${holding.id}`,
                   isDefaultSearchParamsRequired: false,
                 })
                   .then(({ body: { items } }) => {
-                    items?.forEach((item) => {
-                      cy.deleteItemViaApi(item?.id);
+                    items.forEach((item) => {
+                      cy.deleteItemViaApi(item.id);
                     });
                   })
                   .then(() => {
@@ -1134,9 +1134,11 @@ export default {
         return res.body.instances;
       })
       .then((instances) => {
-        instances.forEach((instance) => {
-          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        if (instances && instances.length) {
+          instances.forEach((instance) => {
+            if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
+        }
       });
   },
 
