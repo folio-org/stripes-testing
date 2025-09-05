@@ -149,9 +149,11 @@ describe('MARC', () => {
         'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C356842'] },
         () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
           InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
           InventoryInstances.searchByTitle(createdInstanceIDs[1]);

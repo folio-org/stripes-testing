@@ -50,8 +50,10 @@ describe('Inventory', () => {
             testData.localClassificationIdentifierType,
           ).then((response) => {
             testData.classificationIdentifierTypeId = response.body.id;
-            cy.login(user.username, user.password);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password);
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+            });
             cy.intercept('browse/config/instance-classification*').as('instanceClassifications');
             ClassificationBrowse.openClassificationBrowse();
             cy.wait('@instanceClassifications');

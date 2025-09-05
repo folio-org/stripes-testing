@@ -28,17 +28,21 @@ describe('Notes', () => {
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: urlToEholdings,
+          waiter: NotesEholdings.waitLoading,
+        });
       });
     });
   });
 
   after('Deleting data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    Users.deleteViaApi(testData.viewUserProperties.userId);
+    if (testData.userProperties || testData.viewUserProperties) {
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.userProperties.userId);
+      Users.deleteViaApi(testData.viewUserProperties.userId);
+    }
   });
 
   it(

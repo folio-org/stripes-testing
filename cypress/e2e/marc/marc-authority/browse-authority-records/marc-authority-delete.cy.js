@@ -41,9 +41,11 @@ describe('MARC', () => {
       });
 
       beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
         });
       });
 
