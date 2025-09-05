@@ -113,11 +113,12 @@ describe('Data Import', () => {
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
+        }, 20_000);
       });
     });
 

@@ -90,12 +90,11 @@ describe('Eureka', () => {
       }
       cy.waitForAuthRefresh(() => {
         cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-          waiter: UsersCard.waitLoading,
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
         });
-        cy.reload();
-        UsersCard.waitLoading();
       }, 20_000);
+      cy.wait(3000);
     });
 
     after('Delete roles, users', () => {
@@ -116,6 +115,8 @@ describe('Eureka', () => {
       'C627439 [UIU-3301] Unassigning roles when editing user while having ui-users.roles - Manage (eureka)',
       { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C627439'] },
       () => {
+        UsersSearchPane.searchByKeywords(testData.userA.userId);
+        UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('4');
         UserEdit.openEdit();
         UserEdit.checkUserEditPaneOpened();

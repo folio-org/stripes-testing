@@ -34,7 +34,7 @@ describe('MARC', () => {
             '600',
             '0',
             '0',
-            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever  $v Comic books, strips, etc. $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
+            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $v Comic books, strips, etc. $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
           ],
         };
 
@@ -105,7 +105,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
           });
