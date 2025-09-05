@@ -52,7 +52,7 @@ describe('Inventory', () => {
     after('Deleting created entities', () => {
       // Let's enable tags settings, in case the test fails,
       // to not break other tests in other threads
-      topMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      cy.visit(SettingsMenu.tagsGeneralPath);
       TagsGeneral.waitLoading();
       TagsGeneral.changeEnableTagsStatus('enable');
 

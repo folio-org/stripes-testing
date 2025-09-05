@@ -638,8 +638,8 @@ export default {
   deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
       (instance) => {
-        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
+        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
@@ -652,7 +652,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
-        instances.forEach((instance) => {
+        instances?.forEach((instance) => {
           cy.okapiRequest({
             path: `holdings-storage/holdings?query=instanceId==${instance.id}`,
             isDefaultSearchParamsRequired: false,
@@ -1134,9 +1134,11 @@ export default {
         return res.body.instances;
       })
       .then((instances) => {
-        instances.forEach((instance) => {
-          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        if (instances && instances.length) {
+          instances.forEach((instance) => {
+            if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
+        }
       });
   },
 

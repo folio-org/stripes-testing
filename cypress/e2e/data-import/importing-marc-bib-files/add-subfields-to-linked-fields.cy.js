@@ -250,12 +250,12 @@ describe('Data Import', () => {
           '1',
           '\\',
           '$a C385673 Coates, Ta-Nehisi',
-          '$e Writer $e author.',
+          '$e author.',
           '$0 http://id.loc.gov/authorities/names/n2008001084',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          74,
+          77,
           '700',
           '1',
           '\\',
@@ -265,12 +265,12 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          75,
+          78,
           '700',
           '1',
           '\\',
           '$a C385673 Lee, Stan, $d 1922-2018',
-          '$e AUTHOR $e creator',
+          '$e creator',
           '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
         );
