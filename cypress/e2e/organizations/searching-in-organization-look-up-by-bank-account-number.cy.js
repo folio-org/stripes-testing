@@ -5,9 +5,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import BankingInformation from '../../support/fragments/settings/organizations/bankingInformation';
 import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('Organizations', { retries: { runMode: 1 } }, () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
@@ -30,21 +28,21 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
   let user;
   let C423432User;
 
+  before('Enable Banking Information', () => {
+    cy.loginAsAdmin({
+      path: TopMenu.settingsBankingInformationPath,
+      waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+    });
+    SettingsOrganizations.checkenableBankingInformationIfNeeded();
+  });
+
   before(() => {
-    cy.getAdminToken();
-    BankingInformation.setBankingInformationValue(true);
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
+    });
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
-
-      cy.loginAsAdmin({
-        path: SettingsMenu.organizationsPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-      });
-      SettingsOrganizations.selectBankingInformation();
-      SettingsOrganizations.enableBankingInformation();
-
-      cy.visit(TopMenu.organizationsPath);
-      Organizations.waitLoading();
       Organizations.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganization(firstOrganization.name);
@@ -69,10 +67,12 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
       permissions.uiOrganizationsViewBankingInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
     cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
       C423432User = secondUserProperties;
@@ -80,7 +80,6 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
   });
 
   after(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', firstOrganization.name);
     Organizations.checkSearchResults(firstOrganization);
@@ -97,12 +96,6 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
     Organizations.closeDetailsPane();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
     Organizations.deleteOrganizationViaApi(secondOrganization.id);
-    BankingInformation.setBankingInformationValue(false);
-
-    cy.visit(TopMenu.settingsBankingInformationPath);
-    SettingsOrganizations.waitLoadingOrganizationSettings();
-    SettingsOrganizations.enableBankingInformation();
-
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(C423432User.userId);
   });

@@ -22,11 +22,12 @@ describe('Invoices', () => {
     cy.getAdminToken().then(() => {
       Invoices.changeInvoiceStatusViaApi({ invoice: testData.invoice, status });
     });
-
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+      });
+    }, 20_000);
   };
 
   before('Create test data', () => {

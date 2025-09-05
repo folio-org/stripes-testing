@@ -73,6 +73,7 @@ const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
+const resetTransactionFiltersButton = Button({ id: 'reset-transactions-filters' });
 
 export default {
   defaultUiFund: {
@@ -535,6 +536,11 @@ export default {
     cy.do(addTransferModal.find(confirmButton).click());
   },
 
+  chooseTransactionType: (option) => {
+    cy.do(Accordion('Type').clickHeader());
+    cy.do(Accordion('Type').find(Checkbox(option)).click());
+  },
+
   transfer(toFund, fromFund) {
     cy.do([actionsButton.click(), transferButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount: '10' });
@@ -800,6 +806,11 @@ export default {
   resetFundFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
+  },
+
+  resetTransactionFilters: () => {
+    cy.do(resetTransactionFiltersButton.click());
+    cy.expect(resetTransactionFiltersButton.is({ disabled: true }));
   },
 
   closeFundDetails: () => {

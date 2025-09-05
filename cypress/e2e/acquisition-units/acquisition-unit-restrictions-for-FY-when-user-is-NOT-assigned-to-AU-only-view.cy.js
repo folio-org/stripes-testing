@@ -12,7 +12,6 @@ describe('Acquisition Units', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({
       path: SettingsMenu.acquisitionUnitsPath,
       waiter: AcquisitionUnits.waitLoading,
@@ -61,10 +60,12 @@ describe('Acquisition Units', () => {
       FiscalYears.assignAU(defaultAcquisitionUnit.name);
       FiscalYears.closeThirdPane();
       FiscalYears.resetFilters();
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fiscalYearPath,
-        waiter: FiscalYears.waitForFiscalYearDetailsLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fiscalYearPath,
+          waiter: FiscalYears.waitForFiscalYearDetailsLoading,
+        });
+      }, 20_000);
     });
   });
 

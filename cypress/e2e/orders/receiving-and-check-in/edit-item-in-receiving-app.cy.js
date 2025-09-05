@@ -58,11 +58,12 @@ describe('Orders', () => {
         Permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.receivingPath,
-          waiter: Receivings.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.receivingPath,
+            waiter: Receivings.waitLoading,
+          });
+        }, 20_000);
       });
     });
 

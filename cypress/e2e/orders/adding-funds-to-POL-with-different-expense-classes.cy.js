@@ -32,19 +32,15 @@ describe('Orders', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -53,7 +49,6 @@ describe('Orders', () => {
         });
       });
     });
-    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {

@@ -65,11 +65,12 @@ describe('Orders', () => {
         instance = instanceResponse;
       },
     );
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    }, 20_000);
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -84,18 +85,22 @@ describe('Orders', () => {
       permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    }, 20_000);
     cy.getAdminToken();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);

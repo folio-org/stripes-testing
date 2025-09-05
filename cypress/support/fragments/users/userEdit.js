@@ -37,6 +37,7 @@ const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
+const setExpirationDateButton = Button('Set');
 const actionsButton = Button('Actions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const userInformationAccordion = Accordion('User information');
@@ -125,6 +126,18 @@ const saveButton = Button({ id: 'clickable-save' });
 
 let totalRows;
 
+Cypress.Commands.add('getUserServicePoints', (userId) => {
+  cy.okapiRequest({
+    path: 'service-points-users',
+    searchParams: {
+      query: `(userId==${userId})`,
+    },
+  }).then(({ body }) => {
+    Cypress.env('userServicePoints', body.servicePointsUsers);
+    return body.servicePointsUsers;
+  });
+});
+
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
   method: 'POST',
@@ -154,6 +167,7 @@ export default {
   },
   changeLastName(lastName) {
     cy.do(lastNameField.fillIn(lastName));
+    cy.wait(500);
   },
 
   changeFirstName(firstName) {
@@ -371,6 +385,7 @@ export default {
 
   verifyUserProxyDetails(username) {
     const proxyUser = ProxyUser(including(username));
+    cy.do(Select('Notifications sent to').choose('Proxy'));
     cy.expect([
       proxyUser.exists(),
       proxyUser.find(Select('Relationship Status')).has({ checkedOptionText: 'Active' }),
@@ -472,11 +487,36 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickCloseWithoutSavingIfModalExists() {
+    cy.do(cancelButton.click());
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
+  },
+
+  verifySaveButtonEnabled() {
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  },
+
   saveAndClose() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
     cy.wait(3000);
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal-]').length > 0) {
+        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+      }
+    });
+    cy.expect(rootPane.absent());
+  },
+
+  saveAndCloseWithoutConfirmation() {
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
     cy.expect(rootPane.absent());
   },
 
@@ -528,7 +568,12 @@ export default {
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
         body: {
           userId,
-          servicePointsIds: servicePointIds,
+          servicePointsIds: [
+            ...new Set([
+              ...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds,
+              ...servicePointIds,
+            ]),
+          ],
           defaultServicePointId,
         },
         isDefaultSearchParamsRequired: false,
@@ -615,7 +660,9 @@ export default {
   addAddress(type = 'Home') {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
   },
-
+  deleteAddress() {
+    cy.do(Button('Delete address').click());
+  },
   editUsername(username) {
     cy.do(usernameField.fillIn(username));
   },
@@ -785,20 +832,20 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi: (userData) => {
-    return cy
-      .do([
-        lastNameField.fillIn(userData.personal.lastName),
-        addressSelect.choose(userData.patronGroup),
-        barcodeField.fillIn(userData.barcode),
-        usernameField.fillIn(userData.username),
-        emailField.fillIn(userData.personal.email),
-        saveAndCloseBtn.click(),
-      ])
-      .then(() => {
-        cy.intercept('/users').as('user');
-        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
-      });
+  enterValidValueToCreateViaUi: (userData, patronGroup) => {
+    cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
+    cy.do([
+      lastNameField.fillIn(userData.personal.lastName),
+      barcodeField.fillIn(userData.barcode),
+      usernameField.fillIn(userData.username),
+      emailField.fillIn(userData.personal.email),
+      addressSelect.choose(patronGroup),
+      setExpirationDateButton.click(),
+      saveAndCloseBtn.click(),
+    ]);
+    return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   verifyUserPermissionsAccordion(isShown = false) {
@@ -1012,6 +1059,7 @@ export default {
   fillLastFirstNames(lastName, firstName) {
     cy.do(lastNameField.fillIn(lastName));
     if (firstName) cy.do(firstNameField.fillIn(firstName));
+    cy.wait(1000);
   },
 
   fillEmailAddress(email) {
