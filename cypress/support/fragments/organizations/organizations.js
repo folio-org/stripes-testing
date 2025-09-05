@@ -1,3 +1,4 @@
+import { HTML } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -130,6 +131,8 @@ const nextButton = Button('Next', { disabled: or(true, false) });
 const previousButton = Button('Previous', { disabled: or(true, false) });
 const contactStatusButton = Button({ id: 'accordion-toggle-button-inactive' });
 
+const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
+
 export default {
   waitLoading: () => {
     cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
@@ -189,6 +192,8 @@ export default {
     cy.do(Button('Expand all').click());
     cy.wait(3000);
   },
+
+  verifyNoResultMessage: (noResultMessage) => cy.expect(rootSection.find(HTML(including(noResultMessage))).exists()),
 
   checkAllExpandedAccordion: () => {
     cy.get('#pane-organization-details-content')
@@ -447,15 +452,52 @@ export default {
     ]);
   },
 
-  fillScheduleInfo: () => {
+  clickSchedulingEDICheckbox: () => {
     cy.do([
       Checkbox({
         name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
       }).click(),
-      schedulingSection.find(Select('Schedule period')).choose('Daily'),
-      schedulingSection.find(TextField('Schedule frequency *')).fillIn('1'),
-      schedulingSection.find(TextField('Time *')).fillIn(DateTools.getUTCDateForScheduling()),
     ]);
+  },
+
+  fillScheduleInfo: (info) => {
+    cy.get('#scheduling').within(() => {
+      cy.contains('label', 'Schedule period')
+        .closest('[class^=select-]')
+        .find('select')
+        .select(String(info.period));
+
+      const setNativeValue = (input, value) => {
+        const proto = Object.getPrototypeOf(input);
+        const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+        setter.call(input, String(value));
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const blurInput = (input) => {
+        input.dispatchEvent(new Event('blur', { bubbles: true }));
+        input.dispatchEvent(new Event('focusout', { bubbles: true }));
+      };
+
+      cy.get('input[name$="scheduleDay"]').then(($inp) => {
+        const el = $inp[0];
+        setNativeValue(el, info.day);
+        blurInput(el);
+      });
+
+      cy.get('input[name$="scheduleTime"]')
+        .should('be.visible')
+        .then(($inp) => {
+          const el = $inp[0];
+          setNativeValue(el, '');
+          setNativeValue(el, String(info.time));
+          blurInput(el);
+        });
+    });
+  },
+
+  checkDayFieldError(expectedError = 'Value must be less than or equal to 31') {
+    cy.get('[class^=feedbackError]').should('contain.text', expectedError);
   },
 
   fillIntegrationInformation: (
@@ -539,6 +581,45 @@ export default {
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
       ftpSection.find(TextField('Server address')).fillIn(serverAddress),
       ftpSection.find(TextField('FTP port')).fillIn(FTPport),
+    ]);
+    cy.do(saveAndClose.click());
+  },
+
+  fillIntegrationInformationWithoutSchedulingWithDifferentInformation: (
+    integrationName,
+    integartionDescription,
+    vendorEDICode,
+    libraryEDICode,
+    accountNumber,
+    acquisitionMethod,
+  ) => {
+    cy.do([
+      Section({ id: 'integrationInfo' })
+        .find(TextField('Integration name*'))
+        .fillIn(integrationName),
+      TextArea('Description').fillIn(integartionDescription),
+      Select('Integration type*').choose('Ordering'),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({
+        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
+      }).click(),
+    ]);
+    cy.get(
+      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]',
+    ).select(accountNumber);
+    cy.get(
+      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]',
+    ).select(acquisitionMethod);
+    cy.do([
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(Select('FTP connection mode')).choose('Passive'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Username')).fillIn('folio'),
+      ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
+      ftpSection.find(TextField('Order directory')).fillIn('/files'),
     ]);
     cy.do(saveAndClose.click());
   },
@@ -795,6 +876,15 @@ export default {
     })
     .then((resp) => resp.body.id),
 
+  createPrivilegedContactViaApi: (contact) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations-storage/privileged-contacts',
+      body: contact,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((resp) => resp.body.id),
+
   getTagByLabel(label) {
     const q = `label=="${label}"`;
     return cy
@@ -807,11 +897,35 @@ export default {
       .then((r) => r.body.tags?.[0] ?? null);
   },
 
+  getPrivilegedContacts({ cql, limit = 10, offset = 0, totalRecords = 'auto' } = {}) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'organizations-storage/privileged-contacts',
+        searchParams: { ...(cql ? { query: cql } : {}), limit, offset, totalRecords },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((r) => r.body.contacts ?? []);
+  },
+
+  getPrivilegedContactByName(firstName, lastName) {
+    const q = `firstName == "${firstName}" and lastName == "${lastName}"`;
+    return this.getPrivilegedContacts({ cql: q, limit: 1 }).then((arr) => arr[0] ?? null);
+  },
+
   deleteTagById(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `tags/${id}`,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  deletePrivilegedContactsViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `organizations-storage/privileged-contacts/${id}`,
+      failOnStatusCode: false,
     });
   },
 
@@ -899,12 +1013,53 @@ export default {
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
+  addNewDonorContactWithFullInformation: (contact) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
+      privilegedDonorInformationSection.find(Button('Add donor')).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      TextArea({ name: 'notes' }).fillIn(contact.note),
+      Select('Status').choose(contact.status),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      MultiSelect({ label: 'Categories' }).open(),
+      MultiSelectMenu().find(MultiSelectOption(contact.category)).clickSegment(),
+      MultiSelect({ label: 'Categories' }).close(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button('Add email').click(),
+      TextField({ name: 'emails[0].value' }).fillIn(contact.email),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button('Add phone number').click(),
+      TextField({ name: 'phoneNumbers[0].phoneNumber' }).fillIn(contact.phone),
+    ]);
+    cy.wait(2000);
+    cy.do([Button('Add URL').click(), TextField({ name: 'urls[0].value' }).fillIn(contact.url)]);
+    cy.wait(2000);
+    cy.do(saveButtonInCotact.click());
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
   openPrivilegedDonorInformationSection: () => {
     cy.do(Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click());
   },
 
+  closeAddDonorModal: () => {
+    cy.do([addContacsModal.find(Button('Close')).click()]);
+  },
+
   verifyAddDonorButtonIsAbsent: () => {
     cy.expect(Button('Add donor').absent());
+  },
+
+  clickAddDonorButton: () => {
+    cy.do(privilegedDonorInformationSection.find(Button('Add donor')).click());
   },
 
   verifyBankingInformationAccordionIsAbsent: () => {
@@ -1047,6 +1202,21 @@ export default {
     cy.wait(6000);
   },
 
+  checkZeroResultsInContactPeopleSearch: (contact) => {
+    cy.do([
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(searchButtonInModal).click(),
+    ]);
+    cy.wait(6000);
+    cy.xpath(noResultsMessageLabel)
+      .should('be.visible')
+      .and(
+        'have.text',
+        `No results found for "${contact.lastName}". Please check your spelling and filters.`,
+      );
+  },
+
   addIntrefaceToOrganization: (defaultInterface) => {
     cy.do([
       openInterfaceSectionButton.click(),
@@ -1171,6 +1341,13 @@ export default {
 
   checkContactSectionIsEmpty: () => {
     cy.get('#contactPeopleSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'The list contains no items',
+    );
+  },
+
+  checkPrivilegedDonorInformationIsEmpty: () => {
+    cy.get('#privilegedDonorInformation [data-test-accordion-wrapper="true"]').should(
       'contain.text',
       'The list contains no items',
     );

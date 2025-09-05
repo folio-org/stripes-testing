@@ -99,6 +99,14 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
+const searchDefaultColumnHeaders = [
+  'Title',
+  'Contributors',
+  'Publishers',
+  'Date',
+  'Relation',
+  'Instance HRID',
+];
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1492,5 +1500,11 @@ export default {
     cy.do(inventorySearchAndFilter.focus());
     cy.do(inventorySearchAndFilter.find(clearIcon).click());
     this.checkSearchQueryText('');
+  },
+
+  validateSearchTableColumnsShown(columnHeaders = searchDefaultColumnHeaders) {
+    columnHeaders.forEach((header) => {
+      cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+    });
   },
 };

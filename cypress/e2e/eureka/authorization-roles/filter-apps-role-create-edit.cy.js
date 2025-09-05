@@ -50,10 +50,14 @@ describe('Eureka', () => {
 
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.editRoleId, testData.capabIds);
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+          });
+          cy.reload();
+        }, 20_000);
+        AuthorizationRoles.waitContentLoading();
       });
 
       after('Delete user and roles', () => {
