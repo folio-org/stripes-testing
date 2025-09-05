@@ -26,12 +26,13 @@ describe('eHoldings', () => {
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
-        }).then(() => {
-          EHoldingSearch.switchToPackages();
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+          });
         });
+        EHoldingSearch.switchToPackages();
       });
     });
 
