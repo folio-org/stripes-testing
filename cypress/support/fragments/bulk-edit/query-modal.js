@@ -117,6 +117,7 @@ export const itemFieldValues = {
   electronicAccessURI: 'Items — Electronic access — URI',
   electronicAccessURLPublicNote: 'Items — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Items — Electronic access — URL relationship',
+  yearCaption: 'Item — Year, caption',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',

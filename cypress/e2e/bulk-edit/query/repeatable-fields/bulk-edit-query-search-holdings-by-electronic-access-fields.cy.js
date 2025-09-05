@@ -279,6 +279,9 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('harvarda.harvard.edu', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyQueryAreaContent(
+            '(holdings.electronic_access[*]->relationship == Resource) AND (holdings.electronic_access[*]->uri contains harvarda.harvard.edu)',
+          );
           QueryModal.clickShowColumnsButton();
           QueryModal.clickCheckboxInShowColumns('Holdings — Electronic access');
           QueryModal.clickShowColumnsButton();
@@ -305,7 +308,9 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('Electronic resource (PDF)');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-
+          QueryModal.verifyQueryAreaContent(
+            '(holdings.electronic_access[*]->link_text == Electronic resource (PDF)) AND (holdings.electronic_access[*]->uri contains harvarda.harvard.edu)',
+          );
           expectedHoldingsToFind.forEach((holding) => {
             verifyElectronicAccessInQueryModal(holding);
           });
@@ -321,6 +326,9 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('contents');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyQueryAreaContent(
+            '(holdings.electronic_access[*]->materials_specification contains contents) AND (holdings.electronic_access[*]->uri contains harvarda.harvard.edu)',
+          );
 
           expectedHoldingsToFind.forEach((holding) => {
             verifyElectronicAccessInQueryModal(holding);
@@ -337,6 +345,9 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('FTP access to PostScript version');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyQueryAreaContent(
+            '(holdings.electronic_access[*]->public_note starts with FTP access to PostScript version) AND (holdings.electronic_access[*]->uri contains harvarda.harvard.edu)',
+          );
 
           expectedHoldingsToFind.forEach((holding) => {
             verifyElectronicAccessInQueryModal(holding);
