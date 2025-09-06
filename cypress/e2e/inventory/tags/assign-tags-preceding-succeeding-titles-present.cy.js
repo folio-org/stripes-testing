@@ -169,6 +169,7 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventorySteps.addMarcHoldingRecord();
@@ -177,9 +178,9 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
-        InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
 
@@ -190,7 +191,9 @@ describe('Inventory', () => {
         });
 
         cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
