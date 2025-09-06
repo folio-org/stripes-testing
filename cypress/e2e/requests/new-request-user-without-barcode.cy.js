@@ -101,6 +101,7 @@ describe('Choose requester without a barcode', () => {
     { tags: ['extendedPath', 'vega', 'C10956'] },
     () => {
       NewRequest.openNewRequestPane();
+      cy.waitForAuthRefresh(() => {}, 20_000);
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
       NewRequest.addRequester(userData.username);
