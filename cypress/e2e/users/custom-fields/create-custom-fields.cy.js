@@ -23,8 +23,10 @@ describe('Users', () => {
     });
 
     beforeEach(() => {
-      cy.login(user.username, user.password,
-        { path: TopMenu.customFieldsPath, waiter: CustomFields.waitLoading });
+      cy.login(user.username, user.password, {
+        path: TopMenu.customFieldsPath,
+        waiter: CustomFields.waitLoading,
+      });
     });
 
     after('delete test data', () => {
@@ -40,13 +42,13 @@ describe('Users', () => {
           fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
           helpText: `autotestHelpText_${getRandomPostfix()}`,
         };
-
+        cy.waitForAuthRefresh(() => {}, 20_000);
         CustomFields.addCustomTextField(fieldData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyTextFieldPresented(fieldData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
@@ -68,7 +70,7 @@ describe('Users', () => {
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyAreaFieldPresented(fieldData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
@@ -84,13 +86,13 @@ describe('Users', () => {
           fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
           helpText: `autotestHelpText_${getRandomPostfix()}`,
         };
-
+        cy.waitForAuthRefresh(() => {}, 20_000);
         CustomFields.addCustomCheckBox(checkboxData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyCheckboxPresented(checkboxData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
@@ -116,7 +118,7 @@ describe('Users', () => {
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyRadioButtonPresented(radioButtonData);
-        UserEdit.cancelEdit();
+        UserEdit.clickCloseWithoutSavingIfModalExists();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         CustomFields.openTabFromInventorySettingsList();
