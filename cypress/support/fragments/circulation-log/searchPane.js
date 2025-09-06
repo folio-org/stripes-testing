@@ -32,6 +32,7 @@ const servicePointField = MultiSelect({
 export default {
   // TODO: will rework to interactor when we get section id
   clickApplyMainFilter() {
+    cy.waitForAuthRefresh(() => {}, 20_000);
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
   waitLoading() {
