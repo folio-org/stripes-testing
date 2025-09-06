@@ -14,6 +14,7 @@ import {
   Option,
   including,
 } from '../../../../../interactors';
+import { Configurations } from '.';
 import Mappings from './mappings';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -197,6 +198,38 @@ export default {
     ]);
     InteractorsTools.checkCalloutMessage(successfulDeleteCalloutMessage);
     cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).absent());
+  },
+
+  deleteAllRemoteStoragesViaAPIExceptOf(nameToKeep) {
+    cy.okapiRequest({
+      path: 'remote-storage/configurations',
+      method: 'GET',
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      const configs = body.remoteStorageConfigurations || body.configurations || body;
+      const toDelete = configs.filter(
+        (cfg) => cfg.providerName === 'CAIA_SOFT' && cfg.name !== nameToKeep,
+      );
+      cy.wrap(toDelete).each((cfg) => {
+        this.deleteViaApi(cfg.id);
+        cy.wait(500);
+      });
+    });
+  },
+
+  ensureRemoteStorageExists(name) {
+    cy.okapiRequest({
+      path: 'remote-storage/configurations',
+      method: 'GET',
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      const configs = body.remoteStorageConfigurations || body.configurations || body;
+      const exists = configs.some((cfg) => cfg.name === name);
+      if (!exists) {
+        Configurations.openConfigurationsTabFromSettings();
+        Configurations.configurations.CaiaSoft.create(name);
+      }
+    });
   },
 
   verifyCreatedConfiguration(name, configuration) {
