@@ -96,10 +96,12 @@ describe('MARC', () => {
       });
 
       beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+        }, 20_000);
       });
 
       after('Deleting data', () => {
