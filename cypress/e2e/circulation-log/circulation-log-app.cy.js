@@ -76,8 +76,10 @@ describe('Circulation log', () => {
     { tags: ['smoke', 'volaris', 'shiftLeft', 'C15484'] },
     () => {
       SearchPane.searchByItemBarcode(testData.folioInstances[0].barcodes[0]);
+      cy.waitForAuthRefresh(() => {}, 20_000);
       SearchPane.verifyResultCells();
       SearchPane.resetResults();
+      cy.reload();
     },
   );
 
