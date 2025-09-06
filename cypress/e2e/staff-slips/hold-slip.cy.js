@@ -183,7 +183,7 @@ describe('Staff slips', () => {
       path: TopMenu.requestsPath,
       waiter: Requests.waitLoading,
     });
-
+    cy.waitForAuthRefresh(() => {}, 20_000);
     NewRequest.createNewRequest({
       requesterBarcode: requestUserData.barcode,
       itemBarcode: itemData.barcode,
