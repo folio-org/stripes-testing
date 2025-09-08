@@ -15,6 +15,7 @@ const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
 const trashIconButton = Button({ icon: 'trash' });
 const deleteButton = Button('Delete');
+
 function getEditableListRow(rowNumber) {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
 }

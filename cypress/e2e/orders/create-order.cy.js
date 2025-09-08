@@ -15,10 +15,12 @@ describe('Orders', () => {
     });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    }, 20_000);
   });
 
   afterEach(() => {

@@ -43,7 +43,12 @@ describe('orders: Test PO search', () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         orderNumber = poNumber;
         const today = new Date();
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
+        }, 20_000);
         Orders.checkPoSearch(
           Orders.getSearchParamsMap(
             orderNumber,
