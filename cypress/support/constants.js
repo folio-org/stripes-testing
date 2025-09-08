@@ -1288,8 +1288,11 @@ export const HOLDING_NOTE_TYPES = {
 export const ITEM_NOTE_TYPES = {
   ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  BINDING: 'Binding',
   CHECK_IN_NOTE: 'Check in note',
   CHECK_OUT_NOTE: 'Check out note',
+  COPY_NOTE: 'Copy note',
+  NOTE: 'Note',
 };
 
 export const INSTANCE_NOTE_TYPES = {

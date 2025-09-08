@@ -60,7 +60,7 @@ const verifyAdministrativeNotes = (instance, expectedAdminNotes) => {
     const adminNotesText = expectedAdminNotes.join(' | ');
     QueryModal.verifyMatchedRecordsByIdentifier(
       instance.hrid,
-      'Instance — Administrative notes',
+      instanceFieldValues.administrativeNotes,
       adminNotesText,
     );
   }
@@ -222,6 +222,9 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C808445_Instance', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.administrative_notes starts with Includes index) AND (instance.title starts with AT_C808445_Instance)',
+          );
 
           let expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
 
@@ -255,6 +258,9 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('record');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.notes[*]->note contains record) AND (instance.title starts with AT_C808445_Instance)',
+          );
           QueryModal.clickShowColumnsButton();
           QueryModal.clickCheckboxInShowColumns('Instance — Notes');
           QueryModal.clickShowColumnsButton();
@@ -278,6 +284,9 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('True');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.notes[*]->staff_only == true) AND (instance.title starts with AT_C808445_Instance)',
+          );
 
           expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
 

@@ -15,7 +15,7 @@ describe('fse-my-profile - UI (no data manipulation)', () => {
 
   it(
     `TC195470 - verify that change password page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'myProfile'] },
+    { tags: ['fse', 'ui', 'myProfile', 'fse-user-journey'] },
     () => {
       MyProfile.openChangePassword();
       ChangePassword.waitLoading();
