@@ -21,7 +21,6 @@ describe('fse-data-export - UI (no data manipulation)', () => {
     { tags: ['sanity', 'fse', 'ui', 'data-export'] },
     () => {
       ExportFileHelper.waitLoading();
-      cy.logout();
     },
   );
 });
