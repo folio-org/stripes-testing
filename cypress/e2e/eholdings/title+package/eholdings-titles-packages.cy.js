@@ -51,9 +51,11 @@ describe('eHoldings', () => {
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C684'] },
       () => {
-        cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+          });
         });
         EHoldingSearch.switchToTitles();
         EHoldingsTitlesSearch.byTitle(testData.title);
