@@ -50,6 +50,7 @@ const embeddedTableHeadersMap = {
     'Statement for indexes public note',
     'Statement for indexes staff note',
   ],
+  receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
 };
 
 export const holdingsFieldValues = {
@@ -84,6 +85,9 @@ export const holdingsFieldValues = {
   electronicAccessURI: 'Holdings — Electronic access — URI',
   electronicAccessURLPublicNote: 'Holdings — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Holdings — Electronic access — URL relationship',
+  receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
+  receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
+  receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -594,6 +598,8 @@ export default {
       case 'statementsForSupplements':
       case 'statementsForIndexes':
         return [dataObj.statement, dataObj.note, dataObj.staffNote];
+      case 'receivingHistory':
+        return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -643,6 +649,14 @@ export default {
       'statementsForIndexes',
       instanceIdentifier,
       expectedStatements,
+    );
+  },
+
+  verifyReceivingHistoryEmbeddedTableInQueryModal(instanceIdentifier, expectedReceivingHistory) {
+    this.verifyEmbeddedTableInQueryModal(
+      'receivingHistory',
+      instanceIdentifier,
+      expectedReceivingHistory,
     );
   },
 
