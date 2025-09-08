@@ -64,7 +64,7 @@ const verifyAdministrativeNotes = (holding, expectedAdminNotes) => {
       : expectedAdminNotes;
     QueryModal.verifyMatchedRecordsByIdentifier(
       holding.hrid,
-      'Holdings — Administrative notes',
+      holdingsFieldValues.holdingsAdminNotes,
       adminNotesText,
     );
   }
@@ -227,6 +227,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
           QueryModal.fillInValueTextfield(folioInstance.id, 1);
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            `(holdings.administrative_notes == Geography & Map Reading Room) AND (holdings.instance_id == ${folioInstance.id})`,
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.clickShowColumnsButton();
           QueryModal.clickCheckboxInShowColumns('Holdings — Notes');
@@ -268,6 +271,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.chooseValueSelect(HOLDING_NOTE_TYPES.COPY_NOTE);
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            `(holdings.notes[*]->holdings_note_type == ${HOLDING_NOTE_TYPES.COPY_NOTE}) AND (holdings.instance_id == ${folioInstance.id})`,
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
 
           expectedHoldingsToFind.forEach((holding) => {
@@ -285,6 +291,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.chooseValueSelect('True');
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            `(holdings.notes[*]->staff_only == true) AND (holdings.instance_id == ${folioInstance.id}) and (notes.type_id == ${HOLDING_NOTE_TYPES.COPY_NOTE}) and (notes.staff_only == true)`,
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
 
           expectedHoldingsToFind.forEach((holding) => {
