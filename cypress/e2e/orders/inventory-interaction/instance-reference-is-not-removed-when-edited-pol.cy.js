@@ -62,10 +62,14 @@ describe('Orders', () => {
         instance = instanceResponse;
       },
     );
+
+    cy.log('Login as admin...');
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.log('Logged in as admin.');
+
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -88,11 +92,17 @@ describe('Orders', () => {
   });
 
   after(() => {
+    cy.log('Get admin token...');
     cy.getAdminToken();
+    cy.log('Admin token received.');
+
+    cy.log('Login as admin...');
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.log('Logged in as admin.');
+
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();

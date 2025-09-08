@@ -52,15 +52,24 @@ describe('Orders', () => {
         location = res;
       });
     });
+
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
     });
+
     firstOrder.vendor = organization.name;
+
+    cy.log('Login as admin...');
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.log('Logged in as admin.');
+
+    cy.log('Get admin token...');
     cy.getAdminToken();
+    cy.log('Admin token received.');
+
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;

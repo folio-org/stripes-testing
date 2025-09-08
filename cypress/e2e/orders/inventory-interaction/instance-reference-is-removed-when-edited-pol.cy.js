@@ -35,7 +35,9 @@ describe('Orders', () => {
   let instance;
 
   before(() => {
+    cy.log('Get admin token (1)...');
     cy.getAdminToken();
+    cy.log('Admin token received.');
 
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
@@ -62,11 +64,18 @@ describe('Orders', () => {
         instance = instanceResponse;
       },
     );
+
+    cy.log('Login as admin...');
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.log('Logged in as admin.');
+
+    cy.log('Get admin token (2)...');
     cy.getAdminToken();
+    cy.log('Admin token received.');
+
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -89,10 +98,13 @@ describe('Orders', () => {
   });
 
   after(() => {
+    cy.log('Login as admin...');
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.log('Logged in as admin.');
+
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
