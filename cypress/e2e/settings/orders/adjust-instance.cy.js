@@ -54,8 +54,7 @@ describe('Orders', () => {
     let location;
 
     before(() => {
-      cy.getAdminToken();
-
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
         effectiveLocationServicePoint = servicePoints[0];
         NewLocation.createViaApi(
@@ -66,9 +65,6 @@ describe('Orders', () => {
             organization.id = organizationsResponse;
             order.vendor = organizationsResponse;
           });
-
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-          cy.getAdminToken();
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
             Orders.searchByParameter('PO number', orderNumber);

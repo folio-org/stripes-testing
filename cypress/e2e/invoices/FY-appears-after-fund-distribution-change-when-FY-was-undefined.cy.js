@@ -16,7 +16,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -24,7 +23,7 @@ describe('Invoices', () => {
     name: `autotest_2_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -65,8 +64,9 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    }, 20_000);
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;
@@ -84,8 +84,6 @@ describe('Invoices', () => {
           Funds.createViaApi(firstFund).then((firstFundResponse) => {
             firstFund.id = firstFundResponse.fund.id;
 
-            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-            cy.getAdminToken();
             FinanceHelp.searchByName(firstFund.name);
             Funds.selectFund(firstFund.name);
             Funds.addBudget(allocatedQuantity);
@@ -113,8 +111,7 @@ describe('Invoices', () => {
             });
 
             defaultOrder.vendor = organization.name;
-            TopMenuNavigation.openAppFromDropdown('Orders');
-            Orders.selectOrdersPane();
+            cy.visit(TopMenu.ordersPath);
             Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
               (firstOrderResponse) => {
                 defaultOrder.id = firstOrderResponse.id;
@@ -149,10 +146,14 @@ describe('Invoices', () => {
         permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.invoicesPath,
-          waiter: Invoices.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.invoicesPath,
+            waiter: Invoices.waitLoading,
+          });
+          cy.reload();
+          Invoices.waitLoading();
+        }, 20_000);
       });
     });
   });

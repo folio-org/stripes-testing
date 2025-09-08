@@ -12,10 +12,13 @@ describe('orders: Test PO search', () => {
   let orderNumber;
 
   before(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    }, 20_000);
+
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;

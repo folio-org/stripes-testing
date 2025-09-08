@@ -11,12 +11,16 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  CAPABILITY_ACTIONS,
+  CAPABILITY_TYPES,
+  ORDER_STATUSES,
+} from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 
 describe('Orders: Inventory interaction', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -38,6 +42,30 @@ describe('Orders: Inventory interaction', () => {
   let firstOrderNumber;
   let servicePointId;
   let location;
+
+  const capabSetsToAssign = [
+    {
+      table: CAPABILITY_TYPES.DATA,
+      resource: 'UI-Orders Orders',
+      action: CAPABILITY_ACTIONS.VIEW,
+    },
+    {
+      table: CAPABILITY_TYPES.DATA,
+      resource: 'UI-Orders Orders',
+      action: CAPABILITY_ACTIONS.EDIT,
+    },
+    {
+      table: CAPABILITY_TYPES.DATA,
+      resource: 'UI-Orders Orders',
+      action: CAPABILITY_ACTIONS.CREATE,
+    },
+  ];
+
+  const newCapabToAssign = {
+    table: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance Order',
+    action: CAPABILITY_ACTIONS.CREATE,
+  };
 
   before(() => {
     cy.getAdminToken();
@@ -118,10 +146,35 @@ describe('Orders: Inventory interaction', () => {
       permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
+        });
+      }, 20_000);
+      AuthorizationRoles.clickNewButton();
+      AuthorizationRoles.fillRoleNameDescription(userProperties.username);
+      AuthorizationRoles.clickSelectApplication();
+      AuthorizationRoles.selectAllApplicationsInModal();
+      AuthorizationRoles.clickSaveInModal();
+      capabSetsToAssign.forEach((capabilitySet) => {
+        AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySet, true);
       });
+      AuthorizationRoles.clickSaveButton();
+      AuthorizationRoles.checkAfterSaveCreate(userProperties.username);
+      AuthorizationRoles.clickOnCapabilitySetsAccordion();
+      capabSetsToAssign.forEach((capabilitySet) => {
+        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabilitySet);
+      });
+      AuthorizationRoles.clickAssignUsersButton();
+      AuthorizationRoles.selectUserInModal(userProperties.username);
+      AuthorizationRoles.clickSaveInAssignModal();
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
@@ -153,6 +206,10 @@ describe('Orders: Inventory interaction', () => {
     FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
 
     Users.deleteViaApi(user.userId);
+    cy.getUserRoleIdByNameApi(user.username).then((roleId) => {
+      cy.deleteCapabilitySetsFromRoleApi(roleId);
+      cy.deleteAuthorizationRoleApi(roleId);
+    });
   });
 
   it(
@@ -165,21 +222,27 @@ describe('Orders: Inventory interaction', () => {
       OrderLines.selectPOLInOrder();
       OrderLines.deleteButtonInOrderLineIsAbsent();
       cy.loginAsAdmin({
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
+        path: TopMenu.settingsAuthorizationRoles,
+        waiter: AuthorizationRoles.waitContentLoading,
       });
-      UsersSearchPane.searchByKeywords(user.username);
-      UsersSearchPane.openUser(user.username);
-      UserEdit.openEdit();
-      UserEdit.openSelectPermissionsModal();
-      UserEdit.searchForPermission(permissions.uiInventoryCreateOrderFromInstance.gui);
-      UserEdit.selectFirsPermissionInSearch();
-      UserEdit.savePermissionsInModal();
-      UserEdit.saveUserEditForm();
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      AuthorizationRoles.searchRole(user.username);
+      AuthorizationRoles.clickOnRoleName(user.username);
+      AuthorizationRoles.openForEdit(user.username);
+      AuthorizationRoles.clickSelectApplication();
+      AuthorizationRoles.selectAllApplicationsInModal();
+      AuthorizationRoles.clickSaveInModal();
+      AuthorizationRoles.selectCapabilitySetCheckbox(newCapabToAssign);
+      AuthorizationRoles.clickSaveButton();
+      AuthorizationRoles.checkAfterSaveEdit(user.username);
+      AuthorizationRoles.clickOnCapabilitySetsAccordion();
+      AuthorizationRoles.verifyCapabilitySetCheckboxChecked(newCapabToAssign);
+      AuthorizationRoles.verifyCapabilitySetCheckboxChecked(newCapabToAssign);
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       Orders.deleteButtonInOrderIsAbsent();

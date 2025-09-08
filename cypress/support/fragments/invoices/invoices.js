@@ -660,6 +660,10 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceDeletedMessage);
   },
 
+  verifyStatus: (status) => {
+    cy.get('#pane-invoiceLineDetails').should('contain', status);
+  },
+
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
     cy.do(newBlankLineButton.click());

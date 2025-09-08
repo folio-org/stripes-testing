@@ -41,11 +41,12 @@ describe('Export Manager', () => {
 
       cy.createTempUser([Permissions.exportManagerAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.exportManagerPath,
-          waiter: ExportManagerSearchPane.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.exportManagerPath,
+            waiter: ExportManagerSearchPane.waitLoading,
+          });
+        }, 20_000);
       });
     });
 
@@ -83,17 +84,19 @@ describe('Export Manager', () => {
             'Bursar',
             'Circulation log',
             'eHoldings',
-            'Bulk edit',
-            'EDIFACT orders export',
+            'Orders (EDI)',
+            'Orders (CSV)',
           ],
         });
 
         // Check "EDIFACT orders export" option in "Job type" accordion
-        ExportManagerSearchPane.checkFilterOption({ filterName: 'EDIFACT orders export' });
+        ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (EDI)' });
+        ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (CSV)' });
         ExportManagerSearchPane.checkColumnInResultsTable({ jobType: 'EDIFACT orders export' });
 
         // Uncheck "EDIFACT orders export" option in "Job type" accordion
-        ExportManagerSearchPane.checkFilterOption({ filterName: 'EDIFACT orders export' });
+        ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (EDI)' });
+        ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (CSV)' });
         ExportManagerSearchPane.checkNoResultsMessage();
       },
     );

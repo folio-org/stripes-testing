@@ -540,11 +540,11 @@ export default {
   selectClosedStatusFilter: () => {
     cy.do(Checkbox('Closed').click());
   },
-  selectPrefixFilter: () => {
+  selectPrefixFilter: (prefix) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-poNumberPrefix' }).click(),
       Button({ id: 'poNumberPrefix-selection' }).click(),
-      SelectionOption('pref').click(),
+      SelectionOption(prefix).click(),
     ]);
   },
   selectApprovedFilter: () => {

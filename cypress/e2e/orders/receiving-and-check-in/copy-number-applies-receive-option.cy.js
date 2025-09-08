@@ -43,10 +43,9 @@ describe('orders: Receiving and Check-in', () => {
   let orderLineTitleName;
 
   before(() => {
-    cy.getAdminToken();
-
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Online' }).then((servicePoints) => {
-      circ2LocationServicePoint = servicePoints[0];
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+      circ2LocationServicePoint = servicePoint;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(circ2LocationServicePoint.id)).then(
         (locationResponse) => {
           location = locationResponse;
@@ -54,8 +53,6 @@ describe('orders: Receiving and Check-in', () => {
             organization.id = organizationsResponse;
             order.vendor = organizationsResponse;
           });
-
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
             Orders.searchByParameter('PO number', orderNumber);
@@ -84,10 +81,12 @@ describe('orders: Receiving and Check-in', () => {
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

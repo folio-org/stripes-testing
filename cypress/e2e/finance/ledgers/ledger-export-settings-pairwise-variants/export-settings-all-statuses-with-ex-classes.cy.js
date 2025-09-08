@@ -160,10 +160,12 @@ describe('Finance: Ledgers', () => {
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ledgerPath,
-        waiter: Ledgers.waitForLedgerDetailsLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ledgerPath,
+          waiter: Ledgers.waitForLedgerDetailsLoading,
+        });
+      }, 20_000);
     });
   });
 

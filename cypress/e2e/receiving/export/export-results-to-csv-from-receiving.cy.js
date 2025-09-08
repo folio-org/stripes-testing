@@ -99,11 +99,12 @@ describe('Receiving', () => {
     before('Create test order', () => {
       cy.getAdminToken();
       createOrder({ organization: testData.organization, workflowStatus: 'Open' });
-
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.receivingPath,
-        waiter: Receivings.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.receivingPath,
+          waiter: Receivings.waitLoading,
+        });
+      }, 20_000);
     });
 
     it(
@@ -147,11 +148,12 @@ describe('Receiving', () => {
     before('Create test order', () => {
       cy.getAdminToken();
       createOrder({ organization: testData.organization, workflowStatus: 'Pending' });
-
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.receivingPath,
-        waiter: Receivings.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.receivingPath,
+          waiter: Receivings.waitLoading,
+        });
+      }, 20_000);
     });
 
     it(

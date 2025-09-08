@@ -701,7 +701,9 @@ export default {
   addAddress(type = 'Home') {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
   },
-
+  deleteAddress() {
+    cy.do(Button('Delete address').click());
+  },
   editUsername(username) {
     cy.do(usernameField.fillIn(username));
   },

@@ -67,11 +67,12 @@ describe('Invoices', () => {
       Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

@@ -22,11 +22,12 @@ describe('Invoices', () => {
     cy.getAdminToken().then(() => {
       Invoices.changeInvoiceStatusViaApi({ invoice: testData.invoice, status });
     });
-
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+      });
+    }, 20_000);
   };
 
   before('Create test data', () => {
@@ -61,14 +62,11 @@ describe('Invoices', () => {
         listUnitPrice: 110,
         fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
       });
-
       Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
         testData.order = order;
-
         OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
           (orderLines) => {
             testData.orderLine = orderLines[0];
-
             Invoices.createInvoiceWithInvoiceLineViaApi({
               vendorId: testData.organization.id,
               fiscalYearId: testData.fiscalYear.id,
