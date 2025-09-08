@@ -95,7 +95,6 @@ describe('Inventory', () => {
         InventoryInstance.deleteTag(tagC358962);
         InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-        cy.reload();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },
     );
@@ -142,7 +141,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358961);
         InventorySearchAndFilter.closeTagsPane();
-        cy.reload();
         InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358961);

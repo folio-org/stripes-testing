@@ -38,6 +38,9 @@ Cypress.on('fail', (err) => {
     const passwordRegex = new RegExp(Cypress.env('diku_password'), 'g');
     err.message = err.message.replace(passwordRegex, '[FILTERED]');
   }
+  // Mask API key if present in the format apikey=...
+  const apiKeyRegex = /apikey=([A-Za-z0-9\-_]+)/g;
+  err.message = err.message.replace(apiKeyRegex, 'apikey=[FILTERED]');
   // Rethrow the error in order to retain the test's failed status
   throw err;
 });

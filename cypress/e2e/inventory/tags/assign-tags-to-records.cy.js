@@ -149,6 +149,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.filterItemsByTag(tagName);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.folioInstances[0].barcodes[0]);
+        // Wait for the item data to load instead of using cached data.
+        cy.wait(1000);
         JobProfileView.removeTag(tagName);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
