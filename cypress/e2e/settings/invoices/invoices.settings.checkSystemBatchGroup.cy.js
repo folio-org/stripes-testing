@@ -14,8 +14,12 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
         systemBatchGroup.source = adminSourceRecord;
       });
     });
-    cy.loginAsAdmin();
-    cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.invoiceBatchGroupsPath,
+        waiter: SettingsInvoices.waitBatchGroupsLoading,
+      });
+    }, 20_000);
   });
 
   after('Revert FOLIO batch group values to default', () => {
