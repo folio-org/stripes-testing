@@ -106,7 +106,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
         if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
-        Users.deleteViaApi(testData.userProperties.userId);
+        if (testData?.userProperties?.userId) {
+          Users.deleteViaApi(testData.userProperties.userId);
+        }
       });
 
       it(
