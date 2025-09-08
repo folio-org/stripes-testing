@@ -1099,6 +1099,7 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
 };
 
 export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
+export const DEFAULT_LOCALE_OBJECT = { locale: 'en-US', timezone: 'UTC', currency: 'USD' };
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
@@ -1581,3 +1582,8 @@ export const STANDARD_FIELDS = [
 export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
 
 export const DEFAULT_WAIT_TIME = 4000;
+
+export const API_PATH = {
+  INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
+  ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
