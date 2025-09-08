@@ -101,6 +101,7 @@ export const instanceFieldValues = {
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
   languages: 'Instance — Languages',
+  formatNames: 'Instance — Format names',
   noteType: 'Instance — Notes — Note type',
   note: 'Instance — Notes — Note',
   noteStaffOnly: 'Instance — Notes — Staff only',
@@ -426,6 +427,7 @@ export default {
   },
 
   clickTestQuery() {
+    cy.wait(1000);
     cy.do(testQueryButton.click());
     cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
     this.runQueryDisabled();
