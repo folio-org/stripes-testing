@@ -85,7 +85,7 @@ describe('MARC', () => {
 
       it(
         'C552356 Cannot derive MARC bib record with multiple not-repeatable "Local" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C552356'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'C552356', 'nonParallel'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
