@@ -84,6 +84,7 @@ describe('Users', () => {
     'C433 Test that proxy user can checkout on the behalf of the user (volaris)',
     { tags: ['criticalPath', 'volaris', 'C433', 'eurekaPhase1'] },
     () => {
+      cy.waitForAuthRefresh(() => {}, 20_000);
       CheckOutActions.checkOutUser(usersData.userProxy.barcode);
       CheckOutActions.chooseActingPatron(usersData.userSponsor.lastName);
       CheckOutActions.checkOutItem(testData.itemBarcode);

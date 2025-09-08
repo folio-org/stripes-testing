@@ -130,6 +130,7 @@ describe('Circulation log', () => {
       SearchPane.searchByServicePoint('Circ Desk 1');
       SearchPane.verifyResultCells();
       SearchPane.resetResults();
+      cy.reload();
     },
   );
 

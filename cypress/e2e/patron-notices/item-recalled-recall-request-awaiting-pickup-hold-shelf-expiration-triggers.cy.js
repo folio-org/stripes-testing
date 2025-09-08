@@ -329,6 +329,7 @@ describe('Patron notices', () => {
       'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
       { tags: ['criticalPath', 'volaris', 'C347867'] },
       () => {
+        cy.waitForAuthRefresh(() => {}, 20_000);
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
 
@@ -358,7 +359,6 @@ describe('Patron notices', () => {
 
         cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
         NewNoticePolicy.waitLoading();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
 
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
@@ -388,6 +388,7 @@ describe('Patron notices', () => {
           path: TopMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         CheckOutActions.checkOutUser(userForCheckOut.barcode);
         CheckOutActions.checkUserInfo(userForCheckOut, patronGroup.name);
         CheckOutActions.checkOutItem(instanceData.itemBarcode);

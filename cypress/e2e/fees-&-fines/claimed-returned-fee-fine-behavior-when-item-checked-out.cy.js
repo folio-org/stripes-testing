@@ -103,7 +103,12 @@ describe('Fees&Fines', () => {
       () => {
         const declareLostComments = getTestEntityValue('Some additional information');
 
+        UsersCard.clickOnCloseIcon();
+        cy.waitForAuthRefresh(() => {
+          cy.reload();
+        }, 20_000);
         // Expand "Loans" accordion by clicking on it and Click on "Open loans" button
+
         UsersCard.viewCurrentLoans({ openLoans: testData.folioInstances.length });
         UserLoans.checkResultsInTheRowByBarcode([ITEM_STATUS_NAMES.CHECKED_OUT], itemBarcode);
         // Click on the row with the loan matching the preconditions

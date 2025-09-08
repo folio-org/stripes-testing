@@ -190,6 +190,7 @@ describe('Patron notices', () => {
       { tags: ['criticalPath', 'volaris', 'C347866'] },
       () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
 
         const dublicate = true;
@@ -243,6 +244,7 @@ describe('Patron notices', () => {
         });
         Requests.waitLoading();
         NewRequest.openNewRequestPane();
+        cy.waitForAuthRefresh(() => {}, 20_000);
         NewRequest.waitLoadingNewRequestPage();
         NewRequest.enterItemInfo(itemData.barcode);
         NewRequest.verifyItemInformation([itemData.barcode, itemData.title]);

@@ -24,6 +24,8 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/generateTextCode';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TagsGeneral from '../../../support/fragments/settings/tags/tags-general';
 
 describe('Inventory', () => {
   describe('Tags', () => {
@@ -40,10 +42,12 @@ describe('Inventory', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.userServicePoint);
       cy.createTempUser([
+        permissions.uiUserCanEnableDisableTags.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         permissions.moduleDataImportEnabled.gui,
         permissions.inventoryAll.gui,
         permissions.uiTagsPermissionAll.gui,
+        permissions.inventoryCRUDHoldings.gui,
       ]).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(
@@ -70,6 +74,7 @@ describe('Inventory', () => {
           waiter: DataImport.waitLoading,
         });
         DataImport.verifyUploadState();
+        cy.waitForAuthRefresh(() => {}, 20_000);
         DataImport.uploadFileAndRetry('marcFileForC358962.mrc', testData.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search('Default - Create instance and SRS MARC Bib');
@@ -102,9 +107,12 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'volaris', 'C358961'] },
       () => {
         cy.login(userData.username, userData.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: SettingsMenu.tagsGeneralPath,
+          waiter: TagsGeneral.waitLoading,
         });
+        TagsGeneral.changeEnableTagsStatus('enable');
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventoryInstances.selectInstance();
         InventorySearchAndFilter.verifyInstanceDetailsView();
@@ -116,11 +124,12 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.addEmptyFields(5);
         QuickMarcEditor.addValuesToExistingField(5, '780', '$t preceding $x 1234-1234', '0', '0');
+        cy.wait(1000);
         QuickMarcEditor.addEmptyFields(6);
+        cy.wait(1000);
         QuickMarcEditor.addValuesToExistingField(6, '785', '$t succeeding $x 1234-1234', '0', '0');
         cy.wait(1000);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1000);
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.openTagsField();
@@ -134,10 +143,21 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358961);
+        InventorySearchAndFilter.closeTagsPane();
         InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-        cy.reload();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358961);
+
+        // Cleanup — remove fields 780 and 785
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.waitContentLoading();
+        InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
+        InventoryInstances.selectInstance();
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.deleteFieldByTagAndCheck('780');
+        QuickMarcEditor.deleteFieldByTagAndCheck('785');
+        QuickMarcEditor.saveAndCloseAfterFieldDelete();
+        QuickMarcEditor.checkAfterSaveAndClose();
       },
     );
 
@@ -149,6 +169,7 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventorySteps.addMarcHoldingRecord();
@@ -157,9 +178,9 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
-        InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
 
@@ -170,7 +191,9 @@ describe('Inventory', () => {
         });
 
         cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();

@@ -83,6 +83,7 @@ describe('Requests', () => {
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();
+      cy.waitForAuthRefresh(() => {}, 20_000);
       NewRequest.enterItemInfo(itemBarcode);
       NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
       NewRequest.enterRequesterBarcode(userData.barcode);

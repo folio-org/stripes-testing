@@ -95,6 +95,7 @@ describe('Check out', () => {
     'C778 Check out: check out note and columns on "Scan items" pane (vega) (TaaS)',
     { tags: ['extendedPath', 'vega', 'C778'] },
     () => {
+      cy.waitForAuthRefresh(() => {}, 20_000);
       // Enter barcode for a user in the Check Out app.
       CheckOutActions.checkOutUser(testData.user.barcode);
       // Enter barcode for item with at least two check out notes.

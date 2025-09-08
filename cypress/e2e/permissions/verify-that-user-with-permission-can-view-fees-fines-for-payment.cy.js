@@ -229,6 +229,7 @@ describe('Permissions', () => {
         'C380503 Verify that user with permission can view fees/fines for payment (vega) (TaaS)',
         { tags: ['extendedPath', 'vega', 'C380503'] },
         () => {
+          cy.waitForAuthRefresh(() => {}, 20_000);
           CheckOutActions.checkOutUser(userData.barcode);
           CheckOutActions.checkOutItem(instanceData.itemBarcode);
           Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);

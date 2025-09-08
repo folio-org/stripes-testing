@@ -318,16 +318,14 @@ describe('Patron notices', () => {
         'C347875 Overdue fine, renewed triggers (volaris)',
         { tags: ['criticalPath', 'volaris', 'shiftLeft', 'C347875'] },
         () => {
+          cy.waitForAuthRefresh(() => {}, 20_000);
           noticeTemplates.forEach((template, index) => {
             NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
             NewNoticePolicyTemplate.checkAfterSaving(template);
           });
 
-          cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
           cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           NewNoticePolicy.waitLoading();
-
           NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
           NewNoticePolicy.checkPolicyName(noticePolicy);
 
@@ -346,6 +344,7 @@ describe('Patron notices', () => {
             path: TopMenu.checkOutPath,
             waiter: Checkout.waitLoading,
           });
+          cy.waitForAuthRefresh(() => {}, 20_000);
           CheckOutActions.checkOutUser(userData.barcode);
           CheckOutActions.checkUserInfo(userData, patronGroup.name);
           CheckOutActions.checkOutItem(itemData.barcode);
@@ -360,6 +359,7 @@ describe('Patron notices', () => {
             waiter: UsersSearchPane.waitLoading,
           });
           UsersSearchPane.searchByKeywords(userData.barcode);
+          cy.waitForAuthRefresh(() => {}, 20_000);
           UsersCard.waitLoading();
           UsersCard.viewCurrentLoans();
           UserLoans.openLoanDetails(itemData.barcode);
@@ -389,10 +389,19 @@ describe('Patron notices', () => {
           PayFeeFine.setPaymentMethod(testData.paymentMethod);
           PayFeeFine.submitAndConfirm();
 
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+          cy.visit(TopMenu.circulationLogPath);
           // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(100000);
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.circulationLogPath,
+              waiter: SearchPane.waitLoading,
+            });
+            cy.reload();
+          }, 20_000);
+
           SearchPane.searchByUserBarcode(userData.barcode);
           SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
         },
