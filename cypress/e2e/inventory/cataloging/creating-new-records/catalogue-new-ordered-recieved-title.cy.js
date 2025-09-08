@@ -13,7 +13,8 @@ import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine'
 import NewOrder from '../../../../support/fragments/orders/newOrder';
 import Orders from '../../../../support/fragments/orders/orders';
 import Receiving from '../../../../support/fragments/receiving/receiving';
-import InventoryInteractionsDefaults from '../../../../support/fragments/settings/orders/inventoryInteractionsDefaults';
+import OrdersApprovals from '../../../../support/fragments/settings/orders/approvals';
+import InventoryInteractions from '../../../../support/fragments/settings/orders/inventoryInteractions';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -54,36 +55,25 @@ describe('Inventory', () => {
         );
 
         cy.getAdminToken();
-        InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
-          query: '(module==ORDERS and configName==approvals)',
-        }).then((body) => {
-          if (body.configs.length !== 0) {
-            const id = body.configs[0].id;
 
-            InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-              id,
-              module: 'ORDERS',
-              configName: 'approvals',
-              enabled: true,
-              value: '{"isApprovalRequired":false}',
+        OrdersApprovals.getOrderApprovalsSettings().then((settings) => {
+          if (settings?.length !== 0) {
+            OrdersApprovals.setOrderApprovalsSetting({
+              ...settings[0],
+              value: JSON.stringify({ isApprovalRequired: false }),
             });
           }
         });
-        InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
-          query: '(module==ORDERS and configName==inventory-loanTypeName)',
-        }).then((body) => {
-          if (body.configs.length !== 0) {
-            const id = body.configs[0].id;
 
-            InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-              id,
-              module: 'ORDERS',
-              configName: 'inventory-loanTypeName',
-              enabled: true,
+        InventoryInteractions.getLoanTypeSettings().then((settings) => {
+          if (settings?.length !== 0) {
+            InventoryInteractions.setLoanTypeSetting({
+              ...settings[0],
               value: 'Can circulate',
             });
           }
         });
+
         cy.getBookMaterialType().then((materialType) => {
           materialTypeId = materialType.id;
         });
