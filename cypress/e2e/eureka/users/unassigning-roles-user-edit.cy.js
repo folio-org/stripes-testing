@@ -93,8 +93,6 @@ describe('Eureka', () => {
         cy.login(testData.tempUser.username, testData.tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        cy.reload();
-        Users.waitLoading();
       }, 20_000);
       UsersSearchPane.searchByUsername(testData.userA.username);
       cy.wait(2000);
@@ -140,10 +138,6 @@ describe('Eureka', () => {
         UserEdit.saveAndClose();
         UserEdit.checkUserEditPaneOpened(false);
         UsersCard.waitLoading();
-        UsersCard.close();
-        UsersSearchPane.resetAllFilters();
-        UsersSearchPane.searchByKeywords(testData.userA.username);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('2');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
