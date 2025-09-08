@@ -120,7 +120,6 @@ const confirmButton = Button('Confirm');
 const promoteUserModalText = 'This operation will create new record in Keycloak for';
 const userRolesEmptyText = 'No user roles found';
 const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
-const pronounsField = TextField('Pronouns');
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
@@ -223,80 +222,6 @@ export default {
   },
   changePreferredFirstName(prefFirstName) {
     cy.do(preferredFirstName.fillIn(prefFirstName));
-  },
-
-  changePronouns(pronouns) {
-    cy.do(pronounsField.fillIn(pronouns));
-  },
-
-  fillPronouns(pronouns) {
-    cy.do(pronounsField.fillIn(pronouns));
-    cy.wait(500);
-    cy.expect(pronounsField.has({ value: pronouns }));
-  },
-
-  clearPronounsField() {
-    cy.do(pronounsField.clear());
-    cy.wait(500);
-  },
-
-  focusPronounsField() {
-    cy.do(pronounsField.focus());
-    cy.wait(500);
-    cy.expect(pronounsField.has({ focused: true }));
-  },
-
-  verifyPronounsFieldInFocus() {
-    cy.wait(500);
-    cy.expect(pronounsField.has({ focused: true }));
-  },
-
-  verifyPronounsFieldPresent() {
-    cy.wait(500);
-    cy.expect(pronounsField.exists());
-  },
-
-  verifyPronounsFieldValue(value) {
-    cy.expect(pronounsField.has({ value }));
-    cy.wait(500);
-  },
-
-  checkPronounsError(isPresent = true, message = 'Pronouns are limited to 300 characters') {
-    if (isPresent) {
-      cy.expect(pronounsField.has({ error: message, errorTextRed: true }));
-    } else {
-      cy.expect(pronounsField.has({ error: undefined }));
-    }
-  },
-
-  verifyPronounsNoError() {
-    this.checkPronounsError(false);
-  },
-
-  verifyPronounsError(message = 'Pronouns are limited to 300 characters') {
-    this.checkPronounsError(true, message);
-  },
-
-  verifyPronounsTextVisibleInEdit(text) {
-    cy.expect(userEditPane.find(HTML(including(text))).exists());
-  },
-
-  verifySaveButtonActive() {
-    cy.expect(saveAndCloseBtn.has({ disabled: false }));
-  },
-
-  verifyUserFullNameWithPronouns(
-    lastName,
-    preferredName = 'preferredName',
-    testMiddleName = 'testMiddleName',
-    pronouns,
-  ) {
-    cy.expect(
-      userEditPane
-        .find(HTML(including(`${lastName}, ${preferredName} ${testMiddleName}`)))
-        .exists(),
-    );
-    cy.expect(userEditPane.find(HTML(including(`(${pronouns})`))).exists());
   },
 
   changeUserType(type = 'Patron') {
