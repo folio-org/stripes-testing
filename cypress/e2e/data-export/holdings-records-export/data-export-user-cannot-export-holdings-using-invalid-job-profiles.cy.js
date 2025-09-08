@@ -7,8 +7,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user;
+let exportedFileName;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `instanceName_${getRandomPostfix()}`,
@@ -53,7 +55,21 @@ describe('Data Export', () => {
       () => {
         ExportFileHelper.uploadFile(holdingUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(holdingUUIDsFileName);
-        DataExportResults.verifyLastLog(holdingUUIDsFileName, 'Fail');
+
+        cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');
+        cy.wait('@getJobInfo', getLongDelay()).then(({ response }) => {
+          const { jobExecutions } = response.body;
+          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+          const jobId = jobData.hrId;
+          exportedFileName = `${holdingUUIDsFileName.replace('.csv', '')}-${jobId}.mrc`;
+
+          DataExportResults.verifyFailedExportResultCells(
+            exportedFileName,
+            1,
+            jobId,
+            user.username,
+          );
+        });
       },
     );
   });
