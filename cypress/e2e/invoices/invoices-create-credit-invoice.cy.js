@@ -8,6 +8,7 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -34,7 +35,9 @@ describe('Invoices', () => {
       Funds.addBudget(100);
     });
     invoiceLine.subTotal = -subtotalValue;
-    TopMenuNavigation.openAppFromDropdown('Invoices');
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    }, 20_000);
   });
 
   it(
@@ -48,7 +51,6 @@ describe('Invoices', () => {
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');
-      Funds.closeBudgetDetails();
       Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);
