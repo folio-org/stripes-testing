@@ -1578,3 +1578,8 @@ export const STANDARD_FIELDS = [
 export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
 
 export const DEFAULT_WAIT_TIME = 4000;
+
+export const API_PATH = {
+  INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
+  ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
