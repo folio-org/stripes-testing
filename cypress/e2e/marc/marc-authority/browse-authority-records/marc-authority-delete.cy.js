@@ -52,8 +52,10 @@ describe('MARC', () => {
       });
 
       after('Deleting created user', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(testData.userProperties.userId);
+        if (testData?.userProperties?.userId) {
+          cy.getAdminToken();
+          Users.deleteViaApi(testData.userProperties.userId);
+        }
       });
 
       it(
