@@ -61,10 +61,9 @@ describe('Invoices', () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
     });
-    cy.loginAsAdmin({
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    }, 20_000);
   });
 
   afterEach(() => {

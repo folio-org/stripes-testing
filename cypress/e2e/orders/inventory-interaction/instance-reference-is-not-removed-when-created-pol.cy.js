@@ -35,8 +35,12 @@ describe('Orders', () => {
   let instance;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    }, 20_000);
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
         InventoryInteractions.setInstanceMatchingSetting({
@@ -45,31 +49,16 @@ describe('Orders', () => {
         });
       }
     });
-
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
         location = res;
       });
     });
-
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
     });
-
     firstOrder.vendor = organization.name;
-
-    cy.log('Login as admin...');
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
-    cy.log('Logged in as admin.');
-
-    cy.log('Get admin token...');
-    cy.getAdminToken();
-    cy.log('Admin token received.');
-
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -88,10 +77,12 @@ describe('Orders', () => {
       permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
