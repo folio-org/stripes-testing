@@ -509,6 +509,16 @@ export default {
     cy.do(confirmDeletionButton.click());
   },
 
+  clickCancelDeletionButton() {
+    cy.do(cancelDeletionButton.click());
+    cy.expect(deleteModal.absent());
+  },
+
+  closeDeleteModalWithEscapeKey() {
+    cy.get('body').type('{esc}');
+    cy.expect(deleteModal.absent());
+  },
+
   setAllDefaultFOLIOFilesToActiveViaAPI() {
     Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
       cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
