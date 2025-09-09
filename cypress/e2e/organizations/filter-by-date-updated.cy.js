@@ -23,8 +23,6 @@ describe('Organizations', () => {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
       });
-      cy.reload();
-      Organizations.waitLoading();
     }, 20_000);
     cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((user) => {
       testData.user = user;
@@ -41,10 +39,12 @@ describe('Organizations', () => {
         name: `${testData.organization.name}-edited`,
         code: testData.organization.code,
       });
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

@@ -101,7 +101,7 @@ describe('Finance: Transactions', () => {
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
+              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
             );
             Funds.closeBudgetDetails();
             cy.logout();
@@ -216,8 +216,6 @@ describe('Finance: Transactions', () => {
           path: TopMenu.settingsInvoiveApprovalPath,
           waiter: SettingsInvoices.waitApprovalsLoading,
         });
-        cy.reload();
-        SettingsInvoices.waitApprovalsLoading();
       }, 20_000);
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
       cy.visit(TopMenu.invoicesPath);

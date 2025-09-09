@@ -66,8 +66,6 @@ describe('Invoices', () => {
   before(() => {
     cy.waitForAuthRefresh(() => {
       cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-      cy.reload();
-      Funds.waitLoading();
     }, 20_000);
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
@@ -114,7 +112,6 @@ describe('Invoices', () => {
 
             defaultOrder.vendor = organization.name;
             cy.visit(TopMenu.ordersPath);
-            Orders.selectOrdersPane();
             Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
               (firstOrderResponse) => {
                 defaultOrder.id = firstOrderResponse.id;

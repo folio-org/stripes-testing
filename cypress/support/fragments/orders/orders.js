@@ -476,13 +476,15 @@ export default {
   },
 
   resetFiltersIfActive: () => {
-    cy.do(
-      resetButton.has({ disabled: false }).then((enabled) => {
-        if (enabled) {
-          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
         }
-      }),
-    );
+      });
   },
 
   selectStatusInSearch: (orderStatus) => {
