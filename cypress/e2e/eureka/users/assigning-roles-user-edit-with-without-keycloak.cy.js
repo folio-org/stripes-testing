@@ -10,6 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import Modals from '../../../support/fragments/modals';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -84,7 +85,6 @@ describe('Eureka', () => {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
         });
-        cy.reload();
       }, 20_000);
       Users.waitLoading();
     });
@@ -215,6 +215,7 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
         UserEdit.saveUserEditForm();
+        Modals.closeModalWithEscapeKeyIfAny();
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
