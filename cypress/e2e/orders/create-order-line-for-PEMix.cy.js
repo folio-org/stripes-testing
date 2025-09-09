@@ -34,6 +34,8 @@ describe('orders: Test PO search', () => {
     'C343242 Create an order line for format = P/E mix (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
+      cy.wait(4000);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();

@@ -49,6 +49,7 @@ describe('Title level request for aged to lost item', () => {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
       });
+      cy.wait(4000);
     });
   });
 

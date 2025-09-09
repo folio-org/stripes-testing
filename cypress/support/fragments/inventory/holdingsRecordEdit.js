@@ -276,6 +276,9 @@ export default {
   markAsSuppressedFromDiscovery() {
     cy.do(Checkbox('Suppress from discovery').click());
   },
+  checkMarkedAsSuppressedFromDiscovery(isMarked = true) {
+    cy.expect(Checkbox('Suppress from discovery').is({ checked: isMarked }));
+  },
   checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: !saveAndClose }));
     cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
