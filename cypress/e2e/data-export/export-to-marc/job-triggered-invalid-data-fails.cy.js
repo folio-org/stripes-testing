@@ -87,8 +87,11 @@ describe(
             'Authorities',
           );
           cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo1');
-          cy.wait('@getInfo1', getLongDelay()).then((interception) => {
-            const job = interception.response.body.jobExecutions[0];
+          cy.wait('@getInfo1', getLongDelay()).then(({ response }) => {
+            const { jobExecutions } = response.body;
+            const job = jobExecutions.find(({ exportedFiles }) => {
+              return exportedFiles[0].fileName.startsWith(uuidsInInvalidFormat.replace('.csv', ''));
+            });
             const resultFileName = job.exportedFiles[0].fileName;
             const recordsCount = job.progress.total;
             const jobId = job.hrId;
@@ -109,8 +112,13 @@ describe(
             'Authorities',
           );
           cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
-          cy.wait('@getInfo2', getLongDelay()).then((interception) => {
-            const job = interception.response.body.jobExecutions[0];
+          cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
+            const { jobExecutions } = response.body;
+            const job = jobExecutions.find(({ exportedFiles }) => {
+              return exportedFiles[0].fileName.startsWith(
+                notFoundUUIDsInValidFormat.replace('.csv', ''),
+              );
+            });
             const resultFileName = job.exportedFiles[0].fileName;
             const recordsCount = job.progress.total;
             const jobId = job.hrId;

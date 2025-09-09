@@ -1180,7 +1180,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CITATION_REFERENCES_NOTE: 'Citation / References note',
     COPY_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
     CREATION_PRODUCTION_CREDITS_NOTE: 'Creation / Production Credits note',
-    CUMULATIVE_INDEX_FINDING_AIDES_NOTES: 'Cumulative Index / Finding Aides notes',
+    CUMULATIVE_INDEX_FINDING_AIDS_NOTES: 'Cumulative Index / Finding Aids notes',
     DATA_QUALITY_NOTE: 'Data quality note',
     DATE_TIME_PLACE_EVENT_NOTE: 'Date / time and place of an event note',
     DISSERTATION_NOTE: 'Dissertation note',
