@@ -33,6 +33,7 @@ describe('Inventory', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
+        cy.wait(5000);
       });
     });
 
@@ -54,6 +55,7 @@ describe('Inventory', () => {
         cy.intercept('POST', '/inventory/items').as('createItem');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
+        cy.wait(5000);
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
@@ -127,6 +129,7 @@ describe('Inventory', () => {
         cy.intercept('POST', '/inventory/items').as('createItem');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
+        cy.wait(5000);
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);
