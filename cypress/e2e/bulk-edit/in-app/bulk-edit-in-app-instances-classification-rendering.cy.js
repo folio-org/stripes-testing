@@ -202,9 +202,15 @@ describe('Bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(folioInstanceWithoutClassification.instanceId);
-      InventoryInstance.deleteInstanceViaApi(folioInstanceWithClassification.instanceId);
-      InventoryInstance.deleteInstanceViaApi(marcInstanceWithClassification.instanceId);
+
+      [
+        folioInstanceWithoutClassification.instanceId,
+        folioInstanceWithClassification.instanceId,
+        marcInstanceWithClassification.instanceId,
+      ].forEach((instanceId) => {
+        InventoryInstance.deleteInstanceViaApi(instanceId);
+      });
+
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
@@ -245,20 +251,17 @@ describe('Bulk-edit', () => {
         );
 
         // Step 5: Verify Classification display in preview table
-        // For Instance without populated "Classification" data column is not populated
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           folioInstanceWithoutClassification.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
           '',
         );
-        // For FOLIO Instance with "Classification" data column is populated with classification table
         BulkEditSearchPane.verifyClassificationTableInForm(
           BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
           folioInstanceWithClassification.instanceHrid,
           'Dewey',
           folioInstanceWithClassification.classifications[0].classificationNumber,
         );
-        // For MARC Instance with multiple "Classification" entries
         marcInstanceWithClassification.classifications.forEach((classification) => {
           BulkEditSearchPane.verifyClassificationTableInForm(
             BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
@@ -274,44 +277,29 @@ describe('Bulk-edit', () => {
 
         const folioClassificationInFile = `${classificationTableHeadersInFile}Dewey;${folioInstanceWithClassification.classifications[0].classificationNumber}`;
 
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: folioClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          folioClassificationInFile,
         );
-
-        // Verify instance without classification has empty classification column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          '',
         );
 
-        // Verify MARC instance with multiple classification entries
         const marcClassificationInFile = `${classificationTableHeadersInFile}${marcInstanceWithClassification.classifications.map((classification) => `${classification.classificationTypeName};${classification.classificationNumber}`).join('|')}`;
 
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: marcClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          marcClassificationInFile,
         );
 
         // Step 7: Start bulk edit process
@@ -329,14 +317,12 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
           '',
         );
-        // For FOLIO Instance - verify Classification data is rendered consistently in "Preview of records to be changed"
         BulkEditSearchPane.verifyClassificationTableInForm(
           BULK_EDIT_FORMS.ARE_YOU_SURE,
           folioInstanceWithClassification.instanceHrid,
           'Dewey',
           folioInstanceWithClassification.classifications[0].classificationNumber,
         );
-        // For MARC Instance with multiple "Classification" entries in "Are you sure" form
         marcInstanceWithClassification.classifications.forEach((classification) => {
           BulkEditSearchPane.verifyClassificationTableInForm(
             BULK_EDIT_FORMS.ARE_YOU_SURE,
@@ -346,52 +332,34 @@ describe('Bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+          'true',
         );
 
         // Step 9: Download preview changes
         BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: folioClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          folioClassificationInFile,
         );
-        // Verify instance without classification has empty classification column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          '',
         );
-        // Verify MARC instance with multiple classification entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: marcClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          marcClassificationInFile,
         );
 
         // Step 10: Commit changes
@@ -421,51 +389,35 @@ describe('Bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+          'true',
         );
 
         // Step 12: Download changed records
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: folioClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          folioClassificationInFile,
         );
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          '',
         );
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: marcClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          marcClassificationInFile,
         );
 
         // remove earlier downloaded files
@@ -479,117 +431,74 @@ describe('Bulk-edit', () => {
 
         // Step 15: Click on the "File with the matching records" hyperlink, Check display of "Classification" Instance data
         BulkEditLogs.downloadFileWithMatchingRecords();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: folioClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          folioClassificationInFile,
         );
-        // Verify instance without classification has empty classification column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          '',
         );
-        // Verify MARC instance with multiple classification entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: marcClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          marcClassificationInFile,
         );
 
         // Step 16: Click on the "File with the preview of proposed changes (CSV)" hyperlink, Check display of "Classification" Instance data
         BulkEditLogs.downloadFileWithProposedChanges();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: folioClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          folioClassificationInFile,
         );
-        // Verify instance without classification has empty classification column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          '',
         );
-        // Verify MARC instance with multiple classification entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: marcClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          marcClassificationInFile,
         );
 
         // Step 17: Click on the "File with updated records (CSV)" hyperlink, Check display of "Classification" Instance data
         BulkEditLogs.downloadFileWithUpdatedRecords();
-        // FOLIO instance with classification should have proper formatting
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: folioClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          folioClassificationInFile,
         );
-        // Verify instance without classification has empty classification column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          '',
         );
-        // Verify MARC instance with multiple classification entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithClassification.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
-              value: marcClassificationInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
+          marcClassificationInFile,
         );
       },
     );
