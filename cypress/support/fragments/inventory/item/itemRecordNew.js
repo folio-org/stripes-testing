@@ -284,6 +284,10 @@ export default {
     cy.do(Checkbox('Suppress from discovery').click());
   },
 
+  checkMarkedAsSuppressedFromDiscovery(isMarked = true) {
+    cy.expect(Checkbox('Suppress from discovery').is({ checked: isMarked }));
+  },
+
   addElectronicAccessFields({
     relationshipType,
     uri,
