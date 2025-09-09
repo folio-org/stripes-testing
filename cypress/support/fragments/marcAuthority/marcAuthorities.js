@@ -1704,11 +1704,13 @@ export default {
 
   deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
-      records.forEach((record) => {
-        if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id, true);
-        }
-      });
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          if (record.authRefType === authRefType) {
+            this.deleteViaAPI(record.id, true);
+          }
+        });
+      }
     });
   },
 
