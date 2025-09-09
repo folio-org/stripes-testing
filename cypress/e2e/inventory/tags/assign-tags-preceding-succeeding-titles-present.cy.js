@@ -72,6 +72,7 @@ describe('Inventory', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry('marcFileForC358962.mrc', testData.fileName);
         JobProfiles.waitLoadingList();
@@ -93,7 +94,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358962);
-        InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },

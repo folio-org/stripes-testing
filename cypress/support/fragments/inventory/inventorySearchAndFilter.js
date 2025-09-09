@@ -792,6 +792,7 @@ export default {
 
   resetAllAndVerifyNoResultsAppear() {
     cy.do(resetAllButton.click());
+    cy.reload();
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
