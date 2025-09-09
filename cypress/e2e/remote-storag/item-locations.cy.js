@@ -97,11 +97,12 @@ describe('Remote Storage', () => {
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
-
+      cy.waitForAuthRefresh(() => {}, 20_000);
       // select instance
       InventorySearchAndFilter.switchToItem();
       cy.wait(2000);
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
+      cy.waitForAuthRefresh(() => {}, 20_000);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
       InventoryHoldings.checkIfExpanded('', true);
@@ -133,11 +134,13 @@ describe('Remote Storage', () => {
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;
+      cy.waitForAuthRefresh(() => {}, 20_000);
 
       // select instance
       InventorySearchAndFilter.switchToItem();
       cy.wait(2000);
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
+      cy.waitForAuthRefresh(() => {}, 20_000);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
       InventoryHoldings.checkIfExpanded('', true);
