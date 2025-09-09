@@ -72,8 +72,6 @@ describe('Invoices', () => {
         path: TopMenu.fundPath,
         waiter: Funds.waitLoading,
       });
-      cy.reload();
-      Funds.waitLoading();
     }, 20_000);
 
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
@@ -108,7 +106,7 @@ describe('Invoices', () => {
         });
         defaultOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
-        Orders.selectOrdersPane();
+        Orders.resetFiltersIfActive();
         Orders.createApprovedOrderForRollover(defaultOrder, true, true).then(
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
@@ -186,8 +184,6 @@ describe('Invoices', () => {
           path: TopMenu.invoicesPath,
           waiter: Invoices.waitLoading,
         });
-        cy.reload();
-        Invoices.waitLoading();
       }, 20_000);
     });
   });
