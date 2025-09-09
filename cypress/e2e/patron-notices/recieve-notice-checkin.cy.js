@@ -214,8 +214,10 @@ describe('Patron notices', () => {
           path: settingsMenu.circulationPatronNoticePoliciesPath,
           waiter: NewNoticePolicyTemplate.waitLoading,
         });
+        cy.waitForAuthRefresh(() => {}, 20_000);
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
+        cy.waitForAuthRefresh(() => {}, 20_000);
         NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
         noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
@@ -249,9 +251,10 @@ describe('Patron notices', () => {
           path: TopMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
-
+        cy.waitForAuthRefresh(() => {}, 20_000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         cy.get('@items').each((item) => {
           CheckOutActions.checkOutItem(item.barcode);
           Checkout.verifyResultsInTheRow([item.barcode]);
