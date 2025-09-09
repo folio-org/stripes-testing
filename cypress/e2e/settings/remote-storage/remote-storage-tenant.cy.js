@@ -36,12 +36,13 @@ describe('remote-storage-configuration', () => {
             libraries = loclib;
           });
         });
+      }).then(() => {
+        cy.intercept('/location-units/institutions*', { locinsts: [institutions] });
+        cy.login(user.username, user.password);
+        cy.wait(1000);
+        TopMenuNavigation.navigateToApp('Settings');
+        Locations.goToLocationsTab();
       });
-
-      cy.login(user.username, user.password);
-      cy.wait(1000);
-      TopMenuNavigation.navigateToApp('Settings');
-      Locations.goToLocationsTab();
     });
   });
 

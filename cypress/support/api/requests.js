@@ -49,7 +49,7 @@ Cypress.Commands.add('deleteCancellationReasonApi', (id) => {
 });
 
 Cypress.Commands.add('getConfigByName', (module = 'SETTINGS', config) => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     method: 'GET',
     path: 'configurations/entries',
     searchParams: {
@@ -64,7 +64,7 @@ Cypress.Commands.add('getConfigByName', (module = 'SETTINGS', config) => {
 
 // for TLR: scope=circulation, key=generalTlr
 Cypress.Commands.add('getSettingsByName', (scope, config) => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     method: 'GET',
     path: 'settings/entries',
     searchParams: {

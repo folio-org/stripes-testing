@@ -32,7 +32,7 @@ const servicePointField = MultiSelect({
 export default {
   // TODO: will rework to interactor when we get section id
   clickApplyMainFilter() {
-    cy.waitForAuthRefresh(() => {}, 20_000);
+    cy.wait(5000);
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
   waitLoading() {
@@ -52,6 +52,7 @@ export default {
   },
 
   searchByItemBarcode(barcode) {
+    cy.wait(2000);
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     this.clickApplyMainFilter();
     cy.wait(3000);

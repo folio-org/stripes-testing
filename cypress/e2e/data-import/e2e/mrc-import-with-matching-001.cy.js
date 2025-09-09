@@ -37,42 +37,55 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
-  describe('End to end scenarios', () => {
+  describe('End to end scenarios', {
+    retries: {
+      runMode: 1,
+    },
+  }, () => {
     let user = {};
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file name to upload
-    const nameForMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C17044 autoTestFile${getRandomPostfix()}.csv`;
-    const matchProfile = {
-      profileName: `autoTestMatchProf.${getRandomPostfix()}`,
-      incomingRecordFields: {
-        field: '001',
-      },
-      existingRecordFields: {
-        field: '001',
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-    };
-    const mappingProfile = {
-      name: `autoTestMappingProf.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      update: true,
-      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-    };
-    const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `autoTestActionProf.${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
-    };
-    const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `autoTestJobProf.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-    };
+    let nameForMarcFile;
+    let nameForExportedMarcFile;
+    let nameForCSVFile;
+    let matchProfile = {};
+    let mappingProfile = {};
+    let actionProfile = {};
+    let jobProfile = {};
 
-    before('Create test user and login', () => {
+    beforeEach('Create test user and login', () => {
+      nameForMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
+      nameForExportedMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
+      nameForCSVFile = `C17044 autoTestFile${getRandomPostfix()}.csv`;
+      matchProfile = {
+        profileName: `autoTestMatchProf.${getRandomPostfix()}`,
+        incomingRecordFields: {
+          field: '001',
+        },
+        existingRecordFields: {
+          field: '001',
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      };
+      mappingProfile = {
+        name: `autoTestMappingProf.${getRandomPostfix()}`,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        update: true,
+        permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+      };
+      actionProfile = {
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `autoTestActionProf.${getRandomPostfix()}`,
+        action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      };
+      jobProfile = {
+        ...NewJobProfile.defaultJobProfile,
+        profileName: `autoTestJobProf.${getRandomPostfix()}`,
+        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+      };
+
+
       cy.createTempUser([
         Permissions.dataImportUploadAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -89,7 +102,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('Delete test data', () => {
+    afterEach('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

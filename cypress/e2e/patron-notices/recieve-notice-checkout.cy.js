@@ -248,6 +248,7 @@ describe('Patron notices', () => {
           path: topMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
+        cy.wait(7000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {
@@ -306,6 +307,7 @@ describe('Patron notices', () => {
           path: topMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
+        cy.wait(7000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {

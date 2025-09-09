@@ -121,6 +121,7 @@ export default {
   saveRequestAndClose() {
     cy.intercept('POST', '**/requests').as('createRequest');
     cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
   },
 
   waitLoading: () => cy.expect(Pane({ title: 'Request details' }).exists()),
@@ -191,7 +192,9 @@ export default {
   },
 
   enterItemInfo(barcode) {
-    cy.do([itemBarcodeInput.fillIn(barcode), enterItemBarcodeButton.click()]);
+    cy.do(itemBarcodeInput.fillIn(barcode));
+    cy.wait(1000);
+    cy.do(enterItemBarcodeButton.click());
     this.waitForInstanceOrItemSpinnerToDisappear();
   },
 
