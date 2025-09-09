@@ -4,20 +4,26 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
-import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
+      const randomPostfix = getRandomPostfix();
       const errorNonRepeatable = 'Field is non-repeatable.';
-      const marcAuthorityHeading = `AT_C423506_MarcAuthority_${getRandomPostfix()}`;
+      const marcAuthorityHeading = `AT_C423506_MarcAuthority_${randomPostfix}`;
       const tag010 = '010';
       const tag008 = '008';
       const tag100 = '100';
-      const authorityFile = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
-      const prefix = 'n';
+      const localAuthFile = {
+        name: `C423506 auth source file active ${randomPostfix}`,
+        prefix: `na${getRandomLetters(6)}`,
+        startWithNumber: '1',
+        isActive: true,
+      };
       const naturalId = `${randomFourDigitNumber()}${randomFourDigitNumber()}C423506`;
       let userProperties;
 
@@ -29,7 +35,15 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUser) => {
           userProperties = createdUser;
-          ManageAuthorityFiles.setAuthorityFileToActiveViaApi(authorityFile);
+
+          cy.createAuthoritySourceFileUsingAPI(
+            localAuthFile.prefix,
+            localAuthFile.startWithNumber,
+            localAuthFile.name,
+            localAuthFile.isActive,
+          ).then((sourceId) => {
+            localAuthFile.id = sourceId;
+          });
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -39,8 +53,8 @@ describe('MARC', () => {
 
       after('Delete user', () => {
         cy.getAdminToken();
-        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(authorityFile);
         Users.deleteViaApi(userProperties.userId);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
@@ -53,12 +67,12 @@ describe('MARC', () => {
           MarcAuthority.setValid008DropdownValues();
 
           // Step 2: Select authority file (LCNAF)
-          MarcAuthority.selectSourceFile(authorityFile);
+          MarcAuthority.selectSourceFile(localAuthFile.name);
 
           // Step 3: Add 3 new fields: 010, 010, 100
           // Add first 010 field
-          QuickMarcEditor.addNewField(tag010, `$a ${prefix}${naturalId}`, 3);
-          QuickMarcEditor.checkContent(`$a ${prefix}${naturalId}`, 4);
+          QuickMarcEditor.addNewField(tag010, `$a ${localAuthFile.prefix}${naturalId}`, 3);
+          QuickMarcEditor.checkContent(`$a ${localAuthFile.prefix}${naturalId}`, 4);
           // Add 100 field
           QuickMarcEditor.addNewField(tag100, `$a ${marcAuthorityHeading}`, 4);
           QuickMarcEditor.checkContent(`$a ${marcAuthorityHeading}`, 5);

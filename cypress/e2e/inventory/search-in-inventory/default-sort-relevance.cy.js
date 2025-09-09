@@ -78,7 +78,7 @@ describe('Inventory', () => {
 
     it(
       'C543871 Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Relevance" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C543871'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C543871'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
