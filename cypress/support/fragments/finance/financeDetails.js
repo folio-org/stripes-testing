@@ -4,6 +4,7 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   Section,
+  Select,
   including,
 } from '../../../../interactors';
 
@@ -17,7 +18,15 @@ const fundsSection = Section({ id: 'fund' });
 export default {
   checkInformation(information = []) {
     information.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+      if (key === 'Fiscal year') {
+        cy.expect(
+          informationSection
+            .find(Select('Fiscal year'))
+            .has({ checkedOptionText: including(String(value)) }),
+        );
+      } else {
+        cy.expect(informationSection.find(KeyValue(key)).has({ value: including(String(value)) }));
+      }
     });
   },
   checkFinancialSummary(financialSummary) {

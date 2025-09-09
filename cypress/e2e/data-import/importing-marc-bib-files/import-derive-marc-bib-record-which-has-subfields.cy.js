@@ -36,7 +36,6 @@ describe('Data Import', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           });
-          cy.reload();
           DataImport.waitLoading();
         }, 20_000);
       });
@@ -75,9 +74,7 @@ describe('Data Import', () => {
         QuickMarcEditor.updateExistingFieldContent(9, testData.new050fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(10, testData.new082fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(13, testData.new260fieldRecord);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(3000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkFieldContentToEqual(
           'textarea[name="records[6].content"]',

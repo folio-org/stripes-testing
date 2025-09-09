@@ -30,7 +30,7 @@ describe('Finance: Ledgers', () => {
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
+    // create first Fiscal Year and prepare 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -64,7 +64,7 @@ describe('Finance: Ledgers', () => {
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
           defaultFund,
           'Electronic',
           '10',
