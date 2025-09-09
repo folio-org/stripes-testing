@@ -103,6 +103,7 @@ describe('Inventory', () => {
       'C380422 Find Tag with special characters using API (volaris)',
       { tags: ['extendedPath', 'volaris', 'C380422', 'eurekaPhase1'] },
       () => {
+        cy.waitForAuthRefresh(() => {}, 20_000);
         InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
         InventorySearchAndFilter.verifySearchResult(instanceData.title);
         InventorySearchAndFilter.selectFoundInstance(instanceData.title);
@@ -113,6 +114,8 @@ describe('Inventory', () => {
           InventorySearchAndFilter.addTag(tag);
           InteractorsTools.checkCalloutMessage('New tag created');
           cy.wait(3000);
+          InventorySearchAndFilter.closeTagsPane();
+          InventorySearchAndFilter.openTagsField();
         });
 
         newTags[newTags.indexOf('"atags"')] = '\\"atags\\"';
