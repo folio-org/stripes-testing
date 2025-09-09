@@ -80,8 +80,6 @@ describe('Invoices', () => {
           firstFund.id = firstFundResponse.fund.id;
           cy.waitForAuthRefresh(() => {
             cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-            cy.reload();
-            Funds.waitLoading();
           }, 20_000);
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
@@ -116,7 +114,7 @@ describe('Invoices', () => {
           });
           defaultOrder.vendor = organization.name;
           cy.visit(TopMenu.ordersPath);
-          Orders.selectOrdersPane();
+          Orders.resetFiltersIfActive();
           Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
             orderNumber = firstOrderResponse.poNumber;
@@ -160,8 +158,6 @@ describe('Invoices', () => {
             path: TopMenu.invoicesPath,
             waiter: Invoices.waitLoading,
           });
-          cy.reload();
-          Invoices.waitLoading();
         }, 20_000);
       });
     });

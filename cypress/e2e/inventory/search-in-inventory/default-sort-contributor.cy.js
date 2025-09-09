@@ -78,7 +78,7 @@ describe('Inventory', () => {
 
     it(
       'C543869 Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Contributors" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C543869'] },
+      { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543869'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,

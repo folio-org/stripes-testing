@@ -4,20 +4,26 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
-import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
+      const randomPostfix = getRandomPostfix();
       const errorText = 'Record not saved: Communication problem with server. Please try again.';
       const marcAuthorityHeading = `AT_C496202_MarcAuthority_${getRandomPostfix()}`;
       const tagLdr = 'LDR';
       const tag100 = '100';
       const tag010 = '010';
-      const authorityFile = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
-      const prefix = 'n';
+      const localAuthFile = {
+        name: `C496202 auth source file active ${randomPostfix}`,
+        prefix: `na${getRandomLetters(6)}`,
+        startWithNumber: '1',
+        isActive: true,
+      };
       const naturalId = `${randomFourDigitNumber()}${randomFourDigitNumber()}C496202`;
       const validFirstindicatorValue = '1';
       let userProperties;
@@ -30,7 +36,14 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUser) => {
           userProperties = createdUser;
-          ManageAuthorityFiles.setAuthorityFileToActiveViaApi(authorityFile);
+          cy.createAuthoritySourceFileUsingAPI(
+            localAuthFile.prefix,
+            localAuthFile.startWithNumber,
+            localAuthFile.name,
+            localAuthFile.isActive,
+          ).then((sourceId) => {
+            localAuthFile.id = sourceId;
+          });
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -40,8 +53,8 @@ describe('MARC', () => {
 
       after('Delete user', () => {
         cy.getAdminToken();
-        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(authorityFile);
         Users.deleteViaApi(userProperties.userId);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
@@ -52,7 +65,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkRecordStatusNew();
           MarcAuthority.setValid008DropdownValues();
 
-          MarcAuthority.selectSourceFile(authorityFile);
+          MarcAuthority.selectSourceFile(localAuthFile.name);
 
           QuickMarcEditor.addEmptyFields(3);
           QuickMarcEditor.checkEmptyFieldAdded(4);
@@ -64,8 +77,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(`$a ${marcAuthorityHeading}`, 4);
           QuickMarcEditor.updateIndicatorValue(tag100, validFirstindicatorValue, 0);
 
-          QuickMarcEditor.addNewField(tag010, `$a ${prefix}${naturalId}`, 4);
-          QuickMarcEditor.checkContent(`$a ${prefix}${naturalId}`, 5);
+          QuickMarcEditor.addNewField(tag010, `$a ${localAuthFile.prefix}${naturalId}`, 4);
+          QuickMarcEditor.checkContent(`$a ${localAuthFile.prefix}${naturalId}`, 5);
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(errorText);

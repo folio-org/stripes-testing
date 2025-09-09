@@ -664,7 +664,10 @@ export default {
       MultiSelect({ label: including('Authority source') }),
     );
     cy.wait(1000);
+    cy.intercept('search/authorities/facets?*').as('getFacets');
     cy.do(multiSelect.select(including(option)));
+    cy.wait('@getFacets');
+    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
