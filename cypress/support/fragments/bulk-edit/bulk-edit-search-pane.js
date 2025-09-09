@@ -429,6 +429,7 @@ export default {
 
   checkUsersRadio() {
     cy.do(usersRadio.click());
+    cy.wait(1000);
   },
 
   usersRadioIsDisabled(isDisabled) {
