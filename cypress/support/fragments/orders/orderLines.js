@@ -822,7 +822,7 @@ export default {
     submitOrderLine();
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+  rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
     fund,
     expClass,
     unitPrice,
