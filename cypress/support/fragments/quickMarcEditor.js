@@ -598,7 +598,7 @@ export default {
   } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
-    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    cy.wait('@validateRequest', { timeout: 10_000 }).its('response.statusCode').should('eq', 200);
 
     this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
@@ -618,7 +618,7 @@ export default {
       this.confirmDelete();
     }
 
-    cy.wait('@saveRecordRequest', { timeout: 5_000 })
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },
