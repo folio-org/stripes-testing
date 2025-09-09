@@ -25,11 +25,13 @@ describe('bulk-edit', () => {
           permissions.uiUsersView.gui,
         ]).then((userProperties) => {
           user = userProperties;
+
+          FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`, invalidUsername);
+
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-          FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`, invalidUsername);
         });
       });
 
@@ -48,6 +50,7 @@ describe('bulk-edit', () => {
         { tags: ['smoke', 'firebird', 'C375216'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
+          cy.wait(2000);
           BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditSearchPane.verifyErrorLabel(1);
