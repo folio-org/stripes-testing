@@ -157,9 +157,9 @@ export default {
 
   updateGeneralTlrSettingViaApi(newSettings) {
     cy.getSettingsByName('circulation', 'generalTlr').then((body) => {
-      let config = body.configs[0];
+      let config = body.items[0];
 
-      if (body.configs.length === 0) {
+      if (body.items.length === 0) {
         config = {
           value: {
             titleLevelRequestsFeatureEnabled: true,
@@ -182,21 +182,14 @@ export default {
           body: config,
         });
       } else {
-        const newValue = { ...JSON.parse(config.value), ...newSettings };
-        config.value = JSON.stringify(newValue);
+        config.value = { ...config.value, ...newSettings };
 
         cy.okapiRequest({
           method: 'PUT',
           path: `settings/entries/${config.id}`,
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
-          body: {
-            id: config.id,
-            module: config.module,
-            configName: config.configName,
-            enabled: true,
-            value: config.value,
-          },
+          body: config,
         });
       }
     });
