@@ -91,6 +91,10 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data, user', () => {
+        cy.getAdminToken();
+        searchData.flat().forEach((searchLine) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(searchLine.query);
+        });
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties) => {
             testData.userProperties = createdUserProperties;

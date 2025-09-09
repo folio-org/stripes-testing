@@ -30,8 +30,9 @@ describe('Invoices', () => {
     });
   };
   before(() => {
-    cy.getAdminToken();
-
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    }, 20_000);
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
         invoice.accountingCode = organization.erpCode;
@@ -47,17 +48,12 @@ describe('Invoices', () => {
             Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
               defaultLedger.id = ledgerResponse.id;
               defaultFund.ledgerId = defaultLedger.id;
-
               Funds.createViaApi(defaultFund).then((fundResponse) => {
                 defaultFund.id = fundResponse.fund.id;
-
-                cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
                 Helper.searchByName(defaultFund.name);
                 Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
                 invoiceLine.subTotal = -subtotalValue;
-                cy.getAdminToken();
-                Approvals.setApprovePayValue(isApprovePayEnabled);
                 TopMenuNavigation.openAppFromDropdown('Invoices');
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                 Invoices.createInvoiceLine(invoiceLine);
@@ -74,10 +70,12 @@ describe('Invoices', () => {
           permissions.uiInvoicesPayInvoices.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.invoicesPath,
-            waiter: Invoices.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.invoicesPath,
+              waiter: Invoices.waitLoading,
+            });
+          }, 20_000);
           setApprovePayValue(isApprovePayEnabled);
         });
       },
