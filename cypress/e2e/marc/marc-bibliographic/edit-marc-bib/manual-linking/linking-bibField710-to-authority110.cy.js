@@ -17,7 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
-          browseSearchOption: 'corporateNameTitle',
+          browseSearchOption: 'nameTitle',
           tag710: '710',
           contributor: 'C375081 Carleton University. Anthropology Caucus 2023-',
           linkedIconText: 'Linked to MARC authority',
