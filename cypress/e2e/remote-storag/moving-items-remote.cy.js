@@ -63,10 +63,11 @@ describe('Remote Storage', () => {
             item.holdings,
           );
         });
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
       });
     });
   });
@@ -81,10 +82,8 @@ describe('Remote Storage', () => {
     'C163927 Move an item with remote effective location from remote storage locations to non-remote storage holding (volaris)',
     { tags: ['criticalPath', 'volaris', 'C163927'] },
     () => {
-      cy.waitForAuthRefresh(() => {}, 20_000);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-      cy.waitForAuthRefresh(() => {}, 20_000);
       InventorySearchAndFilter.selectSearchResultItem();
       ItemRecordView.closeDetailView();
       InventoryInstance.openMoveItemsWithinAnInstance();
