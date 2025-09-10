@@ -130,6 +130,7 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(roleName);
         AuthorizationRoles.clickOnRoleName(roleName);
         AuthorizationRoles.checkRoleCentrallyManaged(roleName, false);
+        cy.wait(5000);
         AuthorizationRoles.shareRole(roleName);
         AuthorizationRoles.verifyRoleViewPane(roleName);
         AuthorizationRoles.closeRoleDetailView(roleName);
