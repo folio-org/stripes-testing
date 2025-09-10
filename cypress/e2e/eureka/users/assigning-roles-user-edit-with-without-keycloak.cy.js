@@ -162,6 +162,7 @@ describe('Eureka', () => {
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
         if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          UsersSearchPane.resetAllFilters();
           UsersSearchPane.searchByKeywords(
             `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
           );
@@ -198,6 +199,7 @@ describe('Eureka', () => {
           UsersCard.verifyUserRolesCounter('0');
         }
 
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
@@ -216,12 +218,6 @@ describe('Eureka', () => {
         UserEdit.verifyUserRolesRowsCount(1);
         UserEdit.saveUserEditForm();
         Modals.closeModalWithEscapeKeyIfAny();
-        UsersCard.verifyUserLastFirstNameInCard(
-          userBodies[2].personal.lastName,
-          userBodies[2].personal.firstName,
-        );
-        UsersCard.close();
-        UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
