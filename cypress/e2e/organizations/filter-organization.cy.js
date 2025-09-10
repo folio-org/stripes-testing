@@ -35,7 +35,7 @@ describe('Organizations', () => {
   [
     { filterActions: Organizations.selectPendingStatus },
     { filterActions: Organizations.selectNoInIsVendor },
-    { filterActions: Organizations.selectCountryFilter },
+    { filterActions: () => Organizations.selectCountryFilter('United States') },
     { filterActions: Organizations.selectLanguageFilter },
     { filterActions: Organizations.selectCashInPaymentMethod },
   ].forEach((filter) => {

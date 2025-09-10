@@ -133,6 +133,10 @@ const contactStatusButton = Button({ id: 'accordion-toggle-button-inactive' });
 
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
 
+const contactInformationSection = Button({
+  id: 'accordion-toggle-button-contactInformationSection',
+});
+
 export default {
   waitLoading: () => {
     cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
@@ -312,6 +316,38 @@ export default {
       MultiSelectOption(AcquisitionUnit).click(),
       saveAndClose.click(),
     ]);
+  },
+
+  addAdressToOrganization: (address) => {
+    if (address.addressLine1) {
+      cy.do([TextField({ name: 'addresses[0].addressLine1' }).fillIn(address.addressLine1)]);
+    } else if (address.addressLine2) {
+      cy.do([TextField({ name: 'addresses[0].addressLine2' }).fillIn(address.addressLine2)]);
+    } else if (address.city) {
+      cy.do([TextField({ name: 'addresses[0].city' }).fillIn(address.city)]);
+    } else if (address.stateRegion) {
+      cy.do([TextField({ name: 'addresses[0].stateRegion' }).fillIn(address.stateRegion)]);
+    } else if (address.zipCode) {
+      cy.do([TextField({ name: 'addresses[0].zipCode' }).fillIn(address.zipCode)]);
+    } else if (address.country) {
+      cy.do([Selection({ name: 'addresses[0].country' }).choose(address.country)]);
+    } else if (address.language) {
+      cy.do([Selection({ name: 'addresses[0].language' }).choose(address.language)]);
+    } else if (address.category) {
+      cy.do([
+        MultiSelect({ label: 'Categories' }).open(),
+        MultiSelectMenu().find(MultiSelectOption(address.category)).clickSegment(),
+        MultiSelect({ label: 'Categories' }).close(),
+      ]);
+    }
+  },
+
+  openContactInformationSection: () => {
+    cy.do([contactInformationSection.click()]);
+  },
+
+  clickAddAdressButton: () => {
+    cy.do([Button({ id: 'addresses-add-button' }).click()]);
   },
 
   organizationTagDetails: () => {
@@ -700,13 +736,15 @@ export default {
   },
 
   resetFiltersIfActive: () => {
-    cy.do(
-      resetButton.has({ disabled: false }).then((enabled) => {
-        if (enabled) {
-          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
         }
-      }),
-    );
+      });
   },
 
   checkSearchResults: (organization) => {
@@ -761,12 +799,12 @@ export default {
   closeIntegrationDetailsPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
-  selectCountryFilter: () => {
+  selectCountryFilter: (country) => {
     cy.wait(3000);
     cy.do([
       toggleButtonCountry.click(),
       Button({ id: 'addresses-selection' }).click(),
-      SelectionOption('United States').click(),
+      SelectionOption(country).click(),
     ]);
   },
 
