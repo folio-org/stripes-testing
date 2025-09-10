@@ -4,7 +4,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('Organizations: add Kosovo to country list checks (C630465)', () => {
+describe('Organizations', () => {
   const organization1 = {
     ...NewOrganization.defaultUiOrganizations,
     name: `autotest_kosovo_new_${getRandomPostfix()}`,
