@@ -18,38 +18,55 @@ describe('Circulation log', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        testData.servicePointId = servicePoints[0].id;
+    cy.getAdminToken()
+      .then(() => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
+          (servicePoints) => {
+            testData.servicePointId = servicePoints[0].id;
+          },
+        );
+        cy.getLocations({ limit: 1 })
+          .then((res) => {
+            testData.location = res;
+          })
+          .then((location) => {
+            InventoryInstances.createFolioInstancesViaApi({
+              folioInstances: testData.folioInstances,
+              location,
+            });
+          });
+      })
+      .then(() => {
+        cy.createTempUserParameterized(
+          testData.user,
+          [
+            Permissions.circulationLogAll.gui,
+            Permissions.checkinAll.gui,
+            Permissions.inventoryAll.gui,
+          ],
+          { userType: 'patron', barcode: false },
+        )
+          .then((userProperties) => {
+            testData.user = userProperties;
+            testData.user = { ...testData.user, ...userProperties };
+          })
+          .then(() => {
+            ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+              .then((servicePoints) => {
+                testData.servicePointId = servicePoints[0].id;
+              })
+              .then(() => {
+                UserEdit.addServicePointViaApi(
+                  testData.servicePointId,
+                  testData.user.userId,
+                  testData.servicePointId,
+                );
+              })
+              .then(() => {
+                // cy.overrideLocalSettings(testData.user.userId);
+              });
+          });
       });
-      cy.getLocations({ limit: 1 }).then((res) => {
-        testData.location = res;
-      }).then((location) => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location,
-        });
-      });
-    }).then(() => {
-      cy.createTempUserParameterized(testData.user,
-        [Permissions.circulationLogAll.gui, Permissions.checkinAll.gui, Permissions.inventoryAll.gui],
-        { userType: 'patron', barcode: false }).then((userProperties) => {
-        testData.user = userProperties;
-        testData.user = { ...testData.user, ...userProperties };
-      }).then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          testData.servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(
-            testData.servicePointId,
-            testData.user.userId,
-            testData.servicePointId,
-          );
-        }).then(() => {
-          // cy.overrideLocalSettings(testData.user.userId);
-        });
-      });
-    });
   });
 
   after('Delete test data', () => {
@@ -69,9 +86,14 @@ describe('Circulation log', () => {
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)
-      cy.login(testData.user.username, testData.user.password,
-        { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
-      CheckInActions.checkInItem(itemBarcode);
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.checkInPath,
+          waiter: CheckInActions.waitLoading,
+        });
+        CheckInActions.checkInItem(itemBarcode);
+      });
+
       // The item is Checked in
       // Navigate to the "Circulation log" app
 

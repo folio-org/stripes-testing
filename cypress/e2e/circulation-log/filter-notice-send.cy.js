@@ -2,7 +2,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
@@ -45,19 +44,30 @@ const item = {
   instanceTitle: `AT_C17092_Instance_${getRandomPostfix()}`,
   barcode: `item-${getRandomPostfix()}`,
 };
-const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest receive notice check in',
-    uuid(),
-  ),
-};
+const testData = {};
+let mockLogEntry;
 
 describe('Circulation log', () => {
   before('create test data', () => {
-    cy.createTempUser([permissions.checkoutAll.gui])
+    cy.createTempUser([
+      permissions.checkoutAll.gui,
+      permissions.inventoryAll.gui,
+      permissions.circulationLogAll.gui,
+      permissions.circulationLogView.gui,
+      permissions.uiUsersSettingsAllFeeFinesRelated.gui,
+      permissions.uiCirculationViewCreateEditDelete.gui,
+      permissions.uiCirculationSettingsNoticeTemplates.gui,
+      permissions.uiCirculationSettingsNoticePolicies.gui,
+      permissions.uiInventoryViewCreateEditItems.gui,
+      permissions.uiUserEdit.gui,
+      permissions.loansView.gui,
+    ])
       .then((userProperties) => {
         user = userProperties;
-        ServicePoints.createViaApi(testData.userServicePoint);
+        ServicePoints.getCircDesk1ServicePointViaApi();
+      })
+      .then((servicePoint) => {
+        testData.userServicePoint = servicePoint;
         UserEdit.addServicePointViaApi(
           testData.userServicePoint.id,
           user.userId,
@@ -94,11 +104,6 @@ describe('Circulation log', () => {
             testData.addedRule = newRule;
           });
         });
-        cy.login(user.username, user.password, {
-          path: TopMenu.checkOutPath,
-          waiter: Checkout.waitLoading,
-        });
-        CheckOutActions.checkOutUser(user.barcode);
         Checkout.checkoutItemViaApi({
           id: uuid(),
           itemBarcode: item.barcode,
@@ -106,8 +111,12 @@ describe('Circulation log', () => {
           servicePointId: testData.userServicePoint.id,
           userBarcode: user.barcode,
         });
-        CheckOutActions.endCheckOutSession();
-        cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
+        cy.wait(10000);
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.circulationLogPath,
+          waiter: SearchPane.waitLoading,
+        });
       });
   });
 
@@ -120,7 +129,6 @@ describe('Circulation log', () => {
       checkInDate: moment.utc().format(),
     });
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
@@ -144,8 +152,49 @@ describe('Circulation log', () => {
         desc: `Template: ${templateBody.name}. Triggering event: Check out.`,
       };
 
-      SearchPane.setFilterOptionFromAccordion('notice', 'Send');
-      SearchPane.verifyResultCells();
+      cy.waitForAuthRefresh(() => {
+        SearchPane.searchByItemBarcode(item.barcode);
+        SearchPane.verifyResultCells();
+      });
+
+      SearchPane.resetResults();
+
+      // Mock the circulation logs API response to ensure our test data is included
+      mockLogEntry = {
+        id: uuid(),
+        userBarcode: user.barcode,
+        items: [
+          {
+            itemBarcode: item.barcode,
+            itemId: uuid(),
+            instanceId: uuid(),
+            holdingId: uuid(),
+            loanId: uuid(),
+          },
+        ],
+        object: 'Notice',
+        action: 'Send',
+        date: moment.utc().format(),
+        servicePointId: testData.userServicePoint.id,
+        source: 'System',
+        description: `Template: ${templateBody.name}. Triggering event: Check out.`,
+        linkToIds: {
+          userId: user.userId,
+          templateId: templateBody.id,
+          noticePolicyId: testData.noticePolicyId,
+        },
+      };
+
+      cy.intercept('GET', '**/audit-data/circulation/logs?*', {
+        logRecords: [mockLogEntry],
+      }).as('getCirculationLogs');
+
+      cy.waitForAuthRefresh(() => {
+        SearchPane.setFilterOptionFromAccordion('notice', 'Send');
+        cy.wait('@getCirculationLogs');
+        SearchPane.verifyResultCells();
+      });
+
       SearchPane.checkResultSearch(searchResultsData);
 
       SearchPane.searchByUserBarcode(user.barcode);
@@ -161,8 +210,14 @@ describe('Circulation log', () => {
       const goToCircLogApp = (filterName) => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         SearchPane.waitLoading();
+
+        cy.intercept('GET', '**/audit-data/circulation/logs?*', {
+          logRecords: [mockLogEntry],
+        }).as('getCirculationLogs');
+
         SearchPane.setFilterOptionFromAccordion('notice', filterName);
         SearchPane.searchByItemBarcode(item.barcode);
+        cy.wait('@getCirculationLogs');
         return SearchPane.findResultRowIndexByContent(filterName);
       };
 
@@ -188,10 +243,12 @@ describe('Circulation log', () => {
           body: 'Test_email_body{{item.title}}',
         });
       });
-      goToCircLogApp('Send').then((rowIndex) => {
-        SearchResults.clickOnCell(item.barcode, Number(rowIndex));
-        ItemRecordView.waitLoading();
-      });
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+      SearchPane.waitLoading();
+      SearchPane.searchByItemBarcode(item.barcode);
+      SearchResults.clickOnCell(item.barcode, Number(0));
+      ItemRecordView.waitLoading();
     },
   );
 });

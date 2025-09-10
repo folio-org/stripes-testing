@@ -49,9 +49,11 @@ describe('Check In', () => {
           .then(() => {
             UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
           });
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.checkInPath,
-          waiter: CheckInActions.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.checkInPath,
+            waiter: CheckInActions.waitLoading,
+          });
         });
       });
     });
