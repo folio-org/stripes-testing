@@ -173,6 +173,14 @@ describe('Patron notices', () => {
               userData.userId,
               testData.userServicePoint.id,
             );
+          })
+          .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: settingsMenu.circulationPatronNoticePoliciesPath,
+                waiter: NewNoticePolicyTemplate.waitLoading,
+              });
+            });
           });
       });
     });
@@ -210,14 +218,8 @@ describe('Patron notices', () => {
       'C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft', 'C347623'] },
       () => {
-        cy.login(userData.username, userData.password, {
-          path: settingsMenu.circulationPatronNoticePoliciesPath,
-          waiter: NewNoticePolicyTemplate.waitLoading,
-        });
-        cy.waitForAuthRefresh(() => {}, 20_000);
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        cy.waitForAuthRefresh(() => {}, 20_000);
         NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
         noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
@@ -247,14 +249,14 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.checkOutPath,
-          waiter: Checkout.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.checkOutPath,
+            waiter: Checkout.waitLoading,
+          });
         });
-        cy.waitForAuthRefresh(() => {}, 20_000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
-        cy.waitForAuthRefresh(() => {}, 20_000);
         cy.get('@items').each((item) => {
           CheckOutActions.checkOutItem(item.barcode);
           Checkout.verifyResultsInTheRow([item.barcode]);
