@@ -45,6 +45,7 @@ const item = {
   barcode: `item-${getRandomPostfix()}`,
 };
 const testData = {};
+let mockLogEntry;
 
 describe('Circulation log', () => {
   before('create test data', () => {
@@ -52,13 +53,18 @@ describe('Circulation log', () => {
       permissions.checkoutAll.gui,
       permissions.inventoryAll.gui,
       permissions.circulationLogAll.gui,
+      permissions.circulationLogView.gui,
+      permissions.uiUsersSettingsAllFeeFinesRelated.gui,
+      permissions.uiCirculationViewCreateEditDelete.gui,
+      permissions.uiCirculationSettingsNoticeTemplates.gui,
+      permissions.uiCirculationSettingsNoticePolicies.gui,
       permissions.uiInventoryViewCreateEditItems.gui,
       permissions.uiUserEdit.gui,
       permissions.loansView.gui,
     ])
       .then((userProperties) => {
         user = userProperties;
-        return ServicePoints.getCircDesk1ServicePointViaApi();
+        ServicePoints.getCircDesk1ServicePointViaApi();
       })
       .then((servicePoint) => {
         testData.userServicePoint = servicePoint;
@@ -154,7 +160,7 @@ describe('Circulation log', () => {
       SearchPane.resetResults();
 
       // Mock the circulation logs API response to ensure our test data is included
-      const mockLogEntry = {
+      mockLogEntry = {
         id: uuid(),
         userBarcode: user.barcode,
         items: [
@@ -204,8 +210,14 @@ describe('Circulation log', () => {
       const goToCircLogApp = (filterName) => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         SearchPane.waitLoading();
+
+        cy.intercept('GET', '**/audit-data/circulation/logs?*', {
+          logRecords: [mockLogEntry],
+        }).as('getCirculationLogs');
+
         SearchPane.setFilterOptionFromAccordion('notice', filterName);
         SearchPane.searchByItemBarcode(item.barcode);
+        cy.wait('@getCirculationLogs');
         return SearchPane.findResultRowIndexByContent(filterName);
       };
 
@@ -231,10 +243,12 @@ describe('Circulation log', () => {
           body: 'Test_email_body{{item.title}}',
         });
       });
-      goToCircLogApp('Send').then((rowIndex) => {
-        SearchResults.clickOnCell(item.barcode, Number(rowIndex));
-        ItemRecordView.waitLoading();
-      });
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+      SearchPane.waitLoading();
+      SearchPane.searchByItemBarcode(item.barcode);
+      SearchResults.clickOnCell(item.barcode, Number(0));
+      ItemRecordView.waitLoading();
     },
   );
 });
