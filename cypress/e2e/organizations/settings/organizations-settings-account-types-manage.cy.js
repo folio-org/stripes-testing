@@ -3,6 +3,8 @@ import SettingsOrganizations from '../../../support/fragments/settings/organizat
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 
 describe('Banking Information', () => {
   before('Enable Banking Information', () => {
@@ -184,6 +186,73 @@ describe('Banking Information', () => {
         SettingsOrganizations.ensureAccountTypesExist(1);
         SettingsOrganizations.selectBankingInformation();
         SettingsOrganizations.uncheckenableBankingInformationIfChecked();
+      },
+    );
+  });
+
+  describe('Account type - unable to delete', () => {
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const existingAccountType = { name: `autotest_type_name_${getRandomPostfix()}` };
+    const bankingInformation = {
+      bankName: `AutoBank_${getRandomPostfix()}`,
+      bankAccountNumber: '123456789012',
+      transitNumber: '987654321',
+      notes: 'Created from Automated test',
+    };
+
+    before('Create test data', () => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+        bankingInformation.organizationId = response;
+      });
+      SettingsOrganizations.createAccountTypesViaApi(existingAccountType).then((response) => {
+        existingAccountType.id = response.id;
+        bankingInformation.accountTypeId = response.id;
+      });
+      Organizations.createBankingInformationViaApi(bankingInformation);
+
+      cy.createTempUser([
+        permissions.uiOrganizationsView.gui,
+        permissions.uiOrganizationsViewBankingInformation.gui,
+        permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsOrganizationsPath,
+            waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+          });
+        });
+      });
+    });
+
+    after(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsOrganizationsPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      Organizations.deleteOrganizationViaApi(organization.id);
+      SettingsOrganizations.selectAccountTypes();
+      SettingsOrganizations.deleteAccountType(existingAccountType);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C590820: User cannot delete bank account types that is in use by one or more organizations (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.checkNewAccountTypeButtonExists();
+        SettingsOrganizations.tryToDeleteAccountTypeWhenItUnable(existingAccountType);
+        cy.visit(TopMenu.organizationsPath);
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsPresent();
+        Organizations.checkBankInformationExist(bankingInformation.bankName);
+        Organizations.openBankInformationSection();
+        Organizations.checkBankInformationExist(bankingInformation.bankAccountNumber);
       },
     );
   });
