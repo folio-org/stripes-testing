@@ -1,7 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -10,58 +9,50 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import DateTools from '../../../support/utils/dateTools';
 import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import QueryModal, {
+  QUERY_OPERATIONS,
+  instanceFieldValues,
+} from '../../../support/fragments/bulk-edit/query-modal';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user;
-const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
+let matchedRecordsQueryFileName;
+let previewQueryFileNameCsv;
+let changedRecordsQueryFileNameCsv;
+let errorsFromCommittingFileName;
+const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const testInstances = [
   {
     type: 'FOLIO',
-    title: `AT_C831955_FolioInstance1_${getRandomPostfix()}`,
-    initialState: {
-      discoverySuppress: false,
-      staffSuppress: false,
-      deleted: false,
-    },
-  },
-  {
-    type: 'FOLIO',
-    title: `AT_C831955_FolioInstance2_${getRandomPostfix()}`,
-    initialState: {
-      discoverySuppress: true,
-      staffSuppress: true,
-      deleted: false,
-    },
-  },
-  {
-    type: 'MARC',
-    title: `AT_C831955_MarcInstance3_${getRandomPostfix()}`,
-    initialState: {
-      discoverySuppress: false,
-      staffSuppress: true,
-      deleted: false,
-    },
-  },
-  {
-    type: 'MARC',
-    title: `AT_C831955_MarcInstance4_${getRandomPostfix()}`,
-    initialState: {
-      discoverySuppress: true,
-      staffSuppress: false,
-      deleted: false,
-    },
-  },
-  {
-    type: 'MARC',
-    title: `AT_C831955_MarcInstance5_${getRandomPostfix()}`,
+    title: `AT_C831958_FolioInstance1_${getRandomPostfix()}`,
     initialState: {
       discoverySuppress: true,
       staffSuppress: true,
       deleted: true,
+    },
+  },
+  {
+    type: 'MARC',
+    title: `AT_C831958_MarcInstance2_${getRandomPostfix()}`,
+    initialState: {
+      discoverySuppress: true,
+      staffSuppress: true,
+      deleted: true,
+    },
+  },
+  {
+    type: 'FOLIO',
+    title: `AT_C831958_FolioInstance3_${getRandomPostfix()}`,
+    initialState: {
+      discoverySuppress: true,
+      staffSuppress: true,
+      deleted: false,
     },
   },
 ];
@@ -76,6 +67,7 @@ describe('Bulk-edit', () => {
         permissions.uiInventorySetRecordsForDeletion.gui,
         permissions.enableStaffSuppressFacet.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        permissions.bulkEditQueryView.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -131,13 +123,35 @@ describe('Bulk-edit', () => {
             });
           })
           .then(() => {
-            const instanceIds = testInstances.map((instance) => instance.instanceId).join('\n');
-
-            FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, instanceIds);
+            const instanceIds = testInstances.map((instance) => instance.instanceId).join(',');
 
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
+            });
+
+            // Navigate to Query tab and build query
+            BulkEditSearchPane.openQuerySearch();
+            BulkEditSearchPane.checkInstanceRadio();
+            BulkEditSearchPane.clickBuildQueryButton();
+            QueryModal.verify();
+            QueryModal.selectField(instanceFieldValues.instanceId);
+            QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+            QueryModal.fillInValueTextfield(instanceIds);
+            cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
+            cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
+            QueryModal.clickTestQuery();
+            QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
+            QueryModal.clickRunQuery();
+            QueryModal.verifyClosed();
+            cy.wait('@getPreview', getLongDelay()).then((interception) => {
+              const interceptedUuid = interception.request.url.match(
+                /bulk-operations\/([a-f0-9-]+)\/preview/,
+              )[1];
+              matchedRecordsQueryFileName = `${todayDate}-Matched-Records-Query-${interceptedUuid}.csv`;
+              previewQueryFileNameCsv = `${todayDate}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
+              changedRecordsQueryFileNameCsv = `${todayDate}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
+              errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
             });
           });
       });
@@ -151,30 +165,22 @@ describe('Bulk-edit', () => {
         InventoryInstance.deleteInstanceViaApi(instance.instanceId);
       });
 
-      FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+      FileManager.deleteFileFromDownloadsByMask(
+        previewQueryFileNameCsv,
+        changedRecordsQueryFileNameCsv,
+        matchedRecordsQueryFileName,
+        errorsFromCommittingFileName,
+      );
     });
 
     it(
-      'C831955 Verify Set true for deletion of Instances via FOLIO flow (firebird)',
-      { tags: ['smoke', 'firebird', 'C831955'] },
+      'C831958 Verify Set false for deletion of Instances via FOLIO flow (Query) (firebird)',
+      { tags: ['smoke', 'firebird', 'C831958'] },
       () => {
-        // Step 1: Check the result of uploading the .csv file with Instances UUIDs
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
-        BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
-        BulkEditSearchPane.checkForUploading(instanceUUIDsFileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyPaneRecordsCount('5 instance');
+        // Step 1: Show Set for deletion and Staff suppress columns
+        BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+        BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 instance');
         BulkEditActions.openActions();
-        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
-          false,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
-        );
-        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
-        );
-
-        // Step 2: Show Set for deletion and Staff suppress columns
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
@@ -191,7 +197,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
         );
 
-        // Step 3: Check display of Instance data from Preconditions in the "Preview of records matched" table
+        // Step 2: Check display of Instance data from Preconditions in the "Preview of records matched" table
         testInstances.forEach((instance) => {
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
             instance.instanceHrid,
@@ -212,13 +218,13 @@ describe('Bulk-edit', () => {
           );
         });
 
-        // Step 4: Download matched records and verify CSV content
+        // Step 3: Download matched records and verify CSV content
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
 
         testInstances.forEach((instance) => {
           BulkEditFiles.verifyValueInRowByUUID(
-            fileNames.matchedRecordsCSV,
+            matchedRecordsQueryFileName,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             instance.instanceHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
@@ -226,12 +232,7 @@ describe('Bulk-edit', () => {
           );
         });
 
-        // The file contains “Set for deletion” column located after “Previously held” and before “Instance HRID”
-        ExportFile.verifyFileIncludes(fileNames.matchedRecordsCSV, [
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD},${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION},${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID}`,
-        ]);
-
-        // Step 5: Hide columns
+        // Step 4: Hide columns
         BulkEditSearchPane.changeShowColumnCheckbox(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
@@ -244,45 +245,43 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
         );
 
-        // Step 6: Start bulk edit process
+        // Step 5: Start bulk edit process
         BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
 
-        // Step 7: Select "Set records for deletion" option and "Set true" action
+        // Step 6: Select "Set records for deletion" option and "Set false" action
         BulkEditActions.selectOption('Set records for deletion');
-        BulkEditActions.selectAction('Set true');
+        BulkEditActions.selectAction('Set false');
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        // Step 8: Add "Suppress from discovery" option
+        // Step 7: Add "Suppress from discovery" option
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Suppress from discovery', 1);
-        BulkEditActions.verifyActionSelected('Set true', 1);
-        BulkEditActions.verifyActionsSelectDropdownDisabled(1);
-        BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true, 1);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
+        BulkEditActions.verifyTheActionOptions(['Set false', 'Set true'], 1);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
 
-        // Step 9: Add "Staff suppress" option
+        // Step 8: Add "Staff suppress" option
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Staff suppress', 2);
-        BulkEditActions.verifyActionSelected('Set true', 2);
-        BulkEditActions.verifyActionsSelectDropdownDisabled(2);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
+        BulkEditActions.verifyTheActionOptions(['Set false', 'Set true'], 2);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
 
-        // Step 10: Remove the added rows and confirm changes
+        // Step 9: Remove the added rows and confirm changes
         BulkEditActions.deleteRow(2);
         BulkEditActions.deleteRow(1);
         BulkEditActions.confirmChanges();
 
         // Verify "Are you sure?" form
-        BulkEditActions.verifyMessageBannerInAreYouSureForm(5);
+        BulkEditActions.verifyMessageBannerInAreYouSureForm(3);
         BulkEditActions.verifyKeepEditingButtonDisabled(false);
         BulkEditActions.verifyDownloadPreviewButtonDisabled(false);
         BulkEditActions.isCommitButtonDisabled(false);
 
+        // Verify preview shows all instances will be set false for deletion
         const editedHeaderValues = [
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
-            value: 'true',
+            value: 'false',
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
@@ -294,7 +293,6 @@ describe('Bulk-edit', () => {
           },
         ];
 
-        // Verify preview shows all instances will be set for deletion
         testInstances.forEach((instance) => {
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
             instance.instanceHrid,
@@ -302,15 +300,15 @@ describe('Bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyPaginatorInAreYouSureForm(5);
+        BulkEditSearchPane.verifyPaginatorInAreYouSureForm(3);
 
-        // Step 11: Download preview and verify content
+        // Step 10: Download preview and verify content
         BulkEditActions.downloadPreview();
 
         const editedHeaderValuesForFile = [
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
-            value: true,
+            value: false,
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
@@ -324,26 +322,21 @@ describe('Bulk-edit', () => {
 
         testInstances.forEach((instance) => {
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            fileNames.previewRecordsCSV,
+            previewQueryFileNameCsv,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             instance.instanceHrid,
             editedHeaderValuesForFile,
           );
         });
 
-        // The file contains “Set for deletion” column located after “Previously held” and before “Instance HRID”
-        ExportFile.verifyFileIncludes(fileNames.previewRecordsCSV, [
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD},${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION},${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID}`,
-        ]);
-
-        // Step 12: Commit changes
+        // Step 11: Commit changes
         BulkEditActions.commitChanges();
-        BulkEditActions.verifySuccessBanner(4);
+        BulkEditActions.verifySuccessBanner(2);
 
         // Verify changed records
         testInstances.forEach((instance) => {
-          if (instance.title.includes('Instance5')) {
-            // Instance 5 should show "No change in value required" for deletion
+          if (instance.title.includes('Instance3')) {
+            // Instance 3 should show "No change in value required" for deletion
             BulkEditSearchPane.verifyErrorByIdentifier(
               instance.instanceId,
               'No change in value required',
@@ -357,33 +350,31 @@ describe('Bulk-edit', () => {
           }
         });
 
-        // Step 13: Download changed records
+        // Step 12: Download changed records
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
 
-        testInstances.forEach((instance) => {
-          if (!instance.title.includes('Instance5')) {
-            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              fileNames.changedRecordsCSV,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
-              instance.instanceHrid,
-              editedHeaderValuesForFile,
-            );
-          }
+        // Verify only instances that actually changed (Instance3 had no change)
+        const changedInstances = testInstances.filter(
+          (instance) => !instance.title.includes('Instance3'),
+        );
+
+        changedInstances.forEach((instance) => {
+          BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+            changedRecordsQueryFileNameCsv,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
+            instance.instanceHrid,
+            editedHeaderValuesForFile,
+          );
         });
 
-        // The file contains “Set for deletion” column located after “Previously held” and before “Instance HRID”
-        ExportFile.verifyFileIncludes(fileNames.changedRecordsCSV, [
-          `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD},${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION},${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID}`,
-        ]);
-
-        // Step 14: Download errors
+        // Step 13: Download errors
         BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-          `WARNING,${testInstances[4].instanceId},No change in value required`,
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+          `WARNING,${testInstances[2].instanceId},No change in value required`,
         ]);
 
-        // Step 15: Verify changes in Inventory app
+        // Step 14: Verify changes in Inventory app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
         testInstances.forEach((instance) => {
@@ -392,15 +383,15 @@ describe('Bulk-edit', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
 
-          // Verify instance is marked for deletion
-          InstanceRecordView.verifyInstanceIsSetForDeletion();
+          // Verify instance is NOT marked for deletion (set false for deletion)
+          InstanceRecordView.verifyInstanceIsSetForDeletion(false);
           InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();
           InstanceRecordView.verifyInstanceIsMarkedAsSuppressedFromDiscovery();
-          InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
           InventorySearchAndFilter.resetAll();
         });
 
-        // Step 16: For MARC instances, verify source records
+        // Step 15: For MARC instances, verify source records
         testInstances
           .filter((instance) => instance.type === 'MARC')
           .forEach((instance) => {
@@ -411,8 +402,8 @@ describe('Bulk-edit', () => {
             InventoryInstance.viewSource();
             InventoryViewSource.waitLoading();
 
-            // Verify LDR05 is set to 'd'
-            InventoryViewSource.checkFieldContentMatch('LDR', /^LEADER \d{5}d/);
+            // Verify LDR05 is set to 'c' (corrected)
+            InventoryViewSource.checkFieldContentMatch('LDR', /^LEADER \d{5}c/);
             InventoryViewSource.close();
             InventorySearchAndFilter.resetAll();
           });
