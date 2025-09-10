@@ -112,17 +112,15 @@ describe('MARC', () => {
 
     after('Delete all data', () => {
       cy.getAdminToken();
-      cy.waitForAuthRefresh(() => {
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"items.barcode"=="${ITEM_BARCODE}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"items.barcode"=="${ITEM_BARCODE}"`,
+      }).then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
       users.deleteViaApi(userId);
     });
