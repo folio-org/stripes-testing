@@ -10,10 +10,12 @@ describe('Patron notices', () => {
       description: 'Created by autotest team',
     };
 
-    beforeEach('login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationPatronNoticePoliciesPath,
-        waiter: NewNoticePolicy.waitLoading,
+    before('login', () => {
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationPatronNoticePoliciesPath,
+          waiter: NewNoticePolicy.waitLoading,
+        });
       });
     });
 
