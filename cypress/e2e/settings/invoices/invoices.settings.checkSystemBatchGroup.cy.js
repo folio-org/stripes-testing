@@ -15,8 +15,10 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
       });
     });
     cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin();
-      cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
+      cy.loginAsAdmin({
+        path: SettingsMenu.invoiceBatchGroupsPath,
+        waiter: SettingsInvoices.waitBatchGroupsLoading,
+      });
     }, 20_000);
   });
 
