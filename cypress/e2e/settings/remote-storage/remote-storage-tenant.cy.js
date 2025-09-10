@@ -21,27 +21,30 @@ describe('remote-storage-configuration', () => {
     cy.createTempUser([permissions.uiTenantSettingsSettingsLocation.gui]).then((userProperties) => {
       user = userProperties;
 
-      Institutions.createViaApi(institution).then((locinst) => {
-        institutions = locinst;
+      Institutions.createViaApi(institution)
+        .then((locinst) => {
+          institutions = locinst;
 
-        const campus = Campuses.getDefaultCampuse({
-          name: `1_autotest_campus ${getRandomPostfix()}`,
-          institutionId: locinst.id,
-        });
-        Campuses.createViaApi(campus).then((loccamp) => {
-          campuses = loccamp;
-
-          const library = Libraries.getDefaultLibrary({ campusId: loccamp.id });
-          Libraries.createViaApi(library).then((loclib) => {
-            libraries = loclib;
+          const campus = Campuses.getDefaultCampuse({
+            name: `1_autotest_campus ${getRandomPostfix()}`,
+            institutionId: locinst.id,
           });
-        });
-      });
+          Campuses.createViaApi(campus).then((loccamp) => {
+            campuses = loccamp;
 
-      cy.login(user.username, user.password);
-      cy.wait(1000);
-      TopMenuNavigation.navigateToApp('Settings');
-      Locations.goToLocationsTab();
+            const library = Libraries.getDefaultLibrary({ campusId: loccamp.id });
+            Libraries.createViaApi(library).then((loclib) => {
+              libraries = loclib;
+            });
+          });
+        })
+        .then(() => {
+          cy.intercept('/location-units/institutions*', { locinsts: [institutions] });
+          cy.login(user.username, user.password);
+          cy.wait(1000);
+          TopMenuNavigation.navigateToApp('Settings');
+          Locations.goToLocationsTab();
+        });
     });
   });
 

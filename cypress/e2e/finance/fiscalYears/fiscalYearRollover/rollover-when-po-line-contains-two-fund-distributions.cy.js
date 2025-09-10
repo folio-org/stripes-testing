@@ -158,7 +158,7 @@ describe('Finance', () => {
         FinanceHelper.searchByName(ledgers.first.name);
         const LedgerDetails = Ledgers.selectLedger(ledgers.first.name);
         LedgerDetails.checkLedgerDetails({
-          information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
+          information: [{ key: 'Fiscal year', value: fiscalYears.current.code }],
         });
 
         // Click "Actions" button, Select "Rollover" option
@@ -200,7 +200,7 @@ describe('Finance', () => {
         // Go back to "Ledger name" pane, Open "Ledger #2" details pane
         cy.visit(`${TopMenu.ledgerPath}/${ledgers.second.id}/view`);
         LedgerDetails.checkLedgerDetails({
-          information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
+          information: [{ key: 'Fiscal year', value: fiscalYears.current.code }],
         });
 
         // Click "Actions" button, Select "Rollover" option

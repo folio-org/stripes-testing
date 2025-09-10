@@ -4,7 +4,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SoftwareVersions from '../../../support/fragments/settings/softwareVersions/software-versions';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 
-describe('fse-settings - UI', () => {
+describe('fse-settings - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

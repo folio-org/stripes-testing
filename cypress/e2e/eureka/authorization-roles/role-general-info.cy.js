@@ -42,11 +42,12 @@ describe('Eureka', () => {
               capabSetsToAssign,
             );
             if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, []);
-
-            cy.login(testData.userA.username, testData.userA.password, {
-              path: TopMenu.settingsAuthorizationRoles,
-              waiter: AuthorizationRoles.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userA.username, testData.userA.password, {
+                path: TopMenu.settingsAuthorizationRoles,
+                waiter: AuthorizationRoles.waitContentLoading,
+              });
+            }, 20_000);
           });
         });
       });
@@ -82,10 +83,12 @@ describe('Eureka', () => {
               `${testData.userA.lastName}, ${testData.userA.firstName}`,
             );
             cy.logout();
-            cy.login(testData.userB.username, testData.userB.password, {
-              path: TopMenu.settingsAuthorizationRoles,
-              waiter: AuthorizationRoles.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userB.username, testData.userB.password, {
+                path: TopMenu.settingsAuthorizationRoles,
+                waiter: AuthorizationRoles.waitContentLoading,
+              });
+            }, 20_000);
             AuthorizationRoles.waitLoading();
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);

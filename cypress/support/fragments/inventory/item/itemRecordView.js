@@ -7,8 +7,10 @@ import {
   Link,
   MultiColumnList,
   MultiColumnListCell,
+  MultiSelect,
   Pane,
   PaneHeader,
+  Spinner,
   TextField,
 } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
@@ -28,6 +30,7 @@ const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
 const tagsAccordion = Accordion('Tags');
 const hridKeyValue = KeyValue('Item HRID');
+const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -617,4 +620,10 @@ export default {
   verifyHrid: (hrid) => cy.expect(hridKeyValue.has({ value: hrid })),
 
   verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),
+
+  addTag: (tagName) => {
+    cy.expect(tagsAccordion.find(Spinner()).absent());
+    cy.do(tagsAccordion.find(textFieldTagInput).choose(tagName));
+    cy.wait(1500);
+  },
 };

@@ -422,19 +422,16 @@ export default {
     }
   },
   searchByTag: (tagName) => {
-    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
-    // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
+    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     cy.wait('@getTags');
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tagName));
-    // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.expect(MultiSelectOption(including(tagName)).exists());
     cy.do(
       MultiSelectMenu()
         .find(MultiSelectOption(including(tagName)))
         .click(),
     );
-    cy.wait(2000);
   },
 
   searchAndVerify(value) {
@@ -641,8 +638,8 @@ export default {
   deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
       (instance) => {
-        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
+        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
@@ -655,7 +652,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
-        instances.forEach((instance) => {
+        instances?.forEach((instance) => {
           cy.okapiRequest({
             path: `holdings-storage/holdings?query=instanceId==${instance.id}`,
             isDefaultSearchParamsRequired: false,
@@ -1126,7 +1123,7 @@ export default {
   deleteInstanceByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: {
           limit: 100,
           query: `title="${instanceTitle}"`,
@@ -1137,9 +1134,11 @@ export default {
         return res.body.instances;
       })
       .then((instances) => {
-        instances.forEach((instance) => {
-          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        if (instances && instances.length) {
+          instances.forEach((instance) => {
+            if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
+        }
       });
   },
 

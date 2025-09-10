@@ -43,9 +43,11 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.login(user.userProperties.username, user.userProperties.password, {
-              path: TopMenu.settingsAuthorityFilesPath,
-              waiter: ManageAuthorityFiles.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.userProperties.username, user.userProperties.password, {
+                path: TopMenu.settingsAuthorityFilesPath,
+                waiter: ManageAuthorityFiles.waitLoading,
+              });
             });
           });
       });

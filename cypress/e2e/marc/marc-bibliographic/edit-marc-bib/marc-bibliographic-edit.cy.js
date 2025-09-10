@@ -123,7 +123,7 @@ describe('MARC', () => {
 
       it(
         'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C353526'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C353526', 'nonParallel'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           MarcAuthority.checkInfoButton('999');

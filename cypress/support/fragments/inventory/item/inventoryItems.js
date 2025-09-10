@@ -182,4 +182,16 @@ export default {
       })
       .then(({ body }) => body.items);
   },
+  updateItemsOwnershipViaApi(itemIds, newHoldingsId, newTenant) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'inventory/items/update-ownership',
+      body: {
+        toHoldingsRecordId: newHoldingsId,
+        itemIds: Array.isArray(itemIds) ? itemIds : [itemIds],
+        targetTenantId: newTenant,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

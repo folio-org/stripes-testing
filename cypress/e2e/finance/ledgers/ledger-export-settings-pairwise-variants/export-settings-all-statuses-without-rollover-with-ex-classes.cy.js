@@ -72,7 +72,7 @@ describe('Finance: Ledgers', () => {
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
           defaultFund,
           'Electronic',
           '10',

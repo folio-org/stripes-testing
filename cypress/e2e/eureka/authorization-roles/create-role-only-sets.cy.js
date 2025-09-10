@@ -132,7 +132,6 @@ describe('Eureka', () => {
               path: TopMenu.settingsAuthorizationRoles,
               waiter: AuthorizationRoles.waitContentLoading,
             });
-            cy.reload();
             AuthorizationRoles.waitContentLoading();
           }, 20_000);
         });

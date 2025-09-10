@@ -133,6 +133,7 @@ describe('Title Level Request. Request detail', () => {
       path: TopMenu.requestsPath,
       waiter: RequestsSearchResultsPane.waitLoading,
     });
+    cy.wait(2000);
   });
 
   after('Deleting created entities', () => {

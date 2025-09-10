@@ -32,9 +32,7 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.waitContentLoading();
-          cy.reload();
-        }, 20_000);
+        });
       });
     });
 
@@ -50,6 +48,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName);
         BrowseSubjects.searchBrowseSubjects(testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
         BrowseSubjects.clearSearchTextfield();

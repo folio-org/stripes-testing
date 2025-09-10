@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import UserEdit from '../../../support/fragments/users/userEdit';
 
-describe('fse-checkin - UI', () => {
+describe('fse-checkin - UI (data manipulation)', () => {
   let servicePointId;
   let userData = {};
 
@@ -43,7 +43,7 @@ describe('fse-checkin - UI', () => {
 
   it(
     `TC195282 - verify that checkin module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'checkin', 'nonProd'] },
+    { tags: ['fse', 'ui', 'checkin', 'fse-user-journey', 'nonProd'] },
     () => {
       Checkin.waitLoading();
     },

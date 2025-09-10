@@ -93,6 +93,34 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
+    'C494353 Create Local Field (repeatable, required, deprecated) for MARC authority spec (API) (spitfire)',
+    { tags: ['C494353', 'extendedPathFlaky', 'spitfire', 'nonParallel'] },
+    () => {
+      const payload = {
+        ...createFieldPayload,
+        repeatable: true,
+        required: true,
+        deprecated: true,
+      };
+      cy.getUserToken(user.username, user.password);
+      cy.createSpecificationField(authSpecId, payload).then((response) => {
+        expect(response.status).to.eq(201);
+        const respBody = response.body;
+        fieldId = respBody.id;
+        expect(respBody).to.include({
+          ...payload,
+          specificationId: authSpecId,
+          scope: 'local',
+        });
+        // Verify specific boolean fields are set correctly
+        expect(respBody.repeatable, 'Field should be repeatable').to.be.true;
+        expect(respBody.required, 'Field should be required').to.be.true;
+        expect(respBody.deprecated, 'Field should be deprecated').to.be.true;
+      });
+    },
+  );
+
+  it(
     'C494362 Update Local Field for MARC authority spec (API) (spitfire)',
     { tags: ['C494362', 'criticalPath', 'spitfire'] },
     () => {

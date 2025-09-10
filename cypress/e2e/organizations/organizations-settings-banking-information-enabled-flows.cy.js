@@ -694,6 +694,148 @@ describe('Organizations', () => {
     );
   });
 
+  describe('Create an account type', () => {
+    let user;
+    const accountType = {
+      name: `TestAccountType_${getRandomPostfix()}`,
+    };
+
+    before('Create user', () => {
+      cy.getAdminToken();
+      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.settingsOrganizationsPath,
+              waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            });
+            cy.reload();
+            SettingsOrganizations.waitLoadingOrganizationSettings();
+          }, 20_000);
+        },
+      );
+    });
+
+    after('Delete test data', () => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsOrganizationsPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.selectAccountTypes();
+      SettingsOrganizations.deleteAccountType(accountType);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C411687 Create an account type (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.clickNewButton();
+        SettingsOrganizations.clickOutsideAccountTypeField();
+        SettingsOrganizations.checkErrorMessage();
+        SettingsOrganizations.fillAccountTypeName(accountType.name);
+        SettingsOrganizations.saveAccountTypeChanges();
+        SettingsOrganizations.checkRowActionButtons(accountType.name);
+      },
+    );
+  });
+
+  describe('User cannot edit banking information', () => {
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const bankingInformation = {
+      bankName: `Test Bank ${Date.now()}`,
+      bankAccountNumber: '1234567890',
+      transitNumber: '987654321',
+      notes: 'Test banking information',
+    };
+
+    before('Create user and organization with banking information', () => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((orgId) => {
+        organization.id = orgId;
+        bankingInformation.organizationId = orgId;
+        Organizations.createBankingInformationViaApi(bankingInformation);
+      });
+      cy.createTempUser([
+        permissions.uiOrganizationsView.gui,
+        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C423518 A user cannot edit banking information without organization edit permission (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet'] },
+      () => {
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsPresent();
+        Organizations.checkAvailableActionsInTheActionsField();
+      },
+    );
+  });
+
+  describe('Error message related to Banking information does not appear', () => {
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const bankingInformation = {
+      bankName: `Test Bank ${Date.now()}`,
+      bankAccountNumber: `${getRandomPostfix()}`,
+      transitNumber: '987654321',
+      notes: 'Test banking information',
+    };
+
+    before('Create user and organization with banking information', () => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((orgId) => {
+        organization.id = orgId;
+        bankingInformation.organizationId = orgId;
+        Organizations.createBankingInformationViaApi(bankingInformation);
+      });
+      cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C434070 Error message related to Banking information does not appear when user without Banking permissions edits Organization details (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet'] },
+      () => {
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsAbsent();
+        Organizations.editOrganization();
+        Organizations.selectDonorCheckbox();
+        Organizations.saveOrganization();
+        Organizations.varifySaveOrganizationCalloutMessage(organization);
+      },
+    );
+  });
+
   describe('Disable view banking information when "Enable banking information" setting is not active', () => {
     const organization = {
       name: `autotest_org_${getRandomPostfix()}`,
@@ -759,60 +901,11 @@ describe('Organizations', () => {
       'C423547 A user can not view banking information when "Enable banking information" setting is not active (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        // Search and select organization
         Organizations.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsAbsent();
         Organizations.editOrganization();
         Organizations.verifyBankingInformationAccordionIsAbsent();
-      },
-    );
-  });
-
-  describe('Create an account type', () => {
-    let user;
-    const accountType = {
-      name: `TestAccountType_${getRandomPostfix()}`,
-    };
-
-    before('Create user', () => {
-      cy.getAdminToken();
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
-        (userProperties) => {
-          user = userProperties;
-          cy.waitForAuthRefresh(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.settingsOrganizationsPath,
-              waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-            });
-            cy.reload();
-            SettingsOrganizations.waitLoadingOrganizationSettings();
-          }, 20_000);
-        },
-      );
-    });
-
-    after('Delete test data', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsOrganizationsPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-      });
-      SettingsOrganizations.selectAccountTypes();
-      SettingsOrganizations.deleteAccountType(accountType);
-      Users.deleteViaApi(user.userId);
-    });
-
-    it(
-      'C411687 Create an account type (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
-      () => {
-        SettingsOrganizations.selectAccountTypes();
-        SettingsOrganizations.clickNewButton();
-        SettingsOrganizations.clickOutsideAccountTypeField();
-        SettingsOrganizations.checkErrorMessage();
-        SettingsOrganizations.fillAccountTypeName(accountType.name);
-        SettingsOrganizations.saveAccountTypeChanges();
-        SettingsOrganizations.checkRowActionButtons(accountType.name);
       },
     );
   });

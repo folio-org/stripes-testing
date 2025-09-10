@@ -1099,6 +1099,7 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
 };
 
 export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
+export const DEFAULT_LOCALE_OBJECT = { locale: 'en-US', timezone: 'UTC', currency: 'USD' };
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
@@ -1179,7 +1180,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CITATION_REFERENCES_NOTE: 'Citation / References note',
     COPY_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
     CREATION_PRODUCTION_CREDITS_NOTE: 'Creation / Production Credits note',
-    CUMULATIVE_INDEX_FINDING_AIDES_NOTES: 'Cumulative Index / Finding Aides notes',
+    CUMULATIVE_INDEX_FINDING_AIDS_NOTES: 'Cumulative Index / Finding Aids notes',
     DATA_QUALITY_NOTE: 'Data quality note',
     DATE_TIME_PLACE_EVENT_NOTE: 'Date / time and place of an event note',
     DISSERTATION_NOTE: 'Dissertation note',
@@ -1286,17 +1287,24 @@ export const HOLDING_NOTE_TYPES = {
 };
 
 export const ITEM_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  BINDING: 'Binding',
   CHECK_IN_NOTE: 'Check in note',
   CHECK_OUT_NOTE: 'Check out note',
+  COPY_NOTE: 'Copy note',
+  NOTE: 'Note',
 };
 
 export const INSTANCE_NOTE_TYPES = {
   ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
+  LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
 };
 
@@ -1574,3 +1582,8 @@ export const STANDARD_FIELDS = [
 export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
 
 export const DEFAULT_WAIT_TIME = 4000;
+
+export const API_PATH = {
+  INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
+  ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
