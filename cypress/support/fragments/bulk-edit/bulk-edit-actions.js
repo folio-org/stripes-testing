@@ -1740,7 +1740,7 @@ export default {
             'Citation / References note',
             'Copy and Version Identification note',
             'Creation / Production Credits note',
-            'Cumulative Index / Finding Aides notes',
+            'Cumulative Index / Finding Aids notes',
             'Data quality note',
             'Date / time and place of an event note',
             'Dissertation note',

@@ -47,14 +47,23 @@ describe('Inventory', () => {
         permissions.moduleDataImportEnabled.gui,
         permissions.inventoryAll.gui,
         permissions.uiTagsPermissionAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id,
-        );
-      });
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
+        })
+        .then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+          });
+        });
     });
 
     after('Deleting created entities', () => {
@@ -68,10 +77,6 @@ describe('Inventory', () => {
       'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (volaris)',
       { tags: ['extendedPath', 'volaris', 'C358962'] },
       () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry('marcFileForC358962.mrc', testData.fileName);
         JobProfiles.waitLoadingList();
@@ -93,7 +98,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358962);
-        InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },

@@ -12,6 +12,7 @@ export default {
         cy.do(NavListItem(subSection).click());
         cy.wait(2000);
       }
+      cy.wait(3000);
     });
   },
   isAbsent() {

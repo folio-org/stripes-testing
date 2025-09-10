@@ -127,9 +127,11 @@ describe('MARC', () => {
       'C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C358995'] },
       () => {
-        cy.login(user.userCProperties.username, user.userCProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.userCProperties.username, user.userCProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
         MarcAuthorities.searchBy(testData.searchOption, testData.valueAfterUpdate);
         MarcAuthorities.selectTitle(testData.valueAfterUpdate);
@@ -138,10 +140,11 @@ describe('MARC', () => {
         QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
-
-        cy.login(user.userBProperties.username, user.userBProperties.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.userBProperties.username, user.userBProperties.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
         UsersSearchPane.searchByUsername(user.userCProperties.username);
         UsersSearchPane.openUser(user.userCProperties.username);

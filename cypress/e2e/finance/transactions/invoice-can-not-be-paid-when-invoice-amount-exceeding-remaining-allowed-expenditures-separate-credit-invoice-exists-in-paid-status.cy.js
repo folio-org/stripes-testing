@@ -22,7 +22,7 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import settingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -67,7 +67,6 @@ describe('Finance: Transactions', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const thirdInvoice = { ...NewInvoice.defaultUiInvoice };
-  const isApprovePayEnabled = true;
   const isApprovePayDisabled = false;
   let firstInvoice;
   let secondInvoice;
@@ -103,12 +102,9 @@ describe('Finance: Transactions', () => {
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
+              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
             );
             Funds.closeBudgetDetails();
-            cy.logout();
-            cy.getAdminToken();
-
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
 
@@ -220,15 +216,16 @@ describe('Finance: Transactions', () => {
                           workflowStatus: ORDER_STATUSES.OPEN,
                         });
                         cy.wait(10000);
-                        cy.loginAsAdmin();
-                        TopMenuNavigation.openAppFromDropdown('Orders');
-                        Orders.selectOrdersPane();
-
+                        cy.loginAsAdmin({
+                          path: TopMenu.ordersPath,
+                          waiter: Orders.waitLoading,
+                        });
                         Orders.searchByParameter('PO number', secondOrderNumber);
                         Orders.selectFromResultsList(secondOrderNumber);
                         Orders.newInvoiceFromOrder();
                         Invoices.createInvoiceFromOrder(thirdInvoice, defaultFiscalYear.code);
-                        Approvals.setApprovePayValue(isApprovePayEnabled);
+                        cy.visit(TopMenu.settingsInvoiveApprovalPath);
+                        settingsInvoices.checkApproveAndPayCheckboxIfNeeded();
                       });
                     },
                   );

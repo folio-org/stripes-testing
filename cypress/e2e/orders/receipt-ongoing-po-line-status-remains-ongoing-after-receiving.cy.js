@@ -124,10 +124,12 @@ describe('Orders', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
@@ -140,6 +142,7 @@ describe('Orders', () => {
     'C423418 Receipt ongoing PO line status remains “Ongoing” after receiving (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFiltersIfActive();
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.selectPOLInOrder();

@@ -46,7 +46,9 @@ const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const orderDetailsPane = Pane({ id: 'order-details' });
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
+const searchIndexSelect = Select({ id: 'input-record-search-qindex' });
 const searchField = SearchField({ id: 'input-record-search' });
+const orderTypeSelect = Select('Order type*');
 const searchButton = Button('Search');
 const admin = Cypress.env('diku_login');
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
@@ -77,7 +79,9 @@ const selectLocationsModal = Modal('Select locations');
 export default {
   searchByParameter(parameter, value) {
     cy.wait(4000);
-    cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
+    cy.do(searchIndexSelect.choose(parameter));
+    cy.wait(500);
+    cy.do(searchField.fillIn(value));
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
   },
@@ -277,7 +281,7 @@ export default {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
-    cy.do(Select('Order type*').choose(order.orderType));
+    cy.do(orderTypeSelect.choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
@@ -294,7 +298,7 @@ export default {
     ]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
-    cy.do(Select('Order type*').choose(order.orderType));
+    cy.do(orderTypeSelect.choose(order.orderType));
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay()).then(({ response }) => {
@@ -312,7 +316,7 @@ export default {
     ]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
-    cy.do(Select('Order type*').choose(order.orderType));
+    cy.do(orderTypeSelect.choose(order.orderType));
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay()).then(({ response }) => {
@@ -330,7 +334,7 @@ export default {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
-    cy.do(Select('Order type*').choose(order.orderType));
+    cy.do(orderTypeSelect.choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrder', getLongDelay()).then(({ response }) => {
@@ -342,7 +346,7 @@ export default {
     cy.do([Pane({ id: 'orders-results-pane' }).find(actionsButton).click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
-    cy.do(Select('Order type*').choose(order.orderType));
+    cy.do(orderTypeSelect.choose(order.orderType));
     if (isApproved === true) {
       cy.do(Checkbox({ name: 'approved' }).click());
     }
@@ -366,7 +370,7 @@ export default {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
-    cy.do(Select('Order type*').choose(order.orderType));
+    cy.do(orderTypeSelect.choose(order.orderType));
     cy.do([
       MultiSelect({ id: 'order-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))
@@ -471,18 +475,27 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true }));
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
+        }
+      });
   },
 
   resetFiltersIfActive: () => {
-    cy.do(
-      resetButton.has({ disabled: false }).then((enabled) => {
-        if (enabled) {
-          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
         }
-      }),
-    );
+      });
   },
 
   selectStatusInSearch: (orderStatus) => {
@@ -799,7 +812,7 @@ export default {
   },
 
   selectOngoingOrderTypeInPOForm: () => {
-    cy.do(Select('Order type*').choose('Ongoing'));
+    cy.do(orderTypeSelect.choose('Ongoing'));
   },
 
   checkEditedOngoingOrder: (orderNumber, organizationName) => {

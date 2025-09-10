@@ -152,7 +152,9 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleName, false);
+        cy.wait(5000);
         AuthorizationRoles.shareRole(testData.roleName);
+        cy.wait(5000);
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
         testData.originalCapabilitySets.forEach((set) => {
