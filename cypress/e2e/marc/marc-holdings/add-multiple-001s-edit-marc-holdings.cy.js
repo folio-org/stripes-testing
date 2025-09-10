@@ -71,10 +71,11 @@ describe('MARC', () => {
         HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
           recordIDs.push(holdingsID);
         });
-
-        cy.login(createdUserProperties.username, createdUserProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(createdUserProperties.username, createdUserProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
     });
