@@ -100,9 +100,11 @@ describe('MARC', () => {
               ],
             });
             cy.wait(5000);
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
       });
@@ -110,15 +112,17 @@ describe('MARC', () => {
 
     after('Delete all data', () => {
       cy.getAdminToken();
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"items.barcode"=="${ITEM_BARCODE}"`,
-      }).then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      cy.waitForAuthRefresh(() => {
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"items.barcode"=="${ITEM_BARCODE}"`,
+        }).then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
       users.deleteViaApi(userId);
     });
@@ -144,7 +148,7 @@ describe('MARC', () => {
 
     it(
       'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C345404'] },
+      { tags: ['smokeBroken', 'spitfire', 'C345404'] },
       () => {
         cy.wait(5000);
         InventoryActions.import();

@@ -127,8 +127,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -152,11 +150,11 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);
             InventoryInstance.verifyAndClickLinkIconByIndex(bib600FieldValues[0]);
             InventoryInstance.verifySelectMarcAuthorityModal();
-            MarcAuthorities.checkSearchOption('personalNameTitle');
+            MarcAuthorities.checkSearchOption('nameTitle');
             MarcAuthorities.checkSearchInput(testData.instanceField600Value);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchOption('personalNameTitle');
+            MarcAuthorities.checkSearchOption('nameTitle');
             MarcAuthorities.checkSearchInput('');
             MarcAuthorities.verifyEmptyAuthorityField();
             linkValuesWithoutAuthoritySource.forEach((linkValue) => {
