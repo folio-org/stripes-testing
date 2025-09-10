@@ -5,6 +5,7 @@ import {
   MultiColumnListRow,
   SearchField,
   including,
+  or,
 } from '../../../../../interactors';
 
 const addDonorsModal = Modal('Add donors');
@@ -12,6 +13,8 @@ const searchField = SearchField({ id: 'input-record-search' });
 
 const closeButton = addDonorsModal.find(Button('Close'));
 const saveButton = addDonorsModal.find(Button('Save'));
+const nextButton = Button('Next', { disabled: or(true, false) });
+const previousButton = Button('Previous', { disabled: or(true, false) });
 
 export default {
   verifyModalView() {
@@ -46,5 +49,23 @@ export default {
     cy.expect(saveButton.has({ disabled: false }));
     cy.do(saveButton.click());
     cy.expect(addDonorsModal.absent());
+  },
+  verifyTotalSelected(expected) {
+    cy.get('[data-test-find-records-modal-save="true"]')
+      .siblings('div')
+      .should(($div) => {
+        expect($div).to.have.length(1);
+        expect($div.text().trim()).to.eq(`Total selected: ${expected}`);
+      });
+  },
+  selectAllDonorsOnPage: () => {
+    cy.get('[data-test-find-records-modal-select-all="true"]').click();
+  },
+  clickNextPaginationButton() {
+    cy.do(nextButton.click());
+    cy.wait(2000);
+  },
+  clickPreviousPaginationButton: () => {
+    cy.do(previousButton.click());
   },
 };

@@ -822,7 +822,7 @@ export default {
     submitOrderLine();
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+  rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
     fund,
     expClass,
     unitPrice,
@@ -2144,8 +2144,11 @@ export default {
       .click();
   },
 
-  openPageCurrentEncumbrance: (title) => {
-    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
+  openPageCurrentEncumbrance(fundText) {
+    cy.get('#FundDistribution')
+      .find('a[data-test-text-link="true"]')
+      .contains(fundText)
+      .invoke('removeAttr', 'target')
       .click();
   },
 

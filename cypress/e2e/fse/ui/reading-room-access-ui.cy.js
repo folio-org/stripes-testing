@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import ReadingRoom from '../../../support/fragments/reading-room/readingRoom';
 
-describe('fse-reading-room-access - UI for productions tenants', () => {
+describe('fse-reading-room-access - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

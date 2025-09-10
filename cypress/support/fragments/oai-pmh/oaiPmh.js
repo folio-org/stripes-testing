@@ -184,7 +184,9 @@ export default {
     });
 
     if (!field) {
-      throw new Error(`MARC field ${tag} not found in record with UUID ${instanceUuid}`);
+      throw new Error(
+        `MARC field ${tag} with indicators ${JSON.stringify(indicators)} not found in record with UUID ${instanceUuid}`,
+      );
     }
 
     const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
@@ -222,6 +224,111 @@ export default {
         subfield,
         `Subfield "${subfieldCode}" should NOT exist in ${tag} field of record with UUID ${instanceUuid}`,
       ).to.be.undefined;
+    });
+  },
+
+  /**
+   * Verify MARC fields with the same tag and indicators, handling multiple occurrences.
+   * This method can verify multiple fields with the same tag/indicators and their subfields.
+   * @param {string} xmlString - The XML response as a string.
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
+   * @param {string} tag - The tag of the MARC field to verify (e.g., "856").
+   * @param {Object} indicators - Object containing the indicators (e.g., { ind1: "4", ind2: "0" }).
+   * @param {Array} expectedFields - Array of objects, each containing expected subfields for each occurrence
+   *   (e.g., [{ a: "value1", b: "value2" }, { a: "value3", c: "value4" }]).
+   * @param {number} expectedCount - Expected number of fields with the same tag/indicators (optional).
+   * @param {Array} absentSubfields - Array of subfield codes that should NOT exist in any field (e.g., ["x", "y"]).
+   */
+  verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
+    xmlString,
+    instanceUuid,
+    tag,
+    indicators = {},
+    expectedFields = [],
+    expectedCount = null,
+    absentSubfields = [],
+  ) {
+    // Use the namespace URI for MARC21
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    // Find all `datafield` elements within the target record that match tag and indicators
+    const datafields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'datafield');
+    const matchingFields = Array.from(datafields).filter((datafield) => {
+      const matchesTag = datafield.getAttribute('tag') === tag;
+      const matchesInd1 = !indicators.ind1 || datafield.getAttribute('ind1') === indicators.ind1;
+      const matchesInd2 = !indicators.ind2 || datafield.getAttribute('ind2') === indicators.ind2;
+
+      return matchesTag && matchesInd1 && matchesInd2;
+    });
+
+    if (matchingFields.length === 0) {
+      throw new Error(
+        `No MARC fields ${tag} with indicators ${JSON.stringify(indicators)} found in record with UUID ${instanceUuid}`,
+      );
+    }
+
+    // Verify expected count if specified
+    if (expectedCount !== null) {
+      expect(
+        matchingFields.length,
+        `Expected ${expectedCount} fields with tag ${tag} and indicators ${JSON.stringify(indicators)} in record with UUID ${instanceUuid}`,
+      ).to.equal(expectedCount);
+    }
+
+    // Verify each expected field configuration
+    expectedFields.forEach((expectedSubfields, fieldIndex) => {
+      if (fieldIndex >= matchingFields.length) {
+        throw new Error(
+          `Field index ${fieldIndex} exceeds available fields (${matchingFields.length}) for tag ${tag} in record with UUID ${instanceUuid}`,
+        );
+      }
+
+      const field = matchingFields[fieldIndex];
+      const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
+
+      // Verify each expected subfield in this field occurrence
+      Object.entries(expectedSubfields).forEach(([subfieldCode, expectedValue]) => {
+        const subfield = Array.from(subfieldsAll).filter(
+          (sf) => sf.getAttribute('code') === subfieldCode,
+        );
+
+        if (subfield.length === 0) {
+          throw new Error(
+            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex} of record with UUID ${instanceUuid}`,
+          );
+        }
+
+        // For multiple subfields with same code, verify the first one
+        expect(
+          subfield[0].textContent,
+          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+        ).to.equal(expectedValue);
+      });
+
+      // Verify absent subfields in this field occurrence
+      absentSubfields.forEach((subfieldCode) => {
+        const subfield = Array.from(subfieldsAll).find(
+          (sf) => sf.getAttribute('code') === subfieldCode,
+        );
+
+        expect(
+          subfield,
+          `Subfield "${subfieldCode}" should NOT exist in ${tag} field occurrence ${fieldIndex} of record with UUID ${instanceUuid}`,
+        ).to.be.undefined;
+      });
     });
   },
 

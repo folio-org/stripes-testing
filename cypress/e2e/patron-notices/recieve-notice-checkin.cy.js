@@ -173,6 +173,14 @@ describe('Patron notices', () => {
               userData.userId,
               testData.userServicePoint.id,
             );
+          })
+          .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: settingsMenu.circulationPatronNoticePoliciesPath,
+                waiter: NewNoticePolicyTemplate.waitLoading,
+              });
+            });
           });
       });
     });
@@ -210,10 +218,6 @@ describe('Patron notices', () => {
       'C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft', 'C347623'] },
       () => {
-        cy.login(userData.username, userData.password, {
-          path: settingsMenu.circulationPatronNoticePoliciesPath,
-          waiter: NewNoticePolicyTemplate.waitLoading,
-        });
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
         NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
@@ -245,11 +249,12 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.checkOutPath,
-          waiter: Checkout.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.checkOutPath,
+            waiter: Checkout.waitLoading,
+          });
         });
-
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {

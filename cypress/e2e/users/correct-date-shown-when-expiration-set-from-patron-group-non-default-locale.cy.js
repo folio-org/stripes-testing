@@ -32,7 +32,8 @@ const convertDateToBritishFormat = (dateString) => {
 
   const monthName = months[parseInt(month, 10) - 1];
 
-  return `${day} ${monthName} ${year}`;
+  // The day will be displayed without a leading zero.
+  return `${parseInt(day, 10)} ${monthName} ${year}`;
 };
 
 describe('Users', () => {

@@ -1,42 +1,63 @@
 import uuid from 'uuid';
 
-import Configs from '../configs';
+import OrderStorageSettings from '../../orders/orderStorageSettings';
+
+const SETTING_KEY = 'openOrder';
+
+const getParsedValue = (value) => {
+  let currentValue;
+
+  try {
+    currentValue = JSON.parse(value);
+  } catch {
+    currentValue = {};
+  }
+
+  return currentValue;
+};
 
 export default {
-  generateOpenOrderConfig({ isDuplicateCheckDisabled = false, isOpenOrderEnabled = false } = {}) {
+  generateOpenOrderSetting({ isDuplicateCheckDisabled = false, isOpenOrderEnabled = false } = {}) {
+    const value = JSON.stringify({ isDuplicateCheckDisabled, isOpenOrderEnabled });
+
     return {
-      value: JSON.stringify({ isDuplicateCheckDisabled, isOpenOrderEnabled }),
-      module: 'ORDERS',
-      configName: 'openOrder',
       id: uuid(),
+      key: SETTING_KEY,
+      value,
     };
   },
   getOpenOrderConfigViaApi() {
-    return Configs.getConfigViaApi({ query: '(module==ORDERS and configName==openOrder)' });
+    return OrderStorageSettings.getSettingsViaApi({ key: SETTING_KEY });
   },
   setOpenOrderValue(isOpenOrderEnabled) {
-    this.getOpenOrderConfigViaApi().then((configs) => {
-      if (configs[0]) {
-        Configs.updateConfigViaApi({
-          ...configs[0],
-          value: JSON.stringify({ isOpenOrderEnabled }),
+    this.getOpenOrderConfigViaApi().then((settings) => {
+      if (settings[0]) {
+        OrderStorageSettings.updateSettingViaApi({
+          ...settings[0],
+          value: JSON.stringify({
+            ...getParsedValue(settings[0].value),
+            isOpenOrderEnabled,
+          }),
         });
       } else {
-        const config = this.generateOpenOrderConfig({ isOpenOrderEnabled });
-        Configs.createConfigViaApi(config);
+        const setting = this.generateOpenOrderSetting({ isOpenOrderEnabled });
+        OrderStorageSettings.createSettingViaApi(setting);
       }
     });
   },
   setDuplicateCheckValue(isDuplicateCheckDisabled) {
-    this.getOpenOrderConfigViaApi().then((configs) => {
-      if (configs[0]) {
-        Configs.updateConfigViaApi({
-          ...configs[0],
-          value: JSON.stringify({ isDuplicateCheckDisabled }),
+    this.getOpenOrderConfigViaApi().then((settings) => {
+      if (settings[0]) {
+        OrderStorageSettings.updateSettingViaApi({
+          ...settings[0],
+          value: JSON.stringify({
+            ...getParsedValue(settings[0].value),
+            isDuplicateCheckDisabled,
+          }),
         });
       } else {
-        const config = this.generateOpenOrderConfig({ isDuplicateCheckDisabled });
-        Configs.createConfigViaApi(config);
+        const setting = this.generateOpenOrderSetting({ isDuplicateCheckDisabled });
+        OrderStorageSettings.createSettingViaApi(setting);
       }
     });
   },

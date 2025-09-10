@@ -16,7 +16,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with I
   const baseFieldPayload = {
     url: 'http://www.example.org/field100.html',
     repeatable: true,
-    required: true,
+    required: false,
   };
 
   before('Create user and fetch MARC bib specification', () => {

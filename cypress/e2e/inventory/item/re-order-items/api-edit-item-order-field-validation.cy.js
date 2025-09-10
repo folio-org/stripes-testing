@@ -15,7 +15,7 @@ describe('Inventory', () => {
         folioInstances: InventoryInstances.generateFolioInstances({
           count: 1,
           instanceTitlePrefix,
-          holdholdingsCount: 1,
+          holdingsCount: 1,
           itemsCount: 0,
         }),
         errorMessage: 'Order should be a number',
@@ -93,6 +93,8 @@ describe('Inventory', () => {
         'C808482 API | "order" field validation in edit "Item" request (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C808482'] },
         () => {
+          cy.getToken(user.username, user.password);
+
           // Test each invalid order value using cycle
           testData.invalidOrderValues.forEach((invalidOrderValue) => {
             // Create a copy of the original item body and modify the order field

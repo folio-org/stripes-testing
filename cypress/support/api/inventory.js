@@ -775,3 +775,33 @@ Cypress.Commands.add('toggleLccnDuplicateCheck', ({ enable = true }) => {
     }
   });
 });
+
+Cypress.Commands.add('batchCreateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('getRtacBatchViaApi', (instanceIds, fullPeriodicals = true) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'rtac-batch',
+    body: {
+      instanceIds: Array.isArray(instanceIds) ? instanceIds : [instanceIds],
+      fullPeriodicals,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});

@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 
-describe('fse-finance - UI', () => {
+describe('fse-finance - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

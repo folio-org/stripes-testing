@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 
-describe('fse-requests - UI', () => {
+describe('fse-requests - UI (no data manipulation)', () => {
   let userData = {};
   let servicePointId;
 
@@ -45,7 +45,7 @@ describe('fse-requests - UI', () => {
 
   it(
     `TC195690 - verify that requests page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'requests'] },
+    { tags: ['nonProd', 'fse', 'ui', 'requests', 'fse-user-journey'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();

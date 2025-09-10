@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import UserEdit from '../../../support/fragments/users/userEdit';
 
-describe('fse-checkout - UI', () => {
+describe('fse-checkout - UI (data manipulation)', () => {
   let servicePointId;
   let userData = {};
 
@@ -45,7 +45,7 @@ describe('fse-checkout - UI', () => {
 
   it(
     `TC195283 - verify that checkout module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'checkout', 'nonProd'] },
+    { tags: ['fse', 'ui', 'checkout', 'nonProd', 'fse-user-journey'] },
     () => {
       Checkout.waitLoading();
     },

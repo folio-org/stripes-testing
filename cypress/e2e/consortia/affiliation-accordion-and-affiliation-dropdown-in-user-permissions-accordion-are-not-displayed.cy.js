@@ -39,6 +39,7 @@ describe('Consortia', () => {
         path: TopMenu.usersPath,
         waiter: Users.waitLoading,
       });
+      cy.wait(7000);
     });
   });
 

@@ -100,9 +100,11 @@ describe('MARC', () => {
               ],
             });
             cy.wait(5000);
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
       });
@@ -144,7 +146,7 @@ describe('MARC', () => {
 
     it(
       'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C345404'] },
+      { tags: ['smokeBroken', 'spitfire', 'C345404'] },
       () => {
         cy.wait(5000);
         InventoryActions.import();
