@@ -793,3 +793,15 @@ Cypress.Commands.add('batchUpdateItemsViaApi', (items) => {
     body: { items },
   });
 });
+
+Cypress.Commands.add('getRtacBatchViaApi', (instanceIds, fullPeriodicals = true) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'rtac-batch',
+    body: {
+      instanceIds: Array.isArray(instanceIds) ? instanceIds : [instanceIds],
+      fullPeriodicals,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});

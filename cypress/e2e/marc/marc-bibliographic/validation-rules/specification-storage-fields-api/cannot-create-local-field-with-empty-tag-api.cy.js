@@ -16,7 +16,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
     label: 'AT_C490921_Custom Field - Contributor Data',
     url: 'http://www.example.org/field100.html',
     repeatable: true,
-    required: true,
+    required: false,
   };
 
   before('Create user and fetch MARC bib specification', () => {

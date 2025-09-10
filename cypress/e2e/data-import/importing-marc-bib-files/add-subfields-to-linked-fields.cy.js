@@ -250,7 +250,7 @@ describe('Data Import', () => {
           '1',
           '\\',
           '$a C385673 Coates, Ta-Nehisi',
-          '$e author.',
+          '$e Writer $e author.',
           '$0 http://id.loc.gov/authorities/names/n2008001084',
           '',
         );

@@ -1119,8 +1119,9 @@ export default {
     cy.expect(keywordInput.has({ value: '' }));
   },
 
-  verifyAccordionExistance(accordionName) {
-    cy.expect(Accordion(accordionName).exists());
+  verifyAccordionExistance(accordionName, isShown = true) {
+    if (isShown) cy.expect(Accordion(accordionName).exists());
+    else cy.expect(Accordion(accordionName).absent());
   },
 
   verifyAccordionByNameExpanded(accordionName, status = true) {

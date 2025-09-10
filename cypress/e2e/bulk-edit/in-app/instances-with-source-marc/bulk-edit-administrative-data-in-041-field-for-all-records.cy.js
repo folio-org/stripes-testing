@@ -150,11 +150,11 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.verify();
           QueryModal.selectField(instanceFieldValues.languages);
-          QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS_ANY);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.chooseFromValueMultiselect('German');
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.statisticalCodeNames, 1);
-          QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS_ANY, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
           QueryModal.chooseFromValueMultiselect(statisticalCode.name, 1);
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 2);

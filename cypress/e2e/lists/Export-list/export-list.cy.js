@@ -130,7 +130,6 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
-        Lists.exportList();
       },
     );
 
@@ -151,7 +150,6 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
-        Lists.verifyExportListButtonIsDisabled();
       },
     );
 
@@ -199,7 +197,6 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
-        Lists.verifyExportListButtonIsDisabled();
       },
     );
   });

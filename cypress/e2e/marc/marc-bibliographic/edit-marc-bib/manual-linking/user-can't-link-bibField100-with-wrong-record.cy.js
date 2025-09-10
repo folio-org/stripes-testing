@@ -78,7 +78,17 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          ['C380557', 'C380449', 'C440112', 'C409449'].forEach((id) => {
+          [
+            'C380557',
+            'C380449',
+            'C440112',
+            'C409449',
+            'C380452',
+            'C380455',
+            'C380462',
+            'Montessori method of education',
+            'Piano music',
+          ].forEach((id) => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(id);
           });
 
