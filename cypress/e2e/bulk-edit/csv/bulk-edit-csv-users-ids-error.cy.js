@@ -21,14 +21,14 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-        BulkEditSearchPane.waitLoading();
-
         FileManager.createFile(
           `cypress/fixtures/${userUUIDsFileName}`,
           `${user.userId}\r\n${invalidUserUUID}`,
         );
+
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.waitLoading();
       });
     });
 

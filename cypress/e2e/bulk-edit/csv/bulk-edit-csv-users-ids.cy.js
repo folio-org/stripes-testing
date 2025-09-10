@@ -21,14 +21,16 @@ describe('bulk-edit', () => {
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+
         FileManager.createFile(
           `cypress/fixtures/${userUUIDsFileName}`,
           `${user.userId}\r\n${invalidUserUUID}`,
         );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
