@@ -131,9 +131,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
 
             // #5 Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             // #6 Click on the "Actions" in the third pane → Select "View source" option

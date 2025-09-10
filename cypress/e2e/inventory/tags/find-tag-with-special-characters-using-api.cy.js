@@ -81,9 +81,11 @@ describe('Inventory', () => {
           });
         })
         .then(() => {
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
     });
@@ -113,6 +115,8 @@ describe('Inventory', () => {
           InventorySearchAndFilter.addTag(tag);
           InteractorsTools.checkCalloutMessage('New tag created');
           cy.wait(3000);
+          InventorySearchAndFilter.closeTagsPane();
+          InventorySearchAndFilter.openTagsField();
         });
 
         newTags[newTags.indexOf('"atags"')] = '\\"atags\\"';

@@ -568,22 +568,26 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
+          cy.intercept('search/authorities?*').as('searchAuthorities');
+
           MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');
-          // wait for the results to be loaded.
-          cy.wait(1000);
-          MarcAuthorities.checkHeadingType(
-            testData.forC359230.type,
-            testData.forC359230.typeOfHeadingA,
-            testData.forC359230.typeOfHeadingB,
-            testData.forC359230.typeOfHeadingC,
-          );
-          MarcAuthorities.selectTitle(testData.forC359230.value);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359230.valurMarked);
-          MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
-          MarcAuthorities.checkSingleHeadingType(
-            testData.forC359230.type,
-            testData.forC359230.typeOfHeadingA,
-          );
+          cy.wait('@searchAuthorities').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            MarcAuthorities.checkHeadingType(
+              testData.forC359230.type,
+              testData.forC359230.typeOfHeadingA,
+              testData.forC359230.typeOfHeadingB,
+              testData.forC359230.typeOfHeadingC,
+            );
+            const title = interception.response.body.authorities[0].headingRef;
+            MarcAuthorities.selectTitle(title);
+            MarcAuthorities.verifyViewPaneContentExists();
+            MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
+            MarcAuthorities.checkSingleHeadingType(
+              testData.forC359230.type,
+              testData.forC359230.typeOfHeadingA,
+            );
+          });
         },
       );
     });

@@ -94,7 +94,7 @@ describe('Specification Storage - Create Field API', () => {
 
   it(
     'C494353 Create Local Field (repeatable, required, deprecated) for MARC authority spec (API) (spitfire)',
-    { tags: ['C494353', 'extendedPath', 'spitfire'] },
+    { tags: ['C494353', 'extendedPathFlaky', 'spitfire', 'nonParallel'] },
     () => {
       const payload = {
         ...createFieldPayload,

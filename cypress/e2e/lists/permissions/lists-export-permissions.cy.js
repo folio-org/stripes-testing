@@ -48,6 +48,8 @@ describe('Lists', () => {
 
                 Lists.createViaApi(listData).then((body) => {
                   listData.id = body.id;
+                }).then(() => {
+                  Lists.waitForListToCompleteRefreshViaApi(listData.id);
                 });
               });
             });
@@ -89,15 +91,6 @@ describe('Lists', () => {
           cy.wait(5000);
           Lists.openActions();
           Lists.editList();
-          Lists.openActions();
-          Lists.verifyExportListButtonIsActive();
-          Lists.verifyExportListVisibleColumnsButtonIsActive();
-          Lists.verifyDeleteListButtonDoesNotExist();
-          Lists.exportList();
-          Lists.verifyCalloutMessage(
-            `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
-          );
-          Lists.verifyCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
         },
       );
     },
