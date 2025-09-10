@@ -415,6 +415,7 @@ export default {
   },
 
   verifySuccessBanner(validRecordsCount = 1) {
+    cy.wait(2000);
     cy.expect(
       MessageBanner().has({
         textContent: `${validRecordsCount} records have been successfully changed`,

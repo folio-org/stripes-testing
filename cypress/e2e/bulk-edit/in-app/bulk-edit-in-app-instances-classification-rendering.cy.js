@@ -16,15 +16,10 @@ import ClassificationTypes from '../../../support/fragments/settings/inventory/c
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
-
-// Classification table headers for CSV verification
 const classificationTableHeadersInFile = 'Classification identifier type;Classification\n';
-
-// Test instances data according to TestRail preconditions
 const folioInstanceWithoutClassification = {
   title: `AT_C736695_FolioInstance_NoClassification_${getRandomPostfix()}`,
 };
-
 const folioInstanceWithClassification = {
   title: `AT_C736695_FolioInstance_WithClassification_${getRandomPostfix()}`,
   classifications: [
@@ -34,43 +29,35 @@ const folioInstanceWithClassification = {
     },
   ],
 };
-
 const marcInstanceWithClassification = {
   title: `AT_C736695_MarcInstance_WithClassification_${getRandomPostfix()}`,
   classifications: [
     {
       classificationNumber: 'JK609 .M2',
-      subfields: 'ab', // LC classification from 050$ab
       classificationTypeName: 'LC',
     },
     {
       classificationNumber: 'WW 166 M43k 1973',
-      subfields: 'ab', // NLM classification from 060$ab
       classificationTypeName: 'NLM',
     },
     {
       classificationNumber: '971.1/.2',
-      subfields: 'a', // UDC classification from 080$a
       classificationTypeName: 'UDC',
     },
     {
       classificationNumber: '975.5425200222',
-      subfields: 'ab', // Dewey classification from 082$ab
       classificationTypeName: 'Dewey',
     },
     {
       classificationNumber: 'ITC 1.12:TA-503 (A)-18 AND 332-279',
-      subfields: 'a', // GDC classification from 086$a
       classificationTypeName: 'GDC',
     },
     {
       classificationNumber: 'Local classification',
-      subfields: 'a', // LC Local classification from 090$a
       classificationTypeName: 'LC',
     },
   ],
 };
-
 const marcInstanceFields = [
   {
     tag: '008',

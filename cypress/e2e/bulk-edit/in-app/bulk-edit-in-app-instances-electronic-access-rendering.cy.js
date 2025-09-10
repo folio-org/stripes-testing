@@ -270,44 +270,32 @@ describe('Bulk-edit', () => {
 
         const folioElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${folioInstanceWithElectronicAccess.electronicAccess.uri};${folioInstanceWithElectronicAccess.electronicAccess.linkText};${folioInstanceWithElectronicAccess.electronicAccess.materialsSpecification};${folioInstanceWithElectronicAccess.electronicAccess.publicNote}`;
 
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: folioElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          folioElectronicAccessInFile,
         );
 
         // Verify instance without electronic access has empty electronic access column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          '',
         );
 
         // Verify MARC instance with multiple electronic access entries
         const marcElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${marcInstanceWithElectronicAccess.electronicAccess.map((access) => `${access.relationship};${access.uri};${access.linkText || '-'};${access.materialsSpecification || '-'};${access.publicNote || '-'}`).join('|')}`;
 
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: marcElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          marcElectronicAccessInFile,
         );
 
         // Step 7: Start bulk edit process
@@ -355,54 +343,38 @@ describe('Bulk-edit', () => {
         });
 
         // Also verify suppress from discovery change
-        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+          'true',
         );
 
         // Step 9: Download preview changes
         BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: folioElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          folioElectronicAccessInFile,
         );
 
         // Verify instance without electronic access has empty electronic access column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          '',
         );
 
         // Verify MARC instance with multiple electronic access entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: marcElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          marcElectronicAccessInFile,
         );
 
         // Step 10: Commit changes
@@ -442,55 +414,39 @@ describe('Bulk-edit', () => {
         });
 
         // Also verify suppress from discovery change in changed records accordion
-        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
-              value: 'true',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+          'true',
         );
 
         // Step 12: Download changed records
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: folioElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          folioElectronicAccessInFile,
         );
 
         // Verify instance without electronic access has empty electronic access column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          '',
         );
 
         // Verify MARC instance with multiple electronic access entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: marcElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          marcElectronicAccessInFile,
         );
 
         // remove earlier downloaded files
@@ -504,122 +460,86 @@ describe('Bulk-edit', () => {
 
         // Step 15: Click on the "File with the matching records" hyperlink, Check display of "Electronic access" Instance data
         BulkEditLogs.downloadFileWithMatchingRecords();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: folioElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          folioElectronicAccessInFile,
         );
 
         // Verify instance without electronic access has empty electronic access column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          '',
         );
 
         // Verify MARC instance with multiple electronic access entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: marcElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          marcElectronicAccessInFile,
         );
 
         // Step 16: Click on the "File with the preview of proposed changes (CSV)" hyperlink, Check display of "Electronic access" Instance data
         BulkEditLogs.downloadFileWithProposedChanges();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: folioElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          folioElectronicAccessInFile,
         );
 
         // Verify instance without electronic access has empty electronic access column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          '',
         );
 
         // Verify MARC instance with multiple electronic access entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: marcElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          marcElectronicAccessInFile,
         );
 
         // Step 17: Click on the "File with updated records (CSV)" hyperlink, Check display of "Electronic access" Instance data
         BulkEditLogs.downloadFileWithUpdatedRecords();
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: folioElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          folioElectronicAccessInFile,
         );
 
         // Verify instance without electronic access has empty electronic access column
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           folioInstanceWithoutElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: '',
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          '',
         );
 
         // Verify MARC instance with multiple electronic access entries
-        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+        BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstanceWithElectronicAccess.instanceHrid,
-          [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
-              value: marcElectronicAccessInFile,
-            },
-          ],
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS,
+          marcElectronicAccessInFile,
         );
       },
     );
