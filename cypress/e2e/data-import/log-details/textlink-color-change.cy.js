@@ -34,6 +34,7 @@ describe('Data Import', () => {
 
         // #2 In the log, check that the style of the file names has changed
         // Instead of bold, the file name is lightly underlined.
+        cy.wait(2000);
         Logs.verifyFirstFileNameStyle();
 
         // #3 Click any file name

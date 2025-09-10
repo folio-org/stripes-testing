@@ -90,6 +90,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
       cy.loginAsAdmin();
       cy.visit(SettingsMenu.acquisitionUnitsPath);
+      cy.wait(2000);
       AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
       AcquisitionUnits.delete(defaultAcquisitionUnit.name);
       cy.getAdminToken().then(() => {
@@ -104,6 +105,7 @@ describe('Data Import', () => {
       'C345356 Acquisitions unit causes Invoices to Import with errors (folijet)',
       { tags: ['extendedPath', 'folijet', 'C345356'] },
       () => {
+        cy.wait(2000);
         AcquisitionUnits.newAcquisitionUnit();
         AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
         // Need to wait until data will be loaded

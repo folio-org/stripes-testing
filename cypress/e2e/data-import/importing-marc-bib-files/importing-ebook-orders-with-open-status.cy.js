@@ -160,6 +160,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        cy.wait(2000);
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC375989.mrc', marcFileName);
         JobProfiles.waitFileIsUploaded();

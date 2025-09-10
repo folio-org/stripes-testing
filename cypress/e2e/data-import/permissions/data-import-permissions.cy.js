@@ -55,6 +55,7 @@ describe('Data Import', () => {
       'C492 Data Import permissions (folijet)',
       { tags: ['extendedPath', 'folijet', 'C492'] },
       () => {
+        cy.wait(2000);
         DataImport.waitLoading();
         Logs.openFileDetails(fileName);
         FileDetails.checkStatusInColumn(

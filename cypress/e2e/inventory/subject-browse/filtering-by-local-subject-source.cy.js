@@ -68,8 +68,9 @@ describe('Inventory', () => {
       'C584507 Check filtering by local Subject Source (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584507'] },
       () => {
+        cy.wait(2000);
         BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
-        cy.wait(1500);
+        cy.wait(3500);
         BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.subjectSource.name);

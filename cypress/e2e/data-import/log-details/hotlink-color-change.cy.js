@@ -33,6 +33,7 @@ describe('Data Import', () => {
       () => {
         // #1 Click on the "Actions" -> select "View all"
         // User is on the View all Log page. At the top of the page, there should be an indication of how many import jobs there are.
+        cy.wait(2000);
         Logs.actionsButtonClick();
         Logs.viewAllLogsButtonClick();
         LogsViewAll.viewAllIsOpened();
