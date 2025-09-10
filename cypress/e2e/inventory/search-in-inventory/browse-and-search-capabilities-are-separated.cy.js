@@ -26,7 +26,7 @@ describe('Inventory', () => {
         Permissions.uiSubjectBrowse.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-        cy.waitForAuthRefresh().then(() => {
+        cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
