@@ -41,6 +41,7 @@ describe('Inventory', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('AT_C446027_Instance');
 
         cy.then(() => {
           InventoryInstances.getIdentifierTypes({ query: 'name="ISSN"' }).then((identifierType) => {

@@ -23,6 +23,7 @@ describe('Inventory', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('AT_C464312_FolioInstance');
 
         cy.then(() => {
           // Create FOLIO instances

@@ -6,7 +6,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
@@ -14,10 +13,10 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const contributorName = `AT_C446022_Contributor_${randomPostfix}`;
-      const instanceTitlePrefix = `AT_C446022_Instance_${randomPostfix}`;
+      const identifier = `AT_C446028_Identifier_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C446028_Instance_${randomPostfix}`;
       const accordionName = 'Staff suppress';
-      const searchOption = searchInstancesOptions[1]; // Contributor
+      const searchOption = searchInstancesOptions[8]; // OCLC number, normalized
       const staffSuppressedInstanceIndexes = [2, 4];
       const notStaffSuppressedInstanceIndexes = [1, 3];
       const instanceIds = [];
@@ -33,8 +32,8 @@ describe('Inventory', () => {
           indicators: ['1', '0'],
         },
         {
-          tag: '700',
-          content: `$a ${contributorName}`,
+          tag: '035',
+          content: `$a (OCoLC)${identifier}`,
           indicators: ['\\', '\\'],
         },
       ];
@@ -42,20 +41,20 @@ describe('Inventory', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi('AT_C446022_Instance');
+        InventoryInstances.deleteInstanceByTitleViaApi('AT_C446028_Instance');
 
         cy.then(() => {
-          BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
+          InventoryInstances.getIdentifierTypes({ query: 'name="OCLC"' }).then((identifierType) => {
             cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
               // Create 2 FOLIO instances
               [1, 2].forEach((folioIndex) => {
                 const isStaffSuppressed = folioIndex === 2;
                 const instance = {
                   title: `${instanceTitlePrefix}_${folioIndex}`,
-                  contributors: [
+                  identifiers: [
                     {
-                      name: contributorName,
-                      contributorNameTypeId: contributorNameTypes[0].id,
+                      value: identifier,
+                      identifierTypeId: identifierType.id,
                     },
                   ],
                   instanceTypeId: instanceTypes[0].id,
@@ -114,8 +113,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446022 Staff suppress facet is off by default when user has permission to use facet (search by "Contributor") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446022'] },
+        'C446028 Staff suppress facet is off by default when user has permission to use facet (search by "OCLC number, normalized") (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C446028'] },
         () => {
           // Verify we're on Instance tab and Search tab by default
           InventorySearchAndFilter.instanceTabIsDefault();
@@ -129,7 +128,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxInAccordion(accordionName, 'Yes', false);
 
           // Step 2: Run search which will return both not suppressed MARC and FOLIO records
-          InventorySearchAndFilter.searchByParameter(searchOption, contributorName);
+          InventorySearchAndFilter.searchByParameter(searchOption, identifier);
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.checkRowsCount(
             staffSuppressedInstanceIndexes.length + notStaffSuppressedInstanceIndexes.length,

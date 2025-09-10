@@ -35,6 +35,7 @@ describe('Inventory', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('AT_C446024_Instance');
 
         cy.then(() => {
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
