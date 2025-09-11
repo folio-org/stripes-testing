@@ -95,7 +95,6 @@ describe('Fees&Fines', () => {
       'C494013 Check that user with "Fees/Fines: Can pay" can pay fees/fines (vega)',
       { tags: ['extendedPath', 'vega', 'C494013'] },
       () => {
-        // Preconditions: User is on the "Users" app with opened User details page for User from preconditions
         UsersSearchPane.searchByKeywords(userData.username);
         UsersSearchPane.selectUserFromList(userData.username);
         UsersCard.waitLoading();
