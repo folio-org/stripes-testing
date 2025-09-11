@@ -95,11 +95,11 @@ describe('Fees&Fines', () => {
       'C494013 Check that user with "Fees/Fines: Can pay" can pay fees/fines (vega)',
       { tags: ['extendedPath', 'vega', 'C494013'] },
       () => {
+        // Step 1: Click on "Fees/fines" accordion > "# open fee/fine" button
         UsersSearchPane.searchByKeywords(userData.username);
         UsersSearchPane.selectUserFromList(userData.username);
         UsersCard.waitLoading();
 
-        // Step 1: Click on "Fees/fines" accordion > "# open fee/fine" button
         UsersCard.openFeeFines();
         UsersCard.viewAllFeesFines();
         UserAllFeesFines.waitLoading();
