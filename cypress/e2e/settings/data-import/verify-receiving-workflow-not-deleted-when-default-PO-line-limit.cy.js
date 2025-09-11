@@ -79,6 +79,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet', 'C375211'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
+        cy.wait(2000);
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 

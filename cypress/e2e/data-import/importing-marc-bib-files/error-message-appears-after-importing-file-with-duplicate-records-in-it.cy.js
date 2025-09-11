@@ -113,6 +113,7 @@ describe('Data Import', () => {
       'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
       { tags: ['criticalPath', 'folijet', 'C410708'] },
       () => {
+        cy.wait(3000);
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);

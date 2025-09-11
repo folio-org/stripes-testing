@@ -66,6 +66,7 @@ describe('Inventory', () => {
       'C584511 Check filtering by local Subject type in FOLIO records (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584511'] },
       () => {
+        cy.wait(2000);
         BrowseSubjects.searchBrowseSubjects(testData.subjectType.subjectHeading);
         BrowseSubjects.searchBrowseSubjects(testData.subjectType.subjectHeading);
         BrowseSubjects.expandAccordion('Subject type');

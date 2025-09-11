@@ -64,6 +64,7 @@ export default {
   openSingleReportImportModal: () => {
     open();
     cy.do(importButtonInActions.click());
+    cy.wait(2000);
   },
 
   openReImportModal: () => {
