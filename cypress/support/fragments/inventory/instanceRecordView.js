@@ -114,12 +114,20 @@ const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
-const verifyStatisticalCode = (value) => {
-  cy.expect(
-    MultiColumnList({ id: 'list-statistical-codes' })
-      .find(MultiColumnListCell({ content: value }))
-      .exists(),
-  );
+const verifyStatisticalCode = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .exists(),
+    );
+  } else {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .absent(),
+    );
+  }
 };
 
 const verifyStatisticalCodeTypeAndName = (type, name) => {
