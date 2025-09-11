@@ -54,7 +54,6 @@ describe('Eureka', () => {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
           });
-          cy.reload();
           AuthorizationRoles.waitContentLoading();
         }, 20_000);
       });
@@ -79,6 +78,7 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.openForEdit();
+          cy.wait(1000);
           AuthorizationRoles.clickSelectApplication();
 
           AuthorizationRoles.verifySelectApplicationModal();
@@ -97,14 +97,13 @@ describe('Eureka', () => {
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: false });
 
-          AuthorizationRoles.searchForAppInModal(testData.searchQuery);
+          AuthorizationRoles.searchForAppInModal(testData.searchQuery.toUpperCase());
           AuthorizationRoles.checkApplicationShownInModal(
             testData.originalApplications[1],
             true,
             true,
           );
-          // TO DO: Uncomment after UIPSELAPP-14 is fixed:
-          // AuthorizationRoles.checkApplicationCountInModal(1);
+          AuthorizationRoles.checkApplicationCountInModal(1);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
 
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(
