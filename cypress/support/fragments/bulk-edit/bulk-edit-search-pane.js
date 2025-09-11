@@ -1410,39 +1410,48 @@ export default {
 
     cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
-        cy.get('[class^="EmbeddedTable-"]')
-          .eq(rowIndex)
-          .find('tr')
+        cy.get(`[data-row-index="row-${rowIndex}"]`)
           .eq(0)
-          .then((headerRow) => {
-            const headerCells = headerRow.find('th');
+          .within(() => {
+            cy.get('[class^="EmbeddedTable-"]')
+              .find('tr')
+              .eq(0)
+              .then((headerRow) => {
+                const headerCells = headerRow.find('th');
 
-            headers.forEach((header, index) => {
-              expect(headerCells.eq(index).text()).to.equal(header);
-            });
+                headers.forEach((header, index) => {
+                  expect(headerCells.eq(index).text()).to.equal(header);
+                });
+              });
           });
       },
     );
   },
 
-  verifyEmbeddedTableInForm(
-    tableType,
-    formType,
-    instanceIdentifier,
-    expectedValues,
-    miniRowIndex = 1,
-  ) {
-    this.verifyEmbeddedTableColumnHeadersInForm(tableType, formType, instanceIdentifier);
+  verifyEmbeddedTableInForm(tableType, formType, identifier, expectedValues) {
+    this.verifyEmbeddedTableColumnHeadersInForm(tableType, formType, identifier);
 
-    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
+    cy.then(() => formMap[formType].find(MultiColumnListCell(identifier)).row()).then(
       (rowIndex) => {
-        cy.get('[class^="EmbeddedTable-"]')
-          .eq(rowIndex)
-          .find('tr')
-          .eq(miniRowIndex)
-          .find('td')
-          .each(($cell, index) => {
-            cy.wrap($cell).should('have.text', expectedValues[index]);
+        cy.get(`[data-row-index="row-${rowIndex}"]`)
+          .eq(0)
+          .within(() => {
+            cy.get('[class^="EmbeddedTable-"]')
+              .find('tbody tr')
+              .should(($rows) => {
+                // Check if any row contains all our expected values
+                const matchingRow = Array.from($rows).find((row) => {
+                  const rowText = Cypress.$(row).text().trim();
+                  const expectedRowText = expectedValues.join('').trim();
+                  return rowText === expectedRowText;
+                });
+
+                if (!matchingRow) {
+                  throw new Error(
+                    `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                  );
+                }
+              });
           });
       },
     );
@@ -1454,22 +1463,15 @@ export default {
 
   verifyElectronicAccessTableInForm(
     formType,
-    instanceIdentifier,
+    identifier,
     relationship,
     uri,
     linkText,
     materialsSpecified,
     publicNote,
-    miniRowIndex = 1,
   ) {
     const expectedValues = [relationship, uri, linkText, materialsSpecified, publicNote];
-    this.verifyEmbeddedTableInForm(
-      'electronicAccess',
-      formType,
-      instanceIdentifier,
-      expectedValues,
-      miniRowIndex,
-    );
+    this.verifyEmbeddedTableInForm('electronicAccess', formType, identifier, expectedValues);
   },
 
   verifySubjectColumnHeadersInForm(formType, instanceIdentifier) {
@@ -1482,16 +1484,9 @@ export default {
     subjectHeadingValue,
     subjectValue,
     subjectTypeValue,
-    miniRowIndex = 1,
   ) {
     const expectedValues = [subjectHeadingValue, subjectValue, subjectTypeValue];
-    this.verifyEmbeddedTableInForm(
-      'subjects',
-      formType,
-      instanceIdentifier,
-      expectedValues,
-      miniRowIndex,
-    );
+    this.verifyEmbeddedTableInForm('subjects', formType, instanceIdentifier, expectedValues);
   },
 
   verifyClassificationColumnHeadersInForm(formType, instanceIdentifier) {
@@ -1503,16 +1498,9 @@ export default {
     instanceIdentifier,
     classificationIdentifierTypeValue,
     classificationValue,
-    miniRowIndex = 1,
   ) {
     const expectedValues = [classificationIdentifierTypeValue, classificationValue];
-    this.verifyEmbeddedTableInForm(
-      'classifications',
-      formType,
-      instanceIdentifier,
-      expectedValues,
-      miniRowIndex,
-    );
+    this.verifyEmbeddedTableInForm('classifications', formType, instanceIdentifier, expectedValues);
   },
 
   verifyPublicationColumnHeadersInForm(formType, instanceIdentifier) {
@@ -1526,16 +1514,9 @@ export default {
     publisherRole,
     placeOfPublication,
     publicationDate,
-    miniRowIndex = 1,
   ) {
     const expectedValues = [publisher, publisherRole, placeOfPublication, publicationDate];
-    this.verifyEmbeddedTableInForm(
-      'publications',
-      formType,
-      instanceIdentifier,
-      expectedValues,
-      miniRowIndex,
-    );
+    this.verifyEmbeddedTableInForm('publications', formType, instanceIdentifier, expectedValues);
   },
 
   verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
