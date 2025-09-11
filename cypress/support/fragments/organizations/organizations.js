@@ -25,6 +25,7 @@ import {
   MultiSelectMenu,
   or,
   PaneContent,
+  Card,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -35,6 +36,7 @@ import DateTools from '../../utils/dateTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
+const saveAndKeepEditingButton = Button('Save & keep editing');
 const summaryAccordionId = 'summarySection';
 const rootSection = PaneContent({ id: 'organizations-results-pane-content' });
 const organizationList = rootSection.find(MultiColumnList({ id: 'organizations-list' }));
@@ -199,6 +201,31 @@ export default {
 
   verifyNoResultMessage: (noResultMessage) => cy.expect(rootSection.find(HTML(including(noResultMessage))).exists()),
 
+  getLastUpdateTime() {
+    return cy
+      .contains('Record last updated:')
+      .invoke('text')
+      .then((text) => text.replace('Record last updated:', '').trim());
+  },
+
+  openVersionHistory() {
+    cy.do(
+      Section({ id: 'pane-organization-details' })
+        .find(Button({ icon: 'clock' }))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+
+  selectVersionHistoryCard(date) {
+    cy.do([
+      Section({ id: 'versions-history-pane-organization' })
+        .find(Card({ headerStart: date }))
+        .find(Button({ icon: 'clock' }))
+        .click(),
+    ]);
+  },
+
   checkAllExpandedAccordion: () => {
     cy.get('#pane-organization-details-content')
       .find('[id^="accordion-toggle-button-"]')
@@ -254,6 +281,20 @@ export default {
   newOrganization: () => {
     cy.expect(buttonNew.exists());
     cy.do(buttonNew.click());
+  },
+
+  fillNameField: (name) => {
+    cy.do([organizationNameField.fillIn(name)]);
+  },
+
+  checkRequiredFields: (field) => {
+    if (field === 'Name') {
+      cy.expect(TextField(including('Name')).has({ error: 'Required!' }));
+    } else if (field === 'Code') {
+      cy.expect(TextField(including('Code')).has({ error: 'Required!' }));
+    } else if (field === 'Status') {
+      cy.expect(Select(including('Organization status')).has({ error: 'Required!' }));
+    }
   },
 
   varifyAbsentOrganizationApp: () => {
@@ -708,6 +749,13 @@ export default {
     cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: true }));
   },
 
+  checkIsaVendor: (organization) => {
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(
+      summarySection.find(Checkbox('Vendor')).has({ checked: true, disabled: true, visible: true }),
+    );
+  },
+
   expectColorFromList: () => {
     cy.get('#organizations-list').should('have.css', 'background-color', blueColor);
   },
@@ -1130,7 +1178,17 @@ export default {
   },
 
   deleteContactFromContactPeople: () => {
-    cy.get('button[data-test-unassign-contact="true"][aria-label="Unassign"]').click();
+    cy.get('#contact-list button[data-test-unassign-contact="true"][aria-label="Unassign"]:visible')
+      .first()
+      .click();
+  },
+
+  deleteInterfaceFromInterfaces: () => {
+    cy.get(
+      '#interface-list button[data-test-unassign-interface="true"][aria-label="Unassign"]:visible',
+    )
+      .first()
+      .click();
   },
 
   selectCategories: (category) => {
@@ -1162,6 +1220,11 @@ export default {
 
   openContactPeopleSection: () => {
     cy.do(Section({ id: 'contactPeopleSection' }).click());
+  },
+
+  openContactPeopleSectionInEditPage: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-contactPeopleSection' }).click());
+    cy.wait(4000);
   },
 
   openContactPeopleSectionInEditCard: () => {
@@ -1263,7 +1326,13 @@ export default {
       addInterfacesModal.find(searchButtonInModal).click(),
     ]);
     cy.wait(4000);
-    SearchHelper.selectCheckboxFromResultsList();
+    cy.do(
+      addInterfacesModal
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Checkbox())
+        .click(),
+    );
     cy.do([addInterfacesModal.find(saveButton).click(), saveAndClose.click()]);
   },
 
@@ -1391,6 +1460,13 @@ export default {
     );
   },
 
+  checkInterfaceInformationIsEmpty: () => {
+    cy.get('#interfacesSection [data-test-accordion-wrapper="true"]').should(
+      'contain.text',
+      'The list contains no items',
+    );
+  },
+
   checkDonorContactIsAdd: (contact, index = 0) => {
     cy.get('#privilegedDonorInformation [data-row-index="row-' + index + '"]').within(() => {
       cy.get('div[class*=mclCell-]').eq(0).contains(`${contact.lastName}, ${contact.firstName}`);
@@ -1407,6 +1483,14 @@ export default {
   checkInterfaceIsAdd: (defaultInterface) => {
     cy.do(openInterfaceSectionButton.click());
     cy.expect(interfaceSection.find(KeyValue({ value: defaultInterface.name })).exists());
+  },
+
+  checkInterfaceIsAddInOrganizationDetailsPage: (ifaceName) => {
+    cy.do(openInterfaceSectionButton.click());
+    const list = interfaceSection.find(MultiColumnList({ id: 'interface-list' }));
+    cy.expect(
+      list.find(MultiColumnListCell({ column: 'Name', content: including(ifaceName) })).exists(),
+    );
   },
 
   checkInterfaceTypeIsAdd: (interfaceType) => {
@@ -1626,6 +1710,11 @@ export default {
 
   saveOrganization: () => {
     cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  saveAndKeepEditing: () => {
+    cy.do(saveAndKeepEditingButton.click());
     cy.wait(4000);
   },
 
