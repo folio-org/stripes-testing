@@ -70,7 +70,7 @@ describe('Inventory', () => {
       () => {
         cy.wait(2000);
         BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
-        cy.wait(3500);
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectSource.subjectHeading);
         BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.subjectSource.name);
