@@ -4,7 +4,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Organizations', () => {
   let userId;
@@ -53,9 +53,13 @@ describe('Organizations', () => {
     });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      });
     });
-    TopMenuNavigation.navigateToApp('Organizations');
   });
 
   after(() => {
