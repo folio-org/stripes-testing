@@ -54,10 +54,11 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Label API', (
   });
 
   after('Delete test user and cleanup', () => {
+    cy.getAdminToken();
     if (user) {
-      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     }
+    cy.deleteSpecificationField(localFieldId, false);
   });
 
   it(
@@ -75,7 +76,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Label API', (
         label: updatedLabel,
         url: 'http://www.example.org/field100.html',
         repeatable: true,
-        required: true,
+        required: false,
       };
 
       cy.updateSpecificationField(localFieldId, updatePayload).then((updateResp) => {
@@ -86,7 +87,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Label API', (
         expect(updateResp.body.tag).to.eq(LOCAL_FIELD_TAG);
         expect(updateResp.body.url).to.eq('http://www.example.org/field100.html');
         expect(updateResp.body.repeatable).to.eq(true);
-        expect(updateResp.body.required).to.eq(true);
+        expect(updateResp.body.required).to.eq(false);
       });
 
       // Step 2: Get all fields to verify the update
@@ -103,7 +104,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Label API', (
           'http://www.example.org/field100.html',
         );
         expect(updatedField.repeatable, 'Field should have updated repeatable flag').to.eq(true);
-        expect(updatedField.required, 'Field should have updated required flag').to.eq(true);
+        expect(updatedField.required, 'Field should have updated required flag').to.eq(false);
         expect(updatedField.scope, 'Field should maintain local scope').to.eq('local');
       });
     },

@@ -581,4 +581,8 @@ export default {
 
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
   },
+
+  getFormattedDateTimeWithSeconds() {
+    return moment.utc().format('M/D/YYYY, h:mm:ss A');
+  },
 };

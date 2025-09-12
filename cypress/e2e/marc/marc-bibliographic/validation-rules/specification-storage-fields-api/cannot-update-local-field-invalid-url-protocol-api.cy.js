@@ -54,9 +54,12 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Invali
   });
 
   after('Delete test user and cleanup', () => {
+    cy.getAdminToken();
     if (user) {
-      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+    }
+    if (localFieldId) {
+      cy.deleteSpecificationField(localFieldId, false);
     }
   });
 
@@ -72,7 +75,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Invali
         tag: LOCAL_FIELD_TAG,
         label: 'Name',
         repeatable: false,
-        required: true,
+        required: false,
       };
 
       const updatePayloadMissingProtocol = {
@@ -126,7 +129,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Invali
         label: 'Name',
         url: 'http://www.updatedurlexample.org/field899.html',
         repeatable: true,
-        required: true,
+        required: false,
       };
 
       cy.updateSpecificationField(localFieldId, updatePayloadValidProtocol).then((updateResp3) => {
@@ -139,7 +142,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Invali
         expect(updateResp3.body.tag).to.eq(LOCAL_FIELD_TAG);
         expect(updateResp3.body.url).to.eq('http://www.updatedurlexample.org/field899.html');
         expect(updateResp3.body.repeatable).to.eq(true);
-        expect(updateResp3.body.required).to.eq(true);
+        expect(updateResp3.body.required).to.eq(false);
       });
     },
   );
