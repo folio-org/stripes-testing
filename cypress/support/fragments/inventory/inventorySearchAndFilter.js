@@ -1510,32 +1510,6 @@ export default {
       else cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).absent());
     });
   },
-
-  verifyShowColumnsCheckboxesChecked(
-    columnNames = Object.values(INVENTORY_COLUMN_HEADERS).slice(1),
-    isChecked = true,
-  ) {
-    const names = Array.isArray(columnNames) ? columnNames : [columnNames];
-    names.forEach((columnName) => {
-      cy.expect(DropdownMenu().find(Checkbox(columnName)).has({ checked: isChecked }));
-    });
-  },
-
-  verifyShowColumnsMenu() {
-    cy.expect(DropdownMenu().find(HTML('Show columns')).exists());
-    Object.values(INVENTORY_COLUMN_HEADERS)
-      .slice(1)
-      .forEach((columnName) => {
-        cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
-      });
-  },
-
-  toggleShowColumnCheckbox(columnName, isChecked = true) {
-    cy.do(DropdownMenu().find(Checkbox(columnName)).click());
-    cy.wait(200);
-    this.verifyShowColumnsCheckboxesChecked(columnName, isChecked);
-  },
-
   verifyWarningIconForSearchResult: (cellContent, hasWarningItem = true) => {
     const targetCell = MultiColumnListCell({ content: cellContent });
     if (hasWarningItem) cy.expect(targetCell.find(Icon({ warning: true })).exists());

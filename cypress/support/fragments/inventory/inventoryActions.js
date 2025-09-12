@@ -38,6 +38,7 @@ export default {
       Section({ id: 'pane-results' }).find(Button('Actions')).click(),
       Button({ id: 'new-fast-add-record' }).click(),
     ]);
+    cy.wait(1000);
   },
   optionsIsDisabled: (array) => {
     return array.forEach((element) => {
