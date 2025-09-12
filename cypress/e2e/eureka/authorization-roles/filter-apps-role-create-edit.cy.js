@@ -55,7 +55,6 @@ describe('Eureka', () => {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
           });
-          cy.reload();
         }, 20_000);
         AuthorizationRoles.waitContentLoading();
       });
@@ -233,6 +232,7 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.editRoleName);
           AuthorizationRoles.clickOnRoleName(testData.editRoleName);
           AuthorizationRoles.openForEdit();
+          cy.wait(1000);
 
           // Step 16: Click "Select application" button
           AuthorizationRoles.clickSelectApplication();
