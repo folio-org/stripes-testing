@@ -74,6 +74,7 @@ const saveButtonInCotact = Button({
 });
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
+const duplicateButton = Button('Duplicate');
 const contactPeopleSection = Section({ id: 'contactPeopleSection' });
 const addContactButton = Button('Add contact');
 const openInterfaceSectionButton = Button({
@@ -538,11 +539,8 @@ export default {
   },
 
   fillScheduleInfo: (info) => {
-    cy.get('#scheduling').within(() => {
-      cy.contains('label', 'Schedule period')
-        .closest('[class^=select-]')
-        .find('select')
-        .select(String(info.period));
+    cy.get('[aria-labelledby="accordion-toggle-button-scheduling"]').within(() => {
+      cy.get('select[name$="schedulePeriod"]').select(String(info.period));
 
       const setNativeValue = (input, value) => {
         const proto = Object.getPrototypeOf(input);
@@ -556,11 +554,33 @@ export default {
         input.dispatchEvent(new Event('focusout', { bubbles: true }));
       };
 
-      cy.get('input[name$="scheduleDay"]').then(($inp) => {
-        const el = $inp[0];
-        setNativeValue(el, info.day);
-        blurInput(el);
-      });
+      if (info.frequency !== undefined && info.frequency !== null) {
+        cy.get('input[data-testid="schedule-frequency"]').then(($inp) => {
+          const el = $inp[0];
+          setNativeValue(el, info.frequency);
+          blurInput(el);
+        });
+      }
+
+      if (info.day !== undefined && info.day !== null) {
+        cy.get('input[name$="scheduleDay"]').then(($inp) => {
+          if ($inp.length) {
+            const el = $inp[0];
+            setNativeValue(el, info.day);
+            blurInput(el);
+          }
+        });
+      }
+
+      if (info.date) {
+        cy.get('input[name$="schedulingDate"]').then(($inp) => {
+          if ($inp.length) {
+            const el = $inp[0];
+            setNativeValue(el, info.date);
+            blurInput(el);
+          }
+        });
+      }
 
       cy.get('input[name$="scheduleTime"]')
         .should('be.visible')
@@ -662,43 +682,77 @@ export default {
     cy.do(saveAndClose.click());
   },
 
-  fillIntegrationInformationWithoutSchedulingWithDifferentInformation: (
-    integrationName,
-    integartionDescription,
-    vendorEDICode,
-    libraryEDICode,
-    accountNumber,
-    acquisitionMethod,
-  ) => {
-    cy.do([
-      Section({ id: 'integrationInfo' })
-        .find(TextField('Integration name*'))
-        .fillIn(integrationName),
-      TextArea('Description').fillIn(integartionDescription),
-      Select('Integration type*').choose('Ordering'),
-      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
-      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
-      ediSection.find(Button({ icon: 'info' })).click(),
-      Checkbox({
-        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
-      }).click(),
-    ]);
-    cy.get(
-      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]',
-    ).select(accountNumber);
-    cy.get(
-      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]',
-    ).select(acquisitionMethod);
-    cy.do([
-      ftpSection.find(Select('EDI FTP')).choose('FTP'),
-      ftpSection.find(Select('FTP connection mode')).choose('Passive'),
-      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
-      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
-      ftpSection.find(TextField('Username')).fillIn('folio'),
-      ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
-      ftpSection.find(TextField('Order directory')).fillIn('/files'),
-    ]);
-    cy.do(saveAndClose.click());
+  fillIntegrationInformationWithoutSchedulingWithDifferentInformation: (information) => {
+    if (information.integrationName) {
+      cy.do([
+        Section({ id: 'integrationInfo' })
+          .find(TextField('Integration name*'))
+          .fillIn(information.integrationName),
+      ]);
+    }
+    if (information.integrationDescription) {
+      cy.do([TextArea('Description').fillIn(information.integrationDescription)]);
+    }
+    if (information.integrationType) {
+      cy.do(
+        Section({ id: 'integrationInfo' })
+          .find(Select(including('Integration type')))
+          .choose(information.integrationType),
+      );
+    }
+    if (information.transmissionMethod) {
+      cy.do([Select('Transmission method*').choose(information.transmissionMethod)]);
+    }
+    if (information.fileFormat) {
+      cy.do([Select('File format*').choose(information.fileFormat)]);
+    }
+    if (information.vendorEDICode) {
+      cy.do([ediSection.find(TextField('Vendor EDI code*')).fillIn(information.vendorEDICode)]);
+    }
+    if (information.libraryEDICode) {
+      cy.do([ediSection.find(TextField('Library EDI code*')).fillIn(information.libraryEDICode)]);
+    }
+    if (information.ordersMessageForVendor) {
+      cy.do([
+        ediSection.find(Button({ icon: 'info' })).click(),
+        Checkbox({
+          name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
+        }).click(),
+      ]);
+    }
+    if (information.invoicesMessageForVendor) {
+      cy.do([
+        ediSection.find(Button({ icon: 'info' })).click(),
+        Checkbox({
+          name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice',
+        }).click(),
+      ]);
+    }
+    if (information.accountNumber) {
+      cy.get(
+        'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]',
+      ).select(information.accountNumber);
+    }
+    if (information.acquisitionMethod) {
+      cy.get(
+        'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]',
+      ).select(information.acquisitionMethod);
+    }
+    if (information.ediFTP) {
+      cy.do(ftpSection.find(Select('EDI FTP')).choose(information.ediFTP));
+    }
+    if (information.connectionMode) {
+      cy.do(ftpSection.find(Select('FTP connection mode')).choose(information.connectionMode));
+    }
+    if (information.serverAddress) {
+      cy.do([
+        ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+        ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+        ftpSection.find(TextField('Username')).fillIn('folio'),
+        ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
+        ftpSection.find(TextField('Order directory')).fillIn('/files'),
+      ]);
+    }
   },
 
   editIntegrationInformation: () => {
@@ -714,6 +768,30 @@ export default {
 
   editIntegration: () => {
     cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  duplicateIntegration: () => {
+    cy.do([actionsButton.click(), duplicateButton.click()]);
+  },
+
+  deleteIntegration: () => {
+    cy.do([actionsButton.click(), deleteButton.click()]);
+  },
+
+  confirmDuplicateIntegration: () => {
+    cy.do(
+      Modal({ id: 'duplicate-integration-modal' })
+        .find(Button({ id: 'clickable-duplicate-integration-modal-confirm' }))
+        .click(),
+    );
+  },
+
+  confirmDeleteIntegration: () => {
+    cy.do(
+      Modal({ id: 'integration-remove-confirmation' })
+        .find(Button({ id: 'clickable-integration-remove-confirmation-confirm' }))
+        .click(),
+    );
   },
 
   changeDayOnTommorowInIntegation: (tomorrowDate) => {
@@ -737,6 +815,39 @@ export default {
 
   checkSelectedDayInIntegration(day, isChecked) {
     cy.expect(Checkbox(day).has({ disabled: true, checked: isChecked }));
+  },
+
+  checkTransmissionAndFileFormatState: (isDisabled = true) => {
+    cy.expect([
+      Select('Transmission method*').has({ disabled: isDisabled }),
+      Select('File format*').has({ disabled: isDisabled }),
+    ]);
+  },
+
+  checkFieldsAreRequired: (fieldLabels) => {
+    fieldLabels.forEach((label) => {
+      cy.contains('label', label)
+        .invoke('attr', 'for')
+        .then((inputId) => {
+          cy.get(`#${inputId}`).then(($el) => {
+            const isSelect = $el[0].tagName.toLowerCase() === 'select';
+            cy.wrap($el).should('have.attr', 'aria-invalid', 'true');
+            if (isSelect) {
+              cy.wrap($el)
+                .closest('[class^=selectWrap]')
+                .siblings('div[role="alert"]')
+                .find('[class^=feedbackError]')
+                .should('contain.text', 'Required!');
+            } else {
+              cy.wrap($el)
+                .closest('[class^=formControl]')
+                .siblings('div[role="alert"]')
+                .find('[class^=feedbackError]')
+                .should('contain.text', 'Required!');
+            }
+          });
+        });
+    });
   },
 
   checkIsaDonor: (organization) => {
