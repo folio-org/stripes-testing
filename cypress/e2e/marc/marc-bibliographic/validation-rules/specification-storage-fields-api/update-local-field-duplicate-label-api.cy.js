@@ -60,9 +60,12 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Duplicate Lab
   });
 
   after('Delete test user and cleanup', () => {
+    cy.getAdminToken();
     if (user) {
-      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+    }
+    if (localFieldId) {
+      cy.deleteSpecificationField(localFieldId, false);
     }
   });
 
@@ -97,7 +100,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Duplicate Lab
           label: scenario.label,
           url: 'http://www.example.org/field100.html',
           repeatable: true,
-          required: true,
+          required: false,
         };
 
         cy.updateSpecificationField(localFieldId, updatePayload, true).then((response) => {
