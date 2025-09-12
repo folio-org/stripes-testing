@@ -51,7 +51,13 @@ describe('Fees&Fines', () => {
                     defaultAmount: testData.chargeAmount,
                   }).then((manualCharge) => {
                     testData.manualChargeId = manualCharge.id;
-                    cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+
+                    cy.waitForAuthRefresh(() => {
+                      cy.loginAsAdmin({
+                        path: TopMenu.usersPath,
+                        waiter: UsersSearchPane.waitLoading,
+                      });
+                    });
                     UsersSearchPane.searchByLastName(testData.username);
                     UsersCard.startFeeFine();
                     UserCharge.fillRequiredFields(owner, manualCharge.feeFineType);

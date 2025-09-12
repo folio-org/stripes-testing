@@ -64,9 +64,11 @@ describe('Fees&Fines', () => {
                       id: createdPaymentMethod.id,
                       name: createdPaymentMethod.name,
                     };
-                    cy.loginAsAdmin({
-                      path: TopMenu.usersPath,
-                      waiter: UsersSearchPane.waitLoading,
+                    cy.waitForAuthRefresh(() => {
+                      cy.loginAsAdmin({
+                        path: TopMenu.usersPath,
+                        waiter: UsersSearchPane.waitLoading,
+                      });
                     });
                     UsersSearchPane.searchByUsername(testData.userProperties.username);
                   });
@@ -172,7 +174,6 @@ describe('Fees&Fines', () => {
         Checkout.waitLoading();
         cy.checkOutItem(testData.userProperties.barcode, testData.barcode);
         cy.verifyItemCheckOut();
-
 
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
         // Close fee/fine page
