@@ -9,14 +9,14 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `AT_C430260_UserRole_${getRandomPostfix()}`,
+        roleName: `Auto Role C430260 ${getRandomPostfix()}`,
         roleDescription: `Description C430260 ${getRandomPostfix()}`,
-        firstApplicationName: 'app-licenses',
+        firstApplicationName: 'app-dcb',
         secondApplicationName: 'app-acquisitions',
         capabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance',
+            resource: 'Circulation-Item',
             action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
@@ -26,12 +26,12 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Licenses Files',
+            resource: 'Dcb Transactions Status',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Licenses Admin Action',
+            resource: 'Dcb Transactions',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
@@ -59,23 +59,27 @@ describe('Eureka', () => {
         CapabilitySets.roleCapabilitySets,
       ];
 
-      before('Create user, data', () => {
+      before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitLoading,
+            });
           });
+          AuthorizationRoles.waitContentLoading();
         });
       });
 
-      after('Delete user, data', () => {
+      afterEach(() => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          if (roleId) cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteCapabilitiesFromRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId);
         });
       });
 
