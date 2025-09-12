@@ -141,6 +141,7 @@ describe('Eureka', () => {
 
           // Step 11: Actions > Edit
           AuthorizationRoles.openForEdit();
+          cy.wait(1000);
 
           // Step 12: Click "Select application" button
           AuthorizationRoles.clickSelectApplication();
