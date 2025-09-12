@@ -69,8 +69,8 @@ describe('Fees&Fines', () => {
                         path: TopMenu.usersPath,
                         waiter: UsersSearchPane.waitLoading,
                       });
-                      UsersSearchPane.searchByUsername(testData.userProperties.username);
                     });
+                    UsersSearchPane.searchByUsername(testData.userProperties.username);
                   });
                 });
               });

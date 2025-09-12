@@ -138,9 +138,8 @@ describe('Check out', () => {
           path: TopMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
-        CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
       });
-
+      CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
       CheckOutActions.checkPatronInformation(user.username, userBarcode);
       cy.expect(CheckOutActions.modal.absent());
 
