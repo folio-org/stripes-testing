@@ -204,6 +204,13 @@ describe(
             loanId2 = body.id;
           });
         });
+      cy.waitForAuthRefresh(() => {
+        cy.login(renewUserData.username, renewUserData.password, {
+          path: RenewalActions.generateInitialLink(renewUserData.id, loanId1),
+          waiter: () => cy.wait(10000),
+        });
+        RenewalActions.renewWithoutOverrideAccess(itemData1);
+      });
     });
 
     afterEach(() => {
@@ -246,16 +253,13 @@ describe(
       'C568 Renewal: failure because loan is not renewable (vega)',
       { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C568'] },
       () => {
-        cy.login(renewUserData.username, renewUserData.password, {
-          path: RenewalActions.generateInitialLink(renewUserData.id, loanId1),
-          waiter: () => cy.wait(10000),
+        cy.waitForAuthRefresh(() => {
+          cy.login(renewOverrideUserData.username, renewOverrideUserData.password, {
+            path: RenewalActions.generateInitialLink(renewOverrideUserData.id, loanId2),
+            waiter: () => cy.wait(10000),
+          });
         });
-        RenewalActions.renewWithoutOverrideAccess(itemData1);
 
-        cy.login(renewOverrideUserData.username, renewOverrideUserData.password, {
-          path: RenewalActions.generateInitialLink(renewOverrideUserData.id, loanId2),
-          waiter: () => cy.wait(10000),
-        });
         RenewalActions.renewWithOverrideAccess(itemData2);
         RenewalActions.startOverriding(itemData2);
         RenewalActions.fillOverrideInfo();
