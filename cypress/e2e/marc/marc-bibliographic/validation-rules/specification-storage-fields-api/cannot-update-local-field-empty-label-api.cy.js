@@ -66,9 +66,12 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Empty 
   });
 
   after('Delete test user and cleanup', () => {
+    cy.getAdminToken();
     if (user) {
-      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+    }
+    if (localFieldId) {
+      cy.deleteSpecificationField(localFieldId, false);
     }
   });
 
@@ -86,7 +89,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Empty 
         tag: LOCAL_FIELD_TAG,
         url: 'http://www.example.org/field993.html',
         repeatable: true,
-        required: true,
+        required: false,
       };
       const labelValidationScenarios = [
         {
