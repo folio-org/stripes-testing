@@ -216,7 +216,7 @@ const openItemByBarcode = (itemBarcode) => {
   cy.wait(500);
   cy.do(
     instanceDetailsSection
-      .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
