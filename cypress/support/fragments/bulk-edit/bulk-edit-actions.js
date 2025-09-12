@@ -917,6 +917,7 @@ export default {
         .find(MultiSelect({ id: 'statisticalCodes' }))
         .select(value),
     );
+    cy.wait(500);
   },
 
   verifyValueInSecondTextArea(value, rowIndex = 0) {
@@ -1388,12 +1389,16 @@ export default {
     this.clickOptionsSelection();
   },
 
-  verifyOptionExistsInSelectOptionDropdown(option) {
+  verifyOptionExistsInSelectOptionDropdown(option, isExists = true) {
     cy.then(() => {
       SelectionList({ placeholder: 'Filter options list' })
         .optionList()
         .then((list) => {
-          expect(list).to.include(option);
+          if (isExists) {
+            expect(list).to.include(option);
+          } else {
+            expect(list).to.not.include(option);
+          }
         });
     });
   },
