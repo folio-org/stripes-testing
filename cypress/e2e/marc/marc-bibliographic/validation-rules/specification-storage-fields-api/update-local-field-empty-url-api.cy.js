@@ -54,9 +54,12 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Empty URL API
   });
 
   after('Delete test user and cleanup', () => {
+    cy.getAdminToken();
     if (user) {
-      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+    }
+    if (localFieldId) {
+      cy.deleteSpecificationField(localFieldId, false);
     }
   });
 
@@ -72,7 +75,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Empty URL API
         tag: LOCAL_FIELD_TAG,
         label: 'Test name',
         repeatable: true,
-        required: true,
+        required: false,
       };
 
       cy.updateSpecificationField(localFieldId, updatePayloadWithoutUrl).then((updateResp) => {
@@ -82,7 +85,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Empty URL API
         expect(updateResp.body.label).to.eq('Test name');
         expect(updateResp.body.tag).to.eq(LOCAL_FIELD_TAG);
         expect(updateResp.body.repeatable).to.eq(true);
-        expect(updateResp.body.required).to.eq(true);
+        expect(updateResp.body.required).to.eq(false);
         // The url field should not be present in response when not provided in request
         expect(updateResp.body).to.not.have.property('url');
       });
@@ -93,7 +96,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Empty URL API
         label: 'Test name',
         url: '',
         repeatable: true,
-        required: true,
+        required: false,
       };
 
       cy.updateSpecificationField(localFieldId, updatePayloadWithEmptyUrl, false).then(
