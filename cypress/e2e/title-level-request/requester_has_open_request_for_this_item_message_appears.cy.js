@@ -92,10 +92,14 @@ describe('Title Level Request. Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: RequestsSearchResultsPane.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: RequestsSearchResultsPane.waitLoading,
+        });
       });
+
       // create item-level request for user
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);

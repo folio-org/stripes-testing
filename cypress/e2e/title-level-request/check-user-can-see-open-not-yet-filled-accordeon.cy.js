@@ -151,9 +151,12 @@ describe('Title Level Request. Request detail', () => {
       }).then((request) => {
         requestIds.push(request.body.id);
       });
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
     });
   });

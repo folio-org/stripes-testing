@@ -150,8 +150,10 @@ describe('Fees&Fines', () => {
           });
           // there are three steps to visit users application because in this case we are getting all needed requests and responses.
           cy.login(username, password);
-          cy.visit(TopMenu.usersPath);
-          UsersSearchResultsPane.waitLoading();
+          cy.waitForAuthRefresh(() => {
+            cy.visit(TopMenu.usersPath);
+            UsersSearchResultsPane.waitLoading();
+          });
         });
       });
     });

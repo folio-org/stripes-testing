@@ -134,9 +134,11 @@ describe('Create Item or Title level request', () => {
         servicePointId: testData.userServicePoint.id,
         userBarcode: userData.barcode,
       });
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
     });
   });

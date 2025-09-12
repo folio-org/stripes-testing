@@ -174,9 +174,11 @@ describe('Request Detail. TLR', () => {
         });
       })
       .then(() => {
-        cy.login(users.mainUser.username, users.mainUser.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(users.mainUser.username, users.mainUser.password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
         });
       });
   });

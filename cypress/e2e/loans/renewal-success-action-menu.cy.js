@@ -51,9 +51,12 @@ describe('Loans', () => {
             servicePointId: testData.servicePoint.id,
             userBarcode: testData.user.barcode,
           });
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchPane.waitLoading,
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.usersPath,
+              waiter: UsersSearchPane.waitLoading,
+            });
           });
         },
       );

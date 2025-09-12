@@ -47,10 +47,14 @@ describe('Title Level Request', () => {
           testData.user.userId,
           testData.userServicePoint.id,
         );
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
+
         UsersSearchPane.searchByKeywords(testData.user.username);
         UsersSearchPane.openUser(testData.user.username);
         UsersCard.waitLoading();
