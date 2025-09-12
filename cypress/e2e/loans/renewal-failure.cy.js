@@ -209,8 +209,8 @@ describe(
           path: RenewalActions.generateInitialLink(renewUserData.id, loanId1),
           waiter: () => cy.wait(10000),
         });
-        RenewalActions.renewWithoutOverrideAccess(itemData1);
       });
+      RenewalActions.renewWithoutOverrideAccess(itemData1);
     });
 
     afterEach(() => {
