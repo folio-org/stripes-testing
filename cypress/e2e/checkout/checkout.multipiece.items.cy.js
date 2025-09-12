@@ -133,11 +133,14 @@ describe('Check out', () => {
     'C591 Check out: multipiece items (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C591'] },
     () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.checkOutPath,
-        waiter: Checkout.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
+        CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
       });
-      CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
+
       CheckOutActions.checkPatronInformation(user.username, userBarcode);
       cy.expect(CheckOutActions.modal.absent());
 
