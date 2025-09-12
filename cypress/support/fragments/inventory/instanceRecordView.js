@@ -106,20 +106,32 @@ const viewSource = () => {
   cy.do(viewSourceButton.click());
 };
 
-const verifyAdministrativeNote = (value) => {
-  cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+const verifyAdministrativeNote = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+  } else {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).absent());
+  }
 };
 
 const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
-const verifyStatisticalCode = (value) => {
-  cy.expect(
-    MultiColumnList({ id: 'list-statistical-codes' })
-      .find(MultiColumnListCell({ content: value }))
-      .exists(),
-  );
+const verifyStatisticalCode = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .exists(),
+    );
+  } else {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .absent(),
+    );
+  }
 };
 
 const verifyStatisticalCodeTypeAndName = (type, name) => {
