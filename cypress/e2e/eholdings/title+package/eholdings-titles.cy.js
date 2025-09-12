@@ -32,9 +32,11 @@ describe('eHoldings', () => {
           permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
           eHoldingSearch.switchToTitles();
           eHoldingsTitlesSearch.bySubject('chemical engineering');
@@ -65,9 +67,11 @@ describe('eHoldings', () => {
         cy.getAdminToken();
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
           eHoldingSearch.switchToTitles();
 
@@ -129,9 +133,11 @@ describe('eHoldings', () => {
           userId = userProperties.userId;
 
           eHoldingsTitles.getSelectedNotCustomTitleViaApi('test').then((specialTitle) => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: `${TopMenu.eholdingsPath}/titles/${specialTitle.id}`,
-              waiter: () => eHoldingsTitle.waitLoading(specialTitle.name),
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: `${TopMenu.eholdingsPath}/titles/${specialTitle.id}`,
+                waiter: () => eHoldingsTitle.waitLoading(specialTitle.name),
+              });
             });
             eHoldingsTitle.waitPackagesLoading();
             eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
@@ -160,9 +166,11 @@ describe('eHoldings', () => {
         ]).then((userProperties) => {
           userId = userProperties.userId;
           eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.eholdingsPath,
-              waiter: eHoldingsTitlesSearch.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.eholdingsPath,
+                waiter: eHoldingsTitlesSearch.waitLoading,
+              });
             });
             eHoldingSearch.switchToTitles();
             const title = eHoldingsTitles.create(packageName);
@@ -179,9 +187,11 @@ describe('eHoldings', () => {
         cy.getAdminToken();
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
 
           const title = 'Journal of Fish Biology';
@@ -203,9 +213,12 @@ describe('eHoldings', () => {
         cy.getAdminToken();
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
 
           const selectedResource = {

@@ -114,7 +114,7 @@ describe('Inventory', () => {
           cy.expect(MultiColumnList().exists());
 
           InventorySearchAndFilter.searchByParameter(
-            'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+            'Keyword (title, contributor, identifier, HRID, UUID)',
             title,
           );
           FilterItems.selectInstance(title);
