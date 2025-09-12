@@ -289,9 +289,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C813676_Item', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Item — Electronic access');
-          QueryModal.clickShowColumnsButton();
 
           let expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
