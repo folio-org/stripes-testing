@@ -40,9 +40,7 @@ describe('eHoldings', () => {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
-          cy.reload();
-          EHoldingsTitlesSearch.waitLoading();
-        }, 20_000);
+        });
 
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);

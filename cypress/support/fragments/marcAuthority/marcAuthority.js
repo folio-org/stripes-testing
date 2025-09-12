@@ -62,97 +62,26 @@ const defaultAuthority = {
   status: 'Current',
   name: 'oneMarcAuthority.mrc',
   tag008AuthorityBytesProperties: {
-    geoSubd: { interactor: Select('Geo Subd'), defaultValue: 'n - Not applicable', newValue: 'v' },
-    roman: {
-      interactor: Select(or('Roman', 'Roman*')),
-      defaultValue: '| - No attempt to code',
-      newValue: 'v',
-    },
-    lang: {
-      interactor: Select('Lang'),
-      defaultValue: '\\ - No information provided',
-      newValue: 'v',
-    },
-    kindRec: {
-      interactor: Select(or('Kind rec', 'Kind rec*')),
-      defaultValue: 'a - Established heading',
-      newValue: 'v',
-    },
-    catRules: {
-      interactor: Select(or('CatRules', 'CatRules*')),
-      defaultValue: 'c - AACR 2',
-      newValue: 'v',
-    },
-    sHSys: {
-      interactor: Select(or('SH Sys', 'SH Sys*')),
-      defaultValue: 'a - Library of Congress Subject Headings',
-      newValue: 'v',
-    },
-    series: {
-      interactor: Select(or('Series', 'Series*')),
-      defaultValue: 'n - Not applicable',
-      newValue: 'v',
-    },
-    numbSeries: {
-      interactor: Select(or('Numb Series', 'Numb Series*')),
-      defaultValue: 'n - Not applicable',
-      newValue: 'v',
-    },
-    mainUse: {
-      interactor: Select(or('Main use', 'Main use*')),
-      defaultValue: 'a - Appropriate',
-      newValue: 'v',
-    },
-    subjUse: {
-      interactor: Select(or('Subj use', 'Subj use*')),
-      defaultValue: 'a - Appropriate',
-      newValue: 'v',
-    },
-    seriesUse: {
-      interactor: Select(or('Series use', 'Series use*')),
-      defaultValue: 'a - Appropriate',
-      newValue: 'v',
-    },
-    subdType: {
-      interactor: Select(or('Subd type', 'Subd type*')),
-      defaultValue: 'n - Not applicable',
-      newValue: 'v',
-    },
-    govtAg: {
-      interactor: Select('Govt Ag'),
-      defaultValue: '| - No attempt to code',
-      newValue: 'v',
-    },
-    refEval: {
-      interactor: Select(or('RefEval', 'RefEval*')),
-      defaultValue: 'a - Tracings are consistent with the heading',
-      newValue: 'v',
-    },
-    recUpd: {
-      interactor: Select(or('RecUpd', 'RecUpd*')),
-      defaultValue: 'a - Record can be used',
-      newValue: 'v',
-    },
-    persName: {
-      interactor: Select(or('Pers Name', 'Pers Name*')),
-      defaultValue: 'a - Differentiated personal name',
-      newValue: 'v',
-    },
-    levelEst: {
-      interactor: Select(or('Level Est', 'Level Est*')),
-      defaultValue: 'a - Fully established',
-      newValue: 'v',
-    },
-    modRec: {
-      interactor: Select('Mod Rec'),
-      defaultValue: '\\ - Not modified',
-      newValue: 'v',
-    },
-    source: {
-      interactor: Select('Source'),
-      defaultValue: '\\ - National bibliographic agency',
-      newValue: 'v',
-    },
+    geoSubd: { interactor: TextField('Geo Subd'), defaultValue: 'n', newValue: 'v' },
+    roman: { interactor: TextField('Roman'), defaultValue: '|', newValue: 'v' },
+    lang: { interactor: TextField('Lang'), defaultValue: '\\', newValue: 'v' },
+    kindRec: { interactor: TextField('Kind rec'), defaultValue: 'a', newValue: 'v' },
+    catRules: { interactor: TextField('CatRules'), defaultValue: 'c', newValue: 'v' },
+    sHSys: { interactor: TextField('SH Sys'), defaultValue: 'a', newValue: 'v' },
+    series: { interactor: TextField('Series'), defaultValue: 'n', newValue: 'v' },
+    numbSeries: { interactor: TextField('Numb Series'), defaultValue: 'n', newValue: 'v' },
+    mainUse: { interactor: TextField('Main use'), defaultValue: 'a', newValue: 'v' },
+    subjUse: { interactor: TextField('Subj use'), defaultValue: 'a', newValue: 'v' },
+    seriesUse: { interactor: TextField('Series use'), defaultValue: 'b', newValue: 'v' },
+    subdType: { interactor: TextField('Subd type'), defaultValue: 'n', newValue: 'v' },
+    govtAg: { interactor: TextField('Govt Ag'), defaultValue: '|', newValue: 'v' },
+    refEval: { interactor: TextField('RefEval'), defaultValue: 'a', newValue: 'v' },
+    recUpd: { interactor: TextField('RecUpd'), defaultValue: 'a', newValue: 'v' },
+    persName: { interactor: TextField('Pers Name'), defaultValue: 'a', newValue: 'v' },
+    levelEst: { interactor: TextField('Level Est'), defaultValue: 'a', newValue: 'v' },
+    modRecEst: { interactor: TextField('Mod Rec Est'), defaultValue: '\\', newValue: 'v' },
+    source: { interactor: TextField('Source'), defaultValue: '\\', newValue: 'v' },
+
     getAllProperties: () => {
       return Object.values(defaultAuthority.tag008AuthorityBytesProperties).filter(
         (objectProperty) => typeof objectProperty !== 'function',
@@ -178,32 +107,6 @@ const defaultAuthority = {
 };
 
 const detailsPaneHeader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
-const langOptions = {
-  '\\': '\\ - No information provided',
-  b: 'b - English and French',
-  e: 'e - English only',
-  f: 'f - French only',
-  '|': '| - No attempt to code',
-};
-const kindRecOptions = {
-  a: 'a - Established heading',
-  b: 'b - Untraced reference',
-  c: 'c - Traced reference',
-  d: 'd - Subdivision',
-  e: 'e - Node label',
-  f: 'f - Established heading and subdivision',
-  g: 'g - Reference and subdivision',
-  '|': '| - No attempt to code',
-};
-const catRulesOptions = {
-  a: 'a - Earlier rules',
-  b: 'b - AACR 1',
-  c: 'c - AACR 2',
-  d: 'd - AACR 2 compatible heading',
-  z: 'z - Other',
-  n: 'n - Not applicable',
-  '|': '| - No attempt to code',
-};
 
 export default {
   defaultAuthority,
@@ -309,9 +212,9 @@ export default {
   },
   change008Field: (lang, kindrec, catrules) => {
     cy.do([
-      Select('Lang').choose(langOptions[lang]),
-      Select('Kind rec').choose(kindRecOptions[kindrec]),
-      Select('CatRules').choose(catRulesOptions[catrules]),
+      TextField('Lang').fillIn(lang),
+      TextField('Kind rec').fillIn(kindrec),
+      TextField('CatRules').fillIn(catrules),
     ]);
   },
 
@@ -339,8 +242,8 @@ export default {
     cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
   },
   checkPresentedColumns: (presentedColumns) => presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
-  check008Field: (lang) => {
-    cy.do([Select('Lang').choose(langOptions[lang])]);
+  check008Field: (lang = 'eng') => {
+    cy.do(TextField('Lang').fillIn(lang));
   },
   checkRemovedTag: (rowIndex) => {
     cy.do([

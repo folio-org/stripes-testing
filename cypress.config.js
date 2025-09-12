@@ -25,7 +25,7 @@ module.exports = defineConfig({
     openMode: 0,
   },
   numTestsKeptInMemory: 1,
-  watchForFileChanges: true,
+  watchForFileChanges: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
@@ -33,10 +33,10 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    OKAPI_HOST: 'https://kong-bugfest-sunflower-aqa.int.aws.folio.org',
+    OKAPI_TENANT: 'fs09000003',
+    diku_login: 'folio-aqa',
+    diku_password: 'folio-aqa',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
@@ -153,7 +153,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: 'https://bugfest-sunflower-aqa.int.aws.folio.org',
     testIsolation: false,
   },
 });

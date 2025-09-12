@@ -96,9 +96,11 @@ describe('MARC', () => {
       });
 
       beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
       });
 
@@ -147,9 +149,9 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.change008Field('b', 'f', 'a');
+          MarcAuthority.change008Field('x', 'x', 'x');
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
-          MarcAuthority.contains('bfa');
+          MarcAuthority.contains('xxx');
         },
       );
 
