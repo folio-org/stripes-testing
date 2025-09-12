@@ -98,13 +98,13 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(optionToSelect);
         let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectAction('Clear field');
+        BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow(optionToSelect);
         BulkEditActions.deleteRow(1);
         BulkEditActions.selectOption(optionToSelect);
-        BulkEditActions.selectAction('Find (full field search)');
+        BulkEditActions.selectSecondAction('Find (full field search)');
         BulkEditActions.verifyActionSelected('Find (full field search)');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);

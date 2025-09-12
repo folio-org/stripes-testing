@@ -319,7 +319,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL relationship');
-          BulkEditActions.selectAction('Find (full field search)');
+          BulkEditActions.selectSecondAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);
           BulkEditActions.selectSecondAction('Replace with');

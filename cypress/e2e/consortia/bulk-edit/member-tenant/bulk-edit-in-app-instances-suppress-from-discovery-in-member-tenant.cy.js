@@ -220,8 +220,8 @@ describe('Bulk-edit', () => {
             BulkEditActions.verifyRowIcons();
             BulkEditActions.selectOption('Suppress from discovery');
             BulkEditActions.verifyOptionSelected('Suppress from discovery');
-            BulkEditActions.selectAction(suppressFromDiscoveryParam.action);
-            BulkEditActions.verifyActionSelected(suppressFromDiscoveryParam.action);
+            BulkEditActions.selectSecondAction(suppressFromDiscoveryParam.action);
+            BulkEditActions.verifySecondActionSelected(suppressFromDiscoveryParam.action);
 
             if (suppressFromDiscoveryParam.newValue === 'false') {
               BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
