@@ -172,9 +172,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield(folioInstance.id, 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Statements for supplements');
-          QueryModal.clickShowColumnsButton();
 
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 

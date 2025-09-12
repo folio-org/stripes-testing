@@ -231,9 +231,6 @@ describe('Bulk-edit', () => {
             `(holdings.administrative_notes == Geography & Map Reading Room) AND (holdings.instance_id == ${folioInstance.id})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Notes');
-          QueryModal.clickShowColumnsButton();
 
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 
