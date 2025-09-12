@@ -106,8 +106,12 @@ const viewSource = () => {
   cy.do(viewSourceButton.click());
 };
 
-const verifyAdministrativeNote = (value) => {
-  cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+const verifyAdministrativeNote = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+  } else {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).absent());
+  }
 };
 
 const verifyInstanceNote = (value) => {
