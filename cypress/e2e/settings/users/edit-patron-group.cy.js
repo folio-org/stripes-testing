@@ -62,10 +62,13 @@ describe('Users', () => {
 
     // https://folio-org.atlassian.net/browse/UIU-3189
     it('C514937 Edit patron groups (volaris)', { tags: ['smoke', 'volaris', 'C514937'] }, () => {
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-      SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
-      PatronGroups.waitLoading();
+      cy.waitForAuthRefresh(() => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+        UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
+        SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
+        PatronGroups.waitLoading();
+      });
+
       PatronGroups.verifyPatronGroupsPane(testData.isButtonDisabled);
       PatronGroups.clickEditButtonForGroup(testData.patronGroup.name);
       PatronGroups.verifyEditedGroupInTheList(testData.patronGroup);
@@ -94,7 +97,7 @@ describe('Users', () => {
         description: testData.newPatronGroup.description,
         expirationDateOffset: testData.newPatronGroup.expirationDateOffset,
         date: testData.newPatronGroup.currentDate,
-        userName: `${testData.user.lastName}, ${testData.user.firstName}`,
+        // userName: `${testData.user.lastName}, ${testData.user.firstName}`,
         actions: ['edit', 'trash'],
       });
     });

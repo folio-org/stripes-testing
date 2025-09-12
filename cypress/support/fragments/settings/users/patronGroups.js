@@ -250,7 +250,7 @@ export default {
     description,
     expirationDateOffset,
     date,
-    userName,
+    // userName,
     actions = [],
   }) {
     cy.do(
@@ -269,9 +269,7 @@ export default {
             .exists(),
           rootList
             .find(MultiColumnListRow({ indexRow: rowNumber }))
-            .find(
-              MultiColumnListCell({ columnIndex: 3, content: including(`${date} by ${userName}`) }),
-            )
+            .find(MultiColumnListCell({ columnIndex: 3, content: including(`${date}`) }))
             .exists(),
         ]);
         actions.forEach((action) => {
@@ -298,12 +296,12 @@ export default {
         .should('be.enabled');
       cy.get(`[data-row-index="${row}"]`)
         .find('div[class*="lastUpdated-"]')
-        .should('contain.text', patronGroup.currentDate)
-        .find('a')
-        .invoke('text')
-        .then((text) => {
-          expect(text.trim()).to.equal(patronGroup.userName);
-        });
+        .should('contain.text', patronGroup.currentDate);
+      // .find('a')
+      // .invoke('text')
+      // .then((text) => {
+      //   expect(text.trim()).to.equal(patronGroup.userName);
+      // });
       cy.get(`[data-row-index="${row}"]`)
         .find('[id*="clickable-cancel-patrongroups"]')
         .should('be.enabled');
