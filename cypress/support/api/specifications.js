@@ -93,11 +93,12 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getSpecificationFieldSubfields', (fieldId) => {
+Cypress.Commands.add('getSpecificationFieldSubfields', (fieldId, failOnStatusCode = true) => {
   return cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: `specification-storage/fields/${fieldId}/subfields`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   });
 });
 
@@ -123,11 +124,12 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getSpecificationFieldIndicators', (fieldId) => {
+Cypress.Commands.add('getSpecificationFieldIndicators', (fieldId, failOnStatusCode = true) => {
   return cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: `specification-storage/fields/${fieldId}/indicators`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   });
 });
 
@@ -157,11 +159,12 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getSpecificationIndicatorCodes', (indicatorId) => {
+Cypress.Commands.add('getSpecificationIndicatorCodes', (indicatorId, failOnStatusCode = true) => {
   return cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: `specification-storage/indicators/${indicatorId}/indicator-codes`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   });
 });
 
