@@ -1417,9 +1417,9 @@ export const ADVANCED_SEARCH_MODIFIERS = {
 };
 
 export const BULK_EDIT_FORMS = {
-  PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
+  PREVIEW_OF_RECORDS_MATCHED: 'Preview of record matched',
   ARE_YOU_SURE: 'Are you sure',
-  PREVIEW_OF_RECORDS_CHANGED: 'Preview of records changed',
+  PREVIEW_OF_RECORDS_CHANGED: 'Preview of record changed',
 };
 
 export const INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES = {

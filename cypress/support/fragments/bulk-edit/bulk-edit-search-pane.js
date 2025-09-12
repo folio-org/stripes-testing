@@ -20,8 +20,8 @@ import {
 import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
 
-const previewOfRecordsMatchedFormName = 'Preview of records matched';
-const previewOfRecordsChangedFormName = 'Preview of records changed';
+const previewOfRecordsMatchedFormName = 'Preview of record matched';
+const previewOfRecordsChangedFormName = 'Preview of record changed';
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
 const changesAccordion = Accordion(previewOfRecordsChangedFormName);
