@@ -199,7 +199,7 @@ describe(
 
           BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
           BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
-          BulkEditActions.selectAction(actionsToSelect.find);
+          BulkEditActions.selectSecondAction(actionsToSelect.find);
           BulkEditActions.verifyActionSelected(actionsToSelect.find);
           BulkEditActions.verifyTheSecondActionOptions(secondActionOptions);
           BulkEditActions.verifyConfirmButtonDisabled(true);
@@ -213,7 +213,7 @@ describe(
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption(HOLDING_NOTE_TYPES.REPRODUCTION, 1);
           BulkEditActions.verifyTheActionOptions(reproductionNoteActionOptions, 1);
-          BulkEditActions.selectAction(actionsToSelect.find, 1);
+          BulkEditActions.selectSecondAction(actionsToSelect.find, 1);
           BulkEditActions.verifyActionSelected(actionsToSelect.find, 1);
           BulkEditActions.verifyTheSecondActionOptions(secondActionOptions, 1);
           BulkEditActions.verifyConfirmButtonDisabled(true);
@@ -226,7 +226,7 @@ describe(
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE, 2);
-          BulkEditActions.selectAction(actionsToSelect.find, 2);
+          BulkEditActions.selectSecondAction(actionsToSelect.find, 2);
           BulkEditActions.verifyActionSelected(actionsToSelect.find, 2);
           BulkEditActions.fillInFirstTextArea(nonExistentNoteText, 2);
           BulkEditActions.verifyValueInFirstTextArea(nonExistentNoteText, 2);

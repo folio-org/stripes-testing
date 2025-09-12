@@ -215,8 +215,8 @@ describe('Bulk-edit', () => {
             BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.selectOption(staffSuppressOption);
             BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-            BulkEditActions.selectAction(actions.setTrue);
-            BulkEditActions.verifyActionSelected(actions.setTrue);
+            BulkEditActions.selectSecondAction(actions.setTrue);
+            BulkEditActions.verifySecondActionSelected(actions.setTrue);
             BulkEditActions.verifyCheckboxAbsent();
             BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
@@ -312,8 +312,8 @@ describe('Bulk-edit', () => {
                 BulkEditActions.openStartBulkEditFolioInstanceForm();
                 BulkEditActions.selectOption(staffSuppressOption);
                 BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-                BulkEditActions.selectAction(actions.setFalse);
-                BulkEditActions.verifyActionSelected(actions.setFalse);
+                BulkEditActions.selectSecondAction(actions.setFalse);
+                BulkEditActions.verifySecondActionSelected(actions.setFalse);
                 BulkEditActions.verifyCheckboxAbsent();
                 BulkEditActions.verifyConfirmButtonDisabled(false);
                 BulkEditActions.confirmChanges();

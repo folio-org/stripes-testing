@@ -210,7 +210,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
           );
-          BulkEditActions.selectAction('Remove');
+          BulkEditActions.selectSecondAction('Remove');
           BulkEditActions.selectStatisticalCodeValue(statisticalCode.fullName);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();

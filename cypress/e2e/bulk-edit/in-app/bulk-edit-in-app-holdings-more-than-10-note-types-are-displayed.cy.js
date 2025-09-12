@@ -138,8 +138,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(createdNoteTypes[0]);
         BulkEditActions.verifyOptionSelected(createdNoteTypes[0]);
         cy.wait(1000);
-        BulkEditActions.selectAction(actionsToSelect.changeNoteType);
-        BulkEditActions.verifyActionSelected(actionsToSelect.changeNoteType);
+        BulkEditActions.selectSecondAction(actionsToSelect.changeNoteType);
+        BulkEditActions.verifySecondActionSelected(actionsToSelect.changeNoteType);
 
         const defaultNoteTypes = Object.values(HOLDING_NOTE_TYPES);
         const createdNoteTypesWithoutSelected = createdNoteTypes.slice(1);

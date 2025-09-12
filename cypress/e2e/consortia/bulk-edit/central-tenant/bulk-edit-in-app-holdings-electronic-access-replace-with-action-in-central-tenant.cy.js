@@ -319,8 +319,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL relationship');
-          BulkEditActions.selectAction('Replace with');
-          BulkEditActions.verifyActionSelected('Replace with');
+          BulkEditActions.selectSecondAction('Replace with');
+          BulkEditActions.verifySecondActionSelected('Replace with');
           BulkEditActions.selectFromUnchangedSelect(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();

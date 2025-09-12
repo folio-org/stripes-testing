@@ -252,7 +252,7 @@ describe('Bulk-edit', () => {
           fieldsToClear.forEach((field, rowIndex) => {
             // Step 7-13: Select option and clear field for each
             BulkEditActions.selectOption(field, rowIndex);
-            BulkEditActions.selectAction('Clear field', rowIndex);
+            BulkEditActions.selectSecondAction('Clear field', rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);
             if (rowIndex < fieldsToClear.length - 1) {
               BulkEditActions.addNewBulkEditFilterString();
