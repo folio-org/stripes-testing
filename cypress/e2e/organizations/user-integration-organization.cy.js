@@ -4,9 +4,9 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
-describe('ui-organizations: EDI convention in Organization Integration', () => {
+describe('Organizations', () => {
   let userId;
   const organization = {
     ...newOrganization.defaultUiOrganizations,
@@ -53,13 +53,9 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       userId = userProperties.userId;
-      cy.waitForAuthRefresh(() => {
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.organizationsPath,
-          waiter: Organizations.waitLoading,
-        });
-      });
+      cy.login(userProperties.username, userProperties.password);
     });
+    TopMenuNavigation.navigateToApp('Organizations');
   });
 
   after(() => {

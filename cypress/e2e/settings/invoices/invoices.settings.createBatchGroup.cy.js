@@ -11,12 +11,8 @@ describe('ui-invoices-settings: Batch Group creation', () => {
         newBatchGroup.source = adminSourceRecord;
       });
     });
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.invoiceBatchGroupsPath,
-        waiter: SettingsInvoices.waitBatchGroupsLoading,
-      });
-    });
+    cy.loginAsAdmin();
+    cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 
   it(

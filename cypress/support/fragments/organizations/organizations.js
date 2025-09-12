@@ -1714,19 +1714,30 @@ export default {
     integartionDescription2,
   ) => {
     cy.do([openintegrationDetailsSectionButton.click()]);
-    const assertPair = (name, desc) => cy.do(
+    cy.expect(
       listIntegrationConfigs
-        .find(MultiColumnListCell({ columnIndex: 0, content: including(name) }))
-        .perform((el) => {
-          cy.wrap(el)
-            .parents('[role="row"]')
-            .find('[role="gridcell"]')
-            .eq(1)
-            .should('contain.text', desc);
-        }),
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: integrationName1 }),
     );
-    assertPair(integrationName1, integartionDescription1);
-    assertPair(integrationName2, integartionDescription2);
+    cy.expect(
+      listIntegrationConfigs
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: integartionDescription1 }),
+    );
+    cy.expect(
+      listIntegrationConfigs
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: integrationName2 }),
+    );
+    cy.expect(
+      listIntegrationConfigs
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: integartionDescription2 }),
+    );
   },
 
   deleteOrganization: (confirm = true) => {
