@@ -244,9 +244,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C805784_Item', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Item — Notes');
-          QueryModal.clickShowColumnsButton();
 
           let expectedItemsToFind = [expectedItems[0], expectedItems[2], expectedItems[3]];
 
