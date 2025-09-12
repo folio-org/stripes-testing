@@ -9,7 +9,6 @@ import {
   KeyValue,
   List,
   ListItem,
-  MessageBanner,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -61,7 +60,7 @@ const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclos
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
-  patronHasBlocksInPlace: 'Patron has block in place.',
+  patronHasBlocksInPlace: 'Patron has block(s) in place',
 };
 const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
 const newNoteButton = notesSection.find(Button({ id: 'note-create-button' }));
@@ -504,7 +503,7 @@ export default {
   startFeeFine: () => {
     cy.wait(500);
     cy.do(actionsButton.click());
-    cy.do(Button('New fee/fine').click());
+    cy.do(Button('Create fee/fine').click());
     cy.wait(500);
   },
 
@@ -563,7 +562,7 @@ export default {
   },
 
   hasSaveError(errorMessage) {
-    cy.expect(rootSection.find(MessageBanner()).has({ textContent: errorMessage }));
+    cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
   },
   startFeeFineAdding() {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
