@@ -113,6 +113,43 @@ export default {
     }
   },
 
+  verifyVersionHistoryCardWithTime(
+    index = 0,
+    date, // уже "9/11/2025, 5:34 PM"
+    firstName,
+    lastName,
+    isOriginal = true,
+    isCurrent = false,
+  ) {
+    let dateTime;
+
+    if (!date) {
+      // нет параметра — универсальный формат
+      dateTime = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)/;
+    } else {
+      // мы заранее подготовили строку через replace(' ', ', ')
+      const escaped = date.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      dateTime = new RegExp(`^${escaped}$`);
+    }
+
+    const source = lastName && firstName ? `Source: ${lastName}, ${firstName}` : '';
+    const targetCard = rootSection.find(Card({ index }));
+
+    cy.expect([
+      targetCard.has({ headerStart: matching(dateTime) }),
+      targetCard.has({ text: including(source) }),
+    ]);
+
+    if (isOriginal) {
+      cy.expect(targetCard.has({ text: including('Original version') }));
+    } else {
+      cy.expect(targetCard.has({ text: including('Changed') }));
+      if (isCurrent) {
+        cy.expect(targetCard.has({ text: including('Current version') }));
+      }
+    }
+  },
+
   checkChangeForCard(index, changeText, action, isShown = true) {
     const targetCard = rootSection.find(Card({ index }));
     const bullet = `${changeText} (${action})`;
