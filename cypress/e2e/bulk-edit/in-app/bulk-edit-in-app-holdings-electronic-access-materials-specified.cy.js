@@ -93,7 +93,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('Materials specified');
         let possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectAction('Clear field');
+        BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('Materials specified');

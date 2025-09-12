@@ -254,13 +254,13 @@ describe('Bulk-edit', () => {
           // Step 7: Select "URL relationship" from the "Electronic access" option
           BulkEditActions.selectOption('URL relationship');
           // Step 8: Select "Find (full field search)" action
-          BulkEditActions.selectAction('Find (full field search)');
+          BulkEditActions.selectSecondAction('Find (full field search)');
           // Step 9: Check displayed URL relationship types (should only show local)
           BulkEditActions.checkTypeExists(localUrlRelationshipName);
           // Step 10: Select shared URL relationship type (should not be available, so select local)
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);
           // Step 11: Select "Replace with" action
-          BulkEditActions.selectAction('Replace with');
+          BulkEditActions.selectSecondAction('Replace with');
           // Step 12: Select local URL relationship type
           BulkEditActions.selectFromUnchangedSelect(localUrlRelationshipName);
           BulkEditActions.verifyConfirmButtonDisabled(false);

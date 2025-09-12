@@ -90,14 +90,14 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('URI');
         const possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectAction('Clear field');
+        BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('URI');
         BulkEditActions.deleteRow(1);
         BulkEditActions.noteReplaceWith('URI', item.uri, item.newUri);
-        BulkEditActions.selectAction('Replace with');
-        BulkEditActions.fillInFirstTextArea(item.lastUri);
+        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.fillInSecondTextArea(item.lastUri);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [item.lastUri]);
         BulkEditActions.downloadPreview();

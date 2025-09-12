@@ -350,13 +350,13 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
-          BulkEditActions.selectAction('Clear field');
+          BulkEditActions.selectSecondAction('Clear field');
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary item location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary item location', 1);
-          BulkEditActions.selectAction('Clear field', 1);
+          BulkEditActions.selectSecondAction('Clear field', 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);

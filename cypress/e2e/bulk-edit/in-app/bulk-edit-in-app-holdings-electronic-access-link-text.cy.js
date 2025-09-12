@@ -107,14 +107,14 @@ describe(
           BulkEditActions.selectOption('Link text');
           let possibleActions = ['Clear field', 'Find', 'Replace with'];
           BulkEditActions.verifyPossibleActions(possibleActions);
-          BulkEditActions.selectAction('Clear field');
+          BulkEditActions.selectSecondAction('Clear field');
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow();
           BulkEditActions.verifyOptionAbsentInNewRow('Link text');
           BulkEditActions.deleteRow(1);
-          BulkEditActions.selectAction('Replace with');
+          BulkEditActions.selectSecondAction('Replace with');
           BulkEditActions.verifyConfirmButtonDisabled(true);
-          BulkEditActions.fillInFirstTextArea(newLinkText);
+          BulkEditActions.fillInSecondTextArea(newLinkText);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.findValue('Link text');
           possibleActions = ['Replace with', 'Remove'];
@@ -124,9 +124,9 @@ describe(
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.fillInFirstTextArea('Te;st:');
           BulkEditActions.verifyConfirmButtonDisabled(false);
-          BulkEditActions.selectAction('Replace with');
+          BulkEditActions.selectSecondAction('Replace with');
           BulkEditActions.verifyConfirmButtonDisabled(true);
-          BulkEditActions.fillInFirstTextArea(replacedLinkText);
+          BulkEditActions.fillInSecondTextArea(newLinkText);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditSearchPane.verifyInputLabel(

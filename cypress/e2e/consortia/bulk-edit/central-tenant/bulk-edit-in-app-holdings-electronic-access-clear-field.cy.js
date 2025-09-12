@@ -328,14 +328,14 @@ describe('Bulk-edit', () => {
 
           fieldsToClear.forEach((field, rowIndex) => {
             BulkEditActions.selectOption(field, rowIndex);
-            BulkEditActions.selectAction('Clear field', rowIndex);
+            BulkEditActions.selectSecondAction('Clear field', rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex + 1);
           });
 
           BulkEditActions.selectOption('URL public note', 4);
-          BulkEditActions.selectAction('Clear field', 4);
+          BulkEditActions.selectSecondAction('Clear field', 4);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);

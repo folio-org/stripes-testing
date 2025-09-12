@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Permanent item location');
-        BulkEditActions.selectAction('Replace with');
+        BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.selectLocation(newLocation, 0);
 
         BulkEditActions.clickSelectedLocation(newLocation, 'Select location');

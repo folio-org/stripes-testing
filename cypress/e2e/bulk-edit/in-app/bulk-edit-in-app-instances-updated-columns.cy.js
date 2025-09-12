@@ -72,7 +72,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.selectOption('Staff suppress');
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
-        BulkEditActions.selectAction('Set false');
+        BulkEditActions.selectSecondAction('Set false');
 
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
