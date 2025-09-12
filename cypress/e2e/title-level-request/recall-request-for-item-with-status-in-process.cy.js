@@ -47,9 +47,11 @@ describe('Title level request', () => {
         testData.servicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
       });
     });
   });
