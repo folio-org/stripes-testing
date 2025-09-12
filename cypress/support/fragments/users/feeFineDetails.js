@@ -48,4 +48,16 @@ export default {
       KeyValue('Billed amount').has({ value: amount }),
     ]);
   },
+  checkFeeFineLatestPaymentStatus(status) {
+    cy.expect([
+      Pane(including('Fee/fine details')).exists(),
+      KeyValue('Latest payment status').has({ value: status }),
+    ]);
+  },
+  checkFeeFineRemainingAmount(amount) {
+    cy.expect([
+      Pane(including('Fee/fine details')).exists(),
+      KeyValue('Remaining amount').has({ value: amount }),
+    ]);
+  },
 };
