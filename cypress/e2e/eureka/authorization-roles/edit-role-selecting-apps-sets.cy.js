@@ -1,17 +1,23 @@
 import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import {
+  CAPABILITY_TYPES,
+  CAPABILITY_ACTIONS,
+  APPLICATION_NAMES,
+} from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
-  describe(CAPABILITY_TYPES.SETTINGS, () => {
+  describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `AT_C430262_UserRole_${getRandomPostfix()}`,
+        roleName: `Auto Role C430262 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        originalApplications: ['app-platform-minimal', 'app-licenses'],
+        originalApplications: ['app-platform-minimal', 'app-dcb'],
         newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
@@ -55,7 +61,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Licenses Admin Action',
+            resource: 'Dcb Transactions',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -152,10 +158,14 @@ describe('Eureka', () => {
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
         });
+        AuthorizationRoles.waitContentLoading();
       });
 
       after('Delete user, role', () => {

@@ -8,9 +8,9 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `AT_C430264_UserRole_${getRandomPostfix()}`,
+        roleName: `Auto Role C430264 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        firstApplicationName: 'app-licenses',
+        firstApplicationName: 'app-dcb',
         secondApplicationName: 'app-acquisitions',
       };
 
@@ -29,10 +29,13 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitLoading,
+            });
           });
+          AuthorizationRoles.waitContentLoading();
         });
       });
 

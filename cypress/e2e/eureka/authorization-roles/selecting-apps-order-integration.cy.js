@@ -106,9 +106,10 @@ describe('Eureka', () => {
         });
       });
 
-      it(
+      // Trillium+ only
+      it.skip(
         'C736766 Selecting applications for order integrations when create authorization role (thunderjet)',
-        { tags: ['smoke', 'thunderjet', 'eureka', 'C736766'] },
+        { tags: [] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);
