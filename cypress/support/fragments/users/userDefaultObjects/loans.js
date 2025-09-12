@@ -41,7 +41,7 @@ export default {
     this.checkStatus(row, ITEM_STATUS_NAMES.DECLARED_LOST);
   },
   startDeclareLost(row) {
-    const columnIndex = 11;
+    const columnIndex = 10;
     cy.do(
       MultiColumnList('list-loanshistory')
         .find(MultiColumnListCell({ row, columnIndex }))

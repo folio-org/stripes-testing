@@ -198,9 +198,11 @@ describe('Loans', () => {
         { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C9191', 'eurekaPhase1'] },
         () => {
           UsersCard.getApi(testData.userId).then((user) => {
-            Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
-            Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
-            Loans.cancelDeclareLost();
+            cy.waitForAuthRefresh(() => {
+              Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
+              Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
+              Loans.cancelDeclareLost();
+            });
             Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
 
             Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
