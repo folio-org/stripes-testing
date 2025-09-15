@@ -9,7 +9,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -111,10 +111,11 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808497 Create "Item" with empty "order" field (default state) when Instance has multiple Holdings with Items (spitfire)',
         {
-          tags: ['criticalPath', 'spitfire', 'C808497'],
+          tags: [],
         },
         () => {
           cy.waitForAuthRefresh(() => {

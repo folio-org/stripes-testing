@@ -501,8 +501,8 @@ export default {
 
   setValid008DropdownValues() {
     defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().forEach((property) => {
-      cy.do(property.interactor.choose(property.defaultValue));
-      cy.expect(property.interactor.has({ checkedOptionText: property.defaultValue }));
+      cy.do(property.interactor.fillIn(property.defaultValue));
+      cy.expect(property.interactor.has({ value: property.defaultValue }));
     });
   },
 };

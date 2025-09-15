@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Search in Inventory', () => {
     const randomPostfix = getRandomPostfix();
     const instanceTitlePrefix = `AT_C813025_FolioInstance_${randomPostfix}`;
@@ -48,9 +48,11 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
         });
       });
     });
@@ -61,9 +63,10 @@ describe('Inventory', () => {
       InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitlePrefix);
     });
 
+    // Trillium+ only
     it(
       'C813025 Search for Item by UUID field using "Keyword" and "Item UUID" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C813025'] },
+      { tags: [] },
       () => {
         // Step 1: Search for item using item UUID with "Keyword" search option
         InventorySearchAndFilter.switchToItem();

@@ -10,7 +10,7 @@ describe('Inventory', () => {
       lccnOption: 'LCCN, normalized',
       containsAll: 'Contains all',
       defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
-      defaultSearchOptionItem: 'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+      defaultSearchOptionItem: 'Keyword (title, contributor, identifier, HRID, UUID)',
     };
 
     before(() => {

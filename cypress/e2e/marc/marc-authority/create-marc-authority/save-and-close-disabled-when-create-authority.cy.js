@@ -12,7 +12,7 @@ import {
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
-      const headerText = /New .*MARC authority record/;
+      const headerText = /Create a new .*MARC authority record/;
       const users = {};
 
       before('Create users, data', () => {
@@ -26,9 +26,11 @@ describe('MARC', () => {
             users.userProperties = userProperties;
           })
           .then(() => {
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
       });
