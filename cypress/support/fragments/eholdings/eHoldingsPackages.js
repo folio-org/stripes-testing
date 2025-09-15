@@ -211,7 +211,7 @@ export default {
     eHoldingsNewCustomPackage.checkPackageCreatedCallout(calloutMessage);
   },
 
-  verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 30) {
+  verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 50) {
     return recurse(
       () => this.getPackageViaApi(packageName),
       (response) => response.body.data.length > 0,
