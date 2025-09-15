@@ -6,8 +6,8 @@ export default class NewFiscalYear {
     name: `1_autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(1000, 9999),
     acquisitionUnits: '',
-    periodBeginDate: DateTools.getPreviousDayDate(),
-    periodEndDate: DateTools.getCurrentDate(),
+    periodBeginDate: DateTools.getPreviousDayDateInDDMMYYYYFormat(),
+    periodEndDate: DateTools.getCurrentDateINDDMMYYYYFormat(),
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
   };
 

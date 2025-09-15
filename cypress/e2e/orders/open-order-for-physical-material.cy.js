@@ -14,19 +14,19 @@ describe('Orders', () => {
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
 
   before(() => {
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    });
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
   after(() => {
     cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
-
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
