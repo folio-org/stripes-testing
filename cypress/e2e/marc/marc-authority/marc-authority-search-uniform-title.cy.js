@@ -30,12 +30,12 @@ const searchCases = [
   // Step 4: Only Authorized Uniform title
   {
     query:
-      'AT_C409450 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz',
+      'AT_C409450 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Authorized',
         heading:
-          'AT_C409450 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz',
+          'AT_C409450 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz',
         type: 'Uniform Title',
       },
     ],
@@ -43,12 +43,12 @@ const searchCases = [
   // Step 5: Only Reference Uniform title
   {
     query:
-      'AT_C409450 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz',
+      'AT_C409450 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Reference',
         heading:
-          'AT_C409450 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz',
+          'AT_C409450 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz',
         type: 'Uniform Title',
       },
     ],
@@ -56,12 +56,12 @@ const searchCases = [
   // Step 6: Only Auth/Ref Uniform title
   {
     query:
-      'AT_C409450 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt subv subx suby subz sub4',
+      'AT_C409450 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt sub4--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409450 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt subv subx suby subz sub4',
+          'AT_C409450 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt sub4--subv--subx--suby--subz',
         type: 'Uniform Title',
       },
     ],
@@ -69,17 +69,17 @@ const searchCases = [
   // Step 7-9: Negative cases (no records) - using invalid subfields
   {
     query:
-      'AT_C409450 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz subw',
+      'AT_C409450 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz subw',
     expected: [],
   },
   {
     query:
-      'AT_C409450 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz subw',
+      'AT_C409450 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz subw',
     expected: [],
   },
   {
     query:
-      'AT_C409450 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt subv subx suby subz sub4 sub5',
+      'AT_C409450 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt sub4 sub5--subv--subx--suby--subz',
     expected: [],
   },
 ];

@@ -15,14 +15,15 @@ const uploadFileName = `C409477_testMarcFile.${randomPostfix}.mrc`;
 const jobProfile = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
 const propertyName = 'authority';
 const browseQuery = 'C409477';
-const authorizedFull = 'C409477 Geographic name 151 Gulf Stream subg subv subx suby subz';
+const authorizedFull = 'C409477 Geographic name 151 Gulf Stream subg--subv--subx--suby--subz';
 const referenceFull =
-  'C409477 Geographic name 451 Gulf Stream subg subi subv subx suby subz sub4 sub5';
+  'C409477 Geographic name 451 Gulf Stream subg subi sub4 sub5--subv--subx--suby--subz';
 const authRefFull =
-  'C409477 Geographic name 551 Ocean currents subg subi subv subx suby subz sub4 sub5';
-const authorizedInvalid = 'C409477 Geographic name 151 Gulf Stream subg subv subx suby subz sub4';
+  'C409477 Geographic name 551 Ocean currents subg subi sub4 sub5--subv--subx--suby--subz';
+const authorizedInvalid =
+  'C409477 Geographic name 151 Gulf Stream subg sub4--subv--subx--suby--subz';
 const referenceInvalid =
-  'C409477 Geographic name 451 Gulf Stream subg subi subv subx suby subz sub4 sub5 sub1';
+  'C409477 Geographic name 451 Gulf Stream subg subi sub4 sub5 sub1--subv--subx--suby--subz';
 const geographicNameOption = 'Geographic name';
 
 const createdAuthorityIDs = [];
@@ -46,10 +47,11 @@ describe('MARC', () => {
                 });
               },
             );
-
-            cy.login(testUser.username, testUser.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testUser.username, testUser.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
             MarcAuthorities.switchToBrowse();
           },
