@@ -5,7 +5,7 @@ import AuthorizationRoles from '../../../support/fragments/settings/authorizatio
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
-describe('Eureka', () => {
+describe.skip('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const applicationNames = ['app-gobi', 'app-ebsconet', 'app-mosaic'];
@@ -107,7 +107,7 @@ describe('Eureka', () => {
       });
 
       // Trillium+ only
-      it.skip(
+      it(
         'C736766 Selecting applications for order integrations when create authorization role (thunderjet)',
         { tags: [] },
         () => {

@@ -8,7 +8,7 @@ import { AUTHORIZATION_ROLE_TYPES, APPLICATION_NAMES } from '../../../support/co
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('Eureka', () => {
+describe.skip('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
@@ -61,40 +61,37 @@ describe('Eureka', () => {
         Users.deleteViaApi(testData.user.userId);
       });
 
-      it(
-        'C794509 Default roles cannot be created/edited/deleted (eureka)',
-        { tags: ['criticalPath', 'eureka', 'C794509'] },
-        () => {
-          AuthorizationRoles.searchRole(defaultRoles[0].name);
-          AuthorizationRoles.clickOnRoleName(defaultRoles[0].name);
-          AuthorizationRoles.verifyRoleType(defaultRoles[0].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
-          AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
+      // Trillium+ only
+      it('C794509 Default roles cannot be created/edited/deleted (eureka)', { tags: [] }, () => {
+        AuthorizationRoles.searchRole(defaultRoles[0].name);
+        AuthorizationRoles.clickOnRoleName(defaultRoles[0].name);
+        AuthorizationRoles.verifyRoleType(defaultRoles[0].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
+        AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
 
-          AuthorizationRoles.clickNewButton();
-          AuthorizationRoles.fillRoleNameDescription(defaultSystemRoles[0].name);
-          cy.intercept('POST', '/roles').as('createCall');
-          AuthorizationRoles.clickSaveButton();
-          cy.wait('@createCall').then(({ response }) => {
-            expect(response.statusCode).to.eq(409);
-            expect(response.body.errors[0].message).to.eq(testData.createErrorText.split(': ')[1]);
-          });
-          InteractorsTools.checkCalloutErrorMessage(testData.createErrorText);
+        AuthorizationRoles.clickNewButton();
+        AuthorizationRoles.fillRoleNameDescription(defaultSystemRoles[0].name);
+        cy.intercept('POST', '/roles').as('createCall');
+        AuthorizationRoles.clickSaveButton();
+        cy.wait('@createCall').then(({ response }) => {
+          expect(response.statusCode).to.eq(409);
+          expect(response.body.errors[0].message).to.eq(testData.createErrorText.split(': ')[1]);
+        });
+        InteractorsTools.checkCalloutErrorMessage(testData.createErrorText);
 
-          AuthorizationRoles.closeRoleCreateView();
-          AuthorizationRoles.searchRole(defaultRoles[1].name);
-          AuthorizationRoles.clickOnRoleName(defaultRoles[1].name);
-          AuthorizationRoles.verifyRoleType(defaultRoles[1].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
-          AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
+        AuthorizationRoles.closeRoleCreateView();
+        AuthorizationRoles.searchRole(defaultRoles[1].name);
+        AuthorizationRoles.clickOnRoleName(defaultRoles[1].name);
+        AuthorizationRoles.verifyRoleType(defaultRoles[1].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
+        AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
 
-          AuthorizationRoles.searchRole(defaultSystemRoles[1].name);
-          AuthorizationRoles.clickOnRoleName(defaultSystemRoles[1].name);
-          AuthorizationRoles.verifyRoleType(
-            defaultSystemRoles[1].name,
-            AUTHORIZATION_ROLE_TYPES.DEFAULT,
-          );
-          AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
-        },
-      );
+        AuthorizationRoles.searchRole(defaultSystemRoles[1].name);
+        AuthorizationRoles.clickOnRoleName(defaultSystemRoles[1].name);
+        AuthorizationRoles.verifyRoleType(
+          defaultSystemRoles[1].name,
+          AUTHORIZATION_ROLE_TYPES.DEFAULT,
+        );
+        AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
+      });
     });
   });
 });
