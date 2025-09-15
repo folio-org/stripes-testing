@@ -45,9 +45,11 @@ describe('Inventory', () => {
           tag.id = tagId;
         });
 
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
 
@@ -70,6 +72,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
           InventoryInstance.checkAddedTag(tag.label, instanceTitle);
           InventoryInstance.deleteTag(tag.label);
+          cy.reload();
         },
       );
 
