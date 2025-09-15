@@ -11,6 +11,7 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -31,6 +32,12 @@ describe('orders: Unreceive piece from Order', () => {
     cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   after(() => {
@@ -42,12 +49,9 @@ describe('orders: Unreceive piece from Order', () => {
     'C10925 Unreceive piece using "Actions" button (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
-      cy.loginAsAdmin();
       const barcode = Helper.getRandomBarcode();
       const enumeration = 'autotestCaption';
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        TopMenuNavigation.openAppFromDropdown('Orders');
-        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', poNumber);
         Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
