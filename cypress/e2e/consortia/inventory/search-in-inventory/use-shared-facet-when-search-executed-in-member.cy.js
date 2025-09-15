@@ -125,8 +125,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C402334 Use "Shared" facet when Search was executed in "Member" tenant ("Instance" tab) (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C402334'] },
+      'C844208 Use "Shared" facet when Search was executed in "Member" tenant ("Instance" tab) (consortia) (spitfire)',
+      { tags: ['criticalPathECS', 'spitfire', 'C844208'] },
       () => {
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
