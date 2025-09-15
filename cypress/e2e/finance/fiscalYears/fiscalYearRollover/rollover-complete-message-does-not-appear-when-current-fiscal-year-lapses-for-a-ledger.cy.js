@@ -48,10 +48,12 @@ describe('Fiscal Year Rollover', () => {
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fiscalYearPath,
-        waiter: FiscalYears.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fiscalYearPath,
+          waiter: FiscalYears.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

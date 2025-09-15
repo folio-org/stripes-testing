@@ -18,7 +18,7 @@ import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldings
 import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 
-describe('fse-eholdings - UI for production tenants', () => {
+describe('fse-eholdings - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -40,9 +40,26 @@ describe('fse-eholdings - UI for production tenants', () => {
   );
 });
 
-describe('fse-eholdings - UI for non-production tenants', () => {
+describe('fse-eholdings - UI (data manipulation)', () => {
   let agreementId;
   const defaultAgreement = { ...Agreements.defaultAgreement };
+
+  before('Creating data', () => {
+    cy.allure().logCommandSteps(false);
+    cy.getAdminToken();
+    defaultAgreement.name += 'FSE_TEST_TC195671';
+    Agreements.createViaApi(defaultAgreement).then((agreement) => {
+      agreementId = agreement.id;
+    });
+    cy.allure().logCommandSteps();
+  });
+
+  after('Delete test data', () => {
+    cy.allure().logCommandSteps(false);
+    cy.getAdminToken();
+    Agreements.deleteViaApi(agreementId);
+    cy.allure().logCommandSteps();
+  });
 
   beforeEach(() => {
     // hide sensitive data from the report
@@ -78,7 +95,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'toBeFixed'] },
     () => {
       const testNote = {
         title: `autotest_TC195626_${getRandomPostfix()}`,
@@ -119,23 +136,6 @@ describe('fse-eholdings - UI for non-production tenants', () => {
       DeleteConfirmationModal.confirmDeleteNote();
     },
   );
-
-  before('Creating data', () => {
-    cy.allure().logCommandSteps(false);
-    cy.getAdminToken();
-    defaultAgreement.name += 'FSE_TEST_TC195671';
-    Agreements.createViaApi(defaultAgreement).then((agreement) => {
-      agreementId = agreement.id;
-    });
-    cy.allure().logCommandSteps();
-  });
-
-  after('Delete test data', () => {
-    cy.allure().logCommandSteps(false);
-    cy.getAdminToken();
-    Agreements.deleteViaApi(agreementId);
-    cy.allure().logCommandSteps();
-  });
 
   it(
     `TC195671 - eholdings: add an agreement ${Cypress.env('OKAPI_HOST')}`,

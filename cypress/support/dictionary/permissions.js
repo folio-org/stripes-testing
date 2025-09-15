@@ -225,6 +225,10 @@ export default {
     internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
+  uiInventoryMarcItemInProcessDefault: {
+    internal: 'ui-inventory.items.mark-in-process.execute',
+    gui: 'Inventory: Mark items in process',
+  },
   uiInventoryMarcItemIntellectual: {
     internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
@@ -333,6 +337,10 @@ export default {
   inventoryStorageBatchCreateUpdateItems: {
     internal: 'inventory-storage.items.batch.post',
     gui: 'inventory storage - create or update a number of items',
+  },
+  inventoryFastAddCreate: {
+    internal: 'ui-plugin-create-inventory-records.create',
+    gui: 'Fast add: Create',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
@@ -446,25 +454,25 @@ export default {
     internal: 'specification-storage.subfields.item.put',
     gui: 'Specification Storage - Update subfield definition',
   },
-
   specificationStorageSpecificationRulesItemPatch: {
     internal: 'specification-storage.specification.rules.item.patch',
     gui: 'Specification Storage - Toggle rule for specification',
   },
-
   specificationStorageSpecificationRulesCollectionGet: {
     internal: 'specification-storage.specification.rules.collection.get',
     gui: 'Specification Storage - Get specification rules collection',
   },
-
   specificationStorageSpecificationItemGet: {
     internal: 'specification-storage.specifications.item.get',
     gui: 'Specification Storage - Get specification',
   },
-
   specificationStorageSpecificationCollectionGet: {
     internal: 'specification-storage.specifications.collection.get',
     gui: 'Specification Storage - Get specification collection',
+  },
+  rtacGetBatchHoldingsCollection: {
+    internal: 'rtac.batch.post',
+    gui: 'RTAC - get batch holding collection',
   },
 
   // Circulation log

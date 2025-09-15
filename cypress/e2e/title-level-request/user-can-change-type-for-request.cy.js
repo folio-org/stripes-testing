@@ -129,9 +129,12 @@ describe('Title Level Request. Request detail', () => {
   });
 
   beforeEach('login', () => {
-    cy.login(userData.username, userData.password, {
-      path: TopMenu.requestsPath,
-      waiter: RequestsSearchResultsPane.waitLoading,
+    cy.waitForAuthRefresh(() => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: RequestsSearchResultsPane.waitLoading,
+      });
+      cy.wait(2000);
     });
   });
 

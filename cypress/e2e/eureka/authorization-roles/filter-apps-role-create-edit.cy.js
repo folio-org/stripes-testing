@@ -50,10 +50,13 @@ describe('Eureka', () => {
 
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.editRoleId, testData.capabIds);
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+          });
+        }, 20_000);
+        AuthorizationRoles.waitContentLoading();
       });
 
       after('Delete user and roles', () => {
@@ -229,6 +232,7 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.editRoleName);
           AuthorizationRoles.clickOnRoleName(testData.editRoleName);
           AuthorizationRoles.openForEdit();
+          cy.wait(1000);
 
           // Step 16: Click "Select application" button
           AuthorizationRoles.clickSelectApplication();

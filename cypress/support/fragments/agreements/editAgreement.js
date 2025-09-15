@@ -91,9 +91,10 @@ export default {
     cy.do([deleteLicenseButton.click(), saveButton.click()]);
   },
 
-  addOrganization(organizationName) {
+  addOrganization(organizationName, roleName) {
     cy.do([addOrganizationButton.click(), linkOrganizationButton.click()]);
     selectOrganizationModal.findOrganization(organizationName);
-    cy.xpath("//select[contains(@data-testid, 'rolesFieldArray')]").select('Content provider');
+    cy.wait(1000);
+    cy.xpath("//select[contains(@data-testid, 'rolesFieldArray')]").select(roleName);
   },
 };

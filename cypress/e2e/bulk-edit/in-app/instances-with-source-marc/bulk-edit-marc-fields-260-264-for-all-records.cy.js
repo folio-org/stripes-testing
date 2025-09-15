@@ -67,7 +67,7 @@ const EXPECTED_PUBLICATIONS = [
   },
 ];
 const verifyAllPublicationsInForm = (formType) => {
-  EXPECTED_PUBLICATIONS.forEach((publication, index) => {
+  EXPECTED_PUBLICATIONS.forEach((publication) => {
     BulkEditSearchPane.verifyPublicationTableInForm(
       formType,
       marcInstance.hrid,
@@ -75,7 +75,6 @@ const verifyAllPublicationsInForm = (formType) => {
       publication.role,
       publication.place,
       publication.date,
-      index + 1,
     );
   });
 };

@@ -2,7 +2,7 @@ import MyProfile from '../../../support/fragments/settings/my-profile/my-profile
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ChangePassword from '../../../support/fragments/settings/my-profile/change-password';
 
-describe('fse-my-profile - UI', () => {
+describe('fse-my-profile - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -15,7 +15,7 @@ describe('fse-my-profile - UI', () => {
 
   it(
     `TC195470 - verify that change password page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'myProfile'] },
+    { tags: ['fse', 'ui', 'myProfile', 'fse-user-journey'] },
     () => {
       MyProfile.openChangePassword();
       ChangePassword.waitLoading();

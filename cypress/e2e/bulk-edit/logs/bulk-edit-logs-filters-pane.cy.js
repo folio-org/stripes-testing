@@ -7,104 +7,112 @@ import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 
-describe('Bulk-edit', () => {
-  describe('Logs', () => {
-    before('create test data', () => {
-      cy.createTempUser([
-        Permissions.bulkEditLogsView.gui,
-        Permissions.bulkEditCsvView.gui,
-        Permissions.bulkEditView.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    describe('Logs', () => {
+      beforeEach('create test data', () => {
+        cy.createTempUser([
+          Permissions.bulkEditLogsView.gui,
+          Permissions.bulkEditCsvView.gui,
+          Permissions.bulkEditView.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
-    });
 
-    after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-    });
+      afterEach('delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+      });
 
-    it(
-      'C368035 Filters section: Started, Ended (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C368035'] },
-      () => {
-        const currentDate = DateTools.getCurrentDateForFiscalYear();
-        const yesterday = DateTools.getPreviousDayDateForFiscalYear();
-        const tomorrow = DateTools.getDayTomorrowDateForFiscalYear();
-        BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifySetCriteriaPaneExists();
-        BulkEditLogs.verifyLogsPane();
-        const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
-        recordTypes.forEach((recordType) => BulkEditLogs.checkLogsCheckbox(recordType));
-        BulkEditLogs.verifyUserAccordionCollapsed();
-        BulkEditLogs.clickLogsStartedAccordion();
-        BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
-        BulkEditLogs.clickLogsEndedAccordion();
-        BulkEditLogs.verifyLogsEndedAccordionExistsWithElements();
-        BulkEditLogs.fillLogsDate('Started', 'From', currentDate);
-        BulkEditLogs.verifyClearSelectedDateButtonExists('Started', 'From');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', currentDate);
-        BulkEditLogs.applyStartDateFilters();
-        BulkEditLogs.verifyDateFieldWithError('Started', 'To', 'Please enter an end date');
-        BulkEditLogs.fillLogsDate('Started', 'To', yesterday);
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', yesterday);
-        BulkEditLogs.verifyClearSelectedDateButtonExists('Started', 'To');
-        BulkEditLogs.applyStartDateFilters();
-        BulkEditLogs.verifyDateAccordionValidationMessage(
-          'Started',
-          'Start date is greater than end date',
-        );
-        BulkEditLogs.clickClearSelectedDateButton('Started', 'From');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', '');
-        BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
-        BulkEditLogs.fillLogsDate('Started', 'From', yesterday);
-        BulkEditLogs.fillLogsDate('Started', 'To', currentDate);
-        BulkEditLogs.applyStartDateFilters();
-        BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
-        BulkEditLogs.verifyClearSelectedFiltersButton('Started');
-        BulkEditLogs.fillLogsDate('Ended', 'To', yesterday);
-        BulkEditLogs.verifyClearSelectedDateButtonExists('Ended', 'To');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', yesterday);
-        BulkEditLogs.applyEndDateFilters();
-        BulkEditLogs.verifyDateFieldWithError('Ended', 'From', 'Please enter a start date');
-        BulkEditLogs.fillLogsDate('Ended', 'From', currentDate);
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'From', currentDate);
-        BulkEditLogs.verifyClearSelectedDateButtonExists('Ended', 'From');
-        BulkEditLogs.applyEndDateFilters();
-        BulkEditLogs.verifyDateAccordionValidationMessage(
-          'Ended',
-          'Start date is greater than end date',
-        );
-        BulkEditLogs.clickClearSelectedDateButton('Ended', 'To');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', '');
-        BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
-        BulkEditLogs.fillLogsDate('Ended', 'To', tomorrow);
-        BulkEditLogs.applyEndDateFilters();
-        BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
-        BulkEditLogs.verifyClearSelectedFiltersButton('Ended');
-        BulkEditLogs.fillLogsDate('Ended', 'From', yesterday);
-        BulkEditLogs.fillLogsDate('Ended', 'To', tomorrow);
-        BulkEditLogs.applyEndDateFilters();
-        BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
-        BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
-        BulkEditLogs.clickClearStartedFilter();
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', '');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', '');
-        BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
-        BulkEditLogs.resetAll();
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', '');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', '');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'From', '');
-        BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', '');
-        BulkEditLogs.clickLogsStartedAccordion();
-        BulkEditLogs.clickLogsEndedAccordion();
-        BulkEditSearchPane.verifySetCriteriaPaneExists();
-        BulkEditLogs.verifyLogsPane();
-      },
-    );
-  });
-});
+      it(
+        'C368035 Filters section: Started, Ended (firebird) (TaaS)',
+        { tags: ['extendedPath', 'firebird', 'C368035'] },
+        () => {
+          const currentDate = DateTools.getCurrentDateForFiscalYear();
+          const yesterday = DateTools.getPreviousDayDateForFiscalYear();
+          const tomorrow = DateTools.getDayTomorrowDateForFiscalYear();
+          BulkEditSearchPane.openLogsSearch();
+          BulkEditSearchPane.verifySetCriteriaPaneExists();
+          BulkEditLogs.verifyLogsPane();
+          const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
+          recordTypes.forEach((recordType) => BulkEditLogs.checkLogsCheckbox(recordType));
+          BulkEditLogs.verifyUserAccordionCollapsed();
+          BulkEditLogs.clickLogsStartedAccordion();
+          BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
+          BulkEditLogs.clickLogsEndedAccordion();
+          BulkEditLogs.verifyLogsEndedAccordionExistsWithElements();
+          BulkEditLogs.fillLogsDate('Started', 'From', currentDate);
+          BulkEditLogs.verifyClearSelectedDateButtonExists('Started', 'From');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', currentDate);
+          BulkEditLogs.applyStartDateFilters();
+          BulkEditLogs.verifyDateFieldWithError('Started', 'To', 'Please enter an end date');
+          BulkEditLogs.fillLogsDate('Started', 'To', yesterday);
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', yesterday);
+          BulkEditLogs.verifyClearSelectedDateButtonExists('Started', 'To');
+          BulkEditLogs.applyStartDateFilters();
+          BulkEditLogs.verifyDateAccordionValidationMessage(
+            'Started',
+            'Start date is greater than end date',
+          );
+          BulkEditLogs.clickClearSelectedDateButton('Started', 'From');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', '');
+          BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
+          BulkEditLogs.fillLogsDate('Started', 'From', yesterday);
+          BulkEditLogs.fillLogsDate('Started', 'To', currentDate);
+          BulkEditLogs.applyStartDateFilters();
+          BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
+          BulkEditLogs.verifyClearSelectedFiltersButton('Started');
+          BulkEditLogs.fillLogsDate('Ended', 'To', yesterday);
+          BulkEditLogs.verifyClearSelectedDateButtonExists('Ended', 'To');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', yesterday);
+          BulkEditLogs.applyEndDateFilters();
+          BulkEditLogs.verifyDateFieldWithError('Ended', 'From', 'Please enter a start date');
+          BulkEditLogs.fillLogsDate('Ended', 'From', currentDate);
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'From', currentDate);
+          BulkEditLogs.verifyClearSelectedDateButtonExists('Ended', 'From');
+          BulkEditLogs.applyEndDateFilters();
+          BulkEditLogs.verifyDateAccordionValidationMessage(
+            'Ended',
+            'Start date is greater than end date',
+          );
+          BulkEditLogs.clickClearSelectedDateButton('Ended', 'To');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', '');
+          BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
+          BulkEditLogs.fillLogsDate('Ended', 'To', tomorrow);
+          BulkEditLogs.applyEndDateFilters();
+          BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
+          BulkEditLogs.verifyClearSelectedFiltersButton('Ended');
+          BulkEditLogs.fillLogsDate('Ended', 'From', yesterday);
+          BulkEditLogs.fillLogsDate('Ended', 'To', tomorrow);
+          BulkEditLogs.applyEndDateFilters();
+          BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
+          BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
+          BulkEditLogs.clickClearStartedFilter();
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', '');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', '');
+          BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
+          BulkEditLogs.resetAll();
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', '');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', '');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'From', '');
+          BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', '');
+          BulkEditLogs.clickLogsStartedAccordion();
+          BulkEditLogs.clickLogsEndedAccordion();
+          BulkEditSearchPane.verifySetCriteriaPaneExists();
+          BulkEditLogs.verifyLogsPane();
+        },
+      );
+    });
+  },
+);

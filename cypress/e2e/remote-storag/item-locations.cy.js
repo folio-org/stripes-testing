@@ -69,11 +69,15 @@ describe('Remote Storage', () => {
                 ],
               ],
             });
+          })
+          .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventorySearchAndFilter.waitLoading,
+              });
+            });
           });
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
       },
     );
   });
@@ -97,7 +101,6 @@ describe('Remote Storage', () => {
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
-
       // select instance
       InventorySearchAndFilter.switchToItem();
       cy.wait(2000);

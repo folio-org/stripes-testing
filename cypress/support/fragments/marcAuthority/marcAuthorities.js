@@ -664,7 +664,10 @@ export default {
       MultiSelect({ label: including('Authority source') }),
     );
     cy.wait(1000);
+    cy.intercept('search/authorities/facets?*').as('getFacets');
     cy.do(multiSelect.select(including(option)));
+    cy.wait('@getFacets');
+    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
@@ -1179,7 +1182,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((res) => {
-        return res.body.authorities;
+        return res.body.authorities || [];
       });
   },
 
@@ -1701,11 +1704,13 @@ export default {
 
   deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
-      records.forEach((record) => {
-        if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id, true);
-        }
-      });
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          if (record.authRefType === authRefType) {
+            this.deleteViaAPI(record.id, true);
+          }
+        });
+      }
     });
   },
 

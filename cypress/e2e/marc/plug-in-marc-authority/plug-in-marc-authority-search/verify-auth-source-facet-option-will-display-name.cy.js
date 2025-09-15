@@ -74,7 +74,7 @@ describe('MARC', () => {
             }
           });
         });
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
+        cy.getAdminToken()
           .then(() => {
             testData.marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -100,7 +100,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(testData.instanceTitle);

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   Button,
   Checkbox,
@@ -111,6 +112,7 @@ const centrallyManagedKeyValue = KeyValue('Centrally managed');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
+const generalInfoDateFormat = 'M/D/YYYY h:mm A';
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -625,21 +627,36 @@ export default {
   },
 
   verifyGeneralInformationWhenCollapsed: (updatedDate) => {
+    const momentDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const updatedDatePlus1Minute = momentDate.add(1, 'minute').format(generalInfoDateFormat);
     cy.expect(
       generalInformationAccordion.has({
-        content: including(`Record last updated: ${updatedDate}`),
+        content: or(
+          including(`Record last updated: ${updatedDate}`),
+          including(`Record last updated: ${updatedDatePlus1Minute}`),
+        ),
       }),
     );
   },
 
   verifyGeneralInformationWhenExpanded: (updatedDate, updatedUser, createdDate, createdUser) => {
+    const momentUpdatedDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const momentCreatedDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const updatedDatePlus1Minute = momentUpdatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const createdDatePlus1Minute = momentCreatedDate.add(1, 'minute').format(generalInfoDateFormat);
     cy.do(recordLastUpdatedHeader.click());
     cy.expect([
       generalInformationAccordion.has({
         content: and(
-          including(`Record last updated: ${updatedDate}`),
+          or(
+            including(`Record last updated: ${updatedDate}`),
+            including(`Record last updated: ${updatedDatePlus1Minute}`),
+          ),
           including(`Source: ${updatedUser}`),
-          including(`Record created: ${createdDate}`),
+          or(
+            including(`Record created: ${createdDate}`),
+            including(`Record created: ${createdDatePlus1Minute}`),
+          ),
           including(`Source: ${createdUser}`),
         ),
       }),

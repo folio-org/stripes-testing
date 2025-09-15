@@ -12,7 +12,8 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Consortia', () => {
         const testData = {
-          lccnValues: ['vpi794563523570', 'vpi766384523570'],
+          lccnValues: ['vpi794563523570'],
+          canceledLccnValues: ['vpi766384523570'],
         };
         const randomPostfix = getRandomPostfix();
         const marcInstanceTitle = `AT_C523570_MarcBibInstance_${randomPostfix}`;
@@ -48,7 +49,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C523570 Cannot save existing MARC bib record with value in "010 $a" subfield which matches to other FOLIO records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
+          'C523570 Save existing MARC bib record with value in "010 $a" subfield which matches to other FOLIO records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C523570'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed
@@ -93,7 +94,7 @@ describe('MARC', () => {
                         },
                         {
                           identifierTypeId: testData.canceledLccnTypeId,
-                          value: testData.lccnValues[1],
+                          value: testData.canceledLccnValues[0],
                         },
                       ],
                     },
@@ -130,11 +131,17 @@ describe('MARC', () => {
               QuickMarcEditor.waitLoading();
               QuickMarcEditor.updateLDR06And07Positions();
 
-              // Attempt to update "010 $a" with LCCN and Canceled LCCN values
+              // Attempt to update "010 $a" with LCCN values
               testData.lccnValues.forEach((lccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${lccnValue}`);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+              });
+
+              // Attempt to update "010 $a" with Canceled LCCN values
+              testData.canceledLccnValues.forEach((canceledLccnValue) => {
+                QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnValue}`);
+                QuickMarcEditor.clickSaveAndKeepEditing();
               });
             });
           },

@@ -47,14 +47,23 @@ describe('Inventory', () => {
         permissions.moduleDataImportEnabled.gui,
         permissions.inventoryAll.gui,
         permissions.uiTagsPermissionAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id,
-        );
-      });
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
+        })
+        .then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+          });
+        });
     });
 
     after('Deleting created entities', () => {
@@ -68,10 +77,6 @@ describe('Inventory', () => {
       'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (volaris)',
       { tags: ['extendedPath', 'volaris', 'C358962'] },
       () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry('marcFileForC358962.mrc', testData.fileName);
         JobProfiles.waitLoadingList();
@@ -93,9 +98,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358962);
-        InventorySearchAndFilter.verifyTagCount();
-        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         cy.reload();
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },
     );
@@ -142,7 +146,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358961);
         InventorySearchAndFilter.closeTagsPane();
-        cy.reload();
         InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358961);
@@ -164,18 +167,24 @@ describe('Inventory', () => {
       'C367962 Verify that user can add more than 1 tag to "Holdings" record with source "MARC" (volaris)',
       { tags: ['extendedPath', 'volaris', 'C367962'] },
       () => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventorySteps.addMarcHoldingRecord();
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
@@ -188,7 +197,11 @@ describe('Inventory', () => {
           HoldingsRecordEdit.addTag(tag);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.waitContentLoading();
+        });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();

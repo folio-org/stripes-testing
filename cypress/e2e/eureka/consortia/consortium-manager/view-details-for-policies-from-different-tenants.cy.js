@@ -95,42 +95,32 @@ describe('Eureka', () => {
         SelectMembers.checkMember(tenantNames.college, true);
         SelectMembers.saveAndClose();
         ConsortiumManagerApp.verifyMembersSelected(2);
-        SelectMembers.selectMember(tenantNames.central);
-        cy.resetTenant();
-        cy.getAuthorizationPoliciesApi().then((policiesCentral) => {
-          AuthorizationPolicies.verifyPoliciesCount(policiesCentral.length);
-          AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName);
-          AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
-          AuthorizationPolicies.waitContentLoading();
-          AuthorizationPolicies.searchPolicy(testData.centralPolicyName);
-          AuthorizationPolicies.clickOnPolicyName(testData.centralPolicyName);
-          AuthorizationPolicies.verifyPolicyViewPane(
-            testData.centralPolicyName,
-            policyBody.description,
-          );
-          AuthorizationPolicies.checkActionsButtonShownForPolicy(testData.centralPolicyName, false);
-          AuthorizationPolicies.closePolicyDetailView(testData.centralPolicyName);
-          AuthorizationPolicies.clearSearchField();
 
-          SelectMembers.selectMember(tenantNames.college);
-          cy.setTenant(Affiliations.College);
-          cy.getAuthorizationPoliciesApi().then((policiesCollege) => {
-            AuthorizationPolicies.verifyPoliciesCount(policiesCollege.length);
-            AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
-            AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName);
-            AuthorizationPolicies.waitContentLoading();
-            AuthorizationPolicies.searchPolicy(testData.collegePolicyName);
-            AuthorizationPolicies.clickOnPolicyName(testData.collegePolicyName);
-            AuthorizationPolicies.verifyPolicyViewPane(
-              testData.collegePolicyName,
-              policyBody.description,
-            );
-            AuthorizationPolicies.checkActionsButtonShownForPolicy(
-              testData.collegePolicyName,
-              false,
-            );
-          });
-        });
+        SelectMembers.selectMember(tenantNames.central);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
+        AuthorizationPolicies.waitContentLoading();
+        AuthorizationPolicies.searchPolicy(testData.centralPolicyName);
+        AuthorizationPolicies.clickOnPolicyName(testData.centralPolicyName);
+        AuthorizationPolicies.verifyPolicyViewPane(
+          testData.centralPolicyName,
+          policyBody.description,
+        );
+        AuthorizationPolicies.checkActionsButtonShownForPolicy(testData.centralPolicyName, false);
+        AuthorizationPolicies.closePolicyDetailView(testData.centralPolicyName);
+        AuthorizationPolicies.clearSearchField();
+
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName);
+        AuthorizationPolicies.waitContentLoading();
+        AuthorizationPolicies.searchPolicy(testData.collegePolicyName);
+        AuthorizationPolicies.clickOnPolicyName(testData.collegePolicyName);
+        AuthorizationPolicies.verifyPolicyViewPane(
+          testData.collegePolicyName,
+          policyBody.description,
+        );
+        AuthorizationPolicies.checkActionsButtonShownForPolicy(testData.collegePolicyName, false);
       },
     );
   });

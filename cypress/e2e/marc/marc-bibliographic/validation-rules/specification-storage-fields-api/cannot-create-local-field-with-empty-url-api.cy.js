@@ -16,7 +16,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
   const baseFieldPayload = {
     label: 'Test name',
     repeatable: true,
-    required: true,
+    required: false,
   };
 
   before('Create user and fetch MARC bib specification', () => {
