@@ -6,13 +6,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      subjectValue: `C356831_Subject_${randomPostfix}`,
-      instanceTitlePrefix: `AT_C356831_FolioInstance_${getRandomPostfix()}`,
+      subjectValue: `C357531_Subject_${randomPostfix}`,
+      instanceTitlePrefix: `AT_C357531_FolioInstance_${getRandomPostfix()}`,
+      numberOfTitles: 3,
     };
 
     const createdInstanceIDs = [];
@@ -23,12 +25,12 @@ describe('Inventory', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C356831_FolioInstance');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C357531_FolioInstance');
 
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             const instanceTypeId = instanceTypes[0].id;
 
-            for (let index = 1; index <= 3; index++) {
+            for (let index = 1; index <= testData.numberOfTitles; index++) {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: { title: `${testData.instanceTitlePrefix} ${index}`, instanceTypeId },
               }).then((instanceData) => {
@@ -54,8 +56,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C356831 Verify selecting a row with multiple entries -- Subject browse (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356831'] },
+      'C357531 Verify exact match for subjects selected on the browse form (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C357531'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {
@@ -68,14 +70,13 @@ describe('Inventory', () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectValue);
         BrowseSubjects.checkSearchResultsTable();
         BrowseSubjects.checkValueIsBold(testData.subjectValue);
+        BrowseCallNumber.checkNumberOfTitlesForRow(testData.subjectValue, '3');
         BrowseSubjects.openInstance({ name: testData.subjectValue });
         InventorySearchAndFilter.verifyResultListExists();
-        for (let index = 1; index <= 3; index++) {
+        for (let index = 1; index <= testData.numberOfTitles; index++) {
           InventorySearchAndFilter.verifySearchResult(`${testData.instanceTitlePrefix} ${index}`);
         }
-        InventoryInstance.goToPreviousPage();
-        BrowseSubjects.checkSearchResultsTable();
-        BrowseSubjects.checkValueIsBold(testData.subjectValue);
+        InventorySearchAndFilter.verifyNumberOfSearchResults(testData.numberOfTitles);
       },
     );
   });

@@ -6,13 +6,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      subjectValue: `C356831_Subject_${randomPostfix}`,
-      instanceTitlePrefix: `AT_C356831_FolioInstance_${getRandomPostfix()}`,
+      subjectValue: `C358530_Subject_${randomPostfix}`,
+      instanceTitlePrefix: `AT_C358530_FolioInstance_${getRandomPostfix()}`,
     };
 
     const createdInstanceIDs = [];
@@ -23,12 +24,12 @@ describe('Inventory', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C356831_FolioInstance');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C358530_FolioInstance');
 
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             const instanceTypeId = instanceTypes[0].id;
 
-            for (let index = 1; index <= 3; index++) {
+            for (let index = 1; index <= 2; index++) {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: { title: `${testData.instanceTitlePrefix} ${index}`, instanceTypeId },
               }).then((instanceData) => {
@@ -54,8 +55,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C356831 Verify selecting a row with multiple entries -- Subject browse (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356831'] },
+      'C358530 Verify the hit count on Subject browse list (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C358530'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {
@@ -68,14 +69,7 @@ describe('Inventory', () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectValue);
         BrowseSubjects.checkSearchResultsTable();
         BrowseSubjects.checkValueIsBold(testData.subjectValue);
-        BrowseSubjects.openInstance({ name: testData.subjectValue });
-        InventorySearchAndFilter.verifyResultListExists();
-        for (let index = 1; index <= 3; index++) {
-          InventorySearchAndFilter.verifySearchResult(`${testData.instanceTitlePrefix} ${index}`);
-        }
-        InventoryInstance.goToPreviousPage();
-        BrowseSubjects.checkSearchResultsTable();
-        BrowseSubjects.checkValueIsBold(testData.subjectValue);
+        BrowseContributors.verifyInventoryBrowsePaneheader();
       },
     );
   });
