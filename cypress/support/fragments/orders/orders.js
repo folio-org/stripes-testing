@@ -46,7 +46,6 @@ const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const orderDetailsPane = Pane({ id: 'order-details' });
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
-const searchIndexSelect = Select({ id: 'input-record-search-qindex' });
 const searchField = SearchField({ id: 'input-record-search' });
 const orderTypeSelect = Select('Order type*');
 const searchButton = Button('Search');
@@ -79,11 +78,11 @@ const selectLocationsModal = Modal('Select locations');
 export default {
   searchByParameter(parameter, value) {
     cy.wait(4000);
-    cy.do(searchIndexSelect.choose(parameter));
-    cy.wait(500);
+    cy.do(searchField.selectIndex(parameter));
+    cy.wait(1000);
     cy.do(searchField.fillIn(value));
-    cy.expect(searchButton.has({ disabled: false }));
-    cy.do(searchButton.click());
+    cy.wait(1000);
+    cy.do(Button('Search').click());
   },
   clearSearchField() {
     cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
