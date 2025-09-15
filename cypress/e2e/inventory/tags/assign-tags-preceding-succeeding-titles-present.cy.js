@@ -98,6 +98,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358962);
+        cy.reload();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },
@@ -166,18 +167,24 @@ describe('Inventory', () => {
       'C367962 Verify that user can add more than 1 tag to "Holdings" record with source "MARC" (volaris)',
       { tags: ['extendedPath', 'volaris', 'C367962'] },
       () => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventorySteps.addMarcHoldingRecord();
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
@@ -190,7 +197,11 @@ describe('Inventory', () => {
           HoldingsRecordEdit.addTag(tag);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.waitContentLoading();
+        });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();

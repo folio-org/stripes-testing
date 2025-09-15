@@ -107,10 +107,13 @@ describe('Requests', () => {
     'C546 Create new request for "Page" type (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C546'] },
     () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
+
       createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
       createPageTypeRequest.clickNewRequest(createdItem.barcode);
       createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);

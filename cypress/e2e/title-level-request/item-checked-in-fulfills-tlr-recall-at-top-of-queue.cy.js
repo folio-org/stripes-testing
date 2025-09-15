@@ -130,9 +130,11 @@ describe('Request queue. TLR', () => {
         });
       })
       .then(() => {
-        cy.login(users.mainUser.username, users.mainUser.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(users.mainUser.username, users.mainUser.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
         });
       });
   });
