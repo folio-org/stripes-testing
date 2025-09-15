@@ -10,7 +10,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
       const testData = {
-        headerText: /New .*MARC authority record/,
+        headerText: /Create a new .*MARC authority record/,
         authorityFileValue: 'n000232',
         tag010: '010',
         tag100Content: '$a C423523 Close window test ESC',
@@ -30,9 +30,11 @@ describe('MARC', () => {
             user = userProperties;
           })
           .then(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
       });

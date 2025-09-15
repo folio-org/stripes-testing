@@ -17,7 +17,7 @@ describe('MARC', () => {
     let instanceHrid;
     const testData = {
       tag852: '852',
-      headerTitle: /New .*MARC holdings record/,
+      headerTitle: /Create a new .*MARC holdings record/,
       oclc: '1007797324',
       OCLCAuthentication: '100481406/PAOLF',
     };

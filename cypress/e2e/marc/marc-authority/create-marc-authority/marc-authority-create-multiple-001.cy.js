@@ -37,9 +37,11 @@ describe('MARC', () => {
           userProperties = createdUser;
           ManageAuthorityFiles.setAuthorityFileToActiveViaApi(authorityFile1);
           ManageAuthorityFiles.setAuthorityFileToActiveViaApi(authorityFile2);
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
       });

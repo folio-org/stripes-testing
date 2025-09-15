@@ -6,7 +6,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -69,46 +69,43 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
-      it(
-        'C808479 API | Create "Item" with empty "order" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808479'] },
-        () => {
-          cy.getToken(user.username, user.password);
+      // Trillium+ only
+      it('C808479 API | Create "Item" with empty "order" field (spitfire)', { tags: [] }, () => {
+        cy.getToken(user.username, user.password);
 
-          const itemBodyBase = {
-            status: {
-              name: ITEM_STATUS_NAMES.AVAILABLE,
-            },
-            holdingsRecordId,
-            materialType: {
-              id: materialType.id,
-            },
-            permanentLoanType: {
-              id: loanType.id,
-            },
-          };
+        const itemBodyBase = {
+          status: {
+            name: ITEM_STATUS_NAMES.AVAILABLE,
+          },
+          holdingsRecordId,
+          materialType: {
+            id: materialType.id,
+          },
+          permanentLoanType: {
+            id: loanType.id,
+          },
+        };
 
-          cy.then(() => {
-            // Create items without order field and verify auto-assignment
-            [
-              { ...itemBodyBase, barcode: uuid() },
-              { ...itemBodyBase, barcode: uuid() },
-            ].forEach((body, index) => {
-              cy.createItem(body).then((response) => {
-                expect(response.status).to.eq(201);
-                expect(response.body).to.have.property('order', index + 1);
-              });
-            });
-          }).then(() => {
-            // Step 3: Get items by holdings ID and verify sorting
-            InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
-              expect(items).to.have.length(2);
-              expect(items[0].order).to.eq(1);
-              expect(items[1].order).to.eq(2);
+        cy.then(() => {
+          // Create items without order field and verify auto-assignment
+          [
+            { ...itemBodyBase, barcode: uuid() },
+            { ...itemBodyBase, barcode: uuid() },
+          ].forEach((body, index) => {
+            cy.createItem(body).then((response) => {
+              expect(response.status).to.eq(201);
+              expect(response.body).to.have.property('order', index + 1);
             });
           });
-        },
-      );
+        }).then(() => {
+          // Step 3: Get items by holdings ID and verify sorting
+          InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
+            expect(items).to.have.length(2);
+            expect(items[0].order).to.eq(1);
+            expect(items[1].order).to.eq(2);
+          });
+        });
+      });
     });
   });
 });

@@ -23,7 +23,7 @@ describe('MARC', () => {
     const randomLetters = getRandomLetters(8);
     const testData = {
       tag852: '852',
-      headerTitle: /New .*MARC holdings record/,
+      headerTitle: /Create a new .*MARC holdings record/,
       location: QuickMarcEditor.getExistingLocation(),
       updatedIndicator: '0',
       newTag852Content: `$b E $h call $i number ${randomLetters} $k prefix $l title $m suffix $t copy number`,

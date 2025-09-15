@@ -6,7 +6,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -85,10 +85,11 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C812850 API | Edit multiple "Item" records (change "order" field values) using batch endpoint (spitfire)',
         {
-          tags: ['criticalPath', 'spitfire', 'C812850'],
+          tags: [],
         },
         () => {
           cy.getToken(user.username, user.password);

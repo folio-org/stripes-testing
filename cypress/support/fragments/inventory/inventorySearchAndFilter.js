@@ -1510,6 +1510,7 @@ export default {
       else cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).absent());
     });
   },
+
   verifyWarningIconForSearchResult: (cellContent, hasWarningItem = true) => {
     const targetCell = MultiColumnListCell({ content: cellContent });
     if (hasWarningItem) cy.expect(targetCell.find(Icon({ warning: true })).exists());
