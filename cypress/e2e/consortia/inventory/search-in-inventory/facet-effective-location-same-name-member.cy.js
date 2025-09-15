@@ -59,6 +59,10 @@ describe('Inventory', () => {
         };
         const locationsAccordionName = 'Effective location (item)';
 
+        const Dropdowns = {
+          HELDBY: 'Held by',
+        };
+
         before('Create test data and user', () => {
           cy.resetTenant();
           cy.getAdminToken();
@@ -442,6 +446,7 @@ describe('Inventory', () => {
             }, 20_000);
 
             // Step 1: Expand "Effective location (item)" dropdown
+            InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
             InventorySearchAndFilter.clickAccordionByName(locationsAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationsAccordionName, true);
             InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
@@ -499,6 +504,7 @@ describe('Inventory', () => {
             // Step 7: Switch to Holdings tab, verify cleared
             InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.holdingsTabIsDefault();
+            InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
             InventorySearchAndFilter.checkSearchQueryText('');
             InventoryInstances.waitContentLoading();
             // Step 8: Expand "Effective location (item)" dropdown again
@@ -549,6 +555,7 @@ describe('Inventory', () => {
             // Step 13: Switch to Item tab, verify cleared
             InventorySearchAndFilter.switchToItem();
             InventorySearchAndFilter.itemTabIsDefault();
+            InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
             InventorySearchAndFilter.checkSearchQueryText('');
             InventoryInstances.waitContentLoading();
             // Step 14: Type "Test location" in facet and verify both tenant options
