@@ -52,7 +52,7 @@ module.exports = defineConfig({
     eureka: true,
     runAsAdmin: false,
     systemRoleName: 'adminRole',
-    newSettings: true,
+    newSettings: false,
   },
   reporterOptions: reportportalOptions,
   e2e: {

@@ -166,9 +166,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield(folioInstance.id, 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Receiving history');
-          QueryModal.clickShowColumnsButton();
 
           const expectedHoldingsToFind = [
             mappedHoldingsDatatoUIView[0],
