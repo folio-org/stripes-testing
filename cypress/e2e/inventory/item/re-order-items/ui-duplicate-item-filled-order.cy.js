@@ -10,7 +10,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -85,9 +85,10 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808499'] },
+        { tags: [] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(user.username, user.password, {

@@ -1587,3 +1587,12 @@ export const API_PATH = {
   INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
   ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
 };
+
+export const INVENTORY_COLUMN_HEADERS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  PUBLISHERS: 'Publishers',
+  DATE: 'Date',
+  RELATION: 'Relation',
+  INSTANCE_HRID: 'Instance HRID',
+};

@@ -11,7 +11,7 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
-      const headerText = /New .*MARC authority record/;
+      const headerText = /Create a new .*MARC authority record/;
       const newField = {
         previousFieldTag: '008',
         tag: '111',

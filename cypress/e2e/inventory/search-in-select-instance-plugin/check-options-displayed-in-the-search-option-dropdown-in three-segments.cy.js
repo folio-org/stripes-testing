@@ -12,7 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     const defaultSearchOptionHoldings = 'Keyword (title, contributor, identifier, HRID, UUID)';
-    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID, barcode)';
+    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID)';
     const organization = {
       ...NewOrganization.defaultUiOrganizations,
       paymentMethod: 'EFT',
@@ -40,9 +40,11 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui, Permissions.uiOrdersCreate.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.ordersPath,
+              waiter: Orders.waitLoading,
+            });
           });
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);

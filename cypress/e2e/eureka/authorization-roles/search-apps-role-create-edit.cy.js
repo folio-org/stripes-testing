@@ -5,7 +5,7 @@ import AuthorizationRoles from '../../../support/fragments/settings/authorizatio
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import Capabilities from '../../../support/dictionary/capabilities';
 
-describe('Eureka', () => {
+describe.skip('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
@@ -71,9 +71,10 @@ describe('Eureka', () => {
         cy.deleteAuthorizationRoleApi(testData.editRoleId, true);
       });
 
+      // Trillium+ only
       it(
         'C825331 [UIPSELAPP-14] Search for application while creating/editing of the role (eureka)',
-        { tags: ['criticalPath', 'eureka', 'C825331'] },
+        { tags: [] },
         () => {
           const leadingWordApps = allTenantApplications.filter((app) => app.startsWith(testData.searchTerms.leading));
           const middleWordApps = allTenantApplications.filter((app) => app.includes(testData.searchTerms.middle));

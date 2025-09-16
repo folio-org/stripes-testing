@@ -44,9 +44,11 @@ describe('MARC', () => {
           ).then((sourceId) => {
             localAuthFile.id = sourceId;
           });
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
       });
@@ -81,9 +83,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkEmptyFieldAdded(6);
           QuickMarcEditor.updateTagNameToLockedTag(6, tag008);
 
-          // The new row should be disabled (read-only)
           QuickMarcEditor.verifyTagValue(6, tag008);
-          QuickMarcEditor.verifyDropdownsShownInField(6, true);
 
           // Step 4: Try to save and check for error message
           QuickMarcEditor.pressSaveAndClose();

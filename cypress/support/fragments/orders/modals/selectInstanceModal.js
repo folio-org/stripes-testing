@@ -56,7 +56,7 @@ const searchHoldingsOptions = [
   'Query search',
 ];
 const searchItemsOptions = [
-  'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+  'Keyword (title, contributor, identifier, HRID, UUID)',
   'Barcode',
   'ISBN',
   'ISSN',

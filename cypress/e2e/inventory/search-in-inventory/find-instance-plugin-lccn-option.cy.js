@@ -41,10 +41,11 @@ describe('Inventory', () => {
         permissions.uiOrdersEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
       });
     });

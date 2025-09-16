@@ -56,9 +56,11 @@ describe('MARC', () => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C523594*');
           })
           .then(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
       });
@@ -70,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523594 "MARC validation rules check" modal appears during create of MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C523594'] },
+        'C813642 "MARC validation rules check" modal appears during create of MARC authority record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813642'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();

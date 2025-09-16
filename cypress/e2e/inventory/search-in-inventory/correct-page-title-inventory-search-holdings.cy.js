@@ -14,7 +14,7 @@ describe('Inventory', () => {
     const randomPostfix = getRandomPostfix();
     const instanceTitlePrefix = `AT_C423411_FolioInstance_${randomPostfix}`;
     const testData = {
-      keywordOption: 'Keyword (title, contributor, identifier)',
+      keywordOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
       querySearchOption: searchHoldingsOptions[10],
       sourceAccordionName: 'Source',
       folioInstance: InventoryInstances.generateFolioInstances({

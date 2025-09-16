@@ -8,7 +8,7 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -72,10 +72,11 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808496 Create "Item" with empty "order" field (default state) (spitfire)',
         {
-          tags: ['criticalPath', 'spitfire', 'C808496'],
+          tags: [],
         },
         () => {
           cy.waitForAuthRefresh(() => {
