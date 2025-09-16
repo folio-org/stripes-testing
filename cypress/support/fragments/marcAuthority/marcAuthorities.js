@@ -875,7 +875,7 @@ export default {
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
-      modalAdvancedSearch.find(buttonCancelInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
     if (boolean) {
       cy.expect([

@@ -77,6 +77,7 @@ describe('Remote Storage', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventorySearchAndFilter.waitLoading,
+            authRefresh: true,
           });
         });
     });

@@ -177,6 +177,7 @@ describe('Request Detail. TLR', () => {
         cy.login(users.mainUser.username, users.mainUser.password, {
           path: TopMenu.requestsPath,
           waiter: Requests.waitLoading,
+          authRefresh: true,
         });
       });
   });

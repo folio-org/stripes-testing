@@ -108,6 +108,9 @@ export default {
   getOrderNumber() {
     return cy.then(() => infoSectionFields.poNumber.value());
   },
+  getOrderNumberFromForm() {
+    return cy.then(() => TextField({ name: 'poNumber' }).value());
+  },
   fillOrderFields({ orderInfo }) {
     if (orderInfo) {
       this.fillOrderInfoSectionFields(orderInfo);

@@ -16,6 +16,9 @@ import { NewOrganization, Organizations } from '../../../support/fragments/organ
 import OpenOrder from '../../../support/fragments/settings/orders/openOrder';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import { matching } from '../../../../interactors';
+import OrderStates from '../../../support/fragments/orders/orderStates';
 
 describe('Orders', () => {
   const testData = {
@@ -45,6 +48,7 @@ describe('Orders', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
+        authRefresh: true,
       });
     });
   });
@@ -77,7 +81,7 @@ describe('Orders', () => {
         { label: 'Add POL', conditions: { disabled: true } },
       ]);
 
-      OrderEditForm.getOrderNumber().then((poNumber) => {
+      OrderEditForm.getOrderNumberFromForm().then((poNumber) => {
         testData.poNumber = poNumber;
 
         // Fill in all the mandatory fields
@@ -93,7 +97,6 @@ describe('Orders', () => {
         OrderLineEditForm.checkButtonsConditions([
           { label: 'Cancel', conditions: { disabled: false } },
           { label: 'Save & close', conditions: { disabled: false } },
-          { label: 'Save & open order', conditions: { disabled: false } },
         ]);
 
         // Fill in all the mandatory fields, Click "Save & open order" button
@@ -107,13 +110,12 @@ describe('Orders', () => {
             quantityPhysical: '1',
           },
         });
-        OrderLineEditForm.clickSaveAndOpenOrderButton();
-
-        // Navigate to "Orders" app and search for created order
-        cy.visit(TopMenu.ordersPath);
-        Orders.selectOrderByPONumber(testData.poNumber);
-
-        // Check Order details
+        OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        Orders.openOrder();
+        InteractorsTools.checkCalloutMessage(
+          matching(new RegExp(OrderStates.orderOpenedSuccessfully)),
+        );
         OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
         OrderDetails.checkOrderLinesTableContent([
           { poLineNumber: testData.poNumber, poLineTitle: testData.instance.instanceTitle },

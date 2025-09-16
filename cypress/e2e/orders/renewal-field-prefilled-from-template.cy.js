@@ -5,6 +5,10 @@ import { NewOrganization, Organizations } from '../../support/fragments/organiza
 import { OpenOrder, OrderTemplates } from '../../support/fragments/settings/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import { matching } from '../../../interactors';
+import OrderStates from '../../support/fragments/orders/orderStates';
 
 describe('Orders', () => {
   const isOpenOrderEnabled = true;
@@ -27,10 +31,10 @@ describe('Orders', () => {
       Permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });
@@ -76,7 +80,14 @@ describe('Orders', () => {
           quantityPhysical: '1',
         },
       });
-      OrderLineEditForm.clickSaveAndOpenOrderButton();
+      OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
+      InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderOpenedSuccessfully)),
+      );
+      OrderDetails.openPolDetails(`autotest_pol_${testData.organization.erpCode}`);
 
       // "Renewal note" field in "Ongoing order information" contains prefilled text from template
       OrderLineDetails.checkOngoingOrderInformationSection([

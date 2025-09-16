@@ -185,6 +185,7 @@ describe('Permissions', () => {
             cy.loginAsAdmin({
               path: TopMenu.checkOutPath,
               waiter: Checkout.waitLoading,
+              authRefresh: true,
             });
           });
         });
