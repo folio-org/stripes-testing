@@ -224,7 +224,7 @@ export default {
     cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(matching(new RegExp(`^${statusTerm}`))));
+    cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
   saveAndClose() {
     cy.wait(1500);

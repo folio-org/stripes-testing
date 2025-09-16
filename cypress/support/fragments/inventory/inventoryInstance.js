@@ -36,7 +36,7 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
-import { REQUEST_METHOD, ITEM_STATUS_NAMES } from '../../constants';
+import { REQUEST_METHOD, ITEM_STATUS_NAMES, INSTANCE_STATUS_TERM_NAMES } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -213,7 +213,7 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
-  cy.wait(500);
+  cy.wait(1500);
   cy.do(
     instanceDetailsSection
       .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
@@ -907,7 +907,7 @@ export default {
   checkHoldingsTable: (
     locationName,
     rowNumber,
-    caption,
+    loanType,
     barcode,
     status,
     effectiveLocation = null,
@@ -916,11 +916,13 @@ export default {
     const indexRowNumber = `row-${rowNumber}`;
     cy.do(Accordion(accordionHeader).clickHeader());
 
-    const row = Accordion(accordionHeader).find(MultiColumnListRow({ indexRow: indexRowNumber }));
+    const row = Accordion(accordionHeader).find(
+      MultiColumnListRow({ rowIndexInParent: indexRowNumber }),
+    );
 
     cy.expect([
       row.find(MultiColumnListCell({ content: barcode })).exists(),
-      row.find(MultiColumnListCell({ content: caption })).exists(),
+      row.find(MultiColumnListCell({ content: loanType })).exists(),
       row.find(MultiColumnListCell({ content: status })).exists(),
     ]);
 
@@ -933,7 +935,7 @@ export default {
     const indexRowNumber = `row-${rowNumber}`;
     cy.do(Accordion({ label: including(languageAccordionValue) }).clickHeader());
     const row = Accordion({ label: including(languageAccordionValue) }).find(
-      MultiColumnListRow({ indexRow: indexRowNumber }),
+      MultiColumnListRow({ rowIndexInParent: indexRowNumber }),
     );
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
   },
@@ -1229,7 +1231,7 @@ export default {
   checkIsInstanceUpdated: () => {
     const instanceStatusTerm = KeyValue('Instance status term');
 
-    cy.expect(instanceStatusTerm.has({ value: 'Batch Loaded' }));
+    cy.expect(instanceStatusTerm.has({ value: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED }));
     cy.expect(source.has({ value: 'MARC' }));
     cy.expect(
       KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }),

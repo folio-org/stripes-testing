@@ -83,10 +83,12 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-        (instances) => {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
+        (response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
         },
       );
 
