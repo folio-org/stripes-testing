@@ -95,9 +95,9 @@ describe('Data Import', () => {
       });
       // need to delete instanses with same 035 fields
       resourceIdentifiers.forEach((identifier) => {
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier).then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }
@@ -126,9 +126,9 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         resourceIdentifiers.forEach((identifier) => {
-          InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
+          InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier).then((response) => {
+            if (response.totalRecords !== 0) {
+              response.instances.forEach(({ id }) => {
                 InventoryInstance.deleteInstanceViaApi(id);
               });
             }

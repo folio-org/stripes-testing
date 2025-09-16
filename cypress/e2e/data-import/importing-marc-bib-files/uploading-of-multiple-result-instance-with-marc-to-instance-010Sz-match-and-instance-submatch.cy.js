@@ -104,9 +104,9 @@ describe('Data Import', () => {
         testData.user = userProperties;
 
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(testData.identifire.value).then(
-          (instances) => {
-            if (instances.length !== 0) {
-              instances.forEach(({ id }) => {
+          (response) => {
+            if (response.totalRecords !== 0) {
+              response.instances.forEach(({ id }) => {
                 InstanceRecordView.markAsDeletedViaApi(id);
                 InventoryInstance.deleteInstanceViaApi(id);
               });
@@ -161,7 +161,7 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.chooseInstanceStatusTerm('Cataloged (folio: cat)');
+        InstanceRecordEdit.chooseInstanceStatusTerm('Cataloged');
         InstanceRecordEdit.saveAndClose();
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.CATALOGED);

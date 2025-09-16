@@ -30,6 +30,7 @@ import {
   BROWSE_CALL_NUMBER_OPTIONS,
   BROWSE_CLASSIFICATION_OPTIONS,
   INVENTORY_COLUMN_HEADERS,
+  INSTANCE_STATUS_TERM_NAMES,
 } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
@@ -177,7 +178,7 @@ const checkInstanceDetails = () => {
   });
   // when creating mapping profile we choose instance status term as "Batch Loaded"
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
-  const expectedStatusTerm = 'Batch Loaded';
+  const expectedStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
   const expectedStatusCode = 'batch';
 
   cy.do(
@@ -594,8 +595,8 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body: { instances } }) => {
-        return instances;
+      .then((resp) => {
+        return resp.body;
       });
   },
 

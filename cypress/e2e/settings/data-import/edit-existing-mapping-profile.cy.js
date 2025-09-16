@@ -1,4 +1,4 @@
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEditForm';
@@ -17,7 +17,7 @@ describe('Data Import', () => {
       name: `C2351 autotest mapping profile ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
-    const instanceStatusTerm = '"Batch Loaded"';
+    const instanceStatusTerm = `"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {

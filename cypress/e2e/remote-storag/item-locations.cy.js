@@ -122,7 +122,7 @@ describe('Remote Storage', () => {
       InventoryInstance.checkHoldingsTable(
         toBeEditedLocationName,
         0,
-        '-',
+        'No value set-',
         ITEM_BARCODE,
         ITEM_STATUS_NAMES.AVAILABLE,
         editedLocationName,
@@ -158,7 +158,7 @@ describe('Remote Storage', () => {
       InventoryInstance.checkHoldingsTable(
         editedLocationName,
         0,
-        '-',
+        'No value set-',
         ITEM_BARCODE,
         ITEM_STATUS_NAMES.AVAILABLE,
         toBeEditedLocationName,
