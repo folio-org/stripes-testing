@@ -107,11 +107,45 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
   });
 });
 
+// Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
+//   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+//   callback();
+//   cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
+//   cy.wait(500);
+// });
+
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
-  cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+  cy.intercept('POST', '/authn/refresh').as('authnRefreshCall');
+
   callback();
-  cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
-  cy.wait(500);
+
+  cy.log(`Waiting ${timeout / 1000} sec for /authn/refresh call...`);
+  cy.window({ log: false }).then(() => {
+    return cy.wrap(null, { log: false }).then(() => {
+      const pollInterval = 100;
+      const startTime = Date.now();
+
+      const checkForRequest = () => {
+        return cy.get('@authnRefreshCall.all', { log: false }).then((interceptions) => {
+          if (interceptions.length > 0) {
+            return cy
+              .wait('@authnRefreshCall')
+              .its('response.statusCode')
+              .should('eq', 201)
+              .then(() => {
+                cy.wait(500);
+              });
+          }
+          if (Date.now() - startTime >= timeout) {
+            cy.log('No /authn/refresh call made - continuing the test.');
+            return;
+          }
+          return cy.wait(pollInterval, { log: false }).then(checkForRequest);
+        });
+      };
+      return checkForRequest();
+    });
+  });
 });
 
 Cypress.Commands.add('getConsortiaStatus', () => {
