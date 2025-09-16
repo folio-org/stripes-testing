@@ -149,7 +149,9 @@ describe('Requests Export CSV File', () => {
     'C199705 Patron Comments are Displayed in Requests Export CSV File (vega)',
     { tags: ['criticalPath', 'vega', 'C199705'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.waitForAuthRefresh(() => {
+        cy.visit(TopMenu.requestsPath);
+      });
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.exportRequestToCsv();

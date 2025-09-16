@@ -64,6 +64,7 @@ describe('Title Level Request', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.requestsPath,
             waiter: Requests.waitLoading,
+            authRefresh: true,
           });
         });
     });

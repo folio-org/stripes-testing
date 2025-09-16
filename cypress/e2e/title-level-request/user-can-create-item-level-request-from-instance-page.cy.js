@@ -96,6 +96,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
+        authRefresh: true,
       });
     });
   });
@@ -119,7 +120,6 @@ describe('Title Level Request. Create Item or Title level request', () => {
     'C347890 Check that user can create Item level request from instance page (vega) (TaaS)',
     { tags: ['extendedPath', 'vega', 'C347890'] },
     () => {
-      cy.log('new request-0');
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       InventoryInstance.checkNewRequestAtNewPane();
       // Pay attention on the "Create title level request" check mark button (checked)

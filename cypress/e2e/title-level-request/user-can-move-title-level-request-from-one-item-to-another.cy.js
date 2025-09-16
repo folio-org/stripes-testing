@@ -90,7 +90,11 @@ describe('Title Level Request', () => {
       testData.folioInstances.forEach((item) => {
         item.barcodes.forEach((barcode) => {
           if (barcode !== testData.currentItem) {
-            cy.login(userData.username, userData.password, { path: TopMenu.requestsPath, waiter: Requests.waitLoading });
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+              authRefresh: true,
+            });
             Requests.selectTitleRequestLevel();
             Requests.findCreatedRequest(item.instanceTitle);
             Requests.selectFirstRequest(item.instanceTitle);

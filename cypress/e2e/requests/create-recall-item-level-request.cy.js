@@ -87,6 +87,11 @@ describe('Create Recall Item level request', () => {
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
           });
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+          authRefresh: true,
+        });
       });
   });
 
@@ -109,10 +114,6 @@ describe('Create Recall Item level request', () => {
     'C350418 Check that user can create "Recall" Item level request (vega)',
     { tags: ['criticalPath', 'vega', 'C350418'] },
     () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
       NewRequest.openNewRequestPane();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);

@@ -44,8 +44,8 @@ describe('Requests', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.tagsGeneralPath,
         waiter: TagsGeneral.waitLoading,
+        authRefresh: true,
       });
-      cy.waitForAuthRefresh(() => {}, 20_000);
       TagsGeneral.changeEnableTagsStatus('enable');
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
