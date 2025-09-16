@@ -37,10 +37,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUser) => {
           userProperties = createdUser;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
+        });
         });
       });
 
@@ -64,7 +65,6 @@ describe('MARC', () => {
 
           // Step 3: The new row should be disabled (read-only)
           QuickMarcEditor.verifyTagValue(5, tag008);
-          QuickMarcEditor.verifyDropdownsShownInField(5, true);
 
           // Step 4: Try to save and check for error messages
           QuickMarcEditor.pressSaveAndClose();

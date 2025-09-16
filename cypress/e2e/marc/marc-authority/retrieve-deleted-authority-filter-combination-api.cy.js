@@ -82,6 +82,7 @@ describe('MARC', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -117,6 +118,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           batchDeleteStart = new Date();
           batchDeleteStart.setMinutes(batchDeleteStart.getMinutes() + 2);

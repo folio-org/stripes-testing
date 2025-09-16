@@ -44,9 +44,10 @@ describe('MARC', () => {
           ).then((sourceId) => {
             localAuthFile.id = sourceId;
           });
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
           });
         });
       });

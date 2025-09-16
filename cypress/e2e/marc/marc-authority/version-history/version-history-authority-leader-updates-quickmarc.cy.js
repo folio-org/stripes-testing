@@ -22,7 +22,7 @@ describe('MARC', () => {
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
       };
       const dropdownUpdate = [testData.tagLdr, 'Status', 'n - New'];
-      const textUpdate = [testData.tag008, 'Geo Subd', 'd - Subdivided geographically-direct'];
+      const textUpdate = ['Geo Subd', 'd'];
       const versionHistoryCardsData = [
         {
           isOriginal: false,
@@ -120,8 +120,7 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.selectFieldsDropdownOption(...dropdownUpdate);
           QuickMarcEditor.verifyDropdownOptionChecked(...dropdownUpdate);
-          QuickMarcEditor.selectFieldsDropdownOption(...textUpdate);
-          QuickMarcEditor.verifyDropdownOptionChecked(...textUpdate);
+          QuickMarcEditor.update008TextFields(...textUpdate);
           cy.wait(3000);
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();

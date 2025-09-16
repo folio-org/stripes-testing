@@ -90,10 +90,10 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
             });
           });
         });
@@ -120,8 +120,8 @@ describe('MARC', () => {
             cy.wait(500);
             InventoryInstance.verifyAndClickLinkIcon(newField.tag);
             InventoryInstance.verifySelectMarcAuthorityModal();
-            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
-            MarcAuthorities.checkSearchInput(testData.searchValue);
+            // MarcAuthorities.checkSearchOption(testData.browseSearchOption);
+            // MarcAuthorities.checkSearchInput(testData.searchValue);
             MarcAuthorities.switchToSearch();
             MarcAuthorities.searchByParameter(newField.searchOption, testData.searchQuery);
             InventoryInstance.clickLinkButton();

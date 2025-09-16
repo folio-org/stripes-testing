@@ -58,10 +58,10 @@ describe('MARC', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+            cy.login(user.username, user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
           });
           MarcAuthorities.switchToSearch();
         },
@@ -70,11 +70,11 @@ describe('MARC', () => {
 
     after('Delete user, test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.preconditionUserId);
-      Users.deleteViaApi(user.userId);
       createdAuthorityIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id);
       });
+      Users.deleteViaApi(testData.preconditionUserId);
+      Users.deleteViaApi(user.userId);
     });
 
     it(

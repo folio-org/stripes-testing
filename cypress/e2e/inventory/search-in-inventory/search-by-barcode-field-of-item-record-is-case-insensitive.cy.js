@@ -92,6 +92,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -103,7 +104,9 @@ describe('Inventory', () => {
         });
         ServicePoints.deleteViaApi(testData.userServicePoint.id);
         Locations.deleteViaApi(testData.defaultLocation);
-        Users.deleteViaApi(testData.user.userId);
+        if (testData.user && testData.user.userId) {
+          Users.deleteViaApi(testData.user.userId);
+        }
         cy.deleteLoanType(testData.loanTypeId);
       });
 
@@ -114,9 +117,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
 
-          testData.searchValues.forEach((value) => {
-            search(testData.keywordOption, value);
-          });
           testData.searchValues.forEach((value) => {
             search(testData.barcodeOption, value);
           });

@@ -57,11 +57,12 @@ describe('Inventory', () => {
               });
             })
             .then(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              InventorySearchAndFilter.instanceTabIsDefault();
+                cy.login(user.username, user.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
+                });
+                InventorySearchAndFilter.instanceTabIsDefault();
             });
         });
       });

@@ -98,6 +98,7 @@ const buttonLink = Button('Link');
 const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
+const buttonCancelInAdvSearchModal = Button({ ariaLabel: 'Cancel', disabled: or(false, true) });
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
 const buttonResetAllInAdvancedModal = Button({ ariaLabel: 'Reset all' });
 const buttonClose = Button({ icon: 'times' });
@@ -875,7 +876,7 @@ export default {
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
-      modalAdvancedSearch.find(buttonResetAllInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonCancelInAdvSearchModal).exists(),
     ]);
     if (boolean) {
       cy.expect([
