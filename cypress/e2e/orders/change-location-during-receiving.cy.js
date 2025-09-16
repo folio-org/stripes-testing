@@ -13,7 +13,8 @@ import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../suppo
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
-describe('orders: Receive piece from Order',
+describe(
+  'orders: Receive piece from Order',
   {
     retries: {
       runMode: 1,
@@ -27,6 +28,7 @@ describe('orders: Receive piece from Order',
     let orderNumber;
     let firstLocation;
     let secondLocation;
+    const displaySummary = 'autotestCaption';
 
     beforeEach(() => {
       order = { ...NewOrder.defaultOneTimeOrder, approved: true };
@@ -88,10 +90,11 @@ describe('orders: Receive piece from Order',
         permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
         user = userProperties;
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
       });
     });
@@ -107,7 +110,6 @@ describe('orders: Receive piece from Order',
       'C9177 Change location during receiving (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
-        const displaySummary = 'autotestCaption';
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         // Receiving part
@@ -122,4 +124,5 @@ describe('orders: Receive piece from Order',
         InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       },
     );
-  });
+  },
+);

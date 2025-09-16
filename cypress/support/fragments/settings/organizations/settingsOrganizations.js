@@ -350,6 +350,25 @@ export default {
     );
   },
 
+  tryToDeleteAccountTypeWhenItUnable(typeName) {
+    cy.do(
+      MultiColumnListCell({ content: typeName.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber).find(trashIconButton).click(),
+          Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click(),
+        ]);
+      }),
+    );
+    cy.wait(1000);
+    InteractorsTools.checkModalMessage(
+      'Cannot delete account type',
+      'Unable to delete. Account type is in use by one or more organizations.',
+    );
+    cy.wait(1000);
+    cy.do([Button('Okay').click()]);
+  },
+
   checkAccountTypeAbsent(typeName) {
     cy.get('#editList-bankingAccountTypes')
       .should('exist')

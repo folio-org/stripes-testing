@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import ErmComparison from '../../../support/fragments/erm-comparison/ermComparison';
 
-describe('fse-erm-comparison - UI', () => {
+describe('fse-erm-comparison - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

@@ -133,9 +133,9 @@ describe('Data Import', () => {
         protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(
           `${randomIdentifierCode}00999523`,
-        ).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
+        ).then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }

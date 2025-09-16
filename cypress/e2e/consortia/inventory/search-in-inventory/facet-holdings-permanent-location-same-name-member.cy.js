@@ -45,6 +45,9 @@ describe('Inventory', () => {
           central: [],
         };
         const locationsAccordionName = 'Holdings permanent location';
+        const Dropdowns = {
+          HELDBY: 'Held by',
+        };
 
         before('Create test data and user', () => {
           cy.resetTenant();
@@ -201,6 +204,7 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
 
             // Step 1: Expand "Holdings permanent location" dropdown
+            InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
             InventorySearchAndFilter.clickAccordionByName(locationsAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationsAccordionName, true);
             InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
@@ -242,6 +246,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.itemTabIsDefault();
             InventorySearchAndFilter.checkSearchQueryText('');
             InventoryInstances.waitContentLoading();
+            InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
             // Step 6: Run search for both instances
             InventoryInstances.searchByTitle(titlePrefix);
             InventorySearchAndFilter.verifyNumberOfSearchResults(2);

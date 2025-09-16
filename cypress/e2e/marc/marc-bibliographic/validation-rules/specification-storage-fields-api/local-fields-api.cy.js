@@ -134,7 +134,7 @@ describe('Specification Storage - Create Field API', () => {
         ...createFieldPayload,
         tag: '898',
         repeatable: true,
-        required: true,
+        required: false,
         deprecated: true,
       };
       cy.getUserToken(user.username, user.password);
@@ -181,7 +181,7 @@ describe('Specification Storage - Create Field API', () => {
               label: 'Field name with updates made by user #2',
               url: 'http://www.example.org/updated2',
               repeatable: true,
-              required: true,
+              required: false,
               deprecated: true,
             };
             cy.updateSpecificationField(fieldId, updatePayload2).then((updateResp2) => {

@@ -10,8 +10,10 @@ import {
   Select,
   TextField,
 } from '../../../../../interactors';
+import OrderStorageSettings from '../../orders/orderStorageSettings';
 import InteractorsTools from '../../../utils/interactorsTools';
-import Configs from '../configs';
+
+const ORDER_NUMBER_SETTING_KEY = 'orderNumber';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
@@ -210,26 +212,25 @@ export default {
   generateUserCanEditPONumberConfig(canUserEditOrderNumber = false) {
     return {
       value: JSON.stringify({ canUserEditOrderNumber }),
-      module: 'ORDERS',
-      configName: 'orderNumber',
+      key: ORDER_NUMBER_SETTING_KEY,
       id: uuid(),
     };
   },
 
   getUserCanEditPONumberViaApi() {
-    return Configs.getConfigViaApi({ query: '(module==ORDERS and configName==orderNumber)' });
+    return OrderStorageSettings.getSettingsViaApi({ key: ORDER_NUMBER_SETTING_KEY });
   },
 
   setUserCanEditPONumberViaApi(canUserEditOrderNumber) {
-    this.getUserCanEditPONumberViaApi().then((configs) => {
-      if (configs[0]) {
-        Configs.updateConfigViaApi({
-          ...configs[0],
+    this.getUserCanEditPONumberViaApi().then((settings) => {
+      if (settings[0]) {
+        OrderStorageSettings.updateSettingViaApi({
+          ...settings[0],
           value: JSON.stringify({ canUserEditOrderNumber }),
         });
       } else {
-        const config = this.generateUserCanEditPONumberConfig(canUserEditOrderNumber);
-        Configs.createConfigViaApi(config);
+        const setting = this.generateUserCanEditPONumberConfig(canUserEditOrderNumber);
+        OrderStorageSettings.createSettingViaApi(setting);
       }
     });
   },

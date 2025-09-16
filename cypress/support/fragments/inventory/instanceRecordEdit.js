@@ -224,7 +224,7 @@ export default {
     cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(matching(new RegExp(`^${statusTerm}`))));
+    cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
   saveAndClose() {
     cy.wait(1500);
@@ -279,6 +279,9 @@ export default {
     ]);
     cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
     cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
+  },
+  clickDiscoverySuppressCheckbox() {
+    cy.do(supressFromDiscoveryCheckbox.click());
   },
   verifyDiscoverySuppressCheckbox(isChecked = false, isDisabled = false) {
     if (isChecked) {

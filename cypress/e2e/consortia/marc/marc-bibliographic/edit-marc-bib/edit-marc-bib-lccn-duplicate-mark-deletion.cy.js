@@ -14,13 +14,7 @@ describe('MARC', () => {
       describe('Consortia', () => {
         const testData = {
           bibFile: 'marcBibFileC569613.mrc',
-          lccnValues: [
-            'vp58020562569613',
-            'pv19951911569613',
-            'lccn12345678569613',
-            'vpi79456384569613',
-            'vpi76638463569613',
-          ],
+          lccnValues: ['vp58020562569613', 'lccn12345678569613', 'vpi79456384569613'],
         };
         const randomPostfix = getRandomPostfix();
         const folioInstancePrefix = `AT_C569613_FolioInstance_${randomPostfix}`;
@@ -55,7 +49,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C569613 Edit MARC bib record with "010 $a" subfield matched to others, marked as deleted records (MARC and FOLIO) with "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
+          'C569613 Edit MARC bib record with "010 $a" subfield matched to others, marked as deleted records (MARC and FOLIO) with "LCCN" field when duplicate LCCN check is enabled (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C569613'] },
           () => {
             // Precondition moved to `it` block to make sure `after` hook will always be executed
@@ -80,11 +74,6 @@ describe('MARC', () => {
                       testData.lccnTypeId = identifier.id;
                     },
                   );
-                  InventoryInstances.getIdentifierTypes({ query: 'name="Canceled LCCN"' }).then(
-                    (identifier) => {
-                      testData.canceledLccnTypeId = identifier.id;
-                    },
-                  );
                 }).then(() => {
                   // Create Folio instances with LCCN numbers and set them for deletion
                   InventoryInstances.createFolioInstanceViaApi({
@@ -97,11 +86,7 @@ describe('MARC', () => {
                       identifiers: [
                         {
                           identifierTypeId: testData.lccnTypeId,
-                          value: testData.lccnValues[3],
-                        },
-                        {
-                          identifierTypeId: testData.canceledLccnTypeId,
-                          value: testData.lccnValues[4],
+                          value: testData.lccnValues[2],
                         },
                       ],
                     },

@@ -123,10 +123,12 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
+      }, 20_000);
     });
   });
   after(() => {
@@ -139,7 +141,6 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     'C347897 Approve invoice with both payment and credit (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       cy.wait(2000);
       Invoices.createInvoiceLinePOLLookUWithSubTotal(firstOrderNumber, '10');

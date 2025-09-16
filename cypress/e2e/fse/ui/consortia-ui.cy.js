@@ -1,7 +1,7 @@
 import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('fse-consortia - UI for production tenants', () => {
+describe('fse-consortia - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -68,7 +68,7 @@ describe('fse-consortia - UI for production tenants', () => {
   );
 });
 
-describe('fse-consortia - UI for non-production tenants', () => {
+describe('fse-consortia - UI (data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

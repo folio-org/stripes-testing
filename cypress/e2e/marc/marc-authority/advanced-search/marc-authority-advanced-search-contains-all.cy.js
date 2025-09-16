@@ -192,6 +192,18 @@ describe('MARC', () => {
             testData.userProperties = createdUserProperties;
           },
         );
+        searchResults.forEach((resultArray) => {
+          resultArray.forEach((result) => {
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: `keyword="${result.heading}"`,
+            }).then((records) => {
+              records.forEach((record) => {
+                MarcAuthority.deleteViaAPI(record.id, true);
+              });
+            });
+          });
+        });
 
         DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
           (response) => {

@@ -100,9 +100,11 @@ describe('MARC', () => {
               ],
             });
             cy.wait(5000);
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
       });

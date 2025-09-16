@@ -168,10 +168,10 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
-        if (instances.length !== 0) {
-          instances.forEach(({ id }) => {
-            InstanceRecordView.markAsDeletedViaApi(id);
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((response) => {
+        if (response.totalRecords !== 0) {
+          response.instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
           });
         }
       });
@@ -215,10 +215,9 @@ describe('Data Import', () => {
           cy.deleteItemViaApi(instance.items[0].id);
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         });
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
-          if (instances.length !== 0) {
-            instances.forEach(({ id }) => {
-              InstanceRecordView.markAsDeletedViaApi(id);
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }

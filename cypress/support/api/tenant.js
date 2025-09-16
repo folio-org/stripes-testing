@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE_STRING } from '../constants';
+import { DEFAULT_LOCALE_OBJECT } from '../constants';
 
 const localeConfigName = 'tenantLocaleSettings';
 
@@ -74,7 +74,7 @@ Cypress.Commands.add('setDefaultLocaleApi', () => {
   cy.getConfigForTenantByName(localeConfigName).then((config) => {
     if (config) {
       const updatedConfig = { ...config };
-      updatedConfig.value = DEFAULT_LOCALE_STRING;
+      updatedConfig.value = DEFAULT_LOCALE_OBJECT;
       cy.updateConfigForTenantById(config.id, updatedConfig);
     }
   });

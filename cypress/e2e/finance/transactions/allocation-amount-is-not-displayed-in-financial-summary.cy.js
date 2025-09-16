@@ -85,10 +85,12 @@ describe('Finance', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.fundPath,
-          waiter: Funds.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.fundPath,
+            waiter: Funds.waitLoading,
+          });
+        }, 20_000);
       });
     });
 

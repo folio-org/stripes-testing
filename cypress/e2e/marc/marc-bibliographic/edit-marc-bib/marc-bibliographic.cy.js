@@ -76,14 +76,8 @@ describe('MARC', () => {
               const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
                 QuickMarcEditor.getFreeTags()[1],
               );
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.deleteConfirmationPresented();
-              QuickMarcEditor.confirmDelete();
-              // Wait for the content to be loaded.
-              cy.wait(4000);
+              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.contains(expectedInSourceRow);
               InventoryViewSource.contains(expectedInSourceRowWithSubfield);
@@ -101,9 +95,7 @@ describe('MARC', () => {
             QuickMarcEditor.addRow();
             QuickMarcEditor.checkInitialContent();
             const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             InventoryInstance.waitLoading();
             // Wait for the content to be loaded.
             cy.wait(4000);
@@ -125,16 +117,10 @@ describe('MARC', () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
             cy.reload();
-            cy.wait(7000);
+            QuickMarcEditor.waitLoading();
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.deleteConfirmationPresented();
-              QuickMarcEditor.confirmDelete();
-              InventoryInstance.waitLoading();
-              // Wait for the content to be loaded.
-              cy.wait(4000);
+              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.notContains(deletedTag);
             });

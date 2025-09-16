@@ -47,10 +47,14 @@ describe('Permissions', () => {
       'C350967 quickMARC: View MARC bibliographic record (spitfire)',
       { tags: ['smoke', 'spitfire', 'C350967'] },
       () => {
-        cy.login(userData.name, userData.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.name, userData.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.instanceTabIsDefault();
         InventoryInstances.searchByTitle(instanceID);

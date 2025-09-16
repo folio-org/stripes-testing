@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Dashboard from '../../../support/fragments/dashboard/dashboard';
 
-describe('fse-dashboard - UI', () => {
+describe('fse-dashboard - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
