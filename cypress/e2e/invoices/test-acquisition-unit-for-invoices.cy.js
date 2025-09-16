@@ -60,6 +60,7 @@ describe('Invoices', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
@@ -70,18 +71,21 @@ describe('Invoices', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.checkZeroSearchResultsHeader();
@@ -89,13 +93,16 @@ describe('Invoices', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
+      }).then(() => {
+        AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+        AcquisitionUnits.selectViewCheckbox();
       });
-      AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-      AcquisitionUnits.selectViewCheckbox();
 
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

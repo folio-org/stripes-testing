@@ -192,6 +192,7 @@ describe('Fiscal Year Rollover', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
+        authRefresh: true,
       });
     });
   });
