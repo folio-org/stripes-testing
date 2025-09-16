@@ -103,6 +103,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -134,7 +135,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase testT estD testA or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971256422129',
+              'keyword exactPhrase testA estD testT or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971256422129',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.checkRecordDetailPageMarkedValue(newFields[0].markedValue);
