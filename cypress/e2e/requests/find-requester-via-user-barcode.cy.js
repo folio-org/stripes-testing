@@ -90,6 +90,7 @@ describe('Find requester via user barcode', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.requestsPath,
               waiter: Requests.waitLoading,
+              authRefresh: true,
             });
           });
       });

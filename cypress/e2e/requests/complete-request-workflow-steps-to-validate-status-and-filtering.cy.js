@@ -85,6 +85,7 @@ describe('Requests', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.checkInPath,
           waiter: CheckInActions.waitLoading,
+          authRefresh: true,
         });
       });
   });

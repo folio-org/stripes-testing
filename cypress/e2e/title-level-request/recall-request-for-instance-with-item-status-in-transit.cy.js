@@ -50,6 +50,7 @@ describe('Title level request', () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
+        authRefresh: true,
       });
     });
   });

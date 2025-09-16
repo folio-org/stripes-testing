@@ -71,7 +71,7 @@ const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-co
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
 const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
-const createRequestButton = Button('New request');
+const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
 const userRolesAccordion = rootSection.find(Accordion('User roles'));
@@ -514,7 +514,7 @@ export default {
 
   startBlock: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('New block').click());
+    cy.do(Button('Create block').click());
   },
 
   openTagsPane() {
