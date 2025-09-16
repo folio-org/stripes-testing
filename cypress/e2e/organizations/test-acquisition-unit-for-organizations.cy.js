@@ -47,6 +47,7 @@ describe('Organizations', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
@@ -58,6 +59,7 @@ describe('Organizations', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
+        authRefresh: true,
       });
       Organizations.createOrganizationWithAU(organization, defaultAcquisitionUnit.name);
       Organizations.checkOrganizationInfo(organization);
@@ -66,12 +68,14 @@ describe('Organizations', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
+        authRefresh: true,
       });
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkZeroSearchResultsHeader();
@@ -88,6 +92,7 @@ describe('Organizations', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
+        authRefresh: true,
       });
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

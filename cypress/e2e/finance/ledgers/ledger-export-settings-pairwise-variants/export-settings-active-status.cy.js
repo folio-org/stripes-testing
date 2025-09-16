@@ -43,8 +43,7 @@ describe('Finance: Ledgers', () => {
   let fileName;
 
   before(() => {
-    cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -52,18 +51,13 @@ describe('Finance: Ledgers', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
       });
-
-      cy.getAdminToken();
       cy.getLocations({ limit: 1 }).then((res) => {
         location = res;
       });
@@ -78,7 +72,6 @@ describe('Finance: Ledgers', () => {
         organization.id = responseOrganizations;
       });
       firstOrder.vendor = organization.name;
-      cy.visit(TopMenu.ordersPath);
       cy.visit(TopMenu.ordersPath);
       Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
         firstOrder.id = firstOrderResponse.id;
@@ -129,6 +122,7 @@ describe('Finance: Ledgers', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
+        authRefresh: true,
       });
     });
   });

@@ -9,6 +9,7 @@ describe('Orders', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionMethodsPath,
         waiter: AcquisitionMethods.waitLoading,
+        authRefresh: true,
       });
     });
 
