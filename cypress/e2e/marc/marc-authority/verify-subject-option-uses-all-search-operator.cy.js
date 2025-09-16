@@ -12,7 +12,7 @@ describe('MARC', () => {
     const testData = {
       searchOptions: ['Keyword', 'Subject'],
       recordType: 'Authorized',
-      marcValue: 'C584450 Discrimination in employment Law and legislation',
+      marcValue: 'C584450 Discrimination in employment--Law and legislation',
       searchQueries: [
         'Discrimination in employment Law and legislation',
         'Discrimination in employment legislation and law',
@@ -58,10 +58,10 @@ describe('MARC', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
-
           cy.login(user.username, user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthorities.switchToSearch();
         },

@@ -105,11 +105,11 @@ export default {
     ]);
     if (isOriginal) {
       cy.expect(targetCard.has({ innerHTML: including('<b><i>Original version</i></b>') }));
+    } else if (isCurrent) {
+      cy.expect(targetCard.find(Button('Current version')).exists());
+      cy.expect(targetCard.has({ innerHTML: including('<b><i>Current version</i></b>') }));
     } else {
       cy.expect(targetCard.find(Button('Changed')).exists());
-      if (isCurrent) {
-        cy.expect(targetCard.has({ innerHTML: including('<b><i>Current version</i></b>') }));
-      }
     }
   },
 
@@ -164,7 +164,11 @@ export default {
 
   openChangesForCard(index = 0) {
     const targetCard = rootSection.find(Card({ index }));
-    cy.do(targetCard.find(Button('Changed')).click());
+    if (index === 0) {
+      cy.do(targetCard.find(Button('Current version')).click());
+    } else {
+      cy.do(targetCard.find(Button('Changed')).click());
+    }
     cy.expect(Modal().exists());
   },
 
