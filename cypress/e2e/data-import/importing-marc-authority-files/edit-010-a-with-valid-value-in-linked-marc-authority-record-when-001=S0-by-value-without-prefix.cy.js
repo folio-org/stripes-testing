@@ -180,8 +180,6 @@ describe('Data Import', () => {
           cy.loginAsAdmin();
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
@@ -198,14 +196,11 @@ describe('Data Import', () => {
         QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
 
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
-          cy.reload();
-          MarcAuthorities.waitLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
+        });
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
       });
     });

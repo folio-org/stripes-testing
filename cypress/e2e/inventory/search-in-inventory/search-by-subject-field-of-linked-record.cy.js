@@ -77,6 +77,13 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
+        testData.instanceRecords.forEach((instanceTitle) => {
+          InventoryInstances.deleteInstanceByTitleViaApi(instanceTitle);
+        });
+        testData.searchAuthorityQueries.forEach((authHeading) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authHeading);
+        });
+
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -92,8 +99,6 @@ describe('Inventory', () => {
       cy.waitForAuthRefresh(() => {
         cy.loginAsAdmin();
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        cy.reload();
         InventoryInstances.waitContentLoading();
       }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
@@ -141,14 +146,11 @@ describe('Inventory', () => {
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375259'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });

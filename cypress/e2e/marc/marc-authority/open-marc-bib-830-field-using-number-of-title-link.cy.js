@@ -15,7 +15,8 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '830',
-      marcValue: 'Cambridge tracts in mathematics and mathematical physics no. 19. english England',
+      marcValue:
+        'Cambridge tracts in mathematics and mathematical physics english--no. 19.--England',
       rowIndex: 21,
       searchOption: 'Keyword',
       instanceTitle: 'The algebraic theory of modular systems / by F.S. Macaulay.',

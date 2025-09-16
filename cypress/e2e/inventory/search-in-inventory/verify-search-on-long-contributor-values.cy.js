@@ -76,12 +76,11 @@ describe('inventory', () => {
       });
 
       beforeEach('Login', () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-        }, 20_000);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
       });
 
       after('Delete test data', () => {

@@ -27,6 +27,7 @@ describe('eHoldings', () => {
             cy.login(userProperties.username, userProperties.password, {
               path: TopMenu.eholdingsPath,
               waiter: EHoldingsTitlesSearch.waitLoading,
+              authRefresh: true,
             });
           });
         });
@@ -56,7 +57,9 @@ describe('eHoldings', () => {
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag);
             EHoldingsPackage.removeExistingTags();
+            cy.wait(2000);
             EHoldingsPackage.closePackage();
+            cy.wait(2000);
             EHoldingsPackagesSearch.verifyTagAbsent(addedTag);
           });
       },

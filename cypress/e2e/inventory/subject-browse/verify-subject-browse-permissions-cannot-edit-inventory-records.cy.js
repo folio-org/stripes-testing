@@ -103,10 +103,8 @@ describe('Inventory', () => {
         InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
         InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
 
-        // Step 6: Verify absence of edit capabilities - no options in Actions menu, no Add holdings button, no Add item button
-        // Actions button will be hidden when UIIN-3341 is done
-        InventoryInstance.checkButtonsShown({ actions: true, addHoldings: false, addItem: false });
-        InventoryInstance.verifyActionsMenuEmpty();
+        // Step 6: Verify absence of edit capabilities - no Actions button, no Add holdings button, no Add item button
+        InventoryInstance.checkButtonsShown({ actions: false, addHoldings: false, addItem: false });
 
         // Step 7: Open holdings view and verify no Actions menu
         InstanceRecordView.openHoldingView(false);
@@ -115,7 +113,7 @@ describe('Inventory', () => {
 
         // Step 8: Close holdings view and return to instance view
         HoldingsRecordView.close();
-        InstanceRecordView.waitLoading();
+        InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
       },
     );
   });
