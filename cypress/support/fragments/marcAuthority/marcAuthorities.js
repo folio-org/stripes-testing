@@ -99,7 +99,7 @@ const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
-const buttonResetAllInAdvancedModal = Button({ ariaLabel: 'Reset all' });
+const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
 const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
@@ -847,7 +847,7 @@ export default {
   },
 
   clickResetAllButtonInAdvSearchModal() {
-    cy.do(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).click());
+    cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
   },
 
   checkAdvancedSearchModalAbsence() {
@@ -874,8 +874,8 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
-      modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
-      modalAdvancedSearch.find(buttonResetAllInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
     if (boolean) {
       cy.expect([

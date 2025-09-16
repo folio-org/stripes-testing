@@ -253,14 +253,12 @@ describe('Inventory', () => {
             // Turn Version histoy feature on in case someone disabled it
             cy.enableVersionHistoryFeature(true);
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
+
             InventoryInstances.searchByTitle(testData.createdRecordId);
             InventoryInstances.selectInstanceById(testData.createdRecordId);
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);

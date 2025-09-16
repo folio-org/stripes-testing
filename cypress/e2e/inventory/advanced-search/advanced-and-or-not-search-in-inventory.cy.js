@@ -39,6 +39,7 @@ describe('Inventory', () => {
     before('Creating data', () => {
       cy.getAdminToken()
         .then(() => {
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C400621');
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
           });
@@ -159,6 +160,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

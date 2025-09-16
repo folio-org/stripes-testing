@@ -31,6 +31,7 @@ describe('Notes', () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,
+        authRefresh: true,
       });
     });
   });
@@ -62,6 +63,7 @@ describe('Notes', () => {
       cy.login(testData.viewUserProperties.username, testData.viewUserProperties.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,
+        authRefresh: true,
       });
       NotesEholdings.verifyNoteVisibilityWithViewPermission(note.title, note.details);
       NotesEholdings.openNoteView(note.title, note.details);
@@ -70,6 +72,7 @@ describe('Notes', () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,
+        authRefresh: true,
       });
       NotesEholdings.openNoteView(note.title, note.details);
       NotesEholdings.deleteNote();
