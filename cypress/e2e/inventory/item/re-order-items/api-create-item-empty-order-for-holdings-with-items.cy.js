@@ -6,7 +6,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -97,9 +97,10 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808481 API | Create "Item" with empty "order" field when Instance has multiple Holdings with Items (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808481'] },
+        { tags: [] },
         () => {
           cy.getToken(user.username, user.password);
 

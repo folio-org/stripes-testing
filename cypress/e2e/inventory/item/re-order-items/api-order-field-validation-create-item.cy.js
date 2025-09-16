@@ -5,7 +5,7 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -69,9 +69,10 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808478 API | "order" field validation in create "Item" request (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808478'] },
+        { tags: [] },
         () => {
           cy.getToken(user.username, user.password);
 

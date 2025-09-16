@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const defaultSearchOptionHoldings = 'Keyword (title, contributor, identifier, HRID, UUID)';
-    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID, barcode)';
+    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID)';
     let user;
 
     before('Create user, test data', () => {

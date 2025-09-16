@@ -118,50 +118,53 @@ const searchCases = [
   },
   // Step 4: Only Authorized Subject
   {
-    query: 'AT_C409453 Subject 150 Lampetra subb subv subx suby subz',
+    query: 'AT_C409453 Subject 150 Lampetra subb--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Authorized',
-        heading: 'AT_C409453 Subject 150 Lampetra subb subv subx suby subz',
+        heading: 'AT_C409453 Subject 150 Lampetra subb--subv--subx--suby--subz',
         type: 'Topical',
       },
     ],
   },
   // Step 5: Only Reference Subject
   {
-    query: 'AT_C409453 Subject 450 Eudontomyzon subb subg subi subv subx suby subz sub4 sub5',
+    query: 'AT_C409453 Subject 450 Eudontomyzon subb subg subi sub4 sub5--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Reference',
-        heading: 'AT_C409453 Subject 450 Eudontomyzon subb subg subi subv subx suby subz sub4 sub5',
+        heading:
+          'AT_C409453 Subject 450 Eudontomyzon subb subg subi sub4 sub5--subv--subx--suby--subz',
         type: 'Topical',
       },
     ],
   },
   // Step 6: Only Auth/Ref Subject
   {
-    query: 'AT_C409453 Subject 550 Petromyzontidae subb subg subi subv subx suby subz sub4 sub5',
+    query:
+      'AT_C409453 Subject 550 Petromyzontidae subb subg subi sub4 sub5--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409453 Subject 550 Petromyzontidae subb subg subi subv subx suby subz sub4 sub5',
+          'AT_C409453 Subject 550 Petromyzontidae subb subg subi sub4 sub5--subv--subx--suby--subz',
         type: 'Topical',
       },
     ],
   },
   // Step 7-9: Negative cases (no records) - using invalid subfields
   {
-    query: 'AT_C409453 Subject 150 Lampetra subb subv subx suby subz sub1',
-    expected: [],
-  },
-  {
-    query: 'AT_C409453 Subject 450 Eudontomyzon subb subg subi subv subx suby subz sub4 sub5 sub1',
+    query: 'AT_C409453 Subject 150 Lampetra subb sub1--subv--subx--suby--subz',
     expected: [],
   },
   {
     query:
-      'AT_C409453 Subject 550 Petromyzontidae subb subg subi subv subx suby subz sub4 sub5 sub1',
+      'AT_C409453 Subject 450 Eudontomyzon subb subg subi sub4 sub5 sub1--subv--subx--suby--subz',
+    expected: [],
+  },
+  {
+    query:
+      'AT_C409453 Subject 550 Petromyzontidae subb subg subi sub4 sub5 sub1--subv--subx--suby--subz',
     expected: [],
   },
 ];
@@ -192,7 +195,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
             MarcAuthorities.waitLoading();
           }, 20_000);
         },

@@ -31,7 +31,7 @@ describe('MARC', () => {
       tag866: '866',
       tag999: '999',
       tag866Value: 'Test',
-      headerTitle: /New .*MARC holdings record/,
+      headerTitle: /Create a new .*MARC holdings record/,
       headerSubtitle: 'New',
       tagLDRValueInSourceMask: /LEADER\s\d{5}[c,d,n][u,v,x,y]\s{3}22\d{5}[1,2,3,4,5,m,u,z].\s4500/,
       tag001ValueInSourceMask: /[a-z]+\d+/,

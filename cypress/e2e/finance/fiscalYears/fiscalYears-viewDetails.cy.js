@@ -6,8 +6,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('Fiscal Year', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
   before(() => {
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.fiscalYearPath);
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.fiscalYearPath,
+        waiter: FiscalYears.waitLoading,
+      });
+    });
     FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
     FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
     FiscalYears.closeThirdPane();

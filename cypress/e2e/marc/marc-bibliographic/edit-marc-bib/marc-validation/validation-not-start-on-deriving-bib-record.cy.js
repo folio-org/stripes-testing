@@ -7,7 +7,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('MARC', () => {
+describe.skip('MARC', () => {
   describe('MARC Bibliographic', () => {
     const marcFile = {
       marc: 'marcBibFileForC552449.mrc',
@@ -93,9 +93,10 @@ describe('MARC', () => {
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
     });
     describe('Edit MARC bib', () => {
+      // Trillium+ only
       it(
         "C552449 MARC validation doesn't start on deleted field during deriving of MARC bib record (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C552449'] },
+        { tags: [] },
         () => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();

@@ -17,7 +17,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag600: '600',
-          instanceField600Value: 'C380454 Goldwater, Barry M. (Barry Morris), 1909-1998.',
+          instanceField600Value: '1909-1998. (Barry Morris),',
           errorMessage:
             'You have selected an invalid heading based on the bibliographic field you want controlled. Please revise your selection.',
         };
@@ -150,11 +150,11 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);
             InventoryInstance.verifyAndClickLinkIconByIndex(bib600FieldValues[0]);
             InventoryInstance.verifySelectMarcAuthorityModal();
-            MarcAuthorities.checkSearchOption('nameTitle');
+            MarcAuthorities.checkSearchOption('personalNameTitle');
             MarcAuthorities.checkSearchInput(testData.instanceField600Value);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchOption('nameTitle');
+            MarcAuthorities.checkSearchOption('personalNameTitle');
             MarcAuthorities.checkSearchInput('');
             MarcAuthorities.verifyEmptyAuthorityField();
             linkValuesWithoutAuthoritySource.forEach((linkValue) => {

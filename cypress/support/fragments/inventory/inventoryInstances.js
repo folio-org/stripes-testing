@@ -64,8 +64,8 @@ const advSearchModal = Modal('Advanced search');
 const buttonSearchInAdvSearchModal = advSearchModal.find(
   Button({ ariaLabel: 'Search', disabled: or(false, true) }),
 );
-const buttonResetAllInAdvSearchModal = advSearchModal.find(
-  Button({ ariaLabel: 'Reset all', disabled: or(false, true) }),
+const buttonCancelInAdvSearchModal = advSearchModal.find(
+  Button({ ariaLabel: 'Cancel', disabled: or(false, true) }),
 );
 const buttonCloseInAdvSearchModal = advSearchModal.find(
   Button({ id: 'advanced-search-modal-close-button' }),
@@ -115,7 +115,7 @@ export const searchHoldingsOptions = [
   'Advanced search',
 ];
 export const searchItemsOptions = [
-  'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+  'Keyword (title, contributor, identifier, HRID, UUID)',
   'Barcode',
   'ISBN',
   'ISSN',
@@ -182,11 +182,8 @@ const searchItemsOptionsValues = [
   'advancedSearch',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
-advSearchInstancesOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
-advSearchHoldingsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
-advSearchItemsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 17);
@@ -1218,7 +1215,7 @@ export default {
     cy.expect([
       AdvancedSearch({ rowCount: 6 }).exists(),
       buttonSearchInAdvSearchModal.exists(),
-      buttonResetAllInAdvSearchModal.exists(),
+      buttonCancelInAdvSearchModal.exists(),
     ]);
   },
   closeAdvancedSearchModal() {
@@ -1406,8 +1403,8 @@ export default {
     cy.do(buttonSearchInAdvSearchModal.click());
   },
 
-  clickResetAllBtnInAdvSearchModal() {
-    cy.do(buttonResetAllInAdvSearchModal.click());
+  clickCancelBtnInAdvSearchModal() {
+    cy.do(buttonCancelInAdvSearchModal.click());
   },
   closeAdvSearchModalUsingESC() {
     cy.get('#advanced-search-modal').type('{esc}');

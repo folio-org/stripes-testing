@@ -12,7 +12,7 @@ describe('MARC', () => {
       const users = {};
       const localAuthFilesIds = [];
       const randomPostfix = getRandomPostfix();
-      const paneHeaderCreateNewMarcAuthorityRecord = /New .*MARC authority record/;
+      const paneHeaderCreateNewMarcAuthorityRecord = /Create a new .*MARC authority record/;
       const localAuthFiles = [
         {
           name: `C422243 auth source file active ${randomPostfix}`,
