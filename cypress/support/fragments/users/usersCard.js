@@ -572,6 +572,7 @@ export default {
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
+    cy.wait(2000);
   },
   viewAllClosedFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewclosedaccounts' })).click());
