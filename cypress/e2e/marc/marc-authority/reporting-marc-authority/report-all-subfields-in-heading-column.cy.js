@@ -73,10 +73,10 @@ describe('MARC', () => {
           Permissions.exportManagerAll.gui,
         ]).then((createdUserProperties) => {
           user = createdUserProperties;
-            cy.login(user.username, user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
+          cy.login(user.username, user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
         });
       });

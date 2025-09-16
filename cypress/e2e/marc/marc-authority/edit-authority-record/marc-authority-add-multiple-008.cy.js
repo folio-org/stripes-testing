@@ -37,11 +37,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUser) => {
           userProperties = createdUser;
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
-        });
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
+          });
         });
       });
 

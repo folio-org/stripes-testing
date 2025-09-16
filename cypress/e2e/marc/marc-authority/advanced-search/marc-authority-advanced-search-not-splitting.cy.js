@@ -111,10 +111,10 @@ describe('MARC', () => {
       });
 
       before('Login', () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-            authRefresh: true,
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
       });
 

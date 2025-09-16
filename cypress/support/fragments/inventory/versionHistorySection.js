@@ -105,13 +105,11 @@ export default {
     ]);
     if (isOriginal) {
       cy.expect(targetCard.has({ innerHTML: including('<b><i>Original version</i></b>') }));
+    } else if (isCurrent) {
+      cy.expect(targetCard.find(Button('Current version')).exists());
+      cy.expect(targetCard.has({ innerHTML: including('<b><i>Current version</i></b>') }));
     } else {
-      if (isCurrent) {
-        cy.expect(targetCard.find(Button('Current version')).exists());
-        cy.expect(targetCard.has({ innerHTML: including('<b><i>Current version</i></b>') }));
-      } else {
-        cy.expect(targetCard.find(Button('Changed')).exists());
-      }
+      cy.expect(targetCard.find(Button('Changed')).exists());
     }
   },
 
@@ -169,7 +167,7 @@ export default {
     if (index === 0) {
       cy.do(targetCard.find(Button('Current version')).click());
     } else {
-    cy.do(targetCard.find(Button('Changed')).click());
+      cy.do(targetCard.find(Button('Changed')).click());
     }
     cy.expect(Modal().exists());
   },

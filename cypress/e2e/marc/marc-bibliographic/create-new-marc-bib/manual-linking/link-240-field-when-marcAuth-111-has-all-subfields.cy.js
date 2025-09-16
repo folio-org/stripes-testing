@@ -90,10 +90,10 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-                authRefresh: true,
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
