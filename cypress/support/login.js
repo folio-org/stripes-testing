@@ -65,8 +65,6 @@ Cypress.Commands.add(
       }
     }
 
-    cy.log('AUTH_REFRESH: ', authRefresh);
-
     if (authRefresh) {
       cy.waitForAuthRefresh(() => {
         loginFn();
