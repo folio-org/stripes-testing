@@ -171,9 +171,11 @@ describe('Title level Request', () => {
         });
       })
       .then(() => {
-        cy.login(users[0].username, users[0].password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(users[0].username, users[0].password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
         });
       });
   });
@@ -220,7 +222,6 @@ describe('Title level Request', () => {
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       ConfirmItemInModal.confirmAwaitingPickUpModal();
 
-      cy.waitForAuthRefresh(() => {}, 20_000);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);

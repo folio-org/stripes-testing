@@ -1269,6 +1269,17 @@ export default {
     cy.wait('@getData');
   },
 
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
+  },
+
   checkSharedInstancesInResultList() {
     return cy
       .get('div[class^="mclRowContainer--"]')

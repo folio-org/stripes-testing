@@ -35,8 +35,10 @@ describe('Users', () => {
     'C511 User is able to change password locally (volaris)',
     { tags: ['extendedPath', 'volaris', 'C511'] },
     () => {
-      ChangePassword.openChangePasswordViaUserProfile();
-      ChangePassword.checkInitialState();
+      cy.waitForAuthRefresh(() => {
+        ChangePassword.openChangePasswordViaUserProfile();
+        ChangePassword.checkInitialState();
+      });
 
       ChangePassword.fillPasswordFields(userData.password, newPassword, newPassword);
 
