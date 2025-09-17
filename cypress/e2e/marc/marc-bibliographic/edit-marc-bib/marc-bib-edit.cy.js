@@ -80,6 +80,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
         });
       });
 
@@ -96,10 +101,6 @@ describe('MARC', () => {
         'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C360098'] },
         () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);
           InventoryInstances.selectInstance();
@@ -139,10 +140,6 @@ describe('MARC', () => {
         'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C356842'] },
         () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
           InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
           InventoryInstances.searchByTitle(createdInstanceIDs[1]);
           InventoryInstances.selectInstance();
@@ -219,11 +216,6 @@ describe('MARC', () => {
             },
             field010: { tag: '010', content: '$a    58020553 ' },
           };
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
 
           InventoryInstances.searchByTitle(createdInstanceIDs[2]);
           InventoryInstances.selectInstance();
@@ -319,6 +311,7 @@ describe('MARC', () => {
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.restoreDeletedFields();
           QuickMarcEditor.verifyTagValue(4, fieldData.field010.tag);
           QuickMarcEditor.checkContent(fieldData.field010.content, 4);

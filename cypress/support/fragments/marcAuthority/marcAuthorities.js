@@ -874,7 +874,7 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
-      modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
       modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
     if (boolean) {

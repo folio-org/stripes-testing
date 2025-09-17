@@ -10,6 +10,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 import UsersCard from '../../../../support/fragments/users/usersCard';
+import TopMenu from '../../../../support/fragments/topMenu';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -49,12 +50,10 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.lastName = user.personal.lastName;
-              testData.firstName = user.personal.firstName;
-            },
-          );
+          cy.getAdminUserDetails().then((user) => {
+            testData.lastName = user.personal.lastName;
+            testData.firstName = user.personal.firstName;
+          });
 
           cy.then(() => {
             cy.getAdminToken();
@@ -80,13 +79,11 @@ describe('MARC', () => {
             MarcAuthority.verifyCreatedRecordSuccess();
             MarcAuthority.contains(testData.authorityHeading);
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-              MarcAuthorities.waitLoading();
-              cy.reload();
-              MarcAuthorities.waitLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
+            });
             MarcAuthorities.searchBeats(testData.authorityHeading);
             MarcAuthorities.selectTitle(testData.authorityHeading);
             MarcAuthority.waitLoading();
