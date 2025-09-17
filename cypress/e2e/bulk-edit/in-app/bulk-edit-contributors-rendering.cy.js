@@ -214,7 +214,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.selectOption('Suppress from discovery');
-        BulkEditActions.selectAction('Set true');
+        BulkEditActions.selectSecondAction('Set true');
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);

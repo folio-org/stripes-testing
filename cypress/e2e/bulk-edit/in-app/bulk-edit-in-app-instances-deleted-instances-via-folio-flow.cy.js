@@ -160,7 +160,7 @@ describe('Bulk-edit', () => {
         // Step 7: Add "Statistical code" option
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Statistical code', 1);
-        BulkEditActions.selectAction('Add', 1);
+        BulkEditActions.selectSecondAction('Add', 1);
         BulkEditActions.selectStatisticalCodeValue(statisticalCode.fullName, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 

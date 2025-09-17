@@ -155,7 +155,9 @@ describe('Bulk-edit', () => {
 
         instances.forEach((instance) => {
           // Verify initial statistical codes are present
-          const initialCodesString = initialStatisticalCodes.map((code) => code.fullName).join('|');
+          const initialCodesString = initialStatisticalCodes
+            .map((code) => code.fullName)
+            .join(' | ');
 
           BulkEditFiles.verifyValueInRowByUUID(
             fileNames.matchedRecordsCSV,
@@ -175,7 +177,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyTheActionOptions(['Add', 'Remove', 'Remove all']);
 
         // Step 8: Select "Remove all" action
-        BulkEditActions.selectAction('Remove all');
+        BulkEditActions.selectSecondAction('Remove all');
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 9: Try to add another "Statistical code" option - should not be available
@@ -184,7 +186,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionExistsInSelectOptionDropdown('Statistical code', false);
 
         // Step 10: Change first row action to "Add"
-        BulkEditActions.selectAction('Add');
+        BulkEditActions.selectSecondAction('Add');
         BulkEditActions.verifyTheActionOptions(['Add', 'Remove', 'Remove all']);
 
         // Step 11: Select new statistical codes to add
@@ -197,7 +199,7 @@ describe('Bulk-edit', () => {
 
         // Step 13: Select "Remove" action for second row
         BulkEditActions.verifyTheActionOptions(['Remove'], 1);
-        BulkEditActions.selectAction('Remove', 1);
+        BulkEditActions.selectSecondAction('Remove', 1);
 
         // Step 14: Select initial statistical codes to remove
         initialStatisticalCodes.forEach((code) => {
