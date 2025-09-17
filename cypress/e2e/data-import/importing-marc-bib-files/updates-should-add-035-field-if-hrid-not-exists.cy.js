@@ -111,6 +111,7 @@ describe('Data Import', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
+            authRefresh: true,
           });
         });
       });
@@ -132,6 +133,7 @@ describe('Data Import', () => {
         { tags: ['criticalPath', 'folijet', 'C543840'] },
         () => {
           // upload .mrc file
+          DataImport.verifyUploadState();
           DataImport.uploadFile('marcBibFileForC543840_1.mrc', marcFileNameForCreate);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileToRun);

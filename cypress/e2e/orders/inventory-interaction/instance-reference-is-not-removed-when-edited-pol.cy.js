@@ -35,8 +35,11 @@ describe('Orders', () => {
   let instance;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+      authRefresh: true,
+    });
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
         InventoryInteractions.setInstanceMatchingSetting({
@@ -45,7 +48,6 @@ describe('Orders', () => {
         });
       }
     });
-
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -62,14 +64,6 @@ describe('Orders', () => {
         instance = instanceResponse;
       },
     );
-
-    cy.log('Login as admin...');
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
-    cy.log('Logged in as admin.');
-
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -92,17 +86,11 @@ describe('Orders', () => {
   });
 
   after(() => {
-    cy.log('Get admin token...');
-    cy.getAdminToken();
-    cy.log('Admin token received.');
-
-    cy.log('Login as admin...');
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
+      authRefresh: true,
     });
-    cy.log('Logged in as admin.');
-
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -121,14 +109,14 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.editPOLInOrder();
+      OrderLines.editPOL();
       OrderLines.openPageConnectedInstance();
       InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.editPOLInOrder();
+      OrderLines.editPOL();
       OrderLines.fillInInvalidDataForPublicationDate();
       OrderLines.cancelRemoveInstanceConnectionModal();
       OrderLines.cancelEditingPOL();

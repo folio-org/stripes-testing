@@ -13,8 +13,7 @@ import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine'
 import NewOrder from '../../../../support/fragments/orders/newOrder';
 import Orders from '../../../../support/fragments/orders/orders';
 import Receiving from '../../../../support/fragments/receiving/receiving';
-import OrdersApprovals from '../../../../support/fragments/settings/orders/approvals';
-import InventoryInteractions from '../../../../support/fragments/settings/orders/inventoryInteractions';
+import InventoryInteractionsDefaults from '../../../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -55,26 +54,37 @@ describe('Inventory', () => {
         );
 
         cy.getAdminToken();
+        InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
+          query: '(module==ORDERS and configName==approvals)',
+        }).then((body) => {
+          if (body.configs.length !== 0) {
+            const id = body.configs[0].id;
 
-        OrdersApprovals.getOrderApprovalsSettings().then((settings) => {
-          if (settings?.length !== 0) {
-            OrdersApprovals.setOrderApprovalsSetting({
-              ...settings[0],
-              value: JSON.stringify({ isApprovalRequired: false }),
+            InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+              id,
+              module: 'ORDERS',
+              configName: 'approvals',
+              enabled: true,
+              value: '{"isApprovalRequired":false}',
             });
           }
         });
+        InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
+          query: '(module==ORDERS and configName==inventory-loanTypeName)',
+        }).then((body) => {
+          if (body.configs.length !== 0) {
+            const id = body.configs[0].id;
 
-        InventoryInteractions.getLoanTypeSettings().then((settings) => {
-          if (settings?.length !== 0) {
-            InventoryInteractions.setLoanTypeSetting({
-              ...settings[0],
+            InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+              id,
+              module: 'ORDERS',
+              configName: 'inventory-loanTypeName',
+              enabled: true,
               value: 'Can circulate',
             });
           }
         });
-
-        cy.getBookMaterialType().then((materialType) => {
+        cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
           materialTypeId = materialType.id;
         });
         ServicePoints.createViaApi(firstServicePoint);
@@ -164,7 +174,7 @@ describe('Inventory', () => {
           InventoryInstance.verifyItemBarcode('No barcode');
           InventoryInstance.verifyLoan('Can circulate');
           InventoryInstance.openItemByBarcode('No barcode');
-          ItemRecordView.checkBarcode('No value set-');
+          ItemRecordView.checkBarcode('-');
           InventoryItems.edit();
           ItemRecordEdit.waitLoading(instanceTitle);
           ItemRecordEdit.addBarcode(barcode);
@@ -179,7 +189,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter(
-            'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+            'Keyword (title, contributor, identifier, HRID, UUID)',
             instanceTitle,
           );
           // TODO need to wait until result is displayed
@@ -209,7 +219,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter(
-            'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+            'Keyword (title, contributor, identifier, HRID, UUID)',
             instanceTitle,
           );
           // TODO need to wait until result is displayed

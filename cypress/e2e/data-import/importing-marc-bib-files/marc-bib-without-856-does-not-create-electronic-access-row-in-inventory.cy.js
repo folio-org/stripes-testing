@@ -74,6 +74,7 @@ describe('Data Import', () => {
     };
 
     before('Create user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -84,6 +85,7 @@ describe('Data Import', () => {
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -201,7 +203,7 @@ describe('Data Import', () => {
         FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
-        ItemRecordView.checkElectronicAccess('No value set-', 'No value set-');
+        ItemRecordView.checkElectronicAccess('-', '-');
       },
     );
   });

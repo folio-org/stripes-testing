@@ -19,6 +19,7 @@ import {
   Section,
   Select,
   SelectionOption,
+  Spinner,
   TextArea,
   TextField,
 } from '../../../../interactors';
@@ -49,6 +50,7 @@ const cancelButton = Button('Cancel');
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const saveButton = Button('Save and close');
+const editButton = Button('Edit');
 const searchField = SearchField({ id: 'input-record-search' });
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
@@ -1887,6 +1889,14 @@ export default {
     cy.wait(4000);
     cy.do(Button('Edit').click());
     cy.wait(4000);
+  },
+
+  editPOL: () => {
+    cy.expect(Spinner().absent());
+    cy.expect(actionsButton.exists());
+    cy.do(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click());
+    cy.expect(editButton.exists());
+    cy.do(editButton.click());
   },
 
   changeInstanceConnectionInActions: () => {

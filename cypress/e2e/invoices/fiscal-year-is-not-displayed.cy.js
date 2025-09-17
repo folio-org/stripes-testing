@@ -55,6 +55,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });

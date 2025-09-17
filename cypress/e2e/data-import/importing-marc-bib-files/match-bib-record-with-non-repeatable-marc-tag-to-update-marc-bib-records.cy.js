@@ -14,6 +14,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import ActionProfiles from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -235,6 +236,8 @@ describe('Data Import', () => {
         InventoryInstances.importWithOclc(testData.oclcNumber);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.addHoldings();
+        InventoryNewHoldings.waitLoading();
+        cy.reload();
         InventoryNewHoldings.fillPermanentLocation(testData.holdings.holdingsPermanentLocation);
         InventoryNewHoldings.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
@@ -345,8 +348,8 @@ describe('Data Import', () => {
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

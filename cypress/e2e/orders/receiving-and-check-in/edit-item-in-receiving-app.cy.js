@@ -62,6 +62,7 @@ describe('Orders', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.receivingPath,
           waiter: Receivings.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -93,7 +94,6 @@ describe('Orders', () => {
           testData.orderLine.titleOrPackage,
         );
         ReceivingDetails.checkButtonsConditions([
-          { label: 'Actions', conditions: { disabled: false } },
           { label: 'Collapse all', conditions: { disabled: false } },
         ]);
         ReceivingDetails.checkReceivingDetails({
@@ -103,7 +103,7 @@ describe('Orders', () => {
         });
 
         // Click "Edit" button on the third pane
-        const ReceivingEditForm = ReceivingDetails.openReceivingEditForm();
+        const ReceivingEditForm = ReceivingDetails.clickEditButton();
         ReceivingEditForm.checkReceivingFormContent({
           itemDetails: { title: testData.orderLine.titleOrPackage },
           lineDetails: { poLineNumber: `${testData.order.poNumber}-1` },

@@ -10,6 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import interactorsTools from '../../../support/utils/interactorsTools';
 import ExceptionModal from '../../../support/fragments/settings/tenant/modals/exceptionModal';
+import settingsPane from '../../../support/fragments/settings/settingsPane';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -75,9 +76,10 @@ describe('Settings: Tenant', () => {
 
     cy.createTempUser([Permissions.uiTenantSettingsSettingsLocation.gui]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password);
-      cy.wait(2000);
-      cy.visit(TopMenu.settingsPath);
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.settingsPath,
+        waiter: settingsPane.waitLoading,
+      });
     });
   });
 

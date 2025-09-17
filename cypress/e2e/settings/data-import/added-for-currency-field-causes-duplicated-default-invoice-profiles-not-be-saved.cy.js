@@ -5,10 +5,10 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -38,6 +38,7 @@ describe('Data Import', () => {
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -54,6 +55,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet', 'C353959'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully created`;
+
         FieldMappingProfiles.search(profileForDuplicate);
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
