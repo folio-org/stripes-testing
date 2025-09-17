@@ -75,6 +75,7 @@ describe('Data Export', () => {
         path: TopMenu.marcAuthorities,
         waiter: MarcAuthorities.waitLoading,
       });
+      cy.wait(5000);
     });
   });
 

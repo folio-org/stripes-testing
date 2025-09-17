@@ -73,6 +73,7 @@ describe('Data Export', () => {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
         });
+        cy.wait(5000);
       });
     });
 

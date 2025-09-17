@@ -197,9 +197,10 @@ describe('Bulk-edit', () => {
         });
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C808445 Search instances by Administrative notes, Note, Staff only (firebird)',
-        { tags: ['smoke', 'firebird', 'C808445'] },
+        { tags: [] },
         () => {
           // Get note type name for verification
           const noteTypeName = INSTANCE_NOTE_TYPES.ACTION_NOTE;

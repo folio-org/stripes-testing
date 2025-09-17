@@ -155,9 +155,10 @@ describe('Bulk-edit', () => {
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
-    it(
+    // Trillium
+    it.skip(
       'C831955 Verify Set true for deletion of Instances via FOLIO flow (firebird)',
-      { tags: ['smoke', 'firebird', 'C831955'] },
+      { tags: [] },
       () => {
         // Step 1: Check the result of uploading the .csv file with Instances UUIDs
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

@@ -91,7 +91,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
-        return response.body.jobProfiles[0];
+        return response.body.jobProfiles;
       });
   },
 

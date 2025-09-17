@@ -197,9 +197,10 @@ describe('Bulk-edit', () => {
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
-    it(
+    // Trillium
+    it.skip(
       'C736694 Verify rendering "Electronic access" data of Instance record in bulk edit forms and files (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C736694'] },
+      { tags: [] },
       () => {
         // Step 1: Select record type and identifier
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

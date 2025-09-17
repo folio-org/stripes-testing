@@ -41,7 +41,7 @@ describe('Bulk-edit', () => {
         // try to upload empty file
         BulkEditSearchPane.uploadFile('empty.csv');
         InteractorsTools.checkCalloutMessage(
-          'The uploaded file is empty.',
+          'File uploading failed : Cannot upload a file. Reason: file is empty.',
           calloutTypes.error,
         );
         InteractorsTools.closeCalloutMessage();

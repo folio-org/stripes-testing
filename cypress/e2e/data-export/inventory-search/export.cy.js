@@ -76,7 +76,7 @@ describe('Data Export', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);
         InventorySearchAndFilter.saveUUIDs();
 
-        cy.intercept('search/resources/jobs/**/ids').as('getIds');
+        cy.intercept('/search/instances/ids**').as('getIds');
         cy.wait('@getIds', getLongDelay()).then((req) => {
           const expectedUUIDs = InventorySearchAndFilter.getUUIDsFromRequest(req);
 

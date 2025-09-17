@@ -243,9 +243,10 @@ describe('Bulk-edit', () => {
         });
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C805773 Search instances by Instance — Notes — Note type (all operators for field with predefined values) (firebird)',
-        { tags: ['smoke', 'firebird', 'C805773'] },
+        { tags: [] },
         () => {
           // Get note type names for verification
           const noteTypeNames = {

@@ -36,12 +36,14 @@ describe('Data Export', () => {
           instanceData.publicationRange = ['4'];
 
           cy.updateInstance(instanceData);
+
+          FileManager.createFile(`cypress/fixtures/${fileName}`, folioInstance.id);
         });
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
         });
-        FileManager.createFile(`cypress/fixtures/${fileName}`, folioInstance.id);
+        cy.wait(5000);
       });
     });
 

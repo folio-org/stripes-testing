@@ -101,6 +101,7 @@ describe('Bulk-edit', () => {
                 path: TopMenu.bulkEditPath,
                 waiter: BulkEditSearchPane.waitLoading,
               });
+              cy.wait(5000);
 
               // Step 1: Build and run Bulk edit query for "Inventory - items"
               BulkEditSearchPane.openQuerySearch();

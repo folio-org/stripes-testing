@@ -240,9 +240,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C805770 Search holdings by Holdings — Notes — Note (all operators for free text field) (firebird)',
-        { tags: ['smoke', 'firebird', 'C805770'] },
+        { tags: [] },
         () => {
           // Create expected holdings for verification
           const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);

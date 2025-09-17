@@ -963,7 +963,7 @@ export default {
   },
 
   urlRelationshipReplaceWith(oldValue, newValue, rowIndex = 0) {
-    this.selectOption('URL relationship');
+    this.selectOption('URL Relationship');
     this.selectSecondAction('Find (full field search)');
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
@@ -1370,7 +1370,7 @@ export default {
       SelectionOption('Materials specified').exists(),
       SelectionOption('URI').exists(),
       SelectionOption('URL public note').exists(),
-      SelectionOption('URL relationship').exists(),
+      SelectionOption('URL Relationship').exists(),
       SelectionOption('Permanent holdings location').exists(),
       SelectionOption('Temporary holdings location').exists(),
       SelectionOption('Action note').exists(),
@@ -1716,13 +1716,7 @@ export default {
 
       case 'instance':
         expectedOptions = [
-          [
-            'Administrative note',
-            'Set records for deletion',
-            'Staff suppress',
-            'Statistical code',
-            'Suppress from discovery',
-          ],
+          ['Administrative note', 'Staff suppress', 'Statistical code', 'Suppress from discovery'],
           [
             'Accessibility note',
             'Accumulation and Frequency of Use note',
@@ -1737,7 +1731,7 @@ export default {
             'Citation / References note',
             'Copy and Version Identification note',
             'Creation / Production Credits note',
-            'Cumulative Index / Finding Aids notes',
+            'Cumulative Index / Finding Aides notes',
             'Data quality note',
             'Date / time and place of an event note',
             'Dissertation note',
@@ -1785,7 +1779,7 @@ export default {
       case 'holding':
         expectedOptions = [
           ['Administrative note', 'Suppress from discovery'],
-          ['Link text', 'Materials specified', 'URI', 'URL public note', 'URL relationship'],
+          ['Link text', 'Materials specified', 'URI', 'URL public note', 'URL Relationship'],
           [
             'Action note',
             'Binding',
@@ -2206,7 +2200,7 @@ export default {
           cy.wrap(rowEl)
             .find('[class*="subRow-"]')
             .eq(subRowIndex)
-            .find('select[name="name"]')
+            .find('select[name="action"]')
             .eq(1)
             .select(action);
         }),

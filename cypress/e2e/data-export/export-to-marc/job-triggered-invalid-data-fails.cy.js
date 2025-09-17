@@ -39,6 +39,7 @@ describe(
             path: TopMenu.dataExportPath,
             waiter: DataExportLogs.waitLoading,
           });
+          cy.wait(5000);
           FileManager.createFile(`cypress/fixtures/${emptyFile}`);
           FileManager.createFile(`cypress/fixtures/${uuidsInInvalidFormat}`, getRandomPostfix());
           FileManager.createFile(`cypress/fixtures/${notFoundUUIDsInValidFormat}`, validUserUUID);

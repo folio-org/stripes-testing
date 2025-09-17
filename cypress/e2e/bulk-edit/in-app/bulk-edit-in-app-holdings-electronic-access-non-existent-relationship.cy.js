@@ -48,6 +48,7 @@ describe('Bulk-edit', () => {
           path: SettingsMenu.urlRelationshipPath,
           waiter: UrlRelationship.waitloading,
         });
+        cy.wait(5000);
       });
     });
 

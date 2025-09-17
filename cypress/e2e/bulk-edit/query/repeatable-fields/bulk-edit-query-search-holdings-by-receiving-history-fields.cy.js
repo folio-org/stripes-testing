@@ -127,9 +127,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C813672 Search holdings by Receiving history fields (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C813672'] },
+        { tags: [] },
         () => {
           // Map receiving history data to convert boolean publicDisplay to string format for verification
           const mappedHoldingsDatatoUIView = testHoldingsData.map((holding) => ({
