@@ -37,7 +37,7 @@ describe('Data Import', () => {
     const searchOption = 'Keyword';
     const searchValue = 'aat423564';
     const recordTitle = 'C423564 John Doe Sir, 1909-1965';
-    const headerText = /New .*MARC authority record/;
+    const headerText = /Create a new .*MARC authority record/;
     const dropdownSelections = {
       'Geo Subd': 'a',
       Roman: 'a',
@@ -179,6 +179,7 @@ describe('Data Import', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
       });
     });

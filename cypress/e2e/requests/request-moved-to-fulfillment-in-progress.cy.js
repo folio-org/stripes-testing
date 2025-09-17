@@ -80,6 +80,7 @@ describe('Title Level Request', () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkInPath,
         waiter: CheckInActions.waitLoading,
+        authRefresh: true,
       });
     });
   });

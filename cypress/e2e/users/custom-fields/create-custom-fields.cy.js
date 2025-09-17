@@ -26,6 +26,7 @@ describe('Users', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.customFieldsPath,
         waiter: CustomFields.waitLoading,
+        authRefresh: true,
       });
     });
 

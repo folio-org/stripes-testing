@@ -191,6 +191,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -213,7 +214,7 @@ describe('MARC', () => {
           { tags: ['criticalPath', 'spitfire', 'C436825'] },
           () => {
             InventoryInstance.newMarcBibRecord();
-            QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);
+            QuickMarcEditor.checkPaneheaderContains(/Create a new .*MARC bib record/);
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
             QuickMarcEditor.updateLDR06And07Positions();
             cy.wait(500);

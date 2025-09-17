@@ -9,7 +9,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        headerText: /New .*MARC bib record/,
+        headerText: /Create a new .*MARC bib record/,
       };
 
       before('Create test data', () => {

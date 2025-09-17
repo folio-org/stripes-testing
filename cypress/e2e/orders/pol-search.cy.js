@@ -7,6 +7,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('orders: Test Po line search', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -85,8 +86,6 @@ describe('orders: Test Po line search', () => {
     cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.loginAsAdmin();
-    cy.getAdminToken();
     cy.createOrderApi(order).then(() => {
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
         orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
@@ -94,8 +93,12 @@ describe('orders: Test Po line search', () => {
         cy.createOrderLineApi(orderLine).then((response) => {
           orderLineNumber = response.body.poLineNumber;
         });
-        cy.visit(TopMenu.ordersPath);
-        Orders.selectOrderLines();
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.orderLinesPath,
+            waiter: OrderLines.waitLoading,
+          });
+        });
       });
     });
   });

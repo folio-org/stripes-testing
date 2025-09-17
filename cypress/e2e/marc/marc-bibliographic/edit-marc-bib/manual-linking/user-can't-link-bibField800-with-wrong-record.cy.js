@@ -69,14 +69,12 @@ describe('MARC', () => {
             marc: 'marcBibFileForC380465.mrc',
             fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-            numOfRecords: 1,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC380465.mrc',
             fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            numOfRecords: 10,
             propertyName: 'authority',
           },
         ];
@@ -121,7 +119,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
           });

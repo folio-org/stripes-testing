@@ -40,10 +40,11 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.uiInventoryViewCreateEditHoldings.gui]).then(
           (userProperties) => {
             user = userProperties;
-
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           },
         );
@@ -70,7 +71,7 @@ describe('Inventory', () => {
 
         // Step 2: Click on "Title" value in second pane
         InventoryInstances.selectInstanceById(testData.instanceId);
-        InventoryInstance.waitLoading();
+        InventoryInstance.verifyInstanceTitle(testData.marcBibTitle);
 
         // Step 3: Click on "View holdings" button next to Holding name
         InventoryInstance.openHoldingView();

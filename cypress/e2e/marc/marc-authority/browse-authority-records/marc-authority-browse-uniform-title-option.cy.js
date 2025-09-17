@@ -16,15 +16,15 @@ const jobProfile = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
 const propertyName = 'authority';
 const browseQuery = 'C409480';
 const authorizedFull =
-  'C409480 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz';
+  'C409480 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz';
 const referenceFull =
-  'C409480 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz';
+  'C409480 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz';
 const authRefFull =
-  'C409480 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt subv subx suby subz sub4';
+  'C409480 Uniform title 530 Cartoons und Comics subd subf subg subh subi subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz sub4';
 const authorizedInvalid =
-  'C409480 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz subw';
+  'C409480 Uniform title 130 Cartoons & Comics subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz subw';
 const referenceInvalid =
-  'C409480 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt subv subx suby subz subw';
+  'C409480 Uniform title 430 Reihe "Cartoons & Comics" subd subf subg subh subk subl subm subn subo subp subr subs subt--subv--subx--suby--subz subw';
 const uniformTitleOption = 'Uniform title';
 
 const createdAuthorityIDs = [];
@@ -48,10 +48,11 @@ describe('MARC', () => {
                 });
               },
             );
-
-            cy.login(testUser.username, testUser.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testUser.username, testUser.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
             MarcAuthorities.switchToBrowse();
           },

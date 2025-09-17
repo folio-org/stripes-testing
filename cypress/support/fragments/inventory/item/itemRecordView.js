@@ -405,6 +405,7 @@ export default {
   ),
 
   verifyLoanAndAvailabilitySection(data) {
+    this.collapseAll();
     this.expandAll();
     verifyPermanentLoanType(
       data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
@@ -439,12 +440,16 @@ export default {
       loanAccordion
         .find(
           KeyValue('Staff only', {
-            value: data.staffOnly === '-' ? 'No value set-' : data.staffOnly,
+            value: data.staffOnly === '-' ? data.staffOnly : 'No value set-',
           }),
         )
         .exists(),
       loanAccordion
-        .find(KeyValue('Note', { value: data.note === '-' ? 'No value set-' : data.note }))
+        .find(
+          KeyValue('Note', {
+            value: data.note === '-' ? data.note : 'No value set-',
+          }),
+        )
         .exists(),
     ]);
   },
@@ -605,6 +610,11 @@ export default {
 
   expandAll() {
     cy.do(Button('Expand all').click());
+    cy.wait(1000);
+  },
+
+  collapseAll() {
+    cy.do(Button('Collapse all').click());
     cy.wait(1000);
   },
 

@@ -36,7 +36,7 @@ const searchCases = [
       {
         authRef: 'Authorized',
         heading:
-          'AT_C409442 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq Musical settings Literary style Stage history 1950- England',
+          'AT_C409442 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq--Musical settings--Literary style--Stage history--1950---England',
         type: 'Personal Name',
       },
     ],
@@ -45,12 +45,12 @@ const searchCases = [
   {
     searchOption: 'Personal name',
     query:
-      'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subv subx suby subz',
+      'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Reference',
         heading:
-          'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subv subx suby subz',
+          'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq--subv--subx--suby--subz',
         type: 'Personal Name',
       },
     ],
@@ -59,12 +59,12 @@ const searchCases = [
   {
     searchOption: 'Personal name',
     query:
-      'AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+      'AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+          'AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq--subv--subx--suby--subz',
         type: 'Personal Name',
       },
     ],
@@ -79,13 +79,13 @@ const searchCases = [
   {
     searchOption: 'Personal name',
     query:
-      'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk subv subx suby subz',
+      'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk--subv--subx--suby--subz',
     expected: [],
   },
   {
     searchOption: 'Personal name',
     query:
-      'Family AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+      'Family AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq--subv--subx--suby--subz',
     expected: [],
   },
 
@@ -96,19 +96,19 @@ const searchCases = [
       {
         authRef: 'Authorized',
         heading:
-          'AT_C409442 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq Musical settings Literary style Stage history 1950- England',
+          'AT_C409442 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq--Musical settings--Literary style--Stage history--1950---England',
         type: 'Personal Name',
       },
       {
         authRef: 'Reference',
         heading:
-          'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subv subx suby subz',
+          'AT_C409442 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq--subv--subx--suby--subz',
         type: 'Personal Name',
       },
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+          'AT_C409442 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq--subv--subx--suby--subz',
         type: 'Personal Name',
       },
     ],
@@ -141,7 +141,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
             MarcAuthorities.waitLoading();
           }, 20_000);
         },

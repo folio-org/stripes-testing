@@ -218,6 +218,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationOverdueFinePoliciesPath,
         waiter: () => cy.wait(3000),
+        authRefresh: true,
       });
 
       const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
@@ -249,6 +250,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkOutPath,
         waiter: Checkout.waitLoading,
+        authRefresh: true,
       });
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(instanceData.itemBarcode);

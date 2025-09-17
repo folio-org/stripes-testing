@@ -4,7 +4,7 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -124,10 +124,11 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C812999 API MOD-RTAC | Verify "itemDisplayOrder" field exists in BATCH API which gets instances with items and holdings from inventory (spitfire)',
         {
-          tags: ['extendedPath', 'spitfire', 'C812999'],
+          tags: [],
         },
         () => {
           cy.getToken(user.username, user.password);

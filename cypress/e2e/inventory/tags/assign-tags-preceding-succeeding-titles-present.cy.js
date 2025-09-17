@@ -98,6 +98,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358962);
+        cy.reload();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },
@@ -169,6 +170,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
@@ -177,6 +179,7 @@ describe('Inventory', () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
@@ -190,7 +193,11 @@ describe('Inventory', () => {
           HoldingsRecordEdit.addTag(tag);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.waitContentLoading();
+        });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();

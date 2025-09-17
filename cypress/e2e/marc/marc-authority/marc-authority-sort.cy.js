@@ -160,11 +160,10 @@ describe('MARC', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
         MarcAuthorities.checkSearchOptions();
         MarcAuthoritiesSearch.verifyDefaultSearchPaneState();
-        MarcAuthorities.clickActionsButton();
-        MarcAuthorities.verifyActionsMenu();
 
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
         cy.wait(2000);

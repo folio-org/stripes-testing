@@ -68,7 +68,7 @@ describe('Orders', () => {
       // Click "Actions", Select "Add PO line" option
       const OrderLineEditForm = OrderDetails.selectAddPOLine();
       OrderLineEditForm.checkButtonsConditions([
-        { label: 'Save & open order', conditions: { disabled: false } },
+        { label: 'Save & close', conditions: { disabled: false } },
       ]);
 
       // Fill in all the mandatory fields, Click "Save & open order" button
@@ -84,10 +84,11 @@ describe('Orders', () => {
           quantityPhysical: '1',
         },
       });
-      OrderLineEditForm.clickSaveAndOpenOrderButton();
+      OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
 
       // Return to "Purchase order" pane
       OrderLineDetails.backToOrderDetails();
+      OrderDetails.openOrder();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderDetails.checkOrderLinesTableContent([
         { poLineNumber: testData.order.poNumber, poLineTitle },
@@ -104,7 +105,6 @@ describe('Orders', () => {
       OrderLineDetails.openOrderLineEditForm();
       OrderLineEditForm.checkButtonsConditions([
         { label: 'Save & close', conditions: { disabled: true } },
-        { label: 'Save & open order', conditions: { disabled: false } },
       ]);
 
       // Edit "Receiving note" field, Click "Save & close" button

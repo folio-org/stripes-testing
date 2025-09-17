@@ -9,9 +9,9 @@ describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `AT_C496128_UserRole_${getRandomPostfix()}`,
+        roleName: `Auto Role C496128 ${getRandomPostfix()}`,
         originalApplication: 'app-platform-minimal',
-        newApplication: 'app-agreements',
+        newApplication: 'app-platform-complete',
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
@@ -51,12 +51,12 @@ describe('Eureka', () => {
         newCapabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Erm Agreements',
+            resource: 'Accounts Item',
             action: CAPABILITY_ACTIONS.EDIT,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Erm Agreements Item',
+            resource: 'Accounts Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
@@ -92,8 +92,6 @@ describe('Eureka', () => {
               path: TopMenu.settingsAuthorizationRoles,
               waiter: AuthorizationRoles.waitContentLoading,
             });
-            cy.reload();
-            AuthorizationRoles.waitContentLoading();
           }, 20_000);
         });
       });
@@ -102,8 +100,6 @@ describe('Eureka', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteCapabilitySetsFromRoleApi(roleId);
-          cy.deleteCapabilitiesFromRoleApi(roleId);
           cy.deleteAuthorizationRoleApi(roleId);
         });
       });

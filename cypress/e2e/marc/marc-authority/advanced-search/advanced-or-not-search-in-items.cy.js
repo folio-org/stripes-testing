@@ -30,7 +30,7 @@ describe('MARC', () => {
             itemBarcode: uuid(),
           },
         ],
-        defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+        defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
       };
 
       before('Creating data', () => {
@@ -228,14 +228,14 @@ describe('MARC', () => {
             1,
             testData.instances[2].title,
             'Starts with',
-            'Keyword (title, contributor, identifier)',
+            'Keyword (title, contributor, identifier, HRID, UUID)',
             'NOT',
           );
           InventoryInstances.checkAdvSearchModalItemValues(
             1,
             testData.instances[2].title,
             'Starts with',
-            'Keyword (title, contributor, identifier)',
+            'Keyword (title, contributor, identifier, HRID, UUID)',
             'NOT',
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();

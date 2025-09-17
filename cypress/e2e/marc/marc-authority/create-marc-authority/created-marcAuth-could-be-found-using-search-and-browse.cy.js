@@ -18,7 +18,7 @@ describe('MARC', () => {
         tag010Value: 'n00776432',
         tag400Value: 'Huan Doe Senior, 1909-1965',
         tag500Value: 'La familia',
-        headerText: /New .*MARC authority record/,
+        headerText: /Create a new .*MARC authority record/,
         AUTHORIZED: 'Authorized',
         REFERENCE: 'Reference',
         AUTHREF: 'Auth/Ref',
@@ -66,6 +66,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

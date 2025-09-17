@@ -1,7 +1,11 @@
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
@@ -91,18 +95,13 @@ describe('Eureka', () => {
             action: 'View',
           },
           {
+            table: 'Data',
+            resource: 'Configuration Entries Collection',
+            action: 'View',
+          },
+          {
             table: 'Settings',
             resource: 'Module Agreements Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Erm Settings',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Erm Settings Collection',
             action: 'View',
           },
         ],
@@ -163,8 +162,8 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Settings: 5,
-            Data: 9,
+            Settings: 3,
+            Data: 10,
           },
         },
         absentCapabilitySetTables: ['Procedural'],
@@ -212,11 +211,13 @@ describe('Eureka', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
         }, 20_000);
+        AuthorizationRoles.waitContentLoading();
       });
 
       after('Delete user, role', () => {

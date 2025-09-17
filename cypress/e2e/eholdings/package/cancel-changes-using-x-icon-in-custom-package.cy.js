@@ -26,7 +26,6 @@ describe('eHoldings', () => {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
-          cy.reload();
           EHoldingsTitlesSearch.waitLoading();
         });
       });
@@ -50,7 +49,7 @@ describe('eHoldings', () => {
         EHoldingsPackage.verifyButtonsDisabled();
         EHoldingsNewCustomPackage.fillInRequiredProperties(testData.customPackageName);
         EHoldingsPackage.verifyButtonsEnabled();
-        EHoldingsNewCustomPackage.closeEditingWindow();
+        EHoldingsPackage.closeEditingWindow();
 
         EHoldingsPackage.verifyUnsavedChangesModalExists();
         EHoldingsPackage.clickKeepEditing();

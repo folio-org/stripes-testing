@@ -30,6 +30,16 @@ export default {
     )}/${currentDate.getFullYear()}`;
   },
 
+  getCurrentDateINDDMMYYYYFormat: () => {
+    const currentDate = new Date();
+
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  },
+
   getCurrentDateForFileNaming: () => {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}_${padWithZero(
@@ -79,6 +89,18 @@ export default {
     const day = yesterday.getDate();
     const year = yesterday.getFullYear();
     return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+  },
+
+  getPreviousDayDateInDDMMYYYYFormat: () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const day = yesterday.getDate().toString().padStart(2, '0');
+    const month = (yesterday.getMonth() + 1).toString().padStart(2, '0');
+    const year = yesterday.getFullYear();
+
+    return `${day}/${month}/${year}`;
   },
 
   getTomorrowDayDateForFiscalYear: () => {
