@@ -2,6 +2,8 @@
 import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
 
+let authRefreshCounter = 0;
+
 Cypress.Commands.add('getToken', (username, password, getServicePoint = false) => {
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
@@ -115,7 +117,9 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
 // });
 
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
-  cy.intercept('POST', '/authn/refresh').as('authnRefreshCall');
+  authRefreshCounter++;
+  const alias = `authnRefreshCall_${authRefreshCounter}`;
+  cy.intercept('POST', '/authn/refresh').as(alias);
 
   callback();
 
@@ -126,10 +130,10 @@ Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
       const startTime = Date.now();
 
       const checkForRequest = () => {
-        return cy.get('@authnRefreshCall.all', { log: false }).then((interceptions) => {
+        return cy.get(`@${alias}.all`, { log: false }).then((interceptions) => {
           if (interceptions.length > 0) {
             return cy
-              .wait('@authnRefreshCall')
+              .wait(`@${alias}`)
               .its('response.statusCode')
               .should('eq', 201)
               .then(() => {
