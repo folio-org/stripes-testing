@@ -71,10 +71,7 @@ describe('MARC', () => {
           InventoryInstance.checkInstanceTitle(testData.searchTitle);
 
           // Step 2: Click on "Actions" button → Select "+ New MARC bibliographic record" option
-          InventoryInstances.createNewMarcBibRecord();
-
-          // Verify "Create a new MARC bib record" pane is opened
-          QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);
+          InventoryInstance.newMarcBibRecord();
 
           // Step 3: Fill in the required fields with valid data
           // Fill 245 field with title value
