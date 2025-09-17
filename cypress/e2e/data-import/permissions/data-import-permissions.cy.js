@@ -24,6 +24,7 @@ describe('Data Import', () => {
     const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -41,6 +42,7 @@ describe('Data Import', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
+          authRefresh: true,
         });
       });
     });

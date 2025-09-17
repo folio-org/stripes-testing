@@ -46,6 +46,7 @@ describe('Data Import', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -66,13 +67,13 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
         NewFieldMappingProfile.checkPreviouslyPopulatedDataIsDisplayed(mappingProfile);
         // #3 Check "Purchase order lines limit setting" field in "Order information" accordion
-        NewFieldMappingProfile.verifyDefaultPurchaseOrderLinesLimit(1);
+        NewFieldMappingProfile.verifyDefaultPurchaseOrderLinesLimit(`"${1}"`);
         // #4 Click "Save as profile & close" button
         NewFieldMappingProfile.save();
         FieldMappingProfileView.checkCalloutMessage('New record created:');
         FieldMappingProfileView.verifyMappingProfileOpened();
         // #5 Check "Purchase order lines limit setting" field in "Order information" accordion of the Settings details view screen
-        FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(1);
+        FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(`"${1}"`);
       },
     );
   });

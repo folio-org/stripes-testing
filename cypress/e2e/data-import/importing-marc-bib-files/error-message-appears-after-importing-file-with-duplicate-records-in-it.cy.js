@@ -88,6 +88,7 @@ describe('Data Import', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -112,6 +113,7 @@ describe('Data Import', () => {
       'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
       { tags: ['criticalPath', 'folijet', 'C410708'] },
       () => {
+        DataImport.verifyUploadState();
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);

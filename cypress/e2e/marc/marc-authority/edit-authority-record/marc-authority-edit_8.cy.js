@@ -55,6 +55,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
         });
       });
@@ -81,6 +82,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
+          cy.wait(4000);
           QuickMarcEditor.updateExistingField('010', '$a n90635366');
           QuickMarcEditor.checkButtonsEnabled();
           // QuickMarcEditor.clickSaveAndKeepEditingButton();

@@ -70,14 +70,11 @@ describe('MARC', () => {
               testData.createdAuthorityID = response[0].authority.id;
             },
           );
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-            MarcAuthorities.waitLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
+          });
         });
       });
 
@@ -98,11 +95,13 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
           MarcAuthority.checkInfoButton('999');
-          newFieldsArr.forEach((field) => {
-            MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
+          newFieldsArr.forEach((field, index) => {
+            MarcAuthority.addNewField(10 + index, field[0], field[3], field[1], field[2]);
           });
-          cy.wait(1000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.getAdminToken();
           protectedMARCFields.forEach((marcFieldProtectionRule) => {

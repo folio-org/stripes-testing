@@ -51,22 +51,18 @@ describe('ui-orders: Orders', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       firstBudget.fiscalYearId = response.id;
       secondBudget.fiscalYearId = response.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
         secondFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
-
           firstBudget.fundId = fundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
         });
@@ -93,7 +89,6 @@ describe('ui-orders: Orders', () => {
       defaultOrder.vendor = organization.name;
     });
     defaultOrder.vendor = organization.name;
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
@@ -127,6 +122,7 @@ describe('ui-orders: Orders', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });

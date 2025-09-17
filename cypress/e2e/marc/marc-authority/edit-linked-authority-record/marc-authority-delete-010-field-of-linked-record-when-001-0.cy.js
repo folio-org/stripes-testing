@@ -23,7 +23,7 @@ describe('MARC', () => {
         authorityTitle: 'C374163 Clovio, Giulio, 1498-1578',
         instanceTitle: 'Farnese book of hours :',
         searchOption: 'Keyword',
-        searchValue: 'Clovio, Giulio',
+        searchValue: 'C374163 Clovio, Giulio',
         calloutMessage:
           'This record has successfully saved and is in process. Changes may not appear immediately.',
         linked600Field: [
@@ -66,23 +66,14 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
 
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
           MarcAuthorities.getMarcAuthoritiesViaApi({
             limit: 100,
             query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -104,8 +95,6 @@ describe('MARC', () => {
             cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -119,19 +108,14 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field);
             QuickMarcEditor.closeCallout();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              });
-              cy.reload();
-              MarcAuthorities.waitLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
+            });
           });
         });
       });

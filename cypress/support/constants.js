@@ -826,7 +826,7 @@ export const AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
   RECUPD: 'RecUpd',
   PERSNAME: 'Pers Name',
   LEVELEST: 'Level Est',
-  MODREC: 'Mod Rec',
+  MODREC: 'Mod Rec Est',
   SOURCE: 'Source',
 };
 
@@ -1594,5 +1594,4 @@ export const INVENTORY_COLUMN_HEADERS = {
   PUBLISHERS: 'Publishers',
   DATE: 'Date',
   RELATION: 'Relation',
-  INSTANCE_HRID: 'Instance HRID',
 };

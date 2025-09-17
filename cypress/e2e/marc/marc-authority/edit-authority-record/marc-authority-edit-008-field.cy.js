@@ -219,9 +219,10 @@ describe('MARC', () => {
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
-      it(
+      // Trillium+ only
+      it.skip(
         'C350691 Verify "008" field dropdowns on Edit MARC authority pane (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C350691'] },
+        { tags: [] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.select(createdAuthorityID[0]);

@@ -79,6 +79,7 @@ describe('Data Import', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.acquisitionUnitsPath,
           waiter: AcquisitionUnits.waitLoading,
+          authRefresh: true,
         });
         // need to edit file for creating unique invoice number
         DataImport.editMarcFile(filePathForUpload, editedFileForUpload, ['19353'], [invoiceNumber]);

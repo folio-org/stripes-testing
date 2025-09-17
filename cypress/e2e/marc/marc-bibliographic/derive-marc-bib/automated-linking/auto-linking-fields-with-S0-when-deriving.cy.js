@@ -144,6 +144,7 @@ describe('MARC', () => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -160,6 +161,7 @@ describe('MARC', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -180,7 +182,6 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.deriveNewMarcBib();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
