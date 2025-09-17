@@ -6,15 +6,13 @@ describe('ui-invoices-settings: Batch Group creation', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const newBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   before(() => {
-    cy.getAdminToken().then(() => {
+    cy.loginAsAdmin({
+      path: SettingsMenu.invoiceBatchGroupsPath,
+      waiter: SettingsInvoices.waitBatchGroupsLoading,
+      authRefresh: true,
+    }).then(() => {
       cy.getAdminSourceRecord().then((adminSourceRecord) => {
         newBatchGroup.source = adminSourceRecord;
-      });
-    });
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.invoiceBatchGroupsPath,
-        waiter: SettingsInvoices.waitBatchGroupsLoading,
       });
     });
   });

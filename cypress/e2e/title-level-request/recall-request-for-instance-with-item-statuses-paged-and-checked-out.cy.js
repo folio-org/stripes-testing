@@ -184,6 +184,7 @@ describe('Create Item or Title level request', () => {
         cy.login(users[0].username, users[0].password, {
           path: TopMenu.requestsPath,
           waiter: Requests.waitLoading,
+          authRefresh: true,
         });
       });
   });

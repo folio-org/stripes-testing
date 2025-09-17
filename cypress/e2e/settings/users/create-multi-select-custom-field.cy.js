@@ -27,6 +27,7 @@ describe('Settings (Users) - Custom Fields', () => {
     cy.login(testData.user.username, testData.user.password, {
       path: TopMenu.customFieldsPath,
       waiter: CustomFields.waitLoading,
+      authRefresh: true,
     });
   });
 

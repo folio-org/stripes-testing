@@ -96,6 +96,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,
         waiter: RequestsSearchResultsPane.waitLoading,
+        authRefresh: true,
       });
     });
   });

@@ -141,6 +141,11 @@ describe('Staff slips', () => {
           servicePointId: testData.userServicePoint.id,
           userBarcode: userData.barcode,
         });
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+          authRefresh: true,
+        });
       });
   });
 
@@ -179,11 +184,6 @@ describe('Staff slips', () => {
   });
 
   it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega', 'C347898'] }, () => {
-    cy.login(userData.username, userData.password, {
-      path: TopMenu.requestsPath,
-      waiter: Requests.waitLoading,
-    });
-
     NewRequest.createNewRequest({
       requesterBarcode: requestUserData.barcode,
       itemBarcode: itemData.barcode,

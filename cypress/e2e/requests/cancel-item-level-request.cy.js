@@ -123,6 +123,7 @@ describe('Cancel item level request', () => {
     cy.login(userData.username, userData.password, {
       path: TopMenu.requestsPath,
       waiter: Requests.waitLoading,
+      authRefresh: true,
     });
   });
 

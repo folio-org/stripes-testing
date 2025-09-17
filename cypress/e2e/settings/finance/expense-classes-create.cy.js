@@ -6,17 +6,16 @@ describe('ui-invoices-settings: Batch Group creation', { retries: { runMode: 1 }
   const expenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const newExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getAdminSourceRecord().then((adminSourceRecord) => {
-          expenseClass.source = adminSourceRecord;
-          newExpenseClass.source = adminSourceRecord;
-        });
-      })
-      .then(() => {
-        cy.loginAsAdmin();
-        cy.visit(`${SettingsMenu.expenseClassesPath}`);
+    cy.loginAsAdmin({
+      path: SettingsMenu.expenseClassesPath,
+      waiter: SettingsFinance.waitExpenseClassesLoading,
+      authRefresh: true,
+    }).then(() => {
+      cy.getAdminSourceRecord().then((adminSourceRecord) => {
+        expenseClass.source = adminSourceRecord;
+        newExpenseClass.source = adminSourceRecord;
       });
+    });
   });
 
   it(

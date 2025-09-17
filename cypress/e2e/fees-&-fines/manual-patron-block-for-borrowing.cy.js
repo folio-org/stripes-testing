@@ -111,17 +111,23 @@ describe('Fees&Fines', () => {
       'C478 Verify that manual patron block for "Borrowing" blocks checkouts by patron (vega)',
       { tags: ['extendedPath', 'vega', 'C478'] },
       () => {
-        cy.login(userData.user1.username, userData.user1.password);
-        cy.visit(TopMenu.checkOutPath);
-        Checkout.waitLoading();
+        cy.login(userData.user1.username, userData.user1.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+          authRefresh: true,
+        });
+
         CheckOutActions.checkOutUser(userData.user1.barcode);
         Checkout.verifyModal(renewalsBlock.title, renewalsBlock.description1);
         Checkout.viewBlockDetails();
         UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description1);
 
-        cy.login(userData.user2.username, userData.user2.password);
-        cy.visit(TopMenu.checkOutPath);
-        Checkout.waitLoading();
+        cy.login(userData.user2.username, userData.user2.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+          authRefresh: true,
+        });
+
         CheckOutActions.checkOutUser(userData.user2.barcode);
         Checkout.verifyModal(renewalsBlock.title, renewalsBlock.description1);
         Checkout.verifyModal(renewalsBlock.title, renewalsBlock.description2);
@@ -129,9 +135,12 @@ describe('Fees&Fines', () => {
         UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description2);
         UsersCard.verifyPatronBlockDescription(2, renewalsBlock.description1);
 
-        cy.login(userData.user3.username, userData.user3.password);
-        cy.visit(TopMenu.checkOutPath);
-        Checkout.waitLoading();
+        cy.login(userData.user3.username, userData.user3.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+          authRefresh: true,
+        });
+
         CheckOutActions.checkOutUser(userData.user3.barcode);
         Checkout.verifyModalAbsent(renewalsBlock.title);
       },

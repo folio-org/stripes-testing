@@ -46,8 +46,11 @@ describe('orders: Edifact export', () => {
   let servicePointId;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
+      authRefresh: true,
+    });
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -80,10 +83,6 @@ describe('orders: Edifact export', () => {
                     volumes: [],
                   },
                 };
-                cy.loginAsAdmin({
-                  path: TopMenu.organizationsPath,
-                  waiter: Organizations.waitLoading,
-                });
                 Organizations.searchByParameters('Name', organization.name);
                 Organizations.checkSearchResults(organization);
                 Organizations.selectOrganization(organization.name);
@@ -119,12 +118,13 @@ describe('orders: Edifact export', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber, true, true);

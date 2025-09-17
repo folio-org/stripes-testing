@@ -902,6 +902,7 @@ export default {
       cy.loginAsAdmin({
         path: TopMenu.fundPath,
         waiter: this.waitLoading,
+        authRefresh: true,
       });
       this.createFund(fund);
       this.checkCreatedFund(fund.name);

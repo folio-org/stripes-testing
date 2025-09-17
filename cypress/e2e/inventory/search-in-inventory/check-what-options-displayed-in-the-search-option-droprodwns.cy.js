@@ -14,7 +14,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         user = createdUserProperties;
-        cy.login(createdUserProperties.username, createdUserProperties.password, {
+        cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
           authRefresh: true,

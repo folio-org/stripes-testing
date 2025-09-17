@@ -98,6 +98,7 @@ const buttonLink = Button('Link');
 const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
+const buttonCancelInAdvSearchModal = Button({ ariaLabel: 'Cancel', disabled: or(false, true) });
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
 const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
 const buttonClose = Button({ icon: 'times' });

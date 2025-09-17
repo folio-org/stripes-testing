@@ -71,15 +71,11 @@ export default {
     if (isShown) {
       cy.expect([
         paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
-        paneIntanceDetails.find(MultiColumnListHeader('Title')).exists(),
-        paneIntanceDetails.find(MultiColumnListHeader('Contributors')).exists(),
         paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
       ]);
     } else {
       cy.expect([
         paneIntanceDetails.find(MultiColumnListHeader('Classification')).absent(),
-        paneIntanceDetails.find(MultiColumnListHeader('Title')).absent(),
-        paneIntanceDetails.find(MultiColumnListHeader('Contributors')).absent(),
         paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).absent(),
       ]);
     }

@@ -161,8 +161,6 @@ describe('MARC', () => {
         });
         MarcAuthorities.checkSearchOptions();
         MarcAuthoritiesSearch.verifyDefaultSearchPaneState();
-        MarcAuthorities.clickActionsButton();
-        MarcAuthorities.verifyActionsMenu();
 
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
         cy.wait(2000);

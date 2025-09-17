@@ -48,6 +48,7 @@ describe('Title level request for declared lost item', () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
+        authRefresh: true,
       });
     });
   });

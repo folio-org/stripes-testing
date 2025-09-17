@@ -68,6 +68,7 @@ describe('Loans', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.usersPath,
             waiter: UsersSearchPane.waitLoading,
+            authRefresh: true,
           });
         },
       );
