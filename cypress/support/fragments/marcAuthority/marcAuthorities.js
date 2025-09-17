@@ -98,7 +98,6 @@ const buttonLink = Button('Link');
 const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
-const buttonCancelInAdvSearchModal = Button({ ariaLabel: 'Cancel', disabled: or(false, true) });
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
 const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
 const buttonClose = Button({ icon: 'times' });
@@ -847,7 +846,7 @@ export default {
     cy.expect(searchInput.has({ value: including(value) }));
   },
 
-  clickResetAllButtonInAdvSearchModal() {
+  clickCancelButtonInAdvSearchModal() {
     cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
   },
 
@@ -1265,9 +1264,12 @@ export default {
     });
   },
 
-  checkResultsListRecordsCount() {
+  checkResultsListRecordsCount(facetFilter) {
     const alias = `getItems${getRandomPostfix()}`;
     cy.intercept('GET', '/search/authorities?*').as(alias);
+    if (facetFilter && typeof facetFilter === 'function') {
+      facetFilter();
+    }
     cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
       cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());

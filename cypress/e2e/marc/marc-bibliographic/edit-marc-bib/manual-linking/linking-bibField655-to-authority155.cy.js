@@ -19,7 +19,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag655: '655',
-          authorityValue: 'C380766 Drama Genre',
+          authorityValue: 'C380766 Drama--Genre',
           authorityHeading: 'C380766 Drama',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
@@ -97,13 +97,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
