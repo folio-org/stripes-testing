@@ -99,6 +99,7 @@ describe('MARC', () => {
             cy.login(testData.userAData.username, testData.userAData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.waitContentLoading();
             InventoryInstance.newMarcBibRecord();

@@ -16,9 +16,9 @@ const jobProfile = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
 const propertyName = 'authority';
 const browseQuery = 'C409464';
 const authorizedFull =
-  'C409464 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq Musical settings Literary style Stage history 1950- England';
+  'C409464 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq--Musical settings--Literary style--Stage history--1950---England';
 const referenceFull =
-  'C409464 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subv subx suby subz';
+  'C409464 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq--subv--subx--suby--subz';
 const authRefFull =
   'C409464 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz';
 const authorizedInvalid =
@@ -53,6 +53,7 @@ describe('MARC', () => {
           cy.login(testUser.username, testUser.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthorities.switchToBrowse();
         });
