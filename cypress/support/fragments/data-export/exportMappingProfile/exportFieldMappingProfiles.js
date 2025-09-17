@@ -81,7 +81,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
-        return response.body.mappingProfiles;
+        return response.body.mappingProfiles[0];
       });
   },
 

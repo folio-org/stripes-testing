@@ -224,6 +224,7 @@ export default {
   goToLocationsTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
+    cy.wait(3000);
     cy.do(NavListItem('Locations').click());
     cy.expect(Pane('Locations').exists());
   },
