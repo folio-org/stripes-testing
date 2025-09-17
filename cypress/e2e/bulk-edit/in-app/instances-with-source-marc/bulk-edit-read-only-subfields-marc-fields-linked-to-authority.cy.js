@@ -458,14 +458,14 @@ describe('Bulk-edit', () => {
         BulkEditLogs.clickActionsRunBy(user.username);
         BulkEditLogs.downloadFileWithProposedChanges();
 
-        // TODO: Uncomment after issue in MODBULKOPS-504 is fixed
-        // BulkEditFiles.verifyValueInRowByUUID(
-        //   fileNames.previewRecordsCSV,
-        //   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-        //   marcInstance.id,
-        //   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUBJECT,
-        //   editedSubjectInFile,
-        // );
+        // Issue MODBULKOPS-504
+        BulkEditFiles.verifyValueInRowByUUID(
+          fileNames.previewRecordsCSV,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+          marcInstance.id,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUBJECT,
+          editedSubjectInFile,
+        );
 
         // Step 14: Verify changes in Inventory app - fields remain linked
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
