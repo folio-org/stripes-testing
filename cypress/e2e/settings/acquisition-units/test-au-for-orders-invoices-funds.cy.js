@@ -51,18 +51,15 @@ describe('Acquisition Units', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -136,7 +133,11 @@ describe('Acquisition Units', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.fundPath,
+      waiter: Funds.waitLoading,
+      authRefresh: true,
+    });
     Invoices.getInvoiceViaApi({
       query: `vendorInvoiceNo="${invoice.invoiceNumber}"`,
     }).then(({ invoices }) => {
@@ -150,9 +151,6 @@ describe('Acquisition Units', () => {
     }).then((response) => {
       AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
     });
-    cy.loginAsAdmin();
-    TopMenuNavigation.openAppFromDropdown('Finance');
-    FinanceHelp.selectFundsNavigation();
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
@@ -169,6 +167,7 @@ describe('Acquisition Units', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
@@ -182,6 +181,7 @@ describe('Acquisition Units', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -206,10 +206,15 @@ describe('Acquisition Units', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
-      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      cy.login(user.username, user.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+        authRefresh: true,
+      });
       FinanceHelp.searchByName(defaultFund.name);
       Funds.checkZeroSearchResultsHeader();
     },

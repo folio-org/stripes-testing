@@ -48,7 +48,6 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getAdminToken();
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
@@ -147,6 +146,7 @@ describe('Invoices', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });

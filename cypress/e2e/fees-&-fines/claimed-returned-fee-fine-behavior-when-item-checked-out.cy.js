@@ -78,6 +78,7 @@ describe('Fees&Fines', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: AppPaths.getUserPreviewPathWithQuery(testData.user.userId),
             waiter: UsersCard.waitLoading,
+            authRefresh: true,
           });
         });
     });

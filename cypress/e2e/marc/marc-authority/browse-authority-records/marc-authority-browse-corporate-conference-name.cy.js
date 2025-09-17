@@ -85,7 +85,6 @@ describe('MARC', () => {
             'Corporate/Conference name',
             browseQuery,
           );
-
           // Step 3: Search and verify results for base query
           MarcAuthorityBrowse.searchBy('Corporate/Conference name', browseQuery);
           MarcAuthorityBrowse.checkResultWithValue(

@@ -54,8 +54,11 @@ describe('Orders', () => {
     let location;
 
     before(() => {
-      cy.getAdminToken();
-
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+        authRefresh: true,
+      });
       ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
         effectiveLocationServicePoint = servicePoint;
         NewLocation.createViaApi(
@@ -66,11 +69,6 @@ describe('Orders', () => {
             organization.id = organizationsResponse;
             order.vendor = organizationsResponse;
           });
-
-          cy.loginAsAdmin();
-          TopMenuNavigation.openAppFromDropdown('Orders');
-          Orders.selectOrdersPane();
-          cy.getAdminToken();
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
             Orders.searchByParameter('PO number', orderNumber);
@@ -95,12 +93,13 @@ describe('Orders', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.ordersInstanceStatusPath,
           waiter: SettingsOrders.waitLoadingInstanceStatus,
+          authRefresh: true,
         });
       });
     });
 
     after(() => {
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.unOpenOrder();
