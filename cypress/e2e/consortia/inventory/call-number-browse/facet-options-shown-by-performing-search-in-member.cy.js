@@ -175,26 +175,30 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         cy.wait(3000);
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.verifyHeldByOption(tenantNames.university);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
@@ -206,25 +210,29 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
+        InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.verifyHeldByOption(tenantNames.university);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
