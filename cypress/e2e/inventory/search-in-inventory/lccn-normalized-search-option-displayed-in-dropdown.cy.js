@@ -10,7 +10,7 @@ describe('Inventory', () => {
       lccnOption: 'LCCN, normalized',
       containsAll: 'Contains all',
       defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
-      defaultSearchOptionItem: 'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+      defaultSearchOptionItem: 'Keyword (title, contributor, identifier, HRID, UUID)',
     };
 
     before(() => {
@@ -21,6 +21,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

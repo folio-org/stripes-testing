@@ -1606,7 +1606,10 @@ export default {
       'ui-quick-marc.record.fixedField-Level Est-text',
       'Level of establishment',
     );
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Mod Rec-text', 'Modified record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Mod Rec Est-text',
+      'Modified record',
+    );
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-Source-text',
       'Cataloging source',
@@ -2158,7 +2161,9 @@ export default {
   },
 
   checkRecordStatusNew() {
-    cy.expect(Pane(matching(/New .*MARC authority record/)).has({ subtitle: 'Status:New' }));
+    cy.expect(
+      Pane(matching(/Create a new .*MARC authority record/)).has({ subtitle: 'Status:New' }),
+    );
   },
 
   verifyPaneheaderWithContentAbsent(text) {
@@ -2591,9 +2596,9 @@ export default {
   checkOnlyBackslashesIn008Boxes() {
     cy.get('input[name^="records"][name$=".tag"][value="008"]')
       .parents('[data-testid="quick-marc-editorid"]')
-      .find('[data-testid="bytes-field-col"] select')
-      .then((selects) => {
-        const values = Array.from(selects, (el) => el.value);
+      .find('[data-testid="bytes-field-col"] input')
+      .then((inputs) => {
+        const values = Array.from(inputs, (el) => el.value);
         expect(values.join('')).to.match(/^\\+$/);
       });
   },

@@ -28,6 +28,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('orders: Unopen order', { retries: { runMode: 1 } }, () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
@@ -161,9 +162,12 @@ describe('orders: Unopen order', { retries: { runMode: 1 } }, () => {
                                 status: INVOICE_STATUSES.PAID,
                               });
                             });
-                            cy.loginAsAdmin();
-                            TopMenuNavigation.openAppFromDropdown('Orders');
-                            Orders.selectOrdersPane();
+                            cy.waitForAuthRefresh(() => {
+                              cy.loginAsAdmin({
+                                path: TopMenu.ordersPath,
+                                waiter: Orders.waitLoading,
+                              });
+                            });
                             Orders.searchByParameter('PO number', orderNumber);
                             Orders.selectFromResultsList(orderNumber);
                             OrderLines.selectPOLInOrder(0);
@@ -194,10 +198,12 @@ describe('orders: Unopen order', { retries: { runMode: 1 } }, () => {
       permissions.uiOrdersUnopenpurchaseorders.gui,
     ]).then((userProperties) => {
       user = userProperties;
-
-      cy.login(userProperties.username, userProperties.password);
-      TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrdersPane();
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
   });
 

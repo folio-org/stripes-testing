@@ -19,7 +19,7 @@ describe('MARC', () => {
         tag100: '100',
         tag010Value: 'n00776432',
         tag001Value: 'n4332123',
-        headerText: /New .*MARC authority record/,
+        headerText: /Create a new .*MARC authority record/,
         AUTHORIZED: 'Authorized',
       };
 
@@ -51,6 +51,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

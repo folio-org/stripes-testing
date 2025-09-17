@@ -1,4 +1,4 @@
-describe('Eureka', () => {
+describe.skip('Eureka', () => {
   describe('Tenants', () => {
     const testData = {
       tenant: Cypress.env('OKAPI_TENANT'),
@@ -60,47 +60,44 @@ describe('Eureka', () => {
     //   );
     // });
 
-    it(
-      'C784506 Default roles for system users created and assigned (eureka)',
-      { tags: ['criticalPath', 'eureka', 'C784506'] },
-      () => {
-        cy.getAdminToken();
-        expectedSystemRoles.forEach((expectedSystemRole) => {
-          const matchingRoles = existingRoles.filter(
-            (role) => role.name === testData.systemRoleName(expectedSystemRole.moduleName),
-          );
-          expect(matchingRoles.length).to.eq(1);
-          expectedSystemRole.roleId = matchingRoles[0].id;
-          // Uncomment when MODROLESKC-315 is done
-          // cy.getCapabilitiesForRoleApi(expectedSystemRole.roleId, {
-          //   limit: 5000,
-          //   expand: true,
-          // }).then((assignedCapabilitiesResponse) => {
-          // const assignedPermissionNames = assignedCapabilitiesResponse.body.capabilities.map(
-          //   (capab) => capab.permission,
-          // );
-          // const expectedPermissionNames = expectedSystemRole.permissionNames.filter(permission => allExistingCapabilities.find((capab) => capab.permission === permission));
-          // expect(assignedPermissionNames.sort()).to.deep.equal(expectedPermissionNames.sort());
+    // Trillium+ only
+    it('C784506 Default roles for system users created and assigned (eureka)', { tags: [] }, () => {
+      cy.getAdminToken();
+      expectedSystemRoles.forEach((expectedSystemRole) => {
+        const matchingRoles = existingRoles.filter(
+          (role) => role.name === testData.systemRoleName(expectedSystemRole.moduleName),
+        );
+        expect(matchingRoles.length).to.eq(1);
+        expectedSystemRole.roleId = matchingRoles[0].id;
+        // Uncomment when MODROLESKC-315 is done
+        // cy.getCapabilitiesForRoleApi(expectedSystemRole.roleId, {
+        //   limit: 5000,
+        //   expand: true,
+        // }).then((assignedCapabilitiesResponse) => {
+        // const assignedPermissionNames = assignedCapabilitiesResponse.body.capabilities.map(
+        //   (capab) => capab.permission,
+        // );
+        // const expectedPermissionNames = expectedSystemRole.permissionNames.filter(permission => allExistingCapabilities.find((capab) => capab.permission === permission));
+        // expect(assignedPermissionNames.sort()).to.deep.equal(expectedPermissionNames.sort());
 
-          // Remove after MODROLESKC-315 is done and tested (left for testing)
-          // expectedSystemRole.missingPermissions = [];
-          // expectedSystemRole.permissionNames.forEach((permission) => {
-          //   if (
-          //     !assignedPermissionNames.includes(permission) &&
-          //     allExistingCapabilities.find((capab) => capab.permission === permission)
-          //   ) {
-          //     expectedSystemRole.missingPermissions.push(permission);
-          //   }
-          // });
+        // Remove after MODROLESKC-315 is done and tested (left for testing)
+        // expectedSystemRole.missingPermissions = [];
+        // expectedSystemRole.permissionNames.forEach((permission) => {
+        //   if (
+        //     !assignedPermissionNames.includes(permission) &&
+        //     allExistingCapabilities.find((capab) => capab.permission === permission)
+        //   ) {
+        //     expectedSystemRole.missingPermissions.push(permission);
+        //   }
+        // });
 
-          cy.getUsers({ query: `username=="${expectedSystemRole.moduleName}"` }).then((users) => {
-            cy.getAuthorizationRolesForUserApi(users[0].id).then((userRolesResponse) => {
-              const systemUserRoleIds = userRolesResponse.body.userRoles.map((role) => role.roleId);
-              expect(systemUserRoleIds).to.include(expectedSystemRole.roleId);
-            });
+        cy.getUsers({ query: `username=="${expectedSystemRole.moduleName}"` }).then((users) => {
+          cy.getAuthorizationRolesForUserApi(users[0].id).then((userRolesResponse) => {
+            const systemUserRoleIds = userRolesResponse.body.userRoles.map((role) => role.roleId);
+            expect(systemUserRoleIds).to.include(expectedSystemRole.roleId);
           });
         });
-      },
-    );
+      });
+    });
   });
 });

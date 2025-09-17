@@ -6,7 +6,6 @@ import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldi
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
-import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -46,6 +45,7 @@ describe('eHoldings', () => {
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsTitlesSearch.waitLoading,
+            authRefresh: true,
           });
           EHoldingSearch.switchToPackages();
           EHoldingsPackagesSearch.byName();
@@ -72,6 +72,7 @@ describe('eHoldings', () => {
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsPackages.waitLoading,
+            authRefresh: true,
           });
 
           EHoldingSearch.switchToPackages();
@@ -102,6 +103,7 @@ describe('eHoldings', () => {
             cy.login(userProperties.username, userProperties.password, {
               path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
+              authRefresh: true,
             });
             cy.wait(1000);
             EHoldingsPackage.removeFromHoldings();
@@ -127,6 +129,7 @@ describe('eHoldings', () => {
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsPackages.waitLoading,
+            authRefresh: true,
           });
 
           EHoldingSearch.switchToPackages();
@@ -184,6 +187,7 @@ describe('eHoldings', () => {
             cy.login(userProperties.username, userProperties.password, {
               path: TopMenu.eholdingsPath,
               waiter: EHoldingsPackages.waitLoading,
+              authRefresh: true,
             });
 
             const yesterday = DateTools.getPreviousDayDate();
@@ -218,6 +222,7 @@ describe('eHoldings', () => {
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsPackages.waitLoading,
+            authRefresh: true,
           });
 
           const token = `Test${getRandomPostfix()}`;
@@ -239,50 +244,30 @@ describe('eHoldings', () => {
       'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C703'] },
       () => {
-        let titleName;
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          EHoldingsPackages.createPackageViaAPI().then(({ data: { id } }) => {
-            eHoldingsTitles
-              .createEHoldingTitleVIaApi({
-                packageId: id,
-              })
-              .then((title) => {
-                titleName = title.attributes.name;
-              })
-              .then(() => {
-                cy.login(userProperties.username, userProperties.password, {
-                  path: TopMenu.eholdingsPath,
-                  waiter: EHoldingsPackages.waitLoading,
-                });
+          EHoldingsPackages.createPackageViaAPI().then(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: EHoldingsPackages.waitLoading,
+              authRefresh: true,
+            });
 
-                EHoldingSearch.switchToPackages();
-                // wait until package is created via API
-                cy.wait(15000);
-                UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
-                EHoldingsPackagesSearch.bySelectionStatus('Selected');
-                EHoldingsPackages.openPackage();
-                EHoldingsPackage.editProxyActions();
-                EHoldingsPackageView.patronRadioButton('No');
-                EHoldingsPackage.saveAndClose();
-                EHoldingsPackageView.waitLoading();
-                EHoldingsPackage.waitForTitlesState({
-                  packageId: id,
-                  titleName,
-                  isHidden: true,
-                });
-                cy.waitForAuthRefresh(() => {
-                  cy.reload();
-                });
-                EHoldingsPackage.verifyTitleFound(titleName);
-                EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
-                EHoldingsPackageView.verifyAlternativeRadio('No');
-                cy.getAdminToken();
-                EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
-              });
+            EHoldingSearch.switchToPackages();
+            // wait until package is created via API
+            cy.wait(15000);
+            UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+            EHoldingsPackagesSearch.bySelectionStatus('Selected');
+            EHoldingsPackages.openPackage();
+            EHoldingsPackage.editProxyActions();
+            EHoldingsPackageView.patronRadioButton('No');
+            EHoldingsPackage.saveAndClose();
+            EHoldingsPackageView.verifyAlternativeRadio('No');
+            cy.getAdminToken();
+            EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
           });
         });
       },

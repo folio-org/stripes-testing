@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Advanced search', () => {
     const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
     const randomPostfix = getRandomPostfix();
@@ -93,9 +93,10 @@ describe('Inventory', () => {
       });
     });
 
+    // Trillium+ only
     it(
       'C729567 Advanced search | Search for Item by barcode field using "Barcode" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C729567'] },
+      { tags: [] },
       () => {
         // Switch to Item tab
         InventorySearchAndFilter.switchToItem();

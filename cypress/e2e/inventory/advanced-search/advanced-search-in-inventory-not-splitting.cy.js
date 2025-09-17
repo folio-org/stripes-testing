@@ -15,7 +15,7 @@ describe('Inventory', () => {
     const randomLetters = getRandomLetters(10);
     const testData = {
       advSearchOption: 'Advanced search',
-      keywordSearchOption: 'Keyword (title, contributor, identifier)',
+      keywordSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
       instanceTitles: [
         `Chile and Peru : two paths to social${randomLetters} justice / edited by Leila A. Bradfield. C466212`,
         `Consiliō et animīs : tracing a path to not social${randomLetters} justice through the classics / by Antoinette M. Ryan. C466212`,
@@ -92,6 +92,7 @@ describe('Inventory', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });

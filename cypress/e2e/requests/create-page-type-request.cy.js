@@ -110,7 +110,9 @@ describe('Requests', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
+        authRefresh: true,
       });
+
       createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
       createPageTypeRequest.clickNewRequest(createdItem.barcode);
       createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);

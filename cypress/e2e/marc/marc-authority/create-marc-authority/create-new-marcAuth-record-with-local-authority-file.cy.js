@@ -13,7 +13,7 @@ describe('MARC', () => {
       const recordTitle = `C423528 Create a new MARC authority record with Local authority file autotest ${getRandomPostfix()}`;
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
-      const headerText = /New .*MARC authority record/;
+      const headerText = /Create a new .*MARC authority record/;
       let createdAuthorityId;
       const newField = {
         previousFieldTag: '008',
@@ -54,6 +54,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

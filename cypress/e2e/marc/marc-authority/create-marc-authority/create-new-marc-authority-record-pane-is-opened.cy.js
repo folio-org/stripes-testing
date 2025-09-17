@@ -8,7 +8,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
-      const headerText = /New .*MARC authority record/;
+      const headerText = /Create a new .*MARC authority record/;
       const defaultLDRValuesInFields = [
         ['records[0].content.Record length', '00000', true],
         ['records[0].content.7-16 positions', '\\\\a2200000', true],
@@ -36,6 +36,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

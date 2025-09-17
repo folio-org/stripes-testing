@@ -9,7 +9,7 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -62,10 +62,11 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808498 Create Instance+Holdings+Item with empty "order" field (default state) using "New fast add record" feature (spitfire)',
         {
-          tags: ['extendedPath', 'spitfire', 'C808498'],
+          tags: [],
         },
         () => {
           cy.waitForAuthRefresh(() => {

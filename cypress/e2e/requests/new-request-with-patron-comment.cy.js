@@ -60,6 +60,7 @@ describe('Requests', () => {
       cy.login(requestUserData.username, requestUserData.password, {
         path: TopMenu.requestsPath,
         waiter: () => cy.wait(2000),
+        authRefresh: true,
       });
     });
   });

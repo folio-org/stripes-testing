@@ -1,27 +1,24 @@
 import { Permissions } from '../../../support/dictionary';
-import { APPLICATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const defaultSearchOptionHoldings = 'Keyword (title, contributor, identifier, HRID, UUID)';
-    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID, barcode)';
+    const defaultSearchOptionItem = 'Keyword (title, contributor, identifier, HRID, UUID)';
     let user;
 
     before('Create user, test data', () => {
       cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         user = createdUserProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(createdUserProperties.username, createdUserProperties.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
         InventorySearchAndFilter.instanceTabIsDefault();
       });
     });

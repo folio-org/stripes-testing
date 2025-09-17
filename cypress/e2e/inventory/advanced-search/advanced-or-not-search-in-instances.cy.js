@@ -75,14 +75,11 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
       });
     });
 
@@ -177,7 +174,7 @@ describe('Inventory', () => {
               rowNumber,
               '',
               'Contains all',
-              'Keyword (title, contributor, identifier)',
+              'Keyword (title, contributor, identifier, HRID, UUID)',
               'AND',
             );
           });

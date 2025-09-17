@@ -13,7 +13,7 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const users = {};
       const randomPostfix = getRandomPostfix();
-      const paneHeaderCreateNewMarcAuthorityRecord = /New .*MARC authority record/;
+      const paneHeaderCreateNewMarcAuthorityRecord = /Create a new .*MARC authority record/;
       const localAuthFile = {
         name: `C422244 auth source file ${randomPostfix}`,
         prefix: getRandomLetters(8),
@@ -49,10 +49,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
-            });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              MarcAuthorities.waitLoading();
+              authRefresh: true,
             });
           });
       });

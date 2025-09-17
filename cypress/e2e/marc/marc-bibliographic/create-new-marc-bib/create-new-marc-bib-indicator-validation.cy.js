@@ -13,7 +13,7 @@ describe('MARC', () => {
     describe('Create new MARC bib', () => {
       const testData = {
         instanceTitle: `AT_C422108_MarcBibInstance_${getRandomPostfix()}`,
-        paneHeaderCreateRecordText: /New .*MARC bib record/,
+        paneHeaderCreateRecordText: /Create a new .*MARC bib record/,
         tagLDR: 'LDR',
         tag245: '245',
         tag008: '008',
@@ -75,6 +75,7 @@ describe('MARC', () => {
           cy.login(user.userProperties.username, user.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });

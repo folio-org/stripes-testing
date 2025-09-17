@@ -82,11 +82,8 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -190,6 +187,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -297,9 +295,10 @@ describe('MARC', () => {
         });
       });
 
+      // Flaky due to UIMARCAUTH-451
       it(
         'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380567'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C380567'] },
         () => {
           const validSearchResults = [
             'UXPROD-4394C380567 Corporate name 110',
@@ -317,14 +316,11 @@ describe('MARC', () => {
             'UXPROD-4394C380567 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg subk subv subx suby subz',
             'UXPROD-4394C380567 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subk subv subx suby subz subg',
           ];
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -550,18 +546,16 @@ describe('MARC', () => {
         });
       });
 
+      // Flaky due to UIMARCAUTH-451
       it(
         'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380569'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C380569'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -666,9 +660,10 @@ describe('MARC', () => {
         });
       });
 
+      // Flaky due to UIMARCAUTH-451
       it(
         'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380566'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C380566'] },
         () => {
           cy.then(() => {
             const validSearchResults = [
@@ -681,14 +676,12 @@ describe('MARC', () => {
               'UXPROD-4394C380566 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk subv subx suby subz',
               'Family UXPROD-4394C380566 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
             ];
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
+
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -797,14 +790,11 @@ describe('MARC', () => {
         'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C380570'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

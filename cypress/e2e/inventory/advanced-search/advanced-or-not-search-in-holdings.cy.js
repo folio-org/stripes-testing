@@ -115,6 +115,7 @@ describe('Inventory', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });
@@ -198,7 +199,7 @@ describe('Inventory', () => {
           0,
           '',
           'Contains all',
-          'Keyword (title, contributor, identifier)',
+          'Keyword (title, contributor, identifier, HRID, UUID)',
         );
         // #9 In first line in modal:
         // * Fill search input field with part of a "Call number" value from Preconditions (e.g., "CNY118HO11800")

@@ -29,52 +29,53 @@ const searchCases = [
   },
   // Step 4: Only Authorized Geographic name
   {
-    query: 'AT_C409446 Geographic name 151 Gulf Stream subg subv subx suby subz',
+    query: 'AT_C409446 Geographic name 151 Gulf Stream subg--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Authorized',
-        heading: 'AT_C409446 Geographic name 151 Gulf Stream subg subv subx suby subz',
+        heading: 'AT_C409446 Geographic name 151 Gulf Stream subg--subv--subx--suby--subz',
         type: 'Geographic Name',
       },
     ],
   },
   // Step 5: Only Reference Geographic name
   {
-    query: 'AT_C409446 Geographic name 451 Gulf Stream subg subi subv subx suby subz sub4 sub5',
+    query: 'AT_C409446 Geographic name 451 Gulf Stream subg subi sub4 sub5--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Reference',
         heading:
-          'AT_C409446 Geographic name 451 Gulf Stream subg subi subv subx suby subz sub4 sub5',
+          'AT_C409446 Geographic name 451 Gulf Stream subg subi sub4 sub5--subv--subx--suby--subz',
         type: 'Geographic Name',
       },
     ],
   },
   // Step 6: Only Auth/Ref Geographic name
   {
-    query: 'AT_C409446 Geographic name 551 Ocean currents subg subi subv subx suby subz sub4 sub5',
+    query:
+      'AT_C409446 Geographic name 551 Ocean currents subg subi sub4 sub5--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409446 Geographic name 551 Ocean currents subg subi subv subx suby subz sub4 sub5',
+          'AT_C409446 Geographic name 551 Ocean currents subg subi sub4 sub5--subv--subx--suby--subz',
         type: 'Geographic Name',
       },
     ],
   },
   // Step 7-9: Negative cases (no records)
   {
-    query: 'AT_C409446 Geographic name 151 Gulf Stream subg subv subx suby subz sub4',
+    query: 'AT_C409446 Geographic name 151 Gulf Stream subg sub4--subv--subx--suby--subz',
     expected: [],
   },
   {
     query:
-      'AT_C409446 Geographic name 451 Gulf Stream subg subi subv subx suby subz sub4 sub5 sub1',
+      'AT_C409446 Geographic name 451 Gulf Stream subg subi sub4 sub5 sub1--subv--subx--suby--subz',
     expected: [],
   },
   {
     query:
-      'AT_C409446 Geographic name 551 Ocean currents subg subi subv subx suby subz sub4 sub5 sub1',
+      'AT_C409446 Geographic name 551 Ocean currents subg subi sub4 sub5 sub1--subv--subx--suby--subz',
     expected: [],
   },
 ];
@@ -105,7 +106,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
             MarcAuthorities.waitLoading();
           }, 20_000);
         },

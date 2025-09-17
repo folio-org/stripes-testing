@@ -25,8 +25,12 @@ describe('orders: Close Order', () => {
     cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.loginAsAdmin();
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   after(() => {
@@ -40,7 +44,6 @@ describe('orders: Close Order', () => {
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', poNumber);
         Orders.selectFromResultsList(poNumber);
         Orders.openOrder();

@@ -72,10 +72,10 @@ describe('Choose requester without a barcode', () => {
           })
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
-
             cy.login(userData.username, userData.password, {
               path: TopMenu.requestsPath,
               waiter: RequestsSearchResultsPane.waitLoading,
+              authRefresh: true,
             });
           });
       });

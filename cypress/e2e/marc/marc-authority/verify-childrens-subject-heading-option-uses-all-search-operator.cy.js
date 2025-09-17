@@ -14,7 +14,7 @@ describe('MARC', () => {
       recordType: 'Authorized',
       marcValue: 'C584451 Montessori method of education',
       searchQueries: [
-        'Montessori method of education',
+        'C584451 Montessori method of education',
         'method of education Montessori',
         'method Montessori',
         'children method Montessori',
@@ -58,10 +58,10 @@ describe('MARC', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
-
           cy.login(user.username, user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthorities.switchToSearch();
         },

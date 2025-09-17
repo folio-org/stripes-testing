@@ -17,7 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
-          browseSearchOption: 'nameTitle',
+          browseSearchOption: 'corporateNameTitle',
           tag710: '710',
           contributor: 'C375081 Carleton University. Anthropology Caucus 2023-',
           linkedIconText: 'Linked to MARC authority',
@@ -91,14 +91,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 

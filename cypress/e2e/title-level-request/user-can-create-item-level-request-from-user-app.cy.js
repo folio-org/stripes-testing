@@ -50,6 +50,7 @@ describe('Title Level Request', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
         UsersSearchPane.searchByKeywords(testData.user.username);
         UsersSearchPane.openUser(testData.user.username);

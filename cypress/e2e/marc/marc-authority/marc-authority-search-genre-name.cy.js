@@ -24,65 +24,65 @@ const searchCases = [
     expected: [
       {
         authRef: 'Authorized',
-        heading: 'AT_C409454 Genre 155 Peplum films subv subx suby subz',
+        heading: 'AT_C409454 Genre 155 Peplum films--subv--subx--suby--subz',
         type: 'Genre',
       },
       {
         authRef: 'Reference',
-        heading: 'AT_C409454 Genre 455 Gladiator films subi subv subx suby subz sub4 sub5',
+        heading: 'AT_C409454 Genre 455 Gladiator films subi sub4 sub5--subv--subx--suby--subz',
         type: 'Genre',
       },
       {
         authRef: 'Auth/Ref',
-        heading: 'AT_C409454 Genre 555 Motion pictures subi subv subx suby subz sub4 sub5',
+        heading: 'AT_C409454 Genre 555 Motion pictures subi sub4 sub5--subv--subx--suby--subz',
         type: 'Genre',
       },
     ],
   },
   // Step 4: Only Authorized Genre
   {
-    query: 'AT_C409454 Genre 155 Peplum films subv subx suby subz',
+    query: 'AT_C409454 Genre 155 Peplum films--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Authorized',
-        heading: 'AT_C409454 Genre 155 Peplum films subv subx suby subz',
+        heading: 'AT_C409454 Genre 155 Peplum films--subv--subx--suby--subz',
         type: 'Genre',
       },
     ],
   },
   // Step 5: Only Reference Genre
   {
-    query: 'AT_C409454 Genre 455 Gladiator films subi subv subx suby subz sub4 sub5',
+    query: 'AT_C409454 Genre 455 Gladiator films subi sub4 sub5--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Reference',
-        heading: 'AT_C409454 Genre 455 Gladiator films subi subv subx suby subz sub4 sub5',
+        heading: 'AT_C409454 Genre 455 Gladiator films subi sub4 sub5--subv--subx--suby--subz',
         type: 'Genre',
       },
     ],
   },
   // Step 6: Only Auth/Ref Genre
   {
-    query: 'AT_C409454 Genre 555 Motion pictures subi subv subx suby subz sub4 sub5',
+    query: 'AT_C409454 Genre 555 Motion pictures subi sub4 sub5--subv--subx--suby--subz',
     expected: [
       {
         authRef: 'Auth/Ref',
-        heading: 'AT_C409454 Genre 555 Motion pictures subi subv subx suby subz sub4 sub5',
+        heading: 'AT_C409454 Genre 555 Motion pictures subi sub4 sub5--subv--subx--suby--subz',
         type: 'Genre',
       },
     ],
   },
   // Step 7-9: Negative cases (no records)
   {
-    query: 'AT_C409454 Genre 155 Peplum films subv subx suby subz sub1',
+    query: 'AT_C409454 Genre 155 Peplum films sub1--subv--subx--suby--subz',
     expected: [],
   },
   {
-    query: 'AT_C409454 Genre 455 Gladiator films subi subv subx suby subz sub4 sub5 sub1',
+    query: 'AT_C409454 Genre 455 Gladiator films subi sub4 sub5 sub1--subv--subx--suby--subz',
     expected: [],
   },
   {
-    query: 'g AT_C409454 Genre 555 Motion pictures subi subv subx suby subz sub4 sub5',
+    query: 'g AT_C409454 Genre 555 Motion pictures subi sub4 sub5--subv--subx--suby--subz',
     expected: [],
   },
 ];
@@ -113,7 +113,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
             MarcAuthorities.waitLoading();
           }, 20_000);
         },

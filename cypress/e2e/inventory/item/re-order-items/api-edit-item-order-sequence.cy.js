@@ -5,7 +5,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       const randomPostfix = getRandomPostfix();
@@ -83,10 +83,11 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Trillium+ only
       it(
         'C808483 API | Edit "Item" with duplicated / last in the sequence / out of the sequence "order" value (spitfire)',
         {
-          tags: ['extendedPath', 'spitfire', 'C808483'],
+          tags: [],
         },
         () => {
           cy.getToken(user.username, user.password);

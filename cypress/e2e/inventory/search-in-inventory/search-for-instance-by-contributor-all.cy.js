@@ -15,7 +15,7 @@ const testData = {
   allSearchOption: 'All',
   advSearchOption: 'Advanced search',
   keywordSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
-  keywordAdvancedSearchOption: 'Keyword (title, contributor, identifier)',
+  keywordAdvancedSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
   contributorValue: 'Dobynsauto, Stephenauto, 1941-',
   searchQueries: [
     'Dobynsauto, Stephenauto, 1941-',

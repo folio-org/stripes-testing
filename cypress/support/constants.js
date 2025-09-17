@@ -826,7 +826,7 @@ export const AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
   RECUPD: 'RecUpd',
   PERSNAME: 'Pers Name',
   LEVELEST: 'Level Est',
-  MODREC: 'Mod Rec',
+  MODREC: 'Mod Rec Est',
   SOURCE: 'Source',
 };
 
@@ -1586,4 +1586,12 @@ export const DEFAULT_WAIT_TIME = 4000;
 export const API_PATH = {
   INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
   ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
+
+export const INVENTORY_COLUMN_HEADERS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  PUBLISHERS: 'Publishers',
+  DATE: 'Date',
+  RELATION: 'Relation',
 };

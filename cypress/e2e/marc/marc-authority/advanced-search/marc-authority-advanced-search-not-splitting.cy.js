@@ -44,7 +44,7 @@ describe('MARC', () => {
         ],
         [
           {
-            query: 'Judaismsplitauto and literature Unitedsplitauto States History 20th century',
+            query: 'Judaismsplitauto and literature--Unitedsplitauto States--History--20th century',
             searchOption: testData.keywordOption,
             operator: false,
             modifier: testData.exactPhraseMatchOption,
@@ -71,13 +71,13 @@ describe('MARC', () => {
       ];
 
       const searchResults = [
-        ['Judaismsplitauto and literature Unitedsplitauto States History 20th century'],
-        ['Rhetoric Political aspects or Unitedsplitauto States History 20th century'],
-        ['Liberalism or not Unitedsplitauto States History 20th century'],
+        ['Judaismsplitauto and literature--Unitedsplitauto States--History--20th century'],
+        ['Rhetoric--Political aspects--or Unitedsplitauto States--History--20th century'],
+        ['Liberalism or not--Unitedsplitauto States--History--20th century'],
         [
-          'Judaismsplitauto and literature Unitedsplitauto States History 20th century',
-          'Liberalism or not Unitedsplitauto States History 20th century',
-          'Rhetoric Political aspects or Unitedsplitauto States History 20th century',
+          'Judaismsplitauto and literature--Unitedsplitauto States--History--20th century',
+          'Liberalism or not--Unitedsplitauto States--History--20th century',
+          'Rhetoric--Political aspects--or Unitedsplitauto States--History--20th century',
         ],
       ];
 
@@ -114,6 +114,7 @@ describe('MARC', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
       });
 

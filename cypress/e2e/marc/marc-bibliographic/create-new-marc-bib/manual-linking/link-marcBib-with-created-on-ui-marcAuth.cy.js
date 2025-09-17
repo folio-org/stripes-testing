@@ -21,7 +21,7 @@ describe('MARC', () => {
             tag245Content: 'Test: linking with created MARC authority',
           },
           marcAuthIcon: 'Linked to MARC authority',
-          newAuthorityHeaderText: /New .*MARC authority record/,
+          newAuthorityHeaderText: /Create a new .*MARC authority record/,
           sourceName: 'LC Name Authority file (LCNAF)',
           markedValue: 'John Doe',
           accordionContributor: 'Contributor',
@@ -86,14 +86,11 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              });
-              cy.reload();
-              MarcAuthorities.waitLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
+            });
           });
         });
 

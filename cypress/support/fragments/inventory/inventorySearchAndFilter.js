@@ -5,6 +5,7 @@ import {
   Checkbox,
   DropdownMenu,
   Form,
+  Icon,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
@@ -25,7 +26,11 @@ import {
   not,
   or,
 } from '../../../../interactors';
-import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
+import {
+  BROWSE_CALL_NUMBER_OPTIONS,
+  BROWSE_CLASSIFICATION_OPTIONS,
+  INVENTORY_COLUMN_HEADERS,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
@@ -99,14 +104,6 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
-const searchDefaultColumnHeaders = [
-  'Title',
-  'Contributors',
-  'Publishers',
-  'Date',
-  'Relation',
-  'Instance HRID',
-];
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1503,9 +1500,22 @@ export default {
     this.checkSearchQueryText('');
   },
 
-  validateSearchTableColumnsShown(columnHeaders = searchDefaultColumnHeaders) {
-    columnHeaders.forEach((header) => {
-      cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+  validateSearchTableColumnsShown(
+    columnHeaders = Object.values(INVENTORY_COLUMN_HEADERS),
+    isShown = true,
+  ) {
+    const headers = Array.isArray(columnHeaders) ? columnHeaders : [columnHeaders];
+    headers.forEach((header) => {
+      if (isShown) cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+      else cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).absent());
     });
+  },
+
+  verifyWarningIconForSearchResult: (cellContent, hasWarningItem = true) => {
+    const targetCell = MultiColumnListCell({ content: cellContent });
+    if (hasWarningItem) cy.expect(targetCell.find(Icon({ warning: true })).exists());
+    else {
+      cy.expect([targetCell.exists(), targetCell.find(Icon({ warning: true })).absent()]);
+    }
   },
 };

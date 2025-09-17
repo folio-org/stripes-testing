@@ -9,7 +9,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
       const user = {};
-      const headerText = /New .*MARC authority record/;
+      const headerText = /Create a new .*MARC authority record/;
       const errorNotification = 'Record cannot be saved. An authority file is required';
 
       const newField010 = {
@@ -37,6 +37,7 @@ describe('MARC', () => {
             cy.login(user.userProperties.username, user.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

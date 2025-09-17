@@ -17,7 +17,7 @@ describe('MARC', () => {
     let instanceHrid;
     const testData = {
       tag852: '852',
-      headerTitle: /New .*MARC holdings record/,
+      headerTitle: /Create a new .*MARC Holdings record/,
       oclc: '1007797324',
       OCLCAuthentication: '100481406/PAOLF',
     };
@@ -29,6 +29,7 @@ describe('MARC', () => {
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
+        authRefresh: true,
       });
       InventoryActions.import(testData.oclc);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -44,6 +45,7 @@ describe('MARC', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

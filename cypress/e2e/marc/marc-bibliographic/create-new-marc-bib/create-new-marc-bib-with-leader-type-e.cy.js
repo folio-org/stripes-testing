@@ -19,7 +19,7 @@ describe('MARC', () => {
     describe('Create new MARC bib', () => {
       const instanceTitle = `C422119 The most important book ${getRandomPostfix()}`;
       const field245Value = { tag: '245', value: `$a ${instanceTitle}` };
-      const paneHeaderCreateRecord = /New .*MARC bib record/;
+      const paneHeaderCreateRecord = /Create a new .*MARC bib record/;
       const paneHeaderEditRecord = /Edit .*MARC record/;
       const tagLDR = 'LDR';
       const tag008 = '008';
@@ -43,6 +43,7 @@ describe('MARC', () => {
           cy.login(user.userProperties.username, user.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
