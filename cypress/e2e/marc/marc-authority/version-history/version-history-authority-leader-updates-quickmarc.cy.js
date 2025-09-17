@@ -3,8 +3,7 @@ import Users from '../../../../support/fragments/users/users';
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import DateTools from '../../../../support/utils/dateTools';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -22,7 +21,7 @@ describe('MARC', () => {
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
       };
       const dropdownUpdate = [testData.tagLdr, 'Status', 'n - New'];
-      const textUpdate = [testData.tag008, 'Geo Subd', 'd - Subdivided geographically-direct'];
+      const textUpdate = ['Geo Subd', 'd'];
       const versionHistoryCardsData = [
         {
           isOriginal: false,
@@ -66,22 +65,20 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -91,13 +88,9 @@ describe('MARC', () => {
           ).then((response) => {
             testData.createdRecordId = response[0].authority.id;
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-              MarcAuthorities.waitLoading();
-              cy.reload();
-              MarcAuthorities.waitLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              authRefresh: true,
+            });
             MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);
             MarcAuthorities.selectTitle(testData.authorityHeading);
             MarcAuthority.waitLoading();
@@ -120,8 +113,7 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.selectFieldsDropdownOption(...dropdownUpdate);
           QuickMarcEditor.verifyDropdownOptionChecked(...dropdownUpdate);
-          QuickMarcEditor.selectFieldsDropdownOption(...textUpdate);
-          QuickMarcEditor.verifyDropdownOptionChecked(...textUpdate);
+          QuickMarcEditor.update008TextFields(...textUpdate);
           cy.wait(3000);
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();

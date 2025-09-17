@@ -36,6 +36,7 @@ describe('Invoices', () => {
       cy.loginAsAdmin({
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
       FileManager.createFile(`cypress/fixtures/${fileName}`, 'someContent');
     });

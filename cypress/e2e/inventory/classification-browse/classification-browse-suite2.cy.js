@@ -904,6 +904,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
@@ -1015,14 +1016,12 @@ describe('Inventory', () => {
           [],
         );
 
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
+
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
@@ -1140,6 +1139,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
@@ -1256,6 +1256,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
@@ -1372,6 +1373,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
@@ -1484,14 +1486,12 @@ describe('Inventory', () => {
           testData.classificationBrowseAlgorithm,
           [CLASSIFICATION_IDENTIFIER_TYPES.LC],
         );
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
+
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();

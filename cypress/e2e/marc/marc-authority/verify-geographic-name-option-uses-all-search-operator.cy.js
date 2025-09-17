@@ -12,7 +12,7 @@ describe('MARC', () => {
     const testData = {
       searchOptions: ['Keyword', 'Geographic name'],
       recordType: 'Authorized',
-      marcValue: 'C584445 Greenwich Village (New York, N.Y.) Maps',
+      marcValue: 'C584445 Greenwich Village (New York, N.Y.)--Maps',
       searchQueries: [
         'Greenwich Village (New York, N.Y.) Maps',
         'Maps Greenwich New York Village (N.Y.)',
@@ -58,10 +58,10 @@ describe('MARC', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
-
           cy.login(user.username, user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthorities.switchToSearch();
         },

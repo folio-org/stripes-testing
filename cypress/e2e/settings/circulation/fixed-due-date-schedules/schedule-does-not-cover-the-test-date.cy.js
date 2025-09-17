@@ -176,6 +176,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationFixedDueDateSchedulesPath,
         waiter: FixedDueDateSchedules.waitLoading,
+        authRefresh: true,
       });
       FixedDueDateSchedules.editSchedule(mySchedule.name, {
         description: mySchedule.description,

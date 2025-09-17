@@ -131,6 +131,7 @@ describe('Duplicate item level request', () => {
             cy.login(userData1.username, userData1.password, {
               path: TopMenu.requestsPath,
               waiter: Requests.waitLoading,
+              authRefresh: true,
             });
           });
       });

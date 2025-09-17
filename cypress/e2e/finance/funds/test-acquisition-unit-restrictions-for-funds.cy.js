@@ -20,7 +20,6 @@ describe('Funds', () => {
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
       });
@@ -54,28 +53,33 @@ describe('Funds', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
+      }).then(() => {
+        AcquisitionUnits.newAcquisitionUnit();
+        AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+        cy.wait(2000);
+        AcquisitionUnits.assignUser(userA.username);
+        cy.wait(4000);
       });
-      AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-      // Need to wait,while data is load
-      cy.wait(2000);
-      AcquisitionUnits.assignUser(userA.username);
 
       cy.login(userA.username, userA.password, {
         path: TopMenu.fundPath,
         waiter: Funds.waitLoading,
+        authRefresh: true,
       });
       Funds.createFundWithAU(defaultfund, defaultLedger, defaultAcquisitionUnit.name);
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+      }).then(() => {
+        AcquisitionUnits.unAssignUser(userA.username, defaultAcquisitionUnit.name);
       });
-      AcquisitionUnits.unAssignUser(userA.username, defaultAcquisitionUnit.name);
 
       cy.login(userA.username, userA.password, {
         path: TopMenu.fundPath,
         waiter: Funds.waitLoading,
+        authRefresh: true,
       });
       FinanceHelp.searchByName(defaultfund.name);
       Funds.checkZeroSearchResultsHeader();
@@ -83,6 +87,7 @@ describe('Funds', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.selectViewCheckbox();
@@ -90,6 +95,7 @@ describe('Funds', () => {
       cy.login(userA.username, userA.password, {
         path: TopMenu.fundPath,
         waiter: Funds.waitLoading,
+        authRefresh: true,
       });
       FinanceHelp.searchByName(defaultfund.name);
       Funds.selectFund(defaultfund.name);

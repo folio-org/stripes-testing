@@ -21,7 +21,7 @@ describe('MARC', () => {
           rowIndex: 76,
           content: '$a C380750 Martin, Laura $c (Comic book artist), $e colorist. $0 2014052262',
           searchValue:
-            'keyword exactPhrase C380750 Martin, Laura (Comic book artist), or identifiers.value exactPhrase 2014052262',
+            'keyword exactPhrase C380750 Martin, Laura or identifiers.value exactPhrase 2014052262',
           selectedFilterValue: 'advancedSearch',
           toggle: 'Search',
           contributor: 'C380750 Martin, Laura (Comic book artist)',
@@ -89,14 +89,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 

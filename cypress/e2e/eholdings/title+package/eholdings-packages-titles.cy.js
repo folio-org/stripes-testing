@@ -29,8 +29,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
-        }).then(() => {
-          EHoldingSearch.switchToPackages();
+          authRefresh: true,
         });
       });
     });
@@ -44,6 +43,7 @@ describe('eHoldings', () => {
       'C354003 Verify that "Export" button become disabled when user does not choose any fields to export (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C354003'] },
       () => {
+        EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyPackageInResults(testData.packageName);
         EHoldingsPackages.openPackage();

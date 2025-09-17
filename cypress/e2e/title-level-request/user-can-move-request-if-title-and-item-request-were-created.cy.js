@@ -101,14 +101,6 @@ describe('Title Level Request', () => {
       );
     });
 
-    beforeEach('Open Request detail page', () => {
-      cy.visit(TopMenu.requestsPath);
-      Requests.waitLoading();
-      Requests.findCreatedRequest(testData.user.barcode);
-      Requests.selectFirstRequest(instanceData.instanceTitle);
-      RequestDetail.waitLoading();
-    });
-
     after('Delete test data', () => {
       cy.getAdminToken();
       cy.wrap(requestIds).each((id) => {
@@ -134,6 +126,14 @@ describe('Title Level Request', () => {
       'C350521 Check that user can move request if Title and Item requests were previously created (vega) (TaaS)',
       { tags: ['extendedPath', 'vega', 'C350521'] },
       () => {
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.requestsPath);
+          Requests.waitLoading();
+        });
+
+        Requests.findCreatedRequest(testData.user.barcode);
+        Requests.selectFirstRequest(instanceData.instanceTitle);
+        RequestDetail.waitLoading();
         // Click on the Actions option
         RequestDetail.openActions();
         RequestDetail.verifyMoveRequestButtonExists();
@@ -151,6 +151,12 @@ describe('Title Level Request', () => {
       'C350427 Check that the request has disappeared from the queue after changing the "Close-Cancelled" status (vega) (TaaS)',
       { tags: ['extendedPath', 'vega', 'C350427'] },
       () => {
+        cy.visit(TopMenu.requestsPath);
+        Requests.waitLoading();
+
+        Requests.findCreatedRequest(testData.user.barcode);
+        Requests.selectFirstRequest(instanceData.instanceTitle);
+        RequestDetail.waitLoading();
         // Pay attention on the Request status and Item status
         RequestDetail.checkRequestInformation({
           status: 'Open - Not yet filled',

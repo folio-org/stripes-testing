@@ -48,6 +48,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
 
@@ -70,6 +71,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
           InventoryInstance.checkAddedTag(tag.label, instanceTitle);
           InventoryInstance.deleteTag(tag.label);
+          cy.reload();
         },
       );
 

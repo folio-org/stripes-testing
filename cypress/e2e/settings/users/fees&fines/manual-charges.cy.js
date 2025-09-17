@@ -26,6 +26,7 @@ describe('Fees&Fines', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.manualCharges,
         waiter: ManualCharges.waitLoading,
+        authRefresh: true,
       });
     });
 

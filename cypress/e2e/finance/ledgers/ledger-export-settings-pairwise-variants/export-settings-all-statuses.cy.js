@@ -30,8 +30,7 @@ describe('Finance: Ledgers', () => {
   let fileName;
 
   before(() => {
-    cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -39,18 +38,13 @@ describe('Finance: Ledgers', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
       });
-      cy.getAdminToken();
-      // Create second Fiscal Year for Rollover
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
       });
@@ -88,6 +82,7 @@ describe('Finance: Ledgers', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
+        authRefresh: true,
       });
     });
   });

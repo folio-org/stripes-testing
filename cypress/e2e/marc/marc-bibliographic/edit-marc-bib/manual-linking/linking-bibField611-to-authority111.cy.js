@@ -99,14 +99,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
@@ -132,7 +129,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase V.Council 1960 San Pietro ValueT or identifiers.value exactPhrase fst01405122',
+              'keyword exactPhrase V.Council 1960 ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
@@ -146,7 +143,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase V.Council San Pietro ValueT or identifiers.value exactPhrase fst01405122',
+              'keyword exactPhrase V.Council ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
@@ -160,7 +157,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase V.Council 1960 San Pietro ValueT or identifiers.value exactPhrase fst01405122',
+              'keyword exactPhrase V.Council 1960 ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
 

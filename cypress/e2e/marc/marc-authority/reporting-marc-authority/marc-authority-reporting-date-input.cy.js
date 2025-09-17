@@ -26,6 +26,7 @@ describe('MARC', () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
         });
       });

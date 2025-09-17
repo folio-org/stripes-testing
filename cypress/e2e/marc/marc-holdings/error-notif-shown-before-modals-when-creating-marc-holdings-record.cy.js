@@ -17,7 +17,7 @@ describe('MARC', () => {
   describe('MARC Holdings', () => {
     let user;
     const testData = {
-      headerTitle: 'New MARC holdings record',
+      headerTitle: 'Create a new MARC Holdings record',
       headerSubtitle: 'New',
     };
     const marcFile = {
@@ -58,6 +58,7 @@ describe('MARC', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

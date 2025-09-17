@@ -148,28 +148,11 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            InventoryInstances.getInstancesViaApi({
-              limit: 100,
-              query:
-                'title="The other side of paradise (test delete eligible for linking field and use autolinking)"',
-            }).then((instances) => {
-              if (instances) {
-                instances.forEach(({ id }) => {
-                  InventoryInstance.deleteInstanceViaApi(id);
-                });
-              }
-            });
+            InventoryInstances.deleteInstanceByTitleViaApi(
+              'The other side of paradise (test delete eligible for linking field and use autolinking)',
+            );
             testData.searchAuthorityQueries.forEach((query) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 100,
-                query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-              }).then((authorities) => {
-                if (authorities) {
-                  authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id);
-                  });
-                }
-              });
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
             });
 
             cy.getAdminToken();
@@ -189,14 +172,11 @@ describe('MARC', () => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
