@@ -43,7 +43,7 @@ describe('Data Import', () => {
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
-        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [(identifiers="\\"identifierTypeId\\":\\"439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef\\""',
+        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef"',
     };
     const marcFileNames = [
       {
@@ -189,6 +189,7 @@ describe('Data Import', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
+          authRefresh: true,
         });
       });
     });

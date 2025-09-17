@@ -161,7 +161,7 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.chooseInstanceStatusTerm('Cataloged (folio: cat)');
+        InstanceRecordEdit.chooseInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.CATALOGED);
         InstanceRecordEdit.saveAndClose();
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.CATALOGED);
