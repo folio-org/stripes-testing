@@ -12,11 +12,11 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialISBN: '9780866985529',
-        invalidISBN: '97808669855291089',
+        contributorName: 'Beethoven, Ludwig van, 1770-1827',
+        tag: '110',
         marcFile: {
-          marc: 'oneMarcBib.mrc',
-          fileName: `testMarcFileC10989.${getRandomPostfix()}.mrc`,
+          marc: 'marcBibFileForC10979.mrc',
+          fileName: `testMarcFileC10979.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
@@ -56,19 +56,22 @@ describe('MARC', () => {
       });
 
       it(
-        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10989'] },
+        'C10979 Change the 100 field in quickMARC and verify change in the instance record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C10979'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.initialISBN, 2);
+
+          InventoryInstance.verifyContributor(0, 0, 'Personal name');
+          InventoryInstance.verifyContributor(0, 1, testData.contributorName);
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingFieldContent(8, `$z ${testData.invalidISBN}`);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.updateExistingTagValue(16, testData.tag);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           InventoryInstance.waitInventoryLoading();
 
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.invalidISBN, 0);
+          InventoryInstance.verifyContributor(0, 0, 'Corporate name');
+          InventoryInstance.verifyContributor(0, 1, testData.contributorName);
         },
       );
     });

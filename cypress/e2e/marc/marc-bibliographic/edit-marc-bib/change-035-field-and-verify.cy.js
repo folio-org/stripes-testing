@@ -12,8 +12,9 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialISBN: '9780866985529',
-        invalidISBN: '97808669855291089',
+        initialSystemControl: '(OCoLC)962073864',
+        updatedOCLCNumber: '(OCoLC)12345',
+        title: `C10996 Test Instance ${getRandomPostfix()}`,
         marcFile: {
           marc: 'oneMarcBib.mrc',
           fileName: `testMarcFileC10989.${getRandomPostfix()}.mrc`,
@@ -56,19 +57,19 @@ describe('MARC', () => {
       });
 
       it(
-        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10989'] },
+        'C10996 Change the 035 subfield in quickMARC and verify change in the instance record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C10996'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.initialISBN, 2);
+          InventoryInstance.verifyResourceIdentifier('OCLC', testData.initialSystemControl, 4);
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingFieldContent(8, `$z ${testData.invalidISBN}`);
+          QuickMarcEditor.updateExistingFieldContent(9, `$a ${testData.updatedOCLCNumber}`);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitInventoryLoading();
 
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.invalidISBN, 0);
+          InventoryInstance.verifyResourceIdentifier('OCLC', testData.updatedOCLCNumber, 4);
         },
       );
     });
