@@ -16,6 +16,7 @@ describe('Users', () => {
     cy.loginAsAdmin({
       path: TopMenu.usersPath,
       waiter: UsersSearchPane.waitLoading,
+      authRefresh: true,
     });
   });
 

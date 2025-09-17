@@ -57,11 +57,10 @@ describe('Inventory', () => {
           );
         })
         .then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.dataImportPath,
-              waiter: DataImport.waitLoading,
-            });
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+            authRefresh: true,
           });
         });
     });
@@ -111,6 +110,7 @@ describe('Inventory', () => {
         cy.login(userData.username, userData.password, {
           path: SettingsMenu.tagsGeneralPath,
           waiter: TagsGeneral.waitLoading,
+          authRefresh: true,
         });
         TagsGeneral.changeEnableTagsStatus('enable');
         cy.visit(TopMenu.inventoryPath);

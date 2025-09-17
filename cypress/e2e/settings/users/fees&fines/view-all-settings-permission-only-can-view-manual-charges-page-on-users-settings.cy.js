@@ -60,6 +60,7 @@ describe('Fees&Fines', () => {
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.manualCharges,
             waiter: ManualCharges.waitLoading,
+            authRefresh: true,
           });
         });
       });
