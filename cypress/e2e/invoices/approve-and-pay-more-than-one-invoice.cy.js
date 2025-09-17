@@ -17,7 +17,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -65,16 +64,13 @@ describe('Invoices', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
           firstBudget.fundId = fundResponse.fund.id;
-
           Budgets.createViaApi(firstBudget);
         });
       });
     });
-    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -92,7 +88,7 @@ describe('Invoices', () => {
     });
     defaultOrder.vendor = organization.name;
     secondOrder.vendor = organization.name;
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
     Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);
@@ -110,7 +106,7 @@ describe('Invoices', () => {
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrder(firstInvoice, defaultFiscalYear.code);
     });
-    TopMenuNavigation.openAppFromDropdown('Orders');
+    cy.visit(TopMenu.ordersPath);
     Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
       secondOrder.id = secondOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);
@@ -141,6 +137,7 @@ describe('Invoices', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });

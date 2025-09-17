@@ -91,7 +91,6 @@ describe('Orders', () => {
       OrderLineEditForm.fillOrderLineFields({
         receiptStatus: 'Receipt not required',
       });
-      OrderLineEditForm.clickConfirmButton();
       OrderLineEditForm.clickSaveButton();
 
       // Warning message "Purchase order is closed - Complete" appears

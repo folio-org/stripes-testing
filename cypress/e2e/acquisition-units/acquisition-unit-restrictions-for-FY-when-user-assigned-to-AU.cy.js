@@ -20,14 +20,11 @@ describe('Acquisition Units', () => {
   let user;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
-      cy.reload();
-      AcquisitionUnits.waitLoading();
-    }, 20_000);
+    cy.loginAsAdmin({
+      path: SettingsMenu.acquisitionUnitsPath,
+      waiter: AcquisitionUnits.waitLoading,
+      authRefresh: true,
+    });
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
     });
@@ -65,6 +62,7 @@ describe('Acquisition Units', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.fiscalYearPath,
         waiter: FiscalYears.waitForFiscalYearDetailsLoading,
+        authRefresh: true,
       });
       FinanceHelp.searchByAll(firstFiscalYear.name);
       FiscalYears.selectFisacalYear(firstFiscalYear.name);
@@ -79,6 +77,7 @@ describe('Acquisition Units', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.acquisitionUnitsPath,
       waiter: AcquisitionUnits.waitLoading,
+      authRefresh: true,
     });
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
