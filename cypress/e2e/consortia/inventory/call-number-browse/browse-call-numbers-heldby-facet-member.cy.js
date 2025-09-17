@@ -447,8 +447,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404353 Use "Held by" facet when browsing Call numbers in Consortia tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C404353'] },
+        'C844862 Use "Held by" facet when browsing Call numbers in Consortia tenant (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'C844862'] },
         () => {
           cy.resetTenant();
           cy.waitForAuthRefresh(() => {
