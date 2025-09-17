@@ -31,7 +31,7 @@ const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName,
 const marcInstance = {
   title: `AT_C663266_MarcInstance_${getRandomPostfix()}`,
 };
-const authorityHeadingToLink800Field = 'AT_C663266_Robinson, Peter, 1950-2022';
+const authorityHeadingToLink800Field = 'AT_C663266_Robinson, Peter 1950-2022';
 const authorityHeadingToLink830Field =
   'AT_C663266_Cambridge tracts in mathematics and mathematical physics';
 const marcInstanceFields = [
@@ -46,7 +46,7 @@ const marcInstanceFields = [
   },
   {
     tag: '800',
-    content: `$a ${authorityHeadingToLink800Field} $c Inspector Banks series ; $v 24. $y 2023`,
+    content: `$a ${authorityHeadingToLink800Field} $c Inspector Banks series $v 24. $y 2023 $8 800`,
     indicators: ['1', '\\'],
   },
   {
@@ -78,13 +78,13 @@ describe('Bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
         // make sure there are no duplicate authority records in the system
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C663266');
 
-        // Create MARC bibliographic record with specified fields
         cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
           (instanceId) => {
             marcInstance.id = instanceId;
@@ -93,10 +93,8 @@ describe('Bulk-edit', () => {
               marcInstance.hrid = instanceData.hrid;
             });
 
-            // Create CSV file with instance UUID
             FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, marcInstance.id);
 
-            // Upload authority files using forEach loop
             marcAuthFiles.forEach((authFile) => {
               DataImport.uploadFileViaApi(
                 authFile.marc,
@@ -113,7 +111,6 @@ describe('Bulk-edit', () => {
               });
             });
 
-            // All files uploaded, proceed with the test
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -195,7 +192,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink800Field} Inspector Banks series ; 24. | ${authorityHeadingToLink830Field} english no. 19.`,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24. | ${authorityHeadingToLink830Field} english no. 19.`,
         );
 
         // Step 2: Uncheck "Series statements" checkbox to hide column
@@ -222,7 +219,7 @@ describe('Bulk-edit', () => {
         // Step 5: Add new row for 830 field subfield 0 - Find and Replace
         BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
         BulkEditActions.fillInTagAndIndicatorsAndSubfield('830', '\\', '0', '0', 1);
-        BulkEditActions.findAndReplaceWithActionForMarc('84801249C663266', 'n84801250C663266', 1);
+        BulkEditActions.findAndReplaceWithActionForMarc('n84801249C663266', 'n84801250C663266', 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 6: Confirm changes and verify "Are you sure?" form
@@ -233,7 +230,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink800Field} Inspector Banks series ; 24.; ${authorityHeadingToLink830Field} english no. 19.`,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24. | ${authorityHeadingToLink830Field} english no. 19.`,
         );
 
         // Step 7: Download preview in MARC format
@@ -252,11 +249,11 @@ describe('Bulk-edit', () => {
 
                 // Verify subfield $a (name) - preserved
                 const subfieldA = field800.subf.find((s) => s[0] === 'a');
-                expect(subfieldA[1]).to.eq(authorityHeadingToLink800Field);
+                expect(subfieldA[1]).to.eq('AT_C663266_Robinson, Peter');
 
                 // Verify subfield $c (title of work) - preserved
                 const subfieldC = field800.subf.find((s) => s[0] === 'c');
-                expect(subfieldC[1]).to.eq('Inspector Banks series ;');
+                expect(subfieldC[1]).to.eq('Inspector Banks series');
 
                 // Verify subfield $v (volume number) - preserved
                 const subfieldV = field800.subf.find((s) => s[0] === 'v');
@@ -331,7 +328,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.id,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink800Field} Inspector Banks series ; 24.; ${authorityHeadingToLink830Field} english no. 19.`,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24. | ${authorityHeadingToLink830Field} english no. 19.`,
         );
 
         // Step 9: Commit changes
@@ -340,7 +337,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink800Field} Inspector Banks series ; 24.; ${authorityHeadingToLink830Field} english no. 19.`,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24. | ${authorityHeadingToLink830Field} english no. 19.`,
         );
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
 
@@ -360,11 +357,11 @@ describe('Bulk-edit', () => {
 
                 // Verify subfield $a (name) - preserved
                 const subfieldA = field800.subf.find((s) => s[0] === 'a');
-                expect(subfieldA[1]).to.eq(authorityHeadingToLink800Field);
+                expect(subfieldA[1]).to.eq('AT_C663266_Robinson, Peter');
 
                 // Verify subfield $c (title of work) - preserved
                 const subfieldC = field800.subf.find((s) => s[0] === 'c');
-                expect(subfieldC[1]).to.eq('Inspector Banks series ;');
+                expect(subfieldC[1]).to.eq('Inspector Banks series');
 
                 // Verify subfield $v (volume number) - preserved
                 const subfieldV = field800.subf.find((s) => s[0] === 'v');
@@ -411,7 +408,7 @@ describe('Bulk-edit', () => {
 
                 // Verify subfield $0 (authority record control number) - changed by bulk edit
                 const subfield0 = field830.subf.find((s) => s[0] === '0');
-                expect(subfield0[1]).to.eq('http://id.loc.gov/authorities/names/n84801250');
+                expect(subfield0[1]).to.eq('http://id.loc.gov/authorities/names/n84801250C663266');
 
                 // Verify subfield $9 (UUID of linked authority record) - removed (field no longer linked)
                 const subfield9 = field830.subf.find((s) => s[0] === '9');
@@ -443,7 +440,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.id,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink800Field} Inspector Banks series ; 24.; ${authorityHeadingToLink830Field} english no. 19.`,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24. | ${authorityHeadingToLink830Field} english no. 19.`,
         );
 
         // Step 12: Verify changes in Inventory app
@@ -457,7 +454,7 @@ describe('Bulk-edit', () => {
         // Verify Series statements are NOT linked to MARC Authority
         InventoryInstance.verifySeriesStatement(
           0,
-          `${authorityHeadingToLink800Field} Inspector Banks series ; 24.`,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24.`,
         );
         InventoryInstance.verifySeriesStatement(
           1,
@@ -468,11 +465,11 @@ describe('Bulk-edit', () => {
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '800',
-          `$a ${authorityHeadingToLink800Field} $c Inspector Banks series ; $v 24. $y 2023 $8 800`,
+          '$a AT_C663266_Robinson, Peter $d 1950-2022 $c Inspector Banks series $v 24. $y 2023 $8 800',
         );
         InventoryViewSource.verifyFieldInMARCBibSource(
           '830',
-          `$a ${authorityHeadingToLink830Field} $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801250`,
+          `$a ${authorityHeadingToLink830Field} $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801250C663266`,
         );
 
         // Verify fields are NOT linked to authority (no linking icons)
@@ -482,24 +479,24 @@ describe('Bulk-edit', () => {
 
         // Step 14: Edit MARC bibliographic record and verify fields are NOT linked
         InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagField(
-          4,
+        QuickMarcEditor.verifyTagFieldNotLinked(
+          5,
           '800',
           '1',
           '\\',
-          `$a ${authorityHeadingToLink800Field} $c Inspector Banks series ; $v 24. $y 2023 $8 800`,
+          '$a AT_C663266_Robinson, Peter $d 1950-2022 $c Inspector Banks series $v 24. $y 2023 $8 800',
         );
-        QuickMarcEditor.verifyTagField(
-          5,
+        QuickMarcEditor.verifyTagFieldNotLinked(
+          6,
           '830',
           '\\',
           '0',
-          `$a ${authorityHeadingToLink830Field} $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801250`,
+          `$a ${authorityHeadingToLink830Field} $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801250C663266`,
         );
 
         // Verify no linking icons are present for fields 800 and 830
-        QuickMarcEditor.verifyRowLinked(4, false);
         QuickMarcEditor.verifyRowLinked(5, false);
+        QuickMarcEditor.verifyRowLinked(6, false);
       },
     );
   });
