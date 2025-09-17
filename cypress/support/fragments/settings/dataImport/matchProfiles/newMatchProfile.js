@@ -182,13 +182,24 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList.select(existingRecordOption));
 }
 
-function fillOnlyComparePartOfTheValue(value) {
+function fillOnlyComparePartOfTheValueInIncomingSection(value) {
   cy.contains('Incoming MARC Bibliographic record').then((elem) => {
     elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
   });
   cy.do(
     Select({
       name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.comparisonPart',
+    }).choose(value),
+  );
+}
+
+function fillOnlyComparePartOfTheValueInExistingSection(value) {
+  cy.contains('Existing MARC Bibliographic record').then((elem) => {
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
+  });
+  cy.do(
+    Select({
+      name: 'profile.matchDetails[0].existingMatchExpression.qualifier.comparisonPart',
     }).choose(value),
   );
 }
@@ -202,7 +213,8 @@ export default {
   fillQualifierInExistingPart,
   selectExistingRecordField,
   fillStaticValue,
-  fillOnlyComparePartOfTheValue,
+  fillOnlyComparePartOfTheValueInIncomingSection,
+  fillOnlyComparePartOfTheValueInExistingSection,
   fillQualifierInExistingComparisonPart,
   fillIncomingRecordSections,
   fillExistingRecordSections,
@@ -334,10 +346,34 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.wait(2000);
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
-    fillOnlyComparePartOfTheValue(compareValue);
+    fillOnlyComparePartOfTheValueInIncomingSection(compareValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
     fillQualifierInExistingComparisonPart(compareValueInComparison);
+  },
+
+  fillMatchProfileWithIncomingAndExistingRecordsAndComparePartValue({
+    profileName,
+    incomingRecordFields,
+    existingRecordType,
+    existingRecordFields,
+    compareValue,
+    qualifierType,
+    qualifierValue,
+  }) {
+    fillName(profileName);
+    selectExistingRecordType(existingRecordType);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+    cy.wait(2000);
+    fillExistingRecordFields(existingRecordFields.field, 'field');
+    fillExistingRecordFields(existingRecordFields.in1, 'in1');
+    fillExistingRecordFields(existingRecordFields.in2, 'in2');
+    fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
+    fillQualifierInExistingPart(qualifierType, qualifierValue);
+    fillOnlyComparePartOfTheValueInExistingSection(compareValue);
   },
 
   fillMatchProfileWithQualifierInIncomingAndExistingRecords({

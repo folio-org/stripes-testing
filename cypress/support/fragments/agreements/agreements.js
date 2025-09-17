@@ -7,21 +7,28 @@ import {
   Section,
   including,
   or,
+  SearchField,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import NewAgreement from './newAgreement';
 import SearchAndFilterAgreements from './searchAndFilterAgreements';
+import SearchHelper from '../finance/financeHelper';
 
 const section = Section({ id: 'pane-agreement-list' });
 const agreementsSection = Section({ id: 'agreements-tab-pane' });
 const agreementsViewSection = Section({ id: 'pane-view-agreement' });
 const newButton = Button('New');
 const editButton = Button('Edit');
+const deleteButton = Button('Delete');
 const actionsButton = section.find(Button('Actions'));
 const actions = Button('Actions');
 const controllingLicense = Accordion({ id: 'controllingLicense' });
+const organizationSection = Accordion({ id: 'formOrganizations' });
+const addOrganizationButton = Button({ id: 'add-org-btn' });
+const linkOrganizationButton = Button({ name: 'orgs[0].org.orgsUuid' });
+const searchButtonInModal = Button('Search');
 
 const waitLoading = () => {
   cy.expect(
@@ -115,6 +122,12 @@ export default {
     cy.do(editButton.click());
   },
 
+  deleteAgreement() {
+    cy.do(agreementsViewSection.find(actions).click());
+    cy.do(deleteButton.click());
+    cy.do(deleteButton.click());
+  },
+
   createViaApi: (agreement = defaultAgreement) => {
     return cy
       .okapiRequest({
@@ -171,5 +184,23 @@ export default {
   checkSwitchToLocalKbDisplayed() {
     // using xpath to be able to run this on tenans with non-english localization
     cy.xpath("//a[@href='/erm/packages']").should('be.visible');
+  },
+
+  addOrganization: (organization) => {
+    cy.do([
+      organizationSection.find(addOrganizationButton).click(),
+      linkOrganizationButton.click(),
+      SearchField({ id: 'input-record-search' }).fillIn(organization.name),
+      searchButtonInModal.click(),
+    ]);
+    cy.wait(6000);
+    SearchHelper.selectFromResultsList();
+    cy.get('select[data-test-org-role-field]')
+      .find('option:not([disabled])')
+      .first()
+      .then((option) => {
+        cy.get('select[data-test-org-role-field]').select(option.val());
+      });
+    NewAgreement.save();
   },
 };

@@ -5,6 +5,7 @@ import {
   Checkbox,
   DropdownMenu,
   Form,
+  Icon,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
@@ -25,7 +26,12 @@ import {
   not,
   or,
 } from '../../../../interactors';
-import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
+import {
+  BROWSE_CALL_NUMBER_OPTIONS,
+  BROWSE_CLASSIFICATION_OPTIONS,
+  INVENTORY_COLUMN_HEADERS,
+  INSTANCE_STATUS_TERM_NAMES,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
@@ -99,14 +105,6 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
-const searchDefaultColumnHeaders = [
-  'Title',
-  'Contributors',
-  'Publishers',
-  'Date',
-  'Relation',
-  'Instance HRID',
-];
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -180,7 +178,7 @@ const checkInstanceDetails = () => {
   });
   // when creating mapping profile we choose instance status term as "Batch Loaded"
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
-  const expectedStatusTerm = 'Batch Loaded';
+  const expectedStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
   const expectedStatusCode = 'batch';
 
   cy.do(
@@ -597,8 +595,8 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body: { instances } }) => {
-        return instances;
+      .then((resp) => {
+        return resp.body;
       });
   },
 
@@ -1271,6 +1269,17 @@ export default {
     cy.wait('@getData');
   },
 
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
+  },
+
   checkSharedInstancesInResultList() {
     return cy
       .get('div[class^="mclRowContainer--"]')
@@ -1503,9 +1512,47 @@ export default {
     this.checkSearchQueryText('');
   },
 
-  validateSearchTableColumnsShown(columnHeaders = searchDefaultColumnHeaders) {
-    columnHeaders.forEach((header) => {
-      cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+  validateSearchTableColumnsShown(
+    columnHeaders = Object.values(INVENTORY_COLUMN_HEADERS),
+    isShown = true,
+  ) {
+    const headers = Array.isArray(columnHeaders) ? columnHeaders : [columnHeaders];
+    headers.forEach((header) => {
+      if (isShown) cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+      else cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).absent());
     });
+  },
+
+  verifyShowColumnsCheckboxesChecked(
+    columnNames = Object.values(INVENTORY_COLUMN_HEADERS).slice(1),
+    isChecked = true,
+  ) {
+    const names = Array.isArray(columnNames) ? columnNames : [columnNames];
+    names.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).has({ checked: isChecked }));
+    });
+  },
+
+  verifyShowColumnsMenu() {
+    cy.expect(DropdownMenu().find(HTML('Show columns')).exists());
+    Object.values(INVENTORY_COLUMN_HEADERS)
+      .slice(1)
+      .forEach((columnName) => {
+        cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
+      });
+  },
+
+  toggleShowColumnCheckbox(columnName, isChecked = true) {
+    cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    cy.wait(200);
+    this.verifyShowColumnsCheckboxesChecked(columnName, isChecked);
+  },
+
+  verifyWarningIconForSearchResult: (cellContent, hasWarningItem = true) => {
+    const targetCell = MultiColumnListCell({ content: cellContent });
+    if (hasWarningItem) cy.expect(targetCell.find(Icon({ warning: true })).exists());
+    else {
+      cy.expect([targetCell.exists(), targetCell.find(Icon({ warning: true })).absent()]);
+    }
   },
 };

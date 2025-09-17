@@ -89,9 +89,12 @@ describe('Create Item or Title level request', () => {
         instanceData.instanceHRID = instance.hrid;
       });
       TitleLevelRequests.enableTLRViaApi();
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
       });
     });
   });

@@ -282,9 +282,6 @@ describe('Bulk-edit', () => {
           QueryModal.verifyQueryAreaContent(
             '(holdings.electronic_access[*]->relationship == Resource) AND (holdings.electronic_access[*]->uri contains harvarda.harvard.edu)',
           );
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Electronic access');
-          QueryModal.clickShowColumnsButton();
 
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 

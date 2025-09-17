@@ -261,9 +261,6 @@ describe('Bulk-edit', () => {
           QueryModal.verifyQueryAreaContent(
             '(instance.notes[*]->note contains record) AND (instance.title starts with AT_C808445_Instance)',
           );
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Instance — Notes');
-          QueryModal.clickShowColumnsButton();
 
           expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
 

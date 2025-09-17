@@ -88,9 +88,11 @@ describe(
           testData.servicePoint.id,
         );
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.checkOutPath,
-          waiter: Checkout.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.checkOutPath,
+            waiter: Checkout.waitLoading,
+          });
         });
       });
     });

@@ -28,6 +28,8 @@ describe(
     let orderLineTitle;
     let orderNumber;
     let user;
+    const barcode = Helper.getRandomBarcode();
+    const enumeration = 'autotestCaption';
 
     beforeEach(() => {
       order = {
@@ -36,17 +38,18 @@ describe(
       };
       organization = { ...NewOrganization.defaultUiOrganizations };
       orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
-
-      cy.getAdminToken();
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
       Organizations.createOrganizationViaApi(organization).then((response) => {
         organization.id = response;
         order.vendor = response;
       });
-      cy.loginAsAdmin();
       cy.createOrderApi(order).then((orderResponse) => {
         orderNumber = orderResponse.body.poNumber;
-        TopMenuNavigation.openAppFromDropdown('Orders');
-        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();
@@ -61,9 +64,11 @@ describe(
         permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
       });
     });
@@ -79,8 +84,6 @@ describe(
       'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
-        const barcode = Helper.getRandomBarcode();
-        const enumeration = 'autotestCaption';
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

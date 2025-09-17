@@ -277,9 +277,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C805773_FolioInstance', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Instance — Notes');
-          QueryModal.clickShowColumnsButton();
 
           let expectedInstancesToFind = [
             expectedInstances[0],

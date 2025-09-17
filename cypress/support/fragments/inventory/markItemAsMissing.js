@@ -201,6 +201,7 @@ export default {
   },
 
   openItem(itemBarcode) {
+    cy.wait(1500);
     cy.do(
       Section({ id: 'pane-instancedetails' })
         .find(MultiColumnListCell({ content: itemBarcode }))

@@ -39,6 +39,7 @@ describe('Inventory', () => {
       let materialTypeId;
       let instanceTitle;
       const itemQuantity = '1';
+      const loanType = 'Can circulate';
       let barcode;
       let firstServicePoint;
       let secondServicePoint;
@@ -69,7 +70,7 @@ describe('Inventory', () => {
           if (settings?.length !== 0) {
             InventoryInteractions.setLoanTypeSetting({
               ...settings[0],
-              value: 'Can circulate',
+              value: loanType,
             });
           }
         });
@@ -162,7 +163,7 @@ describe('Inventory', () => {
           InventoryInstances.verifyInstanceDetailsView();
           InventoryInstance.openHoldings(effectiveLocation.name);
           InventoryInstance.verifyItemBarcode('No barcode');
-          InventoryInstance.verifyLoan('Can circulate');
+          InventoryInstance.verifyLoan(loanType);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.checkBarcode('No value set-');
           InventoryItems.edit();
@@ -187,15 +188,13 @@ describe('Inventory', () => {
           cy.wait(1500);
           InventoryInstances.selectInstance();
           InventoryInstances.verifyInstanceDetailsView();
-          // InventoryInstance.openHoldings(effectiveLocation.name);
           InventoryInstance.checkHoldingsTable(
             effectiveLocation.name,
             0,
-            '-',
+            loanType,
             barcode,
             ITEM_STATUS_NAMES.AVAILABLE,
           );
-          InventoryInstance.verifyLoan('Can circulate');
           InventoryInstance.openItemByBarcode(barcode);
           ItemRecordView.waitLoading();
           ItemRecordView.checkBarcode(barcode);
@@ -206,25 +205,14 @@ describe('Inventory', () => {
           CheckInActions.checkInItem(barcode);
           ConfirmItemInModal.confirmInTransitModal();
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.resetAll();
-          InventorySearchAndFilter.searchByParameter(
-            'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
-            instanceTitle,
-          );
-          // TODO need to wait until result is displayed
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(1500);
-          InventoryInstances.selectInstance();
           InventoryInstances.verifyInstanceDetailsView();
           InventoryInstance.checkHoldingsTable(
             effectiveLocation.name,
             0,
-            '-',
+            loanType,
             barcode,
             'In transit',
           );
-          InventoryInstance.verifyLoan('Can circulate');
           InventoryInstance.openItemByBarcode(barcode);
           ItemRecordView.waitLoading();
           ItemRecordView.checkBarcode(barcode);

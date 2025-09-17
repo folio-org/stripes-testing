@@ -20,11 +20,19 @@ describe('Organizations', () => {
       },
     ],
   };
-  const integrationName = `IntegrationName${getRandomPostfix()}`;
-  const integartionDescription = 'Test Integation descripton1';
-  const vendorEDICode = getRandomPostfix();
-  const libraryEDICode = getRandomPostfix();
-  const UTCTime = DateTools.getUTCDateForScheduling();
+  const informationForIntegration = {
+    integrationName: `IntegrationName${getRandomPostfix()}`,
+    integrationDescription: 'Test Integation descripton',
+    integrationType: 'Ordering',
+    vendorEDICode: getRandomPostfix(),
+    libraryEDICode: getRandomPostfix(),
+    ordersMessageForVendor: true,
+    accountNumber: organization.accounts[0].accountNo,
+    acquisitionMethod: 'Purchase',
+    ediFTP: 'FTP',
+    connectionMode: 'Active',
+    serverAddress: true,
+  };
 
   const schedulingInfo1 = {
     period: 'Monthly',
@@ -59,14 +67,9 @@ describe('Organizations', () => {
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
     Organizations.fillIntegrationInformationWithoutSchedulingWithDifferentInformation(
-      integrationName,
-      integartionDescription,
-      vendorEDICode,
-      libraryEDICode,
-      organization.accounts[0].accountNo,
-      'Purchase',
-      UTCTime,
+      informationForIntegration,
     );
+    Organizations.saveOrganization();
     cy.wait(4000);
     cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
       user = userProperties;
@@ -89,7 +92,7 @@ describe('Organizations', () => {
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
-      Organizations.selectIntegration(integrationName);
+      Organizations.selectIntegration(informationForIntegration.integrationName);
       Organizations.editIntegration();
       Organizations.clickSchedulingEDICheckbox();
       Organizations.fillScheduleInfo(schedulingInfo1);
@@ -101,7 +104,10 @@ describe('Organizations', () => {
       Organizations.fillScheduleInfo(schedulingInfo4);
       Organizations.saveOrganization();
       Organizations.closeIntegrationDetailsPane();
-      Organizations.checkIntegrationsAdd(integrationName, integartionDescription);
+      Organizations.checkIntegrationsAdd(
+        informationForIntegration.integrationName,
+        informationForIntegration.integrationDescription,
+      );
     },
   );
 });

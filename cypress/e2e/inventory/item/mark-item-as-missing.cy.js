@@ -128,6 +128,7 @@ describe('Inventory', () => {
           MarkItemAsMissing.openItem(item.barcode);
           MarkItemAsMissing.checkIsMarkAsMissingExist(false);
           ItemRecordView.closeDetailView();
+          cy.wait(1000); // wait for modal to be closed
         });
       },
     );

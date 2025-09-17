@@ -190,9 +190,12 @@ describe('Title Level Request', () => {
     { tags: ['extendedPath', 'vega', 'C350557'] },
     () => {
       // From the Request detail page of last request, look at the Position in queue field
-      Requests.findCreatedRequest(instanceData.instanceTitle);
-      Requests.selectFirstRequest(instanceData.instanceTitle);
-      RequestDetail.waitLoading();
+      cy.waitForAuthRefresh(() => {
+        Requests.findCreatedRequest(instanceData.instanceTitle);
+        Requests.selectFirstRequest(instanceData.instanceTitle);
+        RequestDetail.waitLoading();
+      });
+
       RequestDetail.verifyPositionInQueue(`${requestPosition} (${holdRequests} requests)`);
       // Click on the position in queue link
       RequestDetail.viewRequestsInQueue();

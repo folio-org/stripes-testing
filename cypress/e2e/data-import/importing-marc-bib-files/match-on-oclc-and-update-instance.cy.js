@@ -113,15 +113,13 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
-        (instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        },
-      );
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then((response) => {
+        if (response.totalRecords !== 0) {
+          response.instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,

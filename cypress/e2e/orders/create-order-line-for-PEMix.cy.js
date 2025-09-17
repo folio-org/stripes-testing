@@ -17,10 +17,14 @@ describe('orders: Test PO search', () => {
       organization.id = response;
       order.vendor = response;
     });
-    cy.loginAsAdmin();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
-      cy.visit(TopMenu.ordersPath);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
   });
 
