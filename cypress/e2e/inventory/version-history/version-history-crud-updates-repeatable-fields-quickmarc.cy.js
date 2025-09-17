@@ -154,7 +154,12 @@ describe('Inventory', () => {
             isCurrent: true,
             changes: [
               { text: 'Contributors', action: VersionHistorySection.fieldActions.ADDED },
+              { text: 'Contributors', action: VersionHistorySection.fieldActions.ADDED },
+              { text: 'Contributors', action: VersionHistorySection.fieldActions.ADDED },
+              { text: 'Contributors', action: VersionHistorySection.fieldActions.ADDED },
               { text: 'Contributors', action: VersionHistorySection.fieldActions.REMOVED },
+              { text: 'Contributors', action: VersionHistorySection.fieldActions.REMOVED },
+              { text: 'Subjects', action: VersionHistorySection.fieldActions.REMOVED },
               { text: 'Subjects', action: VersionHistorySection.fieldActions.REMOVED },
             ],
           },
@@ -258,7 +263,6 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
               authRefresh: true,
             });
-
             InventoryInstances.searchByTitle(testData.createdRecordId);
             InventoryInstances.selectInstanceById(testData.createdRecordId);
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);
