@@ -41,7 +41,7 @@ describe('MARC', () => {
             boxSeventh: '',
             searchOption: 'Uniform title',
             marcValue:
-              'C422127 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
+              'C422127 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
             valueAfterSave:
               'C422127 Edinburgh tracts in mathematics and mathematical physics english',
           },
@@ -99,14 +99,11 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 

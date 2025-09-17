@@ -17,15 +17,15 @@ const propertyName = 'authority';
 const browseQuery = 'C409476';
 
 const authorizedCorporate =
-  'C409476 Corporate name 110 Apple & Honey Productions subb subc subd subg subn subv subx suby subz';
+  'C409476 Corporate name 110 Apple & Honey Productions subb subc subd subg subn--subv--subx--suby--subz';
 const referenceCorporate =
-  'C409476 Corporate name 410 Apple and Honey Productions subb subc subd subg subn subv subx suby subz';
+  'C409476 Corporate name 410 Apple and Honey Productions subb subc subd subg subn--subv--subx--suby--subz';
 const authRefCorporate =
   'C409476 Corporate name 510 Apple & Honey Film Corp. subb subc subd subg subn subv subx suby subz';
 const authorizedConference =
-  'C409476 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg subv subx suby subz';
+  'C409476 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg--subv--subx--suby--subz';
 const referenceConference =
-  'C409476 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg subv subx suby subz';
+  'C409476 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg--subv--subx--suby--subz';
 const authRefConference =
   'C409476 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subg subv subx suby subz';
 
@@ -62,6 +62,7 @@ describe('MARC', () => {
           cy.login(testUser.username, testUser.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthorities.switchToBrowse();
         });
@@ -84,7 +85,6 @@ describe('MARC', () => {
             'Corporate/Conference name',
             browseQuery,
           );
-
           // Step 3: Search and verify results for base query
           MarcAuthorityBrowse.searchBy('Corporate/Conference name', browseQuery);
           MarcAuthorityBrowse.checkResultWithValue(

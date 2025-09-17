@@ -98,9 +98,8 @@ const buttonLink = Button('Link');
 const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
-const buttonCancelInAdvSearchModal = Button({ ariaLabel: 'Cancel', disabled: or(false, true) });
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
-const buttonResetAllInAdvancedModal = Button({ ariaLabel: 'Reset all' });
+const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
 const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
@@ -847,8 +846,8 @@ export default {
     cy.expect(searchInput.has({ value: including(value) }));
   },
 
-  clickResetAllButtonInAdvSearchModal() {
-    cy.do(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).click());
+  clickCancelButtonInAdvSearchModal() {
+    cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
   },
 
   checkAdvancedSearchModalAbsence() {
@@ -875,8 +874,8 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Match option*' }))
         .has({ content: including(matchOption) }),
-      modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
-      modalAdvancedSearch.find(buttonCancelInAdvSearchModal).exists(),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
     if (boolean) {
       cy.expect([
@@ -1265,9 +1264,12 @@ export default {
     });
   },
 
-  checkResultsListRecordsCount() {
+  checkResultsListRecordsCount(facetFilter) {
     const alias = `getItems${getRandomPostfix()}`;
     cy.intercept('GET', '/search/authorities?*').as(alias);
+    if (facetFilter && typeof facetFilter === 'function') {
+      facetFilter();
+    }
     cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
       cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());

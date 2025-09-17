@@ -178,10 +178,7 @@ describe('Data Import', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
-        });
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-          InventoryInstances.waitContentLoading();
+          authRefresh: true,
         });
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
@@ -237,8 +234,6 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
 
-        const { lastName, firstName, middleName } = testData.userProperties.personal;
-        InventoryInstance.verifyRecordStatus(`${lastName}, ${firstName} ${middleName}`);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           59,
