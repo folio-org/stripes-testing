@@ -121,6 +121,12 @@ export default {
 
     return ReceivingEditForm;
   },
+  clickEditButton() {
+    cy.do(buttons.Edit.click());
+    ReceivingEditForm.waitLoading();
+
+    return ReceivingEditForm;
+  },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
     ReceivingsListEditForm.waitLoading();

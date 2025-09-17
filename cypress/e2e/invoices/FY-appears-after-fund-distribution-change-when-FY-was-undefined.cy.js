@@ -64,9 +64,7 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    }, 20_000);
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;
@@ -146,14 +144,11 @@ describe('Invoices', () => {
         permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.invoicesPath,
-            waiter: Invoices.waitLoading,
-          });
-          cy.reload();
-          Invoices.waitLoading();
-        }, 20_000);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+          authRefresh: true,
+        });
       });
     });
   });
