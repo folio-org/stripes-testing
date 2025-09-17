@@ -1921,4 +1921,8 @@ export default {
     cy.wait(1000);
     cy.expect(Section({ id: 'inventory-menu-section' }).absent());
   },
+
+  checkCloseButtonInFocus() {
+    cy.expect(instanceDetailsSection.find(Button({ icon: 'times' })).has({ focused: true }));
+  },
 };
