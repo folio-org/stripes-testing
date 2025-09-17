@@ -2,12 +2,14 @@ import {
   AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
   AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
   DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -43,10 +45,12 @@ describe('Inventory', () => {
         testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+          authRefresh: true,
         });
-        InventoryInstances.searchByTitle(testData.instanceId);
+        Logs.openFileDetails(marcFile.fileName);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       });
     });
 
@@ -61,7 +65,6 @@ describe('Inventory', () => {
       'C656318 Update "deleted" markers when leader 05 value is changed (folijet)',
       { tags: ['criticalPath', 'folijet', 'C656318'] },
       () => {
-        InventoryInstance.waitLoading();
         InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
         InstanceRecordView.verifyInstanceIsMarkedAsSuppressedFromDiscovery();
         InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();

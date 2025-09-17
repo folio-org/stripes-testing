@@ -60,7 +60,7 @@ describe('Inventory', () => {
         );
         ItemRecordView.waitLoading();
         // #2 Note the presence or lack of fields under the **Item notes** heading
-        ItemRecordView.checkItemNote('No value set-', 'No value set-');
+        ItemRecordView.checkItemNote('-', '-');
         // #3 Click the caret to the right of the **Item record [Status]** at the top of the page and select **Edit**
         ItemRecordView.openItemEditForm(testData.folioInstances[0].instanceTitle);
         // #4 Click **Add note** under the **Item notes** heading to display a set of note fields.  Choose a **Note type** from the dropdown, enter a value into the **Note** field and select or skip the **Staff only** checkbox.  Add several notes with different combinations of values
@@ -74,7 +74,7 @@ describe('Inventory', () => {
         ItemRecordEdit.deleteNote();
         // #8 Click **Save and close** after deleting a note
         ItemRecordEdit.saveAndClose();
-        ItemRecordView.checkItemNote('No value set-', 'No value set-');
+        ItemRecordView.checkItemNote('-', '-');
       },
     );
   });
