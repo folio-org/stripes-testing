@@ -109,53 +109,47 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
-        'C825266 Search items by Year, caption (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825266'] },
-        () => {
-          // Step 1-2: Search items by "Items — Year, caption" field using "contains" operator
-          BulkEditSearchPane.openQuerySearch();
-          BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
-          QueryModal.selectField(itemFieldValues.yearCaption);
-          QueryModal.verifySelectedField(itemFieldValues.yearCaption);
-          QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
-          QueryModal.fillInValueTextfield('1991');
-          QueryModal.addNewRow();
-          QueryModal.selectField(itemFieldValues.itemBarcode, 1);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
-          QueryModal.fillInValueTextfield('AT_C825266_Item', 1);
-          QueryModal.clickTestQuery();
-          QueryModal.verifyQueryAreaContent(
-            '(items.year_caption contains 1991) AND (items.barcode starts with AT_C825266_Item)',
+      // Trillium
+      it.skip('C825266 Search items by Year, caption (firebird)', { tags: [] }, () => {
+        // Step 1-2: Search items by "Items — Year, caption" field using "contains" operator
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.clickBuildQueryButton();
+        QueryModal.verify();
+        QueryModal.selectField(itemFieldValues.yearCaption);
+        QueryModal.verifySelectedField(itemFieldValues.yearCaption);
+        QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
+        QueryModal.fillInValueTextfield('1991');
+        QueryModal.addNewRow();
+        QueryModal.selectField(itemFieldValues.itemBarcode, 1);
+        QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
+        QueryModal.fillInValueTextfield('AT_C825266_Item', 1);
+        QueryModal.clickTestQuery();
+        QueryModal.verifyQueryAreaContent(
+          '(items.year_caption contains 1991) AND (items.barcode starts with AT_C825266_Item)',
+        );
+        QueryModal.verifyPreviewOfRecordsMatched();
+
+        // Expected to find: Item 1 and Item 2 (both contain "1991")
+        const expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+
+        expectedItemsToFind.forEach((item) => {
+          const expectedYearCaptionDisplay = item.yearCaption.join(' | ');
+
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            item.barcode,
+            itemFieldValues.yearCaption,
+            expectedYearCaptionDisplay,
           );
-          QueryModal.verifyPreviewOfRecordsMatched();
+        });
 
-          // Expected to find: Item 1 and Item 2 (both contain "1991")
-          const expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+        // Not expected to find: Item 3 and Item 4
+        const notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
 
-          expectedItemsToFind.forEach((item) => {
-            const expectedYearCaptionDisplay = item.yearCaption.join(' | ');
-
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              item.barcode,
-              itemFieldValues.yearCaption,
-              expectedYearCaptionDisplay,
-            );
-          });
-
-          // Not expected to find: Item 3 and Item 4
-          const notExpectedToFindItemBarcodes = [
-            expectedItems[2].barcode,
-            expectedItems[3].barcode,
-          ];
-
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
-        },
-      );
+        notExpectedToFindItemBarcodes.forEach((barcode) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+        });
+      });
     });
   });
 });

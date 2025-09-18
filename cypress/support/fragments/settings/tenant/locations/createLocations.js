@@ -20,6 +20,7 @@ export default {
     cy.do([Select('Service point(s)').choose(value), Button('Add service point').click()]);
   },
   saveAndClose() {
+    cy.wait(2000);
     cy.do(Button({ id: 'clickable-save-location' }).click());
   },
 };

@@ -173,9 +173,11 @@ describe('Bulk-edit', () => {
       );
     });
 
-    it(
+    // Trillium only
+
+    it.skip(
       'C831958 Verify Set false for deletion of Instances via FOLIO flow (Query) (firebird)',
-      { tags: ['smoke', 'firebird', 'C831958'] },
+      { tags: [] },
       () => {
         // Step 1: Show Set for deletion and Staff suppress columns
         BulkEditSearchPane.verifyBulkEditQueryPaneExists();

@@ -265,7 +265,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyTheActionOptions(Object.values(actionOptions));
 
           // Step 8: Select "Set false" action
-          BulkEditActions.selectAction(actionOptions.setFalse);
+          BulkEditActions.selectSecondAction(actionOptions.setFalse);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
 

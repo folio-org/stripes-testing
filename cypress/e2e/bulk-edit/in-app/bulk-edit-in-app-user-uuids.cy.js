@@ -36,6 +36,7 @@ describe('Bulk-edit', () => {
 
     beforeEach('select User', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+      cy.wait(5000);
       BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
     });
 

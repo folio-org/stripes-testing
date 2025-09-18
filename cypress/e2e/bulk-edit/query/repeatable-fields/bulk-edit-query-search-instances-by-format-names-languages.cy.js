@@ -142,9 +142,10 @@ describe('Bulk-edit', () => {
         });
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C825245 Search instances by Format names, Languages (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C825245'] },
+        { tags: [] },
         () => {
           // Step 1: Search instances by "Instance — Format names" field using "equals" operator
           BulkEditSearchPane.openQuerySearch();

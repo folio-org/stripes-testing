@@ -38,6 +38,7 @@ describe('Bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
+        cy.wait(5000);
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
@@ -55,6 +56,7 @@ describe('Bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
+        cy.wait(5000);
         BulkEditSearchPane.openLogsSearch();
       });
     });
@@ -82,7 +84,7 @@ describe('Bulk-edit', () => {
           expect(targetOperation.id).to.match(
             /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
           );
-          expect(targetOperation.hrId).to.match(/^\d{1,3}$/);
+          expect(targetOperation.hrId).to.match(/^\d{1,4}$/);
 
           BulkEditLogs.verifyOperationHrid(
             userForBuildQuery.username,

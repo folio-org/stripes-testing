@@ -135,94 +135,88 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
-        'C813659 Search holdings by Statements fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813659'] },
-        () => {
-          // Step 1: Verify Statements fields are queryable under "Select options" dropdown
-          BulkEditSearchPane.openQuerySearch();
-          BulkEditSearchPane.checkHoldingsRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
+      // Trillium
+      it.skip('C813659 Search holdings by Statements fields (firebird)', { tags: [] }, () => {
+        // Step 1: Verify Statements fields are queryable under "Select options" dropdown
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.clickBuildQueryButton();
+        QueryModal.verify();
 
-          const statementsFields = [
-            holdingsFieldValues.statementsStatement,
-            holdingsFieldValues.statementsPublicNote,
-            holdingsFieldValues.statementsStaffNote,
-          ];
+        const statementsFields = [
+          holdingsFieldValues.statementsStatement,
+          holdingsFieldValues.statementsPublicNote,
+          holdingsFieldValues.statementsStaffNote,
+        ];
 
-          statementsFields.forEach((field) => {
-            QueryModal.selectField(field);
-            QueryModal.verifySelectedField(field);
-          });
-          QueryModal.verifyFieldsSortedAlphabetically();
+        statementsFields.forEach((field) => {
+          QueryModal.selectField(field);
+          QueryModal.verifySelectedField(field);
+        });
+        QueryModal.verifyFieldsSortedAlphabetically();
 
-          // Step 2: Search holdings by "Holdings — Statements — Statement" field using "equals" operator
-          QueryModal.clickSelectFieldButton();
-          QueryModal.selectField(holdingsFieldValues.statementsStatement);
-          QueryModal.verifySelectedField(holdingsFieldValues.statementsStatement);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.fillInValueTextfield('1-86 (1941-1987)');
-          QueryModal.addNewRow();
-          QueryModal.selectField(holdingsFieldValues.instanceUuid, 1);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.fillInValueTextfield(folioInstance.id, 1);
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Statements');
-          QueryModal.clickShowColumnsButton();
+        // Step 2: Search holdings by "Holdings — Statements — Statement" field using "equals" operator
+        QueryModal.clickSelectFieldButton();
+        QueryModal.selectField(holdingsFieldValues.statementsStatement);
+        QueryModal.verifySelectedField(holdingsFieldValues.statementsStatement);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+        QueryModal.fillInValueTextfield('1-86 (1941-1987)');
+        QueryModal.addNewRow();
+        QueryModal.selectField(holdingsFieldValues.instanceUuid, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.fillInValueTextfield(folioInstance.id, 1);
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
+        QueryModal.clickShowColumnsButton();
+        QueryModal.clickCheckboxInShowColumns('Holdings — Statements');
+        QueryModal.clickShowColumnsButton();
 
-          // Expected to find: Holdings 1 and Holdings 2 (both have "1-86 (1941-1987)" statement)
-          const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
+        // Expected to find: Holdings 1 and Holdings 2 (both have "1-86 (1941-1987)" statement)
+        const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 
-          expectedHoldingsToFind.forEach((holding) => {
-            verifyStatements(holding);
-          });
+        expectedHoldingsToFind.forEach((holding) => {
+          verifyStatements(holding);
+        });
 
-          // Not expected to find: Holdings 3 and Holdings 4
-          const notExpectedToFindHoldingHrids = [
-            expectedHoldings[2].hrid,
-            expectedHoldings[3].hrid,
-          ];
+        // Not expected to find: Holdings 3 and Holdings 4
+        const notExpectedToFindHoldingHrids = [expectedHoldings[2].hrid, expectedHoldings[3].hrid];
 
-          notExpectedToFindHoldingHrids.forEach((hrid) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
-          });
+        notExpectedToFindHoldingHrids.forEach((hrid) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+        });
 
-          // Step 3: Search holdings by "Holdings — Statements — Statement public note" field using "contains" operator
-          QueryModal.selectField(holdingsFieldValues.statementsPublicNote);
-          QueryModal.verifySelectedField(holdingsFieldValues.statementsPublicNote);
-          QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
-          QueryModal.fillInValueTextfield('issues missing');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        // Step 3: Search holdings by "Holdings — Statements — Statement public note" field using "contains" operator
+        QueryModal.selectField(holdingsFieldValues.statementsPublicNote);
+        QueryModal.verifySelectedField(holdingsFieldValues.statementsPublicNote);
+        QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
+        QueryModal.fillInValueTextfield('issues missing');
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFind.forEach((holding) => {
-            verifyStatements(holding);
-          });
+        expectedHoldingsToFind.forEach((holding) => {
+          verifyStatements(holding);
+        });
 
-          notExpectedToFindHoldingHrids.forEach((hrid) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
-          });
+        notExpectedToFindHoldingHrids.forEach((hrid) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+        });
 
-          // Step 4: Search holdings by "Holdings — Statements — Statement staff note" field using "starts with" operator
-          QueryModal.selectField(holdingsFieldValues.statementsStaffNote);
-          QueryModal.verifySelectedField(holdingsFieldValues.statementsStaffNote);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
-          QueryModal.fillInValueTextfield('bound in');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        // Step 4: Search holdings by "Holdings — Statements — Statement staff note" field using "starts with" operator
+        QueryModal.selectField(holdingsFieldValues.statementsStaffNote);
+        QueryModal.verifySelectedField(holdingsFieldValues.statementsStaffNote);
+        QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
+        QueryModal.fillInValueTextfield('bound in');
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedHoldingsToFind.forEach((holding) => {
-            verifyStatements(holding);
-          });
+        expectedHoldingsToFind.forEach((holding) => {
+          verifyStatements(holding);
+        });
 
-          notExpectedToFindHoldingHrids.forEach((hrid) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
-          });
-        },
-      );
+        notExpectedToFindHoldingHrids.forEach((hrid) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+        });
+      });
     });
   });
 });

@@ -93,7 +93,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkCheckInNote(checkInNote, 'No');
-        ItemRecordView.checkCheckOutNote('No value set-', 'Yes');
+        ItemRecordView.checkCheckOutNote('-', 'Yes');
       },
     );
   });

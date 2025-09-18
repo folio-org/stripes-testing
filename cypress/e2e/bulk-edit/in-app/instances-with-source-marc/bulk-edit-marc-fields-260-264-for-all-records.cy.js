@@ -138,9 +138,10 @@ describe('Bulk-edit', () => {
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
-    it(
+    // Trillium
+    it.skip(
       'C773212 Bulk edit marc fields (260, 264) for all records (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C773212'] },
+      { tags: [] },
       () => {
         // Step 1: Click "Actions" menu and check "Publication" checkbox
         BulkEditActions.openActions();

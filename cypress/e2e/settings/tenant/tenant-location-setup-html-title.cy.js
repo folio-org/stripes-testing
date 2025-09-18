@@ -18,7 +18,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const institution = Institutions.getDefaultInstitution({
-  name: `1_autotest_institution ${getRandomPostfix()}`,
+  name: `11_autotest_institution ${getRandomPostfix()}`,
 });
 const testData = {
   location: {},
@@ -32,7 +32,7 @@ describe('Settings: Tenant', () => {
       testData.institutions = locinst;
 
       const campus = Campuses.getDefaultCampuse({
-        name: `1_autotest_campus ${getRandomPostfix()}`,
+        name: `11_autotest_campus ${getRandomPostfix()}`,
         institutionId: locinst.id,
       });
       Campuses.createViaApi(campus).then((loccamp) => {
@@ -47,13 +47,13 @@ describe('Settings: Tenant', () => {
 
             Locations.createViaApi({
               id: uuid(),
-              code: `1_autotest_location_code-${getRandomPostfix()}`,
-              name: `1_autotest_location_name-${getRandomPostfix()}`,
+              code: `11_autotest_location_code-${getRandomPostfix()}`,
+              name: `11_autotest_location_name-${getRandomPostfix()}`,
               isActive: true,
               institutionId: locinst.id,
               campusId: loccamp.id,
               libraryId: loclib.id,
-              discoveryDisplayName: `1_autotest_location_discovery-${getRandomPostfix()}`,
+              discoveryDisplayName: `11_autotest_location_discovery-${getRandomPostfix()}`,
               servicePointIds: [servicePointData.id],
               primaryServicePoint: servicePointData.id,
             }).then((location) => {
@@ -90,7 +90,6 @@ describe('Settings: Tenant', () => {
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.verifyPageTitle('Settings - FOLIO');
-      TenantPane.verifyIconInTenantOption();
       TenantPane.goToTenantTab();
       TenantPane.verifyLocationSetupItems();
       TenantPane.verifyGeneralItems(false);

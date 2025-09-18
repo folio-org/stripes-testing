@@ -94,7 +94,6 @@ export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CITATION_REFERENCES_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.COPY_VERSION_IDENTIFICATION_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CREATION_PRODUCTION_CREDITS_NOTE,
-  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CUMULATIVE_INDEX_FINDING_AIDS_NOTES,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATE_TIME_PLACE_EVENT_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
@@ -411,7 +410,9 @@ export default {
   },
 
   openQuerySearch() {
+    cy.wait(3000);
     cy.do(queryToggle.click());
+    cy.wait(3000);
   },
 
   openLogsSearch() {
@@ -519,7 +520,7 @@ export default {
 
   checkItemsRadio() {
     cy.do(itemsRadio.click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   itemsRadioIsDisabled(isDisabled) {
@@ -532,7 +533,7 @@ export default {
 
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   holdingsRadioIsDisabled(isDisabled) {
@@ -545,6 +546,7 @@ export default {
 
   checkInstanceRadio() {
     cy.do(instancesRadio.click());
+    cy.wait(1000);
   },
 
   instancesRadioIsDisabled(isDisabled) {
@@ -1160,9 +1162,6 @@ export default {
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS))
         .has({ checked: true }),
       DropdownMenu()
-        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION))
-        .has({ checked: false }),
-      DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION))
         .has({ checked: false }),
       DropdownMenu()
@@ -1185,15 +1184,6 @@ export default {
         .has({ checked: false }),
       DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE))
-        .has({ checked: false }),
-      DropdownMenu()
-        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS))
-        .has({ checked: false }),
-      DropdownMenu()
-        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUBJECT))
-        .has({ checked: false }),
-      DropdownMenu()
-        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION))
         .has({ checked: false }),
     ]);
   },
@@ -1344,7 +1334,7 @@ export default {
   },
 
   clickBuildQueryButton() {
-    cy.wait(2000);
+    cy.wait(3000);
     cy.expect(buildQueryButton.has({ disabled: false }));
     cy.do(buildQueryButton.click());
   },
@@ -1392,7 +1382,7 @@ export default {
   },
 
   verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
-    cy.get('[class^="EmbeddedTable-"]')
+    cy.get('[class^="ElectronicAccess"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')

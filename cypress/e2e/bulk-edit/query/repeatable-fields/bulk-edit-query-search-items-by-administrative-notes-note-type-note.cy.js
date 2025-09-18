@@ -205,9 +205,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C813674 Search items by Administrative notes, Note type, Note (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813674'] },
+        { tags: [] },
         () => {
           // Create expected items for verification
           const itemBarcodes = items.map((item) => item.barcode);

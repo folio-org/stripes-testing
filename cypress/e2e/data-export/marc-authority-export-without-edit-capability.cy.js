@@ -39,6 +39,7 @@ describe('Data Export', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.marcAuthorities,
         waiter: MarcAuthorities.waitLoading,
+        authRefresh: true,
       });
     });
   });

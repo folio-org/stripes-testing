@@ -7,12 +7,12 @@ import SettingsDataExport from '../../../support/fragments/data-export/settingsD
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
 const jobProfile = {
-  name: `Job-Profile-${getRandomPostfix()}`,
-  newName: `New-Job-Profile-${getRandomPostfix()}`,
+  name: getTestEntityValue('jobProfile'),
+  newName: getTestEntityValue('newJobProfile'),
   mappingProfile: 'Default authority mapping profile',
 };
 const callout = `Job profile ${jobProfile.name} has been successfully created`;

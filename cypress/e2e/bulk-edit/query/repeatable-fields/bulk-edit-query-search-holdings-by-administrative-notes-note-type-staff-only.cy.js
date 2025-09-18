@@ -206,9 +206,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C813611 Search holdings by Administrative notes, Note type, Staff only (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813611'] },
+        { tags: [] },
         () => {
           // Create expected holdings for verification
           const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);

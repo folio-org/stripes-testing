@@ -39,6 +39,7 @@ describe('Bulk-edit', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
       });
