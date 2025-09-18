@@ -1359,11 +1359,6 @@ export default {
     }
   },
 
-  clearSelectionsInHeldByAccordion() {
-    cy.do(heldByAccordion.find(clearIcon).click());
-    cy.wait(ONE_SECOND);
-  },
-
   clickOnCloseIcon() {
     cy.wait(1000);
     cy.do(closeIconButton.click());
