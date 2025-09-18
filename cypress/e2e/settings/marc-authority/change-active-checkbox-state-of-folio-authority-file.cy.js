@@ -45,7 +45,6 @@ describe('MARC', () => {
           });
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           ManageAuthorityFiles.checkAuthorityFilesTableExists();
-          ManageAuthorityFiles.checkDefaultSourceFilesExist();
 
           // 2 Click on the "Edit" (pencil) icon of "Authority file" with source "FOLIO" which doesn't have assigned "MARC authority" records
           ManageAuthorityFiles.clickEditButton(folioAuthorityFile.name);

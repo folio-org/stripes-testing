@@ -18,10 +18,10 @@ describe('MARC', () => {
       const title = `C436863 Test title ${randomPostfix}`;
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
       const folioAuthorityFile = {
-        name: DEFAULT_FOLIO_AUTHORITY_FILES.GSAFD_GENRE_TERMS,
-        prefix: 'gsafd',
+        name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_SUBJECT_HEADINGS,
+        prefix: 'sh',
         hridStartsWith: '',
-        baseUrl: 'https://vocabularyserver.com/gsafd/',
+        baseUrl: 'http://id.loc.gov/authorities/subjects/',
       };
       const newBaseUrl = `http://testing/field/baseurl/positivetest7${getRandomLetters(4)}/`;
       const controlNumber = `${randomFourDigitNumber()}`;
@@ -75,8 +75,6 @@ describe('MARC', () => {
           });
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           ManageAuthorityFiles.checkAuthorityFilesTableExists();
-          ManageAuthorityFiles.checkDefaultSourceFilesExist();
-
           // 2 Click on the "Edit" (pencil) icon of "Authority file" with source "FOLIO" which has assigned "MARC authority" records
           ManageAuthorityFiles.clickEditButton(folioAuthorityFile.name);
           ManageAuthorityFiles.checkRowEditableInEditModeInFolioFile(

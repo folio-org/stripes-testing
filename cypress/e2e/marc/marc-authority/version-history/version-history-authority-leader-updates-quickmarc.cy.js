@@ -6,6 +6,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import DateTools from '../../../../support/utils/dateTools';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../../../support/fragments/topMenu';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 
@@ -89,7 +90,8 @@ describe('MARC', () => {
             testData.createdRecordId = response[0].authority.id;
 
             cy.login(testData.userProperties.username, testData.userProperties.password, {
-              authRefresh: true,
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
             });
             MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);
             MarcAuthorities.selectTitle(testData.authorityHeading);

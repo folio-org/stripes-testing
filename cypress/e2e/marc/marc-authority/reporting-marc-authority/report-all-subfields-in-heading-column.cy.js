@@ -27,27 +27,27 @@ describe('MARC', () => {
         updatedFieldValue:
           '$a AT_C494105 Personal name 100 Elizabeth $b II, $c Queen of Great Britain, $d 1926- $g subg $q subq $k subk $v Musical settings $x Literary style $x Stage history $y 1950-UPD $z England',
         originalHeading:
-          'AT_C494105 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq Musical settings Literary style Stage history 1950- England',
+          'AT_C494105 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq--Musical settings--Literary style--Stage history--1950---England',
         newHeading:
-          'AT_C494105 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq Musical settings Literary style Stage history 1950-UPD England',
+          'AT_C494105 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq--Musical settings--Literary style--Stage history--1950-UPD--England',
       };
       const corporateName = {
         tag: '110',
         updatedFieldValue:
           '$a AT_C494105 Corporate name 110 Apple & Honey Productions $b subb $c subc $d subd $g subg $n subn $k subk $v subv $x subx $y subyUPD $z subz',
         originalHeading:
-          'AT_C494105 Corporate name 110 Apple & Honey Productions subb subc subd subg subn subv subx suby subz',
+          'AT_C494105 Corporate name 110 Apple & Honey Productions subb subc subd subg subn--subv--subx--suby--subz',
         newHeading:
-          'AT_C494105 Corporate name 110 Apple & Honey Productions subb subc subd subg subn subv subx subyUPD subz',
+          'AT_C494105 Corporate name 110 Apple & Honey Productions subb subc subd subg subn--subv--subx--subyUPD--subz',
       };
       const conferenceName = {
         tag: '111',
         updatedFieldValue:
           '$a AT_C494105 Conference Name 111 Western Region Agricultural Education Research Meeting $c subc $d subd $n subn $q subq $g subg $s subk $v subv $x subx $y subyUPD $z subz',
         originalHeading:
-          'AT_C494105 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg subv subx suby subz',
+          'AT_C494105 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg--subv--subx--suby--subz',
         newHeading:
-          'AT_C494105 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg subv subx subyUPD subz',
+          'AT_C494105 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg--subv--subx--subyUPD--subz',
       };
 
       before('Create user, import authority file', () => {
