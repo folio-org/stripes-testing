@@ -54,6 +54,7 @@ describe('Title Level Request', () => {
         cy.login(userData.username, userData.password, {
           path: SettingsMenu.circulationTitleLevelRequestsPath,
           waiter: TitleLevelRequests.waitLoading,
+          authRefresh: true,
         });
       });
     });

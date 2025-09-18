@@ -13,6 +13,7 @@ describe('remote-storage-configuration', () => {
     cy.loginAsAdmin({
       path: settingsMenu.remoteStoragePath,
       waiter: () => cy.wait(3000),
+      authRefresh: true,
     });
     RemoteStorage.goToConfigurations();
     Configurations.waitLoading();

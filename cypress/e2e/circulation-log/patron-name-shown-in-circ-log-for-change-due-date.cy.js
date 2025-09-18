@@ -68,6 +68,7 @@ describe('Circulation log', () => {
       cy.login(userA.username, userA.password, {
         path: TopMenu.checkOutPath,
         waiter: Checkout.waitLoading,
+        authRefresh: true,
       });
     });
   });

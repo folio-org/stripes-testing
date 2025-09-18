@@ -192,13 +192,15 @@ describe('Circulation log', () => {
     'C17064 Check the Actions button from filtering Circulation log by transferred partially (volaris)',
     { tags: ['criticalPath', 'volaris', 'shiftLeft', 'C17064'] },
     () => {
-      createFeeFine().then((feeFineId) => {
-        testData.feeFineId = feeFineId;
-        TransferFeeFine.transferFeeFineViaApi(
-          getActionBody(transferAccount.accountName, partiallAmount),
-          testData.feeFineId,
-        );
-        checkActionsButton('Transferred partially');
+      cy.waitForAuthRefresh(() => {
+        createFeeFine().then((feeFineId) => {
+          testData.feeFineId = feeFineId;
+          TransferFeeFine.transferFeeFineViaApi(
+            getActionBody(transferAccount.accountName, partiallAmount),
+            testData.feeFineId,
+          );
+          checkActionsButton('Transferred partially');
+        });
       });
     },
   );
