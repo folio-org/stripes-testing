@@ -19,7 +19,7 @@ Cypress.Commands.add(
     {
       path = '/',
       waiter = () => cy.expect(Heading(including('Welcome')).exists()),
-      authRefresh = true,
+      authRefresh = false,
     } = {},
   ) => {
     function loginFn() {
