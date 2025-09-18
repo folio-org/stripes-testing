@@ -41,6 +41,7 @@ describe('Inventory', () => {
   */
       cy.getAdminToken()
         .then(() => {
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C400619');
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
           });

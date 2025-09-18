@@ -166,7 +166,7 @@ describe('MARC', () => {
         cy.wait(2000);
         MarcAuthorities.verifyResultsPane();
         MarcAuthorities.clickActionsButton();
-        MarcAuthorities.verifyActionsMenu(true, true);
+        MarcAuthorities.verifyActionsMenu();
 
         MarcAuthorities.actionsSortBy('Authorized/Reference');
         MarcAuthorities.checkRowsContent(marcAuthorities.authorizedReferences);

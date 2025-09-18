@@ -30,6 +30,7 @@ describe('MARC', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
+              authRefresh: true,
             });
           },
         );

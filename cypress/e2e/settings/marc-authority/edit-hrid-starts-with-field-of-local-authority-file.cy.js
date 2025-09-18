@@ -58,6 +58,7 @@ describe('MARC', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsAuthorityFilesPath,
             waiter: ManageAuthorityFiles.waitLoading,
+            authRefresh: true,
           });
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           ManageAuthorityFiles.checkAuthorityFilesTableExists();
