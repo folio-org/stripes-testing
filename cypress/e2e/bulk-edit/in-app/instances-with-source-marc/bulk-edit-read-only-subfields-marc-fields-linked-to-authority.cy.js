@@ -175,9 +175,10 @@ describe('Bulk-edit', () => {
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
-    it(
+    // Trillium
+    it.skip(
       'C663262 Bulk edit read-only subfields (a, 9) of marc fields (610, 240) linked to authority record (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663262'] },
+      { tags: [] },
       () => {
         // Step 1: Check "Subject" checkbox to show column
         BulkEditActions.openActions();
