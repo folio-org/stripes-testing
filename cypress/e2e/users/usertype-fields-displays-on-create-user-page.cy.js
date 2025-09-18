@@ -58,6 +58,7 @@ describe('Users', () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
       });
     });

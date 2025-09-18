@@ -70,7 +70,7 @@ describe('Organizations', () => {
       Organizations.openPrivilegedDonorInformationSection();
       Organizations.clickAddDonorButton();
       Organizations.closeAddDonorModal();
-      Organizations.deleteContactFromContactPeople();
+      Organizations.deleteDonorFromPrivilegedDonorInformation();
       Organizations.cancelOrganization();
       Organizations.keepEditingOrganization();
       Organizations.saveOrganization();
