@@ -133,7 +133,7 @@ describe('Finance', () => {
         FinanceHelper.searchByName(ledger.name);
         const LedgerDetails = Ledgers.selectLedger(ledger.name);
         LedgerDetails.checkLedgerDetails({
-          information: [{ key: 'Fiscal year', value: fiscalYears.current.code }],
+          information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
         });
 
         // Click "Actions" button, Select "Rollover" option
@@ -158,7 +158,7 @@ describe('Finance', () => {
         // Click "Close & view ledger details" button
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
         LedgerDetails.checkLedgerDetails({
-          information: [{ key: 'Fiscal year', value: fiscalYears.current.code }],
+          information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
         });
 
         // Click **"Fund A"** record in "Fund" accordion on

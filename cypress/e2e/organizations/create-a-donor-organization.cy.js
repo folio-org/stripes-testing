@@ -21,6 +21,7 @@ describe('Organizations', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
+        authRefresh: true,
       });
     });
   });

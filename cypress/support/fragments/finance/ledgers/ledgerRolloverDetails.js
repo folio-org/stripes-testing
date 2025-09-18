@@ -158,8 +158,7 @@ export default {
 
     cy.expect(rolloverButton.has({ disabled: false }));
     cy.do(rolloverButton.triggerClick());
-
-    this.clickContinueInConfirmationModal();
+    UnpaidInvoiceListModal.clickContinueButton();
 
     cy.expect(confirmModal.has({ message: matching(new RegExp(messages.rolloverConfirm)) }));
     cy.do(confirmModal.confirm());

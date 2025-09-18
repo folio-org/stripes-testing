@@ -21,6 +21,7 @@ import {
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Orders', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -161,9 +162,11 @@ describe('Orders', () => {
                             status: INVOICE_STATUSES.PAID,
                           });
                         });
-                        cy.loginAsAdmin();
-                        TopMenuNavigation.openAppFromDropdown('Orders');
-                        Orders.selectOrdersPane();
+                        cy.loginAsAdmin({
+                          path: TopMenu.ordersPath,
+                          waiter: Orders.waitLoading,
+                          authRefresh: true,
+                        });
                         Orders.searchByParameter('PO number', orderNumber);
                         Orders.selectFromResultsList(orderNumber);
                         OrderLines.selectPOLInOrder(0);
@@ -171,7 +174,7 @@ describe('Orders', () => {
                         OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
                         OrderLines.saveOrderLine();
 
-                        TopMenuNavigation.openAppFromDropdown('Finance');
+                        cy.visit(TopMenu.ledgerPath);
                         FinanceHelp.searchByName(defaultLedger.name);
                         Ledgers.selectLedger(defaultLedger.name);
                         Ledgers.rollover();
@@ -213,7 +216,11 @@ describe('Orders', () => {
         permissions.uiOrdersEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+          authRefresh: true,
+        });
       });
     });
   });
@@ -227,8 +234,6 @@ describe('Orders', () => {
     'C404376 Change fund distribution when PO line has related paid invoices in previous and current fiscal years (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

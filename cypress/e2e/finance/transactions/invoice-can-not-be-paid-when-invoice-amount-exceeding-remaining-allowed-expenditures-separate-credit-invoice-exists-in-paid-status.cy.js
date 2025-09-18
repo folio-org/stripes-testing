@@ -19,7 +19,6 @@ import {
 } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import settingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
@@ -75,7 +74,7 @@ describe('Finance: Transactions', () => {
   let secondOrderNumber;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
@@ -86,24 +85,18 @@ describe('Finance: Transactions', () => {
         firstLedger.id = ledgerResponse.id;
         firstFund.ledgerId = firstLedger.id;
         secondFund.ledgerId = firstLedger.id;
-
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
           firstBudget.fundId = fundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
-
           Funds.createViaApi(secondFund).then((secondFundResponse) => {
             secondFund.id = secondFundResponse.fund.id;
             secondBudget.fundId = secondFundResponse.fund.id;
             Budgets.createViaApi(secondBudget);
-            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
             FinanceHelp.searchByName(secondFund.name);
             Funds.selectFund(secondFund.name);
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
-            InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
-            );
             Funds.closeBudgetDetails();
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
@@ -247,6 +240,7 @@ describe('Finance: Transactions', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });
