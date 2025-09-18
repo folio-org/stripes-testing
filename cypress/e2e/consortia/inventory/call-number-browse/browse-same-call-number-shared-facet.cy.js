@@ -22,6 +22,9 @@ describe('Inventory', () => {
       const randomPostfix = getRandomPostfix();
       const instancePrefix = 'C402777Auto Instance';
       const callNumber = `C402777Auto ${randomPostfix}`;
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
       const testData = {
         collegeHoldings: [],
         universityHoldings: [],
@@ -331,6 +334,7 @@ describe('Inventory', () => {
         () => {
           cy.wait(10_000); // wait for the same CN from all instances to be available
           cy.setTenant(Affiliations.College);
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
           InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
