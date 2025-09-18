@@ -96,6 +96,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -125,9 +126,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag711);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib711AfterLinkingToAuth111);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -138,7 +137,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
             InventoryInstance.goToPreviousPage();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
@@ -156,9 +154,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkModal(testData.tag711);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib711AfterUnlinking);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(5, 1, testData.contributor);
             InventoryInstance.checkMarcAppIconAbsent(5);
