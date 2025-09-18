@@ -126,8 +126,8 @@ describe('Export Manager', () => {
   });
 
   it(
-    'C788681 Verify search filter options Export Manager (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C788681'] },
+    'C350727 Verify search filter options Export Manager (firebird)',
+    { tags: ['criticalPath', 'firebird', 'C350727'] },
     () => {
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchBySuccessful();

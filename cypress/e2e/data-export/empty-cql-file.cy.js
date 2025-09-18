@@ -30,12 +30,16 @@ describe('Data Export', () => {
       permissions.dataExportUploadExportDownloadFileViewLogs.gui,
     ]).then((userProperties) => {
       user = userProperties;
+
       InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+
+      FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
+
       cy.login(user.username, user.password, {
         path: TopMenu.dataExportPath,
         waiter: DataExportLogs.waitLoading,
+        authRefresh: true,
       });
-      FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
     });
   });
 

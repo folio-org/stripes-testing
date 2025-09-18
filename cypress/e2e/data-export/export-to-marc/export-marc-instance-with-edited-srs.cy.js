@@ -192,7 +192,7 @@ describe('Data Export', () => {
 
       // Step 5: Go to "Inventory" app
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-      cy.waitForAuthRefresh(() => {}, 20_000);
+      cy.wait(5000);
       InventorySearchAndFilter.waitLoading();
 
       // Step 6: Find MARC Instance from Preconditions

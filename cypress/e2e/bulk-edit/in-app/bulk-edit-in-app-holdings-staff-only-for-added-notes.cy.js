@@ -185,9 +185,9 @@ describe(
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
 
-          const suppressFromDiscovery = 'true';
+          const suppressFromDiscovery = true;
 
-          BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10);
+          BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10, true);
           BulkEditActions.deleteRow(2);
           BulkEditActions.verifyStaffOnlyCheckbox(false, 2);
           BulkEditActions.verifyStaffOnlyCheckbox(true, 3);
@@ -234,7 +234,7 @@ describe(
           );
           BulkEditSearchPane.verifyExactChangesUnderColumns(
             'Suppress from discovery',
-            suppressFromDiscovery,
+            `${suppressFromDiscovery}`,
           );
           BulkEditActions.clickKeepEditingBtn();
           BulkEditActions.uncheckStaffOnlyCheckbox(7);
