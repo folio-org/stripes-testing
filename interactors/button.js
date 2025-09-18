@@ -23,6 +23,7 @@ export default HTML.extend('button')
     dataType: (el) => el.getAttribute('data-type-button'),
     dataTestID: (el) => el.getAttribute('data-testid'),
     svgClass: (el) => el.querySelector('svg').getAttribute('class').toString(),
+    focused: (el) => el.contains(el.ownerDocument.activeElement),
     text: (el) => el.textContent,
     disabled: {
       apply: (el) => {
