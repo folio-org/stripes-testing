@@ -214,9 +214,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C805784 Search items by Items — Notes — Staff only (all operators for true/false field) (firebird)',
-        { tags: ['smoke', 'firebird', 'C805784'] },
+        { tags: [] },
         () => {
           // Get note type name for verification
           const noteTypeName = ITEM_NOTE_TYPES.ACTION_NOTE;

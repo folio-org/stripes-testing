@@ -26,7 +26,11 @@ describe('Fees&Fines', () => {
           },
         );
 
-        cy.loginAsAdmin({ path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
+        cy.loginAsAdmin({
+          path: SettingsMenu.usersOwnersPath,
+          waiter: UsersOwners.waitLoading,
+          authRefresh: true,
+        });
       });
     });
 

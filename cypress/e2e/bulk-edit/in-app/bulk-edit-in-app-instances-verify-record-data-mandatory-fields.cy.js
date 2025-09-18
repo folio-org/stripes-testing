@@ -110,10 +110,6 @@ describe('Bulk-edit', () => {
             value: 'false',
           },
           {
-            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION,
-            value: 'false',
-          },
-          {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             value: instance.hrid,
           },
@@ -145,7 +141,6 @@ describe('Bulk-edit', () => {
             value: '',
           },
           { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS, value: '' },
-          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION, value: '' },
           { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION, value: '' },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,

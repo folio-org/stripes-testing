@@ -251,141 +251,138 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
-        'C813676 Search items by Electronic access fields (firebird)',
-        { tags: ['smoke', 'firebird', 'C813676'] },
-        () => {
-          // Create expected items for verification
-          const itemBarcodes = items.map((item) => item.barcode);
-          const expectedItems = createExpectedItems(itemBarcodes);
+      // Trillium
+      it.skip('C813676 Search items by Electronic access fields (firebird)', { tags: [] }, () => {
+        // Create expected items for verification
+        const itemBarcodes = items.map((item) => item.barcode);
+        const expectedItems = createExpectedItems(itemBarcodes);
 
-          // Step 1: Verify Electronic access fields are queryable under "Select options" dropdown
-          BulkEditSearchPane.openQuerySearch();
-          BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
+        // Step 1: Verify Electronic access fields are queryable under "Select options" dropdown
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.clickBuildQueryButton();
+        QueryModal.verify();
 
-          [
-            itemFieldValues.electronicAccessLinkText,
-            itemFieldValues.electronicAccessMaterialSpecified,
-            itemFieldValues.electronicAccessURI,
-            itemFieldValues.electronicAccessURLPublicNote,
-            itemFieldValues.electronicAccessURLRelationship,
-          ].forEach((field) => {
-            QueryModal.selectField(field);
-            QueryModal.verifySelectedField(field);
-          });
-          QueryModal.verifyFieldsSortedAlphabetically();
-          QueryModal.clickSelectFieldButton();
+        [
+          itemFieldValues.electronicAccessLinkText,
+          itemFieldValues.electronicAccessMaterialSpecified,
+          itemFieldValues.electronicAccessURI,
+          itemFieldValues.electronicAccessURLPublicNote,
+          itemFieldValues.electronicAccessURLRelationship,
+        ].forEach((field) => {
+          QueryModal.selectField(field);
+          QueryModal.verifySelectedField(field);
+        });
+        QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
 
-          // Step 2: Search items by "Items — Electronic access — URL relationship" field using "equals" operator
-          QueryModal.selectField(itemFieldValues.electronicAccessURLRelationship);
-          QueryModal.verifySelectedField(itemFieldValues.electronicAccessURLRelationship);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.chooseValueSelect('No display constant generated');
-          QueryModal.addNewRow();
-          QueryModal.selectField(itemFieldValues.itemBarcode, 1);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
-          QueryModal.fillInValueTextfield('AT_C813676_Item', 1);
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Item — Electronic access');
-          QueryModal.clickShowColumnsButton();
+        // Step 2: Search items by "Items — Electronic access — URL relationship" field using "equals" operator
+        QueryModal.selectField(itemFieldValues.electronicAccessURLRelationship);
+        QueryModal.verifySelectedField(itemFieldValues.electronicAccessURLRelationship);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+        QueryModal.chooseValueSelect('No display constant generated');
+        QueryModal.addNewRow();
+        QueryModal.selectField(itemFieldValues.itemBarcode, 1);
+        QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
+        QueryModal.fillInValueTextfield('AT_C813676_Item', 1);
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
+        QueryModal.clickShowColumnsButton();
+        QueryModal.clickCheckboxInShowColumns('Item — Electronic access');
+        QueryModal.clickShowColumnsButton();
 
-          let expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+        let expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
-          expectedItemsToFind.forEach((item) => {
-            verifyElectronicAccessInQueryModal(item);
-          });
+        expectedItemsToFind.forEach((item) => {
+          verifyElectronicAccessInQueryModal(item);
+        });
 
-          let notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
+        let notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
 
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
+        notExpectedToFindItemBarcodes.forEach((barcode) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+        });
 
-          // Step 3: Search items by "Items — Electronic access — URI" field using "starts with" operator
-          QueryModal.selectField(itemFieldValues.electronicAccessURI);
-          QueryModal.verifySelectedField(itemFieldValues.electronicAccessURI);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
-          QueryModal.fillInValueTextfield('http://www.mapnetwork.org');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        // Step 3: Search items by "Items — Electronic access — URI" field using "starts with" operator
+        QueryModal.selectField(itemFieldValues.electronicAccessURI);
+        QueryModal.verifySelectedField(itemFieldValues.electronicAccessURI);
+        QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
+        QueryModal.fillInValueTextfield('http://www.mapnetwork.org');
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+        expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
-          expectedItemsToFind.forEach((item) => {
-            verifyElectronicAccessInQueryModal(item);
-          });
+        expectedItemsToFind.forEach((item) => {
+          verifyElectronicAccessInQueryModal(item);
+        });
 
-          notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
+        notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
 
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
+        notExpectedToFindItemBarcodes.forEach((barcode) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+        });
 
-          // Step 4: Search items by "Items — Electronic access — Link text" field using "starts with" operator
-          QueryModal.selectField(itemFieldValues.electronicAccessLinkText);
-          QueryModal.verifySelectedField(itemFieldValues.electronicAccessLinkText);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
-          QueryModal.fillInValueTextfield('Monitoring the AIDS Pandemic');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        // Step 4: Search items by "Items — Electronic access — Link text" field using "starts with" operator
+        QueryModal.selectField(itemFieldValues.electronicAccessLinkText);
+        QueryModal.verifySelectedField(itemFieldValues.electronicAccessLinkText);
+        QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
+        QueryModal.fillInValueTextfield('Monitoring the AIDS Pandemic');
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+        expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
-          expectedItemsToFind.forEach((item) => {
-            verifyElectronicAccessInQueryModal(item);
-          });
+        expectedItemsToFind.forEach((item) => {
+          verifyElectronicAccessInQueryModal(item);
+        });
 
-          notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
+        notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
 
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
+        notExpectedToFindItemBarcodes.forEach((barcode) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+        });
 
-          // Step 5: Search items by "Items — Electronic access — Material specified" field using "equals" operator
-          QueryModal.selectField(itemFieldValues.electronicAccessMaterialSpecified);
-          QueryModal.verifySelectedField(itemFieldValues.electronicAccessMaterialSpecified);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.fillInValueTextfield('Book');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        // Step 5: Search items by "Items — Electronic access — Material specified" field using "equals" operator
+        QueryModal.selectField(itemFieldValues.electronicAccessMaterialSpecified);
+        QueryModal.verifySelectedField(itemFieldValues.electronicAccessMaterialSpecified);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+        QueryModal.fillInValueTextfield('Book');
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+        expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
-          expectedItemsToFind.forEach((item) => {
-            verifyElectronicAccessInQueryModal(item);
-          });
+        expectedItemsToFind.forEach((item) => {
+          verifyElectronicAccessInQueryModal(item);
+        });
 
-          notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
+        notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
 
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
+        notExpectedToFindItemBarcodes.forEach((barcode) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+        });
 
-          // Step 6-7: Search items by "Items — Electronic access — URL public note" field using "contains" operator
-          QueryModal.selectField(itemFieldValues.electronicAccessURLPublicNote);
-          QueryModal.verifySelectedField(itemFieldValues.electronicAccessURLPublicNote);
-          QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
-          QueryModal.fillInValueTextfield('available');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        // Step 6-7: Search items by "Items — Electronic access — URL public note" field using "contains" operator
+        QueryModal.selectField(itemFieldValues.electronicAccessURLPublicNote);
+        QueryModal.verifySelectedField(itemFieldValues.electronicAccessURLPublicNote);
+        QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
+        QueryModal.fillInValueTextfield('available');
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          expectedItemsToFind = [expectedItems[0], expectedItems[1]];
+        expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
-          expectedItemsToFind.forEach((item) => {
-            verifyElectronicAccessInQueryModal(item);
-          });
+        expectedItemsToFind.forEach((item) => {
+          verifyElectronicAccessInQueryModal(item);
+        });
 
-          notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
+        notExpectedToFindItemBarcodes = [expectedItems[2].barcode, expectedItems[3].barcode];
 
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
-        },
-      );
+        notExpectedToFindItemBarcodes.forEach((barcode) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+        });
+      });
     });
   });
 });

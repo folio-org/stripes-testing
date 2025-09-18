@@ -129,9 +129,12 @@ describe('Circulation log', () => {
     'C17010 Filter circulation log by service points (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17010'] },
     () => {
-      SearchPane.searchByServicePoint(servicePointName);
-      SearchPane.verifyResultCells();
+      cy.waitForAuthRefresh(() => {
+        SearchPane.searchByServicePoint(servicePointName);
+        SearchPane.verifyResultCells();
+      });
       SearchPane.resetResults();
+      cy.reload();
     },
   );
 
@@ -180,7 +183,11 @@ describe('Circulation log', () => {
     { tags: ['smoke', 'volaris', 'C15853'] },
     () => {
       // login with user that has all permissions
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      cy.loginAsAdmin({
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+        authRefresh: true,
+      });
 
       // find user
       UsersSearchPane.searchByStatus('Active');
@@ -216,7 +223,11 @@ describe('Circulation log', () => {
     'C16980 Filter circulation log by changed due date (volaris)',
     { tags: ['criticalPath', 'volaris', 'C16980'] },
     () => {
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      cy.loginAsAdmin({
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+        authRefresh: true,
+      });
 
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(userId);

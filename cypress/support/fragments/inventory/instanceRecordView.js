@@ -106,20 +106,32 @@ const viewSource = () => {
   cy.do(viewSourceButton.click());
 };
 
-const verifyAdministrativeNote = (value) => {
-  cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+const verifyAdministrativeNote = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+  } else {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).absent());
+  }
 };
 
 const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
-const verifyStatisticalCode = (value) => {
-  cy.expect(
-    MultiColumnList({ id: 'list-statistical-codes' })
-      .find(MultiColumnListCell({ content: value }))
-      .exists(),
-  );
+const verifyStatisticalCode = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .exists(),
+    );
+  } else {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .absent(),
+    );
+  }
 };
 
 const verifyStatisticalCodeTypeAndName = (type, name) => {
@@ -780,12 +792,23 @@ export default {
     });
   },
 
-  verifyInstanceSubject: (subjectSource) => {
+  verifyInstanceSubject: (subjectSource, isLinkedToMarcAuthority = false) => {
+    if (isLinkedToMarcAuthority) {
+      cy.expect(
+        subjectList
+          .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+          .find(MultiColumnListCell({ column: 'Subject headings' }))
+          .has({ content: `Linked to MARC authority${subjectSource.subjectHeadings}` }),
+      );
+    } else {
+      cy.expect(
+        subjectList
+          .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+          .find(MultiColumnListCell({ column: 'Subject headings' }))
+          .has({ content: subjectSource.subjectHeadings }),
+      );
+    }
     cy.expect([
-      subjectList
-        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
-        .find(MultiColumnListCell({ column: 'Subject headings' }))
-        .has({ content: subjectSource.subjectHeadings }),
       subjectList
         .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject source' }))
@@ -959,5 +982,18 @@ export default {
     }).then(() => {
       cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
     });
+  },
+
+  verifyAlternativeTitle(indexRow, value, isLinkedToMarcAuthority = false) {
+    const alternativeTitleCell = titleDataAccordion
+      .find(MultiColumnList({ id: 'list-alternative-titles' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell({ column: 'Alternative title' }));
+
+    if (isLinkedToMarcAuthority) {
+      cy.expect(alternativeTitleCell.has({ content: `Linked to MARC authority${value}` }));
+    } else {
+      cy.expect(alternativeTitleCell.has({ content: value }));
+    }
   },
 };

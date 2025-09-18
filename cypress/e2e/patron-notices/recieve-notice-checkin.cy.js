@@ -179,6 +179,7 @@ describe('Patron notices', () => {
               cy.login(userData.username, userData.password, {
                 path: settingsMenu.circulationPatronNoticePoliciesPath,
                 waiter: NewNoticePolicyTemplate.waitLoading,
+                authRefresh: true,
               });
             });
           });
@@ -249,11 +250,10 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.waitForAuthRefresh(() => {
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.checkOutPath,
-            waiter: Checkout.waitLoading,
-          });
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+          authRefresh: true,
         });
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);

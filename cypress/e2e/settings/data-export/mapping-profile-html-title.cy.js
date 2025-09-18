@@ -7,12 +7,12 @@ import SettingsDataExport from '../../../support/fragments/data-export/settingsD
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
 const mappingProfile = {
-  name: `Mapping-Profile-${getRandomPostfix()}`,
-  newName: `New-Mapping-Profile-${getRandomPostfix()}`,
+  name: getTestEntityValue('fieldMappingProfile'),
+  newName: getTestEntityValue('newFieldMappingProfile'),
   newDescription: `New-Mapping-Profile-${getRandomPostfix()}`,
 };
 const callout = `The field mapping profile ${mappingProfile.name} has been successfully created`;

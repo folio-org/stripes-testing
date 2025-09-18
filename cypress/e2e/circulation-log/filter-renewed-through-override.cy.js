@@ -85,7 +85,10 @@ describe('Circulation log', () => {
     cy.getAdminSourceRecord().then((record) => {
       testData.adminSourceRecord = record;
     });
-    cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
+    cy.loginAsAdmin({
+      path: TopMenu.circulationLogPath,
+      waiter: SearchPane.waitLoading,
+    });
   });
 
   after('delete test data', () => {
@@ -113,9 +116,11 @@ describe('Circulation log', () => {
         servicePoint: testData.userServicePoint.name,
         source: testData.adminSourceRecord,
       };
-      SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
-      SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      cy.waitForAuthRefresh(() => {
+        SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
+        SearchPane.verifyResultCells();
+        SearchPane.checkResultSearch(searchResultsData);
+      });
 
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.verifyResultCells();

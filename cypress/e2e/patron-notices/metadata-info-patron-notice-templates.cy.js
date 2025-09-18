@@ -29,6 +29,7 @@ describe('Patron notices', () => {
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
+            authRefresh: true,
           });
         });
     });

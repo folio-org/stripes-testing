@@ -65,9 +65,11 @@ describe('Reading Room Access', () => {
         name: `ReadingRoom${getRandomPostfix()}`,
         servicePointName: testData.servicePoint.name,
       };
+      cy.waitForAuthRefresh(() => {
+        SettingsTenantPane.goToTenantTab();
+        SettingsTenantPane.selectTenant(TENANTS.READING_ROOM_ACCESS);
+      });
 
-      SettingsTenantPane.goToTenantTab();
-      SettingsTenantPane.selectTenant(TENANTS.READING_ROOM_ACCESS);
       SettingsReadingRoom.verifyReadingRoomPaneExists();
       SettingsReadingRoom.create(readingRoom);
 

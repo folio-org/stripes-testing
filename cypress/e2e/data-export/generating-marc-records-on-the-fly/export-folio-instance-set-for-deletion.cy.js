@@ -71,11 +71,13 @@ describe('Data Export', () => {
             SetRecordForDeletionModal.clickConfirm();
             InstanceRecordView.verifyInstanceIsSetForDeletion();
 
+            FileManager.createFile(`cypress/fixtures/${fileName}`, createdInstanceIds.join('\n'));
+
             cy.login(user.username, user.password, {
               path: TopMenu.dataExportPath,
               waiter: DataExportLogs.waitLoading,
+              authRefresh: true,
             });
-            FileManager.createFile(`cypress/fixtures/${fileName}`, createdInstanceIds.join('\n'));
           });
       });
     });

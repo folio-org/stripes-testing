@@ -3,7 +3,6 @@ import ManageAuthorityFiles from '../../../support/fragments/settings/marc-autho
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
-import { AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -28,7 +27,6 @@ describe('MARC', () => {
         ],
         isActive: true,
       };
-      const errorNonUniqueBaseUrl = 'Error saving data. Base URL must be unique.';
       const user = {};
 
       before('Create user, login', () => {
@@ -79,10 +77,8 @@ describe('MARC', () => {
             ManageAuthorityFiles.checkCancelButtonEnabled();
             ManageAuthorityFiles.checkSaveButtonEnabled();
             ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
-            ManageAuthorityFiles.checkErrorInField(
+            ManageAuthorityFiles.verifyUpdateAssignedSourceFileError(
               authorityFilesNonUniqueBaseUrl.name,
-              AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
-              errorNonUniqueBaseUrl,
             );
             ManageAuthorityFiles.clickCancelButton();
             ManageAuthorityFiles.checkSourceFileExistsByName(

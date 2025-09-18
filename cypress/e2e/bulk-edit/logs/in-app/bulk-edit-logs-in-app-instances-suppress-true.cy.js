@@ -282,7 +282,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyTheActionOptions(Object.values(actionOptions));
 
           // Step 8: Select "Set true" action
-          BulkEditActions.selectAction(actionOptions.setTrue);
+          BulkEditActions.selectSecondAction(actionOptions.setTrue);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 9: Uncheck checkbox only near "Apply to all items records" label

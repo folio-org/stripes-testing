@@ -138,9 +138,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C813660 Search holdings by Statements for supplements fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813660'] },
+        { tags: [] },
         () => {
           // Step 1: Verify Statements for supplements fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();

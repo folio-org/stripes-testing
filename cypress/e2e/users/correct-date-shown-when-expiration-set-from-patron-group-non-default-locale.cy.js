@@ -65,6 +65,7 @@ describe('Users', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.tenantPath,
           waiter: TenantPane.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -90,7 +91,6 @@ describe('Users', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(testData.user.username);
-      cy.waitForAuthRefresh(() => {}, 20_000);
       UsersCard.waitLoading();
 
       // Step 2: open Edit

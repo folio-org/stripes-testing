@@ -19,6 +19,7 @@ describe('remote-storage-configuration', () => {
     cy.login(user.username, user.password, {
       path: TopMenu.remoteStorageConfigurationPath,
       waiter: Configurations.waitLoading,
+      authRefresh: true,
     });
   });
 

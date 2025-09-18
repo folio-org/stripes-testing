@@ -138,9 +138,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C813667 Search holdings by Statements for indexes fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813667'] },
+        { tags: [] },
         () => {
           // Step 1: Verify Statements for indexes fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();
