@@ -269,6 +269,7 @@ describe('Bulk-edit', () => {
 
             instances.forEach((instance) => {
               TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              InventorySearchAndFilter.clearSelectionsInHeldByAccordion();
               InventorySearchAndFilter.selectYesfilterStaffSuppress();
               InventorySearchAndFilter.searchInstanceByTitle(instance.title);
               InventoryInstances.selectInstance();
@@ -368,6 +369,7 @@ describe('Bulk-edit', () => {
 
                 instances.forEach((instance) => {
                   TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+                  InventorySearchAndFilter.clearSelectionsInHeldByAccordion();
                   InventorySearchAndFilter.searchInstanceByTitle(instance.title);
                   InventoryInstances.selectInstance();
                   InventoryInstance.waitLoading();
