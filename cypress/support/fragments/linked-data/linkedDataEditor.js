@@ -5,6 +5,7 @@ import InventoryInstance from '../inventory/inventoryInstance';
 import PreviewResource from './previewResource';
 import SearchAndFilter from './searchAndFilter';
 import ComparisonForm from './comparisonForm';
+import WorkProfileModal from './workProfileModal';
 
 const searchSection = "//div[@class='item-search-content']";
 const actionsButton = "//button[@data-testid='search-view-actions-dropdown']";
@@ -49,6 +50,7 @@ export default {
   openNewResourceForm: () => {
     cy.xpath(actionsButton).click();
     cy.xpath(newResourceButton).click();
+    WorkProfileModal.selectDefaultOption();
     EditResource.waitLoading();
   },
 

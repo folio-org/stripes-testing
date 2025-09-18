@@ -147,6 +147,7 @@ const validationCalloutMainText =
   'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
 const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
 const derivePaneHeaderText = /Derive a new .*MARC bib record/;
+const searchButtonIn010Field = Button({ ariaLabel: 'search' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -3138,5 +3139,33 @@ export default {
   verifyDropdownsShownInField(rowIndex, isShown = true) {
     if (isShown) cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).exists());
     else cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).absent());
+  },
+
+  checkSearchButtonShownIn010Field({ checkHoverText = false } = {}) {
+    cy.expect(getRowInteractorByTagName('010').find(searchButtonIn010Field).exists());
+    if (checkHoverText) {
+      cy.do(getRowInteractorByTagName('010').find(searchButtonIn010Field).hoverMouse());
+      cy.expect(Tooltip().has({ text: 'Search for records by 010 value(s)' }));
+    }
+  },
+
+  checkAddButtonShownInField(tag, isShown = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(addFieldButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  clickSearchButtonIn010Field() {
+    cy.do(
+      getRowInteractorByTagName('010')
+        .find(searchButtonIn010Field)
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
+    cy.url().should('include', 'advancedSearch');
   },
 };
