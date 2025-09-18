@@ -10,12 +10,12 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        title: `AT_C514992_MarcBibInstance_${getRandomPostfix()}`,
+        title: `AT_C519973_MarcBibInstance_${getRandomPostfix()}`,
         tags: {
           tag245: '245',
-          tag988: '988',
+          tag199: '199',
         },
-        undefinedFieldContent: '$a Not defined field',
+        undefinedFieldContent: '$a Undefined 1XX field',
         expectedWarning: 'Warn: Field is undefined.',
         userProperties: {},
         valid245indicatorValue: '1',
@@ -43,8 +43,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514992 Create MARC bib record with field which is not defined in validation rules (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514992'] },
+        'C519973 Create MARC bib record with undefined 1XX field (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C519973'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();
@@ -61,8 +61,8 @@ describe('MARC', () => {
             1,
           );
 
-          QuickMarcEditor.addNewField(testData.tags.tag988, testData.undefinedFieldContent, 4);
-          QuickMarcEditor.verifyTagValue(5, testData.tags.tag988);
+          QuickMarcEditor.addNewField(testData.tags.tag199, testData.undefinedFieldContent, 4);
+          QuickMarcEditor.verifyTagValue(5, testData.tags.tag199);
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(5, testData.expectedWarning);
