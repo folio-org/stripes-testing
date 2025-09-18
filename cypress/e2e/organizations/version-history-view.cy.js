@@ -90,6 +90,7 @@ describe('Organizations', () => {
     cy.loginAsAdmin({
       path: TopMenu.agreementsPath,
       waiter: Agreements.waitLoading,
+      authRefresh: true,
     });
     Agreements.selectRecord(defaultAgreement.name);
     Agreements.deleteAgreement();
@@ -110,8 +111,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         1,
         preUpdated,
-        'Diku_admin',
-        'ADMINISTRATOR',
+        'folio-aqa',
+        'folio-aqa',
         true,
         false,
       );
@@ -119,8 +120,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
-        'Diku_admin',
-        'ADMINISTRATOR',
+        'folio-aqa',
+        'folio-aqa',
         false,
         true,
       );

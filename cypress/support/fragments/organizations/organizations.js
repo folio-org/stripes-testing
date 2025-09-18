@@ -437,6 +437,15 @@ export default {
     cy.expect(tagsPane.absent());
   },
 
+  closeEditingWindow() {
+    cy.do(
+      PaneHeader()
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(1000);
+  },
+
   selectTagFilter: (tag) => {
     cy.wait(3000);
     cy.do([
@@ -1288,10 +1297,34 @@ export default {
     cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
 
+  deleteDonorFromPrivilegedDonorInformation: () => {
+    const acc = Section({ id: 'privilegedDonorInformation' });
+    const list = acc.find(MultiColumnList({ id: 'privilegedContacts' }));
+
+    cy.expect(list.exists());
+    cy.expect(list.find(MultiColumnListRow({ index: 0 })).exists());
+
+    cy.do(
+      list
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Button({ ariaLabel: 'Unassign' }))
+        .click(),
+    );
+  },
+
   deleteContactFromContactPeople: () => {
-    cy.get('#contact-list button[data-test-unassign-contact="true"][aria-label="Unassign"]:visible')
-      .first()
-      .click();
+    const acc = Section({ id: 'contactPeopleSection' });
+    const list = acc.find(MultiColumnList({ id: 'contact-list' }));
+
+    cy.expect(list.exists());
+    cy.expect(list.find(MultiColumnListRow({ index: 0 })).exists());
+
+    cy.do(
+      list
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Button({ ariaLabel: 'Unassign' }))
+        .click(),
+    );
   },
 
   deleteInterfaceFromInterfaces: () => {

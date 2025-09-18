@@ -60,34 +60,34 @@ describe('Inventory', () => {
         ).then((response) => {
           instanceRecordId = response[0].instance.id;
         });
-      }).then(() => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventoryInstances.searchByTitle(instanceRecordId);
-        InventoryInstances.selectInstanceById(instanceRecordId);
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(bibTag);
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(authorityHeading);
-        MarcAuthority.contains(authorityHeading);
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
-        QuickMarcEditor.checkAfterSaveAndClose();
-
-        cy.waitForAuthRefresh(() => {
+      })
+        .then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
+          InventoryInstances.searchByTitle(instanceRecordId);
+          InventoryInstances.selectInstanceById(instanceRecordId);
+          InventoryInstance.editMarcBibliographicRecord();
+          InventoryInstance.verifyAndClickLinkIcon(bibTag);
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.verifySelectMarcAuthorityModal();
+          InventoryInstance.searchResults(authorityHeading);
+          MarcAuthority.contains(authorityHeading);
+          InventoryInstance.clickLinkButton();
+          QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.checkAfterSaveAndClose();
+        })
+        .then(() => {
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
-        InventorySearchAndFilter.switchToBrowseTab();
-      });
+          InventorySearchAndFilter.switchToBrowseTab();
+        });
     });
 
     after('Delete user, records', () => {

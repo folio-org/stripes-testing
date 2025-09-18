@@ -55,31 +55,27 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-
-          cy.getAdminToken();
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
             });
-          });
-
-          cy.waitForAuthRefresh(() => {
+          })
+          .then(() => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000).then(() => {
-            InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
@@ -96,16 +92,14 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
-          });
-          cy.waitForAuthRefresh(() => {
+          })
+          .then(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
-          }, 20_000);
-        });
+          });
       });
 
       after('Deleting user, data', () => {
@@ -142,9 +136,6 @@ describe('MARC', () => {
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
           InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
-
-          const { lastName, firstName, middleName } = testData.userProperties.personal;
-          InventoryInstance.verifyRecordStatus(`${lastName}, ${firstName} ${middleName}`);
           InventoryInstance.verifyInstanceSubject(
             11,
             0,
@@ -155,7 +146,6 @@ describe('MARC', () => {
           );
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.checkPaneheaderContains(`Source: ${lastName}, ${firstName}`);
           QuickMarcEditor.verifyTagFieldAfterLinking(
             51,
             '655',

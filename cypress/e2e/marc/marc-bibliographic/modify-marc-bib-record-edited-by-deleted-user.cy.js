@@ -66,6 +66,7 @@ describe('MARC', () => {
             cy.login(users.userAProperties.username, users.userAProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -95,6 +96,7 @@ describe('MARC', () => {
         cy.login(users.userBProperties.username, users.userBProperties.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
 
         UsersSearchPane.searchByUsername(users.userAProperties.username);

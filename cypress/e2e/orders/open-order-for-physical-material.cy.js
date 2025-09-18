@@ -6,7 +6,6 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
@@ -43,7 +42,7 @@ describe('Orders', () => {
         OrderLines.backToEditingOrder();
         Orders.openOrder();
 
-        TopMenuNavigation.openAppFromDropdown('Inventory');
+        cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', orderLineTitle);
         InventorySearchAndFilter.verifySearchResult(orderLineTitle);
       });

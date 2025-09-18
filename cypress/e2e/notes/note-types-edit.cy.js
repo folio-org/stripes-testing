@@ -40,9 +40,11 @@ describe('Notes', () => {
         ]).then((userC1304Properties) => {
           testData.userC1304Properties = userC1304Properties;
 
-          cy.loginAsAdmin().then(() => {
-            cy.visit(TopMenu.usersPath);
-            UsersSearchPane.waitLoading();
+          cy.loginAsAdmin({
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+            authRefresh: true,
+          }).then(() => {
             UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
             UsersSearchPane.waitLoading();
             UsersCard.openNotesSection();
@@ -66,30 +68,30 @@ describe('Notes', () => {
     'C1304 Settings | Edit a note type (spitfire)',
     { tags: ['extendedPath', 'spitfire', 'C1304'] },
     () => {
-      cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password).then(
-        () => {
-          cy.visit(TopMenu.notesPath);
-          NoteTypes.waitLoading();
-          NoteTypes.checkNewButtonState();
-          NoteTypes.clickEditNoteType(testData.customNoteTypeName);
-          NoteTypes.checkNoteButtonsState();
-          NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
-          NoteTypes.saveNoteType(testData.updatedNoteTypeName);
+      cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password, {
+        path: TopMenu.notesPath,
+        waiter: NoteTypes.waitLoading,
+        authRefresh: true,
+      }).then(() => {
+        NoteTypes.checkNewButtonState();
+        NoteTypes.clickEditNoteType(testData.customNoteTypeName);
+        NoteTypes.checkNoteButtonsState();
+        NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
+        NoteTypes.saveNoteType(testData.updatedNoteTypeName);
 
-          cy.visit(TopMenu.usersPath);
-          UsersSearchPane.waitLoading();
-          UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
-          UsersSearchPane.waitLoading();
-          UsersCard.openNotesSection();
-          UsersCard.clickNewNoteButton();
-          NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
-          NewNote.close();
-          UsersCard.openNotesSection();
-          UsersCard.openNoteForEdit(noteC1304.title);
-          ExistingNoteEdit.waitLoading();
-          NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
-        },
-      );
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.waitLoading();
+        UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
+        UsersSearchPane.waitLoading();
+        UsersCard.openNotesSection();
+        UsersCard.clickNewNoteButton();
+        NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+        NewNote.close();
+        UsersCard.openNotesSection();
+        UsersCard.openNoteForEdit(noteC1304.title);
+        ExistingNoteEdit.waitLoading();
+        NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+      });
     },
   );
 });

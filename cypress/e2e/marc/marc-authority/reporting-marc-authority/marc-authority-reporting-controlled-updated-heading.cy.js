@@ -141,6 +141,7 @@ describe('MARC', () => {
           cy.wait(1500);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          cy.wait(3000);
 
           MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedFirstUpdateData);
         },

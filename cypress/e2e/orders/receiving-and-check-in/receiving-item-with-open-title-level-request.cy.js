@@ -100,6 +100,7 @@ describe('Orders: Receiving and Check-in', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });
