@@ -27,7 +27,7 @@ describe('MARC', () => {
             'C380753 Black Panther (Fictitious character) Wakanda Forever--Comic books, strips, etc',
           filterState: [
             'advancedSearch',
-            'keyword exactPhrase C380753 Black Panther (Fictitious character) or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
+            'keyword exactPhrase C380753 Black Panther or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
           ],
           bib600AfterUnlinking: [
             45,
@@ -100,14 +100,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
@@ -139,7 +136,9 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, 45);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600AfterLinkingToAuth100);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.verifyInstanceSubject(

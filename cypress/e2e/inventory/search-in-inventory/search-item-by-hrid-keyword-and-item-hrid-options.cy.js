@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Search in Inventory', () => {
     const randomPostfix = getRandomPostfix();
     const instanceTitlePrefix = `AT_C9208_FolioInstance_${randomPostfix}`;
@@ -59,9 +59,10 @@ describe('Inventory', () => {
       InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitlePrefix);
     });
 
+    // Trillium+ only
     it(
       'C9208 Search for Item by HRID field using "Keyword" and "Item HRID" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9208'] },
+      { tags: [] },
       () => {
         // Step 1: Open Inventory app and select item segment
         InventorySearchAndFilter.switchToItem();

@@ -152,6 +152,7 @@ describe('Data Import', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.ordersPath,
                 waiter: Orders.waitLoading,
+                authRefresh: true,
               });
             });
         });

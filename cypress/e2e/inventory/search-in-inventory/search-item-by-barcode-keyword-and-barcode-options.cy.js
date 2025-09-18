@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Search in Inventory', () => {
     const randomPostfix = getRandomPostfix();
     const simpleBarcode = `5412658${randomPostfix}`;
@@ -53,9 +53,10 @@ describe('Inventory', () => {
       InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitlePrefix);
     });
 
+    // Trillium+ only
     it(
       'C2317 Search for Item by barcode field using "Keyword" and "Barcode" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C2317'] },
+      { tags: [] },
       () => {
         // Step 1: Search for item with simple barcode using "Keyword" search option
         InventorySearchAndFilter.switchToItem();

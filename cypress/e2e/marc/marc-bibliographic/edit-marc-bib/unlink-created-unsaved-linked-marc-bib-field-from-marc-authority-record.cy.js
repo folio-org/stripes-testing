@@ -51,6 +51,8 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366554*');
+
           cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -67,6 +69,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           }).then(() => {
             InventorySearchAndFilter.selectSearchOptions(
               testData.searchOption,

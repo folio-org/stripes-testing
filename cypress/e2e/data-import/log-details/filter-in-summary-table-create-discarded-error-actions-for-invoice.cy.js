@@ -61,6 +61,7 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -71,6 +72,7 @@ describe('Data Import', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
+          authRefresh: true,
         });
       });
     });

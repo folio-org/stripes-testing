@@ -44,7 +44,7 @@ describe('Orders', () => {
   let orderLineTitle;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -52,11 +52,8 @@ describe('Orders', () => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
         secondFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -119,6 +116,7 @@ describe('Orders', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });

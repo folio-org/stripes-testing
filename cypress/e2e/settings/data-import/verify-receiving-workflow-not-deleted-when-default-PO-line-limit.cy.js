@@ -18,8 +18,7 @@ import SettingsOrders from '../../../support/fragments/settings/orders/settingsO
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
+import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -39,6 +38,7 @@ describe('Data Import', () => {
       recordType: 'ORDER',
       description: '',
     };
+    const randomNumber = randomTwoDigitNumber();
     const defaultPurchaseOrderLinesLimit = '1';
     const newPurchaseOrderLinesLimit = '15';
 
@@ -50,7 +50,8 @@ describe('Data Import', () => {
       });
       SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
       // First set to a random number, to make sure "Save" button is clickable
-      OrderLinesLimit.setPOLLimit(defaultPurchaseOrderLinesLimit);
+      SettingsOrders.setPurchaseOrderLinesLimit(randomNumber);
+      SettingsOrders.setPurchaseOrderLinesLimit(defaultPurchaseOrderLinesLimit);
       SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
       cy.createTempUser([
@@ -78,6 +79,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet', 'C375211'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
+        cy.wait(2000);
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
@@ -105,7 +107,7 @@ describe('Data Import', () => {
         // #6 Navigate to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit" -> Change value to any value different from defaulted -> Click "Save" button
         SettingsMenu.selectOrders();
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
-        OrderLinesLimit.setPOLLimit(newPurchaseOrderLinesLimit);
+        SettingsOrders.setPurchaseOrderLinesLimit(newPurchaseOrderLinesLimit);
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(newPurchaseOrderLinesLimit);
 
         // #7 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Find and select the field mapping profile from step 3

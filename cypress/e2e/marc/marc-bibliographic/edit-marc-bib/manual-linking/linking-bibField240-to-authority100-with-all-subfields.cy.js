@@ -20,10 +20,8 @@ describe('MARC', () => {
             '$a Fail $d PASS (editable) $t test $f fail $g fail $h fail $k fail $l fail $m fail $n fail $o fail $p fail $r fail $s fail $1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8  pass(editable)',
           browseSearchOption: 'nameTitle',
           searchOption: 'Keyword',
-          searchValue:
-            'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail',
-          placeholderMessage:
-            'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail would be here',
+          searchValue: 'Fail PASS (editable) test',
+          placeholderMessage: 'Fail PASS (editable) test would be here',
           authorityMarkedValue:
             'Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
           tag240rowindex: 28,
@@ -98,6 +96,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authrefresh: true,
             });
           });
         });

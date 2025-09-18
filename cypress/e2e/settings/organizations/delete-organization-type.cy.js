@@ -15,6 +15,7 @@ describe('Organizations: Settings (Organizations)', () => {
         cy.login(user.username, user.password, {
           path: SettingsMenu.organizationsPath,
           waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+          authRefresh: true,
         });
       },
     );
