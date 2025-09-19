@@ -1424,10 +1424,12 @@ export const BULK_EDIT_FORMS = {
 
 export const INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES = {
   TYPE: 'Type',
+  COMP: 'Comp',
   AUDN: 'Audn',
   FORM: 'Form',
   FILE: 'File',
   GPUB: 'GPub',
+  PROJ: 'Proj',
 };
 
 export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
@@ -1448,6 +1450,11 @@ export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
   DETST: 'DetSt',
   COMPL: 'Compl',
   FID: 'FID',
+  IBD: 'IBD',
+  COBRWR: 'CoBrWr',
+  BMF: 'BMF',
+  RRRRR: 'RRR/RR',
+  DATATYPE: 'Data type',
 };
 
 export const INVENTORY_006_FIELD_TYPE_DROPDOWN = {
@@ -1586,4 +1593,13 @@ export const DEFAULT_WAIT_TIME = 4000;
 export const API_PATH = {
   INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
   ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
+
+export const INVENTORY_COLUMN_HEADERS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  PUBLISHERS: 'Publishers',
+  DATE: 'Date',
+  RELATION: 'Relation',
+  INSTANCE_HRID: 'Instance HRID',
 };

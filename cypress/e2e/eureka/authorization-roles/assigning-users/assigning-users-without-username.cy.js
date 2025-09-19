@@ -68,10 +68,12 @@ describe('Eureka', () => {
                 capabsToAssign,
                 capabSetsToAssign,
               );
-              cy.login(testData.tempUser.username, testData.tempUser.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.tempUser.username, testData.tempUser.password, {
+                  path: TopMenu.settingsAuthorizationRoles,
+                  waiter: AuthorizationRoles.waitContentLoading,
+                });
+              }, 20_000);
             });
           });
         });

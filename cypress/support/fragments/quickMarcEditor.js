@@ -147,6 +147,7 @@ const validationCalloutMainText =
   'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
 const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
 const derivePaneHeaderText = /Derive a new .*MARC bib record/;
+const searchButtonIn010Field = Button({ ariaLabel: 'search' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -1476,25 +1477,28 @@ export default {
     );
   },
 
-  selectFieldsDropdownOption(tag, dropdownLabel, option) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
-        .choose(option),
-    );
+  selectFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(Select({ label: including(dropdownLabel) })).choose(option));
+    cy.wait(500);
   },
 
-  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+  verifyFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
     );
   },
 
-  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
@@ -3119,24 +3123,49 @@ export default {
     this.checkPaneheaderContains(derivePaneHeaderText);
   },
 
-  fillInTextBoxInField(tag, boxLabel, value) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(TextField({ label: boxLabel }))
-        .fillIn(value),
-    );
+  fillInTextBoxInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(TextField({ label: boxLabel })).fillIn(value));
+    cy.wait(500);
   },
 
-  verifyTextBoxValueInField(tag, boxLabel, value) {
-    cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(TextField({ label: boxLabel }))
-        .has({ value }),
-    );
+  verifyTextBoxValueInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ value }));
   },
 
   verifyDropdownsShownInField(rowIndex, isShown = true) {
     if (isShown) cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).exists());
     else cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).absent());
+  },
+
+  checkSearchButtonShownIn010Field({ checkHoverText = false } = {}) {
+    cy.expect(getRowInteractorByTagName('010').find(searchButtonIn010Field).exists());
+    if (checkHoverText) {
+      cy.do(getRowInteractorByTagName('010').find(searchButtonIn010Field).hoverMouse());
+      cy.expect(Tooltip().has({ text: 'Search for records by 010 value(s)' }));
+    }
+  },
+
+  checkAddButtonShownInField(tag, isShown = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(addFieldButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  clickSearchButtonIn010Field() {
+    cy.do(
+      getRowInteractorByTagName('010')
+        .find(searchButtonIn010Field)
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
+    cy.url().should('include', 'advancedSearch');
   },
 };

@@ -80,7 +80,6 @@ describe('Data Import', () => {
         InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
         });
-        InstanceRecordView.waitLoading();
         InstanceRecordView.verifyResourceIdentifier(
           testData.identifire.type,
           testData.identifire.value,

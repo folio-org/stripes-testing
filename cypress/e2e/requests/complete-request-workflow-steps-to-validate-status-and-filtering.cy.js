@@ -82,9 +82,11 @@ describe('Requests', () => {
         }).then((createdRequest) => {
           testData.requestId = createdRequest.body.id;
         });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.checkInPath,
-          waiter: CheckInActions.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.checkInPath,
+            waiter: CheckInActions.waitLoading,
+          });
         });
       });
   });

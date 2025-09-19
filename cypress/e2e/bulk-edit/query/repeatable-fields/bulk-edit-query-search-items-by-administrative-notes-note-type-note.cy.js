@@ -274,9 +274,6 @@ describe('Bulk-edit', () => {
             '(items.notes[*]->item_note_type in [Note, Copy note]) AND (items.barcode starts with AT_C813674_Item)',
           );
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Item — Notes');
-          QueryModal.clickShowColumnsButton();
 
           expectedItemsToFind.forEach((item) => {
             QueryModal.verifyNotesEmbeddedTableInQueryModal(item.barcode, item.notes);

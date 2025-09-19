@@ -26,6 +26,10 @@ const fastAddNewRecordFormDetails = {
   note: 'note for monograph',
 };
 
+const fastAddPane = Pane('New fast add record');
+const cancelButton = fastAddPane.find(Button('Cancel'));
+const closeIcon = fastAddPane.find(PaneHeader()).find(Button({ icon: 'times' }));
+
 const fillFastAddNewRecordForm = ({
   resourceTitle,
   resourceType,
@@ -108,6 +112,16 @@ const closeHoldingsRecordView = () => {
   );
 };
 
+const clickCancel = () => {
+  cy.do(cancelButton.click());
+  cy.expect(fastAddPane.absent());
+};
+
+const closePane = () => {
+  cy.do(closeIcon.click());
+  cy.expect(fastAddPane.absent());
+};
+
 export default {
   fastAddNewRecordFormDetails,
   fillFastAddNewRecordForm,
@@ -118,4 +132,6 @@ export default {
   viewHoldings,
   verifyPermanentLocation,
   closeHoldingsRecordView,
+  closePane,
+  clickCancel,
 };

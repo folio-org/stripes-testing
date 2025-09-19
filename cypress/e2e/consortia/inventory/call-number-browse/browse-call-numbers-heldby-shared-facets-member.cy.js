@@ -24,6 +24,9 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const instancePrefix = 'C404360Auto Instance';
       const callNumberPrefix = `C404360Auto${getRandomLetters(10)}`;
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
       const testData = {
         instances: [
           {
@@ -427,6 +430,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.selectBrowseCallNumbers();
           });
           cy.setTenant(Affiliations.College);
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           allVisibleCNs.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           });

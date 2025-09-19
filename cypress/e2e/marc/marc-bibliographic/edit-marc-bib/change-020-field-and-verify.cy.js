@@ -26,14 +26,6 @@ describe('MARC', () => {
 
       before('Create user', () => {
         cy.getAdminToken();
-        // Delete 991 field requirement to clear precondition environment
-        cy.getSpecificatoinIds().then((specs) => {
-          const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-          if (bibSpec) {
-            cy.deleteSpecificationFieldByTag(bibSpec.id, '991', false);
-          }
-        });
-
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -64,7 +56,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record',
+        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C10989'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
