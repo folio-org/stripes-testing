@@ -5,6 +5,7 @@ import InstanceRecordEdit from '../../../../support/fragments/inventory/instance
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -14,6 +15,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
+      heldByAccordionName: 'Held by',
       newInstanceTitle: `C407750 instanceTitle${getRandomPostfix()}`,
       servicePoint: ServicePoints.defaultServicePoint,
     };
@@ -67,6 +69,7 @@ describe('Inventory', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         InventoryInstances.waitContentLoading();
+        InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
         InventoryInstances.searchByTitle(testData.instance1.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -84,6 +87,7 @@ describe('Inventory', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         InventoryInstances.waitContentLoading();
+        InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
         InventoryInstances.searchByTitle(testData.instance2.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
