@@ -283,4 +283,14 @@ export default {
   clickOnUserBarcodeLink: (barcode) => {
     cy.do(Link(barcode).click());
   },
+
+  checkLoanPolicyInLoanDetails(loanPolicyId) {
+    cy.expect(KeyValue('Loan policy').find(Link(loanPolicyId)).exists());
+  },
+  checkOverdueFinePolicyInLoanDetails(overdueFinePolicyId) {
+    cy.expect(KeyValue('Overdue fine policy').find(Link(overdueFinePolicyId)).exists());
+  },
+  checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyId) {
+    cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyId)).exists());
+  },
 };
