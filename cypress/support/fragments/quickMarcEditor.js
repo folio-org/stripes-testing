@@ -761,6 +761,10 @@ export default {
     );
   },
 
+  verifyContentBoxIsFocused(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ focused: true }));
+  },
+
   movetoFourthBoxUsingTab(rowNumber) {
     cy.get(`[name="records[${rowNumber}].tag"]`).tab().tab().tab();
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(fourthBox).has({ focused: true }));
@@ -1676,6 +1680,7 @@ export default {
     cy.expect([
       Pane({ id: 'quick-marc-editor-pane' }).exists(),
       QuickMarcEditorRow({ tagValue: '999' }).exists(),
+      cancelButton.exists(),
     ]);
   },
 

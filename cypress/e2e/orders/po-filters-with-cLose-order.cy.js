@@ -18,7 +18,10 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
   let orderNumber;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+    });
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -31,8 +34,6 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
     });
     cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
-      cy.loginAsAdmin();
-      cy.getAdminToken();
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
@@ -40,7 +41,6 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
           orderLine.purchaseOrderId = order.id;
           cy.createOrderLineApi(orderLine);
         });
-        cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.editOrder();
