@@ -18,6 +18,7 @@ import MaterialTypes from '../../support/fragments/settings/inventory/materialTy
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
@@ -143,8 +144,11 @@ describe('Invoices', () => {
       permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password);
-      TopMenuNavigation.navigateToApp('Invoices');
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+        authRefresh: true,
+      });
     });
   });
 
