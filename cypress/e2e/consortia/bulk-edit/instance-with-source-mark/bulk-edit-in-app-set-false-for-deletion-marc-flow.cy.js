@@ -38,11 +38,11 @@ describe('Bulk-edit', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
+        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
           permissions.uiInventorySetRecordsForDeletion.gui,
-          permissions.enableStaffSuppressFacet.gui,
           permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           permissions.bulkEditLogsView.gui,
         ]).then((userProperties) => {
