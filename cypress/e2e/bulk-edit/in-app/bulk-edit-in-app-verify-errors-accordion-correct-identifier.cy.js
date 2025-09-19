@@ -101,6 +101,7 @@ describe('Bulk-edit', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.wait(5000);
         InventorySearchAndFilter.searchInstanceByTitle(instance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -144,7 +145,7 @@ describe('Bulk-edit', () => {
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectAction('Replace with');
+        BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.clickSelectedLocation('Select location', newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, newLocation);

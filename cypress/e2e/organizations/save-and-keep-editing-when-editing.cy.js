@@ -58,6 +58,7 @@ describe('Organizations', () => {
       Organizations.selectDonorCheckbox();
       Organizations.cancelOrganization();
       Organizations.closeWithoutSaving();
+      Organizations.closeEditingWindow();
       Organizations.checkIsaVendor(organizationWithNewName);
       Organizations.checkIsNotaDonor(organizationWithNewName);
       Organizations.getLastUpdateTime().then((time) => {

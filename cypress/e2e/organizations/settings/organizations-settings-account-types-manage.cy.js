@@ -31,6 +31,7 @@ describe('Banking Information', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            authRefresh: true,
           });
         },
       );
@@ -80,6 +81,7 @@ describe('Banking Information', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            authRefresh: true,
           });
         },
       );
@@ -118,6 +120,7 @@ describe('Banking Information', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            authRefresh: true,
           });
         },
       );
@@ -166,6 +169,7 @@ describe('Banking Information', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            authRefresh: true,
           });
         },
       );
@@ -223,6 +227,7 @@ describe('Banking Information', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            authRefresh: true,
           });
         });
       });

@@ -104,7 +104,6 @@ describe('Fiscal Year Rollover', () => {
           Funds.closeBudgetDetails();
         });
       });
-      cy.getAdminToken();
       Ledgers.createViaApi(secondLedger).then((secondLedgerResponse) => {
         secondLedger.id = secondLedgerResponse.id;
         secondFund.ledgerId = secondLedger.id;
@@ -177,8 +176,6 @@ describe('Fiscal Year Rollover', () => {
           Orders.openOrder();
         },
       );
-
-      cy.visit(TopMenu.ordersPath);
 
       cy.visit(TopMenu.ordersPath);
       Orders.createApprovedOrderForRollover(thirdOrder, true, false).then((thirdOrderResponse) => {

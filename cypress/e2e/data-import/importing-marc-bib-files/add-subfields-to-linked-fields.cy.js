@@ -256,7 +256,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          77,
+          74,
           '700',
           '1',
           '\\',
@@ -266,7 +266,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          78,
+          75,
           '700',
           '1',
           '\\',

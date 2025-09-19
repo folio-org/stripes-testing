@@ -36,6 +36,7 @@ describe('MARC', () => {
       before('Creating data', () => {
         cy.getAdminToken()
           .then(() => {
+            InventoryInstances.deleteFullInstancesByTitleViaApi('C422023*');
             cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
               testData.instanceTypeId = instanceTypes[0].id;
             });

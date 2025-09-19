@@ -308,8 +308,9 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(3000);
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.restoreDeletedFields();

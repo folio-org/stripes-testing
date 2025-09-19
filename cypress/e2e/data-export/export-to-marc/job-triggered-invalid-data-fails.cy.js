@@ -35,13 +35,16 @@ describe(
           permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.dataExportPath,
-            waiter: DataExportLogs.waitLoading,
-          });
+
           FileManager.createFile(`cypress/fixtures/${emptyFile}`);
           FileManager.createFile(`cypress/fixtures/${uuidsInInvalidFormat}`, getRandomPostfix());
           FileManager.createFile(`cypress/fixtures/${notFoundUUIDsInValidFormat}`, validUserUUID);
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.dataExportPath,
+            waiter: DataExportLogs.waitLoading,
+            authRefresh: true,
+          });
         });
       });
 

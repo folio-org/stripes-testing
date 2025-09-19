@@ -223,9 +223,8 @@ describe('MARC', () => {
             testData.createdRecordId = response[0].authority.id;
 
             cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorityPath,
+              path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
             });
             MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);
             MarcAuthorities.selectTitle(testData.authorityHeading);

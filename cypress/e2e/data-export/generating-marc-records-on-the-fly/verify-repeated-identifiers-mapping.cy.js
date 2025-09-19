@@ -68,6 +68,7 @@ describe('Data Export', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
+          authRefresh: true,
         });
       });
     });

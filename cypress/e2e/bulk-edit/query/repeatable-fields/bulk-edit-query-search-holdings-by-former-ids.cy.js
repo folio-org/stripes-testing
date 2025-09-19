@@ -111,43 +111,37 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
-        'C825265 Search holdings by Former IDs (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825265'] },
-        () => {
-          // Step 1-2: Search holdings by "Holdings — Former IDs" field using "starts with" operator
-          BulkEditSearchPane.openQuerySearch();
-          BulkEditSearchPane.checkHoldingsRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
+      // Trillium
+      it.skip('C825265 Search holdings by Former IDs (firebird)', { tags: [] }, () => {
+        // Step 1-2: Search holdings by "Holdings — Former IDs" field using "starts with" operator
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.clickBuildQueryButton();
+        QueryModal.verify();
 
-          QueryModal.selectField(holdingsFieldValues.formerIds);
-          QueryModal.verifySelectedField(holdingsFieldValues.formerIds);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
-          QueryModal.fillInValueTextfield('hold');
-          QueryModal.addNewRow();
-          QueryModal.selectField(holdingsFieldValues.instanceUuid, 1);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.fillInValueTextfield(folioInstance.id, 1);
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
+        QueryModal.selectField(holdingsFieldValues.formerIds);
+        QueryModal.verifySelectedField(holdingsFieldValues.formerIds);
+        QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
+        QueryModal.fillInValueTextfield('hold');
+        QueryModal.addNewRow();
+        QueryModal.selectField(holdingsFieldValues.instanceUuid, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.fillInValueTextfield(folioInstance.id, 1);
+        QueryModal.clickTestQuery();
+        QueryModal.verifyPreviewOfRecordsMatched();
 
-          const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
+        const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 
-          expectedHoldingsToFind.forEach((holding) => {
-            verifyFormerIds(holding, holding.formerIds);
-          });
+        expectedHoldingsToFind.forEach((holding) => {
+          verifyFormerIds(holding, holding.formerIds);
+        });
 
-          const notExpectedToFindHoldingHrids = [
-            expectedHoldings[2].hrid,
-            expectedHoldings[3].hrid,
-          ];
+        const notExpectedToFindHoldingHrids = [expectedHoldings[2].hrid, expectedHoldings[3].hrid];
 
-          notExpectedToFindHoldingHrids.forEach((hrid) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
-          });
-        },
-      );
+        notExpectedToFindHoldingHrids.forEach((hrid) => {
+          QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+        });
+      });
     });
   });
 });

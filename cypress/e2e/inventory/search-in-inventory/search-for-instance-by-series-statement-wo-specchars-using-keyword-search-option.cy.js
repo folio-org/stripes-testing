@@ -52,17 +52,9 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: `title="${testData.positiveSearchQueries[0]}"`,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
+      testData.searchResults.forEach((title) => {
+        InventoryInstances.deleteInstanceByTitleViaApi(title);
       });
-
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,

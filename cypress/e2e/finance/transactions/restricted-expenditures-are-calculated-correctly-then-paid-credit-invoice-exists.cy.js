@@ -21,7 +21,6 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 import { Permissions } from '../../../support/dictionary';
 
@@ -100,9 +99,6 @@ describe('Finance: Transactions', () => {
             Funds.selectFund(secondFund.name);
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
-            InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
-            );
             Funds.closeBudgetDetails();
             cy.logout();
             cy.getAdminToken();

@@ -330,6 +330,7 @@ describe('Organizations', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
+          authRefresh: true,
         });
       });
       cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
@@ -382,6 +383,7 @@ describe('Organizations', () => {
       'C423427 Searching in "Organization look-up" by "Bank account number" in "All" section with banking permission (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex('All', firstBankingInformation.accountNumber, firstOrganization);
         Orders.resetFilters();

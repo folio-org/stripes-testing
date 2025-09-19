@@ -55,6 +55,7 @@ describe('MARC', () => {
           cy.login(testData.firstUser.username, testData.firstUser.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
+            authRefresh: true,
           }).then(() => {
             DataImport.verifyUploadState();
             DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
@@ -78,6 +79,7 @@ describe('MARC', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
       });
     });

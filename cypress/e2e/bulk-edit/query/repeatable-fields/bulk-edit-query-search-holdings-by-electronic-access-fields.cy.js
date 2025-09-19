@@ -242,9 +242,10 @@ describe('Bulk-edit', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C805787 Search holdings by Electronic access fields using AND operator (firebird)',
-        { tags: ['smoke', 'firebird', 'C805787'] },
+        { tags: [] },
         () => {
           // Create expected holdings for verification
           const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);

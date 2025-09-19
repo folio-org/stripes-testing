@@ -49,6 +49,7 @@ describe('Orders', () => {
     cy.login(testData.user.username, testData.user.password, {
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
+      authRefresh: true,
     });
   });
 
@@ -155,7 +156,7 @@ describe('Orders', () => {
       // Click "Actions" button, Select "Edit" option
       const OrderEditForm = OrderDetails.openOrderEditForm();
       OrderEditForm.checkOngoingOrderInformationSection([
-        { label: 'subscription', conditions: { checked: true, disabled: true }, checkbox: true },
+        { label: 'subscription', conditions: { checked: true }, checkbox: true },
         { label: 'renewalDate', conditions: { value: '' } },
       ]);
 
@@ -174,7 +175,7 @@ describe('Orders', () => {
       // Click "Actions" button on "Purchase order - <Order number>" pane and select "Edit" option
       OrderDetails.openOrderEditForm();
       OrderEditForm.checkOngoingOrderInformationSection([
-        { label: 'subscription', conditions: { checked: true, disabled: true }, checkbox: true },
+        { label: 'subscription', conditions: { checked: true }, checkbox: true },
         { label: 'renewalDate', conditions: { value: testData.tomorrow } },
       ]);
 

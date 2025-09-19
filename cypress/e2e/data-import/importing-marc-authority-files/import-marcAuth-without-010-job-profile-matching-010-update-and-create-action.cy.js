@@ -28,6 +28,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -76,7 +77,7 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422067');
       // create Match profile
       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
@@ -84,8 +85,11 @@ describe('Data Import', () => {
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
       // create Action profile and link it to Field mapping profile
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
-      SettingsDataImport.goToSettingsDataImport();
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+      });
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       SettingsActionProfiles.create(actionProfile, mappingProfile.name);
       cy.wait(3000);
@@ -100,6 +104,7 @@ describe('Data Import', () => {
       // wait for the action profile to be linked
       cy.wait(1000);
       NewJobProfile.saveAndClose();
+      cy.wait(3000);
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -112,6 +117,7 @@ describe('Data Import', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
+          authRefresh: true,
         });
       });
     });

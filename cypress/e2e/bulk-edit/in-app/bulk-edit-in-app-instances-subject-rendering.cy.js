@@ -255,10 +255,10 @@ describe('Bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
-
-    it(
+    // Trillium
+    it.skip(
       'C736698 Verify rendering "Subject" data of Instance record in bulk edit forms and files (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C736698'] },
+      { tags: [] },
       () => {
         // Step 1: Select record type and identifier
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

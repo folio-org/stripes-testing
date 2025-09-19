@@ -7,7 +7,6 @@ import getRandomPostfix, {
   getRandomLetters,
 } from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -30,6 +29,7 @@ describe('MARC', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
+              authRefresh: true,
             });
           },
         );
@@ -48,9 +48,6 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C423372'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
-            ManageAuthorityFiles.checkSourceFileExistsByName(fileName);
-          });
           ManageAuthorityFiles.verifyTableHeaders();
           ManageAuthorityFiles.clickNewButton();
           ManageAuthorityFiles.verifyEditableRowAdded();

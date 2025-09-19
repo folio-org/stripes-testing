@@ -167,6 +167,7 @@ describe('Data Import', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });
@@ -227,8 +228,9 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventorySearchAndFilter.verifyResultListExists();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+        InventorySearchAndFilter.verifyInstanceDetailsView();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkTagAbsent('040');
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the050Field);

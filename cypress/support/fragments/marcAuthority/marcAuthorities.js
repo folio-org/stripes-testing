@@ -1000,7 +1000,9 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      cy.expect(
+        Pane({ subtitle: `${totalRecords.toLocaleString('en-US')} records found` }).exists(),
+      );
       expect(totalRecords).lessThan(totalRecord);
     });
   },
@@ -1010,7 +1012,9 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      cy.expect(
+        Pane({ subtitle: `${totalRecords.toLocaleString('en-US')} records found` }).exists(),
+      );
       expect(totalRecords).greaterThan(totalRecord);
     });
   },
