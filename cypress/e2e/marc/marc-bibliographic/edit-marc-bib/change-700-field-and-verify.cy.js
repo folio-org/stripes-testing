@@ -12,8 +12,8 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialISBN: '9780866985529',
-        invalidISBN: '97808669855291089',
+        contributorName: 'Arizona Center for Medieval and Renaissance Studies',
+        title: `C10996 Test Instance ${getRandomPostfix()}`,
         marcFile: {
           marc: 'oneMarcBib.mrc',
           fileName: `testMarcFileC10989.${getRandomPostfix()}.mrc`,
@@ -56,19 +56,23 @@ describe('MARC', () => {
       });
 
       it(
-        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10989'] },
+        'C10978 Change the 700 field in quickMARC and verify change in the instance record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C10978'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.initialISBN, 2);
+
+          InventoryInstance.verifyContributor(1, 1, testData.contributorName);
+          InventoryInstance.verifyContributor(1, 4, 'No value set-');
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingFieldContent(8, `$z ${testData.invalidISBN}`);
+
+          QuickMarcEditor.updateExistingTagValue(18, '100');
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitInventoryLoading();
 
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.invalidISBN, 0);
+          InventoryInstance.verifyContributor(1, 1, testData.contributorName);
+          InventoryInstance.verifyContributor(1, 4, 'Primary');
         },
       );
     });

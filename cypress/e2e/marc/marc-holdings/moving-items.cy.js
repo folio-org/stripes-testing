@@ -20,6 +20,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     const successCalloutMessage = '1 item has been successfully moved.';
+    const successHoldingCalloutMessage = '1 holding has been successfully moved.';
     const OCLCAuthentication = '100481406/PAOLF';
     let userId;
     let firstHolding = '';
@@ -160,6 +161,7 @@ describe('MARC', () => {
             InventoryInstance.waitLoading();
             InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
             InventoryInstancesMovement.closeInLeftForm();
+            InteractorsTools.checkCalloutMessage(successHoldingCalloutMessage);
             InventorySearchAndFilter.searchByParameter('Instance HRID', initialInstanceHrId);
             InventoryInstances.waitLoading();
             InventoryInstances.selectInstance();

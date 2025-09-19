@@ -947,7 +947,7 @@ export default {
 
     cy.do([
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
@@ -971,7 +971,7 @@ export default {
     cy.wait(5000);
     cy.do([
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
@@ -983,6 +983,7 @@ export default {
   },
 
   moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
+    cy.wait(1000);
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.do(moveHoldingsToAnotherInstanceButton.click());
@@ -997,11 +998,9 @@ export default {
   },
 
   returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
-    this.openHoldings(firstHoldingName, secondHoldingName);
-
     cy.do([
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
-        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
@@ -1920,5 +1919,9 @@ export default {
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.expect(Section({ id: 'inventory-menu-section' }).absent());
+  },
+
+  checkCloseButtonInFocus() {
+    cy.expect(instanceDetailsSection.find(Button({ icon: 'times' })).has({ focused: true }));
   },
 };
