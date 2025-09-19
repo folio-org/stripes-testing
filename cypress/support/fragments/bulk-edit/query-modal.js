@@ -117,7 +117,7 @@ export const itemFieldValues = {
   itemUuid: 'Item — Item UUID',
   holdingsId: 'Holding — UUID',
   holdingsHrid: 'Holding — HRID',
-  temporaryLocation: 'Temporary location — Name',
+  temporaryLocation: 'Item temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
   materialTypeName: 'Material type — Name',
   itemAdministrativeNotes: 'Item — Administrative notes',

@@ -70,10 +70,13 @@ describe('Loans', () => {
               });
             })
             .then(() => {
-              cy.login(checkOutUser.username, checkOutUser.password, {
-                path: TopMenu.checkOutPath,
-                waiter: Checkout.waitLoading,
+              cy.waitForAuthRefresh(() => {
+                cy.login(checkOutUser.username, checkOutUser.password, {
+                  path: TopMenu.checkOutPath,
+                  waiter: Checkout.waitLoading,
+                });
               });
+
               CheckOutActions.checkOutItemUser(
                 Cypress.env('users')[0].barcode,
                 folioInstances[0].barcodes[0],
