@@ -36,14 +36,17 @@ describe('MARC', () => {
       'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345408'] },
       () => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
         InventoryInstances.searchByTitle(createdInstanceID);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.createHoldingsRecord();
+        cy.wait(3000);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.getId().then((id) => {
           holdingsID = id;
