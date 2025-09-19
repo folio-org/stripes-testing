@@ -21,7 +21,7 @@ describe('Finance', () => {
     };
     const toBudget = {
       ...Budgets.getDefaultBudget(),
-      allocated: 0,
+      allocated: 10,
     };
 
     let user;
@@ -88,7 +88,7 @@ describe('Finance', () => {
         const amount = '10';
         Funds.moveAllocation({ toFund, fromFund, amount });
         InteractorsTools.checkCalloutErrorMessage(
-          `$10.00 was not successfully allocated to the budget ${toBudget.name}.`,
+          `$10.00 was not successfully allocated to the budget ${toBudget.name}`,
         );
       },
     );

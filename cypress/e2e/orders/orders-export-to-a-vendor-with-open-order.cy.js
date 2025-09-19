@@ -72,6 +72,7 @@ describe('Export Manager', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.ordersPath,
             waiter: Orders.waitLoading,
+            authRefresh: true,
           });
         });
       });

@@ -73,7 +73,7 @@ describe('Finance: Transactions', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
@@ -84,25 +84,19 @@ describe('Finance: Transactions', () => {
         firstLedger.id = ledgerResponse.id;
         firstFund.ledgerId = firstLedger.id;
         secondFund.ledgerId = firstLedger.id;
-
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
           firstBudget.fundId = fundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
-
           Funds.createViaApi(secondFund).then((secondFundResponse) => {
             secondFund.id = secondFundResponse.fund.id;
             secondBudget.fundId = secondFundResponse.fund.id;
             Budgets.createViaApi(secondBudget);
-            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
             FinanceHelp.searchByName(secondFund.name);
             Funds.selectFund(secondFund.name);
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             Funds.closeBudgetDetails();
-            cy.logout();
-            cy.getAdminToken();
-
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
 
@@ -211,6 +205,7 @@ describe('Finance: Transactions', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.settingsInvoiveApprovalPath,
           waiter: SettingsInvoices.waitApprovalsLoading,
+          authRefresh: true,
         });
       }, 20_000);
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
