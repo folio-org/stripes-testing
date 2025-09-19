@@ -1289,9 +1289,33 @@ export default {
   },
 
   deleteContactFromContactPeople: () => {
-    cy.get('#contact-list button[data-test-unassign-contact="true"][aria-label="Unassign"]:visible')
-      .first()
-      .click();
+    const list = contactPeopleSection.find(MultiColumnList({ id: 'contact-list' }));
+
+    cy.expect(list.exists());
+    cy.expect(list.find(MultiColumnListRow({ index: 0 })).exists());
+
+    cy.do(
+      list
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Button({ ariaLabel: 'Unassign' }))
+        .click(),
+    );
+  },
+
+  deleteDonorFromPrivilegedDonorInformation: () => {
+    const list = privilegedDonorInformationSection.find(
+      MultiColumnList({ id: 'privilegedContacts' }),
+    );
+
+    cy.expect(list.exists());
+    cy.expect(list.find(MultiColumnListRow({ index: 0 })).exists());
+
+    cy.do(
+      list
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Button({ ariaLabel: 'Unassign' }))
+        .click(),
+    );
   },
 
   deleteInterfaceFromInterfaces: () => {
