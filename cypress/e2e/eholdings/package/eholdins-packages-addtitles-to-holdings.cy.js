@@ -47,6 +47,7 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         cy.wait(3000);
         EHoldingsPackage.addToHoldings();
+        cy.wait(3000);
         EHoldingsPackage.verifyHoldingStatus();
         EHoldingsPackage.filterTitles();
         cy.wait(3000);
