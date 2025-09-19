@@ -1,19 +1,21 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
-import { Permissions } from '../../../../../support/dictionary';
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import SetRecordForDeletionModal from '../../../../../support/fragments/inventory/modals/setRecordForDeletionModal';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import SetRecordForDeletionModal from '../../../../support/fragments/inventory/modals/setRecordForDeletionModal';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Set record for deletion', () => {
     const testData = {
+      heldByAccordionName: 'Held by',
       instanceTitle:
         'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
     };
@@ -34,25 +36,42 @@ describe('Inventory', () => {
         });
       });
 
-      cy.createTempUser([
-        Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.uiInventorySetRecordsForDeletion.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.assignCapabilitiesToExistingUser(
+          testData.user.userId,
+          [],
+          [
+            CapabilitySets.uiInventoryInstanceStaffSuppressedRecordsView,
+            CapabilitySets.uiInventoryInstanceSetRecordsForDeletion,
+            CapabilitySets.uiInventoryInstanceEdit,
+          ],
+        );
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [
-          Permissions.uiInventoryViewCreateEditInstances.gui,
-          Permissions.consortiaInventoryShareLocalInstance.gui,
-        ]);
+        cy.assignCapabilitiesToExistingUser(
+          testData.user.userId,
+          [],
+          [
+            CapabilitySets.uiInventoryInstanceStaffSuppressedRecordsView,
+            CapabilitySets.uiInventoryInstanceEdit,
+            CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+          ],
+        );
         cy.resetTenant();
 
         cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
         cy.setTenant(Affiliations.University);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [
-          Permissions.uiInventoryViewCreateEditInstances.gui,
-        ]);
+        cy.assignCapabilitiesToExistingUser(
+          testData.user.userId,
+          [],
+          [
+            CapabilitySets.uiInventoryInstanceStaffSuppressedRecordsView,
+            CapabilitySets.uiInventoryInstanceEdit,
+            CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+          ],
+        );
         cy.resetTenant();
 
         cy.login(testData.user.username, testData.user.password, {
@@ -61,7 +80,8 @@ describe('Inventory', () => {
         });
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        InventoryInstances.searchByTitle(testData.instanceId);
+        InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+        InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
       });
     });
@@ -82,7 +102,7 @@ describe('Inventory', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        InventoryInstances.searchByTitle(testData.instanceId);
+        InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.clickActionsButton();
@@ -98,7 +118,8 @@ describe('Inventory', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-        InventoryInstances.searchByTitle(testData.instanceId);
+        InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+        InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
@@ -106,7 +127,8 @@ describe('Inventory', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        InventoryInstances.searchByTitle(testData.instanceId);
+        InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+        InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
