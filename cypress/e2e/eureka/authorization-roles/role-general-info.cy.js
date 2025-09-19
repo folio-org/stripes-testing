@@ -1,10 +1,13 @@
 import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import DateTools from '../../../support/utils/dateTools';
 import Capabilities from '../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -43,11 +46,13 @@ describe('Eureka', () => {
             );
             if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, []);
             cy.waitForAuthRefresh(() => {
-              cy.login(testData.userA.username, testData.userA.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
-            }, 20_000);
+              cy.login(testData.userA.username, testData.userA.password);
+              TopMenuNavigation.navigateToApp(
+                APPLICATION_NAMES.SETTINGS,
+                SETTINGS_SUBSECTION_AUTH_ROLES,
+              );
+            });
+            AuthorizationRoles.waitContentLoading();
           });
         });
       });
@@ -84,12 +89,13 @@ describe('Eureka', () => {
             );
             cy.logout();
             cy.waitForAuthRefresh(() => {
-              cy.login(testData.userB.username, testData.userB.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
-            }, 20_000);
-            AuthorizationRoles.waitLoading();
+              cy.login(testData.userB.username, testData.userB.password);
+              TopMenuNavigation.navigateToApp(
+                APPLICATION_NAMES.SETTINGS,
+                SETTINGS_SUBSECTION_AUTH_ROLES,
+              );
+            });
+            AuthorizationRoles.waitContentLoading();
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);
             AuthorizationRoles.verifyGeneralInformationWhenCollapsed(createdDateTime);
