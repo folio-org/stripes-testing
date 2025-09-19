@@ -58,8 +58,7 @@ const electronicAccessFieldsFromLowerCase = {
   publicNote: 'url public note',
 };
 const instances = [folioInstance, marcInstance];
-const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
@@ -318,7 +317,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
-          BulkEditActions.selectOption('URL relationship');
+          BulkEditActions.selectOption('URL Relationship');
           BulkEditActions.selectSecondAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);
