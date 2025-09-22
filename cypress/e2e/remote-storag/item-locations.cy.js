@@ -101,6 +101,7 @@ describe('Remote Storage', () => {
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
+      const editedLocationContent = Cypress.env('locations')[1].name.content;
       // select instance
       InventorySearchAndFilter.switchToItem();
       cy.wait(2000);
@@ -125,7 +126,7 @@ describe('Remote Storage', () => {
         '-',
         ITEM_BARCODE,
         ITEM_STATUS_NAMES.AVAILABLE,
-        editedLocationName,
+        editedLocationContent,
       );
     },
   );
@@ -134,9 +135,9 @@ describe('Remote Storage', () => {
     'C163924 Change a remote storage location to standard location (volaris)',
     { tags: ['smoke', 'volaris', 'C163924'] },
     () => {
-      const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;
-
+      const toBeEditedLocationName = Cypress.env('locations')[1].name;
+      const toBeEditedLocationContent = Cypress.env('locations')[1].name.content;
       // select instance
       InventorySearchAndFilter.switchToItem();
       cy.wait(2000);
@@ -161,7 +162,7 @@ describe('Remote Storage', () => {
         '-',
         ITEM_BARCODE,
         ITEM_STATUS_NAMES.AVAILABLE,
-        toBeEditedLocationName,
+        toBeEditedLocationContent,
       );
     },
   );
