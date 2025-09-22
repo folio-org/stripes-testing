@@ -68,14 +68,11 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
       });
     });
 
@@ -92,10 +89,13 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'spitfire', 'C368048', 'eurekaPhase1'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
-          InventoryInstances.searchByTitle(query);
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
+            InventorySearchAndFilter.verifyResultListExists();
+            InventorySearchAndFilter.clickAccordionByName('Shared');
+            InventorySearchAndFilter.verifyAccordionByNameExpanded('Shared', false);
           });
+          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -104,15 +104,22 @@ describe('Inventory', () => {
         });
 
         testData.negativeSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+            InventorySearchAndFilter.verifyResultListExists();
+            InventorySearchAndFilter.clickAccordionByName('Shared');
+            InventorySearchAndFilter.verifyAccordionByNameExpanded('Shared', false);
+          });
           InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
           InventoryInstances.resetAllFilters();
         });
 
-        InventoryInstances.searchByTitle('Philippine Question Books No 10 in catalog');
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
+          InventorySearchAndFilter.verifyResultListExists();
         });
+        InventoryInstances.searchByTitle('Philippine Question Books No 10 in catalog');
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
       },

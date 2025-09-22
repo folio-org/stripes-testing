@@ -157,14 +157,11 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.loginAsAdmin({
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
             instanceIDs.forEach((instanceRecord, index) => {
               InventoryInstances.searchByTitle(instanceRecord);
               InventoryInstances.selectInstance();
@@ -173,6 +170,11 @@ describe('MARC', () => {
                 InventoryInstance.verifyAndClickLinkIconByIndex(record.instanseFieldRowIndex);
                 InventoryInstance.verifySelectMarcAuthorityModal();
                 MarcAuthorities.switchToSearch();
+                cy.ifConsortia(true, () => {
+                  MarcAuthorities.clickAccordionByName('Shared');
+                  MarcAuthorities.actionsSelectCheckbox('No');
+                  MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+                });
                 InventoryInstance.searchResults(record.authorityTitle);
                 MarcAuthorities.checkFieldAndContentExistence(
                   record.authorityFieldTag,
@@ -188,6 +190,7 @@ describe('MARC', () => {
               QuickMarcEditor.pressSaveAndClose();
               cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveAndClose();
             });
             cy.wait(1000);
           });
@@ -201,14 +204,11 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-            MarcAuthorities.waitLoading();
-          }, 20_000);
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
+          });
           MarcAuthorities.switchToBrowse();
         });
       });
@@ -229,6 +229,14 @@ describe('MARC', () => {
         'C367936 Verify that correct number of linked records are displayed in the "Number of titles" column when browsing for linked "MARC Authority" records (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C367936'] },
         () => {
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.waitLoading();
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+            MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(false);
+          });
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[2].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[2].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[2].title, 1);
@@ -242,6 +250,14 @@ describe('MARC', () => {
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.waitLoading();
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+            MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(false);
+          });
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[3].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[3].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[3].title, 2);
@@ -256,6 +272,14 @@ describe('MARC', () => {
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.waitLoading();
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+            MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(false);
+          });
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[4].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[4].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[4].title, 1);

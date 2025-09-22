@@ -14,8 +14,7 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
 const matchedRecordsFileName = BulkEditFiles.getErrorsFromMatchingFileName(userUUIDsFileName);
 
-// Obsolete from Trillium (MODEXPW-598)
-describe.skip('Bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('Permissions', () => {
     before('Create test data', () => {
       cy.createTempUser([

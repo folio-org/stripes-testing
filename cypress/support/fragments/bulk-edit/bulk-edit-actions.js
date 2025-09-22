@@ -822,7 +822,7 @@ export default {
           );
 
           // verify options sorted alphabetically
-          const sortedOptions = [...actualEnabledOptions].sort();
+          const sortedOptions = [...actualEnabledOptions].sort((a, b) => a.localeCompare(b));
 
           expect(actualEnabledOptions).to.deep.equal(sortedOptions);
 

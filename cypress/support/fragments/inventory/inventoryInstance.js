@@ -912,7 +912,7 @@ export default {
     status,
     effectiveLocation = null,
   ) => {
-    const accordionHeader = `Holdings: ${locationName} >`;
+    const accordionHeader = new RegExp(`Holdings:.*?${locationName}`);
     const indexRowNumber = `row-${rowNumber}`;
     cy.do(Accordion(accordionHeader).clickHeader());
 
@@ -925,7 +925,7 @@ export default {
     ]);
 
     if (effectiveLocation) {
-      cy.expect(row.find(MultiColumnListCell({ content: effectiveLocation })).exists());
+      cy.expect(row.find(MultiColumnListCell(including({ content: effectiveLocation }))).exists());
     }
   },
 

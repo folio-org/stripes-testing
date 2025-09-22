@@ -102,10 +102,11 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
       }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
+        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.byShared('No');
         });
-        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tags[i]);
@@ -119,9 +120,7 @@ describe('Inventory', () => {
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(3000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
         InventoryInstances.resetAllFilters();
       }
@@ -151,13 +150,14 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
           authRefresh: true,
         });
-        cy.ifConsortia(true, () => {
-          InventorySearchAndFilter.byShared('No');
-        });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[0],
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.verifyResultListExists();
+          InventorySearchAndFilter.byShared('No');
+        });
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceRecords[0], true);
         InventoryInstances.resetAllFilters();
 
@@ -165,6 +165,10 @@ describe('Inventory', () => {
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[1],
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.verifyResultListExists();
+          InventorySearchAndFilter.byShared('No');
+        });
         testData.instanceRecords.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
         });

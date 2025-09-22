@@ -12,7 +12,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       issnOption: 'ISSN',
-      defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
+      defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
       issnPositiveSearchQueries: ['0040-782X', '0040-782x', '0040-782*', '*-782x'],
       issnNegativeSearchQuery: '0040-782A',
       searchResults: [
@@ -54,6 +54,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

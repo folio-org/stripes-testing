@@ -16,7 +16,7 @@ describe('Inventory', () => {
       user: {},
       subject: {
         indexRow: 1,
-        name: 'Short stories',
+        name: 'C584546 Short stories',
         source: 'Library of Congress Subject Headings',
         type: 'Topical term',
       },
@@ -56,6 +56,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
@@ -72,9 +73,7 @@ describe('Inventory', () => {
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
-        cy.reload();
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
-        cy.wait(3000);
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
         BrowseSubjects.openInstance(testData.subject);
         InventoryInstances.selectInstance();
