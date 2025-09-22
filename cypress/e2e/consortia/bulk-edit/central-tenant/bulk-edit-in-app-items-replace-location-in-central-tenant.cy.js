@@ -351,7 +351,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
-          BulkEditActions.selectAction('Replace with');
+          BulkEditActions.selectSecondAction('Replace with');
           BulkEditActions.verifySelectLocationDisabled();
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup();
@@ -372,7 +372,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary item location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary item location', 1);
-          BulkEditActions.selectAction('Replace with', 1);
+          BulkEditActions.selectSecondAction('Replace with', 1);
           BulkEditActions.verifySelectLocationDisabled(1);
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup(1);

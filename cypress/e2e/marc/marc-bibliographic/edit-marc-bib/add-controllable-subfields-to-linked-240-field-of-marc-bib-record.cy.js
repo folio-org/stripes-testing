@@ -61,14 +61,11 @@ describe('MARC', () => {
             });
           });
 
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          }).then(() => {
             InventorySearchAndFilter.selectSearchOptions(
               testData.searchOption,
               testData.marcBibTitle,
@@ -82,19 +79,20 @@ describe('MARC', () => {
             cy.wait(1000); // need to wait for choose Type of Heading
             MarcAuthorities.chooseTypeOfHeading('Conference Name');
             InventoryInstance.searchResults(testData.marcAuthTitle);
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(1000); // need to wait until save is done
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
         });
       });
 

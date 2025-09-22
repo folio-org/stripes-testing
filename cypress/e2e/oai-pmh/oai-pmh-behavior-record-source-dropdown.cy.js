@@ -15,6 +15,7 @@ describe('OAI-PMH', () => {
       cy.login(user.username, user.password, {
         path: SettingsMenu.oaiPmhPath,
         waiter: OaiPmh.waitLoading,
+        authRefresh: true,
       });
     });
   });
@@ -40,6 +41,7 @@ describe('OAI-PMH', () => {
       cy.login(user.username, user.password, {
         path: SettingsMenu.oaiPmhPath,
         waiter: OaiPmh.waitLoading,
+        authRefresh: true,
       });
       OaiPmh.selectSection(SECTIONS.BEHAVIOR);
       Behavior.verifyRecordSourceDropdownDefaultValue('Inventory');
@@ -51,6 +53,7 @@ describe('OAI-PMH', () => {
       cy.login(user.username, user.password, {
         path: SettingsMenu.oaiPmhPath,
         waiter: OaiPmh.waitLoading,
+        authRefresh: true,
       });
       OaiPmh.selectSection(SECTIONS.BEHAVIOR);
       Behavior.verifyRecordSourceDropdownDefaultValue('Source record storage and Inventory');

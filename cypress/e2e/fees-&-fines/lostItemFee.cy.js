@@ -1,10 +1,11 @@
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Fees&Fines', () => {
   describe('Settings Circulation', () => {
-    const name = 'A_very_specific_name';
-    const editedName = 'An_edited_name';
+    const name = getTestEntityValue('A_very_specific_name');
+    const editedName = getTestEntityValue('An_edited_name');
     const lostItemChargeFeeFineError =
       'Required if there is a possibility of no fee/fine being charged for a lost item';
     const duplicateError =
@@ -16,6 +17,7 @@ describe('Fees&Fines', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationLostItemFeePolicyPath,
         waiter: LostItemFeePolicy.waitLoading,
+        authRefresh: true,
       });
     });
 

@@ -42,8 +42,7 @@ const localUrlRelationship = {
   name: `C494101 local urlRelationship ${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
-const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
@@ -177,6 +176,7 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
+              cy.wait(5000);
               FileManager.createFile(
                 `cypress/fixtures/${holdingUUIDsFileName}`,
                 `${collegeHoldingIds.join('\n')}\n${universityHoldingIds.join('\n')}`,
@@ -324,7 +324,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
-          const fieldsToClear = ['URL relationship', 'URI', 'Link text', 'Materials specified'];
+          const fieldsToClear = ['URL Relationship', 'URI', 'Link text', 'Materials specified'];
 
           fieldsToClear.forEach((field, rowIndex) => {
             BulkEditActions.selectOption(field, rowIndex);

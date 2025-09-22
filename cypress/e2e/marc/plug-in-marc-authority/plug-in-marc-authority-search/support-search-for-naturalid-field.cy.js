@@ -79,7 +79,7 @@ describe('MARC', () => {
             });
           });
         });
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
+        cy.getAdminToken()
           .then(() => {
             testData.marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -138,11 +138,17 @@ describe('MARC', () => {
 
           testData.searchQueriesOneResult.forEach((query, index) => {
             MarcAuthorities.searchByParameter(testData.searchOptions.KEYWORD, query);
+            MarcAuthorities.checkResultsExistance(testData.authorizedTypes.AUTHORIZED);
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             MarcAuthorities.closeMarcViewPane();
             MarcAuthorities.checkAfterSearch(
               testData.authorizedTypes.AUTHORIZED,
               testData.searchResultsOneResult[index],
             );
+            MarcAuthorities.clickResetAndCheck();
           });
         },
       );

@@ -125,6 +125,9 @@ describe('Inventory', () => {
       'C466155 Search for "Instance" by "Classification, normalized" option using "Advanced search" modal (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C466155'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOption(testData.classificationNormalized);
         search(0);
