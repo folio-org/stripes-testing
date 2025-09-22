@@ -19,6 +19,9 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.instance = instanceData;
+      });
 
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
         .then((userProperties) => {
@@ -38,9 +41,6 @@ describe('Inventory', () => {
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-            testData.instance = instanceData;
-          });
         });
     });
 
@@ -48,7 +48,6 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
@@ -56,6 +55,7 @@ describe('Inventory', () => {
       'C407749 (CONSORTIA) Verify the permission for editing local instances on Member tenant (consortia) (folijet)',
       { tags: ['smokeECS', 'folijet', 'C407749'] },
       () => {
+        InventorySearchAndFilter.clearDefaultFilter('Held by');
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

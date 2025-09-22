@@ -218,7 +218,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       cy.waitForAuthRefresh(() => {
         cy.loginAsAdmin({
           path: SettingsMenu.circulationOverdueFinePoliciesPath,
-          waiter: () => cy.wait(3000),
+          waiter: () => cy.wait(6000),
         });
       });
 

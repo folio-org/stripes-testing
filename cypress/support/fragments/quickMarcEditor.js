@@ -761,6 +761,10 @@ export default {
     );
   },
 
+  verifyContentBoxIsFocused(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ focused: true }));
+  },
+
   movetoFourthBoxUsingTab(rowNumber) {
     cy.get(`[name="records[${rowNumber}].tag"]`).tab().tab().tab();
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(fourthBox).has({ focused: true }));
@@ -1477,25 +1481,28 @@ export default {
     );
   },
 
-  selectFieldsDropdownOption(tag, dropdownLabel, option) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
-        .choose(option),
-    );
+  selectFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(Select({ label: including(dropdownLabel) })).choose(option));
+    cy.wait(500);
   },
 
-  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+  verifyFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
     );
   },
 
-  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
@@ -1673,6 +1680,7 @@ export default {
     cy.expect([
       Pane({ id: 'quick-marc-editor-pane' }).exists(),
       QuickMarcEditorRow({ tagValue: '999' }).exists(),
+      cancelButton.exists(),
     ]);
   },
 
@@ -3120,20 +3128,17 @@ export default {
     this.checkPaneheaderContains(derivePaneHeaderText);
   },
 
-  fillInTextBoxInField(tag, boxLabel, value) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(TextField({ label: boxLabel }))
-        .fillIn(value),
-    );
+  fillInTextBoxInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(TextField({ label: boxLabel })).fillIn(value));
+    cy.wait(500);
   },
 
-  verifyTextBoxValueInField(tag, boxLabel, value) {
-    cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(TextField({ label: boxLabel }))
-        .has({ value }),
-    );
+  verifyTextBoxValueInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ value }));
   },
 
   verifyDropdownsShownInField(rowIndex, isShown = true) {
