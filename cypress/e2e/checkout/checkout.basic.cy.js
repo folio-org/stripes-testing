@@ -95,10 +95,11 @@ describe('Check out', () => {
       })
       .then(() => {
         UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
-
-        cy.login(userData.personal.lastname, userData.password, {
-          path: TopMenu.checkOutPath,
-          waiter: Checkout.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.personal.lastname, userData.password, {
+            path: TopMenu.checkOutPath,
+            waiter: Checkout.waitLoading,
+          });
         });
       });
   });
