@@ -925,9 +925,7 @@ export default {
     ]);
 
     if (effectiveLocation) {
-      cy.expect(
-        row.find(MultiColumnListCell(including({ content: `${effectiveLocation} ` }))).exists(),
-      );
+      cy.expect(row.find(MultiColumnListCell(including({ content: effectiveLocation }))).exists());
     }
   },
 
