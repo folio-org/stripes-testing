@@ -127,6 +127,7 @@ describe('Finance: Ledgers', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
+        authRefresh: true,
       });
     });
   });

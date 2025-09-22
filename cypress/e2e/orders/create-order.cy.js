@@ -18,6 +18,7 @@ describe('Orders', () => {
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
+      authRefresh: true,
     });
   });
 

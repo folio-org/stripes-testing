@@ -54,6 +54,7 @@ describe('Orders', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
+        authRefresh: true,
       });
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
@@ -64,6 +65,7 @@ describe('Orders', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
       Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then(({ response }) => {
         orderId = response.body.id;
@@ -75,12 +77,14 @@ describe('Orders', () => {
         cy.loginAsAdmin({
           path: SettingsMenu.acquisitionUnitsPath,
           waiter: AcquisitionUnits.waitLoading,
+          authRefresh: true,
         });
         AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
+          authRefresh: true,
         });
         Orders.searchByParameter('PO number', orderNumber);
         Orders.checkZeroSearchResultsHeader();
@@ -88,6 +92,7 @@ describe('Orders', () => {
         cy.loginAsAdmin({
           path: SettingsMenu.acquisitionUnitsPath,
           waiter: AcquisitionUnits.waitLoading,
+          authRefresh: true,
         });
         AcquisitionUnits.edit(defaultAcquisitionUnit.name);
         AcquisitionUnits.selectViewCheckbox();
@@ -95,6 +100,7 @@ describe('Orders', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
+          authRefresh: true,
         });
         Orders.searchByParameter('PO number', orderNumber);
         FinanceHelp.selectFromResultsList();
