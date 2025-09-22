@@ -59,7 +59,7 @@ describe('MARC', () => {
             (records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             },
@@ -77,53 +77,49 @@ describe('MARC', () => {
               });
             });
           });
-        });
 
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
+          cy.createTempUser([
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.inventoryAll.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          ]).then((userProperties) => {
+            testData.user = userProperties;
 
-          cy.waitForAuthRefresh(() => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000).then(() => {
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(linkingTagAndValues.value);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-              linkingTagAndValues.tag,
-              linkingTagAndValues.rowIndex,
-            );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
-          });
+              authRefresh: true,
+            }).then(() => {
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              cy.ifConsortia(true, () => {
+                MarcAuthorities.clickAccordionByName('Shared');
+                MarcAuthorities.actionsSelectCheckbox('No');
+              });
+              InventoryInstance.searchResults(linkingTagAndValues.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+                linkingTagAndValues.tag,
+                linkingTagAndValues.rowIndex,
+              );
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.checkAfterSaveAndClose();
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+                authRefresh: true,
+              });
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
-          }, 20_000);
+          });
         });
       });
 
@@ -141,18 +137,23 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C374160'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
+          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingFieldContent(11, testData.update400Field);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(testData.tag035, testData.update035Field);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           MarcAuthorities.verifyMarcViewPaneIsOpened();
