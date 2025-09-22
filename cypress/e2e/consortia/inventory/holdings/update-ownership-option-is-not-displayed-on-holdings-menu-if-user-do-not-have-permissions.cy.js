@@ -14,91 +14,93 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Holdings', () => {
-    const testData = {
-      instance: {},
-      user: {},
-      holdings: {},
-    };
+    describe('Consortia', () => {
+      const testData = {
+        instance: {},
+        user: {},
+        holdings: {},
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
+      before('Create test data', () => {
+        cy.getAdminToken();
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
 
-        cy.setTenant(Affiliations.College)
-          .then(() => {
-            cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-              testData.holdings.locationId = res.id;
+          cy.setTenant(Affiliations.College)
+            .then(() => {
+              cy.getLocations({ query: 'name="DCB"' }).then((res) => {
+                testData.holdings.locationId = res.id;
+              });
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                testData.holdings.sourceId = folioSource.id;
+              });
+            })
+            .then(() => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: testData.instance.instanceId,
+                permanentLocationId: testData.holdings.locationId,
+                sourceId: testData.holdings.sourceId,
+              }).then((holding) => {
+                testData.holdings = holding;
+              });
             });
-            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-              testData.holdings.sourceId = folioSource.id;
-            });
-          })
-          .then(() => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.instance.instanceId,
-              permanentLocationId: testData.holdings.locationId,
-              sourceId: testData.holdings.sourceId,
-            }).then((holding) => {
-              testData.holdings = holding;
-            });
-          });
-      });
-      cy.resetTenant();
-
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiInventoryUpdateOwnership.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+        });
         cy.resetTenant();
 
         cy.getAdminToken();
-        cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
-        cy.setTenant(Affiliations.University);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [
+        cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiInventoryUpdateOwnership.gui,
-        ]);
-        cy.resetTenant();
+        ]).then((userProperties) => {
+          testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+          cy.resetTenant();
+
+          cy.getAdminToken();
+          cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+          cy.setTenant(Affiliations.University);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.inventoryAll.gui,
+            Permissions.uiInventoryUpdateOwnership.gui,
+          ]);
+          cy.resetTenant();
+
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        });
       });
+
+      after('Delete test data', () => {
+        cy.withinTenant(Affiliations.College, () => {
+          cy.deleteHoldingRecordViaApi(testData.holdings.id);
+        });
+        cy.withinTenant(Affiliations.Consortia, () => {
+          cy.getAdminToken();
+          InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+          Users.deleteViaApi(testData.user.userId);
+        });
+      });
+
+      it(
+        'C476824 "Update ownership" option is not displayed on Holdings menu if user don\'t have permissions (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C476824'] },
+        () => {
+          InventoryInstances.searchByTitle(testData.instance.instanceId);
+          InventoryInstances.selectInstance();
+          InstanceRecordView.waitLoading();
+          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.checkHoldingRecordViewOpened();
+          HoldingsRecordView.validateOptionInActionsMenu([
+            { optionName: actionsMenuOptions.updateOwnership, shouldExist: false },
+          ]);
+        },
+      );
     });
-
-    after('Delete test data', () => {
-      cy.withinTenant(Affiliations.College, () => {
-        cy.deleteHoldingRecordViaApi(testData.holdings.id);
-      });
-      cy.withinTenant(Affiliations.Consortia, () => {
-        cy.getAdminToken();
-        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-        Users.deleteViaApi(testData.user.userId);
-      });
-    });
-
-    it(
-      'C476824 "Update ownership" option is not displayed on Holdings menu if user don\'t have permissions (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C476824'] },
-      () => {
-        InventoryInstances.searchByTitle(testData.instance.instanceId);
-        InventoryInstances.selectInstance();
-        InstanceRecordView.waitLoading();
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.checkHoldingRecordViewOpened();
-        HoldingsRecordView.validateOptionInActionsMenu([
-          { optionName: actionsMenuOptions.updateOwnership, shouldExist: false },
-        ]);
-      },
-    );
   });
 });
