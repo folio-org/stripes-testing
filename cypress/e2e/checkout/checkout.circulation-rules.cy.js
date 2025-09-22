@@ -69,7 +69,6 @@ describe('Check out: Circulation rules', () => {
             if (response.body.loanPolicies.length > 0) {
               loanPolicyId = response.body.loanPolicies[0].id;
               loanPolicy = response.body.loanPolicies[0].name;
-              console.log('Found existing loan policy:', loanPolicyId);
             } else {
               // Create one-hour loan policy if it doesn't exist using LoanPolicy.createViaApi
               const loanPolicyData = {
