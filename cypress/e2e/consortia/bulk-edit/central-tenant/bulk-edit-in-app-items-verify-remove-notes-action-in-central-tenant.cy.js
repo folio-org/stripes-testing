@@ -556,15 +556,15 @@ describe('Bulk-edit', () => {
               0,
               'No',
               collegeItemNoteType.name,
-              'No value set-',
+              '-',
             );
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
               1,
               'Yes',
               centralSharedItemNoteType.payload.name,
-              'No value set-',
+              '-',
             );
-            ItemRecordView.checkCheckOutNote('No value set-', 'No');
+            ItemRecordView.checkCheckOutNote('-', 'No');
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
@@ -580,10 +580,10 @@ describe('Bulk-edit', () => {
               0,
               'Yes',
               centralSharedItemNoteType.payload.name,
-              'No value set-',
+              '-',
             );
             ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
-            ItemRecordView.checkCheckOutNote('No value set-', 'No');
+            ItemRecordView.checkCheckOutNote('-', 'No');
           });
         },
       );

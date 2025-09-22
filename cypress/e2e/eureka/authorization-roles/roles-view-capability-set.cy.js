@@ -1,10 +1,16 @@
 import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import {
+  CAPABILITY_TYPES,
+  CAPABILITY_ACTIONS,
+  APPLICATION_NAMES,
+} from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import Capabilities from '../../../support/dictionary/capabilities';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -84,10 +90,14 @@ describe('Eureka', () => {
 
       before('Assign capabilities, login', () => {
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
         });
+        AuthorizationRoles.waitContentLoading();
       });
 
       after('Delete user, role', () => {

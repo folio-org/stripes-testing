@@ -86,7 +86,7 @@ describe('Finance: Transactions', () => {
   };
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
@@ -100,24 +100,19 @@ describe('Finance: Transactions', () => {
         Ledgers.createViaApi(secondLedger).then((secondLedgerResponse) => {
           secondLedger.id = secondLedgerResponse.id;
           secondFund.ledgerId = secondLedger.id;
-
           Funds.createViaApi(firstFund).then((fundResponse) => {
             firstFund.id = fundResponse.fund.id;
             firstBudget.fundId = fundResponse.fund.id;
             Budgets.createViaApi(firstBudget);
-
             Funds.createViaApi(secondFund).then((secondFundResponse) => {
               secondFund.id = secondFundResponse.fund.id;
               secondBudget.fundId = secondFundResponse.fund.id;
               Budgets.createViaApi(secondBudget);
-              cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
               FinanceHelp.searchByName(secondFund.name);
               Funds.selectFund(secondFund.name);
               Funds.selectBudgetDetails();
               Funds.transfer(secondFund, firstFund);
               Funds.closeBudgetDetails();
-              cy.logout();
-              cy.getAdminToken();
 
               cy.getLocations({ limit: 1 }).then((res) => {
                 location = res;

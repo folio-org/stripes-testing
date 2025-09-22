@@ -137,6 +137,7 @@ describe('Invoices', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });
