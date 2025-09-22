@@ -69,11 +69,10 @@ describe('orders: create', () => {
 
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
-      cy.waitForAuthRefresh(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });
@@ -95,7 +94,9 @@ describe('orders: create', () => {
     'C665 Edit an existing PO Line on a "Pending" order (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'shiftLeftBroken', 'eurekaPhase1'] },
     () => {
+      Orders.resetFiltersIfActive();
       Orders.selectPendingStatusFilter();
+      Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();

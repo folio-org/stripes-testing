@@ -15,13 +15,14 @@ describe('Fiscal Year', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.fiscalYearPath,
           waiter: FiscalYears.waitLoading,
+          authRefresh: true,
         });
       },
     );
   });
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fiscalYearPath, waiter: FiscalYears.waitLoading });
-    cy.getAdminToken();
+    FiscalYears.searchByName(defaultFiscalYear.name);
     FiscalYears.selectFY(defaultFiscalYear.name);
     FiscalYears.deleteFiscalYearViaActions();
     Users.deleteViaApi(user.userId);

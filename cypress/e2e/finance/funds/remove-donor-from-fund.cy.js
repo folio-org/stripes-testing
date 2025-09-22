@@ -42,6 +42,7 @@ describe('Finance', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.fundPath,
             waiter: Funds.waitLoading,
+            authRefresh: true,
           });
         },
       );

@@ -79,8 +79,9 @@ describe('Export Manager', () => {
         testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.exportManagerOrganizationsPath,
+          path: TopMenu.exportManagerPath,
           waiter: ExportManagerSearchPane.waitLoading,
+          authRefresh: true,
         });
       });
 
