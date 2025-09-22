@@ -223,9 +223,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C805785_FolioInstance', 3);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Instance — Contributors');
-          QueryModal.clickShowColumnsButton();
 
           // Expected to find: Only Instance 2 (has both Personal and Corporate name types,
           // with David Charles name starting criteria, and False primary contributor)
@@ -253,7 +250,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.contributorType);
           QueryModal.verifySelectedField(instanceFieldValues.contributorType);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.fillInValueTextfield('Consultant');
+          QueryModal.chooseValueSelect('Consultant');
+          QueryModal.clickGarbage(1);
+          QueryModal.clickGarbage(1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 

@@ -116,6 +116,11 @@ export const instanceFieldValues = {
   publicationsRole: 'Instance — Publication — Publisher role',
   publicationsPlace: 'Instance — Publication — Place of publication',
   publicationsDate: 'Instance — Publication — Publication date',
+  contributorName: 'Instance — Contributors — Contributor name',
+  contributorNameType: 'Instance — Contributors — Contributor name type',
+  contributorType: 'Instance — Contributors — Contributor type',
+  contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
+  contributorPrimary: 'Instance — Contributors — Primary',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
