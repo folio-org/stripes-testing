@@ -75,12 +75,12 @@ describe('MARC', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
         });
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
+        cy.getAdminToken()
           .then(() => {
             testData.marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -104,6 +104,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(testData.instanceTitle);
             InventoryInstances.selectInstance();
@@ -130,6 +131,11 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C360111'] },
         () => {
           MarcAuthorities.verifySearchResultTabletIsAbsent(true);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+            MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+          });
           MarcAuthorities.searchByParameter(
             testData.authSearchOption.PERSONAL_NAME,
             testData.authTitle,

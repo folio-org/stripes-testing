@@ -72,8 +72,6 @@ describe('MARC', () => {
               cy.loginAsAdmin();
               cy.visit(TopMenu.inventoryPath);
               InventoryInstances.waitContentLoading();
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             cy.ifConsortia(true, () => {
@@ -86,6 +84,10 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySearchOptions();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag100,
               testData.authority100FieldValue,
@@ -95,10 +97,8 @@ describe('MARC', () => {
               testData.tag600,
               testData.tag600RowIndex,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3_000);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3_000);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
             cy.createTempUser([
@@ -108,14 +108,11 @@ describe('MARC', () => {
             ]).then((createdUserProperties) => {
               testData.userProperties = createdUserProperties;
 
-              cy.waitForAuthRefresh(() => {
-                cy.login(testData.userProperties.username, testData.userProperties.password, {
-                  path: TopMenu.marcAuthorities,
-                  waiter: MarcAuthorities.waitLoading,
-                });
-                cy.reload();
-                MarcAuthorities.waitLoading();
-              }, 20_000);
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+                authRefresh: true,
+              });
             });
           });
       });

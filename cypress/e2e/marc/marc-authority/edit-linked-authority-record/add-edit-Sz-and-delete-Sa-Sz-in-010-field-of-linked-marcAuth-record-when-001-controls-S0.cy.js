@@ -36,7 +36,7 @@ describe('MARC', () => {
           field010: '$a 80036674 ',
           field010_1: '$a    80036674  $z test',
           field010_2: '$a    80036674  $z test1',
-          field010_3: '$a 80036674',
+          field010_3: '$a    80036674 ',
           field010_4: '$z test',
         },
       };
@@ -154,6 +154,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_1, tag010.rowIndex);
 
           QuickMarcEditor.updateExistingFieldContent(
@@ -161,19 +162,20 @@ describe('MARC', () => {
             tag010.inputContent.field010_2,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_2, tag010.rowIndex);
 
           QuickMarcEditor.updateExistingFieldContent(
             tag010.rowIndex,
             tag010.inputContent.field010_3,
           );
-          QuickMarcEditor.checkContent(tag010.expectedContent.field010_3, tag010.rowIndex);
+          QuickMarcEditor.checkContent(tag010.inputContent.field010_3, tag010.rowIndex);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_3, tag010.rowIndex);
           cy.wait(3000);
 
@@ -181,6 +183,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_1, tag010.rowIndex);
 
           QuickMarcEditor.updateExistingFieldContent(
@@ -190,7 +193,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
           QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-          QuickMarcEditor.checkAfterSaveAndKeepEditing();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
 
           QuickMarcEditor.pressCancel();

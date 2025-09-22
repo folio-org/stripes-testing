@@ -23,11 +23,10 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -52,7 +51,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkEmptyContent('00');
           QuickMarcEditor.deleteFieldByTagAndCheck('00');
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout('Field 008 is required.');
           QuickMarcEditor.undoDelete();
