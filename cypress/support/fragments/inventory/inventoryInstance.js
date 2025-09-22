@@ -912,7 +912,7 @@ export default {
     status,
     effectiveLocation = null,
   ) => {
-    const accordionHeader = `Holdings: Inactive ${locationName} >`;
+    const accordionHeader = new RegExp(`Holdings:.*?${locationName}`);
     const indexRowNumber = `row-${rowNumber}`;
     cy.do(Accordion(accordionHeader).clickHeader());
 
