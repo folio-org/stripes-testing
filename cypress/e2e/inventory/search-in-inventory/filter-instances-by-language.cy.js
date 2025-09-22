@@ -56,6 +56,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventorySearchAndFilter.instanceTabIsDefault();
           });
@@ -74,6 +75,9 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'C476719'] },
         () => {
           // 1. Expand Language facet, verify options and counters
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.toggleAccordionByName(testData.languageAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
             testData.languageAccordionName,
