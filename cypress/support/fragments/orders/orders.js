@@ -370,12 +370,9 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(orderTypeSelect.choose(order.orderType));
-    cy.do([
-      MultiSelect({ id: 'order-acq-units' })
-        .find(Button({ ariaLabel: 'open menu' }))
-        .click(),
-      MultiSelectOption(AUName).click(),
-    ]);
+    cy.do(MultiSelect({ id: 'order-acq-units' }).open());
+    cy.expect(MultiSelect({ id: 'order-acq-units' }).has({ open: true }));
+    cy.do(MultiSelectOption(AUName).click());
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay());

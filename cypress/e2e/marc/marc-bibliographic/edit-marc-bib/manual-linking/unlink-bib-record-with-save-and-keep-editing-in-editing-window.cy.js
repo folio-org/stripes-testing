@@ -78,7 +78,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });
@@ -108,6 +108,11 @@ describe('MARC', () => {
               InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
               InventoryInstance.verifySelectMarcAuthorityModal();
               MarcAuthorities.switchToSearch();
+              cy.ifConsortia(true, () => {
+                MarcAuthorities.clickAccordionByName('Shared');
+                MarcAuthorities.actionsSelectCheckbox('No');
+                MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+              });
               InventoryInstance.searchResults(testData.authorityTitle);
               MarcAuthorities.checkFieldAndContentExistence(
                 testData.tag100,
