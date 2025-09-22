@@ -234,13 +234,11 @@ describe('Data Import', () => {
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
+          });
           MarcAuthorities.waitLoading();
           MarcAuthorities.verifyDisabledSearchButton();
         });

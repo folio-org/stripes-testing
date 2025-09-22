@@ -9,7 +9,7 @@ import {
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
-const quickExportFileNameMask = /quick-export-\d{1,3}.mrc/gm;
+const quickExportFileNameMask = /quick-export-\d{1,4}.mrc/gm;
 
 export default {
   defaultJobProfile: 'Default instances export job profile',
