@@ -19,12 +19,13 @@ describe('Inventory', () => {
     () => {
       let user;
       const instanceSource = INSTANCE_SOURCE_NAMES.FOLIO;
-      let instanceTitle;
-      let itemBarcode;
+      const instanceTitle = `C402776 autotestInstance ${getRandomPostfix()}`;
+      const itemBarcode = Helper.getRandomBarcode();
 
       beforeEach('Create test data and login', () => {
-        instanceTitle = `C402776 autotestInstance ${getRandomPostfix()}`;
-        itemBarcode = Helper.getRandomBarcode();
+        cy.getAdminToken();
+        InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
+
         cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
           (userProperties) => {
             user = userProperties;
@@ -32,8 +33,8 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
-            InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
           },
         );
       });
