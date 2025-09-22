@@ -11,47 +11,49 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {};
+    describe('Consortia', () => {
+      const testData = {};
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
-      });
-
-      cy.createTempUser([
-        Permissions.uiInventoryViewCreateInstances.gui,
-        Permissions.consortiaInventoryShareLocalInstance.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+      before('Create test data', () => {
+        cy.getAdminToken();
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
         });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
+        cy.createTempUser([
+          Permissions.uiInventoryViewCreateInstances.gui,
+          Permissions.consortiaInventoryShareLocalInstance.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        });
       });
-    });
 
-    after('Delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      Users.deleteViaApi(testData.user.userId);
-    });
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        Users.deleteViaApi(testData.user.userId);
+      });
 
-    it(
-      'C411343 (CONSORTIA) Check the "Share local instance" button on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C411343'] },
-      () => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InstanceRecordView.validateOptionInActionsMenu(
-          actionsMenuOptions.moveItemsWithinAnInstance,
-          false,
-        );
-      },
-    );
+      it(
+        'C411343 (CONSORTIA) Check the "Share local instance" button on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411343'] },
+        () => {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.validateOptionInActionsMenu(
+            actionsMenuOptions.moveItemsWithinAnInstance,
+            false,
+          );
+        },
+      );
+    });
   });
 });
