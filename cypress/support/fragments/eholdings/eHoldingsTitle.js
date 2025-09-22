@@ -130,7 +130,7 @@ export default {
     this.getTitleIdFromUrl().then((id) => {
       cy.okapiRequest({
         method: 'GET',
-        path: `/eholdings/titles/${id}`,
+        path: `eholdings/titles/${id}`,
         searchParams: {
           include: 'resources',
         },
@@ -156,7 +156,7 @@ export default {
           };
           cy.okapiRequest({
             method: 'PUT',
-            path: `/eholdings/resources/${resourceId}`,
+            path: `eholdings/resources/${resourceId}`,
             body: payload,
             contentTypeHeader: 'application/vnd.api+json',
           });
