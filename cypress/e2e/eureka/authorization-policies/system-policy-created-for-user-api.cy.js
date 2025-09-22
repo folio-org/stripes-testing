@@ -28,8 +28,9 @@ describe('Eureka', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.userB = createdUserProperties;
         });
-        cy.getCapabilitiesApi(1).then((capabs) => {
-          testData.capabId = capabs[0].id;
+        cy.getCapabilitiesApi(50).then((capabs) => {
+          const validCapab = capabs.filter((capab) => capab.endpoints.length > 0)[0];
+          testData.capabId = validCapab.id;
         });
       });
 
