@@ -26,7 +26,7 @@ describe('MARC Authority Validation Rules - Local Fields Indicators API', () => 
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         const authoritySpec = specs.find((s) => s.profile === 'authority');
         expect(authoritySpec, 'MARC authority specification exists').to.exist;
         authoritySpecId = authoritySpec.id;
