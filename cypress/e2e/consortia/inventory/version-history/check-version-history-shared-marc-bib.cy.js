@@ -16,88 +16,90 @@ import inventoryViewSource from '../../../../support/fragments/inventory/invento
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const marcFile = {
-      marc: 'marcBibFileForC692169.mrc',
-      fileName: `C692169 marcBibFileName${getRandomPostfix()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      propertyName: 'instance',
-      instanceTitle: 'C692169 Stockholm International Film Festival',
-    };
-    const permissions = [
-      Permissions.uiInventoryViewCreateEditInstances.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.consortiaInventoryShareLocalInstance.gui,
-    ];
-    const testData = {};
+    describe('Consortia', () => {
+      const marcFile = {
+        marc: 'marcBibFileForC692169.mrc',
+        fileName: `C692169 marcBibFileName${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
+        instanceTitle: 'C692169 Stockholm International Film Festival',
+      };
+      const permissions = [
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.consortiaInventoryShareLocalInstance.gui,
+      ];
+      const testData = {};
 
-    before('Create test data', () => {
-      cy.getAdminToken();
+      before('Create test data', () => {
+        cy.getAdminToken();
 
-      cy.withinTenant(Affiliations.College, () => {
-        InventoryInstances.deleteInstanceByTitleViaApi('C692169');
-        DataImport.uploadFilesViaApi(marcFile).then((ids) => {
-          testData.instanceId = [...ids.createdInstanceIDs];
-        });
-      });
-
-      cy.createTempUser(permissions).then((userProperties) => {
-        testData.userProperties = userProperties;
-        cy.affiliateUserToTenant({
-          tenantId: Affiliations.College,
-          userId: testData.userProperties.userId,
-          permissions,
-        });
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-            InventoryInstances.waitContentLoading();
+        cy.withinTenant(Affiliations.College, () => {
+          InventoryInstances.deleteInstanceByTitleViaApi('C692169');
+          DataImport.uploadFilesViaApi(marcFile).then((ids) => {
+            testData.instanceId = [...ids.createdInstanceIDs];
           });
         });
 
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        cy.createTempUser(permissions).then((userProperties) => {
+          testData.userProperties = userProperties;
+          cy.affiliateUserToTenant({
+            tenantId: Affiliations.College,
+            userId: testData.userProperties.userId,
+            permissions,
+          });
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            });
+          });
+
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        });
       });
-    });
 
-    after('Delete test data', () => {
-      cy.getAdminToken();
-      cy.withinTenant(Affiliations.College, () => {
-        InventoryInstance.deleteInstanceViaApi(testData.instanceId[0]);
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        cy.withinTenant(Affiliations.College, () => {
+          InventoryInstance.deleteInstanceViaApi(testData.instanceId[0]);
+        });
+        Users.deleteViaApi(testData.userProperties.userId);
       });
-      Users.deleteViaApi(testData.userProperties.userId);
+
+      it(
+        'C692169 Verify version history after sharing a local MARC instance (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'C692169'] },
+        () => {
+          // Step 1: Search and select the instance
+          InventoryInstances.searchByTitle(marcFile.instanceTitle);
+          InventorySearchAndFilter.byShared('No');
+          cy.wait(1000);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+
+          // Step 2: Share the local instance
+          InventoryInstance.shareInstance();
+          InstanceRecordView.verifyInstanceSource('MARC');
+
+          // Step 3: Verify version history
+          InventoryInstance.viewSource();
+          inventoryViewSource.clickVersionHistoryButton();
+          VersionHistorySection.verifyVersionsCount(1);
+          VersionHistorySection.verifyListOfChanges([
+            'Shared',
+            `${testData.userProperties.lastName}, ${testData.userProperties.firstName}`,
+          ]);
+        },
+      );
     });
-
-    it(
-      'C692169 Verify version history after sharing a local MARC instance (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C692169'] },
-      () => {
-        // Step 1: Search and select the instance
-        InventoryInstances.searchByTitle(marcFile.instanceTitle);
-        InventorySearchAndFilter.byShared('No');
-        cy.wait(1000);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
-
-        // Step 2: Share the local instance
-        InventoryInstance.shareInstance();
-        InstanceRecordView.verifyInstanceSource('MARC');
-
-        // Step 3: Verify version history
-        InventoryInstance.viewSource();
-        inventoryViewSource.clickVersionHistoryButton();
-        VersionHistorySection.verifyVersionsCount(1);
-        VersionHistorySection.verifyListOfChanges([
-          'Shared',
-          `${testData.userProperties.lastName}, ${testData.userProperties.firstName}`,
-        ]);
-      },
-    );
   });
 });
