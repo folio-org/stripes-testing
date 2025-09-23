@@ -28,4 +28,13 @@ export default {
       path: `finance/expense-classes/${expenseClassId}`,
     });
   },
+  getExpenseClassesViaApi(searchParams = {}) {
+    return cy
+      .okapiRequest({
+        path: 'finance/expense-classes',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.expenseClasses ?? []);
+  },
 };
