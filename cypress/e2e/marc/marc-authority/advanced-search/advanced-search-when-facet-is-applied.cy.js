@@ -14,31 +14,31 @@ describe('MARC', () => {
       const testData = {
         searchConfigurations: [
           {
-            query: 'Jack, Adrienne*',
+            query: 'Jack, Adriennetestauto*',
             operator: 'Contains any',
             searchOption: 'Personal name',
           },
           {
             booleanOperator: 'OR',
-            query: 'Maps - Montessori method of education',
+            query: 'Maps - Montessoritestauto method of education',
             operator: 'Exact phrase',
             searchOption: 'Subject',
           },
           {
             booleanOperator: 'OR',
-            query: 'Belarus',
+            query: 'Belarustestauto',
             operator: 'Exact phrase',
             searchOption: 'Geographic name',
           },
         ],
         expectedResults: [
           {
-            searchRecordName: 'Jack, Adrienne',
+            searchRecordName: 'Jack, Adriennetestauto',
             type: 'Authorized',
             headingType: 'Personal Name',
           },
           {
-            searchRecordName: 'Belarus',
+            searchRecordName: 'Belarustestauto',
             type: 'Authorized',
             headingType: 'Geographic Name',
           },
@@ -65,8 +65,9 @@ describe('MARC', () => {
 
       before(() => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C409433*');
-
+        testData.searchConfigurations.forEach((config) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(config.query);
+        });
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -82,10 +83,11 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             testData.user = userProperties;
-
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           },
         );
