@@ -15,8 +15,6 @@ import BrowseContributors from '../../../../support/fragments/inventory/search/b
 let user;
 let contributorNameTypes;
 let contributorTypes;
-
-// Test instances data according to TestRail preconditions
 const testInstancesData = [
   {
     // Instance 1
@@ -224,8 +222,6 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          // Expected to find: Only Instance 2 (has both Personal and Corporate name types,
-          // with David Charles name starting criteria, and False primary contributor)
           const expectedInstancesToFind = [mappedInstancesDataToUIView[1]];
 
           expectedInstancesToFind.forEach((instance) => {
@@ -235,7 +231,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Not expected to find: Instance 1, 3, 4
           const notExpectedToFindInstanceHrids = [
             mappedInstancesDataToUIView[0].hrid,
             mappedInstancesDataToUIView[2].hrid,
@@ -256,7 +251,6 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          // Expected to find: Instance 1 and Instance 2 (both have "Consultant" contributor type)
           const expectedConsultantInstances = [
             mappedInstancesDataToUIView[0],
             mappedInstancesDataToUIView[1],
@@ -269,7 +263,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Not expected to find: Instance 3 and Instance 4
           const notExpectedConsultantHrids = [
             mappedInstancesDataToUIView[2].hrid,
             mappedInstancesDataToUIView[3].hrid,
@@ -287,7 +280,6 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
-          // Expected to find: Instance 1 and Instance 2 (both have "director" in free text)
           expectedConsultantInstances.forEach((instance) => {
             QueryModal.verifyContributorsEmbeddedTableInQueryModal(
               instance.hrid,
@@ -295,7 +287,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Not expected to find: Instance 3 and Instance 4
           notExpectedConsultantHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
