@@ -20,7 +20,7 @@ describe('MARC Authority - Validation rules', () => {
       user = userProperties;
     });
 
-    cy.getSpecificatoinIds()
+    cy.getSpecificationIds()
       .then((specs) => {
         const authSpec = specs.find((s) => s.profile === 'authority');
         expect(authSpec, 'MARC authority specification exists').to.exist;

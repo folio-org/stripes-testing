@@ -91,7 +91,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicator Codes 
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         const bibSpec = specs.find((s) => s.profile === 'bibliographic');
         expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
         bibSpecId = bibSpec.id;
