@@ -27,7 +27,7 @@ export default {
       // Perform click on + for all but the last element
       if (index < resourceIds.length - 1) {
         cy.xpath(
-          `(//div[text() = 'Identifiers']/../div[@class='duplicate-group']//button[1])[${index + 1}]`,
+          `(//div[text() = 'Identifiers']/../div[@class='controls-container']/div[@class='duplicate-group']//button[1])[${index + 1}]`,
         ).click();
         cy.wait(1000);
       }

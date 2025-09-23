@@ -60,6 +60,7 @@ describe('Inventory', () => {
           InstanceRecordEdit.saveAndClose();
           InstanceRecordView.verifySuccsessCalloutMessage();
           InstanceRecordView.verifyInstancePaneExists();
+          cy.wait(3000);
           InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
         },
       );
