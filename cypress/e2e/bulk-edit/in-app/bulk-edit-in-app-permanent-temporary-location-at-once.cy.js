@@ -100,6 +100,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectAction('Replace with');
         BulkEditActions.locationLookupExists();
         BulkEditActions.selectLocation(newLocation1);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         // Click on the "Plus" icon
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.isDisabledRowIcons(false);
@@ -108,6 +109,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('Permanent item location', 1);
         BulkEditActions.selectAction('Replace with', 1);
         BulkEditActions.selectLocation(newLocation2, 1);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.locationLookupExists();
         BulkEditActions.clickLocationLookup(1);
         BulkEditActions.verifyLocationLookupModal();

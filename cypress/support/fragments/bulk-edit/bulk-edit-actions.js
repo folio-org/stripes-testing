@@ -529,10 +529,11 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Replace with'),
-      Button('Select control\nSelect location').click(),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button('Select control\nSelect location'))
+        .click(),
       SelectionOption(including(location)).click(),
     ]);
-    this.verifyConfirmButtonDisabled(false);
   },
 
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
@@ -2100,7 +2101,7 @@ export default {
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(ind2Field)
-        .click(),
+        .perform((el) => cy.wrap(el).find('input').click()),
     );
   },
 
