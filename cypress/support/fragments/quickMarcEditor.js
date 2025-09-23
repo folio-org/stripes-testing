@@ -2084,6 +2084,10 @@ export default {
     cy.expect([calloutAfterSaveAndCloseNewRecord.exists(), instanceDetailsPane.exists()]);
   },
 
+  checkAfterSaveAndKeepEditingDerive() {
+    cy.expect([calloutAfterSaveAndCloseNewRecord.exists(), rootSection.exists()]);
+  },
+
   verifyAndDismissRecordUpdatedCallout() {
     cy.expect(calloutAfterSaveAndClose.exists());
     cy.do(calloutAfterSaveAndClose.dismiss());

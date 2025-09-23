@@ -41,7 +41,7 @@ describe('Specification Storage - Field Indicators API', () => {
     cy.createTempUser(limitedPermissions).then((createdLimitedUser) => {
       limitedUser = createdLimitedUser;
     });
-    cy.getSpecificatoinIds()
+    cy.getSpecificationIds()
       .then((specs) => {
         const bibSpec = specs.find((s) => s.profile === 'bibliographic');
         expect(bibSpec, 'MARC bibliographic specification exists').to.exist;

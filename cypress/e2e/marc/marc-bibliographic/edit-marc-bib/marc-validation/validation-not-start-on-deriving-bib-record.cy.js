@@ -58,7 +58,7 @@ describe('MARC', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.getSpecificatoinIds().then((specifications) => {
+      cy.getSpecificationIds().then((specifications) => {
         specifications.forEach(({ id }) => {
           cy.syncSpecifications(id);
         });
