@@ -15,7 +15,7 @@ describe('MARC', () => {
         tag245: '245',
         tag245Content:
           '$a Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
-        tagValue: 'C499627 Test',
+        tagValue: 'C10935 Test',
         subfield245: '$a',
         errorMessages: {
           tagRequired: 'Fail: Tag must contain three characters and can only accept numbers 0-9.',
@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499627 Cannot save existing MARC bibliographic record without or with multiple 245 fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499627'] },
+        'C10935 Cannot save existing MARC bibliographic record without or with multiple 245 fields (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C10935'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();
