@@ -242,7 +242,7 @@ describe('Inventory', () => {
             title: column.title,
             columnIndex: column.columnIndex,
           });
-          // InstanceRecordView.scroll();
+          InstanceRecordView.scroll();
         });
 
         [
