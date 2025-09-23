@@ -120,9 +120,11 @@ describe('Cancel item level request', () => {
   });
 
   beforeEach('Login', () => {
-    cy.login(userData.username, userData.password, {
-      path: TopMenu.requestsPath,
-      waiter: Requests.waitLoading,
+    cy.waitForAuthRefresh(() => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
     });
   });
 

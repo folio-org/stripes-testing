@@ -64,14 +64,13 @@ describe('Fees&Fines', () => {
                       id: createdPaymentMethod.id,
                       name: createdPaymentMethod.name,
                     };
-                    cy.waitForAuthRefresh(() => {
-                      cy.loginAsAdmin({
-                        path: TopMenu.usersPath,
-                        waiter: UsersSearchPane.waitLoading,
-                      });
+                    cy.loginAsAdmin({
+                      path: TopMenu.usersPath,
+                      waiter: UsersSearchPane.waitLoading,
                     });
-
-                    UsersSearchPane.searchByUsername(testData.userProperties.username);
+                    cy.waitForAuthRefresh(() => {
+                      UsersSearchPane.searchByUsername(testData.userProperties.username);
+                    });
                   });
                 });
               });
