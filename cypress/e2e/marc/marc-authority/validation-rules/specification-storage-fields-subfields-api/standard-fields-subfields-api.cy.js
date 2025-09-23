@@ -34,7 +34,7 @@ describe('Specification Storage - Standard Fields Subfield API for MARC Authorit
     cy.createTempUser(permissions).then((createdUser) => {
       user = createdUser;
     });
-    cy.getSpecificatoinIds().then((specs) => {
+    cy.getSpecificationIds().then((specs) => {
       const authSpec = specs.find((s) => s.profile === 'authority');
       expect(authSpec, 'MARC authority specification exists').to.exist;
       authSpecId = authSpec.id;
