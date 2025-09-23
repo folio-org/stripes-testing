@@ -211,22 +211,22 @@ describe('Inventory', () => {
           {
             title: 'Item: barcode',
             id: including('clickable-list-column-barcode'),
-            columnIndex: 1,
+            columnIndex: 2,
           },
           {
             title: 'Status',
             id: 'status',
-            columnIndex: 2,
+            columnIndex: 3,
           },
           {
             title: 'Copy number',
             id: 'copynumber',
-            columnIndex: 3,
+            columnIndex: 4,
           },
           {
             title: 'Enumeration',
             id: 'enumeration',
-            columnIndex: 6,
+            columnIndex: 7,
           },
         ].forEach((column) => {
           // Validate sort
@@ -242,24 +242,24 @@ describe('Inventory', () => {
             title: column.title,
             columnIndex: column.columnIndex,
           });
-          InstanceRecordView.scroll();
+          // InstanceRecordView.scroll();
         });
 
         [
           {
             title: 'Chronology',
             id: 'chronology',
-            columnIndex: 7,
+            columnIndex: 8,
           },
           {
             title: 'Volume',
             id: 'chronology',
-            columnIndex: 8,
+            columnIndex: 9,
           },
           {
             title: 'Year, caption',
             id: 'yearcaption',
-            columnIndex: 9,
+            columnIndex: 10,
           },
         ].forEach((column) => {
           InstanceRecordView.scroll();
