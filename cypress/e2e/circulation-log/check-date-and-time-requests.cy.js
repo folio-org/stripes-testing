@@ -91,7 +91,9 @@ describe('Circulation log', () => {
         waiter: SearchPane.waitLoading,
       });
       // Select filters under the accordion to trigger result list with a created Request
-      SearchPane.setFilterOptionFromAccordion('request', 'Created');
+      cy.waitForAuthRefresh(() => {
+        SearchPane.setFilterOptionFromAccordion('request', 'Created');
+      });
       SearchPane.findResultRowIndexByContent(testData.user.barcode).then((rowIndex) => {
         // Check and note the date and time of the created Request
         SearchPane.checkResultSearch(

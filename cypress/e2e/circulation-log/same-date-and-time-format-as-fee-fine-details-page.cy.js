@@ -77,7 +77,10 @@ describe('Circulation log', () => {
                 feeFineAccount.id = feeFineAccountId;
               });
             });
-            cy.login(userData.username, userData.password);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.circulationLogPath,
+              waiter: SearchPane.waitLoading,
+            });
           });
       });
   });
@@ -96,8 +99,9 @@ describe('Circulation log', () => {
     'C350712 Check date and time --fee/fines (volaris) (TaaS)',
     { tags: ['extendedPath', 'volaris', 'C350712'] },
     () => {
-      cy.visit(TopMenu.circulationLogPath);
-      SearchPane.setFilterOptionFromAccordion('fee', 'Billed');
+      cy.waitForAuthRefresh(() => {
+        SearchPane.setFilterOptionFromAccordion('fee', 'Billed');
+      });
       // Get Billed Date value for the first row
       SearchResults.getBilledDate(0).then((expectedBilledDate) => {
         SearchResults.chooseActionByRow(0, 'Fee/fine details');
