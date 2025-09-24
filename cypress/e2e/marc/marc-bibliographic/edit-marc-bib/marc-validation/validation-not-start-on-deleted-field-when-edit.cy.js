@@ -36,7 +36,7 @@ describe('MARC', () => {
     before(() => {
       cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C552450');
-      cy.getSpecificatoinIds().then((specifications) => {
+      cy.getSpecificationIds().then((specifications) => {
         specifications.forEach(({ id }) => {
           cy.syncSpecifications(id);
         });

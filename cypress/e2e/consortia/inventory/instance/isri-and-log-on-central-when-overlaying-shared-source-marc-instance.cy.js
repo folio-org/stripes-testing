@@ -14,71 +14,73 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {
-      oclcNumberForImport: '1202462670',
-      oclcNumberForOverlay: '3213213',
-      OCLCAuthentication: '100481406/PAOLF',
-      instanceId: '',
-      instanceTitle: 'Cooking Light Soups & Stew.',
-      updatedInstanceTitle:
-        'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
-    };
+    describe('Consortia', () => {
+      const testData = {
+        oclcNumberForImport: '1202462670',
+        oclcNumberForOverlay: '3213213',
+        OCLCAuthentication: '100481406/PAOLF',
+        instanceId: '',
+        instanceTitle: 'Cooking Light Soups & Stew.',
+        updatedInstanceTitle:
+          'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
+      before('Create test data', () => {
+        cy.getAdminToken();
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
 
-      cy.createTempUser([
-        Permissions.uiInventorySingleRecordImport.gui,
-        Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.moduleDataImportEnabled.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
+        cy.createTempUser([
+          Permissions.uiInventorySingleRecordImport.gui,
+          Permissions.uiInventoryViewCreateEditInstances.gui,
+          Permissions.moduleDataImportEnabled.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
+
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      });
+
+      it(
+        'C418587 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when creating Shared Source = MARC Instance on central tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C418587'] },
+        () => {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.importWithOclc(testData.oclcNumberForImport);
+          InventoryInstance.waitLoading();
+          InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
+          InventoryInstance.startOverlaySourceBibRecord();
+          InventoryInstance.overlayWithOclc(testData.oclcNumberForOverlay);
+          InventoryInstance.waitLoading();
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          Logs.openViewAllLogs();
+          LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Update Instance');
+          LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+          LogsViewAll.waitUIToBeFiltered();
+          LogsViewAll.openFileDetails('No file name');
+          FileDetails.verifyTitle(
+            testData.updatedInstanceTitle,
+            FileDetails.columnNameInResultList.title,
+          );
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.instance,
+          ].forEach((columnName) => {
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+          });
+        },
+      );
     });
-
-    after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-    });
-
-    it(
-      'C418587 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when creating Shared Source = MARC Instance on central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C418587'] },
-      () => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.importWithOclc(testData.oclcNumberForImport);
-        InventoryInstance.waitLoading();
-        InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
-        InventoryInstance.startOverlaySourceBibRecord();
-        InventoryInstance.overlayWithOclc(testData.oclcNumberForOverlay);
-        InventoryInstance.waitLoading();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        Logs.openViewAllLogs();
-        LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Update Instance');
-        LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
-        LogsViewAll.waitUIToBeFiltered();
-        LogsViewAll.openFileDetails('No file name');
-        FileDetails.verifyTitle(
-          testData.updatedInstanceTitle,
-          FileDetails.columnNameInResultList.title,
-        );
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-        });
-      },
-    );
   });
 });

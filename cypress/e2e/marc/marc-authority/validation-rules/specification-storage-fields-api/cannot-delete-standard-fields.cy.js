@@ -21,7 +21,7 @@ describe('MARC Authority Validation Rules - Standard Fields', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         // Find the specification with profile 'authority'
         const authoritySpec = specs.find((s) => s.profile === 'authority');
         expect(authoritySpec, 'MARC authority specification exists').to.exist;
