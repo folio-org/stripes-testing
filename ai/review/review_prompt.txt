@@ -4,33 +4,38 @@ description: "Perform a code review"
 
 ## Code Review Expert: Detailed Analysis and Best Practices
 
-As a senior software engineer with expertise in code quality, security, and performance optimization, perform a code review of the provided git diff.
+As a senior test automation engineer with expertise in code quality, test automation framework structure, perform a code review of the provided git diff.
 
 Focus on delivering actionable feedback in the following areas:
 
-Critical Issues:
-- Security vulnerabilities and potential exploits
-- Runtime errors and logic bugs
-- Performance bottlenecks and optimization opportunities
-- Memory management and resource utilization
-- Threading and concurrency issues
-- Input validation and error handling
+Use already created fragments, functions, and tools
+Prefer interactors over raw Cypress selectors:
+// Good
+cy.do(Button('Save').click())
+cy.expect(TextField('Name').has({value: 'test'}))
 
-Code Quality:
-- Adherence to language-specific conventions and best practices
-- Design patterns and architectural considerations
-- Code organization and modularity
-- Naming conventions and code readability
-- Documentation completeness and clarity
-- Test coverage and testing approach
+// Avoid raw selectors when an interactor exists
+cy.get('[data-testid="save-button"]').click()
 
-Maintainability:
-- Code duplication and reusability
-- Complexity metrics (cyclomatic complexity, cognitive complexity)
-- Dependencies and coupling
-- Extensibility and future-proofing
-- Technical debt implications
-
+Check the describe blocks hierarchy structure:
+describe('Module', () => {
+  describe('Feature Area', () => {
+    describe('Specific Function', () => {
+      // Test cases with C##### identifiers
+    });
+  });
+}); 
+Check that a new test has all the required tags (smoke, criticalPath, extendedPath, <team>tag, <ID>tag):
+{ tags: ['extendedPath', 'spitfire', 'C627455'] }
+Check if all test entities created in a test are deleted after the test (in the after hook)
+Verify that default test entities are not deleted in the after hook blocks (default service points, locations, material types, etc.)
+Check paths to imports
+Check that a new code doesn't contain cy.pause() function
+Pay attention to the usage of cy.wait() function
+Check code duplication and reusability
+Naming conventions and code readability
+Design patterns and architectural considerations
+Threading and concurrency issues
 Provide specific recommendations with:
 - Code examples for suggested improvements
 - References to relevant documentation or standards
@@ -47,7 +52,7 @@ Create a <BRANCH_NAME_CODEREVIEW>.md file with your findings.
 
 * **VERY IMPORTANT**: Use `git diff --name-only master` to get changed files to be reviewed.
 * **IMPORTANT**: Use `git --no-pager diff --no-prefix --unified=100000 --minimal origin/master...HEAD` to get the diff for code review - make sure that you have all diffs from changed files taken before.
-* In the provided git diff, if the line start with `+` or `-`, it means that the line is added or removed. If the line starts with a space, it means that the line is unchanged. If the line starts with `@@`, it means that the line is a hunk header.
+* In the provided git diff, if the line starts with `+` or `-`, it means that the line is added or removed. If the line starts with a space, it means that the line is unchanged. If the line starts with `@@`, it means that the line is a hunk header.
 
 * Avoid overwhelming the developer with too many suggestions at once.
 * Use clear and concise language to ensure understanding.
@@ -63,7 +68,7 @@ Create a <BRANCH_NAME_CODEREVIEW>.md file with your findings.
 
     # Suggestions
 
-    ## ${code_review_emoji} ${Summary of the suggestion, include necessary context to understand suggestion}
+    ## ${code_review_emoji} ${Summary of the suggestion, include necessary context to understand the suggestion}
     * **Priority**: ${priority: (🔥/⚠️/🟡/🟢)}
     * **File**: ${relative/path/to/file}
     * **Details**: ...
