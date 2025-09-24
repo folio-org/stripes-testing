@@ -49,7 +49,11 @@ describe('Receiving', () => {
   let secondUser;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+      authRefresh: true,
+    });
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       firstBudget.fiscalYearId = firstFiscalYearResponse.id;
@@ -110,10 +114,6 @@ describe('Receiving', () => {
                             ...firstOrderResponse,
                             workflowStatus: ORDER_STATUSES.OPEN,
                           });
-                          cy.loginAsAdmin({
-                            path: TopMenu.ordersPath,
-                            waiter: Orders.waitLoading,
-                          });
                           Orders.searchByParameter('PO number', firstOrderNumber);
                           Orders.selectFromResultsList(firstOrderNumber);
                           OrderLines.selectPOLInOrder();
@@ -140,6 +140,7 @@ describe('Receiving', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });

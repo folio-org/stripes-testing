@@ -59,7 +59,7 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
 
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
@@ -75,22 +75,17 @@ describe('Invoices', () => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
         secondFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.closeBudgetDetails();
         });
         secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-        cy.getAdminToken();
         FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
           secondFiscalYear.id = secondFiscalYearResponse.id;
         });
-
         FinanceHelp.selectLedgersNavigation();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
@@ -140,7 +135,6 @@ describe('Invoices', () => {
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
-    cy.logout();
     cy.createTempUser([
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiFinanceViewFundAndBudget.gui,

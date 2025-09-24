@@ -55,7 +55,6 @@ describe('Orders', () => {
       organization.id = responseOrganizations;
     });
     firstOrder.vendor = organization.name;
-    cy.getAdminToken();
     cy.visit(TopMenu.ordersPath);
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
@@ -87,8 +86,6 @@ describe('Orders', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
-        cy.reload();
-        Orders.waitLoading();
       }, 20_000);
     });
   });

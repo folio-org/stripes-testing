@@ -322,6 +322,9 @@ describe('Organizations', () => {
           Organizations.closeDetailsPane();
         },
       );
+      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+        C423432User = secondUserProperties;
+      });
       cy.createTempUser([
         permissions.uiOrdersView.gui,
         permissions.uiOrganizationsViewBankingInformation.gui,
@@ -332,9 +335,6 @@ describe('Organizations', () => {
           waiter: Orders.waitLoading,
           authRefresh: true,
         });
-      });
-      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
-        C423432User = secondUserProperties;
       });
     });
 
@@ -363,6 +363,7 @@ describe('Organizations', () => {
       'C423426 Searching in "Organization look-up" by "Bank account number" with appropriate permission (thunderjet)',
       { tags: ['criticalPathBroken', 'thunderjet'] },
       () => {
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'Bank account number',

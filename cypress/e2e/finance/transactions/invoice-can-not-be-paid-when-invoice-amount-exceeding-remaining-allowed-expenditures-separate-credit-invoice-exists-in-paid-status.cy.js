@@ -209,10 +209,7 @@ describe('Finance: Transactions', () => {
                           workflowStatus: ORDER_STATUSES.OPEN,
                         });
                         cy.wait(10000);
-                        cy.loginAsAdmin({
-                          path: TopMenu.ordersPath,
-                          waiter: Orders.waitLoading,
-                        });
+                        cy.visit(TopMenu.ordersPath);
                         Orders.searchByParameter('PO number', secondOrderNumber);
                         Orders.selectFromResultsList(secondOrderNumber);
                         Orders.newInvoiceFromOrder();

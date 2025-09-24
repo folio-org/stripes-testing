@@ -67,8 +67,11 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
-    cy.visit(SettingsMenu.expenseClassesPath);
+    cy.loginAsAdmin({
+      path: SettingsMenu.expenseClassesPath,
+      waiter: SettingsFinance.waitExpenseClassesLoading,
+      authRefresh: true,
+    });
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
@@ -77,11 +80,9 @@ describe('Invoices', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.loginAsAdmin();
           TopMenuNavigation.openAppFromDropdown('Finance');
           FinanceHelp.selectFundsNavigation();
           FinanceHelp.searchByName(defaultFund.name);
@@ -182,6 +183,7 @@ describe('Invoices', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });

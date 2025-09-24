@@ -73,10 +73,10 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     cy.loginAsAdmin({
       path: SettingsMenu.expenseClassesPath,
       waiter: SettingsFinance.waitExpenseClassesLoading,
+      authRefresh: true,
     });
 
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
-    cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;

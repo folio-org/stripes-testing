@@ -64,7 +64,7 @@ describe('Fiscal Year Rollover', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -76,8 +76,6 @@ describe('Fiscal Year Rollover', () => {
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -175,6 +173,7 @@ describe('Fiscal Year Rollover', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
+        authRefresh: true,
       });
     });
   });
