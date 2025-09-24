@@ -43,7 +43,7 @@ describe('orders: Receiving and Check-in', () => {
   let orderLineTitleName;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
 
     ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
       circ2LocationServicePoint = servicePoint;
@@ -54,8 +54,6 @@ describe('orders: Receiving and Check-in', () => {
             organization.id = organizationsResponse;
             order.vendor = organizationsResponse;
           });
-
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
             Orders.searchByParameter('PO number', orderNumber);
@@ -87,6 +85,7 @@ describe('orders: Receiving and Check-in', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
+        authRefresh: true,
       });
     });
   });

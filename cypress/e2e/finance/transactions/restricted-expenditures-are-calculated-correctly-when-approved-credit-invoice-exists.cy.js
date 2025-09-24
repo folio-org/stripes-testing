@@ -212,7 +212,7 @@ describe('Finance: Transactions', () => {
         });
       });
     });
-
+    setApprovePayValue(isApprovePayEnabled);
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesApproveInvoices.gui,
@@ -225,7 +225,6 @@ describe('Finance: Transactions', () => {
         waiter: Invoices.waitLoading,
         authRefresh: true,
       });
-      setApprovePayValue(isApprovePayEnabled);
     });
   });
 

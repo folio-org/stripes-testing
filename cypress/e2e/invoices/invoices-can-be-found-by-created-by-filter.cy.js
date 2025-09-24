@@ -34,7 +34,7 @@ describe('Invoices', () => {
         });
       });
     });
-
+    cy.getAdminToken();
     cy.createTempUser([
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiOrdersCreate.gui,
@@ -79,6 +79,7 @@ describe('Invoices', () => {
       cy.login(users.secondUser.username, users.secondUser.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
     });
   });

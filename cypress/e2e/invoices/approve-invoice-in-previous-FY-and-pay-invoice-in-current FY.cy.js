@@ -66,7 +66,7 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
 
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -77,13 +77,10 @@ describe('Invoices', () => {
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-        cy.getAdminToken();
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -134,6 +131,7 @@ describe('Invoices', () => {
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
         Ledgers.fillInCommonRolloverInfo(secondFiscalYear.code, 'None', 'Allocation');
+        cy.wait(4000);
       });
     });
 
