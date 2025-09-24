@@ -35,12 +35,11 @@ describe('Orders', () => {
   let instance;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    }, 20_000);
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+      authRefresh: true,
+    });
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
         InventoryInteractions.setInstanceMatchingSetting({
@@ -77,12 +76,11 @@ describe('Orders', () => {
       permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.waitForAuthRefresh(() => {
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
-      }, 20_000);
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+        authRefresh: true,
+      });
     });
   });
 
@@ -90,6 +88,7 @@ describe('Orders', () => {
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
+      authRefresh: true,
     });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);

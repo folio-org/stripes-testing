@@ -53,8 +53,7 @@ describe('Orders', () => {
 
     before(() => {
       cy.clearLocalStorage();
-      cy.getAdminToken();
-
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
       ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
         effectiveLocationServicePoint = servicePoints[0];
         NewLocation.createViaApi(
@@ -65,8 +64,6 @@ describe('Orders', () => {
             organization.id = organizationsResponse;
             order.vendor = organizationsResponse;
           });
-
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
             Orders.searchByParameter('PO number', orderNumber);
@@ -145,6 +142,7 @@ describe('Orders', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.receivingPath,
           waiter: Receiving.waitLoading,
+          authRefresh: true,
         });
       });
     });

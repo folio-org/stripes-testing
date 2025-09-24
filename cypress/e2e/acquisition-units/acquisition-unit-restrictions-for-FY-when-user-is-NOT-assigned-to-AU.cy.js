@@ -5,6 +5,7 @@ import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 
 describe('Acquisition Units', () => {
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -62,8 +63,9 @@ describe('Acquisition Units', () => {
       FiscalYears.closeThirdPane();
       FiscalYears.resetFilters();
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fiscalYearPath,
-        waiter: FiscalYears.waitForFiscalYearDetailsLoading,
+        path: TopMenu.financePath,
+        waiter: Ledgers.waitLoading,
+        authRefresh: true,
       });
     });
   });
@@ -83,6 +85,7 @@ describe('Acquisition Units', () => {
     'C375073 Acquisition unit restrictions for "Fiscal year" records (Edit, Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      FinanceHelp.clickFiscalYearButton();
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.checkNoResultsMessage(
         `No results found for "${defaultFiscalYear.name}". Please check your spelling and filters.`,

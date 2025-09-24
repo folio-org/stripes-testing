@@ -80,6 +80,7 @@ describe('Orders', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
+          authRefresh: true,
         });
       },
     );
