@@ -38,7 +38,11 @@ describe('Fees&Fines', () => {
     });
 
     beforeEach('visiting Users module', () => {
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchResultsPane.waitLoading });
+      cy.loginAsAdmin({
+        path: TopMenu.usersPath,
+        waiter: UsersSearchResultsPane.waitLoading,
+        authRefresh: true,
+      });
     });
 
     after('UserOwner is removed', () => {
