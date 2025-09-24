@@ -136,6 +136,7 @@ describe('Orders', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.settingsInvoiveApprovalPath,
         waiter: SettingsInvoices.waitApprovalsLoading,
+        authRefresh: true,
       });
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
       cy.visit(TopMenu.ordersPath);

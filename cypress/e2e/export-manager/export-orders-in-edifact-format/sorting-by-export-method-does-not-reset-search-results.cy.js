@@ -150,8 +150,9 @@ describe('Export Manager', () => {
         cy.createTempUser([permissions.exportManagerAll.gui]).then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
-            path: TopMenu.exportManagerOrganizationsPath,
+            path: TopMenu.exportManagerPath,
             waiter: ExportManagerSearchPane.waitLoading,
+            authRefresh: true,
           });
         });
       });
@@ -178,15 +179,11 @@ describe('Export Manager', () => {
           ExportManagerSearchPane.selectOrganizationsSearch();
           ExportManagerSearchPane.searchBySuccessful();
           ExportManagerSearchPane.searchByFailed();
-          ExportManagerSearchPane.sortByJobID();
-          ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForFirstOrganization);
+          ExportManagerSearchPane.selectExportMethod(integrationNameForFirstOrganization);
           ExportManagerSearchPane.resetAll();
           ExportManagerSearchPane.searchBySuccessful();
           ExportManagerSearchPane.searchByFailed();
-          ExportManagerSearchPane.sortByJobID();
-          ExportManagerSearchPane.selectJobByIntegrationInList(
-            integrationNameForSecondOrganization,
-          );
+          ExportManagerSearchPane.selectExportMethod(integrationNameForSecondOrganization);
         },
       );
     });
