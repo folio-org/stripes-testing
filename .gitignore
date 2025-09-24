@@ -20,6 +20,6 @@ videos
 report.txt
 scripts/update_permission_names/permissions_backups/*
 
-.github/copilot-instructions.md
+.github/instructions/*
 
 mcp.json

@@ -23,6 +23,7 @@ import {
 import ArrayUtils from '../../utils/arrays';
 
 const listInformationAccording = Accordion('List information');
+const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
 const listNameTextField = TextField({ name: 'listName' });
 const listDescriptionTextArea = TextArea({ name: 'description' });
 const saveButton = Button('Save');
@@ -98,10 +99,26 @@ const UI = {
 
   clickOnListInformationAccordion() {
     cy.do(listInformationAccording.click());
+    cy.wait(500);
   },
 
   expandListInformationAccordion() {
     cy.do(listInformationAccording.open());
+    cy.wait(500);
+  },
+
+  clickOnQueryAccordion() {
+    cy.do(queryAccordion.click());
+    cy.wait(500);
+  },
+
+  expandQueryAccordion() {
+    cy.do(queryAccordion.open());
+    cy.wait(500);
+  },
+
+  collapseQueryAccordion() {
+    cy.do(queryAccordion.close());
   },
 
   openActions() {
@@ -395,9 +412,26 @@ const UI = {
     cy.expect(KeyValue(label, { value }).exists());
   },
 
+  verifyListNameLabel(value) {
+    this.checkKeyValue('List name', value);
+  },
+
+  verifyListDescriptionLabel(value) {
+    this.checkKeyValue('Description', value);
+  },
+
+  verifyVisibilityLabel(value) {
+    this.checkKeyValue('Visibility', value);
+  },
+
   verifyRecordType(recordType) {
     this.checkKeyValue('Record type', recordType);
   },
+
+  verifyStatusLabel(value) {
+    this.checkKeyValue('Status', value);
+  },
+
 
   selectVisibility(visibility) {
     cy.do(RadioButton(visibility).click());
@@ -810,6 +844,23 @@ const API = {
           fqlQuery: '{"users.active":{"$eq":"true"}}',
         },
         fields: ['users.active', 'user.id'],
+        uiQuery: 'users.active == True',
+      };
+    });
+  },
+
+  buildQueryOnActiveUsersWithZeroRecords() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"users.id":{"$eq":"1234567890"}}',
+        },
+        fields: ['users.active', 'user.id'],
+        uiQuery: 'users.id == 1234567890',
       };
     });
   },
