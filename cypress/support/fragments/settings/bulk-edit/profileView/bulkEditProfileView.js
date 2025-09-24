@@ -6,6 +6,7 @@ import {
   RepeatableFieldItem,
   Select,
   Selection,
+  TextArea,
 } from '../../../../../../interactors';
 
 const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
@@ -45,6 +46,14 @@ export default {
       targetRow(rowIndex)
         .find(Selection({ singleValue: location }))
         .visible(),
+    );
+  },
+
+  verifyTextInDataTextArea(text, rowIndex = 0) {
+    cy.expect(
+      targetRow(rowIndex)
+        .find(TextArea({ dataTestID: 'input-textarea-0' }))
+        .has({ textContent: text }),
     );
   },
 

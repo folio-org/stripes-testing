@@ -23,6 +23,7 @@ const closeFormButton = Button({ icon: 'times' });
 const optionsDropdown = Selection({ value: including('Select control') });
 const actionsDropdown = Select({ dataTestID: 'select-actions-0' });
 const locationLookupButton = Button('Location look-up');
+const locationSelection = Selection({ name: 'locationId' });
 const plusButton = Button({ icon: 'plus-sign' });
 const garbageCanButton = Button({ icon: 'trash' });
 const targetRow = (rowIndex = 0) => {
@@ -30,6 +31,7 @@ const targetRow = (rowIndex = 0) => {
 };
 
 export default {
+  targetRow,
   verifyFormElements(title) {
     cy.expect([
       collapseAllLink.exists(),
@@ -78,6 +80,10 @@ export default {
   selectAction(action, rowIndex = 0) {
     cy.do(targetRow(rowIndex).find(actionsDropdown).choose(action));
     cy.expect(targetRow(rowIndex).find(actionsDropdown).has({ checkedOptionText: action }));
+  },
+
+  selectLocation(location, rowIndex = 0) {
+    cy.do(targetRow(rowIndex).find(locationSelection).choose(location));
   },
 
   clickLocationLookup(rowIndex = 0) {
@@ -132,5 +138,13 @@ export default {
       targetRow(rowIndex).find(plusButton).exists(),
       targetRow(rowIndex).find(garbageCanButton).exists(),
     ]);
+  },
+
+  fillTextInDataTextArea(text, rowIndex = 0) {
+    cy.do(
+      targetRow(rowIndex)
+        .find(TextArea({ dataTestID: 'input-textarea-0' }))
+        .fillIn(text),
+    );
   },
 };

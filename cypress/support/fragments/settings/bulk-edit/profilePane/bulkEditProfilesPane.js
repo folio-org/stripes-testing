@@ -67,9 +67,11 @@ export default {
       }),
     );
     cy.expect(
-      targetProfileRow
-        .find(MultiColumnListCell({ column: 'Updated by' }))
-        .has({ content: including(`${userObject.lastName}, ${userObject.firstName}`) }),
+      targetProfileRow.find(MultiColumnListCell({ column: 'Updated by' })).has({
+        content: including(
+          `${userObject.lastName}, ${userObject.firstName} ${userObject.personal.middleName}`,
+        ),
+      }),
     );
     cy.expect(
       targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: 'Active' }),

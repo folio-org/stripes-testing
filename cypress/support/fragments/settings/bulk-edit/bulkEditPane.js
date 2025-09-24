@@ -20,4 +20,8 @@ export default {
   clickItemsBulkEditProfiles() {
     cy.do(navListItems.items.click());
   },
+
+  clickHoldingsBulkEditProfiles() {
+    cy.do(navListItems.holdings.click());
+  },
 };
