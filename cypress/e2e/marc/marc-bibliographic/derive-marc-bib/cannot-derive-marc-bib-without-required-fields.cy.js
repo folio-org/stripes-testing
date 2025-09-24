@@ -51,7 +51,7 @@ describe('MARC', () => {
               createdRecordIDs.push(record[testData.marcFile.propertyName].id);
             });
 
-            cy.getSpecificatoinIds().then((specs) => {
+            cy.getSpecificationIds().then((specs) => {
               const bibliographicSpec = specs.find((s) => s.profile === 'bibliographic');
               bibliographicSpecId = bibliographicSpec.id;
 

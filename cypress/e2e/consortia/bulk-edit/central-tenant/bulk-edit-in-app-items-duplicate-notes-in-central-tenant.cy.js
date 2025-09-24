@@ -196,8 +196,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
           BulkEditActions.downloadMatchedResults();
 
           itemBarcodes.forEach((barcode) => {
@@ -305,8 +304,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
           BulkEditActions.openActions();
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();

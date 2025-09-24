@@ -11,60 +11,62 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {};
+    describe('Consortia', () => {
+      const testData = {};
 
-    before('Create test data and login', () => {
-      cy.getAdminToken();
-      cy.setTenant(Affiliations.College);
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
-      });
-
-      cy.resetTenant();
-      cy.getAdminToken();
-      cy.createTempUser([]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+      before('Create test data and login', () => {
+        cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [
-          Permissions.uiInventorySetRecordsForDeletion.gui,
-          Permissions.inventoryAll.gui,
-        ]);
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
+        });
 
         cy.resetTenant();
-        cy.login(testData.user.username, testData.user.password);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instance.instanceId);
-        InventoryInstances.selectInstance();
-      });
-    });
+        cy.getAdminToken();
+        cy.createTempUser([]).then((userProperties) => {
+          testData.user = userProperties;
 
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(testData.user.userId);
-        cy.setTenant(Affiliations.College);
-        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      });
-    });
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.uiInventorySetRecordsForDeletion.gui,
+            Permissions.inventoryAll.gui,
+          ]);
 
-    it(
-      'C436843 (CONSORTIA) Check "Set record for deletion" option in Actions menu for Local instance on Member tenant (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C436843'] },
-      () => {
-        InstanceRecordView.waitLoading();
-        InstanceRecordView.clickActionsButton();
-        InstanceRecordView.setRecordForDeletion();
-        SetRecordForDeletionModal.waitLoading();
-        SetRecordForDeletionModal.verifyModalView(testData.instance.instanceTitle);
-        SetRecordForDeletionModal.clickCancel();
-        SetRecordForDeletionModal.isNotDisplayed();
-        InstanceRecordView.waitLoading();
-      },
-    );
+          cy.resetTenant();
+          cy.login(testData.user.username, testData.user.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.instance.instanceId);
+          InventoryInstances.selectInstance();
+        });
+      });
+
+      after('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        });
+      });
+
+      it(
+        'C436843 (CONSORTIA) Check "Set record for deletion" option in Actions menu for Local instance on Member tenant (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C436843'] },
+        () => {
+          InstanceRecordView.waitLoading();
+          InstanceRecordView.clickActionsButton();
+          InstanceRecordView.setRecordForDeletion();
+          SetRecordForDeletionModal.waitLoading();
+          SetRecordForDeletionModal.verifyModalView(testData.instance.instanceTitle);
+          SetRecordForDeletionModal.clickCancel();
+          SetRecordForDeletionModal.isNotDisplayed();
+          InstanceRecordView.waitLoading();
+        },
+      );
+    });
   });
 });
