@@ -114,6 +114,7 @@ describe('Citation: duplicate resource', () => {
         callNumber: testData.callNumber,
       });
       HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+      cy.wait(2000);
       InventoryInstance.checkHoldingsTableContent({
         name: LOCATION_NAMES.ANNEX_UI,
       });
