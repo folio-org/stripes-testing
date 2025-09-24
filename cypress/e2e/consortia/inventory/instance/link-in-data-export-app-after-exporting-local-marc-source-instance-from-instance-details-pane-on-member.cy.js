@@ -15,81 +15,83 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {
-      marcFile: {
-        marc: 'oneMarcBib.mrc',
-        fileName: `C422080 autotestMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      },
-    };
+    describe('Consortia', () => {
+      const testData = {
+        marcFile: {
+          marc: 'oneMarcBib.mrc',
+          fileName: `C422080 autotestMarcFile.${getRandomPostfix()}.mrc`,
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        },
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      cy.setTenant(Affiliations.College);
-      DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        testData.marcFile.jobProfileToRun,
-      ).then((response) => {
-        testData.instanceId = response[0].instance.id;
-      });
-      cy.resetTenant();
-
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
-        .then((userProperties) => {
-          testData.user = userProperties;
-        })
-        .then(() => {
-          cy.wait(3000);
-          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.inventoryAll.gui,
-            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-          ]);
-
-          cy.resetTenant();
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        });
-    });
-
-    after('Delete test data', () => {
-      FileManager.deleteFileFromDownloadsByMask(testData.fileName);
-      FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
-      FileManager.deleteFileFromDownloadsByMask('*.csv');
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-      cy.setTenant(Affiliations.College);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-    });
-
-    it(
-      'C422080 (CONSORTIA) Verify the link in Data export app after exporting local MARC Source Instance from Instance details pane on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C422080'] },
-      () => {
-        InventoryInstances.searchByTitle(testData.instanceId);
-        InstanceRecordView.exportInstanceMarc();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        ExportFile.waitLandingPageOpened();
-        cy.resetTenant();
+      before('Create test data', () => {
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.fileName = name;
-          ExportFile.downloadExportedMarcFile(name);
-          // Need to wait,while file to be downloaded
-          cy.wait(2000);
-          FileManager.findDownloadedFilesByMask(`*${name}`).then((files) => expect(files.length).eq(1));
+        DataImport.uploadFileViaApi(
+          testData.marcFile.marc,
+          testData.marcFile.fileName,
+          testData.marcFile.jobProfileToRun,
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
         });
-      },
-    );
+        cy.resetTenant();
+
+        cy.getAdminToken();
+        cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
+          .then((userProperties) => {
+            testData.user = userProperties;
+          })
+          .then(() => {
+            cy.wait(3000);
+            cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(testData.user.userId, [
+              Permissions.inventoryAll.gui,
+              Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+            ]);
+
+            cy.resetTenant();
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          });
+      });
+
+      after('Delete test data', () => {
+        FileManager.deleteFileFromDownloadsByMask(testData.fileName);
+        FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
+        FileManager.deleteFileFromDownloadsByMask('*.csv');
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        cy.setTenant(Affiliations.College);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      });
+
+      it(
+        'C422080 (CONSORTIA) Verify the link in Data export app after exporting local MARC Source Instance from Instance details pane on Member tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C422080'] },
+        () => {
+          InventoryInstances.searchByTitle(testData.instanceId);
+          InstanceRecordView.exportInstanceMarc();
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          ExportFile.waitLandingPageOpened();
+          cy.resetTenant();
+          cy.getAdminToken();
+          cy.setTenant(Affiliations.College);
+          ExportFile.getExportedFileNameViaApi().then((name) => {
+            testData.fileName = name;
+            ExportFile.downloadExportedMarcFile(name);
+            // Need to wait,while file to be downloaded
+            cy.wait(2000);
+            FileManager.findDownloadedFilesByMask(`*${name}`).then((files) => expect(files.length).eq(1));
+          });
+        },
+      );
+    });
   });
 });

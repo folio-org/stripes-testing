@@ -1,6 +1,6 @@
 import { REQUEST_METHOD } from '../constants';
 
-Cypress.Commands.add('getSpecificatoinIds', (searchParams) => {
+Cypress.Commands.add('getSpecificationIds', (searchParams) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'specification-storage/specifications',

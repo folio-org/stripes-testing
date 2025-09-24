@@ -255,8 +255,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-            BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
             BulkEditActions.downloadMatchedResults();
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
