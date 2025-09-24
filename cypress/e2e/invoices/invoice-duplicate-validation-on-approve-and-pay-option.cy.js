@@ -19,7 +19,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Permissions from '../../support/dictionary/permissions';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import ApproveInvoiceModal from '../../support/fragments/invoices/modal/approveInvoiceModal';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import Approvals from '../../support/fragments/settings/orders/approvals';
 
 describe('Invoices', { retries: { runMode: 1 } }, () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -162,7 +162,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
         });
       });
     });
-
+    Approvals.setApprovePayValue(isApprovePayEnabled);
     cy.createTempUser([
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiInvoicesApproveInvoices.gui,
@@ -172,11 +172,10 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
       testData.user = userProperties;
 
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.settingsInvoiveApprovalPath,
-        waiter: SettingsInvoices.waitApprovalsLoading,
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+        authRefresh: true,
       });
-      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
-      cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
       Invoices.sortInvoicesBy('Status');
     });

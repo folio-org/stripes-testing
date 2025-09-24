@@ -265,6 +265,7 @@ describe('Patron notices', () => {
               cy.login(userData.username, userData.password, {
                 path: SettingsMenu.circulationPatronNoticeTemplatesPath,
                 waiter: NewNoticePolicyTemplate.waitLoading,
+                authRefresh: true,
               });
             });
         });
@@ -323,9 +324,7 @@ describe('Patron notices', () => {
             NewNoticePolicyTemplate.checkAfterSaving(template);
           });
 
-          cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
           cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           NewNoticePolicy.waitLoading();
 
           NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
@@ -345,6 +344,7 @@ describe('Patron notices', () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.checkOutPath,
             waiter: Checkout.waitLoading,
+            authRefresh: true,
           });
           CheckOutActions.checkOutUser(userData.barcode);
           CheckOutActions.checkUserInfo(userData, patronGroup.name);
@@ -358,6 +358,7 @@ describe('Patron notices', () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.usersPath,
             waiter: UsersSearchPane.waitLoading,
+            authRefresh: true,
           });
           UsersSearchPane.searchByKeywords(userData.barcode);
           UsersCard.waitLoading();
@@ -372,6 +373,7 @@ describe('Patron notices', () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.circulationLogPath,
             waiter: SearchPane.waitLoading,
+            authRefresh: true,
           });
 
           noticeTemplates.forEach((template) => {

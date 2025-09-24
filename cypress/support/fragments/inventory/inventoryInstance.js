@@ -1688,11 +1688,11 @@ export default {
     );
   },
 
-  verifyLastUpdatedSource: (userFirsttName, userLastName) => {
+  verifyLastUpdatedSource: (userFirstName, userLastName) => {
     cy.do(Accordion('Administrative data').click());
     cy.get('div[data-test-updated-by="true"]')
       .find('a')
-      .should('include.text', `${userLastName}, ${userFirsttName}`);
+      .should('include.text', `${userLastName}, ${userFirstName}`);
   },
 
   verifyRecordCreatedSource: (userFirsttName, userLastName) => {

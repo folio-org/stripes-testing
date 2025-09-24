@@ -81,7 +81,7 @@ describe('Orders: Receiving and Check-in', () => {
             });
         },
       );
-      TitleLevelRequests.enableTLRViaApi();
+      TitleLevelRequests.updateTlrConfigViaApi({ titleLevelRequestsFeatureEnabled: true });
     });
 
     cy.createTempUser([

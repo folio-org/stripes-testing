@@ -44,10 +44,12 @@ describe('Invoices', () => {
   const isApprovePayDisabled = false;
 
   before(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: SettingsMenu.expenseClassesPath,
+      waiter: SettingsFinance.waitExpenseClassesLoading,
+      authRefresh: true,
+    });
     Approvals.setApprovePayValue(isApprovePayDisabled);
-    cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;

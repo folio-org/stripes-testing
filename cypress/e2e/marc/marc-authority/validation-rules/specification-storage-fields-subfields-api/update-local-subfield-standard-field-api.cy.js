@@ -30,7 +30,7 @@ describe('MARC Authority Validation Rules - Update Local Subfield of Standard fi
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         // Find the specification with profile 'authority'
         const authSpec = specs.find((s) => s.profile === 'authority');
         expect(authSpec, 'MARC authority specification exists').to.exist;

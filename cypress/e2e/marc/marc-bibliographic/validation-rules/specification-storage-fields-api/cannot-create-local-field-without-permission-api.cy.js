@@ -22,7 +22,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field withou
     cy.getAdminToken();
     cy.createTempUser(limitedPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         const bibSpec = specs.find((s) => s.profile === 'bibliographic');
         expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
         bibSpecId = bibSpec.id;
