@@ -169,6 +169,11 @@ export default {
     resource: 'UI-Data-Import',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiConsortiaDataImportCentralRecordUpdate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Data-Import Central-Record-Update',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {
