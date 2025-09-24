@@ -26,6 +26,7 @@ import {
   or,
   PaneContent,
   Card,
+  RepeatableField,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -360,27 +361,85 @@ export default {
     ]);
   },
 
-  addAdressToOrganization: (address) => {
+  addAdressToOrganization: (address, numberOfAdress) => {
+    const steps = [];
     if (address.addressLine1) {
-      cy.do([TextField({ name: 'addresses[0].addressLine1' }).fillIn(address.addressLine1)]);
-    } else if (address.addressLine2) {
-      cy.do([TextField({ name: 'addresses[0].addressLine2' }).fillIn(address.addressLine2)]);
-    } else if (address.city) {
-      cy.do([TextField({ name: 'addresses[0].city' }).fillIn(address.city)]);
-    } else if (address.stateRegion) {
-      cy.do([TextField({ name: 'addresses[0].stateRegion' }).fillIn(address.stateRegion)]);
-    } else if (address.zipCode) {
-      cy.do([TextField({ name: 'addresses[0].zipCode' }).fillIn(address.zipCode)]);
-    } else if (address.country) {
-      cy.do([Selection({ name: 'addresses[0].country' }).choose(address.country)]);
-    } else if (address.language) {
-      cy.do([Selection({ name: 'addresses[0].language' }).choose(address.language)]);
-    } else if (address.category) {
       cy.do([
-        MultiSelect({ label: 'Categories' }).open(),
-        MultiSelectMenu().find(MultiSelectOption(address.category)).clickSegment(),
-        MultiSelect({ label: 'Categories' }).close(),
+        TextField({ name: `addresses[${numberOfAdress}].addressLine1` }).fillIn(
+          address.addressLine1,
+        ),
       ]);
+    }
+    if (address.addressLine2) {
+      cy.do([
+        TextField({ name: `addresses[${numberOfAdress}].addressLine2` }).fillIn(
+          address.addressLine2,
+        ),
+      ]);
+    }
+    if (address.city) {
+      cy.do([TextField({ name: `addresses[${numberOfAdress}].city` }).fillIn(address.city)]);
+    }
+    if (address.stateRegion) {
+      cy.do([
+        TextField({ name: `addresses[${numberOfAdress}].stateRegion` }).fillIn(address.stateRegion),
+      ]);
+    }
+    if (address.zipCode) {
+      cy.do([TextField({ name: `addresses[${numberOfAdress}].zipCode` }).fillIn(address.zipCode)]);
+    }
+    if (address.country) {
+      cy.do([Selection({ name: `addresses[${numberOfAdress}].country` }).choose(address.country)]);
+    }
+    if (address.language) {
+      cy.do([
+        Selection({ name: `addresses[${numberOfAdress}].language` }).choose(address.language),
+      ]);
+    }
+    if (address.category) {
+      const values = Array.isArray(address.category) ? address.category : [address.category];
+      const ms = MultiSelect({ label: 'Categories' }).nth(numberOfAdress);
+      steps.push(ms.open());
+      values.forEach((v) => {
+        steps.push(MultiSelectMenu().find(MultiSelectOption(v)).clickSegment());
+      });
+      steps.push(ms.close());
+    }
+    cy.do(steps);
+  },
+
+  addPhoneNumberToOrganization: (phoneNumber, numberOfPhoneNumber) => {
+    if (phoneNumber.phoneNum) {
+      cy.do([
+        TextField({ name: `phoneNumbers[${numberOfPhoneNumber}].phoneNumber` }).fillIn(
+          phoneNumber.phoneNum,
+        ),
+      ]);
+    }
+    if (phoneNumber.type) {
+      cy.do([
+        Selection({ name: `phoneNumbers[${numberOfPhoneNumber}].type` }).choose(phoneNumber.type),
+      ]);
+    }
+    if (phoneNumber.language) {
+      cy.do([
+        Selection({ name: `phoneNumbers[${numberOfPhoneNumber}].language` }).choose(
+          phoneNumber.language,
+        ),
+      ]);
+    }
+    if (phoneNumber.categories) {
+      const values = Array.isArray(phoneNumber.categories)
+        ? phoneNumber.categories
+        : [phoneNumber.categories];
+      const ms = MultiSelect({ label: 'Categories' }).nth(numberOfPhoneNumber);
+      const steps = [RepeatableField({ id: 'phone-numbers' }).find(ms).open()];
+
+      values.forEach((v) => {
+        steps.push(MultiSelectMenu().find(MultiSelectOption(v)).clickSegment());
+      });
+      steps.push(ms.close());
+      cy.do(steps);
     }
   },
 
@@ -390,6 +449,10 @@ export default {
 
   clickAddAdressButton: () => {
     cy.do([Button({ id: 'addresses-add-button' }).click()]);
+  },
+
+  clickAddPhoneNumberButton: () => {
+    cy.do(Button({ id: 'phone-numbers-add-button' }).click());
   },
 
   organizationTagDetails: () => {
