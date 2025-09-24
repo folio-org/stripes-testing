@@ -27,7 +27,7 @@ describe('MARC', () => {
       before('Create user', () => {
         cy.getAdminToken();
         // Delete 991 field requirement to clear precondition environment
-        cy.getSpecificatoinIds().then((specs) => {
+        cy.getSpecificationIds().then((specs) => {
           const bibSpec = specs.find((s) => s.profile === 'bibliographic');
           if (bibSpec) {
             cy.deleteSpecificationFieldByTag(bibSpec.id, '991', false);
