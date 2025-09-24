@@ -135,8 +135,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
             firstInstance.title,
           );
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);
           BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
           BulkEditSearchPane.verifySearchColumnNameTextFieldExists();
           BulkEditSearchPane.verifyCheckedCheckboxesPresentInTheTable();

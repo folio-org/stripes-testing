@@ -171,8 +171,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-            BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
             BulkEditActions.downloadMatchedResults();
 
             instances.forEach((instance) => {

@@ -11,69 +11,71 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    let user;
-    let instanceHRID;
-    const testData = {
-      instanceTitle: `C405563 autoTestInstanceTitle${getRandomPostfix()}`,
-    };
+    describe('Consortia', () => {
+      let user;
+      let instanceHRID;
+      const testData = {
+        instanceTitle: `C405563 autoTestInstanceTitle${getRandomPostfix()}`,
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+      before('Create test data', () => {
+        cy.getAdminToken();
+        cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+          (userProperties) => {
+            user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            Permissions.uiInventoryViewCreateEditInstances.gui,
-          ]);
+            cy.assignAffiliationToUser(Affiliations.College, user.userId);
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              Permissions.uiInventoryViewCreateEditInstances.gui,
+            ]);
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        },
-      );
-    });
-
-    after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.setTenant(Affiliations.College).then(() => {
-        cy.getCollegeAdminToken();
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           },
         );
       });
+
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+        cy.setTenant(Affiliations.College).then(() => {
+          cy.getCollegeAdminToken();
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+            (instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
+      });
+
+      const verifySearchAndFilterPane = () => {
+        InventorySearchAndFilter.verifyPanesExist();
+        InventorySearchAndFilter.verifySearchToggleButtonSelected();
+        InventorySearchAndFilter.instanceTabIsDefault();
+      };
+
+      it(
+        'C405563 (CONSORTIA) (CONSORTIA) Verify the action for creating new local records for Member tenant (consortia) (folijet)',
+        { tags: ['criticalPathECS', 'folijet', 'C405563'] },
+        () => {
+          verifySearchAndFilterPane();
+          const InventoryNewInstance = InventoryInstances.addNewInventory();
+          InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
+          InventoryNewInstance.clickSaveAndCloseButton();
+          InventoryInstance.checkInstanceDetails({
+            instanceInformation: [{ key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO }],
+          });
+          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+            instanceHRID = initialInstanceHrId;
+          });
+        },
+      );
     });
-
-    const verifySearchAndFilterPane = () => {
-      InventorySearchAndFilter.verifyPanesExist();
-      InventorySearchAndFilter.verifySearchToggleButtonSelected();
-      InventorySearchAndFilter.instanceTabIsDefault();
-    };
-
-    it(
-      'C405563 (CONSORTIA) (CONSORTIA) Verify the action for creating new local records for Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet', 'C405563'] },
-      () => {
-        verifySearchAndFilterPane();
-        const InventoryNewInstance = InventoryInstances.addNewInventory();
-        InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
-        InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.checkInstanceDetails({
-          instanceInformation: [{ key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO }],
-        });
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHRID = initialInstanceHrId;
-        });
-      },
-    );
   });
 });

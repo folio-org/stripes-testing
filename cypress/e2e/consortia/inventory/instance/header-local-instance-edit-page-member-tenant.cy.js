@@ -11,60 +11,62 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {};
+    describe('Consortia', () => {
+      const testData = {};
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      cy.setTenant(Affiliations.College);
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
-      });
-
-      cy.resetTenant();
-      cy.createTempUser([]).then((userProperties) => {
-        testData.user = userProperties;
-        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+      before('Create test data', () => {
+        cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [
-          Permissions.uiInventoryViewCreateEditInstances.gui,
-        ]);
-      });
-    });
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
+        });
 
-    after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      cy.setTenant(Affiliations.College);
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      cy.resetTenant();
-      Users.deleteViaApi(testData.user.userId);
-    });
-
-    it(
-      'C404357 (CONSORTIA) Verify the header of a local Instance on edit page for a Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C404357'] },
-      () => {
         cy.resetTenant();
-        cy.login(testData.user.username, testData.user.password);
+        cy.createTempUser([]).then((userProperties) => {
+          testData.user = userProperties;
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.uiInventoryViewCreateEditInstances.gui,
+          ]);
+        });
+      });
 
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        cy.resetTenant();
+        Users.deleteViaApi(testData.user.userId);
+      });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
+      it(
+        'C404357 (CONSORTIA) Verify the header of a local Instance on edit page for a Member tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C404357'] },
+        () => {
+          cy.resetTenant();
+          cy.login(testData.user.username, testData.user.password);
 
-        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
-        InstanceRecordView.edit();
-        InstanceRecordEdit.waitLoading();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
 
-        InstanceRecordEdit.checkInstanceHeader(
-          ` Edit local instance • ${testData.instance.instanceTitle}`,
-        );
-      },
-    );
+          InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+
+          InstanceRecordView.edit();
+          InstanceRecordEdit.waitLoading();
+
+          InstanceRecordEdit.checkInstanceHeader(
+            ` Edit local instance • ${testData.instance.instanceTitle}`,
+          );
+        },
+      );
+    });
   });
 });

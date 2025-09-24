@@ -176,8 +176,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-            BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
             BulkEditActions.openActions();
             BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
@@ -329,8 +328,7 @@ describe('Bulk-edit', () => {
                 });
 
                 BulkEditActions.verifyAreYouSureForm(2);
-                BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-                BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+                BulkEditSearchPane.verifyPaginatorInAreYouSureForm(2);
                 BulkEditActions.downloadPreview();
 
                 instances.forEach((instance) => {

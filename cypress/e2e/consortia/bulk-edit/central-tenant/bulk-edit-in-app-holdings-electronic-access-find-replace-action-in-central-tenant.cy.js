@@ -255,8 +255,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckbox(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -360,8 +359,7 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(4);
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(4);
           BulkEditActions.downloadPreview();
 
           const holdingElectronicAccessFieldsToEditInFile = `${electronicAccessTableHeadersInFile}${localUrlRelationship.name};${electronicAccessFieldsFromLowerCaseToStringInFile}|${localUrlRelationship.name};${electronicAccessFieldsFromLowerCaseToStringInFile}`;

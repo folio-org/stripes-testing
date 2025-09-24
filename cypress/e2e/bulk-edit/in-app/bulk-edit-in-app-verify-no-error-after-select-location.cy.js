@@ -61,6 +61,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('Permanent item location');
         BulkEditActions.selectAction('Replace with');
         BulkEditActions.selectLocation(newLocation, 0);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         BulkEditActions.clickSelectedLocation(newLocation, 'Select location');
         BulkEditActions.verifyConfirmButtonDisabled(true);
