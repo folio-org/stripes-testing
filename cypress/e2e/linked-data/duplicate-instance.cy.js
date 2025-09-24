@@ -109,12 +109,13 @@ describe('Citation: duplicate resource', () => {
       // Add holdings
       cy.wait(3000);
       const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
+      cy.wait(2000);
       HoldingsRecordEdit.fillHoldingFields({
         permanentLocation: LOCATION_NAMES.ANNEX,
         callNumber: testData.callNumber,
       });
       HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
-      cy.wait(2000);
+      cy.reload(true);
       InventoryInstance.checkHoldingsTableContent({
         name: LOCATION_NAMES.ANNEX_UI,
       });
