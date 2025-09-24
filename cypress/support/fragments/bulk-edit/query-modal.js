@@ -51,6 +51,13 @@ const embeddedTableHeadersMap = {
     'Statement for indexes staff note',
   ],
   receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
+  contributors: [
+    'Contributor name',
+    'Contributor name type',
+    'Contributor type',
+    'Contributor type, free text',
+    'Primary',
+  ],
 };
 
 export const holdingsFieldValues = {
@@ -105,6 +112,15 @@ export const instanceFieldValues = {
   noteType: 'Instance — Notes — Note type',
   note: 'Instance — Notes — Note',
   noteStaffOnly: 'Instance — Notes — Staff only',
+  publicationsPublisher: 'Instance — Publication — Publisher',
+  publicationsRole: 'Instance — Publication — Publisher role',
+  publicationsPlace: 'Instance — Publication — Place of publication',
+  publicationsDate: 'Instance — Publication — Publication date',
+  contributorName: 'Instance — Contributors — Contributor name',
+  contributorNameType: 'Instance — Contributors — Contributor name type',
+  contributorType: 'Instance — Contributors — Contributor type',
+  contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
+  contributorPrimary: 'Instance — Contributors — Primary',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -115,8 +131,8 @@ export const itemFieldValues = {
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
-  holdingsId: 'Holding — UUID',
-  holdingsHrid: 'Holding — HRID',
+  holdingsId: 'Holdings — UUID',
+  holdingsHrid: 'Holdings — HRID',
   temporaryLocation: 'Item temporary location — Name',
   itemDiscoverySuppress: 'Item — Suppress from discovery',
   materialTypeName: 'Material type — Name',
@@ -602,6 +618,14 @@ export default {
         return [dataObj.statement, dataObj.note, dataObj.staffNote];
       case 'receivingHistory':
         return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
+      case 'contributors':
+        return [
+          dataObj.name,
+          dataObj.contributorNameType,
+          dataObj.contributorType,
+          dataObj.contributorTypeFreeText,
+          dataObj.primary,
+        ];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -660,6 +684,10 @@ export default {
       instanceIdentifier,
       expectedReceivingHistory,
     );
+  },
+
+  verifyContributorsEmbeddedTableInQueryModal(instanceIdentifier, expectedContributors) {
+    this.verifyEmbeddedTableInQueryModal('contributors', instanceIdentifier, expectedContributors);
   },
 
   clickShowColumnsButton() {

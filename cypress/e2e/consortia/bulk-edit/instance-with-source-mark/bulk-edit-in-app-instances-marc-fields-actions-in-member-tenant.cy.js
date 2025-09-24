@@ -265,8 +265,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyAreYouSureForm(1);
           BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const assertionsOnMarcFileContent = [
@@ -303,9 +302,13 @@ describe('Bulk-edit', () => {
                   );
                 },
                 (record) => expect(record.get('545')[0].subf[1][0]).to.eq('u'),
-                (record) => expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/'),
+                (record) => {
+                  expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/');
+                },
                 (record) => expect(record.get('545')[0].subf[2][0]).to.eq('u'),
-                (record) => expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/'),
+                (record) => {
+                  expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/');
+                },
 
                 (record) => expect(record.get('584')).to.be.empty,
 
@@ -339,8 +342,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
             true,
           );
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 

@@ -16,99 +16,101 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    let user;
-    const testData = {
-      filePath: 'oneMarcBib.mrc',
-      marcFileName: `C409516 autotestFileName${getRandomPostfix()}.mrc`,
-      instanceSource: INSTANCE_SOURCE_NAMES.MARC,
-    };
+    describe('Consortia', () => {
+      let user;
+      const testData = {
+        filePath: 'oneMarcBib.mrc',
+        marcFileName: `C409516 autotestFileName${getRandomPostfix()}.mrc`,
+        instanceSource: INSTANCE_SOURCE_NAMES.MARC,
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      cy.getConsortiaId()
-        .then((consortiaId) => {
-          testData.consortiaId = consortiaId;
-        })
-        .then(() => {
-          cy.setTenant(Affiliations.College);
-          DataImport.uploadFileViaApi(
-            testData.filePath,
-            testData.marcFileName,
-            DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          ).then((response) => {
-            testData.instanceId = response[0].instance.id;
+      before('Create test data', () => {
+        cy.getAdminToken();
+        cy.getConsortiaId()
+          .then((consortiaId) => {
+            testData.consortiaId = consortiaId;
+          })
+          .then(() => {
+            cy.setTenant(Affiliations.College);
+            DataImport.uploadFileViaApi(
+              testData.filePath,
+              testData.marcFileName,
+              DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+            ).then((response) => {
+              testData.instanceId = response[0].instance.id;
 
-            InventoryInstance.shareInstanceViaApi(
-              response[0].instance.id,
-              testData.consortiaId,
-              Affiliations.College,
-              Affiliations.Consortia,
-            );
-            // adding Holdings for shared Instance
-            const collegeLocationData = Locations.getDefaultLocation({
-              servicePointId: ServicePoints.getDefaultServicePoint().id,
-            }).location;
-            Locations.createViaApi(collegeLocationData).then((location) => {
-              testData.collegeLocation = location;
-              InventoryHoldings.getHoldingsFolioSource().then((holdingSources) => {
-                testData.holdingSource = holdingSources.id;
+              InventoryInstance.shareInstanceViaApi(
+                response[0].instance.id,
+                testData.consortiaId,
+                Affiliations.College,
+                Affiliations.Consortia,
+              );
+              // adding Holdings for shared Instance
+              const collegeLocationData = Locations.getDefaultLocation({
+                servicePointId: ServicePoints.getDefaultServicePoint().id,
+              }).location;
+              Locations.createViaApi(collegeLocationData).then((location) => {
+                testData.collegeLocation = location;
+                InventoryHoldings.getHoldingsFolioSource().then((holdingSources) => {
+                  testData.holdingSource = holdingSources.id;
 
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: testData.instanceId,
-                  permanentLocationId: testData.collegeLocation.id,
-                  sourceId: holdingSources.id,
-                }).then((holding) => {
-                  testData.holding = holding;
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: testData.instanceId,
+                    permanentLocationId: testData.collegeLocation.id,
+                    sourceId: holdingSources.id,
+                  }).then((holding) => {
+                    testData.holding = holding;
+                  });
                 });
               });
             });
+            cy.resetTenant();
           });
+
+        cy.getAdminToken();
+        cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+          user = userProperties;
+
+          cy.assignAffiliationToUser(Affiliations.College, user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(user.userId, [
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+          ]);
           cy.resetTenant();
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
-
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        user = userProperties;
-
-        cy.assignAffiliationToUser(Affiliations.College, user.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.inventoryAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        ]);
-        cy.resetTenant();
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       });
-    });
 
-    after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.setTenant(Affiliations.College);
-      InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
-      Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-    });
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+        cy.setTenant(Affiliations.College);
+        InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
+        Locations.deleteViaApi(testData.collegeLocation);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      });
 
-    it(
-      'C409516 (CONSORTIA) Verify the behavior of "View holdings" option on member tenant shared Instance (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet', 'C409516'] },
-      () => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instanceId);
-        InventoryInstances.selectInstance();
-        InstanceRecordView.verifyInstanceSource(testData.instanceSource);
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.waitLoading();
-        HoldingsRecordView.checkPermanentLocation(testData.collegeLocation.name);
-      },
-    );
+      it(
+        'C409516 (CONSORTIA) Verify the behavior of "View holdings" option on member tenant shared Instance (consortia) (folijet)',
+        { tags: ['criticalPathECS', 'folijet', 'C409516'] },
+        () => {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.instanceId);
+          InventoryInstances.selectInstance();
+          InstanceRecordView.verifyInstanceSource(testData.instanceSource);
+          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.checkPermanentLocation(testData.collegeLocation.name);
+        },
+      );
+    });
   });
 });

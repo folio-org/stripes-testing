@@ -16,60 +16,65 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    let user;
-    const matchProfile = {
-      profileName: `C421990 match profile${getRandomPostfix()}`,
-      incomingRecordFields: {
-        field: '001',
-        subfield: 'a',
-      },
-      existingRecordFields: {
-        field: '001',
-        subfield: 'a',
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-    };
-    const detailsOptions = ['INSTANCE', 'MARC_BIBLIOGRAPHIC', 'MARC_AUTHORITY'];
+    describe('Consortia', () => {
+      let user;
+      const matchProfile = {
+        profileName: `C421990 match profile${getRandomPostfix()}`,
+        incomingRecordFields: {
+          field: '001',
+          subfield: 'a',
+        },
+        existingRecordFields: {
+          field: '001',
+          subfield: 'a',
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      };
+      const detailsOptions = ['INSTANCE', 'MARC_BIBLIOGRAPHIC', 'MARC_AUTHORITY'];
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
+      before('Create test data', () => {
+        cy.getAdminToken();
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
-      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
-        user = userProperties;
+        cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+          user = userProperties;
 
-        cy.login(user.username, user.password);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-      });
-    });
-
-    after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-    });
-
-    it(
-      'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C421990'] },
-      () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-        MatchProfiles.waitLoading();
-        MatchProfiles.clickCreateNewMatchProfile();
-        NewMatchProfile.verifyExistingRecordSection(detailsOptions);
-        NewMatchProfile.close();
-
-        MatchProfiles.search(matchProfile.profileName);
-        MatchProfileView.verifyMatchProfileOpened();
-        detailsOptions.forEach((option) => {
-          MatchProfileView.verifyExistingDetails(option);
+          cy.login(user.username, user.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
-        MatchProfileView.edit();
-        MatchProfileEditForm.verifyDetailsSection(detailsOptions);
-      },
-    );
+      });
+
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      });
+
+      it(
+        'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C421990'] },
+        () => {
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+          MatchProfiles.waitLoading();
+          MatchProfiles.clickCreateNewMatchProfile();
+          NewMatchProfile.verifyExistingRecordSection(detailsOptions);
+          NewMatchProfile.close();
+
+          MatchProfiles.search(matchProfile.profileName);
+          MatchProfileView.verifyMatchProfileOpened();
+          detailsOptions.forEach((option) => {
+            MatchProfileView.verifyExistingDetails(option);
+          });
+          MatchProfileView.edit();
+          MatchProfileEditForm.verifyDetailsSection(detailsOptions);
+        },
+      );
+    });
   });
 });

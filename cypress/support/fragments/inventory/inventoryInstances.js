@@ -1670,4 +1670,18 @@ export default {
       cy.expect(Button(optionName).absent());
     }
   },
+
+  toggleMarcBibLccnValidationRule({ enable = true }) {
+    cy.getSpecificationIds({ family: 'MARC' }).then((specs) => {
+      const marcBibSpecId = specs.find((spec) => spec.profile === 'bibliographic').id;
+      cy.getSpecificationRules(marcBibSpecId).then(({ body }) => {
+        const lccnRuleId = body.rules.find(
+          (rule) => rule.name === 'Invalid LCCN Subfield Value',
+        ).id;
+        cy.updateSpecificationRule(marcBibSpecId, lccnRuleId, {
+          enabled: enable,
+        });
+      });
+    });
+  },
 };
