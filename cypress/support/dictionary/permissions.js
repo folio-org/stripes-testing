@@ -42,6 +42,23 @@ export default {
   },
   bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
+  bulkEditSettingsCreate: {
+    internal: 'ui-bulk-edit.settings.create',
+    gui: 'Settings (Bulk edit): Can view, add, update profiles',
+  },
+  bulkEditSettingsView: {
+    internal: 'ui-bulk-edit.settings.view',
+    gui: 'Settings (Bulk edit): Can view only',
+  },
+  bulkEditSettingsDelete: {
+    internal: 'ui-bulk-edit.settings.delete',
+    gui: 'Settings (Bulk edit): Can delete profiles',
+  },
+  bulkEditSettingsLockEdit: {
+    internal: 'ui-bulk-edit.settings.lock.edit',
+    gui: 'Settings (Bulk edit): Can lock and unlock profiles',
+  },
+
   // eHoldings
   uieHoldingsRecordsEdit: {
     internal: 'ui-eholdings.records.edit',
