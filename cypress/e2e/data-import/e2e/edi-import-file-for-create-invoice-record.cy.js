@@ -92,6 +92,7 @@ describe('Data Import', () => {
       { tags: ['smoke', 'folijet', 'shiftLeft', 'C343338', 'eurekaPhase1'] },
       () => {
         // create Field mapping profile
+        cy.wait(2000);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);

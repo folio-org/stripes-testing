@@ -41,11 +41,12 @@ describe('Requests', () => {
     'C747 Assign Tags to Request (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C747'] },
     () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.tagsGeneralPath,
-        waiter: TagsGeneral.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.tagsGeneralPath,
+          waiter: TagsGeneral.waitLoading,
+        });
       });
-      cy.waitForAuthRefresh(() => {}, 20_000);
       TagsGeneral.changeEnableTagsStatus('enable');
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

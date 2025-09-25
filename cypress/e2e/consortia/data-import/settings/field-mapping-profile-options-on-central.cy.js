@@ -15,57 +15,62 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Inventory', () => {
-  describe('Instance', () => {
-    let user;
-    const mappingProfile = {
-      name: `C421996 Mapping profile${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    };
-    const recordTypeOptions = [
-      'Instance',
-      'Order',
-      'Invoice',
-      'MARC Bibliographic',
-      'MARC Authority',
-    ];
+describe('Data Import', () => {
+  describe('Settings', () => {
+    describe('Consortia', () => {
+      let user;
+      const mappingProfile = {
+        name: `C421996 Mapping profile${getRandomPostfix()}`,
+        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      };
+      const recordTypeOptions = [
+        'Instance',
+        'Order',
+        'Invoice',
+        'MARC Bibliographic',
+        'MARC Authority',
+      ];
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
+      before('Create test data', () => {
+        cy.getAdminToken();
+        NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
 
-      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
-        user = userProperties;
+        cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+          user = userProperties;
 
-        cy.login(user.username, user.password);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          cy.login(user.username, user.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        });
       });
+
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+      });
+
+      it(
+        'C421996 (CONSORTIA) Verify the field mapping profile options on Central tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C421996'] },
+        () => {
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+          SettingsFieldMappingProfiles.waitLoading();
+          SettingsFieldMappingProfiles.openNewMappingProfileForm();
+          NewFieldMappingProfile.verifyFolioRecordTypeOptions(recordTypeOptions);
+          NewFieldMappingProfile.clickClose();
+
+          SettingsFieldMappingProfiles.waitLoading();
+          SettingsFieldMappingProfiles.search(mappingProfile.name);
+          FieldMappingProfileView.clickEditButton(mappingProfile.name);
+          FieldMappingProfileEditForm.waitLoading();
+          FieldMappingProfileEditForm.verifyFolioRecordTypeOptions(recordTypeOptions);
+        },
+      );
     });
-
-    after('Delete test data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-    });
-
-    it(
-      'C421996 (CONSORTIA) Verify the field mapping profile options on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C421996'] },
-      () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
-        SettingsFieldMappingProfiles.waitLoading();
-        SettingsFieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.verifyFolioRecordTypeOptions(recordTypeOptions);
-        NewFieldMappingProfile.clickClose();
-
-        SettingsFieldMappingProfiles.waitLoading();
-        SettingsFieldMappingProfiles.search(mappingProfile.name);
-        FieldMappingProfileView.clickEditButton(mappingProfile.name);
-        FieldMappingProfileEditForm.waitLoading();
-        FieldMappingProfileEditForm.verifyFolioRecordTypeOptions(recordTypeOptions);
-      },
-    );
   });
 });

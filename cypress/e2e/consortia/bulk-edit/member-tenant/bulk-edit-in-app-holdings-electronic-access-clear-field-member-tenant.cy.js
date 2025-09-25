@@ -184,8 +184,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(holdingIds.length);
 
           // Step 4: Show "Electronic access" column
           BulkEditActions.openActions();
@@ -277,8 +276,7 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(holdingIds.length);
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(holdingIds.length);
 
           // Step 15: Download preview
           BulkEditActions.downloadPreview();

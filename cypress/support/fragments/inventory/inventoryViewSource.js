@@ -1,5 +1,13 @@
 import { HTML, including, or } from '@interactors/html';
-import { Button, Section, TableRow, PaneHeader, Tooltip, Spinner } from '../../../../interactors';
+import {
+  Button,
+  Section,
+  TableRow,
+  PaneHeader,
+  Tooltip,
+  Spinner,
+  DropdownMenu,
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const instanceTitle = 'MARC bibliographic record';
@@ -10,13 +18,16 @@ const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/au
 const versionHistoryButton = Button({ icon: 'clock' });
 const versionHistoryToolTipText = 'Version history';
 const actionsButton = rootSection.find(Button('Actions', { disabled: or(true, false) }));
+const editButton = Button({ id: 'edit-marc' });
+const printButton = Button({ id: 'print-marc' });
+const exportButton = Button({ id: 'quick-export-trigger' });
 
 const close = () => cy.do(closeButton.click());
 const editMarcBibRecord = () => {
   cy.wait(1000);
   cy.do(actionsButton.click());
   cy.wait(1500);
-  cy.do(Button({ id: 'edit-marc' }).click());
+  cy.do(editButton.click());
 };
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
 const rowEquals = (rowIndex, expectedText) => cy.expect(rootSection.find(TableRow({ index: rowIndex, innerText: expectedText })).exists());
@@ -163,5 +174,24 @@ export default {
     } else {
       cy.expect(versionHistoryButton.absent());
     }
+  },
+
+  validateOptionsInActionsMenu({ edit = true, print = true, quickExport = true } = {}) {
+    cy.do(actionsButton.click());
+    if (edit) cy.expect(editButton.exists());
+    else cy.expect(editButton.absent());
+    if (print) cy.expect(printButton.exists());
+    else cy.expect(printButton.absent());
+    if (quickExport) cy.expect(exportButton.exists());
+    else cy.expect(exportButton.absent());
+    cy.do(actionsButton.click());
+    cy.expect(DropdownMenu().absent());
+  },
+
+  checkRowsCount(expectedCount) {
+    cy.expect([
+      rootSection.find(TableRow({ index: expectedCount - 1 })).exists(),
+      rootSection.find(TableRow({ index: expectedCount })).absent(),
+    ]);
   },
 };
