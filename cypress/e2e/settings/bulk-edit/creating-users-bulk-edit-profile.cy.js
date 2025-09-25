@@ -118,7 +118,7 @@ describe('Bulk edit', () => {
         // Step 11: Click "Save & close" button
         UsersBulkEditProfileForm.clickSaveAndClose();
         UsersBulkEditProfileForm.verifyNewProfilePaneAbsent();
-        UsersBulkEditProfilesPane.verifySuccessToast('Profile successfully created.');
+        UsersBulkEditProfilesPane.verifySuccessToast();
         UsersBulkEditProfilesPane.waitLoading();
 
         // Step 12: Verify row with newly created profile in the table

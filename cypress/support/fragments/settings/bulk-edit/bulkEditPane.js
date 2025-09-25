@@ -28,4 +28,8 @@ export default {
   clickUsersBulkEditProfiles() {
     cy.do(navListItems.users.click());
   },
+
+  clickInstancesBulkEditProfiles() {
+    cy.do(navListItems.instances.click());
+  },
 };

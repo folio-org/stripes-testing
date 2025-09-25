@@ -23,7 +23,6 @@ export default {
     cy.expect([
       profilesPane.exists(),
       profilesPane.find(PaneHeader({ subtitle: matching(/profiles? found/) })).exists(),
-      newButton.exists(),
       searchField.exists(),
       profilesList.exists(),
       profilesList
@@ -36,12 +35,8 @@ export default {
     cy.do(newButton.click());
   },
 
-  verifySuccessToast(message) {
-    cy.expect(
-      Callout({ type: 'success' })
-        .find(HTML(including(message)))
-        .exists(),
-    );
+  verifySuccessToast() {
+    cy.expect(Callout({ type: 'success' }).has({ textContent: 'Profile successfully created.' }));
   },
 
   verifyProfileInTable(name, description, userObject) {

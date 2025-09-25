@@ -1309,6 +1309,7 @@ export const INSTANCE_NOTE_TYPES = {
 };
 
 export const BULK_EDIT_ACTIONS = {
+  ADD: 'Add',
   ADD_NOTE: 'Add note',
   FIND: 'Find',
   REPLACE_WITH: 'Replace with',

@@ -161,4 +161,8 @@ export default {
         .fillIn(text),
     );
   },
+
+  checkStaffOnlyCheckbox(rowIndex = 0) {
+    cy.do(targetRow(rowIndex).find(Checkbox('Staff only')).click());
+  },
 };

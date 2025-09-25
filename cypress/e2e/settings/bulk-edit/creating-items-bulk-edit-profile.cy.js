@@ -118,7 +118,7 @@ describe('Bulk edit', () => {
         // Step 12: Click "Save & close" button
         ItemsBulkEditProfileForm.clickSaveAndClose();
         ItemsBulkEditProfileForm.verifyNewProfilePaneAbsent();
-        ItemsBulkEditProfilesPane.verifySuccessToast('Profile successfully created.');
+        ItemsBulkEditProfilesPane.verifySuccessToast();
         ItemsBulkEditProfilesPane.waitLoading();
 
         // Step 13: Verify newly created profile row in table

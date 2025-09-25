@@ -1,6 +1,7 @@
 import {
   Pane,
   Button,
+  Checkbox,
   Headline,
   KeyValue,
   RepeatableFieldItem,
@@ -13,6 +14,8 @@ const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
 const targetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
+  targetRow,
+
   waitLoading() {
     cy.expect(profileViewPane.exists());
   },
@@ -62,6 +65,12 @@ export default {
       targetRow(rowIndex)
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .has({ textContent: text }),
+    );
+  },
+
+  verifyStaffOnlyCheckboxChecked(rowIndex = 0) {
+    cy.expect(
+      targetRow(rowIndex).find(Checkbox('Staff only')).has({ checked: true, disabled: true }),
     );
   },
 

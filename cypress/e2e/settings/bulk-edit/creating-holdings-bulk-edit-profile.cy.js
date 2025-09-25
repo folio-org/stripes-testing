@@ -103,7 +103,7 @@ describe('Bulk edit', () => {
         // Step 11: Click "Save & close" button
         HoldingsBulkEditProfileForm.clickSaveAndClose();
         HoldingsBulkEditProfileForm.verifyNewProfilePaneAbsent();
-        HoldingsBulkEditProfilesPane.verifySuccessToast('Profile successfully created.');
+        HoldingsBulkEditProfilesPane.verifySuccessToast();
         HoldingsBulkEditProfilesPane.waitLoading();
 
         // Step 12: Verify row with newly created profile in the table
