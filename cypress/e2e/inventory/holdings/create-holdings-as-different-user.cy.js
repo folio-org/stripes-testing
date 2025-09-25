@@ -86,7 +86,7 @@ describe('Inventory', () => {
             instanceHRID = initialInstanceHrId;
           });
           InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
-
+          InventoryInstance.waitLoading();
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkSource(recordsData.source);
           HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);

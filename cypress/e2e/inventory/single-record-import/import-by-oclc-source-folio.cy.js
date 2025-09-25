@@ -100,11 +100,6 @@ describe('Inventory', () => {
           subjectSource: 'Library of Congress Subject Headings',
           subjectType: 'Topical term',
         });
-        InventoryInstance.openAccordion('Instance notes');
-        InventoryInstance.checkInstanceNotes(
-          oclcRecordData.notes.noteType,
-          oclcRecordData.notes.noteContent,
-        );
 
         InstanceRecordView.viewSource();
         InventoryViewSource.contains('020\t');

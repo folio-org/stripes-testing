@@ -1776,12 +1776,14 @@ export default {
   },
 
   toggleAuthorityLccnValidationRule({ enable = true }) {
-    cy.getSpecificatoinIds({ family: 'MARC' }).then((specs) => {
+    cy.getSpecificationIds({ family: 'MARC' }).then((specs) => {
       // Find the specification with profile 'authority'
       const authoritySpecId = specs.find((spec) => spec.profile === 'authority').id;
-      cy.getSpecificatoinRules(authoritySpecId).then((rules) => {
-        const lccnRuleId = rules.find((rule) => rule.name === 'Invalid LCCN Subfield Value').id;
-        cy.updateSpecificatoinRule(authoritySpecId, lccnRuleId, {
+      cy.getSpecificationRules(authoritySpecId).then(({ body }) => {
+        const lccnRuleId = body.rules.find(
+          (rule) => rule.name === 'Invalid LCCN Subfield Value',
+        ).id;
+        cy.updateSpecificationRule(authoritySpecId, lccnRuleId, {
           enabled: enable,
         });
       });

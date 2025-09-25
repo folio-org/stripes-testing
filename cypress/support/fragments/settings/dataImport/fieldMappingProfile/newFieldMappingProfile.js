@@ -152,9 +152,11 @@ const selectOrganizationByName = (organizationName) => {
   cy.do([
     organizationModal.find(searchField).fillIn(organizationName),
     organizationModal.find(searchButton).click(),
-    organizationModal.find(HTML(including('1 record found'))).exists(),
-    MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
+  cy.expect(MultiColumnListCell(organizationName).exists());
+  cy.do(
+    MultiColumnListCell({ row: 0, columnIndex: 0, content: including(organizationName) }).click(),
+  );
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
@@ -275,8 +277,10 @@ const addVendor = (profile) => {
     organizationModal.find(searchField).fillIn(profile.vendor),
     organizationModal.find(searchButton).click(),
   ]);
-  cy.expect(organizationModal.find(HTML(including('1 record found'))).exists());
-  cy.do(MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }));
+  cy.expect(MultiColumnListCell(profile.vendor).exists());
+  cy.do(
+    MultiColumnListCell({ row: 0, columnIndex: 0, content: including(profile.vendor) }).click(),
+  );
 };
 
 const addMaterialSupplier = (profile) => {

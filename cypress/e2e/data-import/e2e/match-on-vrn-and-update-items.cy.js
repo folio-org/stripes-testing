@@ -262,7 +262,6 @@ describe('Data Import', () => {
 
         // create match profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-        MatchOnVRN.waitJSONSchemasLoad();
         matchProfiles.forEach((match) => {
           MatchOnVRN.createMatchProfileForVRN(match);
           cy.wait(3000);

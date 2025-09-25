@@ -14,79 +14,83 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const marcFile = {
-      marc: 'oneMarcBib.mrc',
-      marcFileName: `C446000 marcFileName${getRandomPostfix()}.mrc`,
-    };
-    const testData = {
-      instanceTitle:
-        'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
-    };
+    describe('Consortia', () => {
+      const marcFile = {
+        marc: 'oneMarcBib.mrc',
+        marcFileName: `C446000 marcFileName${getRandomPostfix()}.mrc`,
+      };
+      const testData = {
+        instanceTitle:
+          'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        cy.getConsortiaId().then((consortiaId) => {
-          testData.consortiaId = consortiaId;
+      before('Create test data', () => {
+        cy.getAdminToken().then(() => {
+          cy.getConsortiaId().then((consortiaId) => {
+            testData.consortiaId = consortiaId;
 
-          cy.setTenant(Affiliations.College);
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.marcFileName,
-            DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          ).then((response) => {
-            testData.instanceId = response[0].instance.id;
+            cy.setTenant(Affiliations.College);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.marcFileName,
+              DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+            ).then((response) => {
+              testData.instanceId = response[0].instance.id;
 
-            InventoryInstance.shareInstanceViaApi(
-              testData.instanceId,
-              testData.consortiaId,
-              Affiliations.College,
-              Affiliations.Consortia,
-            );
+              InventoryInstance.shareInstanceViaApi(
+                testData.instanceId,
+                testData.consortiaId,
+                Affiliations.College,
+                Affiliations.Consortia,
+              );
+            });
           });
         });
-      });
-      cy.resetTenant();
+        cy.resetTenant();
 
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.uiInventorySetRecordsForDeletion.gui,
-        Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.uiInventorySetRecordsForDeletion.gui,
+          Permissions.inventoryAll.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          InventoryInstances.searchByTitle(testData.instanceId);
+          InventoryInstances.selectInstance();
         });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        InventoryInstances.searchByTitle(testData.instanceId);
-        InventoryInstances.selectInstance();
       });
-    });
 
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(testData.user.userId);
-        cy.setTenant(Affiliations.College);
-        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      after('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        });
       });
-    });
 
-    it(
-      'C446000 (CONSORTIA) Check "Set record for deletion" action for MARC Shared Instance in Actions menu on Central tenant (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C446000'] },
-      () => {
-        InstanceRecordView.waitLoading();
-        InstanceRecordView.clickActionsButton();
-        InstanceRecordView.setRecordForDeletion();
-        SetRecordForDeletionModal.waitLoading();
-        SetRecordForDeletionModal.verifyModalView(testData.instanceTitle);
-        SetRecordForDeletionModal.clickConfirm();
-        SetRecordForDeletionModal.isNotDisplayed();
-        InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
-        InstanceRecordView.waitLoading();
-        InteractorsTools.checkCalloutMessage(`${testData.instanceTitle} has been set for deletion`);
-      },
-    );
+      it(
+        'C446000 (CONSORTIA) Check "Set record for deletion" action for MARC Shared Instance in Actions menu on Central tenant (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C446000'] },
+        () => {
+          InstanceRecordView.waitLoading();
+          InstanceRecordView.clickActionsButton();
+          InstanceRecordView.setRecordForDeletion();
+          SetRecordForDeletionModal.waitLoading();
+          SetRecordForDeletionModal.verifyModalView(testData.instanceTitle);
+          SetRecordForDeletionModal.clickConfirm();
+          SetRecordForDeletionModal.isNotDisplayed();
+          InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
+          InstanceRecordView.waitLoading();
+          InteractorsTools.checkCalloutMessage(
+            `${testData.instanceTitle} has been set for deletion`,
+          );
+        },
+      );
+    });
   });
 });
