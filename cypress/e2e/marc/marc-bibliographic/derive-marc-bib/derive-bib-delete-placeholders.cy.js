@@ -20,13 +20,8 @@ describe('MARC', () => {
         tag730: '730',
         tag750: '750',
         tag245: '245',
-        tag600: '600',
         tag610: '610',
-        tag611: '611',
         tag630: '630',
-        tag650: '650',
-        tag655: '655',
-        tag800: '800',
         tag810: '810',
         tag811: '811',
       };
@@ -55,11 +50,11 @@ describe('MARC', () => {
 
       const marcInstanceFields = [
         {
-          tag: '008',
+          tag: tags.tag008,
           content: QuickMarcEditor.valid008ValuesInstance,
         },
         {
-          tag: '245',
+          tag: tags.tag245,
           content: `$a ${title}`,
           indicators: ['1', '1'],
         },
