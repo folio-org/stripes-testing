@@ -1,7 +1,12 @@
 import { Permissions } from '../../../support/dictionary';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import Users from '../../../support/fragments/users/users';
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  INSTANCE_NOTE_TYPES,
+  BULK_EDIT_ACTIONS,
+} from '../../../support/constants';
 import BulkEditPane from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
 import HoldingsBulkEditProfilesPane from '../../../support/fragments/settings/bulk-edit/profilePane/holdingsBulkEditProfilesPane';
 import HoldingsBulkEditProfileForm from '../../../support/fragments/settings/bulk-edit/profileForm/holdingsBulkEditProfileForm';
@@ -15,8 +20,6 @@ const testData = {
   profileName: `AT_C805762 holdings bulk edit profile ${getRandomPostfix()}`,
   profileNameToCancel: `AT_C805762 holdings bulk edit profile to cancel ${getRandomPostfix()}`,
   profileDescription: 'Replace temporary location and add administrative note',
-  replaceAction: 'Replace with',
-  addAction: 'Add note',
   adminNote: 'Temporary location changed',
 };
 
@@ -76,7 +79,7 @@ describe('Bulk edit', () => {
         HoldingsBulkEditProfileForm.verifySaveButtonDisabled();
 
         // Step 7: Select "Replace with" in "Select action" dropdown
-        HoldingsBulkEditProfileForm.selectAction(testData.replaceAction);
+        HoldingsBulkEditProfileForm.selectAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
         HoldingsBulkEditProfileForm.verifyDataColumnAppears();
         HoldingsBulkEditProfileForm.verifySelectLocationDropdownExists();
         HoldingsBulkEditProfileForm.verifySaveButtonDisabled();
@@ -92,8 +95,8 @@ describe('Bulk edit', () => {
         HoldingsBulkEditProfileForm.verifySaveButtonDisabled();
 
         // Step 10: Select "Administrative note" and "Add note" with text
-        HoldingsBulkEditProfileForm.selectOption('Administrative note', 1);
-        HoldingsBulkEditProfileForm.selectAction(testData.addAction, 1);
+        HoldingsBulkEditProfileForm.selectOption(INSTANCE_NOTE_TYPES.ADMINISTRATIVE_NOTE, 1);
+        HoldingsBulkEditProfileForm.selectAction(BULK_EDIT_ACTIONS.ADD_NOTE, 1);
         HoldingsBulkEditProfileForm.fillTextInDataTextArea(testData.adminNote, 1);
         HoldingsBulkEditProfileForm.verifySaveButtonDisabled(false);
 
@@ -118,10 +121,13 @@ describe('Bulk edit', () => {
           testData.profileDescription,
         );
         HoldingsBulkEditProfileView.verifySelectedOption('Temporary holdings location');
-        HoldingsBulkEditProfileView.verifySelectedAction(testData.replaceAction);
+        HoldingsBulkEditProfileView.verifySelectedAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
         HoldingsBulkEditProfileView.verifySelectedLocation(`${LOCATION_NAMES.MAIN_LIBRARY} `);
-        HoldingsBulkEditProfileView.verifySelectedOption('Administrative note', 1);
-        HoldingsBulkEditProfileView.verifySelectedAction(testData.addAction, 1);
+        HoldingsBulkEditProfileView.verifySelectedOption(
+          INSTANCE_NOTE_TYPES.ADMINISTRATIVE_NOTE,
+          1,
+        );
+        HoldingsBulkEditProfileView.verifySelectedAction(BULK_EDIT_ACTIONS.ADD_NOTE, 1);
         HoldingsBulkEditProfileView.verifyTextInDataTextArea(testData.adminNote, 1);
 
         // Step 14: Test Cancel functionality - Click "X" button, then "New" button, populate form, click "Cancel"

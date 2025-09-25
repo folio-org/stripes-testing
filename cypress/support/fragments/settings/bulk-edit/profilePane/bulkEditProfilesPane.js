@@ -92,7 +92,7 @@ export default {
 
   deleteBulkEditProfileByNameViaApi(name) {
     cy.getBulkEditProfile({ query: `name="${name}"` }).then((profile) => {
-      if (profile) {
+      if (profile[0]) {
         cy.deleteBulkEditProfile(profile[0].id, true);
       }
     });

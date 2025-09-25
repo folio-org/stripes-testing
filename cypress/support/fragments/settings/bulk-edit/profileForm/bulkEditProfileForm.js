@@ -82,6 +82,20 @@ export default {
     cy.expect(targetRow(rowIndex).find(actionsDropdown).has({ checkedOptionText: action }));
   },
 
+  verifySelectActionDisabled(action, rowIndex = 0) {
+    cy.expect(
+      targetRow(rowIndex).find(actionsDropdown).has({ disabled: true, checkedOptionText: action }),
+    );
+  },
+
+  verifySelectSecondActionDisabled(action, rowIndex = 0) {
+    cy.expect(
+      targetRow(rowIndex)
+        .find(Select({ dataTestID: 'select-actions-1' }))
+        .has({ disabled: true, checkedOptionText: action }),
+    );
+  },
+
   selectLocation(location, rowIndex = 0) {
     cy.do(targetRow(rowIndex).find(locationSelection).choose(location));
   },

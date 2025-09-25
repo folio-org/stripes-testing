@@ -24,4 +24,8 @@ export default {
   clickHoldingsBulkEditProfiles() {
     cy.do(navListItems.holdings.click());
   },
+
+  clickUsersBulkEditProfiles() {
+    cy.do(navListItems.users.click());
+  },
 };

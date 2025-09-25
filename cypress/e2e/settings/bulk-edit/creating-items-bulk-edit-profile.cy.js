@@ -1,7 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import Users from '../../../support/fragments/users/users';
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES, BULK_EDIT_ACTIONS } from '../../../support/constants';
 import BulkEditPane from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
@@ -18,7 +18,6 @@ const testData = {
   profileName: `AT_C740214 items bulk edit profile ${getRandomPostfix()}`,
   profileNameToCancel: `AT_C740214 items bulk edit profile to cancel ${getRandomPostfix()}`,
   profileDescription: 'Replace temporary location and status',
-  action: 'Replace with',
 };
 
 describe('Bulk edit', () => {
@@ -87,7 +86,7 @@ describe('Bulk edit', () => {
         ItemsBulkEditProfileForm.verifySaveButtonDisabled();
 
         // Step 7: Select "Replace with" in action dropdown
-        ItemsBulkEditProfileForm.selectAction(testData.action);
+        ItemsBulkEditProfileForm.selectAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
         ItemsBulkEditProfileForm.verifyDataColumnAppears();
         ItemsBulkEditProfileForm.verifySelectLocationDropdownExists();
         ItemsBulkEditProfileForm.verifySaveButtonDisabled();
@@ -137,10 +136,10 @@ describe('Bulk edit', () => {
           testData.profileDescription,
         );
         ItemsBulkEditProfileView.verifySelectedOption('Temporary item location');
-        ItemsBulkEditProfileView.verifySelectedAction(testData.action);
+        ItemsBulkEditProfileView.verifySelectedAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
         ItemsBulkEditProfileView.verifySelectedLocation(`${LOCATION_NAMES.MAIN_LIBRARY} `);
         ItemsBulkEditProfileView.verifySelectedOption('Item status', 1);
-        ItemsBulkEditProfileView.verifySelectedAction(testData.action, 1);
+        ItemsBulkEditProfileView.verifySelectedAction(BULK_EDIT_ACTIONS.REPLACE_WITH, 1);
         ItemsBulkEditProfileView.verifySelectedItemStatus('Unavailable', 1);
 
         // Step 15: Test Cancel functionality with unsaved changes

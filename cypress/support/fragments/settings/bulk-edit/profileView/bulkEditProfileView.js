@@ -41,6 +41,14 @@ export default {
     );
   },
 
+  verifySelectedSecondAction(action, rowIndex = 0) {
+    cy.expect(
+      targetRow(rowIndex)
+        .find(Select({ dataTestID: 'select-actions-1' }))
+        .has({ checkedOptionText: action }),
+    );
+  },
+
   verifySelectedLocation(location, rowIndex = 0) {
     cy.expect(
       targetRow(rowIndex)

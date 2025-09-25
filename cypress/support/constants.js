@@ -1308,6 +1308,12 @@ export const INSTANCE_NOTE_TYPES = {
   WITH_NOTE: 'With note',
 };
 
+export const BULK_EDIT_ACTIONS = {
+  ADD_NOTE: 'Add note',
+  FIND: 'Find',
+  REPLACE_WITH: 'Replace with',
+};
+
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
