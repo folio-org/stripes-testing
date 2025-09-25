@@ -1311,8 +1311,10 @@ export const INSTANCE_NOTE_TYPES = {
 export const BULK_EDIT_ACTIONS = {
   ADD: 'Add',
   ADD_NOTE: 'Add note',
+  ADDITIONAL_SUBFIELD: 'Additional subfield',
   FIND: 'Find',
   REPLACE_WITH: 'Replace with',
+  SET_TRUE: 'Set true',
 };
 
 export const AUTHORITY_FILE_SOURCES = {

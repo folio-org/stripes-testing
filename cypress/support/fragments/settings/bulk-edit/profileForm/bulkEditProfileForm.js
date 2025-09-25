@@ -9,11 +9,12 @@ import {
   including,
   RepeatableFieldItem,
   Selection,
+  or,
 } from '../../../../../../interactors';
 
 const collapseAllLink = Button('Collapse all');
 const summaryAccordion = Accordion('Summary');
-const bulkEditsAccordion = Accordion('Bulk edits');
+const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
 const nameField = summaryAccordion.find(TextField('Name*'));
 const descriptionField = summaryAccordion.find(TextArea('Description'));
 const lockProfileCheckbox = summaryAccordion.find(Checkbox({ id: 'lockProfile' }));
@@ -26,12 +27,16 @@ const locationLookupButton = Button('Location look-up');
 const locationSelection = Selection({ name: 'locationId' });
 const plusButton = Button({ icon: 'plus-sign' });
 const garbageCanButton = Button({ icon: 'trash' });
-const targetRow = (rowIndex = 0) => {
-  return bulkEditsAccordion.find(RepeatableFieldItem({ index: rowIndex }));
+const getTargetRow = (rowIndex = 0) => {
+  return RepeatableFieldItem({ index: rowIndex });
 };
 
 export default {
-  targetRow,
+  getTargetRow,
+  bulkEditsAccordion,
+  plusButton,
+  garbageCanButton,
+
   verifyFormElements(title) {
     cy.expect([
       collapseAllLink.exists(),
@@ -57,8 +62,8 @@ export default {
       bulkEditsAccordion.find(HTML(including('Options\n*'))).exists(),
       optionsDropdown.exists(),
       bulkEditsAccordion.find(HTML(including('Actions'))).exists(),
-      plusButton.has({ disabled: false }),
-      garbageCanButton.has({ disabled: true }),
+      bulkEditsAccordion.find(plusButton).has({ disabled: false }),
+      bulkEditsAccordion.find(garbageCanButton).has({ disabled: true }),
     ]);
   },
 
@@ -73,39 +78,51 @@ export default {
   },
 
   selectOption(option, rowIndex = 0) {
-    cy.do(targetRow(rowIndex).find(optionsDropdown).choose(option));
-    cy.expect(targetRow(rowIndex).find(optionsDropdown).has({ singleValue: option }));
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(optionsDropdown).choose(option));
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(optionsDropdown)
+        .has({ singleValue: option }),
+    );
   },
 
   selectAction(action, rowIndex = 0) {
-    cy.do(targetRow(rowIndex).find(actionsDropdown).choose(action));
-    cy.expect(targetRow(rowIndex).find(actionsDropdown).has({ checkedOptionText: action }));
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(actionsDropdown).choose(action));
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(actionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
   },
 
   verifySelectActionDisabled(action, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex).find(actionsDropdown).has({ disabled: true, checkedOptionText: action }),
+      getTargetRow(rowIndex)
+        .find(actionsDropdown)
+        .has({ disabled: true, checkedOptionText: action }),
     );
   },
 
   verifySelectSecondActionDisabled(action, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      getTargetRow(rowIndex)
         .find(Select({ dataTestID: 'select-actions-1' }))
         .has({ disabled: true, checkedOptionText: action }),
     );
   },
 
   selectLocation(location, rowIndex = 0) {
-    cy.do(targetRow(rowIndex).find(locationSelection).choose(location));
+    cy.do(getTargetRow(rowIndex).find(locationSelection).choose(location));
   },
 
   clickLocationLookup(rowIndex = 0) {
-    cy.do(targetRow(rowIndex).find(locationLookupButton).click());
+    cy.do(getTargetRow(rowIndex).find(locationLookupButton).click());
   },
 
   clickPlusButton(rowIndex = 0) {
-    cy.do(targetRow(rowIndex).find(plusButton).click());
+    cy.do(getTargetRow(rowIndex).find(plusButton).click());
   },
 
   clickSaveAndClose() {
@@ -122,7 +139,7 @@ export default {
 
   verifyActionsColumnAppears(rowIndex = 0) {
     cy.expect(bulkEditsAccordion.find(HTML(including('Actions\n*'))).exists());
-    cy.expect(targetRow(rowIndex).find(actionsDropdown).exists());
+    cy.expect(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(actionsDropdown).exists());
   },
 
   verifyDataColumnAppears() {
@@ -130,12 +147,12 @@ export default {
   },
 
   verifySelectLocationDropdownExists(rowIndex = 0) {
-    cy.expect(targetRow(rowIndex).find(Button('Select control\nSelect location')).exists());
+    cy.expect(getTargetRow(rowIndex).find(Button('Select control\nSelect location')).exists());
   },
 
   verifyLocationValue(value, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      getTargetRow(rowIndex)
         .find(Selection({ singleValue: value }))
         .visible(),
     );
@@ -143,26 +160,26 @@ export default {
 
   verifyAddedNewBulkEditRow(rowIndex = 1) {
     cy.expect([
-      targetRow(rowIndex - 1)
+      getTargetRow(rowIndex - 1)
         .find(plusButton)
         .absent(),
-      targetRow(rowIndex - 1)
+      getTargetRow(rowIndex - 1)
         .find(garbageCanButton)
         .has({ disabled: false }),
-      targetRow(rowIndex).find(plusButton).exists(),
-      targetRow(rowIndex).find(garbageCanButton).exists(),
+      getTargetRow(rowIndex).find(plusButton).exists(),
+      getTargetRow(rowIndex).find(garbageCanButton).exists(),
     ]);
   },
 
   fillTextInDataTextArea(text, rowIndex = 0) {
     cy.do(
-      targetRow(rowIndex)
+      getTargetRow(rowIndex)
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .fillIn(text),
     );
   },
 
   checkStaffOnlyCheckbox(rowIndex = 0) {
-    cy.do(targetRow(rowIndex).find(Checkbox('Staff only')).click());
+    cy.do(getTargetRow(rowIndex).find(Checkbox('Staff only')).click());
   },
 };

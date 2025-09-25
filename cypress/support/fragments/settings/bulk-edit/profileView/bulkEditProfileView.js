@@ -8,13 +8,17 @@ import {
   Select,
   Selection,
   TextArea,
+  Accordion,
+  or,
 } from '../../../../../../interactors';
 
 const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
-const targetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
+const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
+const getTargetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
-  targetRow,
+  bulkEditsAccordion,
+  getTargetRow,
 
   waitLoading() {
     cy.expect(profileViewPane.exists());
@@ -30,7 +34,8 @@ export default {
 
   verifySelectedOption(option, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
         .find(Selection({ singleValue: option }))
         .visible(),
     );
@@ -38,7 +43,8 @@ export default {
 
   verifySelectedAction(action, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
         .find(Select({ dataTestID: 'select-actions-0' }))
         .has({ checkedOptionText: action }),
     );
@@ -46,7 +52,8 @@ export default {
 
   verifySelectedSecondAction(action, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
         .find(Select({ dataTestID: 'select-actions-1' }))
         .has({ checkedOptionText: action }),
     );
@@ -54,7 +61,7 @@ export default {
 
   verifySelectedLocation(location, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      getTargetRow(rowIndex)
         .find(Selection({ singleValue: location }))
         .visible(),
     );
@@ -62,7 +69,7 @@ export default {
 
   verifyTextInDataTextArea(text, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      getTargetRow(rowIndex)
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .has({ textContent: text }),
     );
@@ -70,7 +77,7 @@ export default {
 
   verifyStaffOnlyCheckboxChecked(rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex).find(Checkbox('Staff only')).has({ checked: true, disabled: true }),
+      getTargetRow(rowIndex).find(Checkbox('Staff only')).has({ checked: true, disabled: true }),
     );
   },
 

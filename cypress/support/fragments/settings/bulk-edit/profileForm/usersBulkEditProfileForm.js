@@ -18,12 +18,12 @@ export default {
   },
 
   selectPatronGroup(patronGroup, rowIndex = 0) {
-    cy.do(this.targetRow(rowIndex).find(patronGroupSelect).choose(including(patronGroup)));
+    cy.do(this.getTargetRow(rowIndex).find(patronGroupSelect).choose(including(patronGroup)));
   },
 
   verifyPatronGroupValue(patronGroup, rowIndex = 0) {
     cy.expect(
-      this.targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(patronGroupSelect)
         .has({ checkedOptionText: including(patronGroup) }),
     );
@@ -33,8 +33,8 @@ export default {
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
 
     cy.do([
-      this.targetRow(rowIndex).find(calendarButton).click(),
-      this.targetRow(rowIndex)
+      this.getTargetRow(rowIndex).find(calendarButton).click(),
+      this.getTargetRow(rowIndex)
         .find(TextField({ placeholder: 'MM/DD/YYYY' }))
         .fillIn(formattedDate),
     ]);
@@ -44,7 +44,7 @@ export default {
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
 
     cy.expect(
-      this.targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(TextField({ value: formattedDate }))
         .exists(),
     );
@@ -52,7 +52,7 @@ export default {
 
   fillEmailFindText(text, rowIndex = 0) {
     cy.do(
-      this.targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(TextField({ testid: 'input-email-0' }))
         .fillIn(text),
     );
@@ -60,7 +60,7 @@ export default {
 
   fillEmailReplaceText(text, rowIndex = 0) {
     cy.do(
-      this.targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(TextField({ testid: 'input-email-1' }))
         .fillIn(text),
     );

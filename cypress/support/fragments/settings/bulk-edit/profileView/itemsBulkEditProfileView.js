@@ -1,14 +1,12 @@
 import BulkEditProfileView from './bulkEditProfileView';
-import { RepeatableFieldItem, Select } from '../../../../../../interactors';
-
-const targetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
+import { Select } from '../../../../../../interactors';
 
 export default {
   ...BulkEditProfileView,
 
   verifySelectedItemStatus(status, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(Select({ dataTestID: 'select-statuses-0' }))
         .has({ checkedOptionText: status }),
     );

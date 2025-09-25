@@ -2,14 +2,12 @@ import BulkEditProfileView from './bulkEditProfileView';
 import { RepeatableFieldItem, Select, TextField, including } from '../../../../../../interactors';
 import DateTools from '../../../../utils/dateTools';
 
-const targetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
-
 export default {
   ...BulkEditProfileView,
 
   verifySelectedPatronGroup(patronGroup, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(Select('Patron group select'))
         .has({ checkedOptionText: including(patronGroup) }),
     );
@@ -27,7 +25,7 @@ export default {
 
   verifyEmailFindText(text, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(TextField({ testid: 'input-email-0' }))
         .has({ value: text }),
     );
@@ -35,7 +33,7 @@ export default {
 
   verifyEmailReplaceText(text, rowIndex = 0) {
     cy.expect(
-      targetRow(rowIndex)
+      this.getTargetRow(rowIndex)
         .find(TextField({ testid: 'input-email-1' }))
         .has({ value: text }),
     );

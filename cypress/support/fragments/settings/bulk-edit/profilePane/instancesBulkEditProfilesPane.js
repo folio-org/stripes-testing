@@ -26,4 +26,8 @@ export default {
   selectNewFolioInstancesProfile() {
     cy.do(DropdownMenu().find(newFolioInstancesBulkEditProfileButton).click());
   },
+
+  selectNewMarcInstancesProfile() {
+    cy.do(DropdownMenu().find(newInstancesWithSourceMARCProfileButton).click());
+  },
 };
