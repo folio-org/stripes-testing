@@ -45,7 +45,7 @@ describe('Finance: Funds', () => {
   });
 
   it(
-    'C353528 User is not able to create planned budget if upcoming fiscal year does not exist',
+    'C353528 User is not able to create planned budget if upcoming fiscal year does not exist (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Funds.searchByName(defaultFund.name);

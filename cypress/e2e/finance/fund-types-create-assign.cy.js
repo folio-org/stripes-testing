@@ -33,7 +33,7 @@ describe('Finance › Settings (Finance)', () => {
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
-        path: TopMenu.seetingsFinanceFundTypePath,
+        path: TopMenu.settingsFinanceFundTypePath,
         waiter: SettingsFinance.waitFundTypesLoading,
       });
     });
@@ -45,20 +45,24 @@ describe('Finance › Settings (Finance)', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6651 Create and assign Fund types', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    SettingsFinance.clickNewButton();
-    SettingsFinance.fillTypeName('');
-    SettingsFinance.checkErrorMessage();
-    SettingsFinance.fillTypeName(fundTypeName);
-    SettingsFinance.clicksaveButton();
+  it(
+    'C6651 Create and assign Fund types (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet'] },
+    () => {
+      SettingsFinance.clickNewButton();
+      SettingsFinance.fillTypeName('');
+      SettingsFinance.checkErrorMessage();
+      SettingsFinance.fillTypeName(fundTypeName);
+      SettingsFinance.clicksaveButton();
 
-    cy.visit(TopMenu.financePath);
-    Funds.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.editFund();
-    Funds.selectFundType(fundTypeName);
-    Funds.save();
-    Funds.varifyFundIsSaved();
-    Funds.verifyFundType(fundTypeName);
-  });
+      cy.visit(TopMenu.financePath);
+      Funds.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
+      Funds.editFund();
+      Funds.selectFundType(fundTypeName);
+      Funds.save();
+      Funds.varifyFundIsSaved();
+      Funds.verifyFundType(fundTypeName);
+    },
+  );
 });
