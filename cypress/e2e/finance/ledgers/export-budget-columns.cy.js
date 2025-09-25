@@ -37,7 +37,6 @@ describe('Finance › Ledgers', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitLoading,
-        authRefresh: true,
       });
     });
   });

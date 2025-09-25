@@ -35,7 +35,6 @@ describe('Finance › Settings (Finance)', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.seetingsFinanceFundTypePath,
         waiter: SettingsFinance.waitFundTypesLoading,
-        authRefresh: true,
       });
     });
   });
