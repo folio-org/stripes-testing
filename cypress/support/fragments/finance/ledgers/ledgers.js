@@ -324,6 +324,9 @@ export default {
       }
     });
   },
+  clickRollover: () => {
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+  },
   clickonViewledgerDetails: () => {
     cy.do([Button('Close & view ledger details').click()]);
   },
