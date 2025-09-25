@@ -14,7 +14,7 @@ import {
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Create new MARC bib', () => {
+    describe('Edit MARC bib', () => {
       const testData = {
         title: `AT_C499606_MarcBibInstance_${getRandomPostfix()}`,
         tags: {
