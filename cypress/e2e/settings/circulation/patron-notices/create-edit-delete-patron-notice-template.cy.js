@@ -35,9 +35,11 @@ describe('Permissions -> Circulation', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-            waiter: NoticePolicyTemplate.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+              waiter: NoticePolicyTemplate.waitLoading,
+            });
           });
         });
     });
