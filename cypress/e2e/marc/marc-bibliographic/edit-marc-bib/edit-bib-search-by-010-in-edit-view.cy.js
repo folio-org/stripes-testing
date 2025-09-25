@@ -11,7 +11,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Create new MARC bib', () => {
+    describe('Edit MARC bib', () => {
       const randomPostfix = getRandomPostfix();
       const lccnPostfix = `476807${randomFourDigitNumber()}${randomFourDigitNumber()}`;
       const testData = {
