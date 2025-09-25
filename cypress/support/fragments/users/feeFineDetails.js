@@ -60,4 +60,20 @@ export default {
       KeyValue('Remaining amount').has({ value: amount }),
     ]);
   },
+  verifyActionsAreAvailable: (actions) => {
+    actions.forEach((action) => {
+      if (action === 'Export') {
+        cy.expect(
+          Button({
+            id: `${action.toLowerCase()}AccountActionsHistoryReport`,
+            disabled: false,
+          }).exists(),
+        );
+      } else {
+        cy.expect(
+          Button({ id: `${action.toLowerCase()}AccountActionsHistory`, disabled: false }).exists(),
+        );
+      }
+    });
+  },
 };
