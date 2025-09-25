@@ -44,9 +44,11 @@ describe('Title Level Request', () => {
           testData.user.userId,
           testData.userServicePoint.id,
         ).then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.requestsPath,
-            waiter: Requests.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
         });
       },
