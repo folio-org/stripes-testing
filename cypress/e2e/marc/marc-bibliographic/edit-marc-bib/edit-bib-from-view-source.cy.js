@@ -9,7 +9,7 @@ import InventoryViewSource from '../../../../support/fragments/inventory/invento
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Create new MARC bib', () => {
+    describe('Edit MARC bib', () => {
       const testData = {
         title: `AT_C543798_MarcBibInstance_${getRandomPostfix()}`,
         tags: {
