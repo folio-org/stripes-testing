@@ -136,7 +136,8 @@ export default {
         },
       }).then((response) => {
         const resources = response.body.included.filter(
-          (resource) => resource.attributes.isSelected === !isSelected,
+          (resource) => resource.attributes.isSelected === !isSelected &&
+            resource.attributes.visibilityData.isHidden === false,
         );
         // If packageName is not set, pick first suitable resource
         const selectedResource = packageName
