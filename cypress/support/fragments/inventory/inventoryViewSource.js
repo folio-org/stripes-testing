@@ -187,4 +187,11 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(DropdownMenu().absent());
   },
+
+  checkRowsCount(expectedCount) {
+    cy.expect([
+      rootSection.find(TableRow({ index: expectedCount - 1 })).exists(),
+      rootSection.find(TableRow({ index: expectedCount })).absent(),
+    ]);
+  },
 };
