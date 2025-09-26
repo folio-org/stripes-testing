@@ -17,8 +17,8 @@ describe('MARC', () => {
       const testData = {
         tag400: '400',
         tag035: '035',
-        update400Field: '$ test 400 field',
-        update035Field: '$ test 035 field',
+        update400Field: '$a test 400 field',
+        update035Field: '$a test 035 field',
         authorityTitle:
           'C374160 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       };
@@ -94,8 +94,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -111,7 +109,7 @@ describe('MARC', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -121,8 +119,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
           }, 20_000);
         });
       });
@@ -143,16 +139,15 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthority.edit();
-          QuickMarcEditor.updateExistingFieldContent(11, testData.update400Field);
+          QuickMarcEditor.updateExistingFieldContent(12, testData.update400Field);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag035, testData.update035Field);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           MarcAuthorities.verifyMarcViewPaneIsOpened();

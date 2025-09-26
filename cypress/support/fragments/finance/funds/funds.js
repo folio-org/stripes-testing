@@ -342,6 +342,15 @@ export default {
     cy.wait(4000);
   },
 
+  checkEmptyBudgetSection() {
+    cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent());
+    cy.expect(
+      Section({ id: 'plannedBudget' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
   addBudget: (allocatedQuantity) => {
     cy.do(Accordion('Current budget').find(newButton).click());
     cy.expect(Modal('Current budget').exists());
@@ -995,6 +1004,21 @@ export default {
   editBudget: () => {
     cy.wait(4000);
     cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  editFund: () => {
+    cy.wait(4000);
+    cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  selectFundType: (typeName) => {
+    cy.do(Selection({ name: 'fund.fundTypeId' }).open());
+    cy.expect(SelectionList().find(SelectionOption(typeName)).exists());
+    cy.do(SelectionList().find(SelectionOption(typeName)).click());
+  },
+
+  verifyFundType: (expectedType) => {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Type')).has({ value: expectedType }));
   },
 
   removeLocation(locationName) {

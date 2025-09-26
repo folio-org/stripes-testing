@@ -141,9 +141,11 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.user = createdUserProperties;
 
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -157,9 +159,11 @@ describe('MARC', () => {
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             cy.wait(3000);
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
         });
@@ -179,8 +183,7 @@ describe('MARC', () => {
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
-            InventoryInstance.deriveNewMarcBib();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
+            InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
