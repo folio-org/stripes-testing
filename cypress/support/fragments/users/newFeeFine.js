@@ -8,12 +8,15 @@ import {
   MultiColumnListRow,
   HTML,
   TextField,
+  Dropdown,
+  including,
 } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'new-modal' });
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
 const ownerTypeSelect = rootModal.find(Select({ id: 'ownerId' }));
 const amountTextField = rootModal.find(TextField({ name: 'amount' }));
+const accessDeniedModal = Modal('Access denied');
 
 const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, createdAt, source }) => ({
   accountId: id,
@@ -175,5 +178,27 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
+  },
+
+  verifyAccessDeniedModal: () => {
+    cy.expect(accessDeniedModal.exists());
+    cy.expect(accessDeniedModal.find(HTML(including('You must select a service point'))).exists());
+  },
+
+  verifyDefaultOwnerSelected: (ownerName) => {
+    cy.expect(ownerTypeSelect.has({ checkedOptionText: ownerName }));
+  },
+
+  switchServicePoint: (spName) => {
+    cy.wait(2000);
+    cy.do([Dropdown({ id: 'profileDropdown' }).open(), Button('Switch service point').click()]);
+    cy.wait(2000);
+    cy.do(Modal('Select service point').find(Button(spName)).click());
+    cy.expect(Modal('Select service point').absent());
+    cy.wait(3000);
+  },
+
+  verifyNoOwnerSelected: () => {
+    cy.expect(ownerTypeSelect.has({ checkedOptionText: 'Select one' }));
   },
 };
