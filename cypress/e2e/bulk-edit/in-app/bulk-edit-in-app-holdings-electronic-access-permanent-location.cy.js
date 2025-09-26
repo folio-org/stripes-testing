@@ -167,12 +167,12 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
 
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, secondElectronicAccess.uri, 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -207,12 +207,12 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
 
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, secondElectronicAccess.uri, 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -242,12 +242,12 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
 
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, secondElectronicAccess.uri, 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
