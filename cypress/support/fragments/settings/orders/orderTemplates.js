@@ -76,16 +76,21 @@ export default {
     OrderTemplateForm.clickSaveButton();
   },
   getDefaultOrderTemplate({
+    checkinItems = false,
     orderType = 'One-time',
     renewalNote = `autotest_renewal_note_${getRandomPostfix()}`,
   } = {}) {
     return {
+      checkinItems,
+      cost: {
+        currency: 'USD',
+      },
+      id: uuid(),
       isPackage: false,
-      templateName: `autotest_template_name_${getRandomPostfix()}`,
-      templateCode: getRandomPostfix(),
       orderType,
       renewalNote,
-      id: uuid(),
+      templateCode: getRandomPostfix(),
+      templateName: `autotest_template_name_${getRandomPostfix()}`,
     };
   },
   createOrderTemplateViaApi(orderTemplate) {

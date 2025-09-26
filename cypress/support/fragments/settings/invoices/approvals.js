@@ -1,29 +1,30 @@
 import uuid from 'uuid';
 
-import Configs from '../configs';
+import InvoiceStorageSettings from '../../invoices/invoiceStorageSettings';
+
+const INVOICE_APPROVALS_SETTING_KEY = 'approvals';
 
 export default {
   generateApprovalConfig(isApprovePayEnabled = false) {
     return {
-      value: JSON.stringify({ isApprovePayEnabled }),
-      module: 'INVOICE',
-      configName: 'approvals',
       id: uuid(),
+      key: INVOICE_APPROVALS_SETTING_KEY,
+      value: JSON.stringify({ isApprovePayEnabled }),
     };
   },
   getApprovalConfigViaApi() {
-    return Configs.getConfigViaApi({ query: '(module==INVOICE and configName==approvals)' });
+    return InvoiceStorageSettings.getSettingsViaApi({ key: INVOICE_APPROVALS_SETTING_KEY });
   },
   setApprovePayValue(isApprovePayEnabled) {
-    this.getApprovalConfigViaApi().then((configs) => {
-      if (configs[0]) {
-        Configs.updateConfigViaApi({
-          ...configs[0],
+    this.getApprovalConfigViaApi().then((settings) => {
+      if (settings?.length !== 0) {
+        InvoiceStorageSettings.updateSettingViaApi({
+          ...settings[0],
           value: JSON.stringify({ isApprovePayEnabled }),
         });
       } else {
-        const config = this.generateApprovalConfig(isApprovePayEnabled);
-        Configs.createConfigViaApi(config);
+        const setting = this.generateApprovalConfig(isApprovePayEnabled);
+        InvoiceStorageSettings.createSettingViaApi(setting);
       }
     });
   },
