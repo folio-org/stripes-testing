@@ -31,11 +31,9 @@ describe('Inventory', () => {
               name: testData.localCallNumberTypeName,
             }).then((id) => {
               testData.callNumberTypeId = id;
-              cy.waitForAuthRefresh(() => {
-                cy.login(user.username, user.password, {
-                  path: TopMenu.settingsPath,
-                  waiter: SettingsPane.waitLoading,
-                });
+              cy.login(user.username, user.password, {
+                path: TopMenu.settingsPath,
+                waiter: SettingsPane.waitLoading,
               });
               TopMenuNavigation.navigateToApp(
                 APPLICATION_NAMES.SETTINGS,

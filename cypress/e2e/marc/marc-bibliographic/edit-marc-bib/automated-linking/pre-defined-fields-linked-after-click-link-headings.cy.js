@@ -225,11 +225,11 @@ describe('MARC', () => {
 
         after('Deleting created user and data', () => {
           cy.getAdminToken();
-          Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
+          Users.deleteViaApi(userData.userId);
         });
 
         it(
@@ -267,7 +267,7 @@ describe('MARC', () => {
             cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             // need to wait until message appear
-            cy.wait(2000);
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 700, 710, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
             );
