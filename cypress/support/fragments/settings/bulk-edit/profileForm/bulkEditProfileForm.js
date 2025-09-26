@@ -9,6 +9,7 @@ import {
   including,
   RepeatableFieldItem,
   Selection,
+  MetaSection,
   or,
 } from '../../../../../../interactors';
 
@@ -23,6 +24,8 @@ const cancelButton = Button('Cancel');
 const closeFormButton = Button({ icon: 'times' });
 const optionsDropdown = Selection({ value: including('Select control') });
 const actionsDropdown = Select({ dataTestID: 'select-actions-0' });
+const secondActionsDropdown = Select({ dataTestID: 'select-actions-1' });
+const dataTextArea = TextArea({ dataTestID: 'input-textarea-0' });
 const locationLookupButton = Button('Location look-up');
 const locationSelection = Selection({ name: 'locationId' });
 const plusButton = Button({ icon: 'plus-sign' });
@@ -33,6 +36,8 @@ const getTargetRow = (rowIndex = 0) => {
 
 export default {
   getTargetRow,
+  actionsDropdown,
+  secondActionsDropdown,
   bulkEditsAccordion,
   plusButton,
   garbageCanButton,
@@ -47,6 +52,10 @@ export default {
       closeFormButton.has({ disabled: false }),
     ]);
     cy.title().should('eq', `Bulk edit settings - ${title} - FOLIO`);
+  },
+
+  verifyMetadataSectionExists() {
+    cy.expect(summaryAccordion.find(MetaSection()).exists());
   },
 
   verifySummaryAccordionElements(isLockProfileCheckboxDisabled = true) {
@@ -87,12 +96,42 @@ export default {
     );
   },
 
+  verifySelectedOption(option, rowIndex = 0) {
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(optionsDropdown)
+        .has({ singleValue: option }),
+    );
+  },
+
   selectAction(action, rowIndex = 0) {
     cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(actionsDropdown).choose(action));
     cy.expect(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
         .find(actionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  verifySelectedAction(action, rowIndex = 0) {
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(actionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  selectSecondAction(action, rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordion.find(getTargetRow(rowIndex)).find(secondActionsDropdown).choose(action),
+    );
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(secondActionsDropdown)
         .has({ checkedOptionText: action }),
     );
   },
@@ -123,6 +162,10 @@ export default {
 
   clickPlusButton(rowIndex = 0) {
     cy.do(getTargetRow(rowIndex).find(plusButton).click());
+  },
+
+  clickGarbageCanButton(rowIndex = 0) {
+    cy.do(getTargetRow(rowIndex).find(garbageCanButton).click());
   },
 
   clickSaveAndClose() {
@@ -172,11 +215,11 @@ export default {
   },
 
   fillTextInDataTextArea(text, rowIndex = 0) {
-    cy.do(
-      getTargetRow(rowIndex)
-        .find(TextArea({ dataTestID: 'input-textarea-0' }))
-        .fillIn(text),
-    );
+    cy.do(getTargetRow(rowIndex).find(dataTextArea).fillIn(text));
+  },
+
+  verifyTextInDataTextArea(text, rowIndex = 0) {
+    cy.expect(getTargetRow(rowIndex).find(dataTextArea).has({ textContent: text }));
   },
 
   checkStaffOnlyCheckbox(rowIndex = 0) {

@@ -1312,9 +1312,17 @@ export const BULK_EDIT_ACTIONS = {
   ADD: 'Add',
   ADD_NOTE: 'Add note',
   ADDITIONAL_SUBFIELD: 'Additional subfield',
+  CLEAR_FIELD: 'Clear field',
+  CHANGE_NOTE_TYPE: 'Change note type',
+  DUPLICATE_TO: 'Duplicate to',
   FIND: 'Find',
   REPLACE_WITH: 'Replace with',
+  REMOVE: 'Remove',
+  REMOVE_ALL: 'Remove all',
+  REMOVE_MARK_AS_STAFF_ONLY: 'Remove mark as staff only',
   SET_TRUE: 'Set true',
+  SET_FALSE: 'Set false',
+  MARK_AS_STAFF_ONLY: 'Mark as staff only',
 };
 
 export const AUTHORITY_FILE_SOURCES = {

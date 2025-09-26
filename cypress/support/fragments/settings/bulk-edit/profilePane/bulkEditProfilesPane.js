@@ -35,8 +35,10 @@ export default {
     cy.do(newButton.click());
   },
 
-  verifySuccessToast() {
-    cy.expect(Callout({ type: 'success' }).has({ textContent: 'Profile successfully created.' }));
+  verifySuccessToast(actionType = 'created') {
+    cy.expect(
+      Callout({ type: 'success' }).has({ textContent: `Profile successfully ${actionType}.` }),
+    );
   },
 
   verifyProfileInTable(name, description, userObject) {
