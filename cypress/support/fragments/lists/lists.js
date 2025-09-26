@@ -462,6 +462,91 @@ const UI = {
     cy.expect(Callout(including(message)).exists());
   },
 
+  verifyListDetailsPageStructure() {
+    // Verify the page title exists
+    cy.get('[class^=paneHeader-]').should('be.visible');
+    // Verify "X records found" text exists
+    cy.get('[class^=paneHeader-]').contains('records found').should('be.visible');
+    // Verify X button exists
+    cy.get('div[class^=paneMenu] > button[icon=times]').should('be.visible');
+    // Verify Actions dropdown button exists
+    cy.expect(actions.exists());
+    // Verify List information accordion exists
+    cy.expect(listInformationAccording.exists());
+    // Verify Query accordion exists
+    cy.expect(queryAccordion.exists());
+  },
+
+  verifyActionsDropdownOptions() {
+    cy.expect([
+      refreshList.exists(),
+      editList.exists(),
+      duplicateList.exists(),
+      deleteList.exists(),
+      exportList.exists(),
+      exportListVisibleColumns.exists(),
+    ]);
+  },
+
+  verifyActionButtonsStatus() {
+    // For lists with records - all buttons should be active
+    cy.expect([
+      refreshList.has({ disabled: false }),
+      editList.has({ disabled: false }),
+      duplicateList.has({ disabled: false }),
+      deleteList.has({ disabled: false }),
+      exportList.has({ disabled: false }),
+      exportListVisibleColumns.has({ disabled: false }),
+    ]);
+  },
+
+  verifyActionButtonsStatusForEmptyList() {
+    // For lists with 0 records - export buttons should be inactive
+    cy.expect([
+      refreshList.has({ disabled: false }),
+      editList.has({ disabled: false }),
+      duplicateList.has({ disabled: false }),
+      deleteList.has({ disabled: false }),
+      exportList.has({ disabled: true }),
+      exportListVisibleColumns.has({ disabled: true }),
+    ]);
+  },
+
+  verifyActionButtonsStatusForListWithoutQuery() {
+    // For lists without query - refresh and export buttons should be inactive
+    cy.expect([
+      refreshList.has({ disabled: true }),
+      editList.has({ disabled: false }),
+      duplicateList.has({ disabled: false }),
+      deleteList.has({ disabled: false }),
+      exportList.has({ disabled: true }),
+      exportListVisibleColumns.has({ disabled: true }),
+    ]);
+  },
+
+  verifyListInformationAccordionContent() {
+    // Verify that List information accordion shows expected fields
+    cy.expect(listInformationAccording.exists());
+    // Check for key fields in the accordion
+    cy.get('div[class*="accordion-"]').should('contain', 'Record last updated');
+    cy.get('div[class*="accordion-"]').should('contain', 'Source');
+    cy.get('div[class*="accordion-"]').should('contain', 'Record created');
+    cy.get('div[class*="accordion-"]').should('contain', 'list name');
+    cy.get('div[class*="accordion-"]').should('contain', 'Description');
+    cy.get('div[class*="accordion-"]').should('contain', 'Visibility');
+    cy.get('div[class*="accordion-"]').should('contain', 'Status');
+  },
+
+  verifyQueryAccordionContent() {
+    // Verify Query accordion shows records found
+    cy.expect(queryAccordion.exists());
+    cy.get('#results-viewer-accordion').should('contain', 'records found');
+  },
+
+  verifySourceLabel(value) {
+    this.checkKeyValue('Source', value);
+  },
+
   closeListDetailsPane() {
     cy.wait(500);
     cy.get('div[class^=paneMenu] > button[icon=times]').click();
