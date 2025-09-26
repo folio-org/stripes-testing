@@ -118,7 +118,7 @@ describe('Bulk-edit', () => {
             elAccess.materialsSpecification,
             adjustedIndex,
           );
-          BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '', adjustedIndex);
+          BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-', adjustedIndex);
         });
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
@@ -149,8 +149,8 @@ describe('Bulk-edit', () => {
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           newElectronicAccessFields.materialsSpecification,
@@ -165,8 +165,8 @@ describe('Bulk-edit', () => {
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
           2,
         );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '', 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '-', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -186,8 +186,8 @@ describe('Bulk-edit', () => {
           0,
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           newElectronicAccessFields.materialsSpecification,
@@ -202,8 +202,8 @@ describe('Bulk-edit', () => {
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
           2,
         );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '', 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '-', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,

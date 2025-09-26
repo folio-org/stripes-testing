@@ -119,7 +119,7 @@ describe('Bulk-edit', () => {
         const editedHeaderValue = [
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-            value: `${notes.adminOneReplaced};${notes.adminTwoReplaced}`,
+            value: `${notes.adminOneReplaced}|${notes.adminTwoReplaced}`,
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE,

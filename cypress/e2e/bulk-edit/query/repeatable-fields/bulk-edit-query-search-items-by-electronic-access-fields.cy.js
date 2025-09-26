@@ -342,7 +342,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
 
-          // Step 5: Search items by "Items — Electronic access — Material specified" field using "equals" operator
+          // Step 5: Search items by "Item — Electronic access — Material specified" field using "equals" operator
           QueryModal.selectField(itemFieldValues.electronicAccessMaterialSpecified);
           QueryModal.verifySelectedField(itemFieldValues.electronicAccessMaterialSpecified);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
