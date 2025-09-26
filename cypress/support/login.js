@@ -6,6 +6,7 @@ import {
   Dropdown,
   Heading,
   including,
+  Link,
   Select,
   TextField,
   TextInput,
@@ -36,22 +37,14 @@ Cypress.Commands.add(
 
           cy.selectTenantIfDropdown();
 
-          cy.do([
-            TextInput('Username').fillIn(username),
-            TextInput('Password').fillIn(password),
-            Button({ name: 'login' }).click(),
-          ]);
+          cy.inputCredentialsAndLogin(username, password);
           waiter();
         });
       } else {
         cy.visit(path);
 
         // Todo: find the way to wrap interactor to cy chainable object
-        cy.do([
-          TextField('Username').fillIn(username),
-          TextField('Password').fillIn(password),
-          Button('Log in').click(),
-        ]);
+        cy.inputCredentialsAndLogin(username, password);
         // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
         // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
         // https://docs.cypress.io/api/commands/wrap#Requirements
@@ -188,10 +181,7 @@ Cypress.Commands.add('selectTenantIfDropdown', () => {
                 (element) => element.id === targetTenantId,
               )[0];
               cy.setTenant(targetTenantId);
-              cy.do(Select('Tenant/Library').choose(targetTenant.name));
-              cy.wait(500);
-              cy.do(Button('Continue').click());
-              cy.wait(1000);
+              cy.selectTenantAndContinue(targetTenant.name);
             });
           });
         } else {
@@ -200,4 +190,46 @@ Cypress.Commands.add('selectTenantIfDropdown', () => {
       });
     });
   });
+});
+
+Cypress.Commands.add('verifyDefaultTenantSelectionPage', () => {
+  cy.expect([
+    Select('Tenant/Library').exists(),
+    Select('Tenant/Library').has({ checkedOptionText: 'Select your tenant/library' }),
+    Button('Continue').has({ disabled: true }),
+  ]);
+});
+
+Cypress.Commands.add('selectTenantAndContinue', (tenantName) => {
+  cy.do(Select('Tenant/Library').choose(tenantName));
+  cy.wait(500);
+  cy.do(Button('Continue').click());
+  cy.wait(1000);
+});
+
+Cypress.Commands.add('verifyDefaultEurekaLoginPage', () => {
+  cy.expect([
+    TextInput('Username').exists(),
+    TextInput('Password').exists(),
+    Button({ name: 'login' }).exists(),
+  ]);
+  if (Cypress.env('ecsEnabled')) {
+    cy.expect(Link('Return to tenant/library selection screen').exists());
+  }
+});
+
+Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
+  if (Cypress.env('eureka')) {
+    cy.do([
+      TextInput('Username').fillIn(username),
+      TextInput('Password').fillIn(password),
+      Button({ name: 'login' }).click(),
+    ]);
+  } else {
+    cy.do([
+      TextField('Username').fillIn(username),
+      TextField('Password').fillIn(password),
+      Button('Log in').click(),
+    ]);
+  }
 });
