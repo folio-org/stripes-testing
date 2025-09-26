@@ -59,7 +59,11 @@ const verifyItemStatusInPane = (itemStatus) => {
 };
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
-  cy.do(Button({ icon: 'times' }).click());
+  cy.do(
+    PaneHeader()
+      .find(Button({ icon: 'times' }))
+      .click(),
+  );
   cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
