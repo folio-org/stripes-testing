@@ -78,7 +78,7 @@ describe('Transactions', () => {
       Funds.selectBudgetDetails();
       Funds.transfer(firstFund, secondFund);
       InteractorsTools.checkCalloutMessage(
-        `$10.00 was successfully transferred to the budget ${firstBudget.name}`,
+        `$10.00 was successfully transferred to the budget ${firstBudget.name}.`,
       );
       Funds.viewTransactions();
       Funds.selectTransactionInList('Transfer');

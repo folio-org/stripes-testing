@@ -67,8 +67,10 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
-    cy.visit(SettingsMenu.expenseClassesPath);
+    cy.loginAsAdmin({
+      path: SettingsMenu.expenseClassesPath,
+      waiter: SettingsFinance.waitExpenseClassesLoading,
+    });
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {

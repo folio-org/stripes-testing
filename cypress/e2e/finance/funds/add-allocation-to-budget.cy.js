@@ -72,7 +72,7 @@ describe('Transactions', () => {
       Funds.selectBudgetDetails();
       Funds.increaseAllocation();
       InteractorsTools.checkCalloutMessage(
-        `$50.00 was successfully allocated to the budget ${defaultBudget.name}`,
+        `$50.00 was successfully allocated to the budget ${defaultBudget.name}.`,
       );
       Funds.viewTransactions();
       Funds.checkTransactionList(defaultFund.code);

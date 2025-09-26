@@ -322,18 +322,20 @@ describe('Organizations', () => {
           Organizations.closeDetailsPane();
         },
       );
+      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+        C423432User = secondUserProperties;
+      });
       cy.createTempUser([
         permissions.uiOrdersView.gui,
         permissions.uiOrganizationsViewBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
-      });
-      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
-        C423432User = secondUserProperties;
       });
     });
 
@@ -362,6 +364,7 @@ describe('Organizations', () => {
       'C423426 Searching in "Organization look-up" by "Bank account number" with appropriate permission (thunderjet)',
       { tags: ['criticalPathBroken', 'thunderjet'] },
       () => {
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'Bank account number',
@@ -369,6 +372,7 @@ describe('Organizations', () => {
           firstOrganization,
         );
         Orders.resetFilters();
+        cy.wait(4000);
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'Bank account number',
@@ -382,9 +386,11 @@ describe('Organizations', () => {
       'C423427 Searching in "Organization look-up" by "Bank account number" in "All" section with banking permission (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex('All', firstBankingInformation.accountNumber, firstOrganization);
         Orders.resetFilters();
+        cy.wait(4000);
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'All',
@@ -403,6 +409,7 @@ describe('Organizations', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchAbsentVendorbyindex(
           'All',
