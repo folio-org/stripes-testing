@@ -39,6 +39,7 @@ describe('Inventory', () => {
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.uiInventorySetRecordsForDeletion.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -74,8 +75,10 @@ describe('Inventory', () => {
           AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
           AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
         );
+        cy.wait(1000);
         QuickMarcEditor.saveAndCloseWithValidationWarnings();
         InstanceRecordView.waitLoading();
+        cy.wait(2000);
         InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.verifyInstanceIsMarkedAsSuppressedFromDiscovery();
         InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();
