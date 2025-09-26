@@ -47,6 +47,7 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.getAdminToken();
         // Clean up any old test codes
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C476764_FolioInstance');
         cy.getStatisticalCodes({ limit: 200 }).then((codes) => {
           codes.forEach((code) => {
             if (code.name.includes('C476764')) {
@@ -68,6 +69,7 @@ describe('Inventory', () => {
             cy.getLocations({ limit: 1, query: '(name<>"*autotest*" and name<>"AT_*")' }).then(
               (res) => {
                 locationId = res.id;
+                testData.locationName = res.name;
               },
             );
             cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
@@ -132,10 +134,12 @@ describe('Inventory', () => {
               }
             })
             .then(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(user.username, user.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+              }, 20_000);
               InventorySearchAndFilter.instanceTabIsDefault();
               InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.itemTabIsDefault();
@@ -181,7 +185,9 @@ describe('Inventory', () => {
             );
             InventoryInstances.selectInstance();
             InventoryInstance.waitInventoryLoading();
-            InventoryInstance.openHoldingItem({ barcode: itemBarcodes[0] });
+            InventoryInstance.openHoldingsAccordion(testData.locationName);
+            cy.wait(3000);
+            InventoryInstance.openItemByBarcode(itemBarcodes[0]);
             ItemRecordView.verifyStatisticalCode(statCodes[0].name);
             ItemRecordView.closeDetailView();
             InventoryInstance.waitInventoryLoading();
@@ -207,7 +213,9 @@ describe('Inventory', () => {
               );
               InventoryInstances.selectInstance(1);
               InventoryInstance.waitInventoryLoading();
-              InventoryInstance.openHoldingItem({ barcode: itemBarcodes[1] });
+              InventoryInstance.openHoldingsAccordion(testData.locationName);
+              cy.wait(3000);
+              InventoryInstance.openItemByBarcode(itemBarcodes[1]);
               ItemRecordView.verifyStatisticalCode(statCodes[1].name);
               ItemRecordView.closeDetailView();
               InventoryInstance.waitInventoryLoading();
@@ -267,10 +275,13 @@ describe('Inventory', () => {
                   );
                   InventoryInstances.selectInstance();
                   InventoryInstance.waitInventoryLoading();
-                  InventoryInstance.openHoldingItem({ barcode: itemBarcodes[2] });
+                  InventoryInstance.openHoldingsAccordion(testData.locationName);
+                  cy.wait(3000);
+                  InventoryInstance.openItemByBarcode(itemBarcodes[2]);
                   ItemRecordView.verifyStatisticalCode(statCodes[2].name);
                   ItemRecordView.closeDetailView();
                   InventoryInstance.waitInventoryLoading();
+                  cy.wait(3000);
                   InventorySearchAndFilter.toggleAccordionByName(STAT_CODE_ACCORDION);
 
                   // 14. Type in facet input
