@@ -1316,6 +1316,7 @@ export const BULK_EDIT_ACTIONS = {
   CHANGE_NOTE_TYPE: 'Change note type',
   DUPLICATE_TO: 'Duplicate to',
   FIND: 'Find',
+  FIND_FULL_FIELD_SEARCH: 'Find (full field search)',
   REPLACE_WITH: 'Replace with',
   REMOVE: 'Remove',
   REMOVE_ALL: 'Remove all',
