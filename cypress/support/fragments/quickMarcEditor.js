@@ -442,6 +442,15 @@ const defaultValid008Values = {
   LitF: '\\',
   Biog: '\\',
 };
+const valid008ValuesInstance = {
+  ...defaultValid008Values,
+  Type: 'a',
+  DtSt: 'm',
+  Conf: '1',
+  Fest: '1',
+  Indx: '1',
+  LitF: 'i',
+};
 const defaultValid008HoldingsValues = {
   AcqEndDate: '\\\\\\\\',
   AcqMethod: '\\',
@@ -518,6 +527,7 @@ export default {
   defaultValidLdr,
   defaultValidHoldingsLdr,
   defaultValid008Values,
+  valid008ValuesInstance,
   defaultValid008HoldingsValues,
 
   getInitialRowsCount() {
@@ -1004,7 +1014,11 @@ export default {
   },
 
   undoDelete() {
-    cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
+    cy.get('[class^=deletedRowPlaceholder-]').each(($placeholder) => {
+      cy.wrap($placeholder).within(() => {
+        cy.contains('span', 'Undo').click();
+      });
+    });
   },
 
   checkUndoDeleteAbsent() {
@@ -3176,5 +3190,13 @@ export default {
         }),
     );
     cy.url().should('include', 'advancedSearch');
+  },
+
+  verifyFieldDropdownFocused(tag, dropdownLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow.find(Select({ label: including(dropdownLabel) })).has({ focused: isFocused }),
+    );
   },
 };
