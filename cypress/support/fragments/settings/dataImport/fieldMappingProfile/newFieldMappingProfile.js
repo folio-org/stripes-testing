@@ -154,9 +154,7 @@ const selectOrganizationByName = (organizationName) => {
     organizationModal.find(searchButton).click(),
   ]);
   cy.expect(MultiColumnListCell(organizationName).exists());
-  cy.do(
-    MultiColumnListCell({ row: 0, columnIndex: 0, content: including(organizationName) }).click(),
-  );
+  cy.do(MultiColumnListCell({ content: organizationName }).click());
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
@@ -278,9 +276,7 @@ const addVendor = (profile) => {
     organizationModal.find(searchButton).click(),
   ]);
   cy.expect(MultiColumnListCell(profile.vendor).exists());
-  cy.do(
-    MultiColumnListCell({ row: 0, columnIndex: 0, content: including(profile.vendor) }).click(),
-  );
+  cy.do(MultiColumnListCell({ content: profile.vendor }).click());
 };
 
 const addMaterialSupplier = (profile) => {
@@ -289,9 +285,9 @@ const addMaterialSupplier = (profile) => {
       physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.materialSupplier),
       organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.materialSupplier).click({ row: 0, columnIndex: 0 }),
     ]);
+    cy.expect(MultiColumnListCell(profile.materialSupplier).exists());
+    cy.do(MultiColumnListCell({ content: profile.materialSupplier }).click());
   }
 };
 
@@ -301,9 +297,9 @@ const addAccessProvider = (profile) => {
       Accordion('E-resources details').find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.accessProvider),
       organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.accessProvider).click({ row: 0, columnIndex: 0 }),
     ]);
+    cy.expect(MultiColumnListCell(profile.accessProvider).exists());
+    cy.do(MultiColumnListCell({ content: profile.accessProvider }).click());
   }
 };
 

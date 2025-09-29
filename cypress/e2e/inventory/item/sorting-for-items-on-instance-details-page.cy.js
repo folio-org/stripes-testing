@@ -223,11 +223,6 @@ describe('Inventory', () => {
             id: 'copynumber',
             columnIndex: 4,
           },
-          {
-            title: 'Enumeration',
-            id: 'enumeration',
-            columnIndex: 7,
-          },
         ].forEach((column) => {
           // Validate sort
           cy.do(MultiColumnListHeader(column.title).click());
@@ -242,10 +237,14 @@ describe('Inventory', () => {
             title: column.title,
             columnIndex: column.columnIndex,
           });
-          InstanceRecordView.scroll();
         });
 
         [
+          {
+            title: 'Enumeration',
+            id: 'enumeration',
+            columnIndex: 7,
+          },
           {
             title: 'Chronology',
             id: 'chronology',
