@@ -115,15 +115,15 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [';uri.com;;;"']);
+        ExportFile.verifyFileIncludes(previewFileName, ['-;uri.com;-;-;-"']);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [';uri.com;;;"']);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, ['-;uri.com;-;-;-"']);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();

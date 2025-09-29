@@ -204,7 +204,7 @@ describe(
             ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
           );
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
-          BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+          BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(
             3,
             electronicAccess[0].materialsSpecification,
@@ -246,7 +246,7 @@ describe(
             ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
           );
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
-          BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+          BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(
             3,
             electronicAccess[0].materialsSpecification,
@@ -317,7 +317,7 @@ describe(
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS]:
-                `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}`,
+                `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};-;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}`,
             },
           ];
 
@@ -342,7 +342,7 @@ describe(
             ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
           );
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
-          BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+          BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
           BulkEditSearchPane.verifyElectronicAccessElementByIndex(
             3,
             electronicAccess[0].materialsSpecification,
