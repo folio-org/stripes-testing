@@ -9,6 +9,7 @@ import {
   including,
   RepeatableFieldItem,
   Selection,
+  MetaSection,
   or,
 } from '../../../../../../interactors';
 
@@ -23,6 +24,8 @@ const cancelButton = Button('Cancel');
 const closeFormButton = Button({ icon: 'times' });
 const optionsDropdown = Selection({ value: including('Select control') });
 const actionsDropdown = Select({ dataTestID: 'select-actions-0' });
+const secondActionsDropdown = Select({ dataTestID: 'select-actions-1' });
+const dataTextArea = TextArea({ dataTestID: 'input-textarea-0' });
 const locationLookupButton = Button('Location look-up');
 const locationSelection = Selection({ name: 'locationId' });
 const plusButton = Button({ icon: 'plus-sign' });
@@ -33,6 +36,8 @@ const getTargetRow = (rowIndex = 0) => {
 
 export default {
   getTargetRow,
+  actionsDropdown,
+  secondActionsDropdown,
   bulkEditsAccordion,
   plusButton,
   garbageCanButton,
@@ -49,12 +54,24 @@ export default {
     cy.title().should('eq', `Bulk edit settings - ${title} - FOLIO`);
   },
 
+  verifyMetadataSectionExists() {
+    cy.expect(summaryAccordion.find(MetaSection()).exists());
+  },
+
   verifySummaryAccordionElements(isLockProfileCheckboxDisabled = true) {
     cy.expect([
       nameField.exists(),
       descriptionField.exists(),
       lockProfileCheckbox.has({ checked: false, disabled: isLockProfileCheckboxDisabled }),
     ]);
+  },
+
+  clickLockProfileCheckbox() {
+    cy.do(lockProfileCheckbox.click());
+  },
+
+  verifyLockProfileCheckboxChecked(isChecked) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked }));
   },
 
   verifyBulkEditsAccordionElements() {
@@ -78,7 +95,19 @@ export default {
   },
 
   selectOption(option, rowIndex = 0) {
-    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(optionsDropdown).choose(option));
+    cy.get('[class^="repeatableFieldItem-"]')
+      .eq(rowIndex)
+      .find('[class^="selectionControlContainer"]')
+      .contains('Select control')
+      .eq(0)
+      .click();
+
+    cy.get('[class^="selectionListRoot"]:not([hidden])').find('li').contains(option).click();
+
+    cy.wait(500);
+  },
+
+  verifySelectedOption(option, rowIndex = 0) {
     cy.expect(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
@@ -89,10 +118,41 @@ export default {
 
   selectAction(action, rowIndex = 0) {
     cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(actionsDropdown).choose(action));
+    cy.wait(500);
     cy.expect(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
         .find(actionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  verifySelectedAction(action, rowIndex = 0) {
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(actionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  selectSecondAction(action, rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordion.find(getTargetRow(rowIndex)).find(secondActionsDropdown).choose(action),
+    );
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(secondActionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  verifySelectedSecondAction(action, rowIndex = 0) {
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(secondActionsDropdown)
         .has({ checkedOptionText: action }),
     );
   },
@@ -119,10 +179,15 @@ export default {
 
   clickLocationLookup(rowIndex = 0) {
     cy.do(getTargetRow(rowIndex).find(locationLookupButton).click());
+    cy.wait(1000);
   },
 
   clickPlusButton(rowIndex = 0) {
-    cy.do(getTargetRow(rowIndex).find(plusButton).click());
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(plusButton).click());
+  },
+
+  clickGarbageCanButton(rowIndex = 0) {
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(garbageCanButton).click());
   },
 
   clickSaveAndClose() {
@@ -172,10 +237,12 @@ export default {
   },
 
   fillTextInDataTextArea(text, rowIndex = 0) {
-    cy.do(
-      getTargetRow(rowIndex)
-        .find(TextArea({ dataTestID: 'input-textarea-0' }))
-        .fillIn(text),
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(dataTextArea).fillIn(text));
+  },
+
+  verifyTextInDataTextArea(text, rowIndex = 0) {
+    cy.expect(
+      bulkEditsAccordion.find(getTargetRow(rowIndex)).find(dataTextArea).has({ textContent: text }),
     );
   },
 

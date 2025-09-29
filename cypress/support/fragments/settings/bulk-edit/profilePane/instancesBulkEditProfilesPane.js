@@ -12,6 +12,7 @@ export default {
 
   waitLoading() {
     cy.expect(profilesPane.exists());
+    cy.wait(1000);
   },
 
   clickActionsButton() {
