@@ -35,11 +35,13 @@ export default {
     cy.do(newButton.click());
   },
 
-  verifySuccessToast() {
-    cy.expect(Callout({ type: 'success' }).has({ textContent: 'Profile successfully created.' }));
+  verifySuccessToast(actionType = 'created') {
+    cy.expect(
+      Callout({ type: 'success' }).has({ textContent: `Profile successfully ${actionType}.` }),
+    );
   },
 
-  verifyProfileInTable(name, description, userObject) {
+  verifyProfileInTable(name, description, userObject, isActive = true) {
     const targetProfileRow = profilesList.find(
       MultiColumnListRow({ content: including(name), isContainer: false }),
     );
@@ -71,6 +73,20 @@ export default {
     cy.expect(
       targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: 'Active' }),
     );
+
+    if (!isActive) {
+      cy.do(
+        targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).perform((el) => {
+          cy.get(el).find('svg').should('have.class', 'icon-lock');
+        }),
+      );
+    } else {
+      cy.do(
+        targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).perform((el) => {
+          cy.get(el).find('svg').should('not.exist');
+        }),
+      );
+    }
   },
 
   clickProfileRow(profileName) {
