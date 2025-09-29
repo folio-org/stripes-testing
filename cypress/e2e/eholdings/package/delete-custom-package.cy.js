@@ -16,7 +16,6 @@ describe('eHoldings', () => {
     let user;
 
     before('Create user, create custom package and login', () => {
-      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
