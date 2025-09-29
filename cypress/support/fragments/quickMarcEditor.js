@@ -148,6 +148,11 @@ const validationCalloutMainText =
 const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
 const derivePaneHeaderText = /Derive a new .*MARC bib record/;
 const searchButtonIn010Field = Button({ ariaLabel: 'search' });
+const getTag008BoxErrorText = (boxName) => `Fail: Record cannot be saved. Field 008 contains an invalid value in "${boxName}" position.`;
+const tagLengthNumbersOnlyInlineErrorText =
+  'Fail: Tag must contain three characters and can only accept numbers 0-9.';
+const tag1XXNonRepeatableRequiredCalloutText = 'Field 1XX is non-repeatable and required.';
+const getSubfieldNonRepeatableInlineErrorText = (subfield) => `Fail: Subfield '${subfield}' is non-repeatable.`;
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -529,6 +534,10 @@ export default {
   defaultValid008Values,
   valid008ValuesInstance,
   defaultValid008HoldingsValues,
+  getTag008BoxErrorText,
+  tagLengthNumbersOnlyInlineErrorText,
+  tag1XXNonRepeatableRequiredCalloutText,
+  getSubfieldNonRepeatableInlineErrorText,
 
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
@@ -1498,7 +1507,11 @@ export default {
   selectFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
-    cy.do(targetRow.find(Select({ label: including(dropdownLabel) })).choose(option));
+    cy.do(
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
+        .choose(option),
+    );
     cy.wait(500);
   },
 
@@ -2092,9 +2105,7 @@ export default {
   },
 
   checkFieldsCount(expectedCount) {
-    cy.then(() => QuickMarcEditor().rowsCount()).then((FieldsCount) => {
-      cy.expect(FieldsCount).equal(expectedCount);
-    });
+    cy.expect(QuickMarcEditor().has({ rowsCount: expectedCount }));
   },
 
   checkAfterSaveAndCloseDerive() {
