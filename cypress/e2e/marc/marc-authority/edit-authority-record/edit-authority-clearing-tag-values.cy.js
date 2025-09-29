@@ -10,15 +10,14 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
       const testData = {
-        authorityHeading: `AT_C359176_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C375137_MarcAuthority_${getRandomPostfix()}`,
         tag100: '100',
+        tag053: '053',
+        tag370: '370',
         tag400: '400',
         tag500: '500',
         tag670: '670',
-        field400Content: '$a Alternative, Name C359176',
-        field500Content: '$a Related, Name C359176',
-        field670Content: '$a Other Data C359176',
-        firstFieldToDeleteIndex: 5,
+        tag952: '952',
       };
 
       const authData = {
@@ -32,16 +31,39 @@ describe('MARC', () => {
           content: `$a ${testData.authorityHeading}`,
           indicators: ['\\', '\\'],
         },
-        { tag: testData.tag400, content: testData.field400Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag500, content: testData.field500Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag670, content: testData.field670Content, indicators: ['\\', '\\'] },
+        { tag: testData.tag053, content: '$a C375137 tag 053', indicators: ['\\', '\\'] },
+        { tag: testData.tag370, content: '$a C375137 tag 370', indicators: ['\\', '\\'] },
+        { tag: testData.tag400, content: '$a C375137 tag 400', indicators: ['\\', '\\'] },
+        { tag: testData.tag500, content: '$a C375137 tag 500', indicators: ['\\', '\\'] },
+        { tag: testData.tag670, content: '$a C375137 tag 670', indicators: ['\\', '\\'] },
+        { tag: testData.tag952, content: '$a C375137 tag 952', indicators: ['\\', '\\'] },
+      ];
+
+      const fieldIndexes = {
+        tag100: 4,
+        tag053: 5,
+        tag370: 6,
+        tag400: 7,
+        tag500: 8,
+        tag670: 9,
+        tag952: 10,
+      };
+
+      const tagsToClear = [
+        testData.tag100,
+        testData.tag053,
+        testData.tag370,
+        testData.tag400,
+        testData.tag500,
+        testData.tag670,
+        testData.tag952,
       ];
 
       let createdAuthorityId;
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C359176_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C375137_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -73,8 +95,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359176 MARC Authority | Verify that deleted MARC Field will display at the same position after restoring (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359176'] },
+        'C375137 Tag value can be cleared for any field of "MARC authority" record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C375137'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);
@@ -82,18 +104,32 @@ describe('MARC', () => {
 
           MarcAuthority.edit();
 
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.deleteField(testData.firstFieldToDeleteIndex + index);
-            QuickMarcEditor.afterDeleteNotification(field.tag);
+          QuickMarcEditor.updateExistingField(testData.tag400, '$a');
+          QuickMarcEditor.checkContentByTag(testData.tag400, '$a');
+          tagsToClear.forEach((tag) => {
+            QuickMarcEditor.updateExistingTagName(tag, '');
+          });
+          Object.values(fieldIndexes).forEach((fieldIndex) => {
+            QuickMarcEditor.verifyTagValue(fieldIndex, '');
           });
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-          QuickMarcEditor.checkDeleteModal(3);
-          QuickMarcEditor.clickRestoreDeletedField();
-
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.verifyTagValue(testData.firstFieldToDeleteIndex + index, field.tag);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkCallout(QuickMarcEditor.tag1XXNonRepeatableRequiredCalloutText);
+          Object.entries(fieldIndexes).forEach(([key, fieldIndex]) => {
+            if (key !== 'tag400') {
+              QuickMarcEditor.checkErrorMessage(
+                fieldIndex,
+                QuickMarcEditor.tagLengthNumbersOnlyInlineErrorText,
+              );
+            } else {
+              QuickMarcEditor.checkErrorMessage(
+                fieldIndex,
+                QuickMarcEditor.tagLengthNumbersOnlyInlineErrorText,
+                false,
+              );
+            }
           });
+          QuickMarcEditor.waitLoading();
         },
       );
     });

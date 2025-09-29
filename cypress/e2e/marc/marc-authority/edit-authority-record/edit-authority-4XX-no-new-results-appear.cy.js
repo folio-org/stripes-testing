@@ -9,16 +9,16 @@ import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/st
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
+      const randomPostfix = getRandomPostfix();
       const testData = {
-        authorityHeading: `AT_C359176_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C375091_MarcAuthority_${randomPostfix}`,
         tag100: '100',
         tag400: '400',
+        tag410: '410',
         tag500: '500',
         tag670: '670',
-        field400Content: '$a Alternative, Name C359176',
-        field500Content: '$a Related, Name C359176',
-        field670Content: '$a Other Data C359176',
-        firstFieldToDeleteIndex: 5,
+        headingFrom4XXField: `AT_C375091_Reference_Heading_${randomPostfix}`,
+        headingFrom5XXField: `AT_C375091_AuthRef_Heading_${randomPostfix}`,
       };
 
       const authData = {
@@ -32,16 +32,23 @@ describe('MARC', () => {
           content: `$a ${testData.authorityHeading}`,
           indicators: ['\\', '\\'],
         },
-        { tag: testData.tag400, content: testData.field400Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag500, content: testData.field500Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag670, content: testData.field670Content, indicators: ['\\', '\\'] },
+        {
+          tag: testData.tag400,
+          content: `$a ${testData.headingFrom4XXField}`,
+          indicators: ['\\', '\\'],
+        },
+        {
+          tag: testData.tag500,
+          content: `$a ${testData.headingFrom5XXField}`,
+          indicators: ['\\', '\\'],
+        },
       ];
 
       let createdAuthorityId;
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C359176_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C375091_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -73,27 +80,31 @@ describe('MARC', () => {
       });
 
       it(
-        'C359176 MARC Authority | Verify that deleted MARC Field will display at the same position after restoring (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359176'] },
+        'C375091 No additional records appear after user edits "4XX" MARC tag in MARC authority record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C375091'] },
         () => {
-          MarcAuthorities.searchBeats(testData.authorityHeading);
-          MarcAuthorities.selectTitle(testData.authorityHeading);
+          MarcAuthorities.searchBeats(testData.headingFrom4XXField);
+          MarcAuthorities.checkRowsCount(1);
+          MarcAuthorities.checkResultList([testData.headingFrom4XXField]);
+          MarcAuthorities.selectTitle(testData.headingFrom4XXField);
           MarcAuthority.waitLoading();
 
           MarcAuthority.edit();
 
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.deleteField(testData.firstFieldToDeleteIndex + index);
-            QuickMarcEditor.afterDeleteNotification(field.tag);
-          });
+          QuickMarcEditor.updateExistingTagName(testData.tag400, testData.tag410);
+          QuickMarcEditor.checkTagAbsent(testData.tag400);
+          QuickMarcEditor.verifyTagValue(5, testData.tag410);
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-          QuickMarcEditor.checkDeleteModal(3);
-          QuickMarcEditor.clickRestoreDeletedField();
+          cy.intercept(/\/search\/authorities\?.*AT_C375091_Reference_Heading/).as(
+            'getAuthorities',
+          );
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          MarcAuthority.waitLoading();
+          MarcAuthority.contains(`${testData.tag410}\t`);
 
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.verifyTagValue(testData.firstFieldToDeleteIndex + index, field.tag);
-          });
+          cy.wait('@getAuthorities').its('response.statusCode').should('eq', 200);
+          MarcAuthorities.checkRowsCount(1);
+          MarcAuthorities.checkResultList([testData.headingFrom4XXField]);
         },
       );
     });

@@ -25,9 +25,8 @@ describe('MARC', () => {
 
       const updatedHeading = `${testData.authorityHeading} UPD`;
 
-      const authFile = {
-        sourceName: `AT_C794530_AuthoritySourceFile_${randomPostfix}`,
-        prefix: getRandomLetters(8),
+      const authData = {
+        prefix: getRandomLetters(15),
         startWithNumber: '1',
       };
 
@@ -41,7 +40,6 @@ describe('MARC', () => {
       const custom008Values = { ...MarcAuthorities.valid008FieldValues, Roman: '\\', Series: '\\' };
 
       let createdAuthorityId;
-      let createdAuthoritySourceFileId;
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -53,30 +51,22 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.createAuthoritySourceFileUsingAPI(
-            authFile.prefix,
-            authFile.startWithNumber,
-            authFile.sourceName,
-          ).then((authoritySourceFileId) => {
-            createdAuthoritySourceFileId = authoritySourceFileId;
-
-            MarcAuthorities.createMarcAuthorityViaAPI(
-              authFile.prefix,
-              authFile.hridStartsWith,
-              authorityFields,
-              undefined,
-              custom008Values,
-            ).then((createdRecordId) => {
-              createdAuthorityId = createdRecordId;
-            });
-
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              });
-            }, 20_000);
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            authData.prefix,
+            authData.startWithNumber,
+            authorityFields,
+            undefined,
+            custom008Values,
+          ).then((createdRecordId) => {
+            createdAuthorityId = createdRecordId;
           });
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+          }, 20_000);
         });
       });
 
@@ -84,7 +74,6 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteViaAPI(createdAuthorityId, true);
         Users.deleteViaApi(testData.userProperties.userId);
-        cy.deleteAuthoritySourceFileViaAPI(createdAuthoritySourceFileId, true);
       });
 
       it(

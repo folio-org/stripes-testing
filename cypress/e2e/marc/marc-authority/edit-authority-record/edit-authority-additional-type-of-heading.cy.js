@@ -10,15 +10,11 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
       const testData = {
-        authorityHeading: `AT_C359176_MarcAuthority_${getRandomPostfix()}`,
-        tag100: '100',
-        tag400: '400',
-        tag500: '500',
-        tag670: '670',
-        field400Content: '$a Alternative, Name C359176',
-        field500Content: '$a Related, Name C359176',
-        field670Content: '$a Other Data C359176',
-        firstFieldToDeleteIndex: 5,
+        authorityHeading: `AT_C409501_MarcAuthority_${getRandomPostfix()}`,
+        tag180: '180',
+        tag480: '480',
+        tag580: '580',
+        valueToAdd: 'UPDATED_480',
       };
 
       const authData = {
@@ -28,20 +24,21 @@ describe('MARC', () => {
 
       const authorityFields = [
         {
-          tag: testData.tag100,
-          content: `$a ${testData.authorityHeading}`,
+          tag: testData.tag180,
+          content: `$x ${testData.authorityHeading}`,
           indicators: ['\\', '\\'],
         },
-        { tag: testData.tag400, content: testData.field400Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag500, content: testData.field500Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag670, content: testData.field670Content, indicators: ['\\', '\\'] },
+        { tag: testData.tag480, content: '$x C409501 tag 480', indicators: ['\\', '\\'] },
+        { tag: testData.tag580, content: '$x C409501 tag 580', indicators: ['\\', '\\'] },
       ];
+
+      const tag480UpdatedContent = `${authorityFields[1].content} ${testData.valueToAdd}`;
 
       let createdAuthorityId;
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C359176_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C409501_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -73,27 +70,23 @@ describe('MARC', () => {
       });
 
       it(
-        'C359176 MARC Authority | Verify that deleted MARC Field will display at the same position after restoring (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359176'] },
+        'C409501 Edit "MARC Authority" record that has a heading 147, 148, 162, 180, 181, 182, 185 (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C409501'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);
           MarcAuthority.waitLoading();
 
           MarcAuthority.edit();
+          QuickMarcEditor.updateExistingField(testData.tag480, tag480UpdatedContent);
+          QuickMarcEditor.checkContentByTag(testData.tag480, tag480UpdatedContent);
 
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.deleteField(testData.firstFieldToDeleteIndex + index);
-            QuickMarcEditor.afterDeleteNotification(field.tag);
-          });
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndCloseAuthority();
+          MarcAuthority.contains(testData.valueToAdd);
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-          QuickMarcEditor.checkDeleteModal(3);
-          QuickMarcEditor.clickRestoreDeletedField();
-
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.verifyTagValue(testData.firstFieldToDeleteIndex + index, field.tag);
-          });
+          MarcAuthority.edit();
+          QuickMarcEditor.checkContentByTag(testData.tag480, tag480UpdatedContent);
         },
       );
     });

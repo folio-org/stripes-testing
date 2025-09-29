@@ -1,7 +1,6 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
@@ -9,16 +8,10 @@ import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/st
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
+      const randomPostfix = getRandomPostfix();
       const testData = {
-        authorityHeading: `AT_C359176_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C422246_MarcAuthority_${randomPostfix}`,
         tag100: '100',
-        tag400: '400',
-        tag500: '500',
-        tag670: '670',
-        field400Content: '$a Alternative, Name C359176',
-        field500Content: '$a Related, Name C359176',
-        field670Content: '$a Other Data C359176',
-        firstFieldToDeleteIndex: 5,
       };
 
       const authData = {
@@ -32,20 +25,19 @@ describe('MARC', () => {
           content: `$a ${testData.authorityHeading}`,
           indicators: ['\\', '\\'],
         },
-        { tag: testData.tag400, content: testData.field400Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag500, content: testData.field500Content, indicators: ['\\', '\\'] },
-        { tag: testData.tag670, content: testData.field670Content, indicators: ['\\', '\\'] },
       ];
 
       let createdAuthorityId;
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C359176_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C422246_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
@@ -73,27 +65,15 @@ describe('MARC', () => {
       });
 
       it(
-        'C359176 MARC Authority | Verify that deleted MARC Field will display at the same position after restoring (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359176'] },
+        'C422246 Verify that "Authority file look-up" hyperlink doesn\'t display in "Edit MARC authority record" window (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C422246'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);
           MarcAuthority.waitLoading();
 
           MarcAuthority.edit();
-
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.deleteField(testData.firstFieldToDeleteIndex + index);
-            QuickMarcEditor.afterDeleteNotification(field.tag);
-          });
-
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-          QuickMarcEditor.checkDeleteModal(3);
-          QuickMarcEditor.clickRestoreDeletedField();
-
-          authorityFields.slice(1).forEach((field, index) => {
-            QuickMarcEditor.verifyTagValue(testData.firstFieldToDeleteIndex + index, field.tag);
-          });
+          MarcAuthority.checkSourceFileSelectShown(false);
         },
       );
     });
