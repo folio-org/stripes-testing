@@ -66,6 +66,14 @@ export default {
     ]);
   },
 
+  clickLockProfileCheckbox() {
+    cy.do(lockProfileCheckbox.click());
+  },
+
+  verifyLockProfileCheckboxChecked(isChecked) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked }));
+  },
+
   verifyBulkEditsAccordionElements() {
     cy.expect([
       bulkEditsAccordion.find(HTML(including('Options\n*'))).exists(),

@@ -19,6 +19,7 @@ const editButton = Button('Edit');
 const duplicateButton = Button('Duplicate');
 const closeFormButton = Button({ icon: 'times' });
 const collapseAllLink = Button('Collapse all');
+const lockProfileCheckbox = summaryAccordion.find(Checkbox({ id: 'lockProfile' }));
 const getTargetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
@@ -27,6 +28,7 @@ export default {
 
   waitLoading() {
     cy.expect(profileViewPane.exists());
+    cy.wait(1000);
   },
 
   verifyProfileDetails(name, description) {
@@ -91,13 +93,8 @@ export default {
     );
   },
 
-  clickCloseFormButton() {
-    cy.do(closeFormButton.click());
-  },
-
-  clickActionsButton() {
-    cy.do(profileViewPane.find(Button('Actions')).click());
-    cy.wait(500);
+  verifyLockProfileCheckboxChecked(isChecked) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: true }));
   },
 
   verifyActionsMenuOptions() {
@@ -106,5 +103,14 @@ export default {
 
   selectEditProfile() {
     cy.do(editButton.click());
+  },
+
+  clickCloseFormButton() {
+    cy.do(closeFormButton.click());
+  },
+
+  clickActionsButton() {
+    cy.do(profileViewPane.find(Button('Actions')).click());
+    cy.wait(500);
   },
 };
