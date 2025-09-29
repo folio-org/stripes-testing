@@ -13,6 +13,7 @@ import {
   Select,
   Pane,
   Link,
+  PaneHeader,
 } from '../../../../interactors';
 import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -61,7 +62,7 @@ export default {
 
   deletePackage: () => {
     cy.do([
-      actionButton.click(),
+      PaneHeader().find(actionButton).click(),
       deletePackageButton.click(),
       confirmModal.find(Button('Yes, delete')).click(),
     ]);
@@ -354,6 +355,10 @@ export default {
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());
+  },
+
+  verifyPackageNotInSearchResults: (packageName) => {
+    cy.expect(resultSection.find(Link({ text: including(packageName) })).absent());
   },
 
   verifyCustomCoverageDates(startDate, endDate) {
