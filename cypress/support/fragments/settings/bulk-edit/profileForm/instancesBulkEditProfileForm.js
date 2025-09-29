@@ -8,7 +8,9 @@ import {
   Accordion,
   HTML,
   including,
+  or,
 } from '../../../../../../interactors';
+import { BULK_EDIT_ACTIONS, INSTANCE_NOTE_TYPES } from '../../../../constants';
 import BulkEditProfileForm from './bulkEditProfileForm';
 
 const newProfilePane = Pane('New FOLIO instances bulk edit profile');
@@ -82,12 +84,14 @@ export default {
     ]);
   },
 
-  verifyApplyToCheckboxes(isChecked = true) {
+  verifyApplyToCheckboxes(isChecked = true, rowIndex = 0) {
     cy.expect([
       this.bulkEditsAccordion
+        .find(this.getTargetRow(rowIndex))
         .find(Checkbox('Apply to all holdings records'))
         .has({ checked: isChecked }),
       this.bulkEditsAccordion
+        .find(this.getTargetRow(rowIndex))
         .find(Checkbox('Apply to all items records'))
         .has({ checked: isChecked }),
     ]);
@@ -183,5 +187,74 @@ export default {
         .find(statisticalCodeSelect)
         .has({ selected: [statisticalCode] }),
     );
+  },
+
+  verifyAvailableOptionsAndActions(rowIndex = 0) {
+    const availableOptionsAndActions = [
+      // Administrative data
+      {
+        option: 'Administrative note',
+        actions: [
+          BULK_EDIT_ACTIONS.ADD_NOTE,
+          BULK_EDIT_ACTIONS.CHANGE_NOTE_TYPE,
+          BULK_EDIT_ACTIONS.FIND,
+          BULK_EDIT_ACTIONS.REMOVE_ALL,
+        ],
+      },
+      {
+        option: 'Set records for deletion',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      {
+        option: 'Staff suppress',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      {
+        option: 'Statistical code',
+        actions: [BULK_EDIT_ACTIONS.ADD, BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REMOVE_ALL],
+      },
+      {
+        option: 'Suppress from discovery',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      // Instance notes
+      {
+        option: INSTANCE_NOTE_TYPES.DATA_QUALITY_NOTE,
+        actions: [
+          BULK_EDIT_ACTIONS.ADD_NOTE,
+          BULK_EDIT_ACTIONS.CHANGE_NOTE_TYPE,
+          BULK_EDIT_ACTIONS.FIND,
+          BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY,
+          BULK_EDIT_ACTIONS.REMOVE_ALL,
+          BULK_EDIT_ACTIONS.REMOVE_MARK_AS_STAFF_ONLY,
+        ],
+      },
+    ];
+
+    availableOptionsAndActions.forEach((optionAndActions) => {
+      this.selectOption(optionAndActions.option, rowIndex);
+
+      cy.expect(
+        this.getTargetRow(rowIndex)
+          .find(this.actionsDropdown)
+          .has({ optionsText: optionAndActions.actions }),
+      );
+
+      if (optionAndActions.actions.includes(BULK_EDIT_ACTIONS.FIND)) {
+        this.selectAction(BULK_EDIT_ACTIONS.FIND, rowIndex);
+        cy.expect(
+          this.getTargetRow(rowIndex)
+            .find(this.secondActionsDropdown)
+            .has({ optionsText: [BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REPLACE_WITH] }),
+        );
+      }
+
+      if (optionAndActions.option === 'Suppress from discovery') {
+        optionAndActions.actions.forEach((action) => {
+          this.selectAction(action, rowIndex);
+          this.verifyApplyToCheckboxes(or(false, true), rowIndex);
+        });
+      }
+    });
   },
 };

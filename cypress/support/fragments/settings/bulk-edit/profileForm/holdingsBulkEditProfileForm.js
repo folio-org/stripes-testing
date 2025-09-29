@@ -1,4 +1,4 @@
-import { Pane, Checkbox } from '../../../../../../interactors';
+import { Pane, Checkbox, or } from '../../../../../../interactors';
 import { BULK_EDIT_ACTIONS, HOLDING_NOTE_TYPES } from '../../../../constants';
 import BulkEditProfileForm from './bulkEditProfileForm';
 
@@ -131,7 +131,7 @@ export default {
       if (optionAndActions.option === 'Suppress from discovery') {
         optionAndActions.actions.forEach((action) => {
           this.selectAction(action, rowIndex);
-          this.verifyApplyToCheckbox(false, rowIndex);
+          this.verifyApplyToCheckbox(or(false, true), rowIndex);
         });
       }
     });

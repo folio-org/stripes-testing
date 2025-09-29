@@ -110,6 +110,7 @@ export default {
 
   selectAction(action, rowIndex = 0) {
     cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(actionsDropdown).choose(action));
+    cy.wait(500);
     cy.expect(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
@@ -170,6 +171,7 @@ export default {
 
   clickLocationLookup(rowIndex = 0) {
     cy.do(getTargetRow(rowIndex).find(locationLookupButton).click());
+    cy.wait(1000);
   },
 
   clickPlusButton(rowIndex = 0) {

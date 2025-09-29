@@ -14,9 +14,11 @@ import {
 
 const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
 const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
+const summaryAccordion = Accordion('Summary');
 const editButton = Button('Edit');
 const duplicateButton = Button('Duplicate');
 const closeFormButton = Button({ icon: 'times' });
+const collapseAllLink = Button('Collapse all');
 const getTargetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
@@ -33,6 +35,9 @@ export default {
       profileViewPane.has({ title: name }),
       profileViewPane.find(Headline(name)).exists(),
       profileViewPane.find(KeyValue('Description')).has({ value: description }),
+      summaryAccordion.has({ open: true }),
+      bulkEditsAccordion.has({ open: true }),
+      collapseAllLink.exists(),
     ]);
   },
 
@@ -91,6 +96,7 @@ export default {
 
   clickActionsButton() {
     cy.do(profileViewPane.find(Button('Actions')).click());
+    cy.wait(500);
   },
 
   verifyActionsMenuOptions() {
