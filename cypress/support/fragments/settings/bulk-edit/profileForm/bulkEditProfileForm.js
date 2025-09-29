@@ -87,13 +87,16 @@ export default {
   },
 
   selectOption(option, rowIndex = 0) {
-    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(optionsDropdown).choose(option));
-    cy.expect(
-      bulkEditsAccordion
-        .find(getTargetRow(rowIndex))
-        .find(optionsDropdown)
-        .has({ singleValue: option }),
-    );
+    cy.get('[class^="repeatableFieldItem-"]')
+      .eq(rowIndex)
+      .find('[class^="selectionControlContainer"]')
+      .contains('Select control')
+      .eq(0)
+      .click();
+
+    cy.get('[class^="selectionListRoot"]:not([hidden])').find('li').contains(option).click();
+
+    cy.wait(500);
   },
 
   verifySelectedOption(option, rowIndex = 0) {
@@ -128,6 +131,15 @@ export default {
     cy.do(
       bulkEditsAccordion.find(getTargetRow(rowIndex)).find(secondActionsDropdown).choose(action),
     );
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(secondActionsDropdown)
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  verifySelectedSecondAction(action, rowIndex = 0) {
     cy.expect(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))

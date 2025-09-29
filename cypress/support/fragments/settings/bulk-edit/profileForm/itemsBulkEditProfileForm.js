@@ -109,7 +109,7 @@ export default {
         cy.expect(
           this.getTargetRow(rowIndex)
             .find(this.secondActionsDropdown)
-            .has({ optionsText: [BULK_EDIT_ACTIONS.CLEAR_FIELD, BULK_EDIT_ACTIONS.REPLACE_WITH] }),
+            .has({ optionsText: [BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REPLACE_WITH] }),
         );
       }
     });

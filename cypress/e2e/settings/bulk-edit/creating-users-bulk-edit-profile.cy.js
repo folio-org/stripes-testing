@@ -85,7 +85,7 @@ describe('Bulk edit', () => {
 
         // Step 7: Select any patron group in "Select patron group" dropdown
         UsersBulkEditProfileForm.selectPatronGroup(testData.patronGroup);
-        UsersBulkEditProfileForm.verifyPatronGroupValue(testData.patronGroup);
+        UsersBulkEditProfileForm.verifySelectedPatronGroup(testData.patronGroup);
         UsersBulkEditProfileForm.verifySaveButtonDisabled(false);
 
         // Step 8: Click "Plus" icon in "Actions" column

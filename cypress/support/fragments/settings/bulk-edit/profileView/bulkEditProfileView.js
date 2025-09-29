@@ -16,6 +16,7 @@ const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
 const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
 const editButton = Button('Edit');
 const duplicateButton = Button('Duplicate');
+const closeFormButton = Button({ icon: 'times' });
 const getTargetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
@@ -28,6 +29,7 @@ export default {
 
   verifyProfileDetails(name, description) {
     cy.expect([
+      closeFormButton.has({ disabled: false }),
       profileViewPane.has({ title: name }),
       profileViewPane.find(Headline(name)).exists(),
       profileViewPane.find(KeyValue('Description')).has({ value: description }),
@@ -84,7 +86,7 @@ export default {
   },
 
   clickCloseFormButton() {
-    cy.do(profileViewPane.find(Button({ icon: 'times' })).click());
+    cy.do(closeFormButton.click());
   },
 
   clickActionsButton() {
