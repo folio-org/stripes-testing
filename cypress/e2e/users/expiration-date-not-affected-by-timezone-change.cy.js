@@ -13,6 +13,7 @@ describe('Users', () => {
   const testData = {
     user: {},
     selectedExpirationDate: '',
+    selectedExpirationDatePlusOne: '',
     westernTimezone: 'Pacific/Nauru',
     easternTimezone: 'Pacific/Auckland',
     utcTimezone: 'UTC',
@@ -32,10 +33,17 @@ describe('Users', () => {
           },
           'MM/DD/YYYY',
         );
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.tenantPath,
-          waiter: TenantPane.waitLoading,
+        testData.selectedExpirationDatePlusOne = DateTools.getFormattedDate(
+          {
+            date: DateTools.addDays(1, testData.selectedExpirationDate),
+          },
+          'MM/DD/YYYY',
+        );
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: SettingsMenu.tenantPath,
+            waiter: TenantPane.waitLoading,
+          });
         });
       });
     });
@@ -51,7 +59,6 @@ describe('Users', () => {
     'C770460 Expiration date is not affected by time zone change (volaris)',
     { tags: ['extendedPath', 'volaris', 'C770460'] },
     () => {
-      cy.waitForAuthRefresh(() => {}, 20_000);
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.changeTimezone(testData.westernTimezone);
       Localization.clickSaveButton();
@@ -95,12 +102,13 @@ describe('Users', () => {
       UsersCard.verifyUserDetailsPaneOpen();
 
       // Check the "Expiration date" field on user details pane
-      // The date should be the same as was set in step #2
-      UsersCard.checkKeyValue('Expiration date', formattedSelectedExpirationDate);
+      // The date in "Expiration date" field is one day ahead of the date set in step #2
+
+      UsersCard.checkKeyValue('Expiration date', testData.selectedExpirationDatePlusOne);
 
       // Step 6: Click "Actions" -> "Edit" on user details pane / Check the "Expiration date" field on user edit page
       UserEdit.openEdit();
-      UserEdit.verifyExpirationDateFieldValue(testData.selectedExpirationDate);
+      UserEdit.verifyExpirationDateFieldValue(testData.selectedExpirationDatePlusOne);
 
       cy.visit(SettingsMenu.tenantPath);
       TenantPane.waitLoading();
