@@ -117,7 +117,7 @@ describe('Bulk edit', () => {
 
         // Step 10: Click "Save & close" button
         InstancesBulkEditProfileForm.clickSaveAndClose();
-        InstancesBulkEditProfileForm.verifyMarcProfilePaneAbsent();
+        InstancesBulkEditProfileForm.verifyNewMarcProfilePaneAbsent();
         InstancesBulkEditProfilesPane.verifySuccessToast();
         InstancesBulkEditProfilesPane.waitLoading();
 

@@ -16,6 +16,10 @@ const ind2Field = TextField({ name: 'ind2' });
 export default {
   ...BulkEditProfileView,
 
+  verifyBulkEditForMarcInstancesAccordionExists() {
+    cy.expect(this.bulkEditsAccordion.has({ open: true }));
+  },
+
   verifyTagAndIndicatorsAndSubfieldValues(tag, ind1, ind2, subfield, rowIndex = 0) {
     cy.expect([
       bulkEditForMarcInstancesAccordion
@@ -41,13 +45,22 @@ export default {
     cy.expect(
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
-        .find(TextArea({ ariaLabel: 'Data', textContent: value }))
+        .find(TextArea({ ariaLabel: 'Data', dataActionIndex: '0', textContent: value }))
         .exists(),
     );
   },
 
+  verifySecondDataTextAreaForMarcInstance(value, rowIndex = 0) {
+    cy.expect(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(TextArea({ ariaLabel: 'Data', dataActionIndex: '1' }))
+        .has({ textContent: value }),
+    );
+  },
+
   verifySelectedMarcAction(action, rowIndex = 0) {
-    cy.do(
+    cy.expect(
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
         .find(Select({ dataActionIndex: '0', checkedOptionText: action }))
@@ -56,7 +69,7 @@ export default {
   },
 
   verifySelectedSecondMarcAction(action, rowIndex = 0) {
-    cy.do(
+    cy.expect(
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
         .find(Select({ dataActionIndex: '1', checkedOptionText: action }))
@@ -65,7 +78,7 @@ export default {
   },
 
   verifySubfieldInSubRow(value, rowIndex = 0, subRowIndex = 0) {
-    cy.do(
+    cy.expect(
       bulkEditForMarcInstancesAccordion.find(this.getTargetRow(rowIndex)).perform((rowEl) => {
         cy.wrap(rowEl)
           .find('[class*="subRow-"]')
@@ -77,7 +90,7 @@ export default {
   },
 
   verifySelectedActionInSubRow(value, rowIndex = 0, subRowIndex = 0) {
-    cy.do(
+    cy.expect(
       bulkEditForMarcInstancesAccordion.find(this.getTargetRow(rowIndex)).perform((rowEl) => {
         cy.wrap(rowEl)
           .find('[class*="subRow-"]')
@@ -89,7 +102,7 @@ export default {
   },
 
   verifyDataTextAreaInSubRow(value, rowIndex = 0, subRowIndex = 0) {
-    cy.do(
+    cy.expect(
       bulkEditForMarcInstancesAccordion.find(this.getTargetRow(rowIndex)).perform((rowEl) => {
         cy.wrap(rowEl)
           .find('[class*="subRow-"]')

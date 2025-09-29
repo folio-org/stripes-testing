@@ -19,7 +19,7 @@ const testData = {
   profileName: `AT_C805765 users bulk edit profile ${getRandomPostfix()}`,
   profileNameToCancel: `AT_C805765 users bulk edit profile to cancel ${getRandomPostfix()}`,
   profileDescription: 'Edit patron group, expiration date and email',
-  patronGroup: 'staff',
+  patronGroup: 'staff (Staff Member)',
   expirationDate: new Date(),
   emailFind: 'example.com',
   emailReplace: 'newdomain.com',

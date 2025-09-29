@@ -78,7 +78,8 @@ export default {
 
   verifyTextInDataTextArea(text, rowIndex = 0) {
     cy.expect(
-      getTargetRow(rowIndex)
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .has({ textContent: text }),
     );

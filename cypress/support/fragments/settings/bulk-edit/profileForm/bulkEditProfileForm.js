@@ -175,11 +175,11 @@ export default {
   },
 
   clickPlusButton(rowIndex = 0) {
-    cy.do(getTargetRow(rowIndex).find(plusButton).click());
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(plusButton).click());
   },
 
   clickGarbageCanButton(rowIndex = 0) {
-    cy.do(getTargetRow(rowIndex).find(garbageCanButton).click());
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(garbageCanButton).click());
   },
 
   clickSaveAndClose() {
@@ -229,11 +229,13 @@ export default {
   },
 
   fillTextInDataTextArea(text, rowIndex = 0) {
-    cy.do(getTargetRow(rowIndex).find(dataTextArea).fillIn(text));
+    cy.do(bulkEditsAccordion.find(getTargetRow(rowIndex)).find(dataTextArea).fillIn(text));
   },
 
   verifyTextInDataTextArea(text, rowIndex = 0) {
-    cy.expect(getTargetRow(rowIndex).find(dataTextArea).has({ textContent: text }));
+    cy.expect(
+      bulkEditsAccordion.find(getTargetRow(rowIndex)).find(dataTextArea).has({ textContent: text }),
+    );
   },
 
   checkStaffOnlyCheckbox(rowIndex = 0) {
