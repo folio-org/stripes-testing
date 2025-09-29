@@ -729,10 +729,10 @@ export default {
     cy.wait(6000);
   },
 
-  verifyIsItemCreated: (itemBarcode) => {
+  verifyIsItemCreated: (itemBarcode, index = 2) => {
     cy.expect(
       rootSection
-        .find(MultiColumnListCell({ columnIndex: 2, content: itemBarcode }))
+        .find(MultiColumnListCell({ columnIndex: index, content: itemBarcode }))
         .find(Button(including(itemBarcode)))
         .exists(),
     );
