@@ -8,7 +8,9 @@ import {
   Accordion,
   HTML,
   including,
+  or,
 } from '../../../../../../interactors';
+import { BULK_EDIT_ACTIONS, INSTANCE_NOTE_TYPES } from '../../../../constants';
 import BulkEditProfileForm from './bulkEditProfileForm';
 
 const newProfilePane = Pane('New FOLIO instances bulk edit profile');
@@ -19,8 +21,10 @@ const tagField = TextField({ name: 'tag' });
 const ind1Field = TextField({ name: 'ind1' });
 const ind2Field = TextField({ name: 'ind2' });
 const subField = TextField({ name: 'subfield' });
-const dataField = TextArea({ ariaLabel: 'Data' });
-const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: true });
+const dataField = TextArea({ ariaLabel: 'Data', dataActionIndex: '0' });
+const secondDataField = TextArea({ ariaLabel: 'Data', dataActionIndex: '1' });
+const selectActionForMarcInstanceDropdown = Select({ dataActionIndex: '0', required: true });
+const selectSecondActionForMarcInstanceDropdown = Select({ dataActionIndex: '1' });
 
 export default {
   ...BulkEditProfileForm,
@@ -37,12 +41,12 @@ export default {
     cy.expect(newProfilePane.absent());
   },
 
-  verifyMarcProfilePaneAbsent() {
+  verifyNewMarcProfilePaneAbsent() {
     cy.expect(newMarcProfilePane.absent());
   },
 
   verifyBulkEditForMarcInstancesAccordionExists() {
-    cy.expect(newMarcProfilePane.find(bulkEditForMarcInstancesAccordion).has({ open: true }));
+    cy.expect(bulkEditForMarcInstancesAccordion.has({ open: true }));
   },
 
   verifyBulkEditForMarcInstancesAccordionElements() {
@@ -82,12 +86,14 @@ export default {
     ]);
   },
 
-  verifyApplyToCheckboxes(isChecked = true) {
+  verifyApplyToCheckboxes(isChecked = true, rowIndex = 0) {
     cy.expect([
       this.bulkEditsAccordion
+        .find(this.getTargetRow(rowIndex))
         .find(Checkbox('Apply to all holdings records'))
         .has({ checked: isChecked }),
       this.bulkEditsAccordion
+        .find(this.getTargetRow(rowIndex))
         .find(Checkbox('Apply to all items records'))
         .has({ checked: isChecked }),
     ]);
@@ -114,12 +120,42 @@ export default {
     ]);
   },
 
+  verifyTagAndIndicatorsAndSubfieldValues(tag, ind1, ind2, subfield, rowIndex = 0) {
+    cy.expect([
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(tagField)
+        .has({ value: tag }),
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(ind1Field)
+        .has({ value: ind1 }),
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(ind2Field)
+        .has({ value: ind2 }),
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(TextField({ value: subfield }))
+        .exists(),
+    ]);
+  },
+
   selectMarcAction(action, rowIndex = 0) {
     cy.do(
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
-        .find(Select({ dataActionIndex: '0' }))
+        .find(selectActionForMarcInstanceDropdown)
         .choose(action),
+    );
+  },
+
+  verifySelectedMarcAction(action, rowIndex = 0) {
+    cy.do(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(selectActionForMarcInstanceDropdown)
+        .has({ checkedOptionText: action }),
     );
   },
 
@@ -127,8 +163,17 @@ export default {
     cy.do(
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
-        .find(Select({ dataActionIndex: '1' }))
+        .find(selectSecondActionForMarcInstanceDropdown)
         .choose(action),
+    );
+  },
+
+  verifySelectedSecondMarcAction(action, rowIndex = 0) {
+    cy.expect(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(selectSecondActionForMarcInstanceDropdown)
+        .has({ checkedOptionText: action }),
     );
   },
 
@@ -143,6 +188,33 @@ export default {
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
         .find(dataField)
+        .has({ value }),
+    );
+  },
+
+  verifyDataTextAreaForMarcInstance(value, rowIndex = 0) {
+    cy.expect(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(dataField)
+        .has({ value }),
+    );
+  },
+
+  fillInSecondDataTextAreaForMarcInstance(value, rowIndex = 0) {
+    cy.do(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(secondDataField)
+        .fillIn(value),
+    );
+  },
+
+  verifySecondDataTextAreaForMarcInstance(value, rowIndex = 0) {
+    cy.expect(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(secondDataField)
         .has({ value }),
     );
   },
@@ -182,6 +254,178 @@ export default {
       this.getTargetRow(rowIndex)
         .find(statisticalCodeSelect)
         .has({ selected: [statisticalCode] }),
+    );
+  },
+
+  verifyAvailableOptionsAndActions(rowIndex = 0) {
+    const availableOptionsAndActions = [
+      // Administrative data
+      {
+        option: 'Administrative note',
+        actions: [
+          BULK_EDIT_ACTIONS.ADD_NOTE,
+          BULK_EDIT_ACTIONS.CHANGE_NOTE_TYPE,
+          BULK_EDIT_ACTIONS.FIND,
+          BULK_EDIT_ACTIONS.REMOVE_ALL,
+        ],
+      },
+      {
+        option: 'Set records for deletion',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      {
+        option: 'Staff suppress',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      {
+        option: 'Statistical code',
+        actions: [BULK_EDIT_ACTIONS.ADD, BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REMOVE_ALL],
+      },
+      {
+        option: 'Suppress from discovery',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      // Instance notes
+      {
+        option: INSTANCE_NOTE_TYPES.DATA_QUALITY_NOTE,
+        actions: [
+          BULK_EDIT_ACTIONS.ADD_NOTE,
+          BULK_EDIT_ACTIONS.CHANGE_NOTE_TYPE,
+          BULK_EDIT_ACTIONS.FIND,
+          BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY,
+          BULK_EDIT_ACTIONS.REMOVE_ALL,
+          BULK_EDIT_ACTIONS.REMOVE_MARK_AS_STAFF_ONLY,
+        ],
+      },
+    ];
+
+    availableOptionsAndActions.forEach((optionAndActions) => {
+      this.selectOption(optionAndActions.option, rowIndex);
+
+      cy.expect(
+        this.bulkEditsAccordion
+          .find(this.getTargetRow(rowIndex))
+          .find(this.actionsDropdown)
+          .has({ optionsText: optionAndActions.actions }),
+      );
+
+      if (optionAndActions.actions.includes(BULK_EDIT_ACTIONS.FIND)) {
+        this.selectAction(BULK_EDIT_ACTIONS.FIND, rowIndex);
+        cy.expect(
+          this.bulkEditsAccordion
+            .find(this.getTargetRow(rowIndex))
+            .find(this.secondActionsDropdown)
+            .has({ optionsText: [BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REPLACE_WITH] }),
+        );
+      }
+
+      if (optionAndActions.option === 'Suppress from discovery') {
+        optionAndActions.actions.forEach((action) => {
+          this.selectAction(action, rowIndex);
+          this.verifyApplyToCheckboxes(or(false, true), rowIndex);
+        });
+      }
+    });
+  },
+
+  verifyAvailableOptionsAndActionsForMarcInstance(rowIndex = 0) {
+    const availableOptionsAndActions = [
+      {
+        option: 'Administrative note',
+        actions: [BULK_EDIT_ACTIONS.ADD_NOTE, BULK_EDIT_ACTIONS.FIND, BULK_EDIT_ACTIONS.REMOVE_ALL],
+      },
+      {
+        option: 'Set records for deletion',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      {
+        option: 'Staff suppress',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+      {
+        option: 'Statistical code',
+        actions: [BULK_EDIT_ACTIONS.ADD, BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REMOVE_ALL],
+      },
+      {
+        option: 'Suppress from discovery',
+        actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
+      },
+    ];
+
+    availableOptionsAndActions.forEach((optionAndActions) => {
+      this.selectOption(optionAndActions.option, rowIndex);
+
+      cy.expect(
+        this.bulkEditsAccordion
+          .find(this.getTargetRow(rowIndex))
+          .find(this.actionsDropdown)
+          .has({ optionsText: optionAndActions.actions }),
+      );
+
+      if (optionAndActions.actions.includes(BULK_EDIT_ACTIONS.FIND)) {
+        this.selectAction(BULK_EDIT_ACTIONS.FIND, rowIndex);
+        cy.expect(
+          this.bulkEditsAccordion
+            .find(this.getTargetRow(rowIndex))
+            .find(this.secondActionsDropdown)
+            .has({ optionsText: [BULK_EDIT_ACTIONS.REMOVE, BULK_EDIT_ACTIONS.REPLACE_WITH] }),
+        );
+      }
+
+      if (optionAndActions.option === 'Suppress from discovery') {
+        optionAndActions.actions.forEach((action) => {
+          this.selectAction(action, rowIndex);
+          this.verifyApplyToCheckboxes(or(false, true), rowIndex);
+        });
+      }
+    });
+  },
+
+  verifyMarcActionsAvailable(rowIndex = 0) {
+    const availableMarcActions = [
+      BULK_EDIT_ACTIONS.ADD,
+      BULK_EDIT_ACTIONS.FIND,
+      BULK_EDIT_ACTIONS.REMOVE_ALL,
+    ];
+
+    cy.expect(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(selectActionForMarcInstanceDropdown)
+        .has({ optionsText: availableMarcActions }),
+    );
+
+    const availableMarcActionsInSecondDropdown = [
+      BULK_EDIT_ACTIONS.APPEND,
+      BULK_EDIT_ACTIONS.REMOVE_FIELD,
+      BULK_EDIT_ACTIONS.REMOVE_SUBFIELD,
+      BULK_EDIT_ACTIONS.REPLACE_WITH,
+    ];
+
+    this.selectMarcAction(BULK_EDIT_ACTIONS.FIND, rowIndex);
+    cy.expect(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(selectSecondActionForMarcInstanceDropdown)
+        .has({ optionsText: availableMarcActionsInSecondDropdown }),
+    );
+  },
+
+  clickGarbageCanButtonInMarcInstancesAccordion(rowIndex = 0) {
+    cy.do(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(this.garbageCanButton)
+        .click(),
+    );
+  },
+
+  clickPlusButtonInMarcInstancesAccordion(rowIndex = 0) {
+    cy.do(
+      bulkEditForMarcInstancesAccordion
+        .find(this.getTargetRow(rowIndex))
+        .find(this.plusButton)
+        .click(),
     );
   },
 };

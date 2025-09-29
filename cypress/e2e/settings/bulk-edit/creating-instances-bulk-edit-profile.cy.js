@@ -57,7 +57,11 @@ describe('Bulk edit', () => {
 
       // Step 2: Click "Actions" menu button
       InstancesBulkEditProfilesPane.clickActionsButton();
-      InstancesBulkEditProfilesPane.verifyActionsMenuOptions();
+      InstancesBulkEditProfilesPane.verifyActionsMenuOptions({
+        edit: true,
+        duplicate: true,
+        delete: false,
+      });
 
       // Step 3: Select "New FOLIO instances bulk edit profile" option
       InstancesBulkEditProfilesPane.selectNewFolioInstancesProfile();

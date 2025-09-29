@@ -19,7 +19,7 @@ const testData = {
   profileName: `AT_C805765 users bulk edit profile ${getRandomPostfix()}`,
   profileNameToCancel: `AT_C805765 users bulk edit profile to cancel ${getRandomPostfix()}`,
   profileDescription: 'Edit patron group, expiration date and email',
-  patronGroup: 'staff',
+  patronGroup: 'staff (Staff Member)',
   expirationDate: new Date(),
   emailFind: 'example.com',
   emailReplace: 'newdomain.com',
@@ -83,7 +83,7 @@ describe('Bulk edit', () => {
 
       // Step 7: Select any patron group in "Select patron group" dropdown
       UsersBulkEditProfileForm.selectPatronGroup(testData.patronGroup);
-      UsersBulkEditProfileForm.verifyPatronGroupValue(testData.patronGroup);
+      UsersBulkEditProfileForm.verifySelectedPatronGroup(testData.patronGroup);
       UsersBulkEditProfileForm.verifySaveButtonDisabled(false);
 
       // Step 8: Click "Plus" icon in "Actions" column

@@ -26,3 +26,14 @@ Cypress.Commands.add('deleteBulkEditProfile', (id, ignoreErrors = false) => {
     failOnStatusCode: !ignoreErrors,
   });
 });
+
+Cypress.Commands.add('createBulkEditProfile', (profileData) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'bulk-operations/profiles',
+    body: profileData,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
