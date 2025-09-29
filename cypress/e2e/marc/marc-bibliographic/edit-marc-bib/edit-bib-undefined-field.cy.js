@@ -8,7 +8,7 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Create new MARC bib', () => {
+    describe('Edit MARC bib', () => {
       const testData = {
         title: `AT_C514994_MarcBibInstance_${getRandomPostfix()}`,
         tags: {

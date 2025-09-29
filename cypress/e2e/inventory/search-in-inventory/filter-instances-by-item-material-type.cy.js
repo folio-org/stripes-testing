@@ -27,6 +27,7 @@ describe('Inventory', () => {
 
       before('Create user, test data', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C476761_FolioInstance');
         MaterialTypes.getMaterialTypesViaApi({ limit: 200 }).then((body) => {
           body.mtypes.forEach((type) => {
             if (type.name.includes('C476761')) {
@@ -47,6 +48,7 @@ describe('Inventory', () => {
               cy.getLocations({ limit: 1, query: '(name<>"*autotest*" and name<>"AT_*")' }).then(
                 (res) => {
                   testData.locationId = res.id;
+                  testData.locationName = res.name;
                 },
               );
               cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
@@ -77,7 +79,6 @@ describe('Inventory', () => {
                     ],
                     items: [
                       {
-                        barcode: testData.itemBarcode,
                         status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                         permanentLoanType: { id: testData.loanTypeId },
                         materialType: { id: materialTypes[i].id },
@@ -98,7 +99,6 @@ describe('Inventory', () => {
                   ],
                   items: [
                     {
-                      barcode: testData.itemBarcode,
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                       permanentLoanType: { id: testData.loanTypeId },
                       materialType: { id: materialTypes[0].id },
@@ -118,7 +118,6 @@ describe('Inventory', () => {
                   ],
                   items: [
                     {
-                      barcode: testData.itemBarcode,
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                       permanentLoanType: { id: testData.loanTypeId },
                       materialType: { id: materialTypes[2].id },
@@ -127,10 +126,12 @@ describe('Inventory', () => {
                 });
               })
               .then(() => {
-                cy.login(user.username, user.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
+                cy.waitForAuthRefresh(() => {
+                  cy.login(user.username, user.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
+                }, 20_000);
                 InventorySearchAndFilter.instanceTabIsDefault();
                 InventorySearchAndFilter.switchToItem();
                 InventorySearchAndFilter.itemTabIsDefault();
@@ -174,7 +175,9 @@ describe('Inventory', () => {
             InventoryInstances.checkSearchResultCount('^2 records');
             InventoryInstances.selectInstance(1);
             InventoryInstance.waitInventoryLoading();
-            InventoryInstance.openHoldingItem({});
+            InventoryInstance.openHoldingsAccordion(testData.locationName);
+            cy.wait(3000);
+            InventoryInstance.openItemByBarcode(testData.barcodeText);
             ItemRecordView.verifyMaterialType(materialTypes[0].name);
             ItemRecordView.closeDetailView();
             InventoryInstance.waitInventoryLoading();
@@ -197,7 +200,9 @@ describe('Inventory', () => {
               InventoryInstances.checkSearchResultCount('^3 records');
               InventoryInstances.selectInstance(2);
               InventoryInstance.waitInventoryLoading();
-              InventoryInstance.openHoldingItem({});
+              InventoryInstance.openHoldingsAccordion(testData.locationName);
+              cy.wait(3000);
+              InventoryInstance.openItemByBarcode(testData.barcodeText);
               ItemRecordView.verifyMaterialType(
                 [materialTypes[0].name, materialTypes[1].name],
                 true,
@@ -257,10 +262,13 @@ describe('Inventory', () => {
                   InventoryInstances.checkSearchResultCount('^2 records');
                   InventoryInstances.selectInstance();
                   InventoryInstance.waitInventoryLoading();
-                  InventoryInstance.openHoldingItem({});
+                  InventoryInstance.openHoldingsAccordion(testData.locationName);
+                  cy.wait(3000);
+                  InventoryInstance.openItemByBarcode(testData.barcodeText);
                   ItemRecordView.verifyMaterialType(materialTypes[2].name);
                   ItemRecordView.closeDetailView();
                   InventoryInstance.waitInventoryLoading();
+                  cy.wait(3000);
                   InventorySearchAndFilter.toggleAccordionByName(
                     testData.materialTypeAccordionName,
                   );

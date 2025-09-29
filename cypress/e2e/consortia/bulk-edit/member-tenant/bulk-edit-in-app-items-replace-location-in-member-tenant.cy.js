@@ -3,7 +3,7 @@ import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import SelectPermanentLocationModal from '../../../../support/fragments/bulk-edit/select-permanent-location-modal';
+import SelectPermanentLocationModal from '../../../../support/fragments/bulk-edit/select-location-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';

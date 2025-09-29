@@ -98,7 +98,7 @@ describe('Finance: Transactions', () => {
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
+              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
             );
             Funds.closeBudgetDetails();
             cy.logout();

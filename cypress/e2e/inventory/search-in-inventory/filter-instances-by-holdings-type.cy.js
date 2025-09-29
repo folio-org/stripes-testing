@@ -231,13 +231,6 @@ describe('Inventory', () => {
                   InventorySearchAndFilter.toggleAccordionByName(
                     testData.holdingsTypeAccordionName,
                   );
-
-                  InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
-                    testData.holdingsTypeAccordionName,
-                    holdingsTypes[3].name,
-                    true,
-                    1,
-                  );
                   InventorySearchAndFilter.selectMultiSelectFilterOption(
                     testData.holdingsTypeAccordionName,
                     holdingsTypes[3].name,

@@ -365,4 +365,8 @@ export default {
     EHoldingsResourceView.waitLoading();
     return EHoldingsResourceView;
   },
+
+  verifyNoCoveragesDatesSet() {
+    cy.expect(KeyValue('Custom coverage dates').absent());
+  },
 };
