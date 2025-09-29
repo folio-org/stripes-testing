@@ -89,7 +89,11 @@ describe('Bulk edit', () => {
           testData.originalDescription,
         );
         InstancesBulkEditProfileView.clickActionsButton();
-        InstancesBulkEditProfileView.verifyActionsMenuOptions();
+        InstancesBulkEditProfileView.verifyActionsMenuOptions({
+          edit: true,
+          duplicate: true,
+          delete: false,
+        });
 
         // Step 2: Click "Edit" button and verify "Lock profile" checkbox under "Summary" accordion
         InstancesBulkEditProfileView.selectEditProfile();
@@ -126,7 +130,11 @@ describe('Bulk edit', () => {
 
         // Step 7: Click "Actions" menu button
         InstancesBulkEditProfileView.clickActionsButton();
-        InstancesBulkEditProfileView.verifyActionsMenuOptions();
+        InstancesBulkEditProfileView.verifyActionsMenuOptions({
+          edit: true,
+          duplicate: true,
+          delete: false,
+        });
 
         // Step 8: Click "Edit" button and verify "Lock profile" checkbox under "Summary" accordion
         InstancesBulkEditProfileView.selectEditProfile();

@@ -99,7 +99,11 @@ describe('Bulk edit', () => {
 
         // Step 2: Click "Actions" menu button
         HoldingsBulkEditProfileView.clickActionsButton();
-        HoldingsBulkEditProfileView.verifyActionsMenuOptions();
+        HoldingsBulkEditProfileView.verifyActionsMenuOptions({
+          edit: true,
+          duplicate: true,
+          delete: false,
+        });
 
         // Step 3: Click "Edit" button
         HoldingsBulkEditProfileView.selectEditProfile();

@@ -164,7 +164,11 @@ describe('Bulk edit', () => {
 
         // Step 2: Click "Actions" menu button
         InstancesBulkEditProfileView.clickActionsButton();
-        InstancesBulkEditProfileView.verifyActionsMenuOptions();
+        InstancesBulkEditProfileView.verifyActionsMenuOptions({
+          edit: true,
+          duplicate: true,
+          delete: false,
+        });
 
         // Step 3: Click "Edit" button
         InstancesBulkEditProfileView.selectEditProfile();

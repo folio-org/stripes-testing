@@ -17,6 +17,7 @@ const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'B
 const summaryAccordion = Accordion('Summary');
 const editButton = Button('Edit');
 const duplicateButton = Button('Duplicate');
+const deleteButton = Button('Delete');
 const closeFormButton = Button({ icon: 'times' });
 const collapseAllLink = Button('Collapse all');
 const lockProfileCheckbox = summaryAccordion.find(Checkbox({ id: 'lockProfile' }));
@@ -97,12 +98,27 @@ export default {
     cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: true }));
   },
 
-  verifyActionsMenuOptions() {
-    cy.expect([editButton.exists(), duplicateButton.exists()]);
+  verifyActionsMenuOptions(config = {}) {
+    const assertions = [];
+
+    if (config.edit) assertions.push(editButton.exists());
+    else assertions.push(editButton.absent());
+
+    if (config.duplicate) assertions.push(duplicateButton.exists());
+    else assertions.push(duplicateButton.absent());
+
+    if (config.delete) assertions.push(deleteButton.exists());
+    else assertions.push(deleteButton.absent());
+
+    cy.expect(assertions);
   },
 
   selectEditProfile() {
     cy.do(editButton.click());
+  },
+
+  selectDeleteProfile() {
+    cy.do(deleteButton.click());
   },
 
   clickCloseFormButton() {

@@ -78,7 +78,7 @@ export default {
   },
 
   verifySubfieldInSubRow(value, rowIndex = 0, subRowIndex = 0) {
-    cy.expect(
+    cy.do(
       bulkEditForMarcInstancesAccordion.find(this.getTargetRow(rowIndex)).perform((rowEl) => {
         cy.wrap(rowEl)
           .find('[class*="subRow-"]')
@@ -90,7 +90,7 @@ export default {
   },
 
   verifySelectedActionInSubRow(value, rowIndex = 0, subRowIndex = 0) {
-    cy.expect(
+    cy.do(
       bulkEditForMarcInstancesAccordion.find(this.getTargetRow(rowIndex)).perform((rowEl) => {
         cy.wrap(rowEl)
           .find('[class*="subRow-"]')
@@ -102,7 +102,7 @@ export default {
   },
 
   verifyDataTextAreaInSubRow(value, rowIndex = 0, subRowIndex = 0) {
-    cy.expect(
+    cy.do(
       bulkEditForMarcInstancesAccordion.find(this.getTargetRow(rowIndex)).perform((rowEl) => {
         cy.wrap(rowEl)
           .find('[class*="subRow-"]')

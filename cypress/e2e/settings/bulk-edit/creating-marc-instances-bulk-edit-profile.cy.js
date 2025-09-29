@@ -62,7 +62,11 @@ describe('Bulk edit', () => {
       () => {
         // Step 1: Click "Actions" menu button and select "New instances with source MARC bulk edit profile" option
         InstancesBulkEditProfilesPane.clickActionsButton();
-        InstancesBulkEditProfilesPane.verifyActionsMenuOptions();
+        InstancesBulkEditProfilesPane.verifyActionsMenuOptions({
+          edit: true,
+          duplicate: true,
+          delete: false,
+        });
         InstancesBulkEditProfilesPane.selectNewMarcInstancesProfile();
         InstancesBulkEditProfileForm.waitLoadingMarcProfile();
         InstancesBulkEditProfileForm.verifyFormElements(
