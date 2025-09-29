@@ -215,6 +215,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.fileName);
         Logs.checkJobStatus(testData.fileName, JOB_STATUS_NAMES.COMPLETED);
+        cy.wait(3000);
         Logs.openFileDetails(testData.fileName);
         [
           FileDetails.columnNameInResultList.srsMarc,
