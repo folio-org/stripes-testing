@@ -195,6 +195,21 @@ describe('Data Import', () => {
       FileManager.deleteFileFromDownloadsByMask(testData.exportedFile);
       FileManager.deleteFile(`cypress/fixtures/${testData.exportedFile}`);
       cy.getAdminToken().then(() => {
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"id"=="${id}"`,
+              }).then((instance) => {
+                cy.deleteItemViaApi(instance.items[0].id);
+                cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            });
+          }
+        });
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
@@ -207,21 +222,6 @@ describe('Data Import', () => {
           );
         });
         Users.deleteViaApi(testData.userId);
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.instanceHRID}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        });
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((response) => {
-          if (response.totalRecords !== 0) {
-            response.instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
       });
     });
 

@@ -60,10 +60,9 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.ordersPath,
-          waiter: SettingsOrders.waitLoadingOrderSettings,
-        });
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.ORDERS);
+        SettingsOrders.waitLoadingOrderSettings();
       });
     });
 

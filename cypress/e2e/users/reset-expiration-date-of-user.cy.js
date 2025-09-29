@@ -17,7 +17,6 @@ describe('Users', () => {
       name: getTestEntityValue('PatronGroup'),
       description: 'Patron_group_description',
       offsetDays: 365,
-      offsetDaysPlusOne: 366,
     },
     todayDate: '',
     pastDate: '',
@@ -156,7 +155,7 @@ describe('Users', () => {
       UserEdit.clickResetExpirationDateButton();
       const expectedFutureResetDate = DateTools.getFormattedDate(
         {
-          date: DateTools.addDays(testData.patronGroup.offsetDaysPlusOne, testData.futureDate),
+          date: DateTools.addDays(testData.patronGroup.offsetDays, testData.futureDate),
         },
         'MM/DD/YYYY',
       );
