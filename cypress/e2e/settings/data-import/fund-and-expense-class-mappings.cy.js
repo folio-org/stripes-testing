@@ -27,7 +27,6 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -120,10 +119,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+        SettingsFieldMappingProfiles.waitLoading();
       });
     });
 
