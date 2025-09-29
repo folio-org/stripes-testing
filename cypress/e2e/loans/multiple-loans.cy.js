@@ -86,8 +86,12 @@ describe('Loans', () => {
               });
             });
           });
-
-          cy.login(userData.username, userData.password);
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: AppPaths.getOpenLoansPath(userData.userId),
+              waiter: () => cy.wait(2000),
+            });
+          });
         });
     });
 
@@ -124,10 +128,10 @@ describe('Loans', () => {
         const itemBarcode = testData.folioInstances[0].barcodes[0];
         const item2Barcode = testData.folioInstances[1].barcodes[0];
         let loanDetails;
-        // Navigate to a user's open loans page.
-        cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+
         // Check off one open loan for an item with the item status Checked out.
         LoansPage.checkOneLoan();
+
         // Change due date button becomes active.
         LoansPage.verifyChangeDueDateButtonIsActive();
         // Check off multiple loans for items with the item status Checked out.
