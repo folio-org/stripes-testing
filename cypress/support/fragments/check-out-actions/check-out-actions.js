@@ -293,4 +293,13 @@ export default {
   checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyId) {
     cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyId)).exists());
   },
+
+  verifyFeeFinesOwed(amount) {
+    cy.expect(KeyValue({ value: including(amount) }).exists());
+  },
+
+  waitLoading() {
+    cy.expect(Pane('Scan patron card').exists());
+    cy.expect(Pane('Scan items').exists());
+  },
 };
