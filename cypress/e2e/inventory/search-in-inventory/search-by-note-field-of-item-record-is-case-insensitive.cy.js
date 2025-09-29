@@ -1,9 +1,10 @@
+import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import { ITEM_STATUS_NAMES, ITEM_NOTES } from '../../../support/constants';
@@ -37,32 +38,32 @@ describe('Inventory', () => {
           {
             title: 'C466083 Instance 1, Item note lower case',
             note: 'item note and admnote case test',
-            barcode: `466083${randomFourDigitNumber()}`,
+            barcode: uuid(),
           },
           {
             title: 'C466083 Instance 2, Item note UPPER case',
             note: 'ITEM NOTE AND ADMNOTE CASE TEST',
-            barcode: `466083${randomFourDigitNumber()}`,
+            barcode: uuid(),
           },
           {
             title: 'C466083 Instance 3, Item adm note lower case',
             admNote: 'item note and admnote case test',
-            barcode: `466083${randomFourDigitNumber()}`,
+            barcode: uuid(),
           },
           {
             title: 'C466083 Instance 4, Item adm note UPPER case',
             admNote: 'ITEM NOTE AND ADMNOTE CASE TEST',
-            barcode: `466083${randomFourDigitNumber()}`,
+            barcode: uuid(),
           },
           {
             title: 'C466083 Instance 5, Item circ note lower case',
             circNote: 'item note and admnote case test',
-            barcode: `466083${randomFourDigitNumber()}`,
+            barcode: uuid(),
           },
           {
             title: 'C466083 Instance 6, Item circ note UPPER case',
             circNote: 'ITEM NOTE AND ADMNOTE CASE TEST',
-            barcode: `466083${randomFourDigitNumber()}`,
+            barcode: uuid(),
           },
         ],
         userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -253,10 +254,12 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000);
         });
       });
 

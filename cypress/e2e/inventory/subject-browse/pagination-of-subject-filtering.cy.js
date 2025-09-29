@@ -69,11 +69,14 @@ describe.skip('Inventory', () => {
         BrowseSubjects.expandAccordion('Subject type');
         subjectTypes.forEach((subjectType) => {
           BrowseSubjects.selectSubjectType(subjectType);
+          cy.wait(2000);
         });
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickNextPaginationButton();
+        cy.wait(2000);
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickPreviousPaginationButton();
+        cy.wait(2000);
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
       },
     );

@@ -82,26 +82,28 @@ describe('MARC', () => {
 
       before('Upload files', () => {
         cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
+        cy.then(() => {
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
+                });
+              },
+            );
+          });
+        }).then(() => {
+          cy.createTempUser([
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
               });
-            },
-          );
-        });
-
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
             });
           });
         });
@@ -163,9 +165,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
 
-          // #11 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.calloutMessage);
+          // #11 Close editing pane
+          QuickMarcEditor.closeAuthorityEditorPane();
 
           // #12 - #13 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');

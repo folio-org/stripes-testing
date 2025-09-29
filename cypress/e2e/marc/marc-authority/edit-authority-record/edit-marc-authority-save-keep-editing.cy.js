@@ -106,11 +106,10 @@ describe('MARC', () => {
 
       beforeEach('Visit MARC Authorities', () => {
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password);
-          cy.visit(TopMenu.marcAuthorities);
-          MarcAuthorities.waitLoading();
-          cy.reload();
-          MarcAuthorities.waitLoading();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         }, 20_000);
       });
 
