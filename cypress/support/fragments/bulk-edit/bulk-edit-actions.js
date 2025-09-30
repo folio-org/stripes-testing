@@ -1516,7 +1516,8 @@ export default {
 
   verifyActionsSelectDropdownDisabled(rowIndex = 0, isDisabled = true) {
     cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select('Actions select'))
         .has({ disabled: isDisabled }),
     );
