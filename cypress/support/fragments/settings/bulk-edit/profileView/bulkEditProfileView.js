@@ -9,6 +9,8 @@ import {
   Selection,
   TextArea,
   Accordion,
+  MetaSection,
+  including,
   or,
 } from '../../../../../../interactors';
 
@@ -20,7 +22,9 @@ const duplicateButton = Button('Duplicate');
 const deleteButton = Button('Delete');
 const closeFormButton = Button({ icon: 'times' });
 const collapseAllLink = Button('Collapse all');
+const expandAllLink = Button('Expand all');
 const lockProfileCheckbox = summaryAccordion.find(Checkbox({ id: 'lockProfile' }));
+const metadataSection = summaryAccordion.find(MetaSection());
 const getTargetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
@@ -42,6 +46,32 @@ export default {
       bulkEditsAccordion.has({ open: true }),
       collapseAllLink.exists(),
     ]);
+    cy.title().should('eq', `Bulk edit settings - ${name} - FOLIO`);
+  },
+
+  verifyLockProfileCheckboxChecked(isChecked) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: true }));
+  },
+
+  verifyMetadataSectionExists() {
+    cy.expect(metadataSection.has({ open: false }));
+  },
+
+  expandMetadataSection() {
+    cy.do(metadataSection.clickHeader());
+  },
+
+  verifyMetadataSection(content) {
+    cy.expect([metadataSection.has({ content: including(content) })]);
+  },
+
+  clickCollapseAllLinkAndVerify() {
+    cy.do(collapseAllLink.click());
+    cy.expect([
+      summaryAccordion.has({ open: false }),
+      bulkEditsAccordion.has({ open: false }),
+      expandAllLink.exists(),
+    ]);
   },
 
   verifySelectedOption(option, rowIndex = 0) {
@@ -51,6 +81,12 @@ export default {
         .find(Selection({ singleValue: option }))
         .visible(),
     );
+    cy.expect(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(Button({ text: including(option), disabled: true }))
+        .exists(),
+    );
   },
 
   verifySelectedAction(action, rowIndex = 0) {
@@ -58,7 +94,7 @@ export default {
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
         .find(Select({ dataTestID: 'select-actions-0' }))
-        .has({ checkedOptionText: action }),
+        .has({ checkedOptionText: action, disabled: true }),
     );
   },
 
@@ -84,7 +120,7 @@ export default {
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
-        .has({ textContent: text }),
+        .has({ textContent: text, disabled: true }),
     );
   },
 
@@ -92,10 +128,6 @@ export default {
     cy.expect(
       getTargetRow(rowIndex).find(Checkbox('Staff only')).has({ checked: true, disabled: true }),
     );
-  },
-
-  verifyLockProfileCheckboxChecked(isChecked) {
-    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: true }));
   },
 
   verifyActionsMenuOptions(config = {}) {

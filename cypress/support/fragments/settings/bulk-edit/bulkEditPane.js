@@ -17,6 +17,27 @@ export default {
     Object.values(navListItems).forEach((item) => cy.expect(item.absent()));
   },
 
+  verifyProfilesTypesPresent(profiles) {
+    cy.get('#app-settings-nav-pane')
+      .find('[class^=NavListItem-]')
+      .then(($items) => {
+        const itemTexts = $items.map((i, el) => Cypress.$(el).text()).get();
+        expect(itemTexts).to.deep.equal(profiles);
+      });
+  },
+
+  verifyProfilesTypesAbsent(profiles) {
+    cy.get('#app-settings-nav-pane')
+      .find('[class^=NavListItem-]')
+      .then(($items) => {
+        const itemTexts = $items.map((i, el) => Cypress.$(el).text()).get();
+
+        profiles.forEach((profile) => {
+          expect(itemTexts).to.not.include(profile);
+        });
+      });
+  },
+
   clickItemsBulkEditProfiles() {
     cy.do(navListItems.items.click());
   },
