@@ -52,6 +52,11 @@ export default {
     resource: 'UI-Inventory Settings Subject-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiDataImportSettingsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Data-Import Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Data capability sets
   capabilities: {
@@ -147,6 +152,31 @@ export default {
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance Staff-Suppressed-Records',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiDataExportEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Data-Export',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventory: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiDataImport: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Data-Import',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiConsortiaDataImportCentralRecordUpdate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Data-Import Central-Record-Update',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiMarcAuthoritiesAuthorityRecordView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.VIEW,
   },
 

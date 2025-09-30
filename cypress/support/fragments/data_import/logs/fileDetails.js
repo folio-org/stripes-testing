@@ -375,6 +375,23 @@ export default {
     );
   },
 
+  openJsonScreenByRowAndStatus: (importStatus, rowNumber = 0, columnNumber = 2) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ columnIndex: columnNumber, content: importStatus }))
+        .perform((element) => {
+          const rowInner = element.parentElement.getAttribute('data-row-inner');
+          cy.get('#search-results-list')
+            .find(`div[data-row-inner="${rowInner}"]`)
+            .find('a')
+            .first()
+            .invoke('removeAttr', 'target')
+            .click();
+        }),
+    );
+  },
+
   filterRecordsWithError: (index) => {
     cy.wait(2000);
     cy.do(
