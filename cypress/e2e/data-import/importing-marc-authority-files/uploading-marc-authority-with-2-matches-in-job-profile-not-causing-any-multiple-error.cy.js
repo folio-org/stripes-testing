@@ -41,8 +41,8 @@ describe('Data Import', () => {
     const testData = {
       createdRecordIDs: [],
       marcFile: {
-        marc: 'marcAuthFileForC624306.mrc',
-        fileName: `C624306 testMarcFile${getRandomPostfix()}.mrc`,
+        //   marc: 'marcAuthFileForC624306.mrc',
+        //   fileName: `C624306 testMarcFile${getRandomPostfix()}.mrc`,
         exportedFileName: `C624306 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         modifiedFileName: `C624306 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
         updatedFileName: `C624306 updatedTestMarcFile${getRandomPostfix()}.mrc`,
@@ -53,6 +53,18 @@ describe('Data Import', () => {
         "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
       csvFile: `C624306_Quick_Authority_Export_${getRandomPostfix()}.csv`,
     };
+    const marcFiles = [
+      {
+        fileName: 'marcAuthFileForC624306.mrc',
+        fileNameImported: `C624306 testMarcFile${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+      },
+      {
+        fileName: 'marcAuthFileForC624306.mrc',
+        fileNameImported: `C624306 testMarcFile${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+      },
+    ];
     const mappingProfile = {
       name: `C624306 Updating Authority with 2 matches${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
@@ -98,13 +110,24 @@ describe('Data Import', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(`${testData.partOfAuthorityTitle}*`);
-      DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-      ).then((response) => {
-        response.forEach((record) => {
-          testData.createdRecordIDs.push(record.authority.id);
+      // DataImport.uploadFileViaApi(
+      //   testData.marcFile.marc,
+      //   testData.marcFile.fileName,
+      //   DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+      // ).then((response) => {
+      //   response.forEach((record) => {
+      //     testData.createdRecordIDs.push(record.authority.id);
+      //   });
+      // });
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.fileName,
+          marcFile.fileNameImported,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record.authority.id);
+          });
         });
       });
 
@@ -170,9 +193,11 @@ describe('Data Import', () => {
           testData.marcFile.exportedFileName,
           testData.marcFile.modifiedFileName,
           [testData.todayDate],
+          [testData.todayDate],
+          [`${testData.todayDate}${randomTwoDigitNumber()}`],
           [`${testData.todayDate}${randomTwoDigitNumber()}`],
         );
-
+        cy.pause();
         // create Field mapping profile
         NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
         // create Action profile and link it to Field mapping profile
