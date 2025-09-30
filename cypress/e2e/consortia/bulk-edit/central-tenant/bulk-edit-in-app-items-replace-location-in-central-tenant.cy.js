@@ -4,7 +4,7 @@ import BulkEditSearchPane, {
   getReasonForTenantNotAssociatedError,
 } from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import SelectLocationsModal from '../../../../support/fragments/bulk-edit/select-locations-modal';
+import SelectLocationsModal from '../../../../support/fragments/bulk-edit/select-consortia-location-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
