@@ -5,6 +5,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_ACTIONS,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 import BulkEditPane from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
 import ItemsBulkEditProfilesPane from '../../../support/fragments/settings/bulk-edit/profilePane/itemsBulkEditProfilesPane';
@@ -15,13 +16,14 @@ import InstancesBulkEditProfilesPane from '../../../support/fragments/settings/b
 import InstancesBulkEditProfileView from '../../../support/fragments/settings/bulk-edit/profileView/instancesBulkEditProfileView';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 let user;
 const testData = {
-  itemsProfileName: `AT_C740202_ItemsProfile_${getRandomPostfix()}`,
-  holdingsProfileName: `AT_C740202_HoldingsProfile_${getRandomPostfix()}`,
-  instancesProfileName: `AT_C740202_InstancesProfile_${getRandomPostfix()}`,
-  marcInstancesProfileName: `AT_C740202_MarcInstancesProfile_${getRandomPostfix()}`,
+  itemsProfileName: null,
+  holdingsProfileName: null,
+  instancesProfileName: null,
+  marcInstancesProfileName: null,
   profileDescription: 'Test profile for viewing verification',
   createdProfileIds: [],
   itemsProfileBody: {
@@ -31,11 +33,21 @@ const testData = {
     entityType: 'ITEM',
     ruleDetails: [
       {
-        option: 'COPY_NOTE',
+        option: 'ITEM_NOTE',
         actions: [
           {
             type: 'ADD_TO_EXISTING',
             updated: 'Test copy note for viewing',
+            parameters: [
+              {
+                key: 'ITEM_NOTE_TYPE_ID_KEY',
+                value: null,
+              },
+              {
+                key: 'STAFF_ONLY',
+                value: 'false',
+              },
+            ],
           },
         ],
       },
@@ -52,7 +64,7 @@ const testData = {
         actions: [
           {
             type: 'REPLACE_WITH',
-            updated: 'Main Library',
+            updated: null,
           },
         ],
       },
@@ -78,7 +90,7 @@ const testData = {
     name: `AT_C740202_MarcInstancesProfile_${getRandomPostfix()}`,
     description: 'Test profile for viewing verification',
     locked: false,
-    entityType: 'INSTANCE',
+    entityType: 'INSTANCE_MARC',
     ruleDetails: [
       {
         option: 'SUPPRESS_FROM_DISCOVERY',
@@ -88,24 +100,20 @@ const testData = {
           },
         ],
       },
+    ],
+    marcRuleDetails: [
       {
-        option: 'MARC_FIELD',
+        tag: '901',
+        ind1: '1',
+        ind2: '1',
+        subfield: 'a',
         actions: [
           {
-            type: 'ADD_TO_EXISTING',
-            updated: '901',
+            name: 'ADD_TO_EXISTING',
             data: [
               {
-                ind1: '1',
-                ind2: '1',
-                subfields: [
-                  {
-                    subfield: 'a',
-                    data: {
-                      text: 'Test data',
-                    },
-                  },
-                ],
+                key: 'VALUE',
+                value: 'Test data',
               },
             ],
           },
@@ -115,7 +123,7 @@ const testData = {
   },
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([
@@ -127,25 +135,34 @@ describe('Bulk edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        // Create test profiles for each type
-        cy.createBulkEditProfile(testData.itemsProfileBody).then((profile) => {
-          testData.itemsProfileName = profile.name;
-          testData.createdProfileIds.push(profile.id);
+        cy.getAdminSourceRecord().then((record) => {
+          testData.adminSourceRecord = record;
         });
 
-        cy.createBulkEditProfile(testData.holdingsProfileBody).then((profile) => {
-          testData.holdingsProfileName = profile.name;
-          testData.createdProfileIds.push(profile.id);
-        });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          testData.holdingsProfileBody.ruleDetails[0].actions[0].updated = res.id;
 
-        cy.createBulkEditProfile(testData.instancesProfileBody).then((profile) => {
-          testData.instancesProfileName = profile.name;
-          testData.createdProfileIds.push(profile.id);
-        });
+          InventoryInstances.getItemNoteTypes({
+            query: 'name="Copy note"',
+          }).then((response) => {
+            testData.itemsProfileBody.ruleDetails[0].actions[0].parameters[0].value =
+              response[0].id;
 
-        cy.createBulkEditProfile(testData.marcInstancesProfileBody).then((profile) => {
-          testData.marcInstancesProfileName = profile.name;
-          testData.createdProfileIds.push(profile.id);
+            // Create test profiles for each type
+            const profiles = [
+              { body: testData.itemsProfileBody, nameKey: 'itemsProfileName' },
+              { body: testData.holdingsProfileBody, nameKey: 'holdingsProfileName' },
+              { body: testData.instancesProfileBody, nameKey: 'instancesProfileName' },
+              { body: testData.marcInstancesProfileBody, nameKey: 'marcInstancesProfileName' },
+            ];
+
+            profiles.forEach((profileConfig) => {
+              cy.createBulkEditProfile(profileConfig.body).then((profile) => {
+                testData[profileConfig.nameKey] = profile.name;
+                testData.createdProfileIds.push(profile.id);
+              });
+            });
+          });
         });
 
         cy.login(user.username, user.password, {
@@ -203,10 +220,12 @@ describe('Bulk edit', () => {
         ItemsBulkEditProfileView.verifyTextInDataTextArea('Test copy note for viewing');
 
         // Step 6: Expand Standard metadata information under "Summary" accordion
-        // дописать проверку метадата аккордиона
         ItemsBulkEditProfileView.verifyMetadataSectionExists();
         ItemsBulkEditProfileView.expandMetadataSection();
-        ItemsBulkEditProfileView.verifyMetadataSection();
+        ItemsBulkEditProfileView.verifyMetadataSection(
+          testData.adminSourceRecord,
+          testData.adminSourceRecord,
+        );
 
         // Step 7: Click "Collapse all" link
         ItemsBulkEditProfileView.clickCollapseAllLinkAndVerify();
@@ -230,15 +249,16 @@ describe('Bulk edit', () => {
         // Step 10: Verify elements under "Summary" accordion
         HoldingsBulkEditProfileView.verifyMetadataSectionExists();
         HoldingsBulkEditProfileView.expandMetadataSection();
-        HoldingsBulkEditProfileView.verifyMetadataSection();
+        HoldingsBulkEditProfileView.verifyMetadataSection(
+          testData.adminSourceRecord,
+          testData.adminSourceRecord,
+        );
         HoldingsBulkEditProfileView.verifyLockProfileCheckboxChecked(false);
 
         // Step 11: Verify elements under "Bulk edits" accordion
-        HoldingsBulkEditProfileView.verifySelectedOption(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.HOLDINGS_RECORDS.PERMANENT_LOCATION,
-        );
+        HoldingsBulkEditProfileView.verifySelectedOption('Permanent holdings location');
         HoldingsBulkEditProfileView.verifySelectedAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
-        HoldingsBulkEditProfileView.verifyTextInDataTextArea('Main Library');
+        HoldingsBulkEditProfileView.verifySelectedLocation(`${LOCATION_NAMES.MAIN_LIBRARY} `);
 
         // Step 12: Click "X" button, then "Instances bulk edit profiles" and click on any existing FOLIO instances bulk edit profile
         HoldingsBulkEditProfileView.clickCloseFormButton();
@@ -256,7 +276,10 @@ describe('Bulk edit', () => {
         // Step 13: Verify elements under "Summary" accordion
         InstancesBulkEditProfileView.verifyMetadataSectionExists();
         InstancesBulkEditProfileView.expandMetadataSection();
-        InstancesBulkEditProfileView.verifyMetadataSection();
+        InstancesBulkEditProfileView.verifyMetadataSection(
+          testData.adminSourceRecord,
+          testData.adminSourceRecord,
+        );
         InstancesBulkEditProfileView.verifyLockProfileCheckboxChecked(false);
         InstancesBulkEditProfileView.verifyLockProfileCheckboxChecked(false);
 
@@ -282,7 +305,10 @@ describe('Bulk edit', () => {
         // Step 16: Verify elements under "Summary" accordion
         InstancesBulkEditProfileView.verifyMetadataSectionExists();
         InstancesBulkEditProfileView.expandMetadataSection();
-        InstancesBulkEditProfileView.verifyMetadataSection();
+        InstancesBulkEditProfileView.verifyMetadataSection(
+          testData.adminSourceRecord,
+          testData.adminSourceRecord,
+        );
         InstancesBulkEditProfileView.verifyLockProfileCheckboxChecked(false);
 
         // Step 17: Verify elements under "Bulk edits for administrative data" accordion

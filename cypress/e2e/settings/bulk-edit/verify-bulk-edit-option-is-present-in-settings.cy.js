@@ -7,7 +7,7 @@ import BulkEditPane from '../../../support/fragments/settings/bulk-edit/bulkEdit
 
 let user;
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([

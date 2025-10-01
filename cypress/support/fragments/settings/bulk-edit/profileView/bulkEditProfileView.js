@@ -12,7 +12,9 @@ import {
   MetaSection,
   including,
   or,
+  matching,
 } from '../../../../../../interactors';
+import DateTools from '../../../../utils/dateTools';
 
 const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
 const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
@@ -61,8 +63,19 @@ export default {
     cy.do(metadataSection.clickHeader());
   },
 
-  verifyMetadataSection(content) {
-    cy.expect([metadataSection.has({ content: including(content) })]);
+  verifyMetadataSection(userCreated, userUpdated) {
+    const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+    const timePattern = '\\d{1,2}:\\d{2}\\s\\w{2}';
+
+    cy.expect([
+      metadataSection.has({
+        content: matching(
+          new RegExp(
+            `Update information\\s*Record last updated: ${date} ${timePattern}\\s*Source: ${userUpdated}\\s+Record created: ${date} ${timePattern}\\s*Source: ${userCreated}\\s*`,
+          ),
+        ),
+      }),
+    ]);
   },
 
   clickCollapseAllLinkAndVerify() {
@@ -75,18 +88,16 @@ export default {
   },
 
   verifySelectedOption(option, rowIndex = 0) {
-    cy.expect(
+    cy.expect([
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
         .find(Selection({ singleValue: option }))
         .visible(),
-    );
-    cy.expect(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
         .find(Button({ text: including(option), disabled: true }))
         .exists(),
-    );
+    ]);
   },
 
   verifySelectedAction(action, rowIndex = 0) {
@@ -108,11 +119,15 @@ export default {
   },
 
   verifySelectedLocation(location, rowIndex = 0) {
-    cy.expect(
+    cy.expect([
       getTargetRow(rowIndex)
         .find(Selection({ singleValue: location }))
         .visible(),
-    );
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(Button({ text: including(location), disabled: true }))
+        .exists(),
+    ]);
   },
 
   verifyTextInDataTextArea(text, rowIndex = 0) {

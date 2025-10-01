@@ -28,7 +28,7 @@ const testData = {
   additionalSubfieldData: 'French version',
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([

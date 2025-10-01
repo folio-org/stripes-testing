@@ -14,9 +14,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 
 let user;
 const testData = {
-  usersProfileName: `AT_C740207_UsersProfile_${getRandomPostfix()}`,
+  usersProfileName: null,
   profileDescription: 'Test users profile for viewing verification',
-  createdProfileIds: [],
   usersProfileBody: {
     name: `AT_C740207_UsersProfile_${getRandomPostfix()}`,
     description: 'Test users profile for viewing verification',
@@ -28,7 +27,7 @@ const testData = {
         actions: [
           {
             type: 'REPLACE_WITH',
-            updated: 'faculty',
+            updated: null,
           },
         ],
       },
@@ -36,7 +35,7 @@ const testData = {
   },
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([
@@ -49,10 +48,20 @@ describe('Bulk edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        // Create test users profile
-        cy.createBulkEditProfile(testData.usersProfileBody).then((profile) => {
-          testData.usersProfileName = profile.name;
-          testData.createdProfileIds.push(profile.id);
+        cy.getAdminSourceRecord().then((record) => {
+          testData.adminSourceRecord = record;
+        });
+
+        cy.getUserGroups({
+          limit: 1,
+          query: 'group=="faculty"',
+        }).then((userPatronGroupId) => {
+          testData.usersProfileBody.ruleDetails[0].actions[0].updated = userPatronGroupId;
+
+          cy.createBulkEditProfile(testData.usersProfileBody).then((profile) => {
+            testData.usersProfileName = profile.name;
+            testData.createdProfileId = profile.id;
+          });
         });
 
         cy.login(user.username, user.password, {
@@ -65,10 +74,7 @@ describe('Bulk edit', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-
-      testData.createdProfileIds.forEach((id) => {
-        cy.deleteBulkEditProfile(id, true);
-      });
+      cy.deleteBulkEditProfile(testData.createdProfileId, true);
     });
 
     it(
@@ -80,7 +86,6 @@ describe('Bulk edit', () => {
         BulkEditPane.waitLoading();
 
         // Step 2: Verify profiles types listed under "Other profiles" group
-        BulkEditPane.verifyOtherProfilesGroupExists();
         BulkEditPane.verifyProfilesTypesPresent(['Users bulk edit profiles']);
         BulkEditPane.verifyProfilesTypesAbsent([
           'Holdings bulk edit profiles',
@@ -108,12 +113,14 @@ describe('Bulk edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.PATRON_GROUP,
         );
         UsersBulkEditProfileView.verifySelectedAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
-        UsersBulkEditProfileView.verifyTextInDataTextArea('faculty');
+        UsersBulkEditProfileView.verifySelectedPatronGroup('faculty (Faculty Member)');
 
         // Step 6: Expand Standard metadata information under "Summary" accordion
-        // дописать метод с проверкой метаданных
         UsersBulkEditProfileView.expandMetadataSection();
-        UsersBulkEditProfileView.verifyMetadataSection();
+        UsersBulkEditProfileView.verifyMetadataSection(
+          testData.adminSourceRecord,
+          testData.adminSourceRecord,
+        );
 
         // Step 7: Click "Collapse all" link
         UsersBulkEditProfileView.clickCollapseAllLinkAndVerify();
