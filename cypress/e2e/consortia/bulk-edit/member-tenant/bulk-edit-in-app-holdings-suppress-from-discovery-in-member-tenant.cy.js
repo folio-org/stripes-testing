@@ -215,8 +215,8 @@ describe('Bulk-edit', () => {
 
           // Step 7-8: Select action
           BulkEditActions.verifyTheActionOptions(Object.values(actions));
-          BulkEditActions.selectAction(actions.setTrue);
-          BulkEditActions.verifyActionSelected(actions.setTrue);
+          BulkEditActions.selectSecondAction(actions.setTrue);
+          BulkEditActions.verifySecondActionSelected(actions.setTrue);
           BulkEditActions.applyToItemsRecordsCheckboxExists(true);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
