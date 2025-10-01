@@ -895,7 +895,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([
       quantityPhysicalLocationField.fillIn(quantity),
@@ -966,7 +968,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityElectronicField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -1145,6 +1149,13 @@ export default {
     ]);
   },
 
+  changePercentsValueInFundDistribution(value) {
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
+      fundDistributionField.fillIn(value),
+    ]);
+  },
+
   fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
     fund,
     unitPrice,
@@ -1303,6 +1314,25 @@ export default {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(6000);
+    submitOrderLine();
+  },
+
+  addSecondFundToPOLWithPersentrageValue(fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      secondFundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      TextField({ name: 'fundDistribution[1].value' }).perform((el) => {
+        const li = el.closest('li');
+        li?.querySelector('[data-test-fund-distr-type-percent="true"]')?.click();
+      }),
+      secondFundDistributionField.fillIn(value),
       saveAndCloseButton.click(),
     ]);
     cy.wait(6000);

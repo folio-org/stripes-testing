@@ -76,4 +76,10 @@ export default {
       }
     });
   },
+  verifyWaiveReasonInHistory: (reasonName) => {
+    cy.expect(HTML(including(reasonName)).exists());
+  },
+  verifyNoCommentInHistory: () => {
+    cy.expect(HTML(including('Additional information for staff')).absent());
+  },
 };

@@ -14,6 +14,13 @@ import {
 
 const profileViewPane = Pane({ id: 'pane-bulk-edit-profile-details' });
 const bulkEditsAccordion = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
+const summaryAccordion = Accordion('Summary');
+const editButton = Button('Edit');
+const duplicateButton = Button('Duplicate');
+const deleteButton = Button('Delete');
+const closeFormButton = Button({ icon: 'times' });
+const collapseAllLink = Button('Collapse all');
+const lockProfileCheckbox = summaryAccordion.find(Checkbox({ id: 'lockProfile' }));
 const getTargetRow = (rowIndex = 0) => RepeatableFieldItem({ index: rowIndex });
 
 export default {
@@ -22,13 +29,18 @@ export default {
 
   waitLoading() {
     cy.expect(profileViewPane.exists());
+    cy.wait(1000);
   },
 
   verifyProfileDetails(name, description) {
     cy.expect([
+      closeFormButton.has({ disabled: false }),
       profileViewPane.has({ title: name }),
       profileViewPane.find(Headline(name)).exists(),
       profileViewPane.find(KeyValue('Description')).has({ value: description }),
+      summaryAccordion.has({ open: true }),
+      bulkEditsAccordion.has({ open: true }),
+      collapseAllLink.exists(),
     ]);
   },
 
@@ -69,7 +81,8 @@ export default {
 
   verifyTextInDataTextArea(text, rowIndex = 0) {
     cy.expect(
-      getTargetRow(rowIndex)
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .has({ textContent: text }),
     );
@@ -81,7 +94,39 @@ export default {
     );
   },
 
+  verifyLockProfileCheckboxChecked(isChecked) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: true }));
+  },
+
+  verifyActionsMenuOptions(config = {}) {
+    const assertions = [];
+
+    if (config.edit) assertions.push(editButton.exists());
+    else assertions.push(editButton.absent());
+
+    if (config.duplicate) assertions.push(duplicateButton.exists());
+    else assertions.push(duplicateButton.absent());
+
+    if (config.delete) assertions.push(deleteButton.exists());
+    else assertions.push(deleteButton.absent());
+
+    cy.expect(assertions);
+  },
+
+  selectEditProfile() {
+    cy.do(editButton.click());
+  },
+
+  selectDeleteProfile() {
+    cy.do(deleteButton.click());
+  },
+
   clickCloseFormButton() {
-    cy.do(profileViewPane.find(Button({ icon: 'times' })).click());
+    cy.do(closeFormButton.click());
+  },
+
+  clickActionsButton() {
+    cy.do(profileViewPane.find(Button('Actions')).click());
+    cy.wait(500);
   },
 };
