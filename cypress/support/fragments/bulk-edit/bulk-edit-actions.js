@@ -520,6 +520,7 @@ export default {
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
+    cy.wait(500);
   },
 
   selectLocation(location, rowIndex = 0) {
@@ -551,6 +552,7 @@ export default {
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
+    cy.wait(500);
   },
 
   clickSelectedLocation(currentLocation, newLocation) {
@@ -594,6 +596,7 @@ export default {
         .choose('Item status'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).choose(status),
     ]);
+    cy.wait(500);
   },
 
   typeInTemporaryLocationFilter(location = 'Annex', type = 'item', rowIndex = 0) {
@@ -750,6 +753,7 @@ export default {
         .click(),
       SelectionOption(including(type)).click(),
     ]);
+    cy.wait(500);
   },
 
   fillTemporaryLoanType(type = 'Selected', rowIndex = 0) {
@@ -771,6 +775,7 @@ export default {
         .click(),
       SelectionOption(type).click(),
     ]);
+    cy.wait(500);
   },
 
   clearTemporaryLoanType(rowIndex = 0) {
@@ -949,6 +954,7 @@ export default {
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .fillIn(newItem),
     );
+    cy.wait(500);
   },
 
   fillInStatisticaCodeValue(value, rowIndex = 0) {
@@ -1037,6 +1043,7 @@ export default {
         .find(Select({ value: '' }))
         .choose('Remove'),
     ]);
+    cy.wait(500);
   },
 
   noteRemoveAll(noteType, rowIndex = 0) {
@@ -1061,6 +1068,7 @@ export default {
         .find(TextArea())
         .fillIn(value),
     ]);
+    cy.wait(500);
   },
 
   addItemNoteAndVerify(type, value, rowIndex = 0) {

@@ -162,7 +162,7 @@ describe('Bulk-edit', () => {
       // Trillium
       it.skip(
         'C805785 Search instances by Contributors fields using AND operator (firebird)',
-        { tags: ['smoke', 'firebird', 'C805785'] },
+        { tags: [] },
         () => {
           // Map contributors data to convert boolean primary to string format for verification
           const mappedInstancesDataToUIView = testInstancesData.map((instance) => ({

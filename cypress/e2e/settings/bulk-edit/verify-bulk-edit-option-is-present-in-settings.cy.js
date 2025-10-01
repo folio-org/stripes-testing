@@ -30,7 +30,7 @@ describe('Bulk edit', () => {
     // Trillium
     it.skip(
       'C740198 Verify "Bulk edit" option is present in Settings (firebird)',
-      { tags: ['smoke', 'firebird', 'C740198'] },
+      { tags: [] },
       () => {
         // Step 1: Navigate to Settings
         TopMenuNavigation.verifyNavigationItemAbsentOnTheBar(APPLICATION_NAMES.BULK_EDIT);

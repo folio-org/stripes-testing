@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { Behavior, General, OaiPmh, Technical } from '../../support/fragments/settings/oai-pmh';
@@ -12,10 +11,7 @@ describe('OAI-PMH', () => {
     cy.createTempUser([permissions.oaipmhView.gui]).then((userProperties) => {
       user = userProperties;
 
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.oaiPmhPath,
-        waiter: OaiPmh.waitLoading,
-      });
+      cy.login(user.username, user.password);
     });
   });
 
