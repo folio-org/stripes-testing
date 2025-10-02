@@ -9,7 +9,7 @@ import { ITEM_STATUS_NAMES } from '../../../../../support/constants';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       describe('Consortia', () => {
@@ -174,9 +174,10 @@ describe('Inventory', () => {
           Users.deleteViaApi(user.userId);
         });
 
+        // Trillium+ only
         it(
           'C812992 API Update ownership of multiple "Item" records and check "order" field (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C812992'] },
+          { tags: [] },
           () => {
             cy.resetTenant();
             cy.getToken(user.username, user.password);

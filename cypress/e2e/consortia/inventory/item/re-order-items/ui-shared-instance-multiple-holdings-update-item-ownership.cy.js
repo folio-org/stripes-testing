@@ -16,7 +16,7 @@ import ItemRecordView from '../../../../../support/fragments/inventory/item/item
 import UpdateOwnershipModal from '../../../../../support/fragments/inventory/modals/updateOwnershipModal';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       describe('Consortia', () => {
@@ -204,9 +204,10 @@ describe('Inventory', () => {
           Users.deleteViaApi(user.userId);
         });
 
+        // Trillium+ only
         it(
           'C808510 Update ownership of 1 "Item" record and check "order" field (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C808510'] },
+          { tags: [] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {
