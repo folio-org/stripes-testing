@@ -128,11 +128,10 @@ describe('Consortia Vega', () => {
       testData.user = userProperties;
 
       UserEdit.addServicePointsViaApi([servicePoint.id], testData.user.userId, servicePoint.id);
-      cy.waitForAuthRefresh(() => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitContentLoading,
-        });
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitContentLoading,
+        authRefresh: true,
       });
     });
   });
