@@ -73,6 +73,24 @@ export default {
     };
   },
 
+  getAllQueryDownloadedFileNames(bulkEditJobId, isDateIncluded = false) {
+    return {
+      identifiersQueryFilename: `Query-${bulkEditJobId}.csv`,
+      matchedRecordsQueryFileName: isDateIncluded
+        ? `${todayDate}-Matched-Records-Query-${bulkEditJobId}.csv`
+        : `*-Matched-Records-Query-${bulkEditJobId}.csv`,
+      previewFileName: isDateIncluded
+        ? `${todayDate}-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`
+        : `*-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`,
+      changedRecordsFileName: isDateIncluded
+        ? `${todayDate}-Changed-Records-CSV-Query-${bulkEditJobId}.csv`
+        : `*-Changed-Records-CSV-Query-${bulkEditJobId}.csv`,
+      errorsFromCommittingFileName: isDateIncluded
+        ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
+        : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
+    };
+  },
+
   deleteAllDownloadedFiles(fileNames) {
     const fileNamesList = Object.values(fileNames);
 
