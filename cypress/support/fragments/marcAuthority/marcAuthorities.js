@@ -1799,4 +1799,8 @@ export default {
       });
     });
   },
+
+  checkSearchQuery(searchQuery) {
+    cy.expect(SearchField({ id: 'textarea-authorities-search', value: searchQuery }).exists());
+  },
 };
