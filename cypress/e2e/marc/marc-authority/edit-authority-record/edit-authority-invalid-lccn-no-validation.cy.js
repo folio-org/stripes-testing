@@ -50,6 +50,8 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        // default value - setting just in case it was changed by someone
+        MarcAuthorities.toggleAuthorityLccnValidationRule({ enable: false });
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C569560_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
