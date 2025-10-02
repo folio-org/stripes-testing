@@ -162,6 +162,8 @@ const resultsListColumns = [
 ];
 
 export default {
+  valid008FieldValues,
+
   waitLoading() {
     cy.expect(resultsPaneHeader.exists());
   },
@@ -1692,10 +1694,11 @@ export default {
     authorityFileHridStartsWith,
     fields,
     LDR = defaultLDR,
+    tag008Values = valid008FieldValues,
   ) {
     return cy.createMarcAuthorityViaAPI(LDR, [
       { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: valid008FieldValues, indicators: ['\\', '\\'] },
+      { tag: '008', content: tag008Values },
       ...fields,
     ]);
   },

@@ -453,8 +453,9 @@ export default {
     return cy.get('@records');
   },
 
-  checkSourceFileSelectShown: () => {
-    cy.expect(sourceFileSelect.exists());
+  checkSourceFileSelectShown: (isShown = true) => {
+    if (isShown) cy.expect(sourceFileSelect.exists());
+    else cy.expect(sourceFileSelect.absent());
   },
 
   selectSourceFile(sourceFileName) {

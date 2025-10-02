@@ -47,10 +47,11 @@ export default {
   },
   selectSection(section) {
     cy.do(navPaneSection.find(NavListItem(section)).click());
+    cy.wait(1000);
     cy.expect(Pane(section).exists());
     // need to wait to prevent application error
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300);
+    cy.wait(1000);
 
     return oaiPmhSections[section];
   },
