@@ -103,14 +103,14 @@ describe('MARC', () => {
             cy.waitForAuthRefresh(() => {
               cy.login(user.username, user.password);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              cy.reload();
+              TopMenuNavigation.navigateToApp(
+                APPLICATION_NAMES.SETTINGS,
+                testData.marcAuthorityTabName,
+              );
+              SettingsPane.waitLoading();
             }, 20_000);
             // Step 2: Switch to Member tenant and check the source file
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            TopMenuNavigation.navigateToApp(
-              APPLICATION_NAMES.SETTINGS,
-              testData.marcAuthorityTabName,
-            );
             SettingsPane.waitLoading();
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
