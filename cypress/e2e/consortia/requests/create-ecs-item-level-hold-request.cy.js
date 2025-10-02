@@ -22,13 +22,15 @@ describe('Consortia Vega', () => {
     instanceTitle: `AT_C624259_Instance_${getRandomPostfix()}`,
     itemBarcode: uuid(),
   };
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  let servicePoint;
   const itemStatus = ITEM_STATUS_NAMES.CHECKED_OUT;
 
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(servicePoint);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
 
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
@@ -78,7 +80,7 @@ describe('Consortia Vega', () => {
                   });
 
                   const locationData = Locations.getDefaultLocation({
-                    servicePointId: ServicePoints.getDefaultServicePoint().id,
+                    servicePointId: servicePoint.id,
                   }).location;
                   Locations.createViaApi(locationData).then((location) => {
                     testData.location = location;
@@ -126,10 +128,10 @@ describe('Consortia Vega', () => {
       testData.user = userProperties;
 
       UserEdit.addServicePointsViaApi([servicePoint.id], testData.user.userId, servicePoint.id);
-
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.requestsPath,
         waiter: Requests.waitContentLoading,
+        authRefresh: true,
       });
     });
   });
@@ -137,9 +139,7 @@ describe('Consortia Vega', () => {
   after('Delete test data', () => {
     cy.resetTenant();
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [servicePoint.id]);
     Users.deleteViaApi(testData.user.userId);
-    ServicePoints.deleteViaApi(servicePoint.id);
     cy.setTenant(Affiliations.College);
     InventoryItems.deleteItemViaApi(testData.item.id);
     InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
