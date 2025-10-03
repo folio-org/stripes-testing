@@ -86,6 +86,28 @@ Cypress.Commands.add('updateUser', (userData) => {
   });
 });
 
+// Add a shorter hook into passing options to createTempUserParameterized
+Cypress.Commands.add(
+  'createDefaultTempUser',
+  (
+    permissions = [],
+    params = {},
+    options
+  ) => {
+    return cy.createTempUserParameterized(
+      undefined,
+      permissions,
+      {
+        patronGroupName: 'staff',
+        userType: 'staff',
+        barcode: true,
+        ...params
+      },
+      options
+    );
+  },
+);
+
 Cypress.Commands.add(
   'createTempUser',
   (permissions = [], patronGroupName = 'staff', userType = 'staff', barcode = true, email) => {
@@ -98,7 +120,13 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = [], params) => {
+Cypress.Commands.add('createTempUserParameterized', (
+  userModel,
+  permissions = [],
+  params,
+  // Options allowing for _slightly_ different use cases, such as passing internal permission names directly instead of having to map them from a special internal list
+  options = { permissionsAreInternal: false }
+) => {
   const parameters = {
     patronGroupName: 'staff',
     userType: 'staff',
@@ -165,70 +193,53 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
           cy.updateRolesForUserApi(userProperties.userId, [roleId]);
         });
       } else if (Cypress.env('eureka')) {
-        let capabilitiesIds;
-        let capabilitySetsIds;
         const permissionNames = [];
-        permissions.forEach((permission) => {
-          for (const permissionObject in permissionsList) {
-            // eslint-disable-next-line no-prototype-builtins
-            if (permissionsList.hasOwnProperty(permissionObject)) {
-              const { gui, internal } = permissionsList[permissionObject];
-              if (gui.toLowerCase().trim() === permission.toLowerCase().trim()) {
-                permissionNames.push(internal);
-                break;
+
+        // Allow for the implementor to pass already set up internal permission names
+        const permissionsAreInternal = options.permissionsAreInternal ?? false;
+        if (!permissionsAreInternal) {
+          // Verify that all permissions are mapped from gui perms to internal ones... can skip this step if we have passed internal perms
+          permissions.forEach((permission) => {
+            for (const permissionObject in permissionsList) {
+              // eslint-disable-next-line no-prototype-builtins
+              if (permissionsList.hasOwnProperty(permissionObject)) {
+                const { gui, internal } = permissionsList[permissionObject];
+                if (gui.toLowerCase().trim() === permission.toLowerCase().trim()) {
+                  permissionNames.push(internal);
+                  break;
+                }
               }
             }
-          }
-        });
+          });
+        } else {
+          permissionNames.push(...permissions);
+        }
 
         if (permissions.length && !permissionNames.length) cy.log('Warning: permissions not found in list!');
 
         if (permissionNames.length) {
-          cy.okapiRequest({
-            path: 'capabilities',
-            searchParams: {
-              query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
-              limit: 100,
-            },
-            isDefaultSearchParamsRequired: false,
-          }).then((responseCapabs) => {
-            capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
-            cy.okapiRequest({
-              path: 'capability-sets',
-              searchParams: {
-                query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
-                limit: 100,
-              },
-              isDefaultSearchParamsRequired: false,
-            }).then((responseSets) => {
-              capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+          cy.getCapabilitiesFromPermissionNames(permissionNames)
+            .then((capabilities) => {
+              const capabilitiesIds = capabilities.map((el) => el.id);
 
-              permissionNames.forEach((permissionName) => {
-                // eslint-disable-next-line no-unused-expressions
-                cy.expect(
-                  responseCapabs.body.capabilities.filter(
-                    (capab) => capab.permission === permissionName,
-                  ).length > 0 ||
-                    responseSets.body.capabilitySets.filter(
-                      (set) => set.permission === permissionName,
-                    ).length > 0,
-                  `Capabilities/sets found for "${permissionName}"`,
-                ).to.be.true;
+              cy.getCapabilitiesSetsFromPermissionNames(permissionNames).then((capabilitySets) => {
+                const capabilitySetsIds = capabilitySets.map((el) => el.id);
+
+                cy.verifyPermissionsAgainstCapabilities(permissionNames, capabilities, capabilitySets);
+
+                if (capabilitiesIds.length === 0) {
+                  cy.log('Warning: Capabilities not found!');
+                } else {
+                  cy.addCapabilitiesToNewUserApi(userProperties.userId, capabilitiesIds);
+                }
+
+                if (capabilitySetsIds.length === 0) {
+                  cy.log('Warning: Capability sets not found!');
+                } else {
+                  cy.addCapabilitySetsToNewUserApi(userProperties.userId, capabilitySetsIds);
+                }
               });
-
-              if (capabilitiesIds.length === 0) {
-                cy.log('Warning: Capabilities not found!');
-              } else {
-                cy.addCapabilitiesToNewUserApi(userProperties.userId, capabilitiesIds);
-              }
-
-              if (capabilitySetsIds.length === 0) {
-                cy.log('Warning: Capability sets not found!');
-              } else {
-                cy.addCapabilitySetsToNewUserApi(userProperties.userId, capabilitySetsIds);
-              }
             });
-          });
         }
       } else {
         cy.wait(3000);
@@ -257,57 +268,47 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
   });
 });
 
-Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
+Cypress.Commands.add('assignPermissionsToExistingUser', (
+  userId,
+  permissions = [],
+  options = {
+    permissionsAreInternal: false
+  }
+) => {
   if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
     cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
       cy.updateRolesForUserApi(userId, [roleId]);
     });
   } else if (Cypress.env('eureka')) {
-    let capabilitiesIds;
-    let capabilitySetsIds;
     const permissionNames = [];
-    permissions.forEach((permission) => {
-      for (const permissionObject in permissionsList) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (permissionsList.hasOwnProperty(permissionObject)) {
-          const { gui, internal } = permissionsList[permissionObject];
-          if (gui.includes(permission)) {
-            permissionNames.push(internal);
-            break;
+
+    // Allow for the implementor to pass already set up internal permission names
+    const permissionsAreInternal = options.permissionsAreInternal ?? false;
+    if (!permissionsAreInternal) {
+      // Verify that all permissions are mapped from gui perms to internal ones... can skip this step if we have passed internal perms
+      permissions.forEach((permission) => {
+        for (const permissionObject in permissionsList) {
+          // eslint-disable-next-line no-prototype-builtins
+          if (permissionsList.hasOwnProperty(permissionObject)) {
+            const { gui, internal } = permissionsList[permissionObject];
+            if (gui.toLowerCase().trim() === permission.toLowerCase().trim()) {
+              permissionNames.push(internal);
+              break;
+            }
           }
         }
-      }
-    });
+      });
+    } else {
+      permissionNames.push(...permissions);
+    }
 
     if (permissionNames.length) {
-      cy.okapiRequest({
-        path: 'capabilities',
-        searchParams: {
-          query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
-        },
-        isDefaultSearchParamsRequired: false,
-      }).then((responseCapabs) => {
-        capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
-        cy.okapiRequest({
-          path: 'capability-sets',
-          searchParams: {
-            query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
-          },
-          isDefaultSearchParamsRequired: false,
-        }).then((responseSets) => {
-          capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+      cy.getCapabilitiesFromPermissionNames(permissionNames).then((capabilities) => {
+        const capabilitiesIds = capabilities.map((el) => el.id);
+        cy.getCapabilitiesSetsFromPermissionNames(permissionNames).then((capabilitySets) => {
+          const capabilitySetsIds = capabilitySets.map((el) => el.id);
 
-          permissionNames.forEach((permissionName) => {
-            // eslint-disable-next-line no-unused-expressions
-            cy.expect(
-              responseCapabs.body.capabilities.filter(
-                (capab) => capab.permission === permissionName,
-              ).length > 0 ||
-                responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
-                  .length > 0,
-              `Capabilities/sets found for "${permissionName}"`,
-            ).to.be.true;
-          });
+          cy.verifyPermissionsAgainstCapabilities(permissionNames, capabilities, capabilitySets);
 
           if (capabilitiesIds.length === 0) {
             cy.log('Capabilities not found ');
@@ -492,4 +493,8 @@ Cypress.Commands.add('assignDepartmentsToExistingUser', (userId, departments = [
       departments,
     });
   });
+});
+
+Cypress.Commands.add('deleteUserViaApi', (userId, fromKeycloak) => {
+  Users.deleteViaApi(userId, fromKeycloak);
 });
