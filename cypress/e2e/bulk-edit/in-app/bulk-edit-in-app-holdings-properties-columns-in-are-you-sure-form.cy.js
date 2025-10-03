@@ -24,7 +24,7 @@ const administrativeNoteText = 'C432296 Administrative note';
 const electronicBookplateNoteText = 'C432296 Electronic bookplate note';
 const newURI = 'https://test.com/study';
 const electronicAccessValue =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n-;https://test.com/study;-;-;-';
+  'URL relationship;URI;Link text;Material specified;URL public note\n-;https://test.com/study;-;-;-';
 const electronicAccessURI = 'https://www.emeraldinsight.com/journal/jepp';
 const instance = {
   instanceName: `C432296 instance-${getRandomPostfix()}`,

@@ -31,7 +31,7 @@ const secondItem = {
   itemBarcode: `secondItem-itemBarcode${getRandomPostfix()}`,
 };
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingsHRIDFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
