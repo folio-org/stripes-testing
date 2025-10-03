@@ -52,8 +52,7 @@ const electronicAccessFields = {
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
-const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 
@@ -136,7 +135,6 @@ describe('Bulk-edit', () => {
                   });
                 });
 
-                cy.resetTenant();
                 cy.login(user.username, user.password, {
                   path: TopMenu.bulkEditPath,
                   waiter: BulkEditSearchPane.waitLoading,
@@ -241,10 +239,10 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 7: Select "URL relationship" from the "Electronic access" option
-          BulkEditActions.selectOption('URL relationship');
+          BulkEditActions.selectOption('URL Relationship');
 
           // Step 8: Select "Replace with" action
-          BulkEditActions.selectAction('Replace with');
+          BulkEditActions.selectSecondAction('Replace with');
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 9: Check displayed URL relationship types (should only show local)
@@ -271,8 +269,8 @@ describe('Bulk-edit', () => {
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex);
             BulkEditActions.selectOption(filter.option, rowIndex);
-            BulkEditActions.selectAction('Replace with', rowIndex);
-            BulkEditActions.fillInFirstTextArea(filter.value, rowIndex);
+            BulkEditActions.selectSecondAction('Replace with', rowIndex);
+            BulkEditActions.fillInSecondTextArea(filter.value, rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);
           });
 

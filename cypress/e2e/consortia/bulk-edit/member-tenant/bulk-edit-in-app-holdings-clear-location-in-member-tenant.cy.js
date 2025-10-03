@@ -204,7 +204,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.selectOption('Temporary holdings location');
             BulkEditActions.verifyTheActionOptions(['Clear field', 'Replace with']);
-            BulkEditActions.selectAction('Clear field');
+            BulkEditActions.selectSecondAction('Clear field');
             BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(2);

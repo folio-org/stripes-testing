@@ -168,7 +168,6 @@ describe('Bulk-edit', () => {
                     `${folioInstance.itemBarcode}\n${marcInstance.itemBarcode}`,
                   );
                 });
-              cy.resetTenant();
               cy.login(user.username, user.password, {
                 path: TopMenu.bulkEditPath,
                 waiter: BulkEditSearchPane.waitLoading,

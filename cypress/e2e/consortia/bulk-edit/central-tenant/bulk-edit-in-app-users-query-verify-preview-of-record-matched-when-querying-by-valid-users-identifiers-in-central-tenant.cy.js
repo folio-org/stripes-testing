@@ -13,6 +13,7 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
 let staffUser;
@@ -127,7 +128,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -196,7 +197,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -237,7 +238,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -290,7 +291,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];

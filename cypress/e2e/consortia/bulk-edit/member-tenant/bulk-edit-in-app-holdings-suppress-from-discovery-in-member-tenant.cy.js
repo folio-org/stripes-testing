@@ -320,8 +320,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption(suppressFromDiscovery);
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
-          BulkEditActions.selectAction(actions.setFalse);
-          BulkEditActions.verifyActionSelected(actions.setFalse);
+          BulkEditActions.selectSecondAction(actions.setFalse);
+          BulkEditActions.verifySecondActionSelected(actions.setFalse);
           BulkEditActions.applyToItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 

@@ -306,7 +306,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
             true,
           );
-          BulkEditSearchPane.verifyPaginatorInMatchedRecords();
+          BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 

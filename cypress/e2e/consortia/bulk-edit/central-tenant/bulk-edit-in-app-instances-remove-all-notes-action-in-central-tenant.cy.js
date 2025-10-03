@@ -198,7 +198,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             'Notes',
-            `Dissertation note;${notes.dissertationStaffOnly};true|Dissertation note;${notes.dissertation};false`,
+            `Dissertation note;${notes.dissertationStaffOnly};true | Dissertation note;${notes.dissertation};false`,
           );
           BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();

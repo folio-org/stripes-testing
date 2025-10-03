@@ -245,7 +245,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
               folioInstance.uuid,
               'Notes',
-              `Reproduction note;${params.notesInitialValue.reproductionUpperCase};true|Reproduction note;${params.notesInitialValue.reproductionLowerCase};false`,
+              `Reproduction note;${params.notesInitialValue.reproductionUpperCase};true | Reproduction note;${params.notesInitialValue.reproductionLowerCase};false`,
             );
             BulkEditActions.openStartBulkEditFolioInstanceForm();
             BulkEditActions.verifyInitialStateBulkEditForm();

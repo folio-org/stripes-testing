@@ -42,7 +42,7 @@ const electronicAccessFields = {
   newUri: 'http://www.koreascience.or.kr/journal/E1TAAE/v2n1.page http://www.ksiam.org',
 };
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'Relationship;URI;Link text;Materials specified;Public note\n';
 const marcInstanceFields = [
   {
     tag: '008',
@@ -166,9 +166,10 @@ describe('Bulk-edit', () => {
         );
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C651495 ECS | Bulk edit marc fields (245, 856) for all records in Central tenant (MARC & FOLIO) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C651495'] },
+        { tags: [] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

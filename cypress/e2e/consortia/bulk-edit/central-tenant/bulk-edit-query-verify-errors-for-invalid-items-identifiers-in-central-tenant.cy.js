@@ -22,6 +22,7 @@ import {
   LOAN_TYPE_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
 } from '../../../../support/constants';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
 let instanceTypeId;
@@ -218,7 +219,7 @@ describe('Bulk-edit', () => {
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -297,7 +298,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];

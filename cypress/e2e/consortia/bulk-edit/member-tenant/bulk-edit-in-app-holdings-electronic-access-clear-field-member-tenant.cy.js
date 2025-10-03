@@ -38,8 +38,7 @@ const localUrlRelationship = {
   name: `C566156 local urlRelationship ${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
-const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
@@ -133,8 +132,6 @@ describe('Bulk-edit', () => {
                     );
                   });
                 });
-
-                cy.resetTenant();
                 cy.login(user.username, user.password, {
                   path: TopMenu.bulkEditPath,
                   waiter: BulkEditSearchPane.waitLoading,
@@ -241,7 +238,7 @@ describe('Bulk-edit', () => {
 
           // Steps 7-13: Add clear field actions for all electronic access fields
           const fieldsToClear = [
-            'URL relationship',
+            'URL Relationship',
             'URI',
             'Link text',
             'Materials specified',
