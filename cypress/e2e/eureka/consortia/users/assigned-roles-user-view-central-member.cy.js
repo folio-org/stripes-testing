@@ -97,14 +97,12 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.testUser.userId);
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.tempUser.username, testData.tempUser.password, {
-            path: TopMenu.usersPath,
-            waiter: Users.waitLoading,
-          });
-          cy.reload();
-          Users.waitLoading();
-        }, 20_000);
+        cy.login(testData.tempUser.username, testData.tempUser.password, {
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
+          authRefresh: true,
+        });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
 

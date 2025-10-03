@@ -16,7 +16,7 @@ import HoldingsRecordView, {
 } from '../../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       describe('Consortia', () => {
@@ -153,9 +153,10 @@ describe('Inventory', () => {
           Users.deleteViaApi(user.userId);
         });
 
+        // Trillium+ only
         it(
           'C808509 Update ownership of "Holdings" record and check Item\'s "order" fields (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C808509'] },
+          { tags: [] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

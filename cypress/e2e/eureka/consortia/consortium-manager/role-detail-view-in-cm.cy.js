@@ -13,7 +13,7 @@ import ConsortiumManagerSettings from '../../../../support/fragments/settings/co
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import Capabilities from '../../../../support/dictionary/capabilities';
 
-describe('Eureka', () => {
+describe.skip('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
@@ -108,9 +108,10 @@ describe('Eureka', () => {
       cy.deleteAuthorizationRoleApi(testData.roleCollege.id);
     });
 
-    it(
+    // Trillium+ only
+    it.skip(
       'C502981 ECS | Eureka | Verify detail view of selected Authorization role (consortia) (thunderjet)',
-      { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C502981'] },
+      { tags: [] },
       () => {
         cy.resetTenant();
         cy.login(userData.username, userData.password);

@@ -131,6 +131,7 @@ describe('Consortia Vega', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.requestsPath,
         waiter: Requests.waitContentLoading,
+        authRefresh: true,
       });
     });
   });
@@ -139,13 +140,11 @@ describe('Consortia Vega', () => {
     cy.resetTenant();
     cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [servicePoint.id]);
     Users.deleteViaApi(testData.user.userId);
-    ServicePoints.deleteViaApi(servicePoint.id);
     cy.setTenant(Affiliations.College);
     InventoryItems.deleteItemViaApi(testData.item.id);
     InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
-    Locations.deleteViaApi(testData.location);
+    Locations.deleteViaApi(testData.locationId);
     cy.resetTenant();
     InventoryInstance.deleteInstanceViaApi(testData.testInstanceIds.instanceId);
   });

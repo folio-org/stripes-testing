@@ -150,15 +150,15 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
-            }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-              MarcAuthorities.switchToBrowse();
-              MarcAuthorities.selectSearchOptionInDropdown(
-                MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
-              );
+              authRefresh: true,
             });
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            MarcAuthorities.switchToBrowse();
+            MarcAuthorities.selectSearchOptionInDropdown(
+              MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
+            );
           });
       });
 
