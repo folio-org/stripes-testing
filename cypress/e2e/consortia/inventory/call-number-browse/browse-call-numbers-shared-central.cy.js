@@ -254,14 +254,12 @@ describe('Inventory', () => {
           addItemRecordInCollege(instance.instanceId);
         });
         cy.resetTenant();
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
+
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         InventorySearchAndFilter.selectBrowseCallNumbers();
       });
