@@ -1,13 +1,18 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -40,7 +45,7 @@ describe('Inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.shadowHoldings.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
             testData.shadowHoldings.locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -48,6 +53,9 @@ describe('Inventory', () => {
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
             testData.shadowItem.materialTypeId = res.id;
+          });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            testData.sourceId = folioSource.id;
           });
         }).then(() => {
           // create shadow instance with holdings and item
@@ -60,6 +68,7 @@ describe('Inventory', () => {
               {
                 holdingsTypeId: testData.shadowHoldings.holdingTypeId,
                 permanentLocationId: testData.shadowHoldings.locationId,
+                sourceId: testData.sourceId,
               },
             ],
             items: [
@@ -95,10 +104,9 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
           cy.resetTenant();
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(user.username, user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });

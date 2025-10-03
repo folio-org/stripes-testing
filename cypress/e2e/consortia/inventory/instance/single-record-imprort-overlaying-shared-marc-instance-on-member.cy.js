@@ -26,7 +26,7 @@ describe('Inventory', () => {
         instanceId: '',
         marcFile: {
           path: 'oneMarcBib.mrc',
-          fileName: `C402762 autotestFileName${getRandomPostfix()}.mrc`,
+          fileName: `C418584 autotestFileName${getRandomPostfix()}.mrc`,
         },
         updatedInstanceTitle:
           'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',

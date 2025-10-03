@@ -98,6 +98,7 @@ describe('Inventory', () => {
       });
 
       after('Delete test data', () => {
+        cy.getAdminToken();
         cy.withinTenant(Affiliations.College, () => {
           InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.barcode);
           Locations.deleteViaApi(testData.locationId);

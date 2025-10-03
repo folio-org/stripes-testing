@@ -4,18 +4,18 @@ import {
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  RECORD_STATUSES,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import NewActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -28,6 +28,7 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import NewActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -36,7 +37,6 @@ import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -151,7 +151,6 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
               Permissions.dataExportViewAddUpdateProfiles.gui,
-              Permissions.consortiaCentralAll.gui,
             ]);
             cy.resetTenant();
           });
@@ -181,6 +180,7 @@ describe('Data Import', () => {
         FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
         FileManager.deleteFileFromDownloadsByMask(testData.marcFile.exportedFileName);
         cy.resetTenant();
+        cy.getAdminToken();
         cy.withinTenant(Affiliations.College, () => {
           InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingsId);
           SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
@@ -208,13 +208,13 @@ describe('Data Import', () => {
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.verifySelectedRecords(1);
-          InventorySearchAndFilter.exportInstanceAsMarc();
-          cy.intercept('/data-export/quick-export').as('getHrid');
-          cy.wait('@getHrid', getLongDelay()).then((req) => {
-            const expectedRecordHrid = req.response.body.jobExecutionHrId;
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            InventorySearchAndFilter.exportInstanceAsMarc();
+            cy.intercept('/data-export/quick-export').as('getHrid');
+            cy.wait('@getHrid', getLongDelay()).then((req) => {
+              const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-            // download exported marc file
-            cy.setTenant(Affiliations.College).then(() => {
               // use cy.getToken function to get toket for current tenant
               TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
               ExportFile.waitLandingPageOpened();
@@ -224,6 +224,7 @@ describe('Data Import', () => {
               );
               FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
             });
+            cy.resetTenant();
           });
           // change exported file
           DataImport.editMarcFile(

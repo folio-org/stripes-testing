@@ -104,8 +104,6 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.settingsDataImportEnabled.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-            // TODO: redesign with capability when fragment will be implemented
-            Permissions.consortiaCentralAll.gui,
           ]);
           cy.resetTenant();
 

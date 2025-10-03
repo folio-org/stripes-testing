@@ -1,11 +1,11 @@
-import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -29,11 +29,11 @@ describe('Inventory', () => {
             cy.assignPermissionsToExistingUser(user.userId, [
               Permissions.uiInventoryViewCreateEditInstances.gui,
             ]);
+            cy.resetTenant();
 
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.login(user.username, user.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           },
@@ -45,7 +45,6 @@ describe('Inventory', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
         cy.setTenant(Affiliations.College).then(() => {
-          cy.getCollegeAdminToken();
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
             (instance) => {
               InventoryInstance.deleteInstanceViaApi(instance.id);

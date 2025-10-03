@@ -9,7 +9,6 @@ import {
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import NewActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -27,9 +26,9 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import NewActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
@@ -110,7 +109,6 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
               Permissions.dataExportViewAddUpdateProfiles.gui,
-              Permissions.consortiaCentralAll.gui,
             ]);
             NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
               (mappingProfileResponse) => {
@@ -197,6 +195,7 @@ describe('Data Import', () => {
               );
               FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
             });
+            cy.resetTenant();
           });
           // change exported file
           DataImport.editMarcFile(
@@ -223,10 +222,9 @@ describe('Data Import', () => {
             users.userAProperties.lastName,
           );
 
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(users.userBProperties.username, users.userBProperties.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.verifyPanesExist();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
@@ -243,10 +241,9 @@ describe('Data Import', () => {
             users.userAProperties.lastName,
           );
 
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(users.userBProperties.username, users.userBProperties.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventorySearchAndFilter.verifyPanesExist();
