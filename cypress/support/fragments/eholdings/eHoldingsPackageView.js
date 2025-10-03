@@ -369,4 +369,17 @@ export default {
   verifyNoCoveragesDatesSet() {
     cy.expect(KeyValue('Custom coverage dates').absent());
   },
+
+  verifyCoverageDatesSet(startDate, endDate) {
+    cy.expect(KeyValue('Custom coverage dates').exists());
+    cy.expect(KeyValue('Custom coverage dates').has({ value: including(startDate) }));
+    cy.expect(KeyValue('Custom coverage dates').has({ value: including(endDate) }));
+  },
+
+  edit() {
+    cy.expect(KeyValue('Package type').exists());
+    cy.expect(KeyValue('Total titles').exists());
+    cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
+    cy.wait(3000);
+  },
 };
