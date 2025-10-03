@@ -26,6 +26,7 @@ import QueryModal, {
   QUERY_OPERATIONS,
   itemFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
 let instanceTypeId;
@@ -223,7 +224,7 @@ describe('Bulk-edit', () => {
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -333,6 +334,7 @@ describe('Bulk-edit', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+            cy.wait(5000);
             BulkEditSearchPane.openLogsSearch();
             BulkEditLogs.verifyLogsPane();
             BulkEditLogs.checkItemsCheckbox();
