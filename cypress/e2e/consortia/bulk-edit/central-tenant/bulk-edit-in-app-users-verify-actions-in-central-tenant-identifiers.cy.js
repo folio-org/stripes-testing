@@ -58,6 +58,7 @@ describe('Bulk-edit', () => {
               `${patronUserInCollege.userId}\n${staffUserInCollege.userId}\n${user.userId}`,
             );
           });
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

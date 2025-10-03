@@ -105,9 +105,9 @@ describe('Bulk-edit', () => {
                   QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
                   QueryModal.chooseValueSelect('False');
                   QueryModal.addNewRow();
-                  QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
-                  QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-                  QueryModal.fillInValueTextfield(`C477642_${postfix}`, 1);
+                  QueryModal.selectField(instanceFieldValues.instanceId, 1);
+                  QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
+                  QueryModal.fillInValueTextfield(`${folioInstance.uuid},${marcInstance.uuid}`, 1);
                   cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
                     'getPreview',
                   );
@@ -154,7 +154,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.staff_suppress == False) AND (instance.title starts with C477642_${postfix})`,
+              `(instance.staff_suppress == False) AND (instance.id in (${folioInstance.uuid}, ${marcInstance.uuid}))`,
             );
 
             instances.forEach((instance) => {

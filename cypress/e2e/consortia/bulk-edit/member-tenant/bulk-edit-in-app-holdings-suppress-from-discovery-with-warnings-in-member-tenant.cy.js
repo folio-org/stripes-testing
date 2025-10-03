@@ -140,7 +140,6 @@ describe('Bulk-edit', () => {
                   `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
                 );
               });
-            cy.resetTenant();
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
@@ -215,8 +214,8 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
 
           // Step 7: Select 'Set false' option
-          BulkEditActions.selectAction(actions.setFalse);
-          BulkEditActions.verifyActionSelected(actions.setFalse);
+          BulkEditActions.selectSecondAction(actions.setFalse);
+          BulkEditActions.verifySecondActionSelected(actions.setFalse);
           BulkEditActions.applyToItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 

@@ -92,10 +92,10 @@ describe('Data Export', () => {
             );
           });
 
-        cy.setTenant(Affiliations.College);
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
+          authRefresh: true,
         });
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       });

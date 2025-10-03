@@ -98,7 +98,7 @@ describe('Bulk-edit', () => {
       // Trillium
       it.skip(
         'C831963 ECS | Verify Set false for deletion of Instances via MARC flow in Central tenant (Logs) (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C831963'] },
+        { tags: [] },
         () => {
           // Step 1: Uncheck columns under "Show columns" subsection
           BulkEditActions.openActions();

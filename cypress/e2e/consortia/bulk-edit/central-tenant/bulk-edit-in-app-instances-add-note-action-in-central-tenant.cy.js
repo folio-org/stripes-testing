@@ -76,42 +76,44 @@ describe('Bulk-edit', () => {
 
                   cy.updateInstance(instanceData);
                 });
-              });
 
-              cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                marcInstance.uuid = instanceId;
+                cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                  marcInstance.uuid = instanceId;
 
-                cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-                  marcInstance.hrid = instanceData.hrid;
-                  instanceData.catalogedDate = catalogDate;
+                  cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
+                    marcInstance.hrid = instanceData.hrid;
+                    instanceData.catalogedDate = catalogDate;
 
-                  cy.updateInstance(instanceData);
+                    cy.updateInstance(instanceData);
+                  });
+
+                  cy.resetTenant();
+                  cy.login(user.username, user.password, {
+                    path: TopMenu.bulkEditPath,
+                    waiter: BulkEditSearchPane.waitLoading,
+                  });
+                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                  BulkEditSearchPane.openQuerySearch();
+                  BulkEditSearchPane.checkInstanceRadio();
+                  BulkEditSearchPane.clickBuildQueryButton();
+                  QueryModal.verify();
+                  QueryModal.selectField(instanceFieldValues.catalogedDate);
+                  QueryModal.verifySelectedField(instanceFieldValues.catalogedDate);
+                  QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO);
+                  QueryModal.pickDate(dateToPick);
+                  QueryModal.addNewRow();
+                  QueryModal.selectField(instanceFieldValues.instanceId, 1);
+                  QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
+                  QueryModal.fillInValueTextfield(`${folioInstance.uuid},${marcInstance.uuid}`, 1);
+                  cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
+                    'getPreview',
+                  );
+                  cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
+                  QueryModal.clickTestQuery();
+                  QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
                 });
               });
             });
-
-          cy.resetTenant();
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          BulkEditSearchPane.openQuerySearch();
-          BulkEditSearchPane.checkInstanceRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
-          QueryModal.selectField(instanceFieldValues.catalogedDate);
-          QueryModal.verifySelectedField(instanceFieldValues.catalogedDate);
-          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO);
-          QueryModal.pickDate(dateToPick);
-          QueryModal.addNewRow();
-          QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
-          QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-          QueryModal.fillInValueTextfield(`AT_C477644_${postfix}`, 1);
-          cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
-          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
-          QueryModal.clickTestQuery();
-          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
         });
       });
 
@@ -153,7 +155,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.cataloged_date >= ${dateToPick}) AND (instance.title starts with AT_C477644_${postfix})`,
+              `(instance.cataloged_date >= ${dateToPick}) AND (instance.id in (${folioInstance.uuid}, ${marcInstance.uuid}))`,
             );
 
             instances.forEach((instance) => {
@@ -164,7 +166,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
             BulkEditActions.openActions();
 
             instances.forEach((instance) => {
