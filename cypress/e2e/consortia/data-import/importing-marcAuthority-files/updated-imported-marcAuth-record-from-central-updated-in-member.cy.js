@@ -205,6 +205,7 @@ describe('Data Import', () => {
           cy.login(users.userAProperties.username, users.userAProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
           cy.wait(1000);

@@ -152,14 +152,11 @@ describe('MARC', () => {
               });
 
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
+              });
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -219,9 +216,9 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+
+            QuickMarcEditor.deleteFieldByTagAndCheck('010');
+            QuickMarcEditor.saveAndCloseAfterFieldDelete();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -256,11 +253,14 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
-            BrowseContributors.waitForContributorToAppear(
-              linkingTagAndValues.authorityHeading,
-              true,
-              true,
-            );
+            cy.withinTenant(Affiliations.University, () => {
+              BrowseContributors.waitForContributorToAppear(
+                linkingTagAndValues.authorityHeading,
+                true,
+                true,
+              );
+            });
+
             BrowseContributors.browse(linkingTagAndValues.authorityHeading);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,

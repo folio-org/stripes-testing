@@ -114,6 +114,7 @@ describe('MARC', () => {
           cy.login(users.userBProperties.username, users.userBProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.searchByTitle(createdInstanceID);
