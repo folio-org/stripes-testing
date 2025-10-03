@@ -58,8 +58,8 @@ describe('Title level Request', () => {
     );
     NewRequest.verifyRequestInformation(requestType);
     NewRequest.saveRequestAndClose();
-    NewRequest.verifyRequestSuccessfullyCreated(user.username);
     RequestDetail.checkItemStatus(itemStatus);
+    NewRequest.verifyRequestSuccessfullyCreated(user.username);
   };
 
   before('Preconditions', () => {
@@ -223,7 +223,9 @@ describe('Title level Request', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);
-      CheckOutActions.checkOutItem(instanceData.item2Barcode);
+      cy.waitForAuthRefresh(() => {
+        CheckOutActions.checkOutItem(instanceData.item2Barcode);
+      });
       CheckOutActions.checkItemInfo(instanceData.item2Barcode, instanceData.title);
 
       createTLR(users[3], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.CHECKED_OUT);
@@ -231,9 +233,9 @@ describe('Title level Request', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[1].barcode);
+      Modals.closeModalIfAny();
       CheckOutActions.checkOutItem(instanceData.item1Barcode);
       CheckOutActions.checkItemInfo(instanceData.item1Barcode, instanceData.title);
-      Modals.closeModalIfAny();
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
