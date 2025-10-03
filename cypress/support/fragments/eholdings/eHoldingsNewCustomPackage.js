@@ -64,4 +64,12 @@ export default {
   verifyDateRangeValues: (startDate, endDate) => {
     cy.expect([startDateField.has({ value: startDate }), endDateField.has({ value: endDate })]);
   },
+
+  verifyNoCoverageDatesMessage: () => {
+    cy.expect(HTML(including('No date ranges set. Saving will remove custom coverage.')).exists());
+  },
+
+  checkPackageUpdatedCallout() {
+    cy.expect(HTML(including('Package saved.')).exists());
+  },
 };
