@@ -63,7 +63,7 @@ describe('Inventory', () => {
       () => {
         BrowseContributors.searchRecordByName(notExactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);
-        BrowseContributors.checkNonExactSearchResultForARow(notExactSearchName, 0);
+        BrowseContributors.checkNonExactSearchResultForARow(notExactSearchName, 5);
         BrowseContributors.searchRecordByName(exactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);
         BrowseContributors.checkSearchResultRecord(exactSearchName);

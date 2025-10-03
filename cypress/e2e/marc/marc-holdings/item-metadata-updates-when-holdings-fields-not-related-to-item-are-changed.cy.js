@@ -90,7 +90,6 @@ describe('MARC', () => {
           });
         });
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,

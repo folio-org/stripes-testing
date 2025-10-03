@@ -92,7 +92,7 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
+              cy.getAdminToken().then(() => {
                 marcFiles.forEach((marcFile) => {
                   DataImport.uploadFileViaApi(
                     marcFile.marc,
@@ -107,7 +107,15 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+              cy.waitForAuthRefresh(() => {
+                cy.loginAsAdmin({
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -121,10 +129,14 @@ describe('MARC', () => {
                 createdRecordIDs.push(holdingsID);
               });
 
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
             });
         });
 

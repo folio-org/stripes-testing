@@ -158,8 +158,14 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
@@ -205,10 +211,14 @@ describe('MARC', () => {
         'C407633 Update shared linked "MARC Authority" record in member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C407633'] },
         () => {
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000).then(() => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             MarcAuthorities.waitLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);

@@ -80,10 +80,14 @@ describe('MARC', () => {
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               ]);
 
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.marcAuthorities,
+                  waiter: MarcAuthorities.waitLoading,
+                });
+                cy.reload();
+                MarcAuthorities.waitLoading();
+              }, 20_000).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 MarcAuthorities.waitLoading();

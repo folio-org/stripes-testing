@@ -81,11 +81,14 @@ describe('Inventory', () => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
+          cy.reload();
+          Orders.waitLoading();
+        }, 20_000);
       });
     });
 

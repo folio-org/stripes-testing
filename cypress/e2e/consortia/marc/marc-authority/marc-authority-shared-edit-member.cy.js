@@ -75,14 +75,14 @@ describe('MARC', () => {
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
-            cy.intercept('/authn/refresh').as('refresh');
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
               cy.reload();
               MarcAuthorities.waitLoading();
-              cy.wait('@refresh', { timeout: 20_000 });
+            }, 20_000).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               MarcAuthorities.waitLoading();
