@@ -51,7 +51,7 @@ export default {
         ],
       },
       {
-        option: 'Materials specified',
+        option: 'Material specified',
         actions: [
           BULK_EDIT_ACTIONS.CLEAR_FIELD,
           BULK_EDIT_ACTIONS.FIND,

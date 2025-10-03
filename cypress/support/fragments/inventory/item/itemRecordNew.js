@@ -300,7 +300,7 @@ export default {
     if (uri) cy.do(TextArea({ ariaLabel: 'URI' }).fillIn(uri));
     if (linkText) cy.do(TextArea({ ariaLabel: 'Link text' }).fillIn(linkText));
     if (materialsSpecified) {
-      cy.do(TextArea({ ariaLabel: 'Materials specified' }).fillIn(materialsSpecified));
+      cy.do(TextArea({ ariaLabel: 'Material specified' }).fillIn(materialsSpecified));
     }
     if (urlPublicNote) cy.do(TextArea({ ariaLabel: 'URL public note' }).fillIn(urlPublicNote));
   },

@@ -40,22 +40,22 @@ const localUrlRelationship = {
 const newElectronicAccessFields = {
   uri: 'https://www.uri.org',
   linkText: 'New Link text',
-  materialsSpecification: 'New Materials specified',
+  materialsSpecification: 'New Material specified',
   publicNote: 'New URL public note',
 };
 const electronicAccessFields = {
   uri: 'https://www.uri.com',
   linkText: 'Link text',
-  materialsSpecification: 'Materials specified',
+  materialsSpecification: 'Material specified',
   publicNote: 'URL public note',
 };
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
@@ -254,12 +254,12 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectFromUnchangedSelect(localUrlRelationship.name);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          // Step 11-14: Add new rows for URI, Link text, Materials specified, URL public note replace with
+          // Step 11-14: Add new rows for URI, Link text, Material specified, URL public note replace with
           const bulkEditFilters = [
             { option: 'URI', value: newElectronicAccessFields.uri },
             { option: 'Link text', value: newElectronicAccessFields.linkText },
             {
-              option: 'Materials specified',
+              option: 'Material specified',
               value: newElectronicAccessFields.materialsSpecification,
             },
             { option: 'URL public note', value: newElectronicAccessFields.publicNote },
