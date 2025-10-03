@@ -38,6 +38,7 @@ describe('Data Export', () => {
       { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10982'] },
       () => {
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
+        ExportFieldMappingProfiles.scrollTo('bottom');
         ExportFieldMappingProfiles.verifyDefaultProfiles();
       },
     );

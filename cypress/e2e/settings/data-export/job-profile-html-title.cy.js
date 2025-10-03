@@ -11,8 +11,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const jobProfile = {
-  name: `Job-Profile-${getRandomPostfix()}`,
-  newName: `New-Job-Profile-${getRandomPostfix()}`,
+  name: `A_Job-Profile-${getRandomPostfix()}`,
+  newName: `A_New-Job-Profile-${getRandomPostfix()}`,
   mappingProfile: 'Default authority mapping profile',
 };
 const callout = `Job profile ${jobProfile.name} has been successfully created`;

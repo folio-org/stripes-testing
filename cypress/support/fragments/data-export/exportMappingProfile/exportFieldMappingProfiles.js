@@ -157,4 +157,8 @@ export default {
   clickProfileNameFromTheList(name) {
     cy.do(MultiColumnListCell(including(name)).click());
   },
+
+  scrollTo(direction) {
+    cy.get('[class^=mclScrollable-').scrollTo(direction);
+  },
 };

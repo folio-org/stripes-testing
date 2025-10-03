@@ -81,4 +81,8 @@ export default {
     cy.get(jobProfilescSearchId).invoke('val').should('equal', '');
     expect(searchButton.has({ disabled: true }));
   },
+
+  scrollTo(direction = 'bottom') {
+    cy.get('[class^=mclScrollable-]').scrollTo(direction);
+  },
 };

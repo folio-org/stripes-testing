@@ -54,6 +54,7 @@ describe('Data Export', () => {
       SelectJobProfile.verifyExistingJobProfiles();
       SelectJobProfile.verifySearchBox();
       SelectJobProfile.verifySearchButton(true);
+      SelectJobProfile.scrollTo('bottom');
       ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'instances', 'Instances', '.cql');
 
       DataExportLogs.waitLoading();
