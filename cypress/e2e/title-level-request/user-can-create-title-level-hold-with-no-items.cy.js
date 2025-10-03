@@ -44,9 +44,11 @@ describe('Title Level Request', () => {
           testData.user.userId,
           testData.userServicePoint.id,
         ).then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.requestsPath,
-            waiter: Requests.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
         });
       },
@@ -77,7 +79,9 @@ describe('Title Level Request', () => {
       NewRequest.enterRequesterBarcode(testData.user.barcode);
       NewRequest.verifyTitleLevelRequestsCheckbox(true);
       NewRequest.verifyRequestTypeHasOptions('Hold');
-      NewRequest.chooseRequestType('Hold');
+      cy.waitForAuthRefresh(() => {
+        NewRequest.chooseRequestType('Hold');
+      });
       NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(testData.user.username);
