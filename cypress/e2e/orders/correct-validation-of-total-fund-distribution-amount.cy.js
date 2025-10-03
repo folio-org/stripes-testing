@@ -133,6 +133,12 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
+      cy.intercept('GET', '/finance/funds*', {
+        body: {
+          funds: [defaultFund],
+          totalRecords: 1,
+        },
+      });
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
       OrderLines.fillInPOLineInfoForElectronicWithThreeFunds(

@@ -36,9 +36,9 @@ describe('Finance: Ledgers', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let servicePointId;
@@ -46,7 +46,7 @@ describe('Finance: Ledgers', () => {
   let fileName;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -55,11 +55,8 @@ describe('Finance: Ledgers', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -82,7 +79,6 @@ describe('Finance: Ledgers', () => {
           organization.id = responseOrganizations;
         });
         firstOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
         cy.visit(TopMenu.ordersPath);
         Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
           firstOrder.id = firstOrderResponse.id;

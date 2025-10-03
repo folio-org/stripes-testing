@@ -2,17 +2,19 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import Groups from '../../../support/fragments/finance/groups/groups';
+import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 
-describe('ui-finance: Funds', () => {
-  let aUnit;
+describe('Funds', () => {
   let tag;
-  let ledger;
-  let group;
   let fundType;
   let user;
+  const isAUnitCreated = false;
 
   const fund = {
     id: uuid(),
@@ -22,9 +24,29 @@ describe('ui-finance: Funds', () => {
     description: `E2E fund description ${getRandomPostfix()}`,
     externalAccountNo: `fund external  ${getRandomPostfix()}`,
   };
+  const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const ledger = { ...Ledgers.defaultUiLedger };
+  const group = { ...Groups.defaultUiGroup };
+  const aUnit = { ...AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true }) };
 
   before(() => {
     cy.getAdminToken();
+    FiscalYears.createViaApi(fiscalYear).then((firstFiscalYearResponse) => {
+      fiscalYear.id = firstFiscalYearResponse.id;
+      ledger.fiscalYearOneId = fiscalYear.id;
+      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        ledger.id = ledgerResponse.id;
+        Groups.createViaApi(group).then((secondGroupResponse) => {
+          group.id = secondGroupResponse.id;
+        });
+      });
+    });
+
+    AcquisitionUnits.createAcquisitionUnitViaApi(aUnit).then(() => {
+      cy.getAdminUserDetails().then((admin) => {
+        AcquisitionUnits.assignUserViaApi(admin.id, aUnit.id);
+      });
+    });
 
     cy.getFundTypesApi({ limit: 1 }).then(({ body }) => {
       fundType = body.fundTypes[0];
@@ -32,22 +54,14 @@ describe('ui-finance: Funds', () => {
     cy.getTagsApi({ limit: 1 }).then(({ body }) => {
       tag = body.tags[0];
     });
-    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
-      aUnit = body.acquisitionsUnits[0];
-    });
-    cy.getLedgersApi({ limit: 1 }).then(({ body }) => {
-      ledger = body.ledgers[0];
-    });
-    cy.getGroupsApi({ limit: 1 }).then(({ body }) => {
-      group = body.groups[0];
-    });
 
-    cy.createTempUser([permissions.uiFinanceViewFundAndBudget.gui]).then((userProperties) => {
+    cy.createTempUser([
+      permissions.uiFinanceViewFundAndBudget.gui,
+      permissions.uiFinanceManageAcquisitionUnits.gui,
+    ]).then((userProperties) => {
+      AcquisitionUnits.assignUserViaApi(userProperties.userId, aUnit.id);
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
     });
   });
 
@@ -67,13 +81,21 @@ describe('ui-finance: Funds', () => {
     cy.getAdminToken();
     cy.deleteFundApi(fund.id);
     Users.deleteViaApi(user.userId);
+    if (isAUnitCreated) cy.deleteAcqUnitApi(aUnit.id);
   });
 
   it(
     'C4059 Test the search and filter options for funds (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.checkZeroSearchResultsMessage();
+      cy.intercept('GET', '/finance/ledgers*', {
+        body: {
+          ledgers: [ledger],
+          totalRecords: 1,
+        },
+      });
 
       Funds.checkFundFilters(
         ledger.name,

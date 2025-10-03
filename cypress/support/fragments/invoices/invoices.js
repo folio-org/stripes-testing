@@ -12,6 +12,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelectOption,
   Pane,
   PaneHeader,
   SearchField,
@@ -21,6 +22,7 @@ import {
   SelectionList,
   SelectionOption,
   TextField,
+  MultiSelect,
 } from '../../../../interactors';
 import { INVOICE_STATUSES } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -1244,9 +1246,11 @@ export default {
         .find(fundCodeFilterSection)
         .find(Button({ ariaLabel: 'Fund code filter list' }))
         .click(),
-      fundCodeFilterSection.find(Button({ id: 'fundCode-selection' })).click(),
-      fundCodeFilterSection.find(SelectionOption(fundCode)).click(),
+      fundCodeFilterSection.find(Button({ ariaLabel: 'open menu' })).click(),
     ]);
+    cy.wait(4000);
+    cy.do(fundCodeFilterSection.find(MultiSelect({ id: 'fund-filter' })).fillIn(fundCode));
+    cy.do(MultiSelectOption(fundCode).click());
   },
 
   selectFiscalYearFilter: (fiscalYear) => {
