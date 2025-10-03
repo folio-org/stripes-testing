@@ -27,7 +27,7 @@ describe('Requests Export CSV File', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C199705_Instance_${getRandomPostfix()}`,
   };
   let defaultLocation;
   let cancellationReason;
@@ -149,11 +149,13 @@ describe('Requests Export CSV File', () => {
     'C199705 Patron Comments are Displayed in Requests Export CSV File (vega)',
     { tags: ['criticalPath', 'vega', 'C199705'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.waitForAuthRefresh(() => {
+        cy.visit(TopMenu.requestsPath);
+      });
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.exportRequestToCsv();
-      Requests.checkCellInCsvFileContainsValue(fileName, 1, 31, patronComment);
+      Requests.checkCellInCsvFileContainsValue(fileName, 1, 32, patronComment);
     },
   );
 
@@ -164,6 +166,8 @@ describe('Requests Export CSV File', () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItemGui(itemData.barcode);
       AwaitingPickupForARequest.checkPatronComments(patronComment);
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.closeModal();
     },
   );
 });
