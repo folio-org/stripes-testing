@@ -68,10 +68,10 @@ describe('Fees&Fines', () => {
       Users.deleteViaApi(user.userId);
 
       feeFineType.forEach((item) => {
-        ManualCharges.deleteViaApi(item.id, false);
+        ManualCharges.deleteViaApi(item.id);
       });
       ownersData.forEach((item) => {
-        UsersOwners.deleteViaApi(item.id, false);
+        UsersOwners.deleteViaApi(item.id);
       });
     });
 
