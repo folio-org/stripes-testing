@@ -312,6 +312,9 @@ function getParentJobExecutions() {
   return cy.okapiRequest({
     path: 'metadata-provider/jobExecutions?limit=10000&sortBy=started_date,desc&subordinationTypeNotAny=COMPOSITE_CHILD&subordinationTypeNotAny=PARENT_SINGLE',
     isDefaultSearchParamsRequired: false,
+    timeout: 120000,
+    retries: 5,
+    retryDelay: 3000,
   });
 }
 
@@ -328,7 +331,8 @@ function getParentJobExecutionId(sourcePath) {
     () => getParentJobExecutions(),
     (response) => filterResponseBySourcePath(response) !== undefined,
     {
-      limit: 5,
+      limit: 6,
+      delay: 2000,
     },
   ).then((response) => {
     return filterResponseBySourcePath(response).id;
@@ -340,6 +344,9 @@ function getChildJobExecutionId(jobExecutionId) {
     () => cy.okapiRequest({
       path: `change-manager/jobExecutions/${jobExecutionId}/children`,
       isDefaultSearchParamsRequired: false,
+      timeout: 60000,
+      retries: 4,
+      retryDelay: 2000,
     }),
     (response) => response.body.jobExecutions.length > 0,
     {
@@ -358,6 +365,9 @@ function getRecordSourceId(jobExecutionId) {
       isDefaultSearchParamsRequired: false,
       searchParams: { limit: 100, query: 'order=asc' },
       failOnStatusCode: false,
+      timeout: 60000,
+      retries: 4,
+      retryDelay: 2000,
     }),
     (response) => response.body?.entries?.length > 0,
     {

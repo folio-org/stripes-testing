@@ -68,6 +68,7 @@ describe('Inventory', () => {
         BrowseContributors.checkNonExactSearchResult(
           instanceA.contributors[0],
           instanceZ.contributors[0],
+          1,
         );
         BrowseContributors.resetAllInSearchPane();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
