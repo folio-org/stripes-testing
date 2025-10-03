@@ -234,9 +234,12 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       permissions.uiOrdersCancelPurchaseOrders.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+        cy.reload();
       });
     });
   });
@@ -253,11 +256,15 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);
       Orders.cancelOrder();
+      cy.intercept('GET', '**/finance/funds*', (req) => {
+        req.reply({ body: { funds: [firstFund, secondFund], totalRecords: 2 } });
+      }).as('fundsStub');
       OrderLines.selectPOLInOrder();
       OrderLines.selectFund(firstFund.name);
+      cy.wait('@fundsStub');
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.selectTransactionInList('Encumbrance');
+      Funds.selectTransaction('row-0');
       Funds.varifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
@@ -265,6 +272,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         'Encumbrance',
         `${firstFund.name} (${firstFund.code})`,
       );
+      cy.wait('@fundsStub');
       Funds.checkStatusInTransactionDetails('Released');
 
       TopMenuNavigation.navigateToApp('Finance');
@@ -295,7 +303,9 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       );
       FinanceHelp.selectFundsNavigation();
       FinanceHelp.searchByName(firstFund.name);
+      cy.wait('@fundsStub');
       Funds.selectFund(firstFund.name);
+      cy.wait('@fundsStub');
       Funds.selectBudgetDetails();
       Funds.checkFinancialActivityAndOverages('$100.00', '$0.00', '$0.00', '$0.00', '$100.00');
       cy.visit(TopMenu.ordersPath);
@@ -308,6 +318,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       OrderLines.addFundToPolInPercentsWithoutSave(secondFund, '100');
       OrderLines.saveOrderLine();
       OrderLines.selectFund(`${secondFund.name}(${secondFund.code})`);
+      cy.wait('@fundsStub');
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
@@ -318,15 +329,19 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
+      cy.wait('@fundsStub');
       Funds.checkStatusInTransactionDetails('Unreleased');
       Funds.closeTransactionApp(secondFund, secondFiscalYear);
+      cy.wait('@fundsStub');
       Funds.closeBudgetDetails();
       Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
+      cy.wait('@fundsStub');
       Funds.selectFund(firstFund.name);
+      cy.wait('@fundsStub');
       Funds.selectPreviousBudgetDetails();
       Funds.openTransactions();
-      Funds.selectTransactionInList('Encumbrance');
+      Funds.selectTransaction('row-0');
       Funds.varifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
@@ -334,6 +349,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         'Encumbrance',
         `${firstFund.name} (${firstFund.code})`,
       );
+      cy.wait('@fundsStub');
     },
   );
 });

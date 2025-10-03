@@ -113,6 +113,18 @@ export default {
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
+  get3DaysAfterTomorrowDateForFiscalYear: () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 4);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
+  },
+
+  get4DaysAfterTomorrowDateForFiscalYear: () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 5);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
+  },
+
   getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + days);
@@ -133,6 +145,14 @@ export default {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
       currentDate.getDate() + 1,
+    )}/${currentDate.getFullYear()}`;
+  },
+
+  get3DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 4);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
   },
 

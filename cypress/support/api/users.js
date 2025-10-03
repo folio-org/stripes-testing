@@ -14,6 +14,19 @@ Cypress.Commands.add('getUsers', (searchParams) => {
   });
 });
 
+Cypress.Commands.add('getAdminUserDetails', () => {
+  if (!Cypress.env('adminUserDetails')) {
+    return cy
+      .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+      .then((users) => {
+        Cypress.env('adminUserDetails', users[0]);
+        return users[0];
+      });
+  } else {
+    return Cypress.env('adminUserDetails');
+  }
+});
+
 Cypress.Commands.add('getUserServicePoints', (userId) => {
   cy.okapiRequest({
     path: 'service-points-users',

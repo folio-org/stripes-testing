@@ -88,6 +88,12 @@ describe('Invoices', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
+      cy.intercept('GET', '/finance/funds*', {
+        body: {
+          funds: [defaultFund],
+          totalRecords: 1,
+        },
+      });
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
@@ -145,6 +151,12 @@ describe('Invoices', () => {
     },
     {
       filterActions: () => {
+        cy.intercept('GET', '/finance/funds*', {
+          body: {
+            funds: [defaultFund],
+            totalRecords: 1,
+          },
+        });
         Invoices.selectFundCodeFilter(defaultFund.code);
       },
     },
@@ -155,6 +167,12 @@ describe('Invoices', () => {
     },
     {
       filterActions: () => {
+        cy.intercept('GET', '/finance/fiscal-years*', {
+          body: {
+            funds: [defaultFiscalYear],
+            totalRecords: 1,
+          },
+        });
         Invoices.selectFiscalYearFilter(defaultFiscalYear.code);
       },
     },

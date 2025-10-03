@@ -835,6 +835,52 @@ export default {
     submitOrderLine();
   },
 
+  rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
+    fund,
+    expClass,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      SelectionOption(`${expClass}`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
+    ]);
+    cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
   fillInPOLineInfoforPEMIXWithFund(fund, unitPrice, quantity, value, institutionId) {
     cy.do([orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX), acquisitionMethodButton.click()]);
     cy.wait(2000);

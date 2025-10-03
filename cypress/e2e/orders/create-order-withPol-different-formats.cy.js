@@ -79,6 +79,12 @@ describe('ui-orders: Orders and Order lines', () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
         OrderLines.addPOLine();
+        cy.intercept('GET', '/finance/funds*', {
+          body: {
+            funds: [defaultFund],
+            totalRecords: 1,
+          },
+        });
         OrderLines.POLineInfoforElectronicResource(orderLineTitle, defaultFund);
         InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
         OrderLines.checkCreatedPOLineElectronicResource(orderLineTitle, defaultFund);

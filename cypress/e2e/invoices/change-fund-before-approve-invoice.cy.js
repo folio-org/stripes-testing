@@ -129,18 +129,24 @@ describe('Invoices', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
+      cy.intercept('GET', '**/finance/funds*', (req) => {
+        req.reply({ body: { funds: [firstFund, secondFund], totalRecords: 2 } });
+      }).as('fundsStub');
       OrderLines.fillInPOLineInfoWithFund(firstFund);
+      cy.wait('@fundsStub');
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLinePOLLookUp(orderNumber);
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changeFundInPOL(secondFund);
+      cy.wait('@fundsStub');
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

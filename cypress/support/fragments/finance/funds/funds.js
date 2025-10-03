@@ -864,6 +864,15 @@ export default {
         .click(),
     ]);
   },
+
+  openBudgetDetailsByBudgetName: (budget) => {
+    cy.do([
+      Accordion({ id: 'currentBudget' })
+        .find(MultiColumnListCell({ content: budget.name }))
+        .click(),
+    ]);
+  },
+
   checkBudgetDetails(records) {
     records
       .sort((a, b) => a.name.localeCompare(b.name))
