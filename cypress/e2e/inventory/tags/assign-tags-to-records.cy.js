@@ -113,8 +113,6 @@ describe('Inventory', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
-          cy.wait(200);
-          HoldingsRecordEdit.clearTagsInput();
           cy.wait(500);
           HoldingsRecordEdit.addTag(tag);
         });

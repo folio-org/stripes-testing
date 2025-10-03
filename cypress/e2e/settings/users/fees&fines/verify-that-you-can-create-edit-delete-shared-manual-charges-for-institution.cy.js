@@ -8,13 +8,14 @@ import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 import Users from '../../../../support/fragments/users/users';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
     const owners = [
       { id: uuid(), owner: 'Shared' },
-      { id: uuid(), owner: 'Owners_1' },
-      { id: uuid(), owner: 'Owners_2' },
+      { id: uuid(), owner: getTestEntityValue('Owners_1') },
+      { id: uuid(), owner: getTestEntityValue('Owners_2') },
     ];
     const feeFineType = [];
     const ownersData = [];
@@ -69,7 +70,6 @@ describe('Fees&Fines', () => {
       feeFineType.forEach((item) => {
         ManualCharges.deleteViaApi(item.id);
       });
-
       ownersData.forEach((item) => {
         UsersOwners.deleteViaApi(item.id);
       });
@@ -79,10 +79,12 @@ describe('Fees&Fines', () => {
       'C443 Verify that you can create/edit/delete "Shared" manual charges for institution (Spitfire) (TaaS)',
       { tags: ['extendedPath', 'vega', 'C443'] },
       () => {
-        cy.visit(SettingsMenu.manualCharges);
-        ManualCharges.waitLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.visit(SettingsMenu.manualCharges);
+          ManualCharges.waitLoading();
+        });
         ManualCharges.checkSelectedOwner(owners[0].owner);
-        cy.waitForAuthRefresh(() => {}, 20_000);
+
         owners.forEach((owner) => {
           ManualCharges.checkOwnersDropdownIncludesOption(owner.owner);
         });

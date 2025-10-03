@@ -31,7 +31,10 @@ describe('remote-storage-configuration', () => {
         Campuses.createViaApi(campus).then((loccamp) => {
           campuses = loccamp;
 
-          const library = Libraries.getDefaultLibrary({ campusId: loccamp.id });
+          const library = Libraries.getDefaultLibrary({
+            campusId: loccamp.id,
+            name: `1_autotest_library ${getRandomPostfix()}`,
+          });
           Libraries.createViaApi(library).then((loclib) => {
             libraries = loclib;
           });
@@ -68,17 +71,11 @@ describe('remote-storage-configuration', () => {
 
       // creating location
       CreateLocations.fillFolioName(locationName);
-      cy.wait(1000);
       CreateLocations.fillCode();
-      cy.wait(1000);
       CreateLocations.fillDiscoveryDisplayName();
-      cy.wait(1000);
       CreateLocations.selectRemoteStorage();
-      cy.wait(1000);
       CreateLocations.selectServicePoint();
-      cy.wait(1000);
       CreateLocations.saveAndClose();
-      cy.wait(1000);
 
       Locations.verifyRemoteStorageValue();
       cy.intercept('DELETE', '/locations/*').as('deleteLocation');

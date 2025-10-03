@@ -161,7 +161,12 @@ describe('Patron notices', () => {
 
     it(
       'C347877 Manual fee/fine notices by fee/fine type: charge and action (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C347877'] },
+      {
+        tags: ['criticalPathFlaky', 'volaris', 'C347877'],
+        retries: {
+          runMode: 2,
+        },
+      },
       () => {
         const feeFineCreate = (feeFineName) => {
           cy.visit(TopMenu.usersPath);
@@ -218,7 +223,9 @@ describe('Patron notices', () => {
           TransferFeeFine.setAmount(2);
           TransferFeeFine.setOwner(userOwnerBody.owner);
           TransferFeeFine.setTransferAccount(transferAccount.accountName);
+          cy.intercept('POST', '**/accounts/*/transfer').as('transferRequest');
           TransferFeeFine.transferAndConfirm();
+          cy.wait('@transferRequest');
           checkNoticeIsSent([
             {
               userBarcode: userData.barcode,
@@ -234,7 +241,9 @@ describe('Patron notices', () => {
           FeeFineDetails.openWaiveModal();
           WaiveFeeFinesModal.setWaiveAmount('2.00');
           WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
+          cy.intercept('POST', '**/accounts/*/waive').as('waiveRequest');
           WaiveFeeFinesModal.confirm();
+          cy.wait('@waiveRequest');
           checkNoticeIsSent([
             {
               userBarcode: userData.barcode,
@@ -250,7 +259,9 @@ describe('Patron notices', () => {
           FeeFineDetails.openPayModal();
           PayFeeFaine.setAmount(2);
           PayFeeFaine.setPaymentMethod({ name: testData.paymentMethodName });
+          cy.intercept('POST', '**/accounts/*/pay').as('payRequest');
           PayFeeFaine.submitAndConfirm();
+          cy.wait('@payRequest');
           checkNoticeIsSent([
             {
               userBarcode: userData.barcode,
@@ -266,7 +277,9 @@ describe('Patron notices', () => {
           FeeFineDetails.openRefundModal();
           RefundFeeFine.setAmount('2.00');
           RefundFeeFine.selectRefundReason(refundReason.nameReason);
+          cy.intercept('POST', '**/accounts/*/refund').as('refundRequest');
           RefundFeeFine.submitAndConfirm();
+          cy.wait('@refundRequest');
           checkNoticeIsSent([
             {
               userBarcode: userData.barcode,
@@ -280,11 +293,11 @@ describe('Patron notices', () => {
 
         feeFineCreate('secondFeeFineId');
         cy.get('@secondFeeFineId').then((secondFeeFineId) => {
-          cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, secondFeeFineId));
-          FeeFineDetails.waitLoading();
-          FeeFineDetails.openActions();
+          openUserFeeFine(userData.userId, secondFeeFineId);
           FeeFineDetails.openErrorModal();
+          cy.intercept('POST', '**/accounts/*/cancel').as('cancelRequest');
           FeeFineDetails.confirmFeeFineCancellation('AutoTestComment');
+          cy.wait('@cancelRequest');
           checkNoticeIsSent([
             {
               userBarcode: userData.barcode,

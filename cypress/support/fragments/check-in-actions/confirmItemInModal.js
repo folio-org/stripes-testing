@@ -19,6 +19,7 @@ export default {
   confirmAwaitingPickUpModal: () => {
     cy.wait(1000);
     cy.do(awaitingPickupModal.find(printSlipCheckbox).click());
+    cy.wait(1000);
     cy.do(awaitingPickupModal.find(closeButton).click());
   },
 

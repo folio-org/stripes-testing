@@ -16,24 +16,22 @@ describe('Permissions', () => {
       const newPassword = generatePassword();
       const newInvalidPassword = generatePassword();
 
-      before('Preconditions', () => {
+      beforeEach('Preconditions', () => {
         cy.getAdminToken().then(() => {
           ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
             (servicePoints) => {
               servicePointId = servicePoints[0].id;
             },
           );
-          cy.createTempUser([Permissions.uiSettingsCanChangeLoacalPassword.gui]).then(
-            (userProperties) => {
+          cy.createTempUser([Permissions.uiSettingsCanChangeLoacalPassword.gui])
+            .then((userProperties) => {
               userData = userProperties;
               UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-            },
-          );
+            })
+            .then(() => {
+              cy.login(userData.username, userData.password);
+            });
         });
-      });
-
-      beforeEach('Login', () => {
-        cy.login(userData.username, userData.password);
       });
 
       after('Deleting created entities', () => {
