@@ -30,18 +30,13 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
-            DataImport.uploadFileViaApi(
-              testData.marcBibFilePath,
-              testData.marcBibFileName,
-              testData.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs = record[testData.propertyName].id;
-              });
+          DataImport.uploadFileViaApi(
+            testData.marcBibFilePath,
+            testData.marcBibFileName,
+            testData.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdRecordIDs = record[testData.propertyName].id;
             });
           });
         });
@@ -57,7 +52,14 @@ describe('MARC', () => {
         'C380646 Derive "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C380646'] },
         () => {
-          cy.visit(TopMenu.inventoryPath);
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           InventoryInstances.searchByTitle(createdRecordIDs);
           InventoryInstance.selectTopRecord();
           InventoryInstance.deriveNewMarcBib();

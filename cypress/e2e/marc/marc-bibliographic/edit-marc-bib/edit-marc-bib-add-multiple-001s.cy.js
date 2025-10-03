@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -66,9 +66,8 @@ describe('MARC', () => {
         'C387458 Add multiple 001s when editing "MARC Bibliographic" record (spitfire)(TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C387458'] },
         () => {
-          InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
-          InventoryInstances.verifyInstanceResultListIsAbsent(false);
-          InventoryInstances.selectInstance();
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.selectInstanceById(createdRecordIDs[0]);
 
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
@@ -79,8 +78,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('', testData.tag001Content);
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();

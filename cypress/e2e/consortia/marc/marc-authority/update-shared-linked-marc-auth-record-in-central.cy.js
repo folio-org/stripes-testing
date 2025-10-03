@@ -160,10 +160,14 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
@@ -209,10 +213,14 @@ describe('MARC', () => {
         'C405927 Update shared linked "MARC Authority" record in Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C405927'] },
         () => {
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
           MarcAuthorities.selectTitle(`Shared\n${testData.authorityTitle}`);
           MarcAuthority.edit();

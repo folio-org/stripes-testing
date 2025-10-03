@@ -64,7 +64,7 @@ describe('MARC', () => {
             boxSecond: '\\',
             boxThird: '0',
             boxFourth: '$a C388504 Normal authors',
-            boxFifth: '',
+            boxFifth: '$z Jamaica $v Biography.',
             boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh99014708C388504',
             boxSeventh: '',
             linkHeadingsEnabledOrDisabled: () => {

@@ -100,17 +100,18 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
           headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
-
-          cy.intercept('/authn/refresh').as('refresh');
-          cy.login(testData.userProperties.username, testData.userProperties.password);
-          cy.reload();
-          cy.wait('@refresh', { timeout: 20_000 });
         });
       });
 
       beforeEach('Visit MARC Authorities', () => {
-        cy.visit(TopMenu.marcAuthorities);
-        MarcAuthorities.waitLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
       });
 
       after('Delete test data', () => {

@@ -81,7 +81,6 @@ describe('MARC', () => {
       );
       Logs.waitFileIsImported(testData.editedMarcFileName);
       Logs.openFileDetails(testData.editedMarcFileName);
-      cy.logout();
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,

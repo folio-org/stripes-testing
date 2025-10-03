@@ -97,10 +97,14 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20000);
           });
         });
 
@@ -154,7 +158,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag655, bib655FieldValues[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -190,7 +194,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib655AfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib655FieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

@@ -236,10 +236,14 @@ describe('Data Import', () => {
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
 
-        cy.login(users.userBProperties.username, users.userBProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);
         MarcAuthority.contains(testData.addedField);

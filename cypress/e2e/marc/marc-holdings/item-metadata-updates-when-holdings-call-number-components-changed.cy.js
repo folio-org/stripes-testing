@@ -98,7 +98,6 @@ describe('MARC', () => {
           testData.holdingsId = holdings[0].id;
         });
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,

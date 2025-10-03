@@ -179,10 +179,14 @@ describe('Inventory', () => {
             });
           });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
+          cy.reload();
+          Orders.waitLoading();
+        }, 20_000);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();

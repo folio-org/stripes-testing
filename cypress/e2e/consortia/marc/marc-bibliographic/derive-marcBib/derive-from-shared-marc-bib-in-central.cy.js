@@ -66,10 +66,14 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+            }, 20_000).then(() => {
+              InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
           });

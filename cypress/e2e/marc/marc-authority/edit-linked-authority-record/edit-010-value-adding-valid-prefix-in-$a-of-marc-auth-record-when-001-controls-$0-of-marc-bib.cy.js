@@ -89,8 +89,14 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
 
-          cy.loginAsAdmin().then(() => {
-            cy.visit(TopMenu.inventoryPath);
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
