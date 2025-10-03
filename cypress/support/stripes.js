@@ -16,6 +16,10 @@ Cypress.Commands.add(
     contentTypeHeader = 'application/json',
     failOnStatusCode = true,
     additionalHeaders = null,
+    encoding = null,
+    timeout = 30000,
+    retries = 2,
+    retryDelay = 2000,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -31,12 +35,28 @@ Cypress.Commands.add(
     if (!Cypress.env('rtrAuth')) {
       headersToSet['x-okapi-token'] = Cypress.env('token');
     }
-    cy.request({
+    let requestObject = {
       method,
       url: queryString ? `${cypressEnvPath}?${queryString}` : cypressEnvPath,
       headers: headersToSet,
       body,
       failOnStatusCode,
-    });
+      timeout,
+    };
+    if (encoding) {
+      requestObject = { ...requestObject, encoding };
+    }
+    const maxAttempts = Math.max(retries, 0) + 1;
+    const makeRequest = (attempt = 1) => cy.request(requestObject).then(
+      (response) => response,
+      (error) => {
+        if (attempt >= maxAttempts) {
+          throw error;
+        }
+        return cy.wait(retryDelay).then(() => makeRequest(attempt + 1));
+      },
+    );
+
+    return makeRequest();
   },
 );

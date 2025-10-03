@@ -36,6 +36,15 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Importing data', () => {
+      cy.getAdminToken();
+      InventoryInstances.getInstancesViaApi({
+        limit: 1000,
+        query: 'title all "C415263*"',
+      }).then((instances) => {
+        instances.forEach(({ id }) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+      });
       cy.createTempUser([Permissions.inventoryAll.gui])
         .then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;

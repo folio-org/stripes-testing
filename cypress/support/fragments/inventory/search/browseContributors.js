@@ -214,9 +214,11 @@ export default {
     ]);
   },
 
-  checkNonExactSearchResult(contributorA, contributorZ) {
+  checkNonExactSearchResult(contributorA, contributorZ, rowIndex = 0) {
     cy.expect([
-      MultiColumnListRow({ index: 0 }).has({ content: '__A_test_contributor_would be here' }),
+      MultiColumnListRow({ index: rowIndex }).has({
+        content: '__A_test_contributor_would be here',
+      }),
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
     ]);
