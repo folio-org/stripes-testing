@@ -49,38 +49,58 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add(
-  'getCapabilitiesApi',
-  (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null, query } = {}) => {
-    let constructedQuery = ignoreDummyCapabs ? 'dummyCapability==false' : '';
-    if (query) constructedQuery += constructedQuery ? ` and (${query})` : query;
-    const requestData = {
-      method: 'GET',
-      path: 'capabilities',
-      searchParams: {
-        limit,
-        query: constructedQuery,
-      },
-      isDefaultSearchParamsRequired: false,
-    };
-    if (customTimeout) requestData.customTimeout = customTimeout;
-    cy.okapiRequest(requestData).then(({ body }) => {
-      cy.wrap(body.capabilities).as('capabs');
-    });
-    return cy.get('@capabs');
-  },
-);
+// Setting up a more generic underpinning "capabilitiesQuery" so we can extend it not just for the cases below, but also for more niche use cases elsewhere
+Cypress.Commands.add('capabilitiesQuery', ({ searchParams = {}, okapiRequestParams = {} }) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'capabilities',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+    ...okapiRequestParams
+  }).then(({ body }) => {
+    return body.capabilities;
+  });
+});
 
-Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500, { query } = {}) => {
-  const searchParams = { limit };
-  if (query) searchParams.query = query;
+Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null, query } = {}) => {
+  let constructedQuery = ignoreDummyCapabs ? 'dummyCapability==false' : '';
+  if (query) constructedQuery += constructedQuery ? ` and (${query})` : query;
+
+  cy.capabilitiesQuery({
+    searchParams: {
+      limit,
+      query: constructedQuery
+    },
+    okapiRequestParams: {
+      ...(customTimeout ? { customTimeout } : {})
+    }
+  }).then((capabilities) => {
+    cy.wrap(capabilities).as('capabs');
+  });
+  return cy.get('@capabs');
+});
+
+// Setting up a more generic underpinning "capabilitySetsQuery" so we can extend it not just for the cases below, but also for more niche use cases elsewhere
+Cypress.Commands.add('capabilitySetsQuery', ({ searchParams = {}, okapiRequestParams = {} }) => {
   cy.okapiRequest({
     method: 'GET',
     path: 'capability-sets',
-    isDefaultSearchParamsRequired: false,
     searchParams,
+    isDefaultSearchParamsRequired: false,
+    ...okapiRequestParams
   }).then(({ body }) => {
-    cy.wrap(body.capabilitySets).as('capabSets');
+    return body.capabilitySets;
+  });
+});
+
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500, { query } = {}) => {
+  cy.capabilitySetsQuery({
+    searchParams: {
+      limit,
+      ...(query ? { query } : {})
+    }
+  }).then((capabilitySets) => {
+    cy.wrap(capabilitySets).as('capabSets');
   });
   return cy.get('@capabSets');
 });
@@ -543,6 +563,42 @@ Cypress.Commands.add('verifyAssignedRolesCountForUserApi', (userId, rolesCount) 
       timeout: 65000,
     },
   );
+});
+
+
+// Make use of the more generic "capabilitiesQuery" above for neat edge use case stuff
+Cypress.Commands.add('getCapabilitiesFromPermissionNames', (permissionNames) => {
+  return cy.capabilitiesQuery({
+    searchParams: {
+      query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+      limit: 1000,
+    }
+  });
+});
+
+// Make use of the more generic "capabilitySetsQuery" above for neat edge use case stuff
+Cypress.Commands.add('getCapabilitiesSetsFromPermissionNames', (permissionNames) => {
+  return cy.capabilitySetsQuery({
+    searchParams: {
+      query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+      limit: 1000,
+    }
+  });
+});
+
+Cypress.Commands.add('verifyPermissionsAgainstCapabilities', (permissionNames, capabilities, capabilitySets) => {
+  permissionNames.forEach((permissionName) => {
+    // eslint-disable-next-line no-unused-expressions
+    cy.expect(
+      capabilities.filter(
+        (capab) => capab.permission === permissionName,
+      ).length > 0 ||
+      capabilitySets.filter(
+        (set) => set.permission === permissionName,
+      ).length > 0,
+      `Capabilities/sets found for "${permissionName}"`,
+    ).to.be.true;
+  });
 });
 
 Cypress.Commands.add(
