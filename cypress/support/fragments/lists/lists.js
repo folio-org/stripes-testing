@@ -1167,4 +1167,158 @@ export const Lists = {
   ...QueryBuilder,
   ...UI,
   ...API,
+
+  verifyListsPageDisplayed() {
+    cy.expect(Pane('Lists').exists());
+    cy.expect(HTML(including('records found')).exists());
+  },
+
+  verifyInactiveFilterIsChecked() {
+    cy.expect(Checkbox('Inactive').has({ checked: true }));
+  },
+
+  selectFirstInactiveList() {
+    cy.do(
+      MultiColumnListRow({ index: 0 })
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .find(Link())
+        .click()
+    );
+  },
+
+  verifyListDetailsPageOpened() {
+    cy.expect(HTML(including('dialog')).exists());
+    cy.expect(HTML(including('records found')).exists());
+  },
+
+  verifyListTitle() {
+    cy.expect(HTML(including('heading')).exists());
+  },
+
+  verifyRecordsFoundText() {
+    cy.expect(HTML(including('records found')).exists());
+  },
+
+  verifyCloseButtonExists() {
+    cy.expect(Button({ ariaLabel: including('Close') }).exists());
+  },
+
+  verifyActionsButtonExists() {
+    cy.expect(Button('Actions').exists());
+  },
+
+  openActionsDropdown() {
+    cy.do(Button('Actions').click());
+  },
+
+  verifyActionsDropdownOptions() {
+    cy.expect([
+      HTML(including('Refresh list')).exists(),
+      HTML(including('Edit list')).exists(),
+      HTML(including('Duplicate list')).exists(),
+      HTML(including('Delete list')).exists(),
+      HTML(including('Export selected columns (CSV)')).exists(),
+      HTML(including('Export all columns (CSV)')).exists(),
+    ]);
+  },
+
+  verifyRefreshListButtonIsDisabled() {
+    cy.expect(HTML(including('Refresh list')).has({ disabled: true }));
+  },
+
+  verifyExportVisibleColumnsButtonIsDisabled() {
+    cy.expect(HTML(including('Export visible columns (CSV)')).has({ disabled: true }));
+  },
+
+  verifyExportAllColumnsButtonIsDisabled() {
+    cy.expect(HTML(including('Export all columns (CSV)')).has({ disabled: true }));
+  },
+
+  verifyEditListButtonIsEnabled() {
+    cy.expect(HTML(including('Edit list')).has({ disabled: false }));
+  },
+
+  verifyDuplicateListButtonIsEnabled() {
+    cy.expect(HTML(including('Duplicate list')).has({ disabled: false }));
+  },
+
+  verifyDeleteListButtonIsEnabled() {
+    cy.expect(HTML(including('Delete list')).has({ disabled: false }));
+  },
+
+  closeActionsDropdown() {
+    cy.do(HTML().click());
+  },
+
+  verifyListInformationAccordionExists() {
+    cy.expect(this.listInformationAccordion.exists());
+  },
+
+  verifyQueryAccordionExists() {
+    cy.expect(this.queryAccordion.exists());
+  },
+
+  collapseListInformationAccordion() {
+    cy.do(this.listInformationAccordion.clickHeader());
+  },
+
+  expandListInformationAccordion() {
+    cy.do(this.listInformationAccordion.clickHeader());
+  },
+
+  verifyListInformationAccordionCollapsed() {
+    cy.expect(this.listInformationAccordion.has({ open: false }));
+  },
+
+  verifyListInformationAccordionExpanded() {
+    cy.expect(this.listInformationAccordion.has({ open: true }));
+  },
+
+  verifyListInformationContent() {
+    cy.expect([
+      this.listInformationAccordion.find(HTML(including('Record last updated'))).exists(),
+      this.listInformationAccordion.find(HTML(including('Source'))).exists(),
+      this.listInformationAccordion.find(HTML(including('Record created'))).exists(),
+      this.listInformationAccordion.find(HTML(including('Description'))).exists(),
+      this.listInformationAccordion.find(HTML(including('Visibility'))).exists(),
+      this.listInformationAccordion.find(HTML(including('Status'))).exists(),
+      this.listInformationAccordion.find(HTML(including('Inactive'))).exists(),
+      this.listInformationAccordion.find(HTML(including('System'))).exists(),
+    ]);
+  },
+
+  collapseQueryAccordion() {
+    cy.do(this.queryAccordion.clickHeader());
+  },
+
+  expandQueryAccordion() {
+    cy.do(this.queryAccordion.clickHeader());
+  },
+
+  verifyQueryAccordionCollapsed() {
+    cy.expect(this.queryAccordion.has({ open: false }));
+  },
+
+  verifyQueryAccordionExpanded() {
+    cy.expect(this.queryAccordion.has({ open: true }));
+  },
+
+  verifyQueryContent() {
+    cy.expect([
+      this.queryAccordion.find(HTML(including('0 records found'))).exists(),
+      this.queryAccordion.find(HTML(including('The list contains no items'))).exists(),
+    ]);
+  },
+
+  closeListDetailsPage() {
+    cy.do(Button({ ariaLabel: including('Close') }).click());
+  },
+
+  verifyListDetailsPageClosed() {
+    cy.expect(HTML(including('dialog')).absent());
+  },
+
+  verifyBackOnListsLandingPage() {
+    cy.expect(Pane('Lists').exists());
+  },
 };
