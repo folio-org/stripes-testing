@@ -118,6 +118,7 @@ export default {
       saveAndCloseButton.click(),
     ]);
     cy.expect(saveAndCloseButton.absent());
+    cy.expect(Pane('Custom fields').exists());
     cy.expect(Accordion(`${data.fieldLabel} · Text field`).exists());
   },
 
@@ -151,6 +152,7 @@ export default {
       saveAndCloseButton.click(),
     ]);
     cy.expect(saveAndCloseButton.absent());
+    cy.expect(Pane('Custom fields').exists());
     cy.expect(Accordion(`${data.fieldLabel} · Checkbox`).exists());
   },
 
@@ -179,6 +181,7 @@ export default {
       saveAndCloseButton.click(),
     ]);
     cy.expect(saveAndCloseButton.absent());
+    cy.expect(Pane('Custom fields').exists());
     cy.expect(Accordion(`${data.fieldLabel} · Single select`).exists());
   },
 
