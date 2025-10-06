@@ -28,17 +28,18 @@ describe('orders: Settings', () => {
       path: SettingsMenu.ordersPONumberEditPath,
       waiter: SettingsOrders.waitLoadingEditPONumber,
     });
-    SettingsOrders.userCanEditPONumber();
-    cy.getAdminToken();
+    SettingsOrders.checkUsercaneditPONumberIfNeeded();
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewAllSettings.gui,
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
     });
   });

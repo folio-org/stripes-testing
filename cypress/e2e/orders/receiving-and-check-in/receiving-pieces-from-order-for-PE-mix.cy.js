@@ -49,8 +49,7 @@ describe('Orders', () => {
     let location;
 
     before(() => {
-      cy.getAdminToken();
-
+      cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
         effectiveLocationServicePoint = servicePoints[0];
         NewLocation.createViaApi(
@@ -62,9 +61,9 @@ describe('Orders', () => {
             order.vendor = organizationsResponse;
           });
 
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
+            Orders.selectOrdersPane();
             Orders.searchByParameter('PO number', orderNumber);
             Orders.selectFromResultsList(orderNumber);
             Orders.createPOLineViaActions();
@@ -87,8 +86,8 @@ describe('Orders', () => {
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+          path: TopMenu.orderLinesPath,
+          waiter: OrderLines.waitLoading,
         });
       });
     });
@@ -102,6 +101,7 @@ describe('Orders', () => {
       'C738 Receiving pieces from an order for P/E MIx that is set to create Items in inventory (items for receiving includes "Order closed" statuses) (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

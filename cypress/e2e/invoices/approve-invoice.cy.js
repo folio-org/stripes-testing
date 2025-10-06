@@ -51,9 +51,11 @@ describe('Invoices', () => {
     ]).then((userProperties) => {
       user = userProperties;
       Approvals.setApprovePayValue(false);
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
       });
     });
   });

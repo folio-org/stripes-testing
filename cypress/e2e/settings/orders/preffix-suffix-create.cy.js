@@ -19,15 +19,16 @@ describe('orders: Settings', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: SettingsMenu.ordersPrefixes,
+      waiter: SettingsOrders.waitLoadingOrderSettings,
+    });
 
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.ordersPrefixes);
     SettingsOrders.createPreffix(poPreffix);
     cy.visit(SettingsMenu.ordersSuffixes);
     SettingsOrders.createSuffix(poSuffix);
@@ -36,9 +37,11 @@ describe('orders: Settings', () => {
 
     cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
     });
   });

@@ -73,12 +73,15 @@ describe('Export Manager', () => {
             order.id = orderId;
             Orders.createPOLineViaActions();
             OrderLines.fillInPOLineInfoForExport('Purchase');
+            cy.wait(4000);
             OrderLines.backToEditingOrder();
             Orders.createPOLineViaActions();
             OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
+            cy.wait(4000);
             OrderLines.backToEditingOrder();
             Orders.createPOLineViaActions();
             OrderLines.fillInPOLineInfoForExport('Depository');
+            cy.wait(4000);
             Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
               orderNumber = response[0].poNumber;
             });
@@ -96,10 +99,13 @@ describe('Export Manager', () => {
           permissions.exportManagerAll.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.orderLinesPath,
+              waiter: OrderLines.waitLoading,
+            });
+            cy.reload();
+          }, 20_000);
         });
       });
 
@@ -118,7 +124,7 @@ describe('Export Manager', () => {
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
         { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
         () => {
-          Orders.selectOrderLines();
+          Orders.selectOrdersPane();
           Orders.selectFilterAcquisitionMethod('Purchase');
           Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
           Orders.resetFilters();

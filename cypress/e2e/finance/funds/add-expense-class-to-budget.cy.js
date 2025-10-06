@@ -19,9 +19,10 @@ describe('ui-finance: Funds', () => {
     allocated: 100,
   };
   before(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
-    cy.visit(SettingsMenu.expenseClassesPath);
+    cy.loginAsAdmin({
+      path: SettingsMenu.expenseClassesPath,
+      waiter: SettingsFinance.waitExpenseClassesLoading,
+    });
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
@@ -42,8 +43,9 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    });
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
@@ -57,9 +59,7 @@ describe('ui-finance: Funds', () => {
 
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.deleteExpenseClass(firstExpenseClass);
-
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 

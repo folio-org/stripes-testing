@@ -65,8 +65,9 @@ describe('Export Manager', () => {
       let orderNumber;
 
       before(() => {
-        cy.getAdminToken();
-
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+        });
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -77,7 +78,6 @@ describe('Export Manager', () => {
           organization.id = organizationsResponse;
           order.vendor = organizationsResponse;
         });
-        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
         Organizations.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
@@ -120,15 +120,18 @@ describe('Export Manager', () => {
           permissions.exportManagerDownloadAndResendFiles.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.orderLinesPath,
+              waiter: OrderLines.waitLoading,
+            });
           });
         });
       });
 
       after(() => {
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.unOpenOrder();
@@ -150,6 +153,7 @@ describe('Export Manager', () => {
         'C347885 Check view for jobs on Export Manager page (thunderjet)',
         { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
         () => {
+          Orders.selectOrdersPane();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();

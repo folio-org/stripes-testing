@@ -41,8 +41,9 @@ describe('orders: create', () => {
   let orderNumber;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
+    });
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -55,7 +56,7 @@ describe('orders: create', () => {
     });
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
@@ -65,9 +66,11 @@ describe('orders: create', () => {
 
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.orderLinesPath,
+          waiter: OrderLines.waitLoading,
+        });
       });
     });
   });
@@ -89,6 +92,7 @@ describe('orders: create', () => {
     'C665 Edit an existing PO Line on a "Pending" order (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeftBroken', 'eurekaPhase1'] },
     () => {
+      Orders.selectOrdersPane();
       Orders.selectPendingStatusFilter();
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

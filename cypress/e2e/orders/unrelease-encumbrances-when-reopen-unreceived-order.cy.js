@@ -124,10 +124,13 @@ describe('Orders', () => {
                               invoice: firstInvoice,
                               status: INVOICE_STATUSES.PAID,
                             });
-                            cy.loginAsAdmin({
-                              path: TopMenu.ordersPath,
-                              waiter: Orders.waitLoading,
+                            cy.waitForAuthRefresh(() => {
+                              cy.loginAsAdmin({
+                                path: TopMenu.orderLinesPath,
+                                waiter: OrderLines.waitLoading,
+                              });
                             });
+                            Orders.selectOrdersPane();
                             Orders.searchByParameter('PO number', orderNumber);
                             Orders.selectFromResultsList(orderNumber);
                             Orders.cancelOrder();
@@ -150,9 +153,13 @@ describe('Orders', () => {
       permissions.uiOrdersReopenPurchaseOrders.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.orderLinesPath,
+            waiter: OrderLines.waitLoading,
+          });
+        });
       });
     });
   });
@@ -166,6 +173,7 @@ describe('Orders', () => {
     'C358539 Unrelease encumbrances when reopen unreceived ongoing order with related paid invoice (Release encumbrance =true) (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderDetails.reOpenOrder({ orderNumber });

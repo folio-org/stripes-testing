@@ -84,7 +84,7 @@ describe('Receiving', () => {
   let fourthOrderNumber;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -178,10 +178,10 @@ describe('Receiving', () => {
                           secondOrderLine.purchaseOrderId = secondOrderResponse.id;
                           OrderLines.createOrderLineViaApi(secondOrderLine);
                         });
-                        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
                         Orders.createOrderViaApi(thirdOrder).then((thirdOrderResponse) => {
                           thirdOrder.id = thirdOrderResponse.id;
                           thirdOrderNumber = thirdOrderResponse.poNumber;
+                          Orders.selectOrdersPane();
                           Orders.searchByParameter('PO number', thirdOrderNumber);
                           Orders.selectFromResultsList(thirdOrderNumber);
                           OrderLines.addPOLine();

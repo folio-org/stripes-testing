@@ -30,9 +30,11 @@ describe('orders: Settings', () => {
       permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.ordersOrderTemplatesPath,
-        waiter: OrderTemplate.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.ordersOrderTemplatesPath,
+          waiter: OrderTemplate.waitLoading,
+        });
       });
     });
   });

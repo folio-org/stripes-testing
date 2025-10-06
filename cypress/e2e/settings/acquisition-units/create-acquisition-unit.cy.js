@@ -32,9 +32,11 @@ describe('Acquisition Units', () => {
       'C6728 Create acquisitions unit (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.acquisitionUnitsPath,
-          waiter: AcquisitionUnits.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.acquisitionUnitsPath,
+            waiter: AcquisitionUnits.waitLoading,
+          });
         });
         AcquisitionUnits.newAcquisitionUnit();
         AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
