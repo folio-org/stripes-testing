@@ -13,7 +13,9 @@ describe('Fees&Fines', () => {
         UsersOwners.createViaApi({ owner: uuid() }).then(({ id }) => {
           specialOwnerId = id;
         });
-        cy.visit(SettingsMenu.paymentsPath);
+        cy.waitForAuthRefresh(() => {
+          cy.visit(SettingsMenu.paymentsPath);
+        });
       });
     });
     after(() => {

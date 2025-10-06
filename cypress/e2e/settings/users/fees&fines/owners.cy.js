@@ -15,26 +15,23 @@ describe('Fees&Fines', () => {
 
     beforeEach(() => {
       cy.getAdminToken().then(() => {
-        ServicePoints.createViaApi(ServicePoints.getDefaultServicePointWithPickUpLocation()).then(
-          (response) => {
-            servicePoints.push(response.body);
-          },
-        );
-        ServicePoints.createViaApi(ServicePoints.getDefaultServicePointWithPickUpLocation()).then(
-          (response) => {
-            servicePoints.push(response.body);
-          },
-        );
-
-        cy.loginAsAdmin({ path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+          servicePoints.push(sp1);
+        });
+        ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+          servicePoints.push(sp2);
+        });
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: SettingsMenu.usersOwnersPath,
+            waiter: UsersOwners.waitLoading,
+          });
+        });
       });
     });
 
     after(() => {
       cy.getAdminToken();
-      servicePoints.forEach((servicePointId) => {
-        ServicePoints.deleteViaApi(servicePointId.id);
-      });
 
       ownerNames.forEach((ownerName) => {
         UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` }).then((owner) => UsersOwners.deleteViaApi(owner.id));
@@ -79,9 +76,11 @@ describe('Fees&Fines', () => {
 
   describe('Management of fee/fine owners', () => {
     before(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.usersOwnersPath,
-        waiter: UsersOwners.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.usersOwnersPath,
+          waiter: UsersOwners.waitLoading,
+        });
       });
     });
 
@@ -132,84 +131,56 @@ describe('Fees&Fines', () => {
       () => {
         createRegularUser().then((firstUserProperties) => {
           testUsers.push(firstUserProperties);
-
-          cy.allure().startStep('Login and open Owners settings by user1');
-          cy.login(firstUserProperties.username, firstUserProperties.password, {
-            path: SettingsMenu.usersOwnersPath,
-            waiter: UsersOwners.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(firstUserProperties.username, firstUserProperties.password, {
+              path: SettingsMenu.usersOwnersPath,
+              waiter: UsersOwners.waitLoading,
+            });
           });
-          cy.allure().endStep();
 
           // clarify should be service points be shared between existing users
-          cy.allure().startStep('Check presented owners and related service points');
           UsersOwners.getUsedServicePoints().then((usedServicePoints) => {
             addedServicePoints.push(
-              UsersOwners.defaultServicePoints.filter(
+              ServicePoints.defaultServicePoints.filter(
                 (servicePoint) => !usedServicePoints?.includes(servicePoint),
               )[0],
             );
-            cy.allure().endStep();
 
-            cy.allure().startStep(
-              'Add new owner, related with current user and not used service point',
-            );
             UsersOwners.startNewLineAdding();
             UsersOwners.fillOwner({
               name: testUsers[0].username,
               servicePoint: addedServicePoints.at(-1),
             });
             UsersOwners.saveOwner(testUsers[0].username);
-            cy.allure().endStep();
 
-            cy.allure().startStep('Verify values in Associated service points.');
             UsersOwners.startNewLineAdding();
             UsersOwners.checkUsedServicePoints(addedServicePoints);
-            cy.allure().endStep();
 
             createRegularUser().then((secondUserProperties) => {
               testUsers.push(secondUserProperties);
 
-              cy.allure().startStep('Login and open Owners settings by user2');
               cy.login(secondUserProperties.username, secondUserProperties.password, {
                 path: SettingsMenu.usersOwnersPath,
                 waiter: UsersOwners.waitLoading,
               });
-              cy.allure().endStep();
 
-              cy.allure().startStep(
-                'Verify values in Associated service points. It should not contain service point from previous step',
-              );
               UsersOwners.startNewLineAdding();
               UsersOwners.checkUsedServicePoints(addedServicePoints);
-              cy.allure().endStep();
 
-              cy.allure().startStep('Login and open Owners settings by user1');
               cy.login(firstUserProperties.username, firstUserProperties.password, {
                 path: SettingsMenu.usersOwnersPath,
                 waiter: UsersOwners.waitLoading,
               });
-              cy.allure().endStep();
 
-              // TODO:  can be not stable, review in the future
-              cy.allure().startStep(
-                'Edit last created owner, uncheck already selected service point and save changed owner  ',
-              );
               UsersOwners.unselectExistingServicePoint(addedServicePoints.at(-1));
-              cy.allure().endStep();
 
-              cy.allure().startStep('Login and open Owners settings by user2');
               cy.login(secondUserProperties.username, secondUserProperties.password, {
                 path: SettingsMenu.usersOwnersPath,
                 waiter: UsersOwners.waitLoading,
               });
-              cy.allure().endStep();
 
-              cy.allure().startStep(
-                'Verify values in Associated service points. It should contain service point from previous step',
-              );
               UsersOwners.startNewLineAdding();
               UsersOwners.checkFreeServicePointPresence(addedServicePoints.at(-1));
-              cy.allure().endStep();
               UsersOwners.cancelAdding();
               // clearing of test data collector from outdated information
               addedServicePoints.pop();

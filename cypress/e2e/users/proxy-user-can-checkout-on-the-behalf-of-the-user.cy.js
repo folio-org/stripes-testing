@@ -60,9 +60,11 @@ describe('Users', () => {
             testData.itemId = testData.folioInstances[0].itemIds[0];
           });
       });
-    cy.loginAsAdmin({
-      path: TopMenu.checkOutPath,
-      waiter: Checkout.waitLoading,
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.checkOutPath,
+        waiter: Checkout.waitLoading,
+      });
     });
   });
 

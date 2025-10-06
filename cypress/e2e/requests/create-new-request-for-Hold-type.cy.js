@@ -82,7 +82,9 @@ describe('Requests', () => {
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C545'] },
     () => {
       // Create new request with item barcode and requester barcode
-      NewRequest.openNewRequestPane();
+      cy.waitForAuthRefresh(() => {
+        NewRequest.openNewRequestPane();
+      });
       NewRequest.enterItemInfo(itemBarcode);
       NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
       NewRequest.enterRequesterBarcode(userData.barcode);
