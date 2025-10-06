@@ -186,8 +186,9 @@ describe('MARC', () => {
               QuickMarcEditor.closeCallout();
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
           cy.wait(1000);
         });

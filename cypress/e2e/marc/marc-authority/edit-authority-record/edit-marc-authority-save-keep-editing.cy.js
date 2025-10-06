@@ -80,6 +80,8 @@ describe('MARC', () => {
 
       before('Upload files', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360092');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360093');
         cy.getAdminSourceRecord().then((record) => {
           adminUser = record;
         });
