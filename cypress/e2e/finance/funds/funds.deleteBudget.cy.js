@@ -36,9 +36,11 @@ describe('ui-finance: Funds', () => {
       permissions.uiFinanceViewEditCreateFundAndBudget.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
       });
     });
   });

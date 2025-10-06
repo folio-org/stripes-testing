@@ -60,7 +60,12 @@ describe('ui-finance: Transactions', () => {
     });
     cy.createTempUser([permissions.uiFinanceCreateTransfers.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
+      });
     });
   });
 

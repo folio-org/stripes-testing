@@ -37,15 +37,19 @@ describe('ui-finance: Transactions', () => {
     });
     cy.createTempUser([permissions.uiFinanceCreateAllocations.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    });
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
@@ -53,13 +57,9 @@ describe('ui-finance: Transactions', () => {
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
     Funds.checkIsBudgetDeleted();
 
-    cy.getAdminToken();
     Funds.deleteFundViaApi(defaultFund.id);
-
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-
     Users.deleteViaApi(user.userId);
   });
 

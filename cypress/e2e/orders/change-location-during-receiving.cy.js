@@ -26,8 +26,9 @@ describe('orders: Receive piece from Order', () => {
   let servicePointId;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
+    });
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -40,11 +41,10 @@ describe('orders: Receive piece from Order', () => {
       });
     });
 
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       orderID = response.body.id;
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -61,10 +61,11 @@ describe('orders: Receive piece from Order', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.orderLinesPath,
+          waiter: OrderLines.waitLoading,
+        });
       });
     });
   });
@@ -88,6 +89,8 @@ describe('orders: Receive piece from Order', () => {
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       const displaySummary = 'autotestCaption';
+      Orders.selectOrdersPane();
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       // Receiving part

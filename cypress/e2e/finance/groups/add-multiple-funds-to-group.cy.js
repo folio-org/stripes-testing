@@ -53,7 +53,6 @@ describe('ui-finance: Groups', () => {
           firstBudget.fundId = firstFundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
         });
-        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
           secondBudget.fundId = secondFundResponse.fund.id;
@@ -67,9 +66,11 @@ describe('ui-finance: Groups', () => {
       permissions.uiFinanceViewEditDeletFundBudget.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.groupsPath,
-        waiter: Groups.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.groupsPath,
+          waiter: Groups.waitLoading,
+        });
       });
     });
   });

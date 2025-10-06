@@ -31,18 +31,19 @@ describe('Orders', () => {
     let user;
 
     before(() => {
-      cy.getAdminToken();
+      cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
       Organizations.createOrganizationViaApi(organization).then((response) => {
         organization.id = response;
         order.vendor = response;
       });
       cy.createOrderApi(order).then((orderResponse) => {
         orderNumber = orderResponse.body.poNumber;
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();
         OrderLines.POLineInfodorPhysicalMaterialForRecieve(orderLineTitle);
+        cy.wait(4000);
       });
       cy.createTempUser([
         permissions.uiOrdersView.gui,
@@ -53,8 +54,8 @@ describe('Orders', () => {
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+          path: TopMenu.orderLinesPath,
+          waiter: OrderLines.waitLoading,
         });
       });
     });
@@ -70,6 +71,7 @@ describe('Orders', () => {
       'C737 Validate when receiving a piece that the item status is updated from "On order" (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

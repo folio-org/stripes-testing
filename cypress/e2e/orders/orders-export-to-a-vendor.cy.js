@@ -37,13 +37,14 @@ describe('Export Manager', () => {
       let user;
 
       before(() => {
-        cy.getAdminToken();
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+        });
         Organizations.createOrganizationViaApi(organization).then((response) => {
           organization.id = response;
           order.vendor = organization.name;
           order.orderType = 'One-time';
         });
-        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
         Organizations.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
@@ -68,9 +69,11 @@ describe('Export Manager', () => {
           permissions.exportManagerAll.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.orderLinesPath,
+              waiter: OrderLines.waitLoading,
+            });
           });
         });
       });
@@ -86,6 +89,7 @@ describe('Export Manager', () => {
         'C350396 Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)',
         { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
         () => {
+          Orders.selectOrdersPane();
           Orders.createOrder(order, true, false).then((orderId) => {
             order.id = orderId;
             Orders.createPOLineViaActions();

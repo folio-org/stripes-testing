@@ -52,25 +52,23 @@ describe('Invoices', () => {
   let orderNumber;
 
   before(() => {
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    });
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
       });
     });
-    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -106,15 +104,19 @@ describe('Invoices', () => {
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    }, 20_000);
     Invoices.searchByParameter('All', invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.selectInvoiceLine();

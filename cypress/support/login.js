@@ -1,6 +1,14 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, Heading, including, Select, TextField, TextInput } from '../../interactors';
+import {
+  Button,
+  Dropdown,
+  Heading,
+  including,
+  Select,
+  TextField,
+  TextInput,
+} from '../../interactors';
 
 Cypress.Commands.add(
   'login',
@@ -68,7 +76,7 @@ Cypress.Commands.add('logout', () => {
 
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {
   cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), visitPath);
-  cy.getAdminToken();
+  // cy.getAdminToken();
 });
 
 Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {

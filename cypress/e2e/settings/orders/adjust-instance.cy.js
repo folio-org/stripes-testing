@@ -53,8 +53,9 @@ describe('orders: Settings', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
-
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
+    });
     ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
       effectiveLocationServicePoint = servicePoints[0];
       NewLocation.createViaApi(
@@ -66,10 +67,9 @@ describe('orders: Settings', () => {
           order.vendor = organizationsResponse;
         });
 
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-        cy.getAdminToken();
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.selectOrdersPane();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -89,15 +89,18 @@ describe('orders: Settings', () => {
       permissions.uiInventoryViewInstances.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: SettingsMenu.ordersInstanceStatusPath,
-        waiter: SettingsOrders.waitLoadingInstanceStatus,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.ordersInstanceStatusPath,
+          waiter: SettingsOrders.waitLoadingInstanceStatus,
+        });
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.orderLinesPath, waiter: OrderLines.waitLoading });
+    Orders.selectOrdersPane();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();

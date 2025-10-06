@@ -27,7 +27,9 @@ describe('Orders', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    });
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
@@ -36,22 +38,17 @@ describe('Orders', () => {
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
       });
     });
-    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -67,9 +64,11 @@ describe('Orders', () => {
       permissions.uiOrdersReopenPurchaseOrders.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
     });
   });
