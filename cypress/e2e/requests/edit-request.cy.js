@@ -44,7 +44,12 @@ describe('Requests', () => {
         EditRequest.requestStatuses.IN_TRANSIT,
         EditRequest.requestStatuses.NOT_YET_FILLED,
       ].forEach((status) => {
-        cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
+        });
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
         // EditRequest.resetFiltersAndReloadPage();
       });
