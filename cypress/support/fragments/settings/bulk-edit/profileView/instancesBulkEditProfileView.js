@@ -45,7 +45,9 @@ export default {
     cy.expect(
       bulkEditForMarcInstancesAccordion
         .find(this.getTargetRow(rowIndex))
-        .find(TextArea({ ariaLabel: 'Data', dataActionIndex: '0', textContent: value }))
+        .find(
+          TextArea({ ariaLabel: 'Data', dataActionIndex: '0', textContent: value, disabled: true }),
+        )
         .exists(),
     );
   },

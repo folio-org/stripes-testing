@@ -36,7 +36,7 @@ const electronicAccess = [
 ];
 const electronicBookplateNote = 'electronicBookplateNote';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const notes = {
   admin: 'adminNote',
   action: 'actionNote',
@@ -122,7 +122,7 @@ describe(
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.downloadMatchedResults();
 
-          const contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+          const contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
 
           ExportFile.verifyFileIncludes(fileNames.matchedRecordsCSV, [contentToVerify]);
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');

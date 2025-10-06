@@ -21,7 +21,7 @@ let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const folioInstanceWithoutElectronicAccess = {
   title: `AT_C736694_FolioInstance_NoElectronicAccess_${getRandomPostfix()}`,
 };

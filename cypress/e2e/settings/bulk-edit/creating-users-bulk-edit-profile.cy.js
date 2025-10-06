@@ -25,7 +25,7 @@ const testData = {
   emailReplace: 'newdomain.com',
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([

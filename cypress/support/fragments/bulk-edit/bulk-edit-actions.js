@@ -103,6 +103,10 @@ export default {
     cy.wait(2000);
   },
 
+  clickSelectBulkEditProfile(recordType) {
+    cy.do(Button(`Select ${recordType} bulk edit profile`).click());
+  },
+
   verifyStartBulkEditOptions() {
     cy.expect([
       startBulkEditFolioInstanceButton.exists(),
@@ -1428,7 +1432,7 @@ export default {
     cy.expect([
       SelectionOption('Administrative note').exists(),
       SelectionOption('Link text').exists(),
-      SelectionOption('Materials specified').exists(),
+      SelectionOption('Material specified').exists(),
       SelectionOption('URI').exists(),
       SelectionOption('URL public note').exists(),
       SelectionOption('URL relationship').exists(),
@@ -1852,7 +1856,7 @@ export default {
       case 'holding':
         expectedOptions = [
           ['Administrative note', 'Suppress from discovery'],
-          ['Link text', 'Materials specified', 'URI', 'URL public note', 'URL relationship'],
+          ['Link text', 'Material specified', 'URI', 'URL public note', 'URL relationship'],
           [
             'Action note',
             'Binding',
