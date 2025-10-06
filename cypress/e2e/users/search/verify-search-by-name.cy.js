@@ -49,9 +49,11 @@ describe('Users', () => {
             usersWithSameLastName[index] = newUserProperties;
           });
         });
-        cy.loginAsAdmin({
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
       });
     });
