@@ -58,11 +58,17 @@ describe('MARC', () => {
               cy.assignPermissionsToExistingUser(testData.user.userId, [
                 Permissions.uiSettingsViewAuthorityFiles.gui,
               ]);
-              cy.login(testData.user.username, testData.user.password, {
-                path: TopMenu.settingsAuthorityFilesPath,
-                waiter: ManageAuthorityFiles.waitLoading,
-              }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.user.username, testData.user.password, {
+                  path: TopMenu.settingsPath,
+                  waiter: SettingsPane.waitLoading,
+                });
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                SettingsPane.selectSettingsTab('MARC authority');
+              }, 20_000).then(() => {
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                SettingsPane.selectSettingsTab('Manage authority files');
+                ManageAuthorityFiles.waitLoading();
               });
             },
           );
@@ -145,8 +151,8 @@ describe('MARC', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             SettingsPane.waitLoading();
-            cy.visit(TopMenu.settingsAuthorityFilesPath);
-            cy.wait('@/authn/refresh', { timeout: 20000 });
+            SettingsPane.selectSettingsTab('MARC authority');
+            SettingsPane.selectSettingsTab('Manage authority files');
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();

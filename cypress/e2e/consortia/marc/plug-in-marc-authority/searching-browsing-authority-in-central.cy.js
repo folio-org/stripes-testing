@@ -72,7 +72,6 @@ describe('MARC', () => {
         })
         .then(() => {
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
             if (marcFile.tenant === 'College') {
               cy.setTenant(Affiliations.College);
             } else {
@@ -93,10 +92,14 @@ describe('MARC', () => {
         })
         .then(() => {
           cy.resetTenant();
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             InventoryInstances.searchByTitle(marcFiles[0].title);
             InventoryInstances.selectInstance();
@@ -121,8 +124,6 @@ describe('MARC', () => {
       'C404417 Searching/browsing for "MARC Authority" records in "MARC Authority" plug-in on Central tenant (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C404417'] },
       () => {
-        cy.reload();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
         InventoryInstance.verifyInstanceTitle(marcFiles[0].title);
         // 1 Click "Actions" button in the third pane → Select "Edit MARC bibliographic record" option.
         InventoryInstance.editMarcBibliographicRecord();

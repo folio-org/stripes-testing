@@ -108,12 +108,14 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               cy.reload();
               InventoryInstances.waitContentLoading();
+            }, 20_000).then(() => {
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
                 tenantNames.university,
@@ -135,7 +137,7 @@ describe('MARC', () => {
                 linkingTagAndValues.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(3000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -166,7 +168,7 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);

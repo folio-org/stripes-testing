@@ -160,7 +160,11 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.loginAsAdmin().then(() => {
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin();
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+        }, 20_000).then(() => {
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -175,15 +179,17 @@ describe('Data Import', () => {
             linkingTagAndValue.rowIndex,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        }, 20000);
       });
     });
 

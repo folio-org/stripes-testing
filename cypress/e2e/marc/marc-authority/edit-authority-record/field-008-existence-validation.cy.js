@@ -72,7 +72,7 @@ describe('MARC', () => {
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFiles = [
         {
-          marc: 'marcAuthFileForC387453.mrc',
+          marc: 'marcAuthFileForC812998.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
         },

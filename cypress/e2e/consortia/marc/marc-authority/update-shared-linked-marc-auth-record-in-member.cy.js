@@ -166,10 +166,14 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000).then(() => {
               linkingInTenants.forEach((tenants) => {
                 ConsortiumManager.switchActiveAffiliation(
                   tenants.currentTeant,
@@ -192,7 +196,7 @@ describe('MARC', () => {
                     linkingTagAndValues.rowIndex,
                   );
                   QuickMarcEditor.pressSaveAndClose();
-                  cy.wait(1500);
+                  cy.wait(3000);
                   QuickMarcEditor.pressSaveAndClose();
                   QuickMarcEditor.checkAfterSaveAndClose();
                 });
@@ -219,10 +223,14 @@ describe('MARC', () => {
         'C407633 Update shared linked "MARC Authority" record in member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C407633'] },
         () => {
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000).then(() => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             MarcAuthorities.waitLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
@@ -238,7 +246,7 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);

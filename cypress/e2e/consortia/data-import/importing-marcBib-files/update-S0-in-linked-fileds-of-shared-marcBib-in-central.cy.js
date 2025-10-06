@@ -196,14 +196,15 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.intercept('/authn/refresh').as('/authn/refresh');
-          cy.reload();
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           InventoryInstances.waitContentLoading();
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -217,7 +218,7 @@ describe('Data Import', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
@@ -261,10 +262,15 @@ describe('Data Import', () => {
             });
 
             cy.resetTenant();
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+            }, 20_000);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            InventoryInstances.waitContentLoading();
           });
         });
     });

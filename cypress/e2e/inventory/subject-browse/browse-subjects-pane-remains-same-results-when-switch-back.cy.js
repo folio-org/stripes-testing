@@ -78,10 +78,12 @@ describe('Inventory', () => {
       'C380405 Browse subjects pane remains same results when user switches to search pane and back (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C380405', 'eurekaPhase1'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        }, 20000);
         BrowseSubjects.waitForSubjectToAppear(testData.inventorySubject);
         InventorySearchAndFilter.selectBrowseSubjects();
         InventorySearchAndFilter.browseSubjectsSearch(testData.inventorySubject);

@@ -32,10 +32,12 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+          }, 20_000);
         });
       });
 
@@ -61,7 +63,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'b');
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForFirstFile);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           TopMenu.openDataImportApp();
@@ -73,7 +75,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'a');
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForSecondFile);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },

@@ -132,10 +132,12 @@ describe('MARC', () => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
           });
         });
 
@@ -174,7 +176,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(newFields[3].contentWithout$9, 8);
             QuickMarcEditor.checkContent(testData.fieldContents.tag245Content, 4);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

@@ -36,10 +36,12 @@ describe('Inventory', () => {
           });
         });
 
-        cy.login(user.userProperties.username, user.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.userProperties.username, user.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        }, 20_000);
         InventorySearchAndFilter.selectBrowseContributors();
       });
     });
