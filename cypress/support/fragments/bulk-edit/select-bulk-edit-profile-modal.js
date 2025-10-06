@@ -16,6 +16,25 @@ const closeButton = Button({ icon: 'times' });
 const searchField = TextField('Search bulk edit profiles');
 const profilesList = HTML({ className: including('profilesList-') });
 
+const verifyTextColumnSorted = (selector, sortOrder, columnName) => {
+  cy.get(selector).then(($elements) => {
+    const textValues = Array.from($elements).map((el) => el.textContent.trim());
+
+    const sortedValues = [...textValues].sort((a, b) => {
+      if (sortOrder === 'ascending') {
+        return a.localeCompare(b, undefined, { sensitivity: 'base' });
+      } else {
+        return b.localeCompare(a, undefined, { sensitivity: 'base' });
+      }
+    });
+
+    expect(textValues).to.deep.equal(
+      sortedValues,
+      `${columnName} should be sorted in ${sortOrder} order`,
+    );
+  });
+};
+
 export default {
   waitLoading(recordType = 'items') {
     const modal = getModal(recordType);
@@ -24,28 +43,32 @@ export default {
   },
 
   verifyProfilesFoundText() {
-    let actualCount = 0;
     cy.get('div[class^=modal] [class^=mclRow-]').then(($rows) => {
-      actualCount = $rows.length;
+      const actualCount = $rows.length;
+
+      cy.expect(
+        Modal()
+          .find(PaneHeader())
+          .has({
+            subtitle: `${actualCount} profile${actualCount !== 1 ? 's' : ''} found`,
+          }),
+      );
     });
-    cy.expect(
-      PaneHeader.has({
-        subtitle: `${actualCount} profile${actualCount !== 1 ? 's' : ''} found`,
-      }),
-    );
   },
 
   verifyAllModalElements() {
     cy.expect([
-      Modal().find(searchField.exists()),
-      Modal().find(closeButton.has({ disabled: false })),
-      Modal().find(profilesList.exists()),
+      Modal().find(searchField).exists(),
+      Modal().find(closeButton).has({ disabled: false }),
+      Modal().find(profilesList).exists(),
     ]);
     this.verifyProfilesFoundText();
   },
 
   selectProfile(profileName) {
-    cy.do(profilesList.find(MultiColumnListRow(including(profileName))).click());
+    cy.do(
+      profilesList.find(MultiColumnListRow(including(profileName), { isContainer: false })).click(),
+    );
   },
 
   verifyProfileInTable(name, description, userObject) {
@@ -67,7 +90,7 @@ export default {
       }),
       targetProfileRow.find(MultiColumnListCell({ column: 'Updated by' })).has({
         content: including(
-          `${userObject.lastName}, ${userObject.firstName} ${userObject.personal.middleName}`,
+          `${userObject.personal.lastName}, ${userObject.personal.firstName} ${userObject.personal.middleName || ''}`.trim(),
         ),
       }),
     ]);
@@ -79,29 +102,61 @@ export default {
 
   verifyProfilesSortedByName(sortOrder = 'ascending') {
     cy.expect(MultiColumnListHeader({ id: 'list-column-name' }).has({ sort: sortOrder }));
-  },
-
-  verifyProfilesSortedByUpdatedDate(sortOrder = 'ascending') {
-    cy.expect(MultiColumnListHeader({ id: 'list-column-updateddate' }).has({ sort: sortOrder }));
+    verifyTextColumnSorted(
+      'div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:first-child [class^="label-"]',
+      sortOrder,
+      'Profile names',
+    );
   },
 
   verifyProfilesSortedByUpdatedBy(sortOrder = 'ascending') {
     cy.expect(MultiColumnListHeader({ id: 'list-column-updatedby' }).has({ sort: sortOrder }));
+    verifyTextColumnSorted(
+      'div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:nth-child(4) [class^="label-"]',
+      sortOrder,
+      'Updated by names',
+    );
+  },
+
+  verifyProfilesSortedByUpdatedDate(sortOrder = 'ascending') {
+    cy.expect(MultiColumnListHeader({ id: 'list-column-updateddate' }).has({ sort: sortOrder }));
+
+    cy.get(
+      'div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:nth-child(3) [class^="label-"]',
+    ).then(($elements) => {
+      const updatedDates = Array.from($elements).map((el) => el.textContent.trim());
+
+      const sortedDates = [...updatedDates].sort((a, b) => {
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+
+        if (sortOrder === 'ascending') {
+          return dateA - dateB;
+        } else {
+          return dateB - dateA;
+        }
+      });
+
+      expect(updatedDates).to.deep.equal(
+        sortedDates,
+        `Updated dates should be sorted in ${sortOrder} order`,
+      );
+    });
   },
 
   changeSortOrderByName() {
     cy.do(Button({ id: 'clickable-list-column-name' }).click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   changeSortOrderByUpdatedDate() {
     cy.do(Button({ id: 'clickable-list-column-updateddate' }).click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   changeSortOrderByUpdatedBy() {
     cy.do(Button({ id: 'clickable-list-column-updatedby' }).click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   searchProfile(profileName) {
@@ -110,7 +165,7 @@ export default {
     cy.wait(1000);
   },
 
-  verifyModalClosed(recordType = 'items') {
+  verifyModalClosed(recordType) {
     const modal = getModal(recordType);
 
     cy.expect(modal.absent());

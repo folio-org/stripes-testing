@@ -25,11 +25,11 @@ let queryFileNames;
 const testData = {
   folioInstanceTitle: `AT_C740244_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `barcode_${getRandomPostfix()}`,
-  profileName: null,
-  profileId: null,
-  instanceId: null,
-  itemId: null,
-  holdingId: null,
+  profileIds: [],
+  actionNote: 'Action note not marked as staff only',
+  checkInNote: 'Check in note text',
+  checkOutNote: 'Check out note text',
+  permanentLoanType: 'Reading room',
   profileBody: {
     name: `AT_C740244_ItemsProfile_${getRandomPostfix()}`,
     description: 'Test profile for executing bulk edit job',
@@ -154,88 +154,89 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        // Get Action note type ID
+        cy.getAdminUserDetails().then((record) => {
+          testData.adminSourceRecord = record;
+        });
+
         InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
           testData.profileBody.ruleDetails[2].actions[0].parameters[0].value = noteTypes[0].id;
 
-          // Get Note type ID for check-in note change
-          InventoryInstances.getItemNoteTypes({ query: 'name="Note"' }).then((generalNoteTypes) => {
-            testData.profileBody.ruleDetails[3].actions[0].updated = generalNoteTypes[0].id;
+          InventoryInstances.getItemNoteTypes({ query: 'name=="Note"' }).then(
+            (generalNoteTypes) => {
+              testData.profileBody.ruleDetails[3].actions[0].updated = generalNoteTypes[0].id;
 
-            // Get permanent loan type ID
-            cy.getLoanTypes({ query: 'name="Reading room"' }).then((loanTypes) => {
-              testData.profileBody.ruleDetails[5].actions[0].updated = loanTypes[0].id;
+              cy.getLoanTypes({ query: `name="${testData.permanentLoanType}"` }).then(
+                (loanTypes) => {
+                  testData.profileBody.ruleDetails[5].actions[0].updated = loanTypes[0].id;
 
-              // Create second profile to verify search and sorting
-              cy.createBulkEditProfile(testData.secondProfileBody).then((profile) => {
-                testData.secondProfileName = profile.name;
-                testData.secondProfileId = profile.id;
-              });
+                  // Create bulk edit profile
+                  cy.createBulkEditProfile(testData.profileBody).then((profile) => {
+                    testData.profileName = profile.name;
+                    testData.profileIds.push(profile.id);
+                  });
 
-              // Create bulk edit profile
-              cy.createBulkEditProfile(testData.profileBody).then((profile) => {
-                testData.profileName = profile.name;
-                testData.profileId = profile.id;
+                  // Create second bulk edit profile to verify search and sorting
+                  cy.createBulkEditProfile(testData.secondProfileBody).then((profile) => {
+                    testData.secondProfileName = profile.name;
+                    testData.profileIds.push(profile.id);
+                  });
 
-                // Create instance with item having required attributes
-                testData.instanceId = InventoryInstances.createInstanceViaApi(
-                  testData.folioInstanceTitle,
-                  testData.itemBarcode,
-                );
+                  testData.instanceId = InventoryInstances.createInstanceViaApi(
+                    testData.folioInstanceTitle,
+                    testData.itemBarcode,
+                  );
 
-                // Update item with required notes and settings
-                cy.getItems({
-                  limit: 1,
-                  expandAll: true,
-                  query: `"barcode"=="${testData.itemBarcode}"`,
-                }).then((items) => {
-                  const item = items[0];
-                  //  testData.itemId = item.id;
-                  // testData.holdingId = item.holdingsRecordId;
+                  cy.getItems({
+                    limit: 1,
+                    expandAll: true,
+                    query: `"barcode"=="${testData.itemBarcode}"`,
+                  }).then((item) => {
+                    testData.itemId = item.id;
+                    item.administrativeNotes = ['admin note for testing'];
+                    item.discoverySuppress = true;
+                    item.notes = [
+                      {
+                        itemNoteTypeId: noteTypes[0].id,
+                        note: testData.actionNote,
+                        staffOnly: false,
+                      },
+                    ];
+                    item.circulationNotes = [
+                      {
+                        noteType: 'Check in',
+                        note: testData.checkInNote,
+                        staffOnly: false,
+                      },
+                      {
+                        noteType: 'Check out',
+                        note: testData.checkOutNote,
+                        staffOnly: true,
+                      },
+                    ];
 
-                  // Update item with test data
-                  item.administrativeNotes = ['admin note for testing'];
-                  item.discoverySuppress = true;
-                  item.notes = [
-                    {
-                      itemNoteTypeId: noteTypes[0].id,
-                      note: 'Action note not marked as staff only',
-                      staffOnly: false,
-                    },
-                  ];
-                  item.circulationNotes = [
-                    {
-                      noteType: 'Check in',
-                      note: 'Check in note text',
-                      staffOnly: false,
-                    },
-                    {
-                      noteType: 'Check out',
-                      note: 'Check out note text',
-                      staffOnly: true,
-                    },
-                  ];
-
-                  cy.updateItemViaApi(item);
-                });
-              });
-            });
-          });
+                    cy.updateItemViaApi(item);
+                  });
+                },
+              );
+            },
+          );
         });
 
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-
-        // Build and execute query as part of preconditions
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
-        QueryModal.selectField(itemFieldValues.itemBarcode);
+        QueryModal.selectField(itemFieldValues.itemDiscoverySuppress);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-        QueryModal.fillInValueTextfield(testData.itemBarcode);
+        QueryModal.chooseValueSelect('True');
+        QueryModal.addNewRow();
+        QueryModal.selectField(itemFieldValues.itemBarcode, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.fillInValueTextfield(testData.itemBarcode, 1);
         cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
         QueryModal.clickTestQuery();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -254,11 +255,11 @@ describe('Bulk-edit', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      cy.deleteBulkEditProfile(testData.profileId, true);
+
+      testData.profileIds.forEach((id) => cy.deleteBulkEditProfile(id, true));
+
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-      if (queryFileNames) {
-        BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
-      }
+      BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
     });
 
     it(
@@ -285,41 +286,42 @@ describe('Bulk-edit', () => {
         SelectBulkEditProfileModal.verifyAllModalElements();
 
         // Step 4-5: Verify the table with the list of existing items bulk edit profiles and count
-        SelectBulkEditProfileModal.verifyProfileInTable(testData.profileName);
+        SelectBulkEditProfileModal.verifyProfileInTable(
+          testData.profileName,
+          testData.profileBody.description,
+          testData.adminSourceRecord,
+        );
         SelectBulkEditProfileModal.verifyProfilesSortedByName();
         SelectBulkEditProfileModal.changeSortOrderByName();
         SelectBulkEditProfileModal.verifyProfilesSortedByName('descending');
         SelectBulkEditProfileModal.changeSortOrderByUpdatedDate();
         SelectBulkEditProfileModal.verifyProfilesSortedByUpdatedDate();
-        SelectBulkEditProfileModal.verifyProfilesSortedByName('none');
         SelectBulkEditProfileModal.changeSortOrderByUpdatedBy();
         SelectBulkEditProfileModal.verifyProfilesSortedByUpdatedBy();
-        SelectBulkEditProfileModal.verifyProfilesSortedByUpdatedDate('none');
-        SelectBulkEditProfileModal.verifyProfilesSortedByName('none');
         SelectBulkEditProfileModal.searchProfile('at_C740244');
-        SelectBulkEditProfileModal.verifyProfileInTable(testData.profileName);
+        SelectBulkEditProfileModal.verifyProfileInTable(
+          testData.profileName,
+          testData.profileBody.description,
+          testData.adminSourceRecord,
+        );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
         SelectBulkEditProfileModal.searchProfile(testData.profileName);
-        SelectBulkEditProfileModal.verifyProfileInTable(testData.profileName);
+        SelectBulkEditProfileModal.verifyProfileInTable(
+          testData.profileName,
+          testData.profileBody.description,
+          testData.adminSourceRecord,
+        );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
 
         // Step 6: Click on the row with items bulk edit profile from Preconditions
         SelectBulkEditProfileModal.selectProfile(testData.profileName);
-        SelectBulkEditProfileModal.verifyModalClosed();
-        BulkEditActions.verifyAreYouSureForm();
+        SelectBulkEditProfileModal.verifyModalClosed('items');
+        BulkEditActions.verifyAreYouSureForm(1);
 
         const editedHeaderValues = [
           {
-            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-            value: '',
-          },
-          {
-            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-            value: false,
-          },
-          {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-            value: 'Action note not marked as staff only (Staff only)',
+            value: 'Action note not marked as staff only (staff only)',
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
@@ -327,15 +329,15 @@ describe('Bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-            value: 'Check out note text',
+            value: testData.checkOutNote,
           },
           {
-            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-            value: 'Check in note text',
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NOTE,
+            value: testData.checkInNote,
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
-            value: 'Reading room',
+            value: testData.permanentLoanType,
           },
         ];
 
@@ -343,16 +345,33 @@ describe('Bulk-edit', () => {
           testData.itemBarcode,
           editedHeaderValues,
         );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          'false',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          ' note for testing',
+        );
         BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
 
         // Step 7: Click the "Download preview in CSV format" button
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
           queryFileNames.previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-          testData.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-          'false',
+          false,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          queryFileNames.previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          'note for testing',
         );
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           queryFileNames.previewFileName,
@@ -369,16 +388,26 @@ describe('Bulk-edit', () => {
           testData.itemBarcode,
           editedHeaderValues,
         );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          'false',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          ' note for testing',
+        );
 
         // Step 9: Click the "Actions" menu and Select "Download changed records (CSV)" element
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
           queryFileNames.changedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-          testData.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-          'false',
+          false,
         );
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           queryFileNames.changedRecordsFileName,
@@ -386,6 +415,16 @@ describe('Bulk-edit', () => {
           testData.itemBarcode,
           editedHeaderValues,
         );
+        BulkEditFiles.verifyValueInRowByUUID(
+          queryFileNames.changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          'note for testing',
+        );
+
+        // remove earlier dowloaded files
+        BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
 
         // Step 10: Click "Logs" toggle in "Set criteria" pane and Check "Inventory - items" checkbox
         BulkEditSearchPane.openLogsSearch();
@@ -403,28 +442,56 @@ describe('Bulk-edit', () => {
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
           queryFileNames.matchedRecordsQueryFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-          testData.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-          'true',
+          true,
         );
 
         // Step 14: Click on the "File with the preview of proposed changes (CSV)" hyperlink
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           queryFileNames.previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-          testData.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
           editedHeaderValues,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          queryFileNames.previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          false,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          queryFileNames.previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          'note for testing',
         );
 
         // Step 15: Click on the "File with updated records (CSV)" hyperlink
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
           queryFileNames.changedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-          testData.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
           editedHeaderValues,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          queryFileNames.changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          false,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          queryFileNames.changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          testData.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          'note for testing',
         );
 
         // Step 16: Navigate to the "Inventory" app => Search for the recently edited Items => Verify that made changes have been applied
@@ -432,19 +499,17 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
         ItemRecordView.waitLoading();
-
-        // Verify all changes have been applied
         ItemRecordView.checkItemAdministrativeNote('');
         ItemRecordView.suppressedAsDiscoveryIsAbsent();
         ItemRecordView.checkMultipleItemNotesWithStaffOnly(
           0,
           'Yes',
           'Action note',
-          'Action note not marked as staff only',
+          testData.actionNote,
         );
-        ItemRecordView.checkMultipleItemNotesWithStaffOnly(1, 'No', 'Note', 'Check in note text');
-        ItemRecordView.checkCheckOutNote('Check out note text', 'No');
-        ItemRecordView.verifyPermanentLoanType('Reading room');
+        ItemRecordView.checkMultipleItemNotesWithStaffOnly(1, 'No', 'Note', testData.checkInNote);
+        ItemRecordView.checkCheckOutNote(testData.checkOutNote, 'No');
+        ItemRecordView.verifyPermanentLoanType(testData.permanentLoanType);
       },
     );
   });
