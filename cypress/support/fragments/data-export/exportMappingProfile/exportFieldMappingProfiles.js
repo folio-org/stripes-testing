@@ -167,8 +167,8 @@ export default {
     ]);
   },
 
-  verifyProfileNameOnTheList(name) {
-    this.scrollDownIfListOfResultsIsLong();
+  verifyProfileNameOnTheList(name, isNeedToScroll = true) {
+    if (isNeedToScroll) this.scrollDownIfListOfResultsIsLong();
 
     cy.expect(MultiColumnListRow(including(name)).exists());
   },

@@ -21,19 +21,21 @@ const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
 
 export default {
-  clickProfileNameFromTheList(name) {
-    cy.wait(2000);
-    // Scroll in case the list of results is long
-    const scrollableSelector = '#search-results-list [class^=mclScrollable]';
+  clickProfileNameFromTheList(name, isNeedToScroll = true) {
+    if (isNeedToScroll) {
+      cy.wait(2000);
+      // Scroll in case the list of results is long
+      const scrollableSelector = '#search-results-list [class^=mclScrollable]';
 
-    cy.get(scrollableSelector).then(($element) => {
-      // Check if the element is scrollable
-      const hasVerticalScrollbar = $element.get(0).scrollHeight > $element.get(0).clientHeight;
+      cy.get(scrollableSelector).then(($element) => {
+        // Check if the element is scrollable
+        const hasVerticalScrollbar = $element.get(0).scrollHeight > $element.get(0).clientHeight;
 
-      if (hasVerticalScrollbar) {
-        cy.get(scrollableSelector).scrollTo('bottom');
-      }
-    });
+        if (hasVerticalScrollbar) {
+          cy.get(scrollableSelector).scrollTo('bottom');
+        }
+      });
+    }
     cy.do(MultiColumnListCell(including(name)).click());
   },
 

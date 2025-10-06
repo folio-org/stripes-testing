@@ -37,9 +37,11 @@ describe('Data Export', () => {
         cy.getInstanceById(instanceId).then((instance) => {
           instanceHRID = instance.hrid;
         });
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.dataExportPath,
+            waiter: DataExportLogs.waitLoading,
+          });
         });
       });
     });
