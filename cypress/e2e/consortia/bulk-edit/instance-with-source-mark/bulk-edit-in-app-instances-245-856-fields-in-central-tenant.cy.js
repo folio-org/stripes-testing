@@ -42,7 +42,7 @@ const electronicAccessFields = {
   newUri: 'http://www.koreascience.or.kr/journal/E1TAAE/v2n1.page http://www.ksiam.org',
 };
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const marcInstanceFields = [
   {
     tag: '008',

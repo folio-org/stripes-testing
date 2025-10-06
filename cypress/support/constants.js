@@ -482,7 +482,7 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   LC_SUBJECT_HEADINGS: 'LC Subject Headings (LCSH)',
   LC_CHILDREN_SUBJECT_HEADINGS: "LC Children's Subject Headings",
   LC_GENRE_FORM_TERMS: 'LC Genre/Form Terms (LCGFT)',
-  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCFGT)',
+  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCDGT)',
   LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC:
     'LC Medium of Performance Thesaurus for Music (LCMPT)',
   FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY: 'Faceted Application of Subject Terminology (FAST)',

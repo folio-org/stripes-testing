@@ -53,14 +53,14 @@ const localUrlRelationshipNameWithAffiliation = `${localUrlRelationship.name} ($
 const electronicAccessFields = {
   uri: 'https://www.testuri.com/uri',
   linkText: 'te;st: [sample] li*nk$text',
-  materialsSpecification: 'test materials specified',
+  materialsSpecification: 'test material specified',
   publicNote: 'url public note',
 };
 const instances = [folioInstance, marcInstance];
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
@@ -341,7 +341,7 @@ describe('Bulk-edit', () => {
             { option: 'URI', action: 'Find', value: electronicAccessFields.uri },
             { option: 'Link text', action: 'Find', value: electronicAccessFields.linkText },
             {
-              option: 'Materials specified',
+              option: 'Material specified',
               action: 'Find',
               value: electronicAccessFields.materialsSpecification,
             },

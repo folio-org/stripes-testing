@@ -38,9 +38,9 @@ const marcInstance = {
   title: `AT_C663269_MarcInstance_${postfix}`,
 };
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const electronicAccessFields = {
   uri: 'http://proxy.library.tamu.edu/login?url=http://congressional.proquest.com/congcomp/getdoc?SERIAL-SET-ID=12247+H.rp.1979',
   urlPublicNote: 'Connect to the full text of this electronic book',

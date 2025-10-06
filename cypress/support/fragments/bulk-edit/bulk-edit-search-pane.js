@@ -58,7 +58,7 @@ const electronicAccessTableHeaders = [
   'URL relationship',
   'URI',
   'Link text',
-  'Materials specified',
+  'Material specified',
   'URL public note',
 ];
 const formMap = {
@@ -1392,7 +1392,7 @@ export default {
   },
 
   verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
-    cy.get('[class^="EmbeddedTable-"]')
+    cy.get('[class^="DynamicTable-"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')
@@ -1413,7 +1413,7 @@ export default {
         cy.get(`[data-row-index="row-${rowIndex}"]`)
           .eq(0)
           .within(() => {
-            cy.get('[class^="EmbeddedTable-"]')
+            cy.get('[class^="DynamicTable-"]')
               .find('tr')
               .eq(0)
               .then((headerRow) => {
@@ -1436,7 +1436,7 @@ export default {
         cy.get(`[data-row-index="row-${rowIndex}"]`)
           .eq(0)
           .within(() => {
-            cy.get('[class^="EmbeddedTable-"]')
+            cy.get('[class^="DynamicTable-"]')
               .find('tbody tr')
               .should(($rows) => {
                 // Check if any row contains all our expected values

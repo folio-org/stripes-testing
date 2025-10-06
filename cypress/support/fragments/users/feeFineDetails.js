@@ -1,6 +1,7 @@
-import { Button, HTML, KeyValue, Pane, including } from '../../../../interactors';
+import { Button, HTML, KeyValue, Pane, including, TextArea, Modal } from '../../../../interactors';
 
 const rootPane = Pane({ id: 'pane-account-action-history' });
+const errorModal = Modal({ id: 'error-modal' });
 
 export default {
   waitLoading: () => {
@@ -75,5 +76,31 @@ export default {
         );
       }
     });
+  },
+  verifyWaiveReasonInHistory: (reasonName) => {
+    cy.expect(HTML(including(reasonName)).exists());
+  },
+  verifyNoCommentInHistory: () => {
+    cy.expect(HTML(including('Additional information for staff')).absent());
+  },
+  checkComment: (comment) => {
+    cy.expect(HTML(including(comment)).exists());
+  },
+  cancelAsError: (comment) => {
+    cy.do(Button('Actions').click());
+    cy.wait(500);
+    cy.do(Button('Error').click());
+    cy.wait(500);
+    cy.do(errorModal.find(TextArea({ name: 'comment' })).fillIn(''));
+    cy.expect(errorModal.find(HTML(including('Comment must be provided'))).exists());
+    cy.do([
+      errorModal.find(TextArea({ name: 'comment' })).fillIn(comment),
+      Button({ type: 'submit' }).click(),
+    ]);
+    cy.wait(1000);
+  },
+  closeDetails: () => {
+    cy.do(Button({ icon: 'times' }).click());
+    cy.wait(500);
   },
 };
