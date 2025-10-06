@@ -42,13 +42,13 @@ describe('MARC', () => {
         const marcFilesForCentral = [
           {
             marc: 'marcBibFileForC405559_1.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcBibFileC405559-1.${getRandomPostfix()}.mrc`,
             propertyName: 'instance',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
           {
             marc: 'marcAuthFileForC405559.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcAuthFileC405559.${getRandomPostfix()}.mrc`,
             propertyName: 'authority',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           },
@@ -57,7 +57,7 @@ describe('MARC', () => {
         const marcFilesForMember = [
           {
             marc: 'marcBibFileForC405559_2.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcBibFileC405559-2.${getRandomPostfix()}.mrc`,
             propertyName: 'instance',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
@@ -100,7 +100,7 @@ describe('MARC', () => {
 
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin()
+              cy.getAdminToken()
                 .then(() => {
                   marcFilesForCentral.forEach((marcFile) => {
                     DataImport.uploadFileViaApi(
@@ -115,8 +115,14 @@ describe('MARC', () => {
                   });
                 })
                 .then(() => {
-                  TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-                  InventoryInstances.waitContentLoading();
+                  cy.waitForAuthRefresh(() => {
+                    cy.loginAsAdmin({
+                      path: TopMenu.inventoryPath,
+                      waiter: InventoryInstances.waitContentLoading,
+                    });
+                    cy.reload();
+                    InventoryInstances.waitContentLoading();
+                  }, 20_000);
                   InventoryInstances.searchByTitle(createdRecordIDs[0]);
                   InventoryInstances.selectInstance();
                   InventoryInstance.editMarcBibliographicRecord();
@@ -151,10 +157,14 @@ describe('MARC', () => {
                 });
               });
 
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000).then(() => {
                 ConsortiumManager.switchActiveAffiliation(
                   tenantNames.central,
                   tenantNames.university,
@@ -234,6 +244,11 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(
+              linkingTagAndValues.authorityHeading,
+              true,
+              true,
+            );
             BrowseContributors.browse(linkingTagAndValues.authorityHeading);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,

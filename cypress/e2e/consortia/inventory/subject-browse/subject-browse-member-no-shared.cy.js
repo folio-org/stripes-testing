@@ -115,11 +115,15 @@ describe('Inventory', () => {
             });
           });
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          }, 20_000).then(() => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
@@ -151,8 +155,6 @@ describe('Inventory', () => {
       'C422238 Verify that subject from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local subject, but another tenant has) (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C422238'] },
       () => {
-        cy.reload();
-        InventoryInstances.waitContentLoading();
         BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[1].value);
         InventorySearchAndFilter.switchToBrowseTab();

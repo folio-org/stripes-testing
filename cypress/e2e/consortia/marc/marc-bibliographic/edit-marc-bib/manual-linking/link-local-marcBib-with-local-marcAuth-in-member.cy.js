@@ -43,13 +43,13 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileForC405560.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcBibFileC405560.${getRandomPostfix()}.mrc`,
             propertyName: 'instance',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
           {
             marc: 'marcAuthFileForC405560.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcAuthFileC405560.${getRandomPostfix()}.mrc`,
             propertyName: 'authority',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           },
@@ -159,7 +159,7 @@ describe('MARC', () => {
               linkingTagAndValues.seventhBox,
             );
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
@@ -177,6 +177,11 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(
+              linkingTagAndValues.authorityHeading,
+              true,
+              true,
+            );
             BrowseContributors.browse(linkingTagAndValues.authorityHeading);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,

@@ -41,12 +41,7 @@ describe('MARC', () => {
         let createdAuthorityID;
 
         before('Create test data', () => {
-          cy.getAdminToken();
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
-            DataImport.waitLoading();
+          cy.getAdminToken().then(() => {
             cy.setTenant(Affiliations.College);
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405544');
             DataImport.uploadFileViaApi(
@@ -80,16 +75,16 @@ describe('MARC', () => {
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               ]);
 
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              }).then(() => {
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                cy.intercept('/authn/refresh').as('/authn/refresh');
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-                MarcAuthorities.waitLoading();
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.marcAuthorities,
+                  waiter: MarcAuthorities.waitLoading,
+                });
                 cy.reload();
-                cy.wait('@/authn/refresh', { timeout: 20000 });
+                MarcAuthorities.waitLoading();
+              }, 20_000).then(() => {
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 MarcAuthorities.waitLoading();
               });
             },

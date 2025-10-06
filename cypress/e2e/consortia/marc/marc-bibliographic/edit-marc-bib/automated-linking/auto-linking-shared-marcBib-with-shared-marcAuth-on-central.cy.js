@@ -123,7 +123,7 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
+              cy.getAdminToken().then(() => {
                 marcFiles.forEach((marcFile) => {
                   DataImport.uploadFileViaApi(
                     marcFile.marc,
@@ -140,10 +140,16 @@ describe('MARC', () => {
                   QuickMarcEditor.setRulesForField(tag, true);
                 });
 
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
+                cy.waitForAuthRefresh(() => {
+                  cy.login(users.userProperties.username, users.userProperties.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
+                  InventoryInstances.waitContentLoading();
+                }, 20_000);
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               });
             });
         });

@@ -84,11 +84,15 @@ describe('Inventory', () => {
             });
           });
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            InventoryInstances.waitContentLoading();
           });
         });
       });

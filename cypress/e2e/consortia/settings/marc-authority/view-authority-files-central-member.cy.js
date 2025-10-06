@@ -9,6 +9,7 @@ import getRandomPostfix, {
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -69,11 +70,16 @@ describe('MARC', () => {
           'C430207 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and Member tenants (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C430207'] },
           () => {
-            cy.login(testData.userA.username, testData.userA.password, {
-              path: TopMenu.settingsAuthorityFilesPath,
-              waiter: ManageAuthorityFiles.waitContentLoading,
-            }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userA.username, testData.userA.password, {
+                path: TopMenu.settingsPath,
+                waiter: SettingsPane.waitLoading,
+              });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              SettingsPane.selectSettingsTab('MARC authority');
+            }, 20_000).then(() => {
+              SettingsPane.selectSettingsTab('Manage authority files');
+              ManageAuthorityFiles.waitLoading();
               ManageAuthorityFiles.checkAuthorityFilesTableExists();
               ManageAuthorityFiles.verifyTableHeaders();
               ManageAuthorityFiles.checkActiveTooltipButtonShown();
@@ -82,7 +88,9 @@ describe('MARC', () => {
               ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
 
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              cy.visit(TopMenu.settingsAuthorityFilesPath);
+              SettingsPane.waitLoading();
+              SettingsPane.selectSettingsTab('MARC authority');
+              SettingsPane.selectSettingsTab('Manage authority files');
               ManageAuthorityFiles.waitContentLoading();
               ManageAuthorityFiles.checkAuthorityFilesTableExists();
               ManageAuthorityFiles.verifyTableHeaders();
@@ -103,7 +111,10 @@ describe('MARC', () => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(TopMenu.settingsAuthorityFilesPath);
+            cy.visit(TopMenu.settingsPath);
+            SettingsPane.waitLoading();
+            SettingsPane.selectSettingsTab('MARC authority');
+            SettingsPane.selectSettingsTab('Manage authority files');
             ManageAuthorityFiles.waitContentLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
             ManageAuthorityFiles.verifyTableHeaders();

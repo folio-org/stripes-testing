@@ -94,10 +94,12 @@ describe('MARC', () => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
           });
         });
 

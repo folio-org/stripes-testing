@@ -79,10 +79,14 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000).then(() => {
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
                 tenantNames.university,
@@ -110,7 +114,7 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.checkPresentedText(testData.instanceTitle);
 
-          InventoryInstance.deriveNewMarcBib();
+          InventoryInstance.deriveNewMarcBibRecord();
           QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);

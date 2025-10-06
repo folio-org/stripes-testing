@@ -84,9 +84,8 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.resetTenant();
-          cy.loginAsAdmin().then(() => {
+          cy.getAdminToken().then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
               if (marcFile.tenant === 'College') {
                 cy.setTenant(Affiliations.College);
               } else {
@@ -106,12 +105,14 @@ describe('Inventory', () => {
             });
           });
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             cy.reload();
             InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

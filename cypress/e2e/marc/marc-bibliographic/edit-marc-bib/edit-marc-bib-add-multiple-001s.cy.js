@@ -49,10 +49,12 @@ describe('MARC', () => {
             });
           });
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000);
         });
       });
 
@@ -80,7 +82,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
