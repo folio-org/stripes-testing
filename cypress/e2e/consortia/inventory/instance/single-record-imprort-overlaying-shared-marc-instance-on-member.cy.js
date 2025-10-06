@@ -53,7 +53,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.uiInventorySingleRecordImport.gui,
             Permissions.uiInventoryViewCreateEditInstances.gui,
-            Permissions.settingsDataImportView.gui,
+            Permissions.settingsDataImportEnabled.gui,
           ]);
           cy.resetTenant();
 

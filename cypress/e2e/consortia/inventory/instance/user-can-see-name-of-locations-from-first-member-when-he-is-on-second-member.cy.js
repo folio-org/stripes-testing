@@ -122,15 +122,17 @@ describe('Inventory', () => {
           );
           InventoryInstance.openHoldingView();
           HoldingsRecordView.waitLoading();
-          HoldingsRecordView.checkTitle(testData.locationName);
+          HoldingsRecordView.checkTitle(`Holdings • ${testData.locationName}`);
           HoldingsRecordView.close();
           InventoryInstance.expandMemberSubSubHoldings(
-            'university',
+            Affiliations.University,
             testData.instanceIds.holdings[0].id,
           );
           InventoryInstance.openItemByBarcode(testData.itemBarcode);
           ItemRecordView.verifyEffectiveLocationForItemInDetails(testData.locationName);
-          ItemRecordView.verifyHoldingsPermanentLocation(`${testData.locationName} (Consortium)`);
+          ItemRecordView.verifyHoldingsPermanentLocation(
+            `${testData.locationName} (${tenantNames.university})`,
+          );
           ItemRecordView.verifyItemEffectiveLocation(testData.locationName);
         },
       );

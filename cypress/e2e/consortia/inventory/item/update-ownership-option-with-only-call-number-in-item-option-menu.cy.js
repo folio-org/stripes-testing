@@ -274,6 +274,7 @@ describe('Inventory', () => {
           });
           ItemRecordView.clickUpdateOwnership();
           UpdateOwnershipModal.selectAffiliation(tenantNames.university);
+          cy.wait(3000);
           UpdateOwnershipModal.validateLocationDropdown(
             `${testData.universityTenant.secondLocationName} > ${testData.universityTenant.secondHoldings.callNumber}`,
           );
