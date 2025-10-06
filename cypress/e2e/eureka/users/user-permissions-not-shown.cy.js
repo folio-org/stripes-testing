@@ -22,10 +22,12 @@ describe('Eureka', () => {
         cy.createUserGroupApi().then((group) => {
           testData.userGroup = group;
         });
-        cy.loginAsAdmin({
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.usersPath,
+            waiter: Users.waitLoading,
+          });
+        }, 20_000);
       });
     });
 

@@ -456,13 +456,13 @@ export default {
     );
     cy.do([searchInputInAssignModal.fillIn(username), searchButtonInAssignModal.click()]);
     cy.wait(2000);
-    cy.do(targetCheckbox.click());
-    cy.expect([
-      targetCheckbox.has({ checked: isSelected }),
+    cy.expect(
       resultsPaneInAssignModal
         .find(MultiColumnList({ columns: assignModalResultColumns }))
         .exists(),
-    ]);
+    );
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
     cy.wait(2000);
   },
 

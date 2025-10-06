@@ -100,10 +100,12 @@ describe('Eureka', () => {
           testData.roleDId,
         ]);
       }
-      cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-        waiter: UsersCard.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.tempUser.username, testData.tempUser.password, {
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
+        });
+      }, 20_000);
     });
 
     after('Delete roles, users', () => {
@@ -124,6 +126,8 @@ describe('Eureka', () => {
       'C466114 Unassigning roles when editing user (eureka)',
       { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C466114'] },
       () => {
+        UsersSearchPane.searchByKeywords(testData.userA.userId);
+        UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('4');
         UserEdit.openEdit();
         UserEdit.checkUserEditPaneOpened();
@@ -177,8 +181,6 @@ describe('Eureka', () => {
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-        Users.waitLoading();
-        UsersSearchPane.searchByKeywords(testData.userA.userId);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('2');
         UserEdit.openEdit();

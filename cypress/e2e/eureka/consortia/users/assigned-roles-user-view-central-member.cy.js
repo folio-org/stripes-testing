@@ -5,7 +5,6 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -95,10 +94,12 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.testUser.userId);
-        cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.tempUser.username, testData.tempUser.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+          Users.waitLoading();
+        }, 20_000);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
 
@@ -122,7 +123,6 @@ describe('Eureka', () => {
         { tags: ['criticalPathECS', 'eureka', 'C514892'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           UsersCard.verifyUserRolesCounter('0');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);

@@ -14,7 +14,7 @@ describe('Eureka', () => {
       describe('Assigning users', () => {
         const randomString = generateItemBarcode();
         const testData = {
-          lastName: `TestC442842User${randomString}`,
+          lastName: `TestC451629User${randomString}`,
           userEmail: 'test@folio.org',
           username: `userc448284${randomString}`,
           roleName: `Auto Role C451629 ${randomString}`,
@@ -51,10 +51,12 @@ describe('Eureka', () => {
               capabsToAssign,
               capabSetsToAssign,
             );
-            cy.login(testData.tempUser.username, testData.tempUser.password, {
-              path: TopMenu.usersPath,
-              waiter: Users.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.tempUser.username, testData.tempUser.password, {
+                path: TopMenu.usersPath,
+                waiter: Users.waitLoading,
+              });
+            }, 20_000);
           });
         });
 
