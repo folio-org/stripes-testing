@@ -339,6 +339,7 @@ describe('Bulk-edit', () => {
               localUrlRelationship.name,
               newElectronicAccessFields.uri,
               newElectronicAccessFields.linkText,
+              '-',
               newElectronicAccessFields.publicNote,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(
@@ -349,6 +350,7 @@ describe('Bulk-edit', () => {
               localUrlRelationship.name,
               newElectronicAccessFields.uri,
               newElectronicAccessFields.linkText,
+              '-',
               newElectronicAccessFields.publicNote,
               1,
             );

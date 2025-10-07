@@ -347,7 +347,7 @@ describe('Bulk-edit', () => {
               sharedUrlRelationshipData.payload.name,
               electronicAccessFieldsEdited.uri,
               electronicAccessFieldsEdited.linkText,
-
+              '-',
               electronicAccessFieldsEdited.publicNote,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(
@@ -361,6 +361,7 @@ describe('Bulk-edit', () => {
               electronicAccessFieldsEdited.uri,
               electronicAccessFieldsEdited.linkText,
               electronicAccessFieldsEdited.publicNote,
+              '-',
               1,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(

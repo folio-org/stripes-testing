@@ -344,6 +344,7 @@ describe('Data Import', () => {
           holdingsElectronicAccessData.urlRelationship,
           holdingsElectronicAccessData.uri,
           holdingsElectronicAccessData.linkTextUMass,
+          '-',
           holdingsElectronicAccessData.urlPublicNote,
         );
       },

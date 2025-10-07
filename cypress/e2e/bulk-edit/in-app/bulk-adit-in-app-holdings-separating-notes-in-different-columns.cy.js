@@ -47,9 +47,7 @@ const editedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, ''],
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
-const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
+const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 
 function verifyFileContent(fileName, headerValuePairs) {
   headerValuePairs.forEach((pair) => {
@@ -140,11 +138,7 @@ describe('Bulk-edit', () => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(
-        matchedRecordsFileName,
-        previewFileName,
-        changedRecordsFileName,
-      );
+      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
     it(
@@ -171,7 +165,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
-        verifyFileContent(matchedRecordsFileName, initialValueSets);
+        verifyFileContent(fileNames.matchedRecordsCSV, initialValueSets);
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
@@ -203,7 +197,7 @@ describe('Bulk-edit', () => {
         });
 
         BulkEditActions.downloadPreview();
-        verifyFileContent(previewFileName, editedValueSets);
+        verifyFileContent(fileNames.previewRecordsCSV, editedValueSets);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner();
@@ -218,7 +212,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        verifyFileContent(changedRecordsFileName, editedValueSets);
+        verifyFileContent(fileNames.changedRecordsCSV, editedValueSets);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
