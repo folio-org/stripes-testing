@@ -35,6 +35,19 @@ export default {
       });
     });
   },
+  setWaivedCommentRequired() {
+    this.getDefaultCommentRequiredFlags().then((response) => {
+      cy.okapiRequest({
+        method: REQUEST_METHOD.PUT,
+        path: `comments/${response.id}`,
+        body: {
+          ...response,
+          waived: 'true',
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    });
+  },
   waitLoading: () => cy.expect(commentRequiredForm.find(PaneHeader('Fee/fine: Comment required')).exists()),
   clickSaveButton() {
     cy.do(saveButton.click());
