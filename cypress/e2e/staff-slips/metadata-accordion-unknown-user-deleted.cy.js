@@ -55,7 +55,11 @@ describe('Staff slips', () => {
         });
 
         cy.getAdminToken();
-        Users.deleteViaApi(userData.userId);
+        Users.deleteViaApi(userData.userId).then((status) => {
+          if (status !== 204) {
+            throw new Error(`User with id=${userData.userId} was not deleted`);
+          }
+        });
 
         cy.createTempUser(
           [Permissions.uiCirculationCreateEditRemoveStaffSlips.gui, Permissions.uiUsersView.gui],
