@@ -130,7 +130,7 @@ describe('Orders', () => {
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.addPOLine();
         OrderLines.preparePOLToPackage(packageNameForPol);
-        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.institutionId);
+        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.code);
         OrderLines.expandPackageTitles();
         OrderLines.addPackageTitle();
         OrderLines.selectInstanceInSelectInstanceModal(testData.firstSharedInstance.title, 0);

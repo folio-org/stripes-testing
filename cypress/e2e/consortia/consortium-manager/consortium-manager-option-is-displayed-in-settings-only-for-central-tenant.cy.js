@@ -4,8 +4,8 @@ import Users from '../../../support/fragments/users/users';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import TopMenu from '../../../support/fragments/topMenu';
+import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -23,17 +23,18 @@ describe('Consortia', () => {
           cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
           UsersSearchPane.searchByUsername(user.username);
           UsersSearchPane.openUser(user.username);
-          UserEdit.assignAllPermissionsToTenant(tenantNames.college, 'Settings');
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(user.userId, [
-            Permissions.consortiaSettingsSettingsMembershipEdit.gui,
-            Permissions.consortiaSettingsSettingsMembershipView.gui,
+            Capabilities.UIConsortiaSettingsMembershipView,
+            Capabilities.UIConsortiaSettingsMembershipEdit,
           ]);
 
           cy.resetTenant();
-          cy.login(user.username, user.password, {
-            path: SettingsMenu.consortiumManagerPath,
-            waiter: ConsortiumManager.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: SettingsMenu.consortiumManagerPath,
+              waiter: ConsortiumManager.waitLoading,
+            });
           });
         });
     });
@@ -49,8 +50,7 @@ describe('Consortia', () => {
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
         ConsortiumManager.verifyConsortiumManagerOnPage();
-        ConsortiumManager.switchActiveAffiliationExists();
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         ConsortiumManager.verifyConsortiumManagerIsAbsent();
       },

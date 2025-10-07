@@ -403,6 +403,10 @@ export default {
     cy.wait('@createUser', { timeout: 130000 });
   },
 
+  clickSaveAndClose: () => {
+    cy.do(Button({ id: 'clickable-save' }).click());
+  },
+
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
