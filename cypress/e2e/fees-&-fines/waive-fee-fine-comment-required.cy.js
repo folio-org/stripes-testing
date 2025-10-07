@@ -95,7 +95,7 @@ describe('Fees&Fines', () => {
       'C467 Verify "Waive fee/fine" behavior when \'Require comment when fee/fine fully/partially waived\' is set to Yes (vega)',
       { tags: ['extendedPath', 'vega', 'C467'] },
       () => {
-        // Step 1: Find active user's User Information/ Expand the Fees/Fines section
+        // Find active user's User Information/ Expand the Fees/Fines section
         UsersSearchPane.searchByKeywords(user.username);
         UsersCard.waitLoading();
         UsersCard.openFeeFines();
