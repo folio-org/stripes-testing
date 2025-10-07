@@ -31,9 +31,11 @@ describe('eHoldings', () => {
           permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
           eHoldingSearch.switchToTitles();
           eHoldingsTitlesSearch.bySubject('chemical engineering');
@@ -173,9 +175,11 @@ describe('eHoldings', () => {
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
 
           const title = 'Journal of Fish Biology';
@@ -196,9 +200,11 @@ describe('eHoldings', () => {
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
           });
 
           const selectedResource = {

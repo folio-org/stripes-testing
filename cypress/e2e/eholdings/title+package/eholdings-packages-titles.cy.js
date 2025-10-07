@@ -22,10 +22,11 @@ describe('eHoldings', () => {
         Permissions.uieHoldingsRecordsEdit.gui,
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
-
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+          });
         }).then(() => {
           EHoldingSearch.switchToPackages();
         });

@@ -1,10 +1,10 @@
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { APPLICATION_NAMES } from '../../../support/constants';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
@@ -41,8 +41,12 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
         testData.user = resUserProperties;
-        cy.login(resUserProperties.username, resUserProperties.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.waitForAuthRefresh(() => {
+          cy.login(resUserProperties.username, resUserProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        });
       });
     });
 

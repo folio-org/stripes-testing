@@ -33,10 +33,11 @@ describe('Note creation', () => {
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
-
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: urlToEholdings,
+          waiter: NotesEholdings.waitLoading,
+        });
       });
     });
   });
@@ -84,9 +85,11 @@ describe('Note creation', () => {
     'C359004 A user can view Notes that were created by deleted user (spitfire)',
     { tags: ['smoke', 'spitfire', 'C359004'] },
     () => {
-      cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
+          path: urlToEholdings,
+          waiter: NotesEholdings.waitLoading,
+        });
       });
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteTitle(note.title);
