@@ -118,10 +118,10 @@ describe('Inventory', () => {
           );
           InventoryInstance.openHoldingView();
           HoldingsRecordView.waitLoading();
-
           HoldingsRecordView.close();
+
           InventoryInstance.expandMemberSubSubHoldings(
-            'college',
+            Affiliations.College,
             testData.instanceIds.holdings[0].id,
           );
           InventoryInstance.openItemByBarcode(testData.itemBarcode);

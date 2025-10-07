@@ -24,6 +24,7 @@ const singleRecordImportsAccordion = Accordion('Inventory single record imports'
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
 const errorsInImportAccordion = Accordion('Errors in import');
 const jobProfileAccordion = Accordion({ id: 'profileIdAny' });
+const userAccordion = Accordion({ id: 'userId' });
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
@@ -224,7 +225,10 @@ export default {
   },
 
   filterJobsByUser(user) {
-    cy.do([Selection({ value: including('Choose user') }).open(), SelectionList().select(user)]);
+    cy.do([
+      userAccordion.find(Selection({ value: including('Choose user') })).open(),
+      SelectionList().select(user),
+    ]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {

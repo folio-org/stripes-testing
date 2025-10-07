@@ -1196,9 +1196,9 @@ export default {
     cy.expect(singleRecordImportModal.exists());
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
       if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
-        cy.do(importTypeSelect.choose('OCLC WorldCat'));
+        cy.do(singleRecordImportModal.find(importTypeSelect).choose('OCLC WorldCat'));
       }
-      cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
+      cy.do(singleRecordImportModal.find(Select({ name: 'selectedJobProfileId' })).choose(profile));
       cy.wait(1500);
       cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
       cy.wait(1500);

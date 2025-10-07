@@ -8,7 +8,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
@@ -37,10 +36,9 @@ describe('Inventory', () => {
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
@@ -73,12 +71,14 @@ describe('Inventory', () => {
             testData.updatedInstanceTitle,
             FileDetails.columnNameInResultList.title,
           );
-          [
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
+          );
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-          });
+          );
         },
       );
     });

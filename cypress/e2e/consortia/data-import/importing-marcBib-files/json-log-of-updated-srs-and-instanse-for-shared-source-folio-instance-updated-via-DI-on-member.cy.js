@@ -7,8 +7,8 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
-import { Permissions } from '../../../../support/dictionary';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -28,11 +28,12 @@ import {
 } from '../../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
-import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
@@ -48,31 +49,29 @@ describe('Data Import', () => {
           modifiedMarcFile: `C417044 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
           editedMarcFile: `C417044 editedTestMarcFile${getRandomPostfix()}.mrc`,
         },
+        heldByAccordionName: 'Held by',
       };
       const mappingProfile = {
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C417044 Update shared Instance using marc-to-marc${getRandomPostfix()}`,
-        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-        update: true,
       };
       const actionProfile = {
-        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C417044 Update shared Instance using marc-to-marc${getRandomPostfix()}`,
         action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
       };
       const matchProfile = {
-        profileName: `C417044 001-to-001 marc bib match${getRandomPostfix()}`,
+        profileName: `C417044 001-to-Hrid match for update${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '001',
         },
-        existingRecordFields: {
-          field: '001',
-        },
         matchCriterion: 'Exactly matches',
-        existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+        existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+        instanceOption: NewMatchProfile.optionsList.instanceHrid,
       };
       const jobProfile = {
         ...NewJobProfile.defaultJobProfile,
-        profileName: `C417044 001-to-001 marc bib match for update marc${getRandomPostfix()}`,
+        profileName: `C417044 Update shared Instance using marc-to-instance${getRandomPostfix()}`,
         acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       };
 
@@ -96,26 +95,33 @@ describe('Data Import', () => {
         });
 
         cy.getAdminToken();
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        ]).then((userProperties) => {
+        cy.createTempUser([]).then((userProperties) => {
           testData.user = userProperties;
+
+          cy.assignCapabilitiesToExistingUser(
+            testData.user.userId,
+            [],
+            [CapabilitySets.uiInventory, CapabilitySets.uiDataExportEdit],
+          );
 
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.inventoryAll.gui,
-            Permissions.moduleDataImportEnabled.gui,
-            Permissions.settingsDataImportEnabled.gui,
-            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-          ]);
+          cy.assignCapabilitiesToExistingUser(
+            testData.user.userId,
+            [],
+            [
+              CapabilitySets.uiInventory,
+              CapabilitySets.uiDataImport,
+              CapabilitySets.uiDataImportSettingsManage,
+              CapabilitySets.uiDataExportEdit,
+              CapabilitySets.uiConsortiaDataImportCentralRecordUpdate,
+            ],
+          );
           cy.resetTenant();
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         });
       });
@@ -137,11 +143,12 @@ describe('Data Import', () => {
       });
 
       it(
-        'C417044 (CONSORTIA) Verify the JSON log of the updated SRS and Instance for shared Source = FOLIO Instance updated via Data import on Member tenant (consortia) (folijet)',
+        'C417044 (CONSORTIA) Verify the JSON log of the created SRS and updated Instance for shared Source = FOLIO Instance updated via Data import on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C417044'] },
         () => {
           const updatedInstanceTitle = `${testData.instance.instanceTitle} modified`;
 
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -167,7 +174,9 @@ describe('Data Import', () => {
             APPLICATION_NAMES.DATA_IMPORT,
           );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
-          FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
+          FieldMappingProfiles.openNewMappingProfileForm();
+          NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+          NewFieldMappingProfile.save();
           FieldMappingProfileView.closeViewMode(mappingProfile.name);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -207,12 +216,14 @@ describe('Data Import', () => {
           JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.editedMarcFile);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(testData.marcFile.editedMarcFile);
-          [
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
+          );
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-          });
+          );
           FileDetails.openJsonScreen(updatedInstanceTitle);
           JsonScreenView.verifyJsonScreenIsOpened();
           JsonScreenView.openMarcSrsTab();
