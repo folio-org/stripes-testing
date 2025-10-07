@@ -94,7 +94,7 @@ describe.skip('Inventory', () => {
     });
 
     // Trillium+ only
-    it(
+    it.skip(
       'C729567 Advanced search | Search for Item by barcode field using "Barcode" search option (spitfire)',
       { tags: [] },
       () => {

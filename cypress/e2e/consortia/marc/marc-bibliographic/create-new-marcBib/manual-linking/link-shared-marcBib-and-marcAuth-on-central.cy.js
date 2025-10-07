@@ -57,6 +57,7 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422141');
 
           cy.createTempUser([
             Permissions.uiInventoryViewInstances.gui,
@@ -119,8 +120,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -180,10 +179,13 @@ describe('MARC', () => {
               `${testData.marcAuthIcon}\n\t${newField.tag}\t2 0\t$a C422141 Dante Alighieri, $d 1265-1321 $e writer $0 http://id.loc.gov/authorities/names/n78095495 $9`,
             );
 
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.resetTenant();
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userBProperties.username, users.userBProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
             InventoryInstances.selectInstance();

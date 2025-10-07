@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../../../support/fragments/inventory/in
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -21,7 +21,6 @@ import HoldingsRecordView from '../../../../../../support/fragments/inventory/ho
 import InventoryViewSource from '../../../../../../support/fragments/inventory/inventoryViewSource';
 import Location from '../../../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -131,13 +130,11 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.loginAsAdmin();
-                TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-                InventoryInstances.waitContentLoading();
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 30_000);
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
+              });
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

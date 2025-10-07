@@ -20,7 +20,7 @@ describe('MARC', () => {
     describe('Reporting MARC authority', () => {
       const testData = {
         searchOption: 'Keyword',
-        title: 'C378894 Drama Genre',
+        title: 'C378894 Drama--Genre',
         updatedTitle: 'C378894 Drama cinema Genre',
       };
 
@@ -40,8 +40,8 @@ describe('MARC', () => {
       ];
 
       const createdAuthorityID = [];
-      let user1; let
-        user2;
+      let user1;
+      let user2;
 
       before('Creating users and uploading files', () => {
         cy.getAdminToken();
@@ -118,11 +118,10 @@ describe('MARC', () => {
         'C378894 "MARC authority headings updates (CSV)" report generated when user who made updates was deleted (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C378894'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(user1.username, user1.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+          cy.login(user1.username, user1.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
 
           MarcAuthorities.searchBy(testData.searchOption, testData.title);
@@ -139,6 +138,7 @@ describe('MARC', () => {
           cy.login(user2.username, user2.password, {
             path: TopMenu.usersPath,
             waiter: Users.waitLoading,
+            authRefresh: true,
           });
           UsersSearchPane.searchByUsername(user1.username);
           UsersSearchPane.selectUserFromList(user1.username);

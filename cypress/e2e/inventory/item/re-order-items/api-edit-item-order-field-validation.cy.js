@@ -90,7 +90,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C808482 API | "order" field validation in edit "Item" request (spitfire)',
         { tags: [] },
         () => {

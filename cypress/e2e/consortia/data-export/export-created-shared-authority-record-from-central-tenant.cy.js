@@ -85,7 +85,7 @@ describe('Data Export', () => {
       { tags: ['criticalPathECS', 'spitfire', 'C436898', 'C436899'] },
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
-        QuickMarcEditor.checkPaneheaderContains('New shared MARC authority record');
+        QuickMarcEditor.checkPaneheaderContains('Create a new shared MARC authority record');
         MarcAuthority.checkSourceFileSelectShown();
         MarcAuthority.selectSourceFile(LC_NAME_AUTHORITY_FILE);
         MarcAuthority.setValid008DropdownValues();

@@ -60,7 +60,7 @@ describe.skip('Inventory', () => {
     });
 
     // Trillium+ only
-    it(
+    it.skip(
       'C9208 Search for Item by HRID field using "Keyword" and "Item HRID" search options (spitfire)',
       { tags: [] },
       () => {

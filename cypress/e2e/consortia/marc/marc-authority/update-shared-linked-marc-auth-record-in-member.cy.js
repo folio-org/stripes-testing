@@ -103,16 +103,8 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C407633" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id, true);
-            });
-          }
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi('C407633');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407633');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -127,6 +119,7 @@ describe('MARC', () => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            InventoryInstances.deleteInstanceByTitleViaApi('C407633');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -137,6 +130,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
+            InventoryInstances.deleteInstanceByTitleViaApi('C407633');
             cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -165,13 +159,12 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.resetTenant();
-              cy.loginAsAdmin();
-              cy.visit(TopMenu.inventoryPath);
-              cy.reload();
-            }, 30_000);
-            InventoryInstances.waitContentLoading();
+            cy.resetTenant();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
 
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
@@ -221,6 +214,7 @@ describe('MARC', () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           }).then(() => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             MarcAuthorities.waitLoading();

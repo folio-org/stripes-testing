@@ -38,7 +38,7 @@ describe('MARC', () => {
           'RecUpd',
           'Pers Name',
           'Level Est',
-          'Mod Rec',
+          'Mod Rec Est',
           'Source',
         ],
         tag110: '110',
@@ -115,8 +115,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387453 "008" field existence validation when edit imported "MARC authority" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C387453'] },
+        'C812998 "008" field existence validation when edit imported "MARC authority" (spitfire) (TaaS)',
+        { tags: ['extendedPath', 'spitfire', 'C812998'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
           MarcAuthorities.select(createdAuthorityIDs[0]);
@@ -147,6 +147,7 @@ describe('MARC', () => {
           // #7 Add new field and fill MARC tag box with "008".
           QuickMarcEditor.addNewField(testData.tag008, '', testData.tag008RowIndex - 1);
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
+          QuickMarcEditor.checkOnlyBackslashesIn008Boxes();
 
           // #8 Delete one digit from "008" tag box
           QuickMarcEditor.updateExistingTagValue(testData.tag008RowIndex, testData.tag00);
