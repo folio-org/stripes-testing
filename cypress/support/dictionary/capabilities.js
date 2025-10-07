@@ -7,6 +7,16 @@ export default {
     resource: 'Settings Enabled',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  UIConsortiaSettingsMembershipView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  UIConsortiaSettingsMembershipEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
 
   // Data capabilities
   uiUsersView: {

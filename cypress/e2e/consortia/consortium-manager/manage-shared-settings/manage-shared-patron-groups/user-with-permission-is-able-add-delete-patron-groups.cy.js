@@ -91,7 +91,9 @@ describe('Consortia', () => {
             ConfirmShare.waitLoadingConfirmShareToAll(sharedPatronGroups1.group);
             ConfirmShare.clickConfirm();
             DepartmentsConsortiumManager.waitLoading();
-            ConsortiumManagerApp.checkMessage(messages.created(sharedPatronGroups1.group, 'All'));
+            ConsortiumManagerApp.checkMessage(
+              `${sharedPatronGroups1.group} was successfully created for All libraries.`,
+            );
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck, [
               'edit',
               'trash',

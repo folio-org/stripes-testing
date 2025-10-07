@@ -1604,7 +1604,7 @@ export default {
       quantityElectronicTextField.fillIn(quantityElectronic),
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      createNewLocationButton.click(),
+      Button('Location look-up').click(),
     ]);
     cy.do([
       selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(institutionId),
