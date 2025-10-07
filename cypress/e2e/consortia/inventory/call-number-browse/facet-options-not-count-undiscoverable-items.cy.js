@@ -74,12 +74,6 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
       InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
         testData.folioSourceId = folioSource.id;
       });
-      InventoryInstances.getLoanTypes().then((loanTypes) => {
-        testData.loanTypeId = loanTypes[0].id;
-      });
-      cy.getMaterialTypes().then((materialType) => {
-        testData.materialTypeId = materialType.id;
-      });
       [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
           ServicePoints.getViaApi({ query: 'name=Circ Desk' }).then((servicePoints) => {
@@ -105,6 +99,12 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
             });
           }).then(() => {
             cy.withinTenant(memberTenant.affiliation, () => {
+              InventoryInstances.getLoanTypes().then((loanTypes) => {
+                testData.loanTypeId = loanTypes[0].id;
+              });
+              cy.getMaterialTypes().then((materialType) => {
+                testData.materialTypeId = materialType.id;
+              });
               cy.log('Creating holdings and items for shared instances');
               currentLocation = testData.defaultLocation[memberTenant.affiliation];
               folioInstancesShared.forEach((instance) => {
@@ -146,13 +146,11 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
         permissions,
       });
 
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
       cy.waitForAuthRefresh(() => {
-        cy.reload();
-        InventoryInstances.waitContentLoading();
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
       ConsortiumManager.switchActiveAffiliation(centralTenant.name, memberTenant.name);
       InventorySearchAndFilter.switchToBrowseTab();

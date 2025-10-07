@@ -13,7 +13,7 @@ import { ITEM_STATUS_NAMES } from '../../../../../support/constants';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     describe('Re-order item records', () => {
       describe('Consortia', () => {
@@ -187,9 +187,10 @@ describe('Inventory', () => {
           Users.deleteViaApi(user.userId);
         });
 
-        it(
+        // Trillium+ only
+        it.skip(
           'C808508 Create "Item" with empty "order" field (default state) when Shared Instance has multiple Holdings with Items in different tenants (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C808508'] },
+          { tags: [] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

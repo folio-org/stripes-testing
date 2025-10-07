@@ -109,7 +109,6 @@ describe('MARC', () => {
                 testData.marcAuthorityTabName,
               );
               SettingsPane.waitLoading();
-              cy.reload();
             }, 20_000);
             SettingsPane.waitLoading();
             // Step 1: Switch to Member tenant and go to Manage authority files

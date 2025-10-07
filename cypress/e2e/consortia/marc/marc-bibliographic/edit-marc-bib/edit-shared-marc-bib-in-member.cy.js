@@ -60,9 +60,6 @@ describe('MARC', () => {
                 cy.login(users.userProperties.username, users.userProperties.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
-                }).then(() => {
-                  cy.reload();
-                  InventoryInstances.waitContentLoading();
                 });
               }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
