@@ -1,4 +1,12 @@
-import { Button, HTML, Modal, including, Select, TextField } from '../../../../interactors';
+import {
+  Button,
+  HTML,
+  Modal,
+  including,
+  Select,
+  TextField,
+  TextArea,
+} from '../../../../interactors';
 
 const rootModal = Modal({ id: 'waive-modal' });
 const confirmModal = Modal({ title: 'Confirm fee/fine waive' });
@@ -54,6 +62,16 @@ export default {
   selectWaiveReason: (waiveReason) => cy.do(Select({ name: 'method' }).choose(waiveReason)),
   setWaiveAmount: (amount) => {
     cy.get('input[name="amount"]').clear().wait(500).type(amount);
+  },
+  fillComment: (comment) => {
+    cy.do(rootModal.find(TextArea({ id: 'comments' })).fillIn(comment));
+  },
+  verifyCommentRequired: () => {
+    cy.expect(rootModal.find(HTML(including('Additional information for staff'))).exists());
+    cy.do(rootModal.find(TextArea({ id: 'comments' })).fillIn(''));
+    cy.expect(
+      rootModal.find(HTML(including('Additional information for staff is required'))).exists(),
+    );
   },
   waiveAmountHasError: (errorMessage) => {
     cy.expect(amountField.has({ error: errorMessage }));
