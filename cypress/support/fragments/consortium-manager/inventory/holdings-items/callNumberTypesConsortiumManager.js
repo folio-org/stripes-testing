@@ -51,7 +51,7 @@ const API = {
         path: `consortia/${consortiaId}/publications`,
         body: {
           method: REQUEST_METHOD.POST,
-          tenants: tenants.map((tenant) => tenant.toLowerCase()),
+          tenants,
           payload: {
             id,
             name: type.payload.name,

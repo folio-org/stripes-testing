@@ -9,7 +9,7 @@ export default {
     cy.expect(
       this.getTargetRow(rowIndex)
         .find(Select('Patron group select'))
-        .has({ checkedOptionText: including(patronGroup) }),
+        .has({ checkedOptionText: including(patronGroup), disabled: true }),
     );
   },
 
@@ -18,7 +18,7 @@ export default {
 
     cy.expect([
       RepeatableFieldItem({ index: rowIndex })
-        .find(TextField({ value: formattedDate }))
+        .find(TextField({ value: formattedDate, disabled: true }))
         .exists(),
     ]);
   },
@@ -27,7 +27,7 @@ export default {
     cy.expect(
       this.getTargetRow(rowIndex)
         .find(TextField({ testid: 'input-email-0' }))
-        .has({ value: text }),
+        .has({ value: text, disabled: true }),
     );
   },
 
@@ -35,7 +35,7 @@ export default {
     cy.expect(
       this.getTargetRow(rowIndex)
         .find(TextField({ testid: 'input-email-1' }))
-        .has({ value: text }),
+        .has({ value: text, disabled: true }),
     );
   },
 };

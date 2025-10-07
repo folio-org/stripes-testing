@@ -210,18 +210,18 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468280'] },
         () => {
           cy.waitForAuthRefresh(() => {
-            cy.setTenant(Affiliations.College);
+            cy.resetTenant();
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
           }, 20_000);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.forEach((row) => {
+            cy.setTenant(Affiliations.College);
             InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
               BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
             );

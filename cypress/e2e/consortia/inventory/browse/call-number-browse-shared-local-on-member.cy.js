@@ -135,7 +135,7 @@ describe('Inventory', () => {
       servicePoint: ServicePoints.getDefaultServicePoint(),
       defaultLocation: {},
     };
-    const tenants = [tenantNames.college];
+    const tenants = [Affiliations.College];
     const removeInstancesByTitle = (title) => {
       [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
@@ -158,12 +158,6 @@ describe('Inventory', () => {
       cy.then(() => {
         InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
           testData.folioSourceId = folioSource.id;
-        });
-        InventoryInstances.getLoanTypes().then((loanTypes) => {
-          testData.loanTypeId = loanTypes[0].id;
-        });
-        InventoryInstances.getMaterialTypes().then((materialTypes) => {
-          testData.materialTypeId = materialTypes[0].id;
         });
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {
@@ -189,6 +183,12 @@ describe('Inventory', () => {
               });
             }).then(() => {
               cy.withinTenant(Affiliations.College, () => {
+                InventoryInstances.getLoanTypes().then((loanTypes) => {
+                  testData.loanTypeId = loanTypes[0].id;
+                });
+                InventoryInstances.getMaterialTypes().then((materialTypes) => {
+                  testData.materialTypeId = materialTypes[0].id;
+                });
                 cy.log('Creating holdings and items for shared instances');
                 currentLocation = testData.defaultLocation[Affiliations.College];
                 folioInstancesShared.forEach((instance) => {
@@ -233,16 +233,14 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-              }, 30_000);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              InventorySearchAndFilter.switchToBrowseTab();
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 30_000);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            InventorySearchAndFilter.switchToBrowseTab();
           });
       });
     });

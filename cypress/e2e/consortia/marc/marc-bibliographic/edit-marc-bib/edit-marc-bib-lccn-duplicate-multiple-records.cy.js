@@ -97,7 +97,6 @@ describe('MARC', () => {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
                 });
-                cy.reload();
               }, 20_000);
               InventoryInstances.waitContentLoading();
 

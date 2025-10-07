@@ -71,12 +71,12 @@ describe('MARC', () => {
                       testData.instanceTypeId = instanceTypes[0].id;
                     },
                   );
-                  InventoryInstances.getIdentifierTypes({ query: 'name="LCCN"' }).then(
+                  InventoryInstances.getIdentifierTypes({ query: 'name=="LCCN"' }).then(
                     (identifier) => {
                       testData.lccnTypeId = identifier.id;
                     },
                   );
-                  InventoryInstances.getIdentifierTypes({ query: 'name="Canceled LCCN"' }).then(
+                  InventoryInstances.getIdentifierTypes({ query: 'name=="Canceled LCCN"' }).then(
                     (identifier) => {
                       testData.canceledLccnTypeId = identifier.id;
                     },
@@ -120,7 +120,6 @@ describe('MARC', () => {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
                 });
-                cy.reload();
               }, 20_000);
               InventoryInstances.waitContentLoading();
 
