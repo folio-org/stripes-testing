@@ -98,7 +98,6 @@ const marcInstanceFields = [
   },
 ];
 const seriesStatement = 'United States congressional serial set.';
-// const todayDate is intentionally omitted after refactoring to use queryFileNames
 
 describe('Bulk-edit', () => {
   describe('Instances with source MARC', () => {
@@ -152,7 +151,6 @@ describe('Bulk-edit', () => {
           const interceptedUuid = interception.request.url.match(
             /bulk-operations\/([a-f0-9-]+)\/preview/,
           )[1];
-          // store query-based file name masks
           queryFileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
         });
       });
