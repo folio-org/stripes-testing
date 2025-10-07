@@ -77,11 +77,9 @@ describe('MARC', () => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
+                authRefresh: true,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                cy.waitForAuthRefresh(() => {
-                  cy.reload();
-                }, 30_000);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 MarcAuthorities.waitLoading();
               });

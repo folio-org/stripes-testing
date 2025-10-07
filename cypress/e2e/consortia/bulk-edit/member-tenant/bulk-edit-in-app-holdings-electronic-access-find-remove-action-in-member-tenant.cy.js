@@ -54,8 +54,7 @@ const electronicAccessFieldsEdited = {
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
-const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifiedPublic note';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const userPermissions = [
@@ -247,10 +246,10 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 7: Select "URL relationship" from the "Electronic access" option
-          BulkEditActions.selectOption('URL relationship');
+          BulkEditActions.selectOption('URL Relationship');
 
           // Step 8: Select "Find (full field search)" action
-          BulkEditActions.selectAction('Find (full field search)');
+          BulkEditActions.selectSecondAction('Find (full field search)');
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 9: Check displayed URL relationship types (should only show local)
@@ -278,7 +277,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex);
             BulkEditActions.selectOption(filter.option, rowIndex);
-            BulkEditActions.selectAction('Find', rowIndex);
+            BulkEditActions.selectSecondAction('Find', rowIndex);
             BulkEditActions.fillInFirstTextArea(filter.value, rowIndex);
             BulkEditActions.selectSecondAction('Remove', rowIndex);
             BulkEditActions.verifyConfirmButtonDisabled(false);

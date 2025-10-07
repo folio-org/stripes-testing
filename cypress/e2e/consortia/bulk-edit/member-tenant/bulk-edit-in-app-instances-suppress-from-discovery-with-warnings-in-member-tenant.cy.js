@@ -220,8 +220,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionSelected(suppressFromDiscovery);
 
           // Step 7: Select "Set false" action
-          BulkEditActions.selectAction(actions.setFalse);
-          BulkEditActions.verifyActionSelected(actions.setFalse);
+          BulkEditActions.selectSecondAction(actions.setFalse);
+          BulkEditActions.verifySecondActionSelected(actions.setFalse);
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
 
           // Step 8: Check the checkboxes for holdings and items

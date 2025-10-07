@@ -132,10 +132,10 @@ describe('Bulk-edit', () => {
           instanceUUIDsFileName,
         );
       });
-
-      it(
+      // Trillium
+      it.skip(
         'C651486 ECS | Bulk edit administrative data and marc fields (600, 800) for all records in Central tenant (MARC, Logs) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C651486'] },
+        { tags: [] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

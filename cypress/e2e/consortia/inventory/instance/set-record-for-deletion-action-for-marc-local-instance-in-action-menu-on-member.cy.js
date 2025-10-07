@@ -75,13 +75,13 @@ describe('Inventory', () => {
           InstanceRecordView.clickActionsButton();
           InstanceRecordView.setRecordForDeletion();
           SetRecordForDeletionModal.waitLoading();
-          SetRecordForDeletionModal.verifyModalView(testData.instance.instanceTitle);
+          SetRecordForDeletionModal.verifyModalView(testData.instanceTitle);
           SetRecordForDeletionModal.clickConfirm();
           SetRecordForDeletionModal.isNotDisplayed();
           InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();
           InstanceRecordView.waitLoading();
           InteractorsTools.checkCalloutMessage(
-            `${testData.instance.instanceTitle} has been set for deletion`,
+            `${testData.instanceTitle} has been set for deletion`,
           );
         },
       );

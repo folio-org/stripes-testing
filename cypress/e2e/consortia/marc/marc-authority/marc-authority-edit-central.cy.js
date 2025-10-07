@@ -69,9 +69,9 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            authRefresh: true,
           });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
 

@@ -44,7 +44,6 @@ describe('Bulk-edit', () => {
         cy.createTempUser(userPermissions).then((userProperties) => {
           user = userProperties;
 
-          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

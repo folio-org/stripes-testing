@@ -102,6 +102,10 @@ export default {
     cy.wait(2000);
   },
 
+  clickSelectBulkEditProfile(recordType) {
+    cy.do(Button(`Select ${recordType} bulk edit profile`).click());
+  },
+
   verifyStartBulkEditOptions() {
     cy.expect([
       startBulkEditFolioInstanceButton.exists(),

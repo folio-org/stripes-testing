@@ -41,6 +41,7 @@ describe('Inventory', () => {
             Permissions.consortiaInventoryShareLocalInstance.gui,
             Permissions.settingsDataImportEnabled.gui,
           ]);
+          cy.resetTenant();
 
           cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

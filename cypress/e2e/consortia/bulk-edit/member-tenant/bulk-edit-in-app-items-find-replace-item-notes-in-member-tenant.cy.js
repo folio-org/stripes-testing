@@ -196,7 +196,6 @@ describe('Bulk-edit', () => {
                     `${folioInstance.itemHrid}\n${marcInstance.itemHrid}`,
                   );
                 });
-              cy.resetTenant();
               cy.login(user.username, user.password, {
                 path: TopMenu.bulkEditPath,
                 waiter: BulkEditSearchPane.waitLoading,

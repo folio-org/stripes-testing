@@ -38,6 +38,7 @@ describe('Inventory', () => {
               testData.secondLocalInstance.instanceHRID = instance.hrid;
             });
           });
+          cy.resetTenant();
 
           cy.login(user.username, user.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

@@ -50,7 +50,7 @@ const testData = {
   },
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     beforeEach('Create test data', () => {
       cy.createTempUser([

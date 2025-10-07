@@ -368,7 +368,7 @@ export default {
 
     cy.do(
       holdingsSection
-        .find(MultiColumnListCell({ columnIndex: 1, content: barcode }))
+        .find(MultiColumnListCell({ columnIndex: 0, content: barcode }))
         .find(Button(including(barcode)))
         .click(),
     );

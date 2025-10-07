@@ -23,7 +23,7 @@ const testData = {
   adminNote: 'Temporary location changed',
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([

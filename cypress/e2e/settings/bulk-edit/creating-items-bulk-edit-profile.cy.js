@@ -20,7 +20,7 @@ const testData = {
   profileDescription: 'Replace temporary location and status',
 };
 
-describe('Bulk edit', () => {
+describe('Bulk-edit', () => {
   describe('Profiles', () => {
     before('Create test data', () => {
       cy.createTempUser([

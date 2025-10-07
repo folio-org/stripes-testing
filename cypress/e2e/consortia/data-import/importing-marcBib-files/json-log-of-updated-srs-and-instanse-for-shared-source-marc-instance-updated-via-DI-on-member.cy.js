@@ -170,6 +170,7 @@ describe('Data Import', () => {
             );
             FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
+          cy.resetTenant();
 
           TopMenuNavigation.navigateToApp(
             APPLICATION_NAMES.SETTINGS,

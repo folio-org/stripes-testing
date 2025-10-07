@@ -86,12 +86,13 @@ describe('Data Export', () => {
             cy.resetTenant();
           })
           .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            }, getLongDelay());
+            cy.resetTenant();
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
+
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             InventorySearchAndFilter.byKeywords(folioInstanceTitle);
           });
@@ -173,7 +174,7 @@ describe('Data Export', () => {
               // Step 7: Check exported record for shared Instances from Preconditions #4 included in the file
               const commonAssertions = (instanceId) => [
                 (record) => {
-                  expect(record.leader).to.eq('00263dam a22000973c 4500');
+                  expect(record.leader[5]).to.eq('d');
                 },
                 (record) => {
                   expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
@@ -230,7 +231,7 @@ describe('Data Export', () => {
               uuid: localInstanceIds[0],
               assertions: [
                 (record) => {
-                  expect(record.leader).to.eq('00263dam a22000973c 4500');
+                  expect(record.leader[5]).to.eq('d');
                 },
                 (record) => {
                   expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;

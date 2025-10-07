@@ -136,7 +136,6 @@ describe('Data Import', () => {
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-            Permissions.consortiaCentralAll.gui,
           ]);
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
             (mappingProfileResponse) => {

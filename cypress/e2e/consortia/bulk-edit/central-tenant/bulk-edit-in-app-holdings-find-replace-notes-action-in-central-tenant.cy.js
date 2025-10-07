@@ -283,7 +283,7 @@ describe('Bulk-edit', () => {
           const initialHeaderValues = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: `${notes.adminUpperCase}|${notes.adminLowerCase}`,
+              value: `${notes.adminUpperCase};${notes.adminLowerCase}`,
             },
             {
               header: centralSharedHoldingNoteType.payload.name,

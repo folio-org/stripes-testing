@@ -126,7 +126,7 @@ export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
   instanceHrid: 'Instances — Instance HRID',
   instanceTitle: 'Instances — Resource title',
-  itemAccessionNumber: 'Item — Accession number',
+  itemAccessionNumber: 'Items — Accession number',
   itemBarcode: 'Items — Barcode',
   itemStatus: 'Items — Status',
   itemHrid: 'Items — Item HRID',
