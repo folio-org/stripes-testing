@@ -3,7 +3,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../support/constants';
+import {
+  DEFAULT_FOLIO_AUTHORITY_FILES,
+  AUTHORITY_FILE_TEXT_FIELD_NAMES,
+} from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -29,6 +32,7 @@ describe('MARC', () => {
         localAuthorityFile.baseUrl,
         `https://testing/field/baseurl/${randomPostfix}/`,
       ];
+      const errorBaseUrlUniqueness = 'Error saving data. Base URL must be unique.';
       let user;
 
       before('Create users, data', () => {
@@ -52,7 +56,6 @@ describe('MARC', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
-              authRefresh: true,
             });
           });
       });
@@ -75,7 +78,11 @@ describe('MARC', () => {
             ManageAuthorityFiles.clickEditButton(folioAuthorityFile.name);
             ManageAuthorityFiles.editBaseUrlInFolioFile(folioAuthorityFile.name, nonUniqueBaseUrl);
             ManageAuthorityFiles.clickSaveButtonAfterEditingFile(folioAuthorityFile.name);
-            ManageAuthorityFiles.verifyUpdateAssignedSourceFileError(folioAuthorityFile.name);
+            ManageAuthorityFiles.checkErrorInField(
+              folioAuthorityFile.name,
+              AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
+              errorBaseUrlUniqueness,
+            );
             ManageAuthorityFiles.clickCancelButtonAfterEditingFile(folioAuthorityFile.name);
             ManageAuthorityFiles.checkSourceFileExists(
               folioAuthorityFile.name,
