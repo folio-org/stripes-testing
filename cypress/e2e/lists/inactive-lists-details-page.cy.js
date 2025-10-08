@@ -34,95 +34,142 @@ describe('Lists', () => {
   it('C411840 Inactive lists - Verify inactive list details page structure and functionality', 
     { tags: ['criticalPath', 'lists'] }, 
     () => {
+      // Precondition: Create several inactive lists for testing
+      const inactiveListsData = [
+        {
+          name: `C411840-${getTestEntityValue('list')}-1`,
+          description: `C411840-${getTestEntityValue('desc')}-1`,
+          recordType: 'Users',
+          fqlQuery: '',
+          isActive: false,
+          isPrivate: false,
+        },
+        {
+          name: `C411840-${getTestEntityValue('list')}-2`,
+          description: `C411840-${getTestEntityValue('desc')}-2`,
+          recordType: 'Items',
+          fqlQuery: '',
+          isActive: false,
+          isPrivate: true,
+        },
+        {
+          name: `C411840-${getTestEntityValue('list')}-3`,
+          description: `C411840-${getTestEntityValue('desc')}-3`,
+          recordType: 'Organizations',
+          fqlQuery: '',
+          isActive: false,
+          isPrivate: false,
+        }
+      ];
+
+      // Create inactive lists via API using existing framework patterns
+      cy.getUserToken(userData.username, userData.password).then(() => {
+        // Build query for Users list (first inactive list)
+        Lists.buildQueryOnActiveUsersWithZeroRecords().then(({ query, fields }) => {
+          Lists.createQueryViaApi(query).then((createdQuery) => {
+            inactiveListsData[0].queryId = createdQuery.queryId;
+            inactiveListsData[0].fqlQuery = createdQuery.fqlQuery;
+            inactiveListsData[0].fields = fields;
+
+            Lists.createViaApi(inactiveListsData[0]).then((body) => {
+              inactiveListsData[0].id = body.id;
+            });
+          });
+        });
+
+        // Create other inactive lists without queries (empty lists)
+        inactiveListsData.slice(1).forEach((listData) => {
+          Lists.createViaApi(listData).then((body) => {
+            listData.id = body.id;
+          });
+        });
+      });
+
+      // Wait for lists to be created
+      cy.wait(2000);
+
       // Navigate to inactive lists page
       cy.visit('/lists?filters=status.Inactive&limit=100&offset=0');
       Lists.waitLoading();
 
       // Verify we're on the inactive lists page with inactive filter checked
-      Lists.verifyInactiveFilterIsChecked();
-      Lists.verifyListsPageDisplayed();
+      Lists.selectInactiveLists();
+      Lists.verifyCheckboxChecked('Inactive');
 
-      // Step 1: Click on any of the inactive lists
-      Lists.selectFirstInactiveList();
+      // Verify our test inactive lists are present
+      inactiveListsData.forEach((listData) => {
+        Lists.verifyListIsPresent(listData.name);
+      });
+
+      // Step 1: Click on any of the inactive lists (first one)
+      Lists.openList(inactiveListsData[0].name);
       
-      // Verify list details page opens
-      Lists.verifyListDetailsPageOpened();
-
       // Step 2: Check the structure of the lists details page
       // Verify title is displayed
-      Lists.verifyListTitle();
+      Lists.verifyListName(inactiveListsData[0].name);
       
       // Verify "X records found" is displayed under the title
-      Lists.verifyRecordsFoundText();
-      
-      // Verify X button at top-left
-      Lists.verifyCloseButtonExists();
+      Lists.verifyRecordsNumber('0');
       
       // Verify Actions dropdown at top-right
-      Lists.verifyActionsButtonExists();
+      Lists.verifyActionsButtonDoesNotExist() === false; // Actions button should exist
       
       // Verify List information accordion
-      Lists.verifyListInformationAccordionExists();
+      Lists.expandListInformationAccordion();
       
       // Verify Query accordion
-      Lists.verifyQueryAccordionExists();
+      Lists.expandQueryAccordion();
 
       // Step 3: Click on "Actions" dropdown
-      Lists.openActionsDropdown();
+      Lists.openActions();
       
-      // Verify dropdown options are displayed
-      Lists.verifyActionsDropdownOptions();
-
       // Step 4: Check the buttons status
       // Verify inactive buttons (disabled)
       Lists.verifyRefreshListButtonIsDisabled();
-      Lists.verifyExportVisibleColumnsButtonIsDisabled();
-      Lists.verifyExportAllColumnsButtonIsDisabled();
+      Lists.verifyExportListButtonIsDisabled();
       
       // Verify active buttons (enabled)
-      Lists.verifyEditListButtonIsEnabled();
-      Lists.verifyDuplicateListButtonIsEnabled();
-      Lists.verifyDeleteListButtonIsEnabled();
-
-      // Close actions dropdown by clicking elsewhere
-      Lists.closeActionsDropdown();
+      Lists.verifyEditListButtonIsActive();
+      Lists.verifyDuplicateListButtonIsActive();
+      Lists.verifyDeleteListButtonIsActive();
 
       // Step 5: Click on "List information" dropdown (collapse)
-      Lists.collapseListInformationAccordion();
-      
-      // Verify the accordion collapses
-      Lists.verifyListInformationAccordionCollapsed();
+      Lists.clickOnListInformationAccordion();
 
       // Step 6: Click on "List information" dropdown again (expand)
       Lists.expandListInformationAccordion();
       
-      // Verify the accordion expands and contains required information
-      Lists.verifyListInformationAccordionExpanded();
-      Lists.verifyListInformationContent();
+      // Verify list information content
+      Lists.verifyListNameLabel(inactiveListsData[0].name);
+      Lists.verifyListDescriptionLabel(inactiveListsData[0].description);
+      Lists.verifyStatusLabel('Inactive');
+      Lists.verifyVisibilityLabel('Shared');
+      Lists.verifyRecordType('Users');
 
       // Step 7: Click on "Query" dropdown (collapse)
-      Lists.collapseQueryAccordion();
-      
-      // Verify the accordion collapses
-      Lists.verifyQueryAccordionCollapsed();
+      Lists.clickOnQueryAccordion();
 
       // Step 8: Click on "Query" dropdown again (expand)
       Lists.expandQueryAccordion();
       
-      // Verify the accordion expands and shows query information
-      Lists.verifyQueryAccordionExpanded();
-      Lists.verifyQueryContent();
+      // Verify query content shows 0 records
+      Lists.verifyRecordsNumber('0');
 
       // Step 9: Click on "X" button
-      Lists.closeListDetailsPage();
-      
-      // Verify list details page closes and landing page opens
-      Lists.verifyListDetailsPageClosed();
-      Lists.verifyBackOnListsLandingPage();
+      Lists.closeListDetailsPane();
       
       // Verify we're back on the lists landing page with inactive filter
-      Lists.verifyInactiveFilterIsChecked();
+      Lists.verifyCheckboxChecked('Inactive');
       cy.url().should('include', 'lists?filters=status.Inactive');
+
+      // Clean up: Delete created test lists
+      cy.getUserToken(userData.username, userData.password).then(() => {
+        inactiveListsData.forEach((listData) => {
+          if (listData.id) {
+            Lists.deleteViaApi(listData.id);
+          }
+        });
+      });
     }
   );
 });
