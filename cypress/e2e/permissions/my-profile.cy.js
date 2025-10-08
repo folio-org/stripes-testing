@@ -78,7 +78,9 @@ describe('Permissions', () => {
         'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',
         { tags: ['extendedPathFlaky', 'volaris', 'C375097'] },
         () => {
-          ChangePassword.openChangePasswordViaUserProfile();
+          cy.waitForAuthRefresh(() => {
+            ChangePassword.openChangePasswordViaUserProfile();
+          });
           ChangePassword.checkInitialState();
 
           cy.wait(5000);
