@@ -55,12 +55,15 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForFirstFY =
+    DateTools.getCurrentDateInPreviusMonthForFiscalYearOnDDMMYYYYFormat();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnDDMMYYYY();
+  const periodStartForSecondFY = DateTools.getCurrentDateINDDMMYYYYFormat();
+  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnDDMMYYYY();
+  const periodStartForThirdFY = DateTools.getCurrentDateINDDMMYYYYFormat();
+  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnDDMMYYYY();
+  const periodStartForFirstFY2 = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
+  const periodEndForFirstFY2 = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   let user;
   let orderNumber;
   let servicePointId;
@@ -251,8 +254,8 @@ describe('Invoices', () => {
       FiscalYears.selectFY(secondFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
       FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForFirstFY,
-        periodEndForFirstFY,
+        periodStartForFirstFY2,
+        periodEndForFirstFY2,
       );
       FinanceHelp.searchByName(thirdFiscalYear.name);
       FiscalYears.selectFY(thirdFiscalYear.name);

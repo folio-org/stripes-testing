@@ -56,10 +56,11 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForFirstFY =
+    DateTools.getCurrentDateInPreviusMonthForFiscalYearOnDDMMYYYYFormat();
+  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnDDMMYYYYFormat();
+  const periodStartForSecondFY = DateTools.getPreviousDayDateForFiscalYearOnDDMMYYYY();
+  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnDDMMYYYYFormat();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let orderNumber;
@@ -128,6 +129,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
             );
             OrderLines.backToEditingOrder();
             Orders.openOrder();
+            cy.wait(4000);
           },
         );
 
