@@ -57,6 +57,9 @@ describe('MARC', () => {
         'C440100 "Prefix" field number of prefixes validation during editing of Local "Authority file" (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C440100'] },
         () => {
+          ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+          ManageAuthorityFiles.checkAuthorityFilesTableExists();
+          ManageAuthorityFiles.checkSourceFileExistsByName(localAuthFile.name);
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
           ManageAuthorityFiles.editField(
             localAuthFile.name,

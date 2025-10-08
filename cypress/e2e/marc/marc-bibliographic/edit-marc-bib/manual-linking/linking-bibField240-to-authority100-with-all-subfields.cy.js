@@ -128,7 +128,6 @@ describe('MARC', () => {
             MarcAuthorities.checkSearchInput('');
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.searchByParameter(testData.searchOption, testData.authorityMarkedValue);
-            MarcAuthorities.selectTitle(testData.authority100FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.checkUnlinkTooltipText(28, 'Unlink from MARC Authority record');
