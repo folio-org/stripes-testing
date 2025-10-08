@@ -65,9 +65,6 @@ describe('Inventory', () => {
         'C476721 Filter "Instance" records by "Resource Type" filter/facet (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C476721'] },
         () => {
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.byShared('No');
-          });
           InventorySearchAndFilter.toggleAccordionByName(testData.resourceTypeAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
             testData.resourceTypeAccordionName,
@@ -144,15 +141,8 @@ describe('Inventory', () => {
                 InventoryInstance.waitInventoryLoading();
                 InstanceRecordView.verifyResourceType(instanceTypes[1].name);
                 InventorySearchAndFilter.clearFilter(testData.resourceTypeAccordionName);
-                cy.ifConsortia(true, () => {
-                  InventorySearchAndFilter.clearFilter('Shared');
-                });
                 InventorySearchAndFilter.verifyResultPaneEmpty();
 
-                cy.ifConsortia(true, () => {
-                  InventorySearchAndFilter.toggleAccordionByName('Shared', false);
-                  InventorySearchAndFilter.byShared('No');
-                });
                 cy.intercept('/search/instances*').as('getInstancesQuery');
                 InventoryInstances.searchByTitle(testData.instancesTitlePrefix);
                 cy.wait('@getInstancesQuery', { timeout: 10_000 });

@@ -155,16 +155,9 @@ describe('Inventory', () => {
 
           // 7. Reset filter, verify result list is empty
           InventorySearchAndFilter.clearFilter(testData.languageAccordionName);
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.clearFilter('Shared');
-          });
           InventorySearchAndFilter.verifyResultPaneEmpty();
 
           // 8. Search all results
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.toggleAccordionByName('Shared', false);
-            InventorySearchAndFilter.byShared('No');
-          });
           cy.intercept('/search/instances*').as('getInstancesAll');
           InventoryInstances.searchByTitle(testData.instancesTitlePrefix);
           cy.wait('@getInstancesAll', { timeout: 10_000 });

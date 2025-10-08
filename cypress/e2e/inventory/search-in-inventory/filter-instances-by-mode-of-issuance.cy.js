@@ -118,9 +118,6 @@ describe('Inventory', () => {
         'C476725 Filter "Instance" records by "Mode of issuance" filter/facet (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C476725'] },
         () => {
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.byShared('No');
-          });
           InventorySearchAndFilter.toggleAccordionByName(testData.modeOfIssuanceAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
             testData.modeOfIssuanceAccordionName,
@@ -193,15 +190,8 @@ describe('Inventory', () => {
                   modesOfIssuance[1].name,
                   false,
                 );
-                cy.ifConsortia(true, () => {
-                  InventorySearchAndFilter.clearFilter('Shared');
-                });
                 InventorySearchAndFilter.verifyResultPaneEmpty();
 
-                cy.ifConsortia(true, () => {
-                  InventorySearchAndFilter.toggleAccordionByName('Shared', false);
-                  InventorySearchAndFilter.byShared('No');
-                });
                 cy.intercept('/search/instances*').as('getInstancesQuery');
                 InventoryInstances.searchByTitle(testData.instancesTitlePrefix);
                 cy.wait('@getInstancesQuery', { timeout: 10_000 });

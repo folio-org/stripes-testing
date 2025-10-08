@@ -1334,7 +1334,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        [],
+        testData.originalTypes,
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
