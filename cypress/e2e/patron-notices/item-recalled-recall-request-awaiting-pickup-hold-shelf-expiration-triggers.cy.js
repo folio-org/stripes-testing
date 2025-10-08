@@ -260,6 +260,7 @@ describe('Patron notices', () => {
             cy.login(userForRequest.username, userForRequest.password, {
               path: SettingsMenu.circulationPatronNoticeTemplatesPath,
               waiter: NewNoticePolicyTemplate.waitLoading,
+              authRefresh: true,
             });
           });
       });
@@ -358,7 +359,6 @@ describe('Patron notices', () => {
 
         cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
         NewNoticePolicy.waitLoading();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
 
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
