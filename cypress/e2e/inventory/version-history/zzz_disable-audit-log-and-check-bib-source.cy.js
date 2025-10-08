@@ -124,7 +124,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655297 Check "Version history" pane after CRUD multiple repeatable fields and subfields in "MARC bibliographic" record via "quickmarc" (spitfire)',
+        'C655297 Disable "Audit log" feature and check "View source" pane of "MARC bibliographic" record (spitfire)',
         { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C655297'] },
         () => {
           InventoryInstance.viewSource();
