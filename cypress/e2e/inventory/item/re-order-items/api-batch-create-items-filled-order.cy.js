@@ -72,7 +72,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C808495 API | Create multiple "Item" records with filled "order" field using batch endpoint (spitfire)',
         {
           tags: [],

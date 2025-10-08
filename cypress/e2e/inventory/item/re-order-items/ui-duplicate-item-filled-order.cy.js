@@ -86,7 +86,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (spitfire)',
         { tags: [] },
         () => {

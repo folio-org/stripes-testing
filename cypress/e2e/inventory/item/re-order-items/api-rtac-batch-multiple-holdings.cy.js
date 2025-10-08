@@ -125,7 +125,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C812999 API MOD-RTAC | Verify "itemDisplayOrder" field exists in BATCH API which gets instances with items and holdings from inventory (spitfire)',
         {
           tags: [],

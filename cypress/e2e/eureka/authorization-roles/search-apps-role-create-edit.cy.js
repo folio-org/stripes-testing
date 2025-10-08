@@ -72,7 +72,7 @@ describe.skip('Eureka', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C825331 [UIPSELAPP-14] Search for application while creating/editing of the role (eureka)',
         { tags: [] },
         () => {

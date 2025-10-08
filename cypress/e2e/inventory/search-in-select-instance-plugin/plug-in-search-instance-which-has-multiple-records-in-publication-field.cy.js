@@ -73,6 +73,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
+          authRefresh: true,
         });
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

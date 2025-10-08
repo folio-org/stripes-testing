@@ -101,7 +101,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C808484 API | Edit "Item" with empty "order" field when Instance has multiple Holdings with Items (spitfire)',
         {
           tags: [],

@@ -66,7 +66,7 @@ describe.skip('Eureka', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C825332 [UIPSELAPP-14] Filtering applications while creating/editing role (eureka)',
         { tags: [] },
         () => {

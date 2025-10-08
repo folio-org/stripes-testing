@@ -63,7 +63,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C808498 Create Instance+Holdings+Item with empty "order" field (default state) using "New fast add record" feature (spitfire)',
         {
           tags: [],

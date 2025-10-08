@@ -13,7 +13,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        headerText: 'New local MARC bib record',
+        headerText: 'Create a new local MARC bib record',
         tags: {
           tag245: '245',
         },
@@ -77,7 +77,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
             InventoryInstances.waitContentLoading();
           }, 20_000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -109,10 +108,12 @@ describe('MARC', () => {
           );
 
           cy.resetTenant();
-          cy.login(users.userAProperties.username, users.userAProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userAProperties.username, users.userAProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000);
           InventoryInstances.searchByTitle(testData.fieldContents.tag245Content, false);
           InventoryInstance.verifyNoResultFoundMessage(
             `No results found for "${testData.fieldContents.tag245Content}". Please check your spelling and filters.`,

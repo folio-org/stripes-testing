@@ -90,7 +90,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it('C808501 Delete "Item" with filled "order" field (spitfire)', { tags: [] }, () => {
+      it.skip('C808501 Delete "Item" with filled "order" field (spitfire)', { tags: [] }, () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,

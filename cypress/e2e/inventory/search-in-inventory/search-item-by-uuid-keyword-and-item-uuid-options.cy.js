@@ -64,7 +64,7 @@ describe.skip('Inventory', () => {
     });
 
     // Trillium+ only
-    it(
+    it.skip(
       'C813025 Search for Item by UUID field using "Keyword" and "Item UUID" search options (spitfire)',
       { tags: [] },
       () => {

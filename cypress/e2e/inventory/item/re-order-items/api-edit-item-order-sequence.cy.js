@@ -84,7 +84,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C808483 API | Edit "Item" with duplicated / last in the sequence / out of the sequence "order" value (spitfire)',
         {
           tags: [],

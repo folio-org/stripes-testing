@@ -13,7 +13,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        headerText: 'New shared MARC bib record',
+        headerText: 'Create a new shared MARC bib record',
         tags: {
           tag245: '245',
         },
@@ -65,7 +65,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
           });
@@ -109,7 +108,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
           }, 20_000);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

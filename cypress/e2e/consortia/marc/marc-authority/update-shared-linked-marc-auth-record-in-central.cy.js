@@ -215,6 +215,7 @@ describe('MARC', () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
           MarcAuthorities.selectTitle(`Shared\n${testData.authorityTitle}`);
