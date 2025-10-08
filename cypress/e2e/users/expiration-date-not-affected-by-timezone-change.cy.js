@@ -14,6 +14,7 @@ describe('Users', () => {
     user: {},
     selectedExpirationDate: '',
     selectedExpirationDatePlusOne: '',
+    selectedExpirationDatePlusOneInDetailPaneFormat: '',
     westernTimezone: 'Pacific/Nauru',
     easternTimezone: 'Pacific/Auckland',
     utcTimezone: 'UTC',
@@ -39,6 +40,14 @@ describe('Users', () => {
           },
           'MM/DD/YYYY',
         );
+        // M/D/YYYY format is expected to be displayed in user details pane
+        testData.selectedExpirationDatePlusOneInDetailPaneFormat = DateTools.getFormattedDate(
+          {
+            date: testData.selectedExpirationDatePlusOne,
+          },
+          'M/D/YYYY',
+        );
+
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {
             path: SettingsMenu.tenantPath,
@@ -56,7 +65,7 @@ describe('Users', () => {
   });
 
   it(
-    'C770460 Expiration date is not affected by time zone change (volaris)',
+    'C770460 The expiration date display differs by one day for a time zone that is in the next or previous day (volaris)',
     { tags: ['extendedPath', 'volaris', 'C770460'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
@@ -103,8 +112,10 @@ describe('Users', () => {
 
       // Check the "Expiration date" field on user details pane
       // The date in "Expiration date" field is one day ahead of the date set in step #2
-
-      UsersCard.checkKeyValue('Expiration date', testData.selectedExpirationDatePlusOne);
+      UsersCard.checkKeyValue(
+        'Expiration date',
+        testData.selectedExpirationDatePlusOneInDetailPaneFormat,
+      );
 
       // Step 6: Click "Actions" -> "Edit" on user details pane / Check the "Expiration date" field on user edit page
       UserEdit.openEdit();
