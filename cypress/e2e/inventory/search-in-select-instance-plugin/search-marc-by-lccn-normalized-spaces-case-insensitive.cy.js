@@ -161,6 +161,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
+          authRefresh: true,
         });
 
         Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -177,10 +178,16 @@ describe('Inventory', () => {
             SelectInstanceModal.clickResetAllButton();
             SelectInstanceModal.checkDefaultSearchOptionSelected();
             SelectInstanceModal.checkTableContent();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.toggleAccordionByName('Shared', false);
+            });
           }
           // Select LCCN normalized option and perform search
           SelectInstanceModal.chooseSearchOption(lccnOption);
           SelectInstanceModal.searchByName(searchData.query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
 
           // Verify all records are found
           expectedTitles.forEach((title) => {

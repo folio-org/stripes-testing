@@ -130,6 +130,9 @@ describe('Inventory', () => {
           // Step 2: Run search which will return both not suppressed MARC and FOLIO records
           InventorySearchAndFilter.searchByParameter(searchOption, identifier);
           InventorySearchAndFilter.verifyResultListExists();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.checkRowsCount(
             staffSuppressedInstanceIndexes.length + notStaffSuppressedInstanceIndexes.length,
           );
