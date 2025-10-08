@@ -20,7 +20,7 @@ describe('Inventory', () => {
         instance: {
           title: `AT_C423409_FolioInstance_${randomPostfix}`,
           id: '',
-          language: 'Japanese',
+          language: 'English',
         },
         searchQueries: {
           basic: `AT_C423409_BasicSearch_${randomPostfix}`,
@@ -47,7 +47,7 @@ describe('Inventory', () => {
             instance: {
               instanceTypeId: instanceTypes[0].id,
               title: testData.instance.title,
-              languages: ['jap'],
+              languages: ['eng'],
             },
           }).then((instanceId) => {
             testData.instance.id = instanceId;

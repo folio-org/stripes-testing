@@ -50,7 +50,7 @@ describe('Specification Storage - Create Field API', () => {
   after('Cleanup: delete user', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
-    if (limitedUser?.userId) Users.deleteViaApi(limitedUser.userId);
+    Users.deleteViaApi(limitedUser.userId);
   });
 
   it(
