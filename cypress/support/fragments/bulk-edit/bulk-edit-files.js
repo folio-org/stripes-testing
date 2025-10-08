@@ -82,25 +82,36 @@ export default {
       previewFileName: isDateIncluded
         ? `${todayDate}-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`
         : `*-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`,
+      previewRecordsMarc: isDateIncluded
+        ? `${todayDate}-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`
+        : `*-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`,
       changedRecordsFileName: isDateIncluded
         ? `${todayDate}-Changed-Records-CSV-Query-${bulkEditJobId}.csv`
         : `*-Changed-Records-CSV-Query-${bulkEditJobId}.csv`,
+      changedRecordsMarc: isDateIncluded
+        ? `${todayDate}-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`
+        : `*-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`,
       errorsFromCommittingFileName: isDateIncluded
         ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
         : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
+      errorsFromMatching: isDateIncluded
+        ? `${todayDate}-Matching-Records-Errors-Query-${bulkEditJobId}.csv`
+        : `*-Matching-Records-Errors-Query-${bulkEditJobId}.csv`,
     };
   },
 
   deleteAllDownloadedFiles(fileNames) {
-    const fileNamesList = Object.values(fileNames);
+    if (fileNames) {
+      const fileNamesList = Object.values(fileNames);
 
-    fileNamesList.forEach((fileNameMask) => {
-      FileManager.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
-        if (fileName !== null) {
-          cy.task('deleteFile', fileName[0]);
-        }
+      fileNamesList.forEach((fileNameMask) => {
+        FileManager.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
+          if (fileName && fileName.length > 0) {
+            cy.task('deleteFile', fileName[0]);
+          }
+        });
       });
-    });
+    }
   },
 
   verifyMatchedResultFileContent(

@@ -56,17 +56,7 @@ const newValueOfContributorsField = {
   subfield5: 'DLC',
 };
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
-const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
-const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
-const changedRecordsFileNameMrc = BulkEditFiles.getChangedRecordsMarcFileName(
-  instanceUUIDsFileName,
-  true,
-);
-const changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
-  instanceUUIDsFileName,
-  true,
-);
+const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 
 describe('Bulk-edit', () => {
   describe('Instances with source MARC', () => {
@@ -115,14 +105,7 @@ describe('Bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(
-        previewFileNameMrc,
-        previewFileNameCsv,
-        changedRecordsFileNameMrc,
-        changedRecordsFileNameCsv,
-        matchedRecordsFileName,
-        instanceUUIDsFileName,
-      );
+      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
     it(
@@ -207,11 +190,11 @@ describe('Bulk-edit', () => {
           },
         ];
 
-        parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, assertionsOnMarcFileContent, 1);
 
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
-          previewFileNameCsv,
+          fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
@@ -231,11 +214,11 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedMarc();
 
-        parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(fileNames.changedRecordsMarc, assertionsOnMarcFileContent, 1);
 
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
-          changedRecordsFileNameCsv,
+          fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
@@ -244,12 +227,7 @@ describe('Bulk-edit', () => {
 
         // remove earlier downloaded files
         FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(
-          previewFileNameMrc,
-          previewFileNameCsv,
-          changedRecordsFileNameMrc,
-          changedRecordsFileNameCsv,
-        );
+        BulkEditFiles.deleteAllDownloadedFiles(fileNames);
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.checkInstancesCheckbox();
@@ -262,7 +240,7 @@ describe('Bulk-edit', () => {
         BulkEditFiles.verifyCSVFileRecordsNumber(instanceUUIDsFileName, 1);
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          matchedRecordsFileName,
+          fileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
@@ -270,7 +248,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyValueInRowByUUID(
-          previewFileNameCsv,
+          fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
@@ -278,11 +256,11 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
-        parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(fileNames.previewRecordsMarc, assertionsOnMarcFileContent, 1);
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          changedRecordsFileNameCsv,
+          fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,
@@ -290,7 +268,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 
-        parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(fileNames.changedRecordsMarc, assertionsOnMarcFileContent, 1);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
