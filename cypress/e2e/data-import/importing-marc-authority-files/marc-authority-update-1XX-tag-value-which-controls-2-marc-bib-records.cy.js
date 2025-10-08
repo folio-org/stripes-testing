@@ -105,12 +105,14 @@ describe('Data Import', () => {
     const linkingTagForFirstMarcBib = [
       {
         rowIndex: 64,
-        value: '374167 DiCaprio',
+        value: 'C374167 DiCaprio, Leonardo',
         tag: 700,
       },
     ];
 
-    const linkingTagForSecondMarcBib = [{ rowIndex: 21, value: '374167 DiCaprio', tag: 700 }];
+    const linkingTagForSecondMarcBib = [
+      { rowIndex: 21, value: 'C374167 DiCaprio, Leonardo', tag: 700 },
+    ];
     const twoMarcBibsToLink = [
       {
         marcBibRecord: 'C374167 Titanic / written and directed by James Cameron.',
