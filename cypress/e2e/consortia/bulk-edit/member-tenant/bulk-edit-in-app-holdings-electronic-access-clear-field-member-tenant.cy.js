@@ -318,7 +318,7 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
             HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-');
-            HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-', 1);
+            HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-', '-', 1);
             HoldingsRecordView.close();
             InventorySearchAndFilter.resetAll();
           });
