@@ -29,7 +29,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('MARC', () => {
+describe.skip('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Version history', { retries: { runMode: 1 } }, () => {
       let randomPostfix;
@@ -304,9 +304,10 @@ describe('MARC', () => {
         FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
       });
 
-      it(
+      // Trillium+ only
+      it.skip(
         'C692124 Check "Version history" pane after CRUD fields, subfields, indicators in MARC bib record updated via "Data import" app (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C692124'] },
+        { tags: [] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
