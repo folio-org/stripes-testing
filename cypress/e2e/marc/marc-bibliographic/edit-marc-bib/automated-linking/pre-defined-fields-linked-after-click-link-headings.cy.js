@@ -186,7 +186,6 @@ describe('MARC', () => {
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
               cy.waitForAuthRefresh(() => {
-                cy.reload();
                 InventoryInstances.waitContentLoading();
               }, 20_000);
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);

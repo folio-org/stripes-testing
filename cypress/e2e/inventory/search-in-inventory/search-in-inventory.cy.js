@@ -135,6 +135,7 @@ describe('Inventory', () => {
         cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventoryInstances.searchByTitle('*');
         InventoryInstances.waitLoading();

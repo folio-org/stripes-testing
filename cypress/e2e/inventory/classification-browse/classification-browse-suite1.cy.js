@@ -761,7 +761,7 @@ describe('Inventory', () => {
           });
         });
       });
-
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -983,7 +983,7 @@ describe('Inventory', () => {
           });
         });
       });
-
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
