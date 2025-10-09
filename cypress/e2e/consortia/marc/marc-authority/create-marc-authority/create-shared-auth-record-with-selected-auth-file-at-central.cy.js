@@ -18,7 +18,7 @@ describe('MARC', () => {
         startWithNumber: '1',
         searchOption: 'Keyword',
         marcValue: 'Create a new Shared MARC authority record with Local authority file test',
-        headerText: 'New shared MARC authority record',
+        headerText: 'Create a new shared MARC authority record',
         AUTHORIZED: 'Authorized',
         sharedIcon: 'Shared',
       };

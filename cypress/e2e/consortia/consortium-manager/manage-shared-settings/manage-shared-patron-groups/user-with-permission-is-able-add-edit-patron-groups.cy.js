@@ -6,7 +6,6 @@ import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
-  messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
@@ -106,7 +105,9 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(sharedPatronGroups3.group);
             ConfirmShare.clickConfirm();
-            ConsortiumManagerApp.checkMessage(messages.created(sharedPatronGroups3.group, 'All'));
+            ConsortiumManagerApp.checkMessage(
+              `${sharedPatronGroups3.group} was successfully created for All libraries.`,
+            );
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck, [
               'edit',
               'trash',
@@ -139,7 +140,9 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(sharedPatronGroups3.group);
             ConfirmShare.clickConfirm();
-            ConsortiumManagerApp.checkMessage(messages.updated(sharedPatronGroups3.group, 'All'));
+            ConsortiumManagerApp.checkMessage(
+              `${sharedPatronGroups3.group} was successfully updated for All libraries.`,
+            );
 
             ConsortiumManagerApp.clickSelectMembers();
             SelectMembers.verifyStatusOfSelectMembersModal(2, 1);

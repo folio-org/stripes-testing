@@ -17,7 +17,7 @@ describe('MARC', () => {
       const users = {};
       const testData = {
         marcValue: `AT_C423582_MarcAuthority_${randomPostfix}`,
-        headerText: 'New local MARC authority record',
+        headerText: 'Create a new local MARC authority record',
         editHeaderText: 'Edit local MARC authority record',
         AUTHORIZED: 'Authorized',
       };

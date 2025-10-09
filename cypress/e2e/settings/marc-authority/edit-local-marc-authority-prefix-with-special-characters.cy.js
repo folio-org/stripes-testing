@@ -55,6 +55,9 @@ describe('MARC', () => {
         'C440099 "Prefix" field alpha and special characters validation during editing of Local "Authority file" (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C440099'] },
         () => {
+          ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+          ManageAuthorityFiles.checkAuthorityFilesTableExists();
+          ManageAuthorityFiles.checkSourceFileExistsByName(localAuthFile.name);
           invalidPrefixes.forEach((prefix) => {
             // Edit Local authority file
             ManageAuthorityFiles.clickEditButton(localAuthFile.name);

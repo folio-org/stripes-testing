@@ -14,7 +14,8 @@ describe('MARC', () => {
       const users = {};
       const localAuthFilesIds = [];
       const randomPostfix = getRandomPostfix();
-      const paneHeaderCreateNewSharedMarcAuthorityRecord = 'New shared MARC authority record';
+      const paneHeaderCreateNewSharedMarcAuthorityRecord =
+        'Create a new shared MARC authority record';
       const localAuthFiles = [
         {
           name: `C422248 auth source file active ${randomPostfix}`,
@@ -62,6 +63,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

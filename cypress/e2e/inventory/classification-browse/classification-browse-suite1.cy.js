@@ -761,7 +761,7 @@ describe('Inventory', () => {
           });
         });
       });
-
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -983,7 +983,7 @@ describe('Inventory', () => {
           });
         });
       });
-
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -1334,7 +1334,7 @@ describe('Inventory', () => {
       ClassificationBrowse.updateIdentifierTypesAPI(
         testData.classificationBrowseId,
         testData.classificationBrowseAlgorithm,
-        testData.originalTypes,
+        [],
       );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);

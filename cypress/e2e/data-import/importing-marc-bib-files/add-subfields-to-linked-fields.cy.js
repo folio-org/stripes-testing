@@ -271,7 +271,7 @@ describe('Data Import', () => {
           '1',
           '\\',
           '$a C385673 Lee, Stan, $d 1922-2018',
-          '$e creator',
+          '$e AUTHOR $e creator',
           '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
         );

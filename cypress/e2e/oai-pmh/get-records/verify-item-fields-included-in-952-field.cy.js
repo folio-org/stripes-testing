@@ -34,7 +34,7 @@ const itemData = {
   enumeration: `Enumeration ${getRandomPostfix()}`,
   chronology: `Chronology ${getRandomPostfix()}`,
   volume: `Volume ${getRandomPostfix()}`,
-  permanentLoanType: 'Can circulate',
+  permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
   temporaryLoanType: 'Reading room',
 };
 
@@ -67,7 +67,7 @@ describe('OAI-PMH', () => {
               marcInstance.holdingsId = response[0].holding.id;
               cy.getDefaultMaterialType().then((res) => {
                 const materialTypeId = res.id;
-                cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then(
+                cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.SELECTED}"` }).then(
                   (loanTypes) => {
                     const loanTypeId = loanTypes[0].id;
 

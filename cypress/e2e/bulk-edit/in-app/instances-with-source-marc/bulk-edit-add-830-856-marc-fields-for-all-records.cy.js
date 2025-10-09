@@ -26,13 +26,11 @@ import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
+import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
-let previewQueryFileNameCsv;
-let previewQueryFileNameMrc;
-let changedRecordsQueryFileNameCsv;
-let changedRecordsQueryFileNameMrc;
+let queryFileNames;
 const postfix = getRandomPostfix();
 const marcInstance = {
   title: `AT_C663269_MarcInstance_${postfix}`,
@@ -100,7 +98,6 @@ const marcInstanceFields = [
   },
 ];
 const seriesStatement = 'United States congressional serial set.';
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('Bulk-edit', () => {
   describe('Instances with source MARC', () => {
@@ -154,10 +151,7 @@ describe('Bulk-edit', () => {
           const interceptedUuid = interception.request.url.match(
             /bulk-operations\/([a-f0-9-]+)\/preview/,
           )[1];
-          previewQueryFileNameCsv = `${todayDate}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-          previewQueryFileNameMrc = `${todayDate}-Updates-Preview-MARC-Query-${interceptedUuid}.mrc`;
-          changedRecordsQueryFileNameCsv = `${todayDate}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
-          changedRecordsQueryFileNameMrc = `${todayDate}-Changed-Records-MARC-Query-${interceptedUuid}.mrc`;
+          queryFileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
         });
       });
     });
@@ -166,12 +160,7 @@ describe('Bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
-      FileManager.deleteFileFromDownloadsByMask(
-        previewQueryFileNameCsv,
-        previewQueryFileNameMrc,
-        changedRecordsQueryFileNameCsv,
-        changedRecordsQueryFileNameMrc,
-      );
+      BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
     });
 
     // Trillium
@@ -304,12 +293,16 @@ describe('Bulk-edit', () => {
           },
         ];
 
-        parseMrcFileContentAndVerify(previewQueryFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(
+          queryFileNames.previewRecordsMarc,
+          assertionsOnMarcFileContent,
+          1,
+        );
 
         const updatedHoldingElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccessFields.uri};-;-;${electronicAccessFields.newUrlPublicNote}`;
 
         BulkEditActions.downloadPreview();
-        FileManager.convertCsvToJson(previewQueryFileNameCsv).then((csvFileData) => {
+        FileManager.convertCsvToJson(queryFileNames.previewFileName).then((csvFileData) => {
           cy.expect(
             csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
           ).to.equal(seriesStatement);
@@ -332,7 +325,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        FileManager.convertCsvToJson(changedRecordsQueryFileNameCsv).then((csvFileData) => {
+        FileManager.convertCsvToJson(queryFileNames.changedRecordsFileName).then((csvFileData) => {
           cy.expect(
             csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
           ).to.equal(seriesStatement);
@@ -343,7 +336,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadChangedMarc();
 
         parseMrcFileContentAndVerify(
-          changedRecordsQueryFileNameMrc,
+          queryFileNames.changedRecordsMarc,
           assertionsOnMarcFileContent,
           1,
         );

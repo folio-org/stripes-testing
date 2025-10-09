@@ -16,7 +16,7 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
       const testData = {
         authority: {
-          searchInput: 'Literature',
+          searchInput: 'C376593 Literature',
           searchOption: 'Keyword',
         },
         bibliographic: {
@@ -70,32 +70,28 @@ describe('MARC', () => {
             );
           });
           // Create the link between bib and authority records
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000).then(() => {
-            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-            InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
-            InventoryInstance.waitLoading();
-            InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIconByIndex(51);
-            MarcAuthorities.switchToSearch();
-            cy.wait(1000);
-            MarcAuthorities.chooseTypeOfHeading('Genre');
-            InventoryInstance.searchResults(testData.linkingValue);
-            MarcAuthorities.clickLinkButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(1000);
-          });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          })
+            .then(() => {
+              InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+              InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+              InventoryInstance.waitLoading();
+              InventoryInstance.editMarcBibliographicRecord();
+              InventoryInstance.verifyAndClickLinkIconByIndex(51);
+              MarcAuthorities.switchToSearch();
+              cy.wait(1000);
+              MarcAuthorities.chooseTypeOfHeading('Genre');
+              InventoryInstance.searchResults(testData.linkingValue);
+              MarcAuthorities.clickLinkButton();
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              cy.wait(1000);
+            })
+            .then(() => cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            }));
         });
       });
 

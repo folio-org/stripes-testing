@@ -259,7 +259,7 @@ describe('MARC', () => {
         },
         // 5. k - a, b, c, d, i, m, s
         {
-          typeField: 'k - Two-dimensional nonprojectable graphic',
+          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.K,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
           tag008Fields: optionsFor008FieldDropdowns.option_5,
         },
@@ -321,7 +321,7 @@ describe('MARC', () => {
         () => {
           valid0607ValuesSets.forEach((set, index) => {
             cy.visit(`${TopMenu.inventoryPath}/view/${testData.createdRecordIDs[0]}`);
-            InventoryInstance.deriveNewMarcBib();
+            InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.waitLoading();
 
             const title = `Derived_C388652_${getRandomPostfix()}`;

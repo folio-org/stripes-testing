@@ -86,7 +86,7 @@ describe.skip('Inventory', () => {
       });
 
       // Trillium+ only
-      it(
+      it.skip(
         'C812846 API | Edit multiple "Item" records (empty "order" field) using batch endpoint (spitfire)',
         {
           tags: [],

@@ -60,6 +60,7 @@ describe('Inventory', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventorySearchAndFilter.waitLoading,
+            authRefresh: true,
           });
         },
       );

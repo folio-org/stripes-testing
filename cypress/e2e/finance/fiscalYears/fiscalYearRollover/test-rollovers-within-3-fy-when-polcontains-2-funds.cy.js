@@ -171,6 +171,7 @@ describe('Fiscal Year Rollover', () => {
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
+          cy.wait(20000);
         },
       );
 
@@ -223,6 +224,7 @@ describe('Fiscal Year Rollover', () => {
           'None',
           'Allocation',
         );
+        cy.wait(20000);
         cy.visit(TopMenu.fiscalYearPath);
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);

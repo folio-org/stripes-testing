@@ -33,6 +33,7 @@ describe('MARC', () => {
         localAuthorityFiles[1].baseUrl,
         `https://test.com/source2_${randomPostfixBaseUrl}/`,
       ];
+      const errorNonUniqueBaseUrl = 'Error saving data. Base URL must be unique.';
       let adminUser;
       const user = {};
       const createdAuthorityIds = [];
@@ -87,7 +88,11 @@ describe('MARC', () => {
               nonUniqueBaseUrl,
             );
             ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthorityFiles[0].name);
-            ManageAuthorityFiles.verifyUpdateAssignedSourceFileError(localAuthorityFiles[0].name);
+            ManageAuthorityFiles.checkErrorInField(
+              localAuthorityFiles[0].name,
+              AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
+              errorNonUniqueBaseUrl,
+            );
             ManageAuthorityFiles.clickCancelButtonAfterEditingFile(localAuthorityFiles[0].name);
             ManageAuthorityFiles.checkSourceFileExists(
               localAuthorityFiles[0].name,

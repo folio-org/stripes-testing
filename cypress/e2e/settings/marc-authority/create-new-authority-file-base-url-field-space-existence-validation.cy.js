@@ -33,6 +33,7 @@ describe('MARC', () => {
             cy.login(user.userProperties.username, user.userProperties.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
+              authRefresh: true,
             });
           });
       });

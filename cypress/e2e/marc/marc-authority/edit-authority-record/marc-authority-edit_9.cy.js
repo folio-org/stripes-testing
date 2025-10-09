@@ -25,6 +25,7 @@ describe('MARC', () => {
       const tags = ['381', '382', '379', ''];
 
       before('create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 

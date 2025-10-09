@@ -15,7 +15,7 @@ describe('Eureka', () => {
           preferredContactTypeId: '002',
         },
       },
-      password: 'password',
+      password: 'password_password',
       notFoundErrorMsg: 'Not Found',
       noUsernameErrorMsg: 'User without username cannot be created in Keycloak',
       randomUuid: uuid(),

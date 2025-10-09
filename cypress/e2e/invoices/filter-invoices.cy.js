@@ -201,6 +201,7 @@ describe('Invoices', () => {
     },
     {
       filterActions: () => {
+        Invoices.resetFilters();
         Invoices.selectFiscalYearFilter(firstFiscalYear.code);
       },
     },

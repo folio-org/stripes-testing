@@ -7,7 +7,6 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -62,9 +61,6 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C434153'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs);
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.byShared('No');
-          });
           InventoryInstance.selectTopRecord();
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.addNewField('010', '$a   766384', 6);
