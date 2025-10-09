@@ -8,7 +8,9 @@ import {
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import QueryModal, {
   instanceFieldValues,
   STRING_OPERATORS,
@@ -261,7 +263,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(folioItem.instanceId);
         BulkEditSearchPane.verifyReasonForError(
-          'Bulk edit of instance notes is not supported for MARC Instances.',
+          ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED,
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
