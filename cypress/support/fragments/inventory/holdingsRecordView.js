@@ -197,6 +197,7 @@ export default {
     relationshipValue,
     uriValue,
     linkText = '-',
+    materialsSpecified = '-',
     urlPublicNote = '-',
     rowIndex = 0,
   ) => {
@@ -213,6 +214,11 @@ export default {
     cy.expect(
       electronicAccessAccordion
         .find(MultiColumnListCell({ row: rowIndex, columnIndex: 2, content: linkText }))
+        .exists(),
+    );
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 3, content: materialsSpecified }))
         .exists(),
     );
     cy.expect(
