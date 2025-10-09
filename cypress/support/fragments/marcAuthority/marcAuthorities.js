@@ -1681,8 +1681,9 @@ export default {
     });
   },
 
-  checkButtonNewExistsInActionDropdown() {
-    cy.expect(buttonNew.exists());
+  checkButtonNewExistsInActionDropdown(buttonShown = true) {
+    if (buttonShown) cy.expect(buttonNew.exists());
+    else cy.expect(buttonNew.absent());
   },
 
   checkAuthorityActionsDropDownExpanded() {
