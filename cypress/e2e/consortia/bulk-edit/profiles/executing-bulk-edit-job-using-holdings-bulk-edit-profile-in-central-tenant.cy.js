@@ -110,14 +110,14 @@ const testData = {
           },
         ],
       },
-      //   {
-      //     option: 'TEMPORARY_LOCATION',
-      //     actions: [
-      //       {
-      //         type: 'CLEAR_FIELD',
-      //       },
-      //     ],
-      //   },
+      {
+        option: 'TEMPORARY_LOCATION',
+        actions: [
+          {
+            type: 'CLEAR_FIELD',
+          },
+        ],
+      },
     ],
   },
   secondProfileBody: {
