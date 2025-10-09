@@ -343,6 +343,7 @@ describe('Bulk-edit', () => {
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfilesFoundText();
+          SelectBulkEditProfileModal.verifyProfileNumberMatchesNumberInSettings('items');
           SelectBulkEditProfileModal.verifyProfilesSortedByName();
           SelectBulkEditProfileModal.changeSortOrderByName();
           SelectBulkEditProfileModal.verifyProfilesSortedByName('descending');
