@@ -12,7 +12,7 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C423515_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C813593_MarcAuthority_${getRandomPostfix()}`,
         tag010: '010',
         tag100: '100',
         newFieldIndex: 6,
@@ -20,12 +20,12 @@ describe('MARC', () => {
         newFieldIndicatorValue: '\\',
         newFieldContent: '$a test field',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n423515${randomDigits}${randomDigits}`,
+        naturalId: `n813593${randomDigits}${randomDigits}`,
       };
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423515_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813593_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -51,11 +51,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C423515 MARC tag box validation in Create a new MARC Authority record window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423515'] },
+        'C813593 MARC tag box validation in Create a new MARC Authority record window (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813593'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           for (let i = 0; i < 3; i++) {

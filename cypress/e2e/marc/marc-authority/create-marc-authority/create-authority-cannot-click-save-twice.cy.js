@@ -13,16 +13,16 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C436948_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C813626_MarcAuthority_${getRandomPostfix()}`,
         tag010: '010',
         tag100: '100',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n436948${randomDigits}${randomDigits}`,
+        naturalId: `n813626${randomDigits}${randomDigits}`,
       };
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C436948_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813626_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -50,11 +50,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C436948 Verify that "Save & close" button cannot be clicked two times in a row in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436948'] },
+        'C813626 Verify that "Save & close" button cannot be clicked two times in a row in "Create a new MARC authority record" window (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813626'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           for (let i = 0; i < 2; i++) {

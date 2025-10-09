@@ -14,7 +14,7 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C423480_MarcAuthority_${randomPostfix}`,
+        authorityHeading: `AT_C813592_MarcAuthority_${randomPostfix}`,
         tagLDR: 'LDR',
         tag001: '001',
         tag005: '005',
@@ -25,7 +25,7 @@ describe('MARC', () => {
         tag999: '999',
         tagLDRSource: 'LEADER',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n423480${randomDigits}${randomDigits}`,
+        naturalId: `n813592${randomDigits}${randomDigits}`,
       };
 
       const fieldValues = {
@@ -65,7 +65,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423480_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813592_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -91,11 +91,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C423480 Fields without tag and subfield values are deleted during saving (create MARC authority) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423480'] },
+        'C813592 Fields without tag and subfield values are deleted during saving (create MARC authority) (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813592'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           for (let i = 0; i < 8; i++) {

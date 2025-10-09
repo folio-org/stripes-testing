@@ -74,8 +74,6 @@ const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
   Section({ menuSectionLabel: 'Show columns' }),
 );
 const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
-const saveCqlButton = authorityActionsDropDownMenu.find(Button('Save authorities CQL query'));
-const saveUuidsButton = authorityActionsDropDownMenu.find(Button('Save authorities UUIDs'));
 const actionsShowColumnsOptions = [
   'Authorized/Reference',
   'Type of heading',
@@ -1763,10 +1761,8 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
-  verifyActionsMenu(saveUuidsEnabled = false, saveCqlEnabled = false, sortOption = sortOptions[0]) {
+  verifyActionsMenu(sortOption = sortOptions[0]) {
     cy.expect([
-      saveUuidsButton.is({ disabled: !saveUuidsEnabled }),
-      saveCqlButton.is({ disabled: !saveCqlEnabled }),
       actionsMenuSortBySection.find(sortBySelect).has({ checkedOptionText: sortOption }),
       sortBySelect.has({ content: sortOptions.join('') }),
     ]);

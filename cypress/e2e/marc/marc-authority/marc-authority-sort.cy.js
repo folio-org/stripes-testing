@@ -141,8 +141,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350579'] },
+      'C729548 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C729548'] },
       () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(

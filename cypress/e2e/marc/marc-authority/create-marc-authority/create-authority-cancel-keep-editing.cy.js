@@ -12,16 +12,16 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C423524_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C813598_MarcAuthority_${getRandomPostfix()}`,
         tag010: '010',
         tag100: '100',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n423524${randomDigits}${randomDigits}`,
+        naturalId: `n813598${randomDigits}${randomDigits}`,
       };
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423524_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813598_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -47,11 +47,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C423524 Select "Keep editing" in "Are you sure" modal and save the record in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423524'] },
+        'C813598 Select "Keep editing" in "Are you sure" modal and save the record in "Create a new MARC authority record" window (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813598'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           for (let i = 0; i < 2; i++) {

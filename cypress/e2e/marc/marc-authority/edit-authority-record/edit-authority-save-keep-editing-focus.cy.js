@@ -8,7 +8,6 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import {
   AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES,
   AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
-  AUTHORITY_008_FIELD_LANG_DROPDOWN,
   AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
 } from '../../../../support/constants';
 
@@ -26,6 +25,7 @@ describe('MARC', () => {
         tag400: '400',
         tag053Content: '$a 053test',
         tag400Content: '$a tag400',
+        newLangBoxValue: 'b',
       };
 
       const tag1XXUpdatedValues = {
@@ -134,22 +134,22 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsDisabled();
 
           pauseAfterEdit();
-          QuickMarcEditor.focusOnFieldsDropdown(
+          QuickMarcEditor.focusOnFieldBox(
             testData.tag008,
             AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
           );
-          QuickMarcEditor.selectFieldsDropdownOption(
+          QuickMarcEditor.fillInTextBoxInField(
             testData.tag008,
             AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
-            AUTHORITY_008_FIELD_LANG_DROPDOWN.B,
+            testData.newLangBoxValue,
           );
-          QuickMarcEditor.verifyDropdownOptionChecked(
+          QuickMarcEditor.verifyTextBoxValueInField(
             testData.tag008,
             AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
-            AUTHORITY_008_FIELD_LANG_DROPDOWN.B,
+            testData.newLangBoxValue,
           );
           QuickMarcEditor.clickSaveAndKeepEditing();
-          QuickMarcEditor.verifyFieldDropdownFocused(
+          QuickMarcEditor.verifyFieldBoxFocused(
             testData.tag008,
             AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
           );

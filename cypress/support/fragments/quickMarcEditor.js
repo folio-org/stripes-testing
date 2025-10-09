@@ -3220,7 +3220,9 @@ export default {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      targetRow.find(Select({ label: including(dropdownLabel) })).has({ focused: isFocused }),
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
+        .has({ focused: isFocused }),
     );
   },
 
@@ -3242,5 +3244,22 @@ export default {
 
   close() {
     cy.do(QuickMarcEditor().find(PaneHeader()).find(closeButton).click());
+  },
+
+  verifyFieldBoxFocused(tag, boxLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow
+        .find(TextField(matching(new RegExp(`^${boxLabel}\\**$`))))
+        .has({ focused: isFocused }),
+    );
+  },
+
+  focusOnFieldBox(tag, boxLabel, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(TextField(matching(new RegExp(`^${boxLabel}\\**$`)))).focus());
+    cy.wait(500);
   },
 };
