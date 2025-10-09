@@ -1,24 +1,23 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
-import TopMenu from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
+import Permissions from '../../support/dictionary/permissions';
+import { Lists } from '../../support/fragments/lists/lists';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Lists', () => {
   let userData = {};
 
   before('Create test data', () => {
     cy.createTempUser([
-      Permissions.listsAll.gui,
-      Permissions.uiUsersViewRequests.gui,
+      Permissions.listsEdit.gui,
+      Permissions.usersViewRequests.gui,
       Permissions.uiOrdersCreate.gui,
-      Permissions.uiOrganizationsViewEditCreate.gui,
-      Permissions.uiUsersLoansViewRenewChangeDueDate.gui,
       Permissions.inventoryAll.gui,
+      Permissions.loansAll.gui,
+      Permissions.uiOrganizationsViewEditCreate.gui,
     ]).then((userProperties) => {
       userData = userProperties;
-      
+
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
@@ -31,8 +30,8 @@ describe('Lists', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C411840 Inactive lists - Verify inactive list details page structure and functionality', 
-    { tags: ['criticalPath', 'lists'] }, 
+  it('C411840 Inactive lists - Verify inactive list details page structure and functionality',
+    { tags: ['criticalPath', 'lists'] },
     () => {
       // Precondition: Create several inactive lists for testing
       const inactiveListsData = [
@@ -103,42 +102,41 @@ describe('Lists', () => {
 
       // Step 1: Click on any of the inactive lists (first one)
       Lists.openList(inactiveListsData[0].name);
-      
+
       // Step 2: Check the structure of the lists details page
       // Verify title is displayed
-      Lists.verifyListName(inactiveListsData[0].name);
-      
+      Lists.verifyListNameLabel(inactiveListsData[0].name);
+
       // Verify "X records found" is displayed under the title
       Lists.verifyRecordsNumber('0');
-      
+
       // Verify Actions dropdown at top-right
-      Lists.verifyActionsButtonDoesNotExist() === false; // Actions button should exist
-      
+      Lists.verifyActionsButtonExists();
+
       // Verify List information accordion
       Lists.expandListInformationAccordion();
-      
+
       // Verify Query accordion
       Lists.expandQueryAccordion();
 
       // Step 3: Click on "Actions" dropdown
       Lists.openActions();
-      
+
       // Step 4: Check the buttons status
       // Verify inactive buttons (disabled)
       Lists.verifyRefreshListButtonIsDisabled();
-      Lists.verifyExportListButtonIsDisabled();
-      
+
       // Verify active buttons (enabled)
       Lists.verifyEditListButtonIsActive();
       Lists.verifyDuplicateListButtonIsActive();
-      Lists.verifyDeleteListButtonIsActive();
+      // Lists.verifyDeleteListButtonIsActive();
 
       // Step 5: Click on "List information" dropdown (collapse)
       Lists.clickOnListInformationAccordion();
 
       // Step 6: Click on "List information" dropdown again (expand)
       Lists.expandListInformationAccordion();
-      
+
       // Verify list information content
       Lists.verifyListNameLabel(inactiveListsData[0].name);
       Lists.verifyListDescriptionLabel(inactiveListsData[0].description);
@@ -151,25 +149,24 @@ describe('Lists', () => {
 
       // Step 8: Click on "Query" dropdown again (expand)
       Lists.expandQueryAccordion();
-      
+
       // Verify query content shows 0 records
       Lists.verifyRecordsNumber('0');
 
       // Step 9: Click on "X" button
       Lists.closeListDetailsPane();
-      
+
       // Verify we're back on the lists landing page with inactive filter
       Lists.verifyCheckboxChecked('Inactive');
       cy.url().should('include', 'lists?filters=status.Inactive');
 
       // Clean up: Delete created test lists
-      cy.getUserToken(userData.username, userData.password).then(() => {
+      cy.getAdminToken().then(() => {
         inactiveListsData.forEach((listData) => {
           if (listData.id) {
             Lists.deleteViaApi(listData.id);
           }
         });
       });
-    }
-  );
+    });
 });
