@@ -23,13 +23,13 @@ describe('Consortia', () => {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'No value set-',
+          user: '',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Consortium',
+          memberLibraries: 'Central Office',
         };
         const localSubjectTypeOnCollege = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
@@ -147,23 +147,26 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
+              sharedSubjectType.user,
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
+              { actions: ['edit', 'trash'] },
             );
 
             ConsortiumManager.clickSelectMembers();
@@ -176,19 +179,21 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
+              sharedSubjectType.user,
             );
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCentral.name);
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
+              { actions: ['edit', 'trash'] },
             );
           },
         );

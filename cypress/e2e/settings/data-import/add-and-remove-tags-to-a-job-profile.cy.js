@@ -50,6 +50,7 @@ describe('Data Import', () => {
         },
       );
       cy.loginAsAdmin();
+      cy.wait(2000);
     });
 
     after('Delete test data', () => {

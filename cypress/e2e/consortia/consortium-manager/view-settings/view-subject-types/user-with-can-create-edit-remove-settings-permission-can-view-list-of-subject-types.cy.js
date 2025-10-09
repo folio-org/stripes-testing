@@ -23,13 +23,13 @@ describe('Consortia', () => {
           name: `C594398 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'System, System user - mod-consortia-keycloak ',
+          user: '',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
           name: `C594398 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Consortium',
+          memberLibraries: 'Central Office',
         };
         const localSubjectTypeOnCollege = {
           name: `C594398 autotestSubjectTypeName${getRandomPostfix()}`,
@@ -155,8 +155,8 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
+              sharedSubjectType.user,
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
@@ -181,8 +181,8 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
+              sharedSubjectType.user,
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,

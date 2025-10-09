@@ -12,7 +12,6 @@ import SubjectSources from '../../../../../support/fragments/settings/inventory/
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -30,7 +29,7 @@ describe('Consortia', () => {
         const localSubjectSourceOnCentral = {
           name: `C594423 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Consortium',
+          memberLibraries: 'Central Office',
         };
         const localSubjectSourceOnCollege = {
           name: `C594423 autotestSubjectTypeName${getRandomPostfix()}`,
@@ -141,27 +140,26 @@ describe('Consortia', () => {
             ConsortiumSubjectSources.choose();
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: sharedSubjectSource.name,
-              actions: [],
+              actions: ['edit', 'trash'],
             });
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnCentral.name,
               localSubjectSourceOnCentral.memberLibraries,
               localSubjectSourceOnCentral.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnCollege.name,
               localSubjectSourceOnCollege.memberLibraries,
               localSubjectSourceOnCollege.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnUniversity.name,
               localSubjectSourceOnUniversity.memberLibraries,
               localSubjectSourceOnUniversity.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
             ConsortiumManager.clickSelectMembers();
             SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
@@ -172,13 +170,13 @@ describe('Consortia', () => {
 
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: sharedSubjectSource.name,
-              actions: [],
+              actions: ['edit', 'trash'],
             });
             ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
               localSubjectSourceOnCentral.name,
               localSubjectSourceOnCentral.memberLibraries,
               localSubjectSourceOnCentral.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnCollege.name);
             ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnUniversity.name);

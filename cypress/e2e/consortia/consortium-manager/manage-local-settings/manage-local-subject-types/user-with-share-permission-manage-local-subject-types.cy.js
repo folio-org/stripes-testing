@@ -45,7 +45,6 @@ describe('Consortia', () => {
           // Create user with share permission in central tenant
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerShare.gui,
-            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
             Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
           ]).then((userProperties) => {
             user = userProperties;

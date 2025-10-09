@@ -24,13 +24,13 @@ describe('Consortia', () => {
           name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'System, System user - mod-consortia-keycloak ',
+          user: '',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
           name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Consortium',
+          memberLibraries: 'Central Office',
         };
         const localSubjectTypeOnCollege = {
           name: `C594400 autotestSubjectTypeName${getRandomPostfix()}`,
@@ -142,29 +142,29 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              'No value set-',
               sharedSubjectType.memberLibraries,
-              { actions: [] },
+              sharedSubjectType.user,
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCollege.name,
               localSubjectTypeOnCollege.memberLibraries,
               localSubjectTypeOnCollege.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnUniversity.name,
               localSubjectTypeOnUniversity.memberLibraries,
               localSubjectTypeOnUniversity.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
             ConsortiumManager.clickSelectMembers();
             SelectMembersModal.verifyStatusOfSelectMembersModal(3, 3, true);
@@ -175,15 +175,15 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
               sharedSubjectType.memberLibraries,
-              { actions: [] },
+              sharedSubjectType.user,
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
               localSubjectTypeOnCentral.name,
               localSubjectTypeOnCentral.memberLibraries,
               localSubjectTypeOnCentral.source,
-              { actions: [] },
+              { actions: ['edit', 'trash'] },
             );
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCollege.name);
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnUniversity.name);

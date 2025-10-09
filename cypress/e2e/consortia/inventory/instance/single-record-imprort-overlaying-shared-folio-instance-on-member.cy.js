@@ -23,6 +23,7 @@ describe('Inventory', () => {
       };
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.setTenant(Affiliations.College);
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
@@ -66,6 +67,7 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
+          cy.setTenant(Affiliations.College);
           InventoryInstance.startOverlaySourceBibRecord();
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();
@@ -80,12 +82,14 @@ describe('Inventory', () => {
             testData.updatedInstanceTitle,
             FileDetails.columnNameInResultList.title,
           );
-          [
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
+          );
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-          });
+          );
         },
       );
     });

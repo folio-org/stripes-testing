@@ -16,16 +16,16 @@ const getDefaultLocation = (
     id: uuid(),
     isActive: true,
     institutionId: specialInstitutionId || uuid(),
-    institutionName: `a_autotest_institution_${getRandomPostfix()}`,
+    institutionName: `1a_autotest_institution_${getRandomPostfix()}`,
     campusId: specialCampusId || uuid(),
-    campusName: `a_autotest_campuse_${getRandomPostfix()}`,
+    campusName: `1a_autotest_campuse_${getRandomPostfix()}`,
     libraryId: specialLibraryId || uuid(),
-    libraryName: `a_autotest_library_${getRandomPostfix()}`,
+    libraryName: `1a_autotest_library_${getRandomPostfix()}`,
     // servicePointIds must have real Service point id
     servicePointIds: [specialServicePointId],
-    name: locationName || `a_autotest_location_name_${getRandomPostfix()}`,
-    code: locationCode || `a_autotest_location_code_${getRandomPostfix()}`,
-    discoveryDisplayName: `a_autotest_name_${getRandomPostfix()}`,
+    name: locationName || `1a_autotest_location_name_${getRandomPostfix()}`,
+    code: locationCode || `1a_autotest_location_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `1a_autotest_name_${getRandomPostfix()}`,
     // servicePointIds must have real Service point id
     primaryServicePoint: specialServicePointId,
   };

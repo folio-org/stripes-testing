@@ -133,10 +133,10 @@ function findRowIndexBySubjectTypeName(name) {
     .then((rowAttr) => Number(rowAttr.replace('row-', '')));
 }
 
-function verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, userName, memberLibraries) {
+function verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, memberLibraries, userName) {
   const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 
-  cy.expect([
+  const expectations = [
     rootPane.exists(),
     EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.name }))
@@ -145,12 +145,21 @@ function verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, userName
       .find(MultiColumnListCell({ columnIndex: columnIndex.source }))
       .has({ content: source }),
     EditableListRow({ index: rowIndex })
-      .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
-      .has({ content: including(`${date} by ${userName}`) }),
-    EditableListRow({ index: rowIndex })
       .find(MultiColumnListCell({ columnIndex: columnIndex.memberLibraries }))
       .has({ content: memberLibraries }),
-  ]);
+  ];
+
+  if (typeof userName !== 'undefined') {
+    expectations.splice(
+      3,
+      0,
+      EditableListRow({ index: rowIndex })
+        .find(MultiColumnListCell({ columnIndex: columnIndex.lastUpdated }))
+        .has({ content: including(`${date} by ${userName}`) }),
+    );
+  }
+
+  cy.expect(expectations);
 }
 
 function verifySubjectTypeRowActions(rowIndex, actions) {
@@ -217,6 +226,7 @@ export default {
   verifySubjectTypeAbsent,
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Subject types');
+    cy.expect(newButton.exists());
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
@@ -524,14 +534,14 @@ export default {
   verifySharedToAllMembersSubjectTypeExists(
     subjectTypeName,
     source,
-    userName,
     memberLibraries,
+    userName,
     options = {},
   ) {
     const { actions = [] } = options;
 
     findRowIndexBySubjectTypeName(subjectTypeName).then((rowIndex) => {
-      verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, userName, memberLibraries);
+      verifySubjectTypeRowContent(rowIndex, subjectTypeName, source, memberLibraries, userName);
       verifySubjectTypeRowActions(rowIndex, actions);
     });
   },

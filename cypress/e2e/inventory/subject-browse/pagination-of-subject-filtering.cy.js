@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('Inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
@@ -69,12 +69,14 @@ describe.skip('Inventory', () => {
         BrowseSubjects.expandAccordion('Subject type');
         subjectTypes.forEach((subjectType) => {
           BrowseSubjects.selectSubjectType(subjectType);
+          cy.wait(1000);
         });
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickNextPaginationButton();
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickPreviousPaginationButton();
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+        cy.wait(2000);
       },
     );
   });
