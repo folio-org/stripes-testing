@@ -46,6 +46,14 @@ export default {
     cy.get('div[class^=modal] [class^=mclRow-]').then(($rows) => {
       const actualCount = $rows.length;
 
+      cy.getBulkEditProfile().then((profiles) => {
+        const totalRecords = profiles.totalRecords;
+
+        expect(actualCount).to.equal(
+          totalRecords,
+          `Number of profiles displayed (${actualCount}) should match totalRecords value (${totalRecords}) from the Settings`,
+        );
+      });
       cy.expect(
         Modal()
           .find(PaneHeader())
