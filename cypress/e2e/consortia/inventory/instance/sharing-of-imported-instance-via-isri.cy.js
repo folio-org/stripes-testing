@@ -68,6 +68,7 @@ describe('Inventory', () => {
         'C422057 (CONSORTIA) Verify the sharing of imported instance via ISRI (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C422057'] },
         () => {
+          cy.setTenant(Affiliations.College);
           InventoryInstances.waitContentLoading();
           InventoryInstances.importWithOclc(testData.oclcNumberForImport);
           InventoryInstance.waitLoading();

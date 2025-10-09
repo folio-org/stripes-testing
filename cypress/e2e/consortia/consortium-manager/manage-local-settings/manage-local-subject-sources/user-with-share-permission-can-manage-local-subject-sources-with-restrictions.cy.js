@@ -41,9 +41,7 @@ describe('Consortia', () => {
         };
 
         before('Create test data', () => {
-          cy.resetTenant();
           cy.getAdminToken();
-
           // Create User A in College (member-1) tenant as per TestRail preconditions
           cy.setTenant(Affiliations.College);
           cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((userProperties) => {
@@ -53,7 +51,6 @@ describe('Consortia', () => {
             cy.resetTenant();
             cy.assignPermissionsToExistingUser(userA.userId, [
               Permissions.consortiaSettingsConsortiumManagerShare.gui,
-              Permissions.consortiaSettingsConsortiumManagerEdit.gui,
               Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
             ]);
 

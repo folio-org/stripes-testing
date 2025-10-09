@@ -53,7 +53,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.uiInventorySingleRecordImport.gui,
             Permissions.uiInventoryViewCreateEditInstances.gui,
-            Permissions.settingsDataImportEnabled.gui,
+            Permissions.settingsDataImportView.gui,
           ]);
           cy.resetTenant();
 
@@ -80,6 +80,7 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
+          cy.setTenant(Affiliations.College);
           InventoryInstance.startOverlaySourceBibRecord();
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();

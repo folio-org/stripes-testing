@@ -114,7 +114,6 @@ describe('Data Import', () => {
               CapabilitySets.uiDataImport,
               CapabilitySets.uiDataImportSettingsManage,
               CapabilitySets.uiDataExportEdit,
-              CapabilitySets.uiConsortiaDataImportCentralRecordUpdate,
             ],
           );
           cy.resetTenant();
@@ -148,7 +147,6 @@ describe('Data Import', () => {
         () => {
           const updatedInstanceTitle = `${testData.instance.instanceTitle} modified`;
 
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);

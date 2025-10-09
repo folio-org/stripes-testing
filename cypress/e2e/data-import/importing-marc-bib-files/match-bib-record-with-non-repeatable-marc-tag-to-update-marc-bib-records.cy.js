@@ -237,7 +237,6 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.addHoldings();
         InventoryNewHoldings.waitLoading();
-        cy.reload();
         InventoryNewHoldings.fillPermanentLocation(testData.holdings.holdingsPermanentLocation);
         InventoryNewHoldings.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();

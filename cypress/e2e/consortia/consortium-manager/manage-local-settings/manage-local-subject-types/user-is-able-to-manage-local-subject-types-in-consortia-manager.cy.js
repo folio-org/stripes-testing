@@ -29,7 +29,6 @@ describe('Consortia', () => {
         const subjectTypeNameForKeepEdit = `C594411 autotestSubjectTypeName${getRandomPostfix()}`;
 
         before('Create users data', () => {
-          cy.clearCookies({ domain: null });
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerEdit.gui,
@@ -77,8 +76,8 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.createLocalSubjectTypeSavedForMemberLibraries(subjectType.name);
             ConsortiumSubjectTypes.confirmSaveForMemberLibraries(
               subjectType.name,
-              tenantNames.college,
               tenantNames.central,
+              tenantNames.college,
               tenantNames.university,
             );
             ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();

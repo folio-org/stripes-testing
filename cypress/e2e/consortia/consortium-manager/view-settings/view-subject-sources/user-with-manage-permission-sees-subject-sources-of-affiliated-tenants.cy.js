@@ -29,7 +29,7 @@ describe('Consortia', () => {
         const localSubjectSourceOnCentral = {
           name: `C594421 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Consortium',
+          memberLibraries: 'Central Office',
         };
         const localSubjectSourceOnCollege = {
           name: `C594421 autotestSubjectTypeName${getRandomPostfix()}`,

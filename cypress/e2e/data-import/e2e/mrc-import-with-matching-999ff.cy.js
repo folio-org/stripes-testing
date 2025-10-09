@@ -44,31 +44,31 @@ describe('Data Import', () => {
     const nameForCSVFile = `C343343 autotestFile${getRandomPostfix()}.csv`;
 
     const mappingProfileForExport = {
-      name: `autotestMappingProf${getRandomPostfix()}`,
+      name: `C343343 autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfileForExport = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `autotestActionProf${getRandomPostfix()}`,
+      name: `C343343 autotestActionProf${getRandomPostfix()}`,
     };
     const jobProfileForExport = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `autotestJobProf${getRandomPostfix()}`,
+      profileName: `C343343 autotestJobProf${getRandomPostfix()}`,
     };
     const mappingProfile = {
-      name: `autotestMappingProf${getRandomPostfix()}`,
+      name: `C343343 autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       update: true,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `autotestActionProf${getRandomPostfix()}`,
+      name: `C343343 autotestActionProf${getRandomPostfix()}`,
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
-      profileName: `autotestMatchProf${getRandomPostfix()}`,
+      profileName: `C343343 autotestMatchProf${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -86,7 +86,7 @@ describe('Data Import', () => {
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `autotestJobProf${getRandomPostfix()}`,
+      profileName: `C343343 autotestJobProf${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 

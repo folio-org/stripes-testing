@@ -49,7 +49,6 @@ describe('Data Import', () => {
           modifiedMarcFile: `C417042 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
           marcFileName: `C417042 editedTestMarcFile${getRandomPostfix()}.mrc`,
         },
-        heldByAccordionName: 'Held by',
       };
       const mappingProfile = {
         name: `C417042 Update shared Instance using marc-to-marc${getRandomPostfix()}`,
@@ -100,7 +99,6 @@ describe('Data Import', () => {
               CapabilitySets.uiDataImport,
               CapabilitySets.uiDataImportSettingsManage,
               CapabilitySets.uiDataExportEdit,
-              CapabilitySets.uiConsortiaDataImportCentralRecordUpdate,
             ],
           );
           cy.resetTenant();
@@ -135,7 +133,6 @@ describe('Data Import', () => {
         () => {
           const updatedInstanceTitle = `${testData.instance.instanceTitle} modified`;
 
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
