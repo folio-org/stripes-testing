@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -346,7 +348,7 @@ describe('Bulk-edit', () => {
             // Instance 5 should show "No change in value required" for deletion
             BulkEditSearchPane.verifyErrorByIdentifier(
               instance.instanceId,
-              'No change in value required',
+              ERROR_MESSAGES.NO_CHANGE_REQUIRED,
               'Warning',
             );
           } else {

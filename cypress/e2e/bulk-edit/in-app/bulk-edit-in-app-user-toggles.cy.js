@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -89,7 +91,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
         BulkEditSearchPane.verifyErrorByIdentifier(
           user.userId,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
         BulkEditSearchPane.openLogsSearch();
@@ -108,7 +110,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
         BulkEditSearchPane.verifyErrorByIdentifier(
           user.userId,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
         BulkEditSearchPane.openLogsSearch();
@@ -118,7 +120,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
         BulkEditSearchPane.verifyErrorByIdentifier(
           user.userId,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
       },

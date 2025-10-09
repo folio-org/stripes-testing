@@ -1,5 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -8,8 +10,7 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/
 
 let user;
 const testFileName = `invalidIdentifier_${getRandomPostfix()}.csv`;
-const errorMessage =
-  'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)';
+const errorMessage = ERROR_MESSAGES.INCORRECT_TOKEN_NUMBER;
 const getCalloutContent = (fileName) => {
   return `${fileName} is formatted incorrectly. Please correct the formatting and upload the file again.`;
 };
