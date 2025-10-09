@@ -1,7 +1,6 @@
 import { HTML, including } from '@interactors/html';
 import {
   Button,
-  Modal,
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
@@ -13,9 +12,10 @@ import {
   Spinner,
   TextField,
   Checkbox,
+  Pane,
 } from '../../../../interactors';
 
-const buildQueryModal = Modal('Build query');
+const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
