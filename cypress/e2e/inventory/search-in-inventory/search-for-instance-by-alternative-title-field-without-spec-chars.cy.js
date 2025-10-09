@@ -65,6 +65,7 @@ describe('Inventory', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });
@@ -82,6 +83,9 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C368045'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
@@ -91,6 +95,9 @@ describe('Inventory', () => {
         });
 
         testData.negativeSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
           InventoryInstances.resetAllFilters();

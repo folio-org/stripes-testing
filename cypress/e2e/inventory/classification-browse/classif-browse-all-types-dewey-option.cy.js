@@ -151,14 +151,11 @@ describe('Inventory', () => {
       'C468179 Browse for classifications of Instance which has each classification type using "Dewey Decimal classification" browse option (spitfire)',
       { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C468179'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
