@@ -2189,7 +2189,6 @@ export default {
       .eq(5)
       .then(($cell) => {
         const noValue = $cell.find('[data-test-no-value="true"]').length > 0;
-
         if (noValue) {
           cy.wrap(noValue).should('be.true');
         } else {
