@@ -856,10 +856,14 @@ export default {
     ]);
   },
 
-  cancelEditConfirmationPresented() {
-    cy.expect(cancelEditConformModel.exists());
-    cy.expect(closeWithoutSavingBtn.exists());
-    cy.expect(cancelEditConfirmBtn.exists());
+  cancelEditConfirmationPresented(isPresented = true) {
+    if (isPresented) {
+      cy.expect([
+        cancelEditConformModel.exists(),
+        closeWithoutSavingBtn.exists(),
+        cancelEditConfirmBtn.exists(),
+      ]);
+    } else cy.expect(cancelEditConformModel.absent());
   },
 
   confirmEditCancel() {
@@ -1143,6 +1147,10 @@ export default {
 
   moveFieldUp(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
+  },
+
+  moveFieldDown(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).click());
   },
 
   moveFieldUpWithEnter(rowNumber) {
@@ -3212,7 +3220,46 @@ export default {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      targetRow.find(Select({ label: including(dropdownLabel) })).has({ focused: isFocused }),
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
+        .has({ focused: isFocused }),
     );
+  },
+
+  verifyIndicatorBoxIsFocused(tag, indicatorIndex, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.expect(targetRow.find(indicator).has({ focused: true }));
+  },
+
+  focusOnFieldsDropdown(tag, dropdownLabel, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(
+      targetRow.find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) })).focus(),
+    );
+    cy.wait(500);
+  },
+
+  close() {
+    cy.do(QuickMarcEditor().find(PaneHeader()).find(closeButton).click());
+  },
+
+  verifyFieldBoxFocused(tag, boxLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow
+        .find(TextField(matching(new RegExp(`^${boxLabel}\\**$`))))
+        .has({ focused: isFocused }),
+    );
+  },
+
+  focusOnFieldBox(tag, boxLabel, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(TextField(matching(new RegExp(`^${boxLabel}\\**$`)))).focus());
+    cy.wait(500);
   },
 };
