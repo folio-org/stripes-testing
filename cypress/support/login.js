@@ -160,9 +160,10 @@ Cypress.Commands.add('selectTenantIfDropdown', () => {
     cy.wait(1000).then(() => {
       cy.get('body').then(($body) => {
         if ($body.find('select').length > 0) {
+          const targetTenantId = Tenant.get();
+          cy.resetTenant();
           cy.getAdminToken();
           cy.getConsortiaStatus().then((consortiaData) => {
-            const targetTenantId = Tenant.get();
             cy.setTenant(consortiaData.centralTenantId);
             cy.getAllTenants().then((userTenants) => {
               const targetTenant = userTenants.filter(

@@ -9,9 +9,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import DateTools from '../../../../support/utils/dateTools';
 import QueryModal, {
   instanceFieldValues,
   QUERY_OPERATIONS,
@@ -20,13 +18,11 @@ import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../s
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
-let previewQueryFileNameCsv;
-let changedRecordsQueryFileNameCsv;
+let queryFileNames;
 const folioInstance = {
   title: `AT_C663253_FolioInstance_${getRandomPostfix()}`,
 };
 const administrativeNoteText = 'Administrative note for bulk edit test';
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('Bulk-edit', () => {
   describe('Instances with source MARC', () => {
@@ -82,8 +78,7 @@ describe('Bulk-edit', () => {
           const interceptedUuid = interception.request.url.match(
             /bulk-operations\/([a-f0-9-]+)\/preview/,
           )[1];
-          previewQueryFileNameCsv = `${todayDate}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-          changedRecordsQueryFileNameCsv = `${todayDate}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
+          queryFileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
         });
 
         BulkEditSearchPane.verifySpecificTabHighlighted('Query');
@@ -95,10 +90,7 @@ describe('Bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(folioInstance.instanceId);
-      FileManager.deleteFileFromDownloadsByMask(
-        previewQueryFileNameCsv,
-        changedRecordsQueryFileNameCsv,
-      );
+      BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
     });
 
     it(
@@ -195,7 +187,7 @@ describe('Bulk-edit', () => {
 
         // Verify .csv file is saved with correct name and contains records with changes
         BulkEditFiles.verifyValueInRowByUUID(
-          previewQueryFileNameCsv,
+          queryFileNames.previewFileName,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           folioInstance.instanceId,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
@@ -220,7 +212,7 @@ describe('Bulk-edit', () => {
 
         // Verify .csv file with changed records is saved
         BulkEditFiles.verifyValueInRowByUUID(
-          changedRecordsQueryFileNameCsv,
+          queryFileNames.changedRecordsFileName,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           folioInstance.instanceId,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,

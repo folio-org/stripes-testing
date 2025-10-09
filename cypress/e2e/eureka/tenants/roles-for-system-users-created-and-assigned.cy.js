@@ -39,7 +39,7 @@ describe('Eureka', () => {
         existingRoles = roles;
       });
       cy.getCapabilitiesApi(5000).then((capabs) => {
-        allExistingCapabilities.push(...capabs);
+        allExistingCapabilities.push(...capabs.filter((capab) => capab.endpoints.length));
       });
     });
 
@@ -76,11 +76,10 @@ describe('Eureka', () => {
           //   limit: 5000,
           //   expand: true,
           // }).then((assignedCapabilitiesResponse) => {
-          // const assignedPermissionNames = assignedCapabilitiesResponse.body.capabilities.map(
-          //   (capab) => capab.permission,
-          // );
-          // const expectedPermissionNames = expectedSystemRole.permissionNames.filter(permission => allExistingCapabilities.find((capab) => capab.permission === permission));
-          // expect(assignedPermissionNames.sort()).to.deep.equal(expectedPermissionNames.sort());
+          //   const assignedPermissionNames = assignedCapabilitiesResponse.body.capabilities
+          //     .map((capab) => capab.permission);
+          //   const expectedPermissionNames = expectedSystemRole.permissionNames.filter(permission => allExistingCapabilities.find((capab) => capab.permission === permission));
+          //   expect(expectedPermissionNames.every(expectedPermName => assignedPermissionNames.includes(expectedPermName))).to.eq(true);
 
           // Remove after MODROLESKC-315 is done and tested (left for testing)
           // expectedSystemRole.missingPermissions = [];
@@ -99,6 +98,7 @@ describe('Eureka', () => {
               expect(systemUserRoleIds).to.include(expectedSystemRole.roleId);
             });
           });
+          // });
         });
       },
     );

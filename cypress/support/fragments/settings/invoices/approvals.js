@@ -1,47 +1,31 @@
 import uuid from 'uuid';
 
+import InvoiceStorageSettings from '../../invoices/invoiceStorageSettings';
+
+const INVOICE_APPROVALS_SETTING_KEY = 'approvals';
+
 export default {
   generateApprovalConfig(isApprovePayEnabled = false) {
     return {
       id: uuid(),
-      key: 'approvals',
+      key: INVOICE_APPROVALS_SETTING_KEY,
       value: JSON.stringify({ isApprovePayEnabled }),
     };
   },
   getApprovalConfigViaApi() {
-    return cy
-      .okapiRequest({
-        path: 'invoice-storage/settings',
-        searchParams: { query: 'key=="approvals"', limit: '1' },
-      })
-      .then(({ body }) => {
-        const items = body?.settings ?? body;
-        return Array.isArray(items) ? items : [];
-      });
+    return InvoiceStorageSettings.getSettingsViaApi({ key: INVOICE_APPROVALS_SETTING_KEY });
   },
   setApprovePayValue(isApprovePayEnabled) {
-    const nextValue = JSON.stringify({ isApprovePayEnabled });
-
-    return this.getApprovalConfigViaApi().then((configs) => {
-      const current = configs[0];
-
-      if (current) {
-        return cy.okapiRequest({
-          method: 'PUT',
-          path: `invoice-storage/settings/${current.id}`,
-          body: {
-            ...current,
-            value: nextValue,
-          },
+    this.getApprovalConfigViaApi().then((settings) => {
+      if (settings?.length !== 0) {
+        InvoiceStorageSettings.updateSettingViaApi({
+          ...settings[0],
+          value: JSON.stringify({ isApprovePayEnabled }),
         });
+      } else {
+        const setting = this.generateApprovalConfig(isApprovePayEnabled);
+        InvoiceStorageSettings.createSettingViaApi(setting);
       }
-
-      const setting = this.generateApprovalConfig(isApprovePayEnabled);
-      return cy.okapiRequest({
-        method: 'POST',
-        path: 'invoice-storage/settings',
-        body: setting,
-      });
     });
   },
 };

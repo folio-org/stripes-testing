@@ -74,7 +74,7 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C422227 Verify Bulk Edit for Holding populated "Materials specified" in electronic access (firebird)',
+      'C422227 Verify Bulk Edit for Holding populated "Material specified" in electronic access (firebird)',
       { tags: ['criticalPath', 'firebird', 'C422227'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
@@ -90,15 +90,15 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
-        BulkEditActions.selectOption('Materials specified');
+        BulkEditActions.selectOption('Material specified');
         let possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.verifyOptionAbsentInNewRow('Materials specified');
+        BulkEditActions.verifyOptionAbsentInNewRow('Material specified');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.findValue('Materials specified');
+        BulkEditActions.findValue('Material specified');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Remove');

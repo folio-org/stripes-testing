@@ -103,6 +103,7 @@ export const instanceFieldValues = {
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
   staffSuppress: 'Instance — Staff suppress',
+  suppressFromDiscovery: 'Instance — Suppress from discovery',
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',

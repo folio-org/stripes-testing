@@ -41,22 +41,22 @@ const localUrlRelationshipName = localUrlRelationship.name;
 const electronicAccessFieldsFromUpperCase = {
   uri: 'HTTPS://www.testuri.com/uri',
   linkText: 'Te;st: [sample] li*nk$text',
-  materialsSpecification: 'Test materials specified',
+  materialsSpecification: 'Test material specified',
   publicNote: 'URL public note',
 };
 const electronicAccessFieldsFromLowerCase = {
   uri: 'https://www.testuri.com/uri',
   linkText: 'te;st: [sample] li*nk$text',
-  materialsSpecification: 'test materials specified',
+  materialsSpecification: 'test material specified',
   publicNote: 'url public note',
 };
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
@@ -286,11 +286,11 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          // Step 19: Add new row for Materials specified find & replace
+          // Step 19: Add new row for Material specified find & replace
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.noteReplaceWith(
-            'Materials specified',
+            'Material specified',
             electronicAccessFieldsFromUpperCase.materialsSpecification,
             electronicAccessFieldsFromLowerCase.materialsSpecification,
             3,
@@ -370,6 +370,7 @@ describe('Bulk-edit', () => {
               localUrlRelationshipName,
               electronicAccessFieldsFromLowerCase.uri,
               electronicAccessFieldsFromLowerCase.linkText,
+              '-',
               electronicAccessFieldsFromLowerCase.publicNote,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(
@@ -381,6 +382,7 @@ describe('Bulk-edit', () => {
               localUrlRelationshipName,
               electronicAccessFieldsFromLowerCase.uri,
               electronicAccessFieldsFromLowerCase.linkText,
+              '-',
               electronicAccessFieldsFromLowerCase.publicNote,
               1,
             );
