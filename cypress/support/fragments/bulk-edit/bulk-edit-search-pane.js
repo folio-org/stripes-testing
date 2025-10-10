@@ -154,6 +154,13 @@ export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
 export const ITEM_IDENTIFIERS = {
   ITEM_BARCODES: 'Item barcodes',
 };
+export const ERROR_MESSAGES = {
+  EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED:
+    'Bulk edit of instance notes is not supported for MARC Instances.',
+  NO_CHANGE_REQUIRED: 'No change in value required',
+  INCORRECT_TOKEN_NUMBER:
+    'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
+};
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
 };
