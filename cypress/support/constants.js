@@ -493,6 +493,21 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
 };
 
+export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
+  AUTHORITY_SOURCE: 'Authority source',
+  REFERENCES: 'References',
+  THESAURUS: 'Thesaurus',
+  TYPE_OF_HEADING: 'Type of heading',
+  DATE_CREATED: 'Date created',
+  DATE_UPDATED: 'Date updated',
+};
+
+export const AUTHORITY_TYPES = {
+  AUTHORIZED: 'Authorized',
+  REFERENCE: 'Reference',
+  AUTH_REF: 'Auth/Ref',
+};
+
 export const ACTION_NAMES_IN_ACTION_PROFILE = {
   CREATE: 'Create (all record types except MARC Bibliographic, MARC Authority, or MARC Holdings)',
   MODIFY: 'Modify (MARC Bibliographic record type only)',
