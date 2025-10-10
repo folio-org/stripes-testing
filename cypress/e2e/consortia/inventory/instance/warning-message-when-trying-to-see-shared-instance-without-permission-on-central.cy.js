@@ -56,7 +56,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422045 (CONSORTIA) Verify the warning message when trying to see shared instance without permission on Central tenant (folijet)',
+        'C422045 (CONSORTIA) Verify the warning message when trying to see shared instance without permission on Central tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C422045'] },
         () => {
           InventoryInstances.waitContentLoading();
