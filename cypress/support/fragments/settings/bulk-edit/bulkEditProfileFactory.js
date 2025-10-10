@@ -166,6 +166,16 @@ export const createAdminNoteRule = (action) => ({
   actions: [action],
 });
 
+export const createTemporaryLocationRule = (action, locationId = null) => ({
+  option: 'TEMPORARY_LOCATION',
+  actions: [
+    {
+      ...action,
+      updated: locationId !== null ? locationId : action.updated,
+    },
+  ],
+});
+
 export const createSuppressFromDiscoveryRule = (
   setToFalse = true,
   applyToItems = null,
@@ -282,11 +292,6 @@ export const HoldingsRules = {
       ],
     };
   },
-
-  createTemporaryLocationRule: (action) => ({
-    option: 'TEMPORARY_LOCATION',
-    actions: [{ type: action }],
-  }),
 
   createPermanentLocationRule: (action, locationId = null) => ({
     option: 'PERMANENT_LOCATION',
@@ -472,16 +477,6 @@ export const ItemsRules = {
 
   createPermanentLocationRule: (action, locationId = null) => ({
     option: 'PERMANENT_LOCATION',
-    actions: [
-      {
-        ...action,
-        updated: locationId !== null ? locationId : action.updated,
-      },
-    ],
-  }),
-
-  createTemporaryLocationRule: (action, locationId = null) => ({
-    option: 'TEMPORARY_LOCATION',
     actions: [
       {
         ...action,

@@ -32,42 +32,42 @@ import {
   createBulkEditProfileBody,
   createAdminNoteRule,
   createSuppressFromDiscoveryRule,
+  createTemporaryLocationRule,
   HoldingsRules,
   ActionCreators,
 } from '../../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
-const {
-  createElectronicAccessMaterialSpecifiedRule,
-  createHoldingsNoteRule,
-  createTemporaryLocationRule,
-} = HoldingsRules;
+const { createElectronicAccessMaterialSpecifiedRule, createHoldingsNoteRule } = HoldingsRules;
 
 // Profile factory functions
-const createMainProfileBody = () => createBulkEditProfileBody({
-  name: `AT_C773233_HoldingsProfile_${getRandomPostfix()}`,
-  description: 'Test holdings bulk edit profile for executing bulk edit job in central tenant',
-  entityType: 'HOLDINGS_RECORD',
-  ruleDetails: [
-    createAdminNoteRule(ActionCreators.findAndReplace('admin', 'Administrative')),
-    createSuppressFromDiscoveryRule(true, false),
-    createElectronicAccessMaterialSpecifiedRule(
-      ActionCreators.findAndReplace('materials', 'Materials'),
-    ),
-    createHoldingsNoteRule(
-      'ADDED Electronic bookplate note',
-      null, // Will be set to Electronic bookplate note type ID
-      false,
-    ),
-    createTemporaryLocationRule(ActionCreators.clearField()),
-  ],
-});
+const createMainProfileBody = (noteTypeId) => {
+  return createBulkEditProfileBody({
+    name: `AT_C773233_HoldingsProfile_${getRandomPostfix()}`,
+    description: 'Test holdings bulk edit profile for executing bulk edit job in central tenant',
+    entityType: 'HOLDINGS_RECORD',
+    ruleDetails: [
+      createAdminNoteRule(ActionCreators.findAndReplace('admin', 'Administrative')),
+      createSuppressFromDiscoveryRule(true, false),
+      createElectronicAccessMaterialSpecifiedRule(
+        ActionCreators.findAndReplace('material', 'Material'),
+      ),
+      createHoldingsNoteRule(
+        ActionCreators.addToExisting('ADDED Electronic bookplate note'),
+        noteTypeId,
+      ),
+      createTemporaryLocationRule(ActionCreators.clearField()),
+    ],
+  });
+};
 
-const createSecondProfileBody = () => createBulkEditProfileBody({
-  name: `Test_HoldingsProfile_${getRandomPostfix()}`,
-  description: 'Test profile for testing search and sort functionality',
-  entityType: 'HOLDINGS_RECORD',
-  ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('test'))],
-});
+const createSecondProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_HoldingsProfile_${getRandomPostfix()}`,
+    description: 'Test profile for testing search and sort functionality',
+    entityType: 'HOLDINGS_RECORD',
+    ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('test'))],
+  });
+};
 
 const testData = {
   permissionsSet: [
@@ -110,11 +110,8 @@ describe('Bulk-edit', () => {
             testData.adminSourceRecord = record;
           });
           cy.getHoldingNoteTypeIdViaAPI('Electronic bookplate').then((noteTypeId) => {
-            // Create profiles and set note type ID
-            const profileBody = createMainProfileBody();
-            profileBody.ruleDetails[3].actions[0].parameters[0].value = noteTypeId;
-
-            cy.createBulkEditProfile(profileBody).then((profile) => {
+            // Create profiles with note type ID
+            cy.createBulkEditProfile(createMainProfileBody(noteTypeId)).then((profile) => {
               testData.profileName = profile.name;
               testData.profileDescription = profile.description;
               testData.profileIds.push(profile.id);

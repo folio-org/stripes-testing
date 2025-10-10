@@ -29,17 +29,13 @@ import { getLongDelay } from '../../../../support/utils/cypressTools';
 import {
   createBulkEditProfileBody,
   createAdminNoteRule,
+  createTemporaryLocationRule,
   ItemsRules,
   ActionCreators,
 } from '../../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
-const {
-  createItemNoteRule,
-  createStatusRule,
-  createTemporaryLoanTypeRule,
-  createTemporaryLocationRule,
-  createCheckInNoteRule,
-} = ItemsRules;
+const { createItemNoteRule, createStatusRule, createTemporaryLoanTypeRule, createCheckInNoteRule } =
+  ItemsRules;
 
 // Profile factory functions
 const createMainProfileBody = () => {
