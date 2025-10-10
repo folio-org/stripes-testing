@@ -312,8 +312,6 @@ describe('Bulk-edit', () => {
             testData.folioInstance.barcodeInMember,
             editedHeaderValues,
           );
-
-          // Verify SUPPRESS_FROM_DISCOVERY separately (UI shows 'true' as string)
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
             testData.folioInstance.barcodeInMember,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
@@ -330,8 +328,6 @@ describe('Bulk-edit', () => {
             testData.folioInstance.barcodeInMember,
             editedHeaderValues,
           );
-
-          // Verify SUPPRESS_FROM_DISCOVERY separately in CSV (file contains boolean true)
           BulkEditFiles.verifyValueInRowByUUID(
             fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
@@ -424,8 +420,6 @@ describe('Bulk-edit', () => {
             testData.folioInstance.barcodeInMember,
             editedHeaderValues,
           );
-
-          // Verify SUPPRESS_FROM_DISCOVERY separately in updated records CSV
           BulkEditFiles.verifyValueInRowByUUID(
             fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
