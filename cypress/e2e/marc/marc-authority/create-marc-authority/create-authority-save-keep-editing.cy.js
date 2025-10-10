@@ -13,13 +13,13 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C709271_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C813646_MarcAuthority_${getRandomPostfix()}`,
         tag001: '001',
         tag008: '008',
         tag010: '010',
         tag100: '100',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n709271${randomDigits}${randomDigits}`,
+        naturalId: `n813646${randomDigits}${randomDigits}`,
         noAuthFileCalloutText: 'Record cannot be saved. An authority file is required',
         no001FieldCalloutText: 'Field 001 is required.',
         warningPrefix: 'Warn:',
@@ -28,7 +28,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C709271_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813646_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -56,13 +56,11 @@ describe('MARC', () => {
       });
 
       it(
-        'C709271 Create MARC authority record using "Save & keep editing" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C709271'] },
+        'C813646 Create MARC authority record using "Save & keep editing" button (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813646'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkButtonsDisabled();
-          MarcAuthority.setValid008DropdownValues();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
 
           QuickMarcEditor.addNewField(
             testData.tag100,

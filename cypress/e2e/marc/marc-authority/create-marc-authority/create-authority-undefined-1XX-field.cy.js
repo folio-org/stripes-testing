@@ -12,7 +12,7 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C519983_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeading: `AT_C813641_MarcAuthority_${getRandomPostfix()}`,
         tags: {
           tag008: '008',
           tag010: '010',
@@ -24,7 +24,7 @@ describe('MARC', () => {
         undefinedFieldContent: '$a Undefined 1XX field',
         expectedWarning: 'Warn: Field is undefined.',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n451569${randomDigits}${randomDigits}`,
+        naturalId: `n813641${randomDigits}${randomDigits}`,
         userProperties: {},
       };
 
@@ -37,7 +37,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C519983_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813641_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -63,13 +63,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C519983 Create MARC authority record with undefined 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519983'] },
+        'C813641 Create MARC authority record with undefined 1XX field (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813641'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008);
-          MarcAuthority.setValid008DropdownValues();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008, false);
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           fields.forEach((field, index) => {

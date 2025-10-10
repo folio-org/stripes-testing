@@ -15,12 +15,12 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeadingPrefix: `AT_C451569_MarcAuthority_${getRandomPostfix()}`,
+        authorityHeadingPrefix: `AT_C813629_MarcAuthority_${getRandomPostfix()}`,
         tag008: '008',
         tag010: '010',
         tag100: '100',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n451569${randomDigits}${randomDigits}`,
+        naturalId: `n813629${randomDigits}${randomDigits}`,
       };
 
       const existingAuthorityHeading = `${testData.authorityHeadingPrefix} Existing`;
@@ -41,7 +41,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C451569_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813629_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -73,17 +73,14 @@ describe('MARC', () => {
       });
 
       it(
-        'C451569 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451569'] },
+        'C813629 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813629'] },
         () => {
           MarcAuthorities.searchBeats(existingAuthorityHeading);
           MarcAuthorities.selectTitle(existingAuthorityHeading);
           MarcAuthority.contains(existingAuthorityHeading);
 
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);
-          MarcAuthority.setValid008DropdownValues();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           for (let i = 0; i < 2; i++) {

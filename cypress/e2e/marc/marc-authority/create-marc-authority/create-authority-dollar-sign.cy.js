@@ -27,7 +27,7 @@ describe('MARC', () => {
         tag510: '510',
         tag511: '511',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n451559${randomDigits}${randomDigits}`,
+        naturalId: `n813628${randomDigits}${randomDigits}`,
         defaultIndicatorValue: '\\',
         authorityHeadingPrefix: 'AT_C451563_MarcAuthority',
       };
@@ -41,9 +41,9 @@ describe('MARC', () => {
         { tag: testData.tag370, content: '$a Cost 50{dollar}, field for test' },
         { tag: testData.tag410, content: '$a US dollars ({dollar}) - field for test' },
         { tag: testData.tag410, content: '$a Heading - {dollar}{dollar}{dollar} $b {dollar}410' },
-        { tag: testData.tag500, content: '$A upper case first code test' },
-        { tag: testData.tag510, content: '$a upper case $B not First $C Code $d TEST' },
-        { tag: testData.tag511, content: '$B A$AP $cp' },
+        { tag: testData.tag500, content: '$a upper case first code test' },
+        { tag: testData.tag510, content: '$a upper case $b not First $c Code $d TEST' },
+        { tag: testData.tag511, content: '$b A$aP $cp' },
       ];
 
       const fieldContentsAfterSave = [
@@ -91,11 +91,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C451559 Create "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451559'] },
+        'C813628 Create "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813628'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           fieldContents.forEach((field, index) => {

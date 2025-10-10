@@ -13,7 +13,7 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const randomDigits = randomFourDigitNumber();
       const testData = {
-        authorityHeading: `AT_C543844_MarcAuthority_${randomPostfix}`,
+        authorityHeading: `AT_C813643_MarcAuthority_${randomPostfix}`,
         tag008: '008',
         tag010: '010',
         tag100: '100',
@@ -27,7 +27,7 @@ describe('MARC', () => {
         fieldUndefinedWarningText: 'Warn: Field is undefined.',
         contentForNon1XX: 'Non-1XX Indicator test',
         authoritySourceFile: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-        naturalId: `n451569${randomDigits}${randomDigits}`,
+        naturalId: `n813643${randomDigits}${randomDigits}`,
       };
 
       const indicatorData1XX = [
@@ -78,7 +78,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C543844_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813643_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -106,13 +106,10 @@ describe('MARC', () => {
       });
 
       it(
-        'C543844 Indicator boxes validation during creation of MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543844'] },
+        'C813643 Indicator boxes validation during creation of MARC authority record (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C813643'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);
-          MarcAuthority.setValid008DropdownValues();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           QuickMarcEditor.addNewField(testData.tag010, `$a ${testData.naturalId}`, 3);
