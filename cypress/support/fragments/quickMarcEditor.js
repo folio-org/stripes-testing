@@ -3262,4 +3262,10 @@ export default {
     cy.do(targetRow.find(TextField(matching(new RegExp(`^${boxLabel}\\**$`)))).focus());
     cy.wait(500);
   },
+
+  checkSomeDropdownsMarkedAsInvalid(tag, someInvalid = true) {
+    const invalidDropdown = getRowInteractorByTagName(tag).find(Select({ valid: false }));
+    if (someInvalid) cy.expect(invalidDropdown.exists());
+    else cy.expect(invalidDropdown.absent());
+  },
 };
