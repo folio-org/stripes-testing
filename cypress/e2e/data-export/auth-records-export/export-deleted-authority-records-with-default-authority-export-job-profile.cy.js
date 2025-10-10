@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -10,23 +10,15 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 let user;
 let exportedFileName;
-let createdAuthoritySourceFileId;
 const authorityUUIDsFileName = `AT_C446010_authorityUUIDs_${getRandomPostfix()}.csv`;
-const authFile = {
-  sourceName: `AT_C446010_AuthoritySourceFile_${getRandomPostfix()}`,
-  prefix: getRandomLetters(8),
-  startWithNumber: '1',
-  hridStartsWith: '',
-};
 const authorityInstance = {
-  title: `AT_C446010_MarcAuthority_${getRandomPostfix()}`,
+  title: 'AT_C446010_MarcAuthority',
 };
-const authorityFields = [
-  { tag: '100', content: `$a ${authorityInstance.title}`, indicators: ['\\', '\\'] },
-];
 const defaultAuthorityExportProfile = 'Default authority';
 
 describe('Data Export', () => {
@@ -37,34 +29,27 @@ describe('Data Export', () => {
       permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      // Create a new authority source file
-      cy.createAuthoritySourceFileUsingAPI(
-        authFile.prefix,
-        authFile.startWithNumber,
-        authFile.sourceName,
-      ).then((authoritySourceFileId) => {
-        createdAuthoritySourceFileId = authoritySourceFileId;
-        // Create a new MARC authority record with the source file code as prefix
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          authFile.prefix,
-          authFile.hridStartsWith,
-          authorityFields,
-        ).then((createdRecordId) => {
-          authorityInstance.id = createdRecordId;
 
-          FileManager.createFile(
-            `cypress/fixtures/${authorityUUIDsFileName}`,
-            authorityInstance.id,
-          );
+      DataImport.uploadFileViaApi(
+        'marcAuthFileC446010.mrc',
+        `testMarcAuthC446010File.${getRandomPostfix()}.mrc`,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+      ).then((response) => {
+        response.forEach((record) => {
+          authorityInstance.id = record.authority.id;
+        });
+        FileManager.createFile(`cypress/fixtures/${authorityUUIDsFileName}`, authorityInstance.id);
 
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            query: `id="${authorityInstance.id}"`,
-          }).then((authorities) => {
-            authorityInstance.naturalId = authorities[0].naturalId;
-          });
+        cy.wait(5000);
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          query: `id="${authorityInstance.id}"`,
+        }).then((authorities) => {
+          authorityInstance.naturalId = authorities[0].naturalId;
+
           MarcAuthority.deleteViaAPI(authorityInstance.id);
         });
       });
+
       cy.login(user.username, user.password, {
         path: TopMenu.dataExportPath,
         waiter: DataExportLogs.waitLoading,
@@ -74,7 +59,6 @@ describe('Data Export', () => {
 
   after('delete test data', () => {
     cy.getAdminToken();
-    cy.deleteAuthoritySourceFileViaAPI(createdAuthoritySourceFileId, true);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${authorityUUIDsFileName}`);
   });
