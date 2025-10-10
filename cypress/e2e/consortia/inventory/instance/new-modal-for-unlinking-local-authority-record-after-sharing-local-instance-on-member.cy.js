@@ -156,6 +156,7 @@ describe('Inventory', () => {
           LinkedToLocalAuthoritiesModal.waitLoading();
           LinkedToLocalAuthoritiesModal.verifyModalView(1);
           LinkedToLocalAuthoritiesModal.clickProceed();
+          cy.wait(3000);
           InventoryInstance.checkSharedTextInDetailView(true);
           InventoryInstance.checkAuthorityAppIconInSection(
             testData.sectionId,
