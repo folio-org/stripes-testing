@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -27,7 +29,7 @@ const notes = {
   reproductionNote: 'Instance reproduction note',
   reproductionNoteStaffOnly: 'Instance reproduction note Staff only',
 };
-const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
+const errorReason = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
 
 describe(
   'Bulk-edit',

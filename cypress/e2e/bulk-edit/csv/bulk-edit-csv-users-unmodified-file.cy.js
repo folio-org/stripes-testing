@@ -1,6 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -62,7 +64,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.verifyReasonForError('No change in value required');
+        BulkEditSearchPane.verifyReasonForError(ERROR_MESSAGES.NO_CHANGE_REQUIRED);
         BulkEditActions.verifyDownloadChangedRecordsAbsent();
 
         BulkEditSearchPane.openLogsSearch();

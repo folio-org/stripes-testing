@@ -1,6 +1,8 @@
 import TopMenu from '../../../../support/fragments/topMenu';
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -24,7 +26,7 @@ let changedRecordsFileName;
 let errorsFromCommittingFileName;
 let bulkEditJobId;
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const reasonForError = 'No change in value required';
+const reasonForError = ERROR_MESSAGES.NO_CHANGE_REQUIRED;
 const emailStarts = `C436762_test_${getRandomPostfix()}`;
 const testUsers = [
   {
