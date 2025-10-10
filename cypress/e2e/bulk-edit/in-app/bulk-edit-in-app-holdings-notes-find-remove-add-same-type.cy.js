@@ -11,7 +11,11 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import { APPLICATION_NAMES, HOLDING_NOTES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  HOLDING_NOTES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../support/constants';
 
 let user;
 const notes = {
@@ -91,9 +95,21 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
 
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `,${notes.action},,,${notes.elbook},`,
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+          item.holdingHRID,
+          [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE,
+              value: notes.action,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE,
+              value: notes.elbook,
+            },
+          ],
+        );
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
           'Electronic bookplate note',
