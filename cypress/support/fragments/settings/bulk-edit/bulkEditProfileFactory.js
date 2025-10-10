@@ -94,6 +94,58 @@ export const ActionCreators = {
   }),
 };
 
+// MARC action creators for common MARC operations
+export const MarcActionCreators = {
+  find: (value) => ({
+    name: 'FIND',
+    data: [
+      {
+        key: 'VALUE',
+        value,
+      },
+    ],
+  }),
+
+  append: (subfield, value) => ({
+    name: 'APPEND',
+    data: [
+      {
+        key: 'SUBFIELD',
+        value: subfield,
+      },
+      {
+        key: 'VALUE',
+        value,
+      },
+    ],
+  }),
+
+  removeAll: () => ({
+    name: 'REMOVE_ALL',
+    data: [],
+  }),
+
+  addToExisting: (value) => ({
+    name: 'ADD_TO_EXISTING',
+    data: [
+      {
+        key: 'VALUE',
+        value,
+      },
+    ],
+  }),
+
+  replaceWith: (value) => ({
+    name: 'REPLACE_WITH',
+    data: [
+      {
+        key: 'VALUE',
+        value,
+      },
+    ],
+  }),
+};
+
 // Main factory function to create bulk edit profile bodies
 export const createBulkEditProfileBody = (config) => {
   const profile = {
@@ -196,112 +248,12 @@ export const HoldingsRules = {
     ],
   }),
 
-  createCallNumberRule: (action, callNumber = null) => ({
-    option: 'CALL_NUMBER',
-    actions: [
-      {
-        ...action,
-        updated: callNumber !== null ? callNumber : action.updated,
-      },
-    ],
-  }),
-
-  createCallNumberTypeRule: (action, callNumberTypeId = null) => ({
-    option: 'CALL_NUMBER_TYPE',
-    actions: [
-      {
-        ...action,
-        updated: callNumberTypeId !== null ? callNumberTypeId : action.updated,
-      },
-    ],
-  }),
-
-  createCallNumberPrefixRule: (action, prefix = null) => ({
-    option: 'CALL_NUMBER_PREFIX',
-    actions: [
-      {
-        ...action,
-        updated: prefix !== null ? prefix : action.updated,
-      },
-    ],
-  }),
-
-  createCallNumberSuffixRule: (action, suffix = null) => ({
-    option: 'CALL_NUMBER_SUFFIX',
-    actions: [
-      {
-        ...action,
-        updated: suffix !== null ? suffix : action.updated,
-      },
-    ],
-  }),
-
-  createHoldingsTypeRule: (action, holdingsTypeId = null) => ({
-    option: 'HOLDINGS_TYPE',
-    actions: [
-      {
-        ...action,
-        updated: holdingsTypeId !== null ? holdingsTypeId : action.updated,
-      },
-    ],
-  }),
-
-  createElectronicAccessUriRule: (action, uri = null) => ({
-    option: 'ELECTRONIC_ACCESS_URI',
-    actions: [
-      {
-        ...action,
-        updated: uri !== null ? uri : action.updated,
-      },
-    ],
-  }),
-
   createElectronicAccessLinkTextRule: (action, linkText = null) => ({
     option: 'ELECTRONIC_ACCESS_LINK_TEXT',
     actions: [
       {
         ...action,
         updated: linkText !== null ? linkText : action.updated,
-      },
-    ],
-  }),
-
-  createElectronicAccessPublicNoteRule: (action, publicNote = null) => ({
-    option: 'ELECTRONIC_ACCESS_PUBLIC_NOTE',
-    actions: [
-      {
-        ...action,
-        updated: publicNote !== null ? publicNote : action.updated,
-      },
-    ],
-  }),
-
-  createIllPolicyRule: (action, illPolicyId = null) => ({
-    option: 'ILL_POLICY',
-    actions: [
-      {
-        ...action,
-        updated: illPolicyId !== null ? illPolicyId : action.updated,
-      },
-    ],
-  }),
-
-  createDigitizationPolicyRule: (action, digitizationPolicyId = null) => ({
-    option: 'DIGITIZATION_POLICY',
-    actions: [
-      {
-        ...action,
-        updated: digitizationPolicyId !== null ? digitizationPolicyId : action.updated,
-      },
-    ],
-  }),
-
-  createRetentionPolicyRule: (action, retentionPolicy = null) => ({
-    option: 'RETENTION_POLICY',
-    actions: [
-      {
-        ...action,
-        updated: retentionPolicy !== null ? retentionPolicy : action.updated,
       },
     ],
   }),
@@ -378,66 +330,6 @@ export const InstancesRules = {
       },
     ],
   }),
-
-  createInstanceTypeRule: (action, instanceTypeId = null) => ({
-    option: 'INSTANCE_TYPE',
-    actions: [
-      {
-        ...action,
-        updated: instanceTypeId !== null ? instanceTypeId : action.updated,
-      },
-    ],
-  }),
-
-  createInstanceStatusRule: (action, statusId = null) => ({
-    option: 'INSTANCE_STATUS',
-    actions: [
-      {
-        ...action,
-        updated: statusId !== null ? statusId : action.updated,
-      },
-    ],
-  }),
-
-  createModeOfIssuanceRule: (action, modeOfIssuanceId = null) => ({
-    option: 'MODE_OF_ISSUANCE',
-    actions: [
-      {
-        ...action,
-        updated: modeOfIssuanceId !== null ? modeOfIssuanceId : action.updated,
-      },
-    ],
-  }),
-
-  createCatalogedDateRule: (action, date = null) => ({
-    option: 'CATALOGED_DATE',
-    actions: [
-      {
-        ...action,
-        updated: date !== null ? date : action.updated,
-      },
-    ],
-  }),
-
-  createInstanceFormatRule: (action, formatId = null) => ({
-    option: 'INSTANCE_FORMAT',
-    actions: [
-      {
-        ...action,
-        updated: formatId !== null ? formatId : action.updated,
-      },
-    ],
-  }),
-
-  createNatureOfContentRule: (action, natureOfContentId = null) => ({
-    option: 'NATURE_OF_CONTENT',
-    actions: [
-      {
-        ...action,
-        updated: natureOfContentId !== null ? natureOfContentId : action.updated,
-      },
-    ],
-  }),
 };
 
 // Items-specific rule creators
@@ -448,16 +340,6 @@ export const ItemsRules = {
       {
         type: action,
         updated: statusId,
-      },
-    ],
-  }),
-
-  createLoanTypeRule: (action, loanTypeId = null) => ({
-    option: 'LOAN_TYPE',
-    actions: [
-      {
-        ...action,
-        updated: loanTypeId !== null ? loanTypeId : action.updated,
       },
     ],
   }),
@@ -516,16 +398,6 @@ export const ItemsRules = {
       ],
     };
   },
-
-  createMaterialTypeRule: (action, materialTypeId = null) => ({
-    option: 'MATERIAL_TYPE',
-    actions: [
-      {
-        ...action,
-        updated: materialTypeId !== null ? materialTypeId : action.updated,
-      },
-    ],
-  }),
 
   createPermanentLoanTypeRule: (action, loanTypeId = null) => ({
     option: 'PERMANENT_LOAN_TYPE',
@@ -661,57 +533,5 @@ export const MarcRules = {
   createMarcData: (key, value) => ({
     key,
     value,
-  }),
-};
-
-// MARC action creators for common MARC operations
-export const MarcActionCreators = {
-  find: (value) => ({
-    name: 'FIND',
-    data: [
-      {
-        key: 'VALUE',
-        value,
-      },
-    ],
-  }),
-
-  append: (subfield, value) => ({
-    name: 'APPEND',
-    data: [
-      {
-        key: 'SUBFIELD',
-        value: subfield,
-      },
-      {
-        key: 'VALUE',
-        value,
-      },
-    ],
-  }),
-
-  removeAll: () => ({
-    name: 'REMOVE_ALL',
-    data: [],
-  }),
-
-  addToExisting: (value) => ({
-    name: 'ADD_TO_EXISTING',
-    data: [
-      {
-        key: 'VALUE',
-        value,
-      },
-    ],
-  }),
-
-  replaceWith: (value) => ({
-    name: 'REPLACE_WITH',
-    data: [
-      {
-        key: 'VALUE',
-        value,
-      },
-    ],
   }),
 };
