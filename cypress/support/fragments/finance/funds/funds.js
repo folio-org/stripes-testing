@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { Heading, HTML, including } from '@interactors/html';
 import uuid from 'uuid';
 import {
   Accordion,
@@ -549,6 +549,28 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do(addTransferModal.find(confirmButton).click());
+  },
+
+  openIncreaseAllocationModal: () => {
+    cy.do([actionsButton.click(), Button('Increase allocation').click()]);
+  },
+
+  checkIncreaseAllocationModal() {
+    cy.do(Heading('Increase allocation').exists());
+    cy.expect(Button('Cancel').is({ disabled: false }));
+    cy.expect(Button('Confirm').is({ disabled: true }));
+  },
+
+  cancelIncreaseAllocationModal: () => {
+    cy.do(addTransferModal.find(cancelButton).click());
+  },
+
+  openDecreaseAllocationModal: () => {
+    cy.do([actionsButton.click(), Button('Decrease allocation').click()]);
+  },
+
+  cancelDecreaseAllocationModal: () => {
+    cy.do(addTransferModal.find(cancelButton).click());
   },
 
   transfer(toFund, fromFund) {
