@@ -99,10 +99,14 @@ describe(
             AuthorizationRoles.selectApplicationInModal(testData.firstApplicationName);
             AuthorizationRoles.selectApplicationInModal(testData.secondApplicationName);
             cy.wait(1000);
-            cy.intercept('GET', capabilityCallRegExp).as('capabilities');
+            cy.intercept('GET', '/capabilities?*').as('capabilities');
             AuthorizationRoles.clickSaveInModal();
             AuthorizationRoles.waitCapabilitiesShown();
-            cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
+            cy.wait('@capabilities').then(({ request, response }) => {
+              const url = decodeURIComponent(request.url);
+              expect(url).to.match(capabilityCallRegExp);
+              expect(response.statusCode).to.eq(200);
+            });
             AuthorizationRoles.verifyAppNamesInCapabilityTables([
               testData.firstApplicationName,
               testData.secondApplicationName,
