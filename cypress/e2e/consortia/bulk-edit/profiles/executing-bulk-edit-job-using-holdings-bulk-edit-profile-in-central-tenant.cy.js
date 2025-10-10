@@ -36,8 +36,11 @@ import {
   ActionCreators,
 } from '../../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
-const { createElectronicAccessRule, createHoldingsNoteRule, createTemporaryLocationRule } =
-  HoldingsRules;
+const {
+  createElectronicAccessMaterialSpecifiedRule,
+  createHoldingsNoteRule,
+  createTemporaryLocationRule,
+} = HoldingsRules;
 
 // Profile factory functions
 const createMainProfileBody = () => createBulkEditProfileBody({
@@ -47,7 +50,9 @@ const createMainProfileBody = () => createBulkEditProfileBody({
   ruleDetails: [
     createAdminNoteRule(ActionCreators.findAndReplace('admin', 'Administrative')),
     createSuppressFromDiscoveryRule(true, false),
-    createElectronicAccessRule(ActionCreators.findAndReplace('materials', 'Materials')),
+    createElectronicAccessMaterialSpecifiedRule(
+      ActionCreators.findAndReplace('materials', 'Materials'),
+    ),
     createHoldingsNoteRule(
       'ADDED Electronic bookplate note',
       null, // Will be set to Electronic bookplate note type ID
@@ -85,7 +90,7 @@ const testData = {
   uri: 'https://example.com',
   linkText: 'Link text for testing',
   electronicAccessTableHeadersInFile:
-    'URL relationship;URI;Link text;Materials specified;URL public note\n',
+    'URL relationship;URI;Link text;Material specified;URL public note\n',
 };
 
 describe('Bulk-edit', () => {

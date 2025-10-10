@@ -208,30 +208,80 @@ export const createSuppressFromDiscoveryRule = (
 
 // Holdings-specific rule creators
 export const HoldingsRules = {
-  createElectronicAccessRule: (action) => ({
+  createElectronicAccessMaterialSpecifiedRule: (action) => ({
     option: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED',
     actions: [action],
   }),
 
-  createHoldingsNoteRule: (noteText, noteTypeId = null, staffOnly = false) => ({
-    option: 'HOLDINGS_NOTE',
-    actions: [
-      {
-        type: BULK_EDIT_ACTION_TYPES.ADD_TO_EXISTING,
-        updated: noteText,
-        parameters: [
-          {
-            key: 'HOLDINGS_NOTE_TYPE_ID_KEY',
-            value: noteTypeId,
-          },
-          {
-            key: 'STAFF_ONLY',
-            value: staffOnly,
-          },
-        ],
-      },
-    ],
+  createElectronicAccessUriRule: (action) => ({
+    option: 'ELECTRONIC_ACCESS_URI',
+    actions: [action],
   }),
+
+  createElectronicAccessUrlRelationshipRule: (action) => ({
+    option: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP',
+    actions: [action],
+  }),
+
+  createHoldingsNoteRule: (action, noteTypeId = null, staffOnly = false) => {
+    let parameters;
+    if (action.type === BULK_EDIT_ACTION_TYPES.ADD_TO_EXISTING) {
+      parameters = [
+        {
+          key: 'HOLDINGS_NOTE_TYPE_ID_KEY',
+          value: noteTypeId,
+        },
+        {
+          key: 'STAFF_ONLY',
+          value: staffOnly,
+        },
+      ];
+    } else if (action.type === BULK_EDIT_ACTION_TYPES.REMOVE_ALL) {
+      parameters = [
+        {
+          key: 'HOLDINGS_NOTE_TYPE_ID_KEY',
+          value: noteTypeId,
+        },
+        {
+          key: 'STAFF_ONLY',
+          value: false,
+        },
+      ];
+    } else if (action.type === BULK_EDIT_ACTION_TYPES.MARK_AS_STAFF_ONLY) {
+      parameters = [
+        {
+          key: 'HOLDINGS_NOTE_TYPE_ID_KEY',
+          value: noteTypeId,
+        },
+        {
+          key: 'STAFF_ONLY',
+          value: false,
+          onlyForActions: ['ADD_TO_EXISTING'],
+        },
+      ];
+    } else if (action.type === BULK_EDIT_ACTION_TYPES.REMOVE_MARK_AS_STAFF_ONLY) {
+      parameters = [
+        { key: 'HOLDINGS_NOTE_TYPE_ID_KEY', value: noteTypeId },
+        {
+          key: 'STAFF_ONLY',
+          value: false,
+          onlyForActions: ['ADD_TO_EXISTING'],
+        },
+      ];
+    } else {
+      parameters = action.parameters;
+    }
+
+    return {
+      option: 'HOLDINGS_NOTE',
+      actions: [
+        {
+          ...action,
+          parameters,
+        },
+      ],
+    };
+  },
 
   createTemporaryLocationRule: (action) => ({
     option: 'TEMPORARY_LOCATION',
