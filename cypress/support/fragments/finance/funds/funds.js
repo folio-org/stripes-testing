@@ -1310,4 +1310,23 @@ export default {
   clickOnLedgerTab: () => {
     cy.do(fundsFiltersSection.find(Button('Ledger')).click());
   },
+
+  checkNegativeAvailableAmountModal: (budgetName) => {
+    cy.do(Modal('Negative available amount').exists());
+
+    cy.expect(
+      Modal('Negative available amount').has({
+        message: including(
+          `Completing this transfer will result in ${budgetName} having a negative available amount. Are you sure you would like to complete this transaction?`,
+        ),
+      }),
+    );
+
+    cy.expect(Modal('Negative available amount').find(Button('Cancel')).has({ disabled: false }));
+    cy.expect(Modal('Negative available amount').find(Button('Confirm')).has({ disabled: false }));
+  },
+
+  clickConfirmInNegativeAvailableAmountModal() {
+    cy.do(Modal('Negative available amount').find(confirmButton).click());
+  },
 };
