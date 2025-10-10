@@ -14,6 +14,25 @@ import ItemsBulkEditProfileView from '../../../support/fragments/settings/bulk-e
 import AreYouSureModal from '../../../support/fragments/settings/bulk-edit/areYouSureModal';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  createSuppressFromDiscoveryRule,
+  ActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+// Profile factory function
+const createProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740222 original items bulk edit profile ${getRandomPostfix()}`,
+    description: 'Original profile description',
+    entityType: 'ITEM',
+    ruleDetails: [
+      createAdminNoteRule(ActionCreators.addToExisting('Original administrative note')),
+      createSuppressFromDiscoveryRule(true),
+    ],
+  });
+};
 
 let user;
 const testData = {
@@ -23,31 +42,6 @@ const testData = {
   editedDescription: 'Updated profile description with changes',
   originalAdministrativeNote: 'Original administrative note',
   editedAdministrativeNote: 'Updated administrative note',
-  profileBody: {
-    name: `AT_C740222 original items bulk edit profile ${getRandomPostfix()}`,
-    description: 'Original profile description',
-    locked: false,
-    entityType: 'ITEM',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Original administrative note',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -60,7 +54,9 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.createBulkEditProfile(testData.profileBody).then((createdProfile) => {
+        // Create profile with factory
+        const profileBody = createProfileBody();
+        cy.createBulkEditProfile(profileBody).then((createdProfile) => {
           testData.originalProfileName = createdProfile.name;
           testData.profileId = createdProfile.id;
         });

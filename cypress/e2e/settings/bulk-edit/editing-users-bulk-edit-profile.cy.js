@@ -13,8 +13,26 @@ import UsersBulkEditProfileView from '../../../support/fragments/settings/bulk-e
 import AreYouSureModal from '../../../support/fragments/settings/bulk-edit/areYouSureModal';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  ActionCreators,
+  UsersRules,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
 let user;
+
+const createProfileBody = () => createBulkEditProfileBody({
+  name: `AT_C740236 original users bulk edit profile ${getRandomPostfix()}`,
+  description: 'Original users profile description',
+  entityType: 'USER',
+  ruleDetails: [
+    UsersRules.createEmailAddressRule(
+      ActionCreators.findAndReplace('example.com', 'newdomain.com'),
+    ),
+    UsersRules.createPatronGroupRule(ActionCreators.replaceWith(null)), // Will be set dynamically
+  ],
+});
+
 const testData = {
   originalProfileName: null, // Will be assigned after profile creation
   editedProfileName: `AT_C740236 edited users bulk edit profile ${getRandomPostfix()}`,
@@ -27,33 +45,6 @@ const testData = {
   originalPatronGroup: 'staff',
   editedPatronGroup: 'faculty',
   expirationDate: new Date(),
-  profileBody: {
-    name: `AT_C740236 original users bulk edit profile ${getRandomPostfix()}`,
-    description: 'Original users profile description',
-    locked: false,
-    entityType: 'USER',
-    ruleDetails: [
-      {
-        option: 'EMAIL_ADDRESS',
-        actions: [
-          {
-            type: 'FIND_AND_REPLACE',
-            initial: 'example.com',
-            updated: 'newdomain.com',
-          },
-        ],
-      },
-      {
-        option: 'PATRON_GROUP',
-        actions: [
-          {
-            type: 'REPLACE_WITH',
-            updated: 'staff',
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -70,9 +61,10 @@ describe('Bulk-edit', () => {
           limit: 1,
           query: 'group=="staff"',
         }).then((userPatronGroupId) => {
-          testData.profileBody.ruleDetails[1].actions[0].updated = userPatronGroupId;
+          const profileBody = createProfileBody();
+          profileBody.ruleDetails[1].actions[0].updated = userPatronGroupId;
 
-          cy.createBulkEditProfile(testData.profileBody).then((createdProfile) => {
+          cy.createBulkEditProfile(profileBody).then((createdProfile) => {
             testData.originalProfileName = createdProfile.name;
             testData.profileId = createdProfile.id;
           });

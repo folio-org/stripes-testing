@@ -17,8 +17,73 @@ import InstancesBulkEditProfileView from '../../../support/fragments/settings/bu
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import {
+  createBulkEditProfileBody,
+  createSuppressFromDiscoveryRule,
+  ActionCreators,
+  ItemsRules,
+  HoldingsRules,
+  MarcRules,
+  MarcActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
 let user;
+
+const createItemsProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740202_ItemsProfile_${getRandomPostfix()}`,
+    description: 'Test profile for viewing verification',
+    locked: false,
+    entityType: 'ITEM',
+    ruleDetails: [
+      ItemsRules.createItemNoteRule(
+        ActionCreators.addToExisting('Test copy note for viewing'),
+        null, // Will be set dynamically
+        false,
+      ),
+    ],
+  });
+};
+
+const createHoldingsProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740202_HoldingsProfile_${getRandomPostfix()}`,
+    description: 'Test profile for viewing verification',
+    locked: false,
+    entityType: 'HOLDINGS_RECORD',
+    ruleDetails: [
+      HoldingsRules.createPermanentLocationRule(
+        ActionCreators.replaceWith(null), // Will be set dynamically
+      ),
+    ],
+  });
+};
+
+const createInstancesProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740202_InstancesProfile_${getRandomPostfix()}`,
+    description: 'Test profile for viewing verification',
+    locked: false,
+    entityType: 'INSTANCE',
+    ruleDetails: [createSuppressFromDiscoveryRule(true, false, false)],
+  });
+};
+
+const createMarcInstancesProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740202_MarcInstancesProfile_${getRandomPostfix()}`,
+    description: 'Test profile for viewing verification',
+    locked: false,
+    entityType: 'INSTANCE_MARC',
+    ruleDetails: [createSuppressFromDiscoveryRule(true, false, false)],
+    marcRuleDetails: [
+      MarcRules.createMarcFieldRule('901', '1', '1', 'a', [
+        MarcActionCreators.addToExisting('Test data'),
+      ]),
+    ],
+  });
+};
+
 const testData = {
   itemsProfileName: null,
   holdingsProfileName: null,
@@ -26,101 +91,6 @@ const testData = {
   marcInstancesProfileName: null,
   profileDescription: 'Test profile for viewing verification',
   createdProfileIds: [],
-  itemsProfileBody: {
-    name: `AT_C740202_ItemsProfile_${getRandomPostfix()}`,
-    description: 'Test profile for viewing verification',
-    locked: false,
-    entityType: 'ITEM',
-    ruleDetails: [
-      {
-        option: 'ITEM_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Test copy note for viewing',
-            parameters: [
-              {
-                key: 'ITEM_NOTE_TYPE_ID_KEY',
-                value: null,
-              },
-              {
-                key: 'STAFF_ONLY',
-                value: 'false',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  holdingsProfileBody: {
-    name: `AT_C740202_HoldingsProfile_${getRandomPostfix()}`,
-    description: 'Test profile for viewing verification',
-    locked: false,
-    entityType: 'HOLDINGS_RECORD',
-    ruleDetails: [
-      {
-        option: 'PERMANENT_LOCATION',
-        actions: [
-          {
-            type: 'REPLACE_WITH',
-            updated: null,
-          },
-        ],
-      },
-    ],
-  },
-  instancesProfileBody: {
-    name: `AT_C740202_InstancesProfile_${getRandomPostfix()}`,
-    description: 'Test profile for viewing verification',
-    locked: false,
-    entityType: 'INSTANCE',
-    ruleDetails: [
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-          },
-        ],
-      },
-    ],
-  },
-  marcInstancesProfileBody: {
-    name: `AT_C740202_MarcInstancesProfile_${getRandomPostfix()}`,
-    description: 'Test profile for viewing verification',
-    locked: false,
-    entityType: 'INSTANCE_MARC',
-    ruleDetails: [
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-          },
-        ],
-      },
-    ],
-    marcRuleDetails: [
-      {
-        tag: '901',
-        ind1: '1',
-        ind2: '1',
-        subfield: 'a',
-        actions: [
-          {
-            name: 'ADD_TO_EXISTING',
-            data: [
-              {
-                key: 'VALUE',
-                value: 'Test data',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -140,20 +110,29 @@ describe('Bulk-edit', () => {
         });
 
         cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
-          testData.holdingsProfileBody.ruleDetails[0].actions[0].updated = res.id;
+          const locationId = res.id;
 
           InventoryInstances.getItemNoteTypes({
             query: 'name="Copy note"',
           }).then((response) => {
-            testData.itemsProfileBody.ruleDetails[0].actions[0].parameters[0].value =
-              response[0].id;
+            const noteTypeId = response[0].id;
+
+            // Create profile bodies using factory functions
+            const itemsProfile = createItemsProfileBody();
+            itemsProfile.ruleDetails[0].actions[0].parameters[0].value = noteTypeId;
+
+            const holdingsProfile = createHoldingsProfileBody();
+            holdingsProfile.ruleDetails[0].actions[0].updated = locationId;
+
+            const instancesProfile = createInstancesProfileBody();
+            const marcInstancesProfile = createMarcInstancesProfileBody();
 
             // Create test profiles for each type
             const profiles = [
-              { body: testData.itemsProfileBody, nameKey: 'itemsProfileName' },
-              { body: testData.holdingsProfileBody, nameKey: 'holdingsProfileName' },
-              { body: testData.instancesProfileBody, nameKey: 'instancesProfileName' },
-              { body: testData.marcInstancesProfileBody, nameKey: 'marcInstancesProfileName' },
+              { body: itemsProfile, nameKey: 'itemsProfileName' },
+              { body: holdingsProfile, nameKey: 'holdingsProfileName' },
+              { body: instancesProfile, nameKey: 'instancesProfileName' },
+              { body: marcInstancesProfile, nameKey: 'marcInstancesProfileName' },
             ];
 
             profiles.forEach((profileConfig) => {

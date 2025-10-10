@@ -15,6 +15,27 @@ import HoldingsBulkEditProfileView from '../../../support/fragments/settings/bul
 import AreYouSureModal from '../../../support/fragments/settings/bulk-edit/areYouSureModal';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  createSuppressFromDiscoveryRule,
+  ActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+// Profile factory function
+const createProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740232 original holdings bulk edit profile ${getRandomPostfix()}`,
+    description: 'Original holdings profile description',
+    entityType: 'HOLDINGS_RECORD',
+    ruleDetails: [
+      createAdminNoteRule(
+        ActionCreators.addToExisting('Original administrative note for holdings'),
+      ),
+      createSuppressFromDiscoveryRule(true, false, true),
+    ],
+  });
+};
 
 let user;
 const testData = {
@@ -24,32 +45,6 @@ const testData = {
   editedDescription: 'Updated holdings profile description with changes',
   originalAdministrativeNote: 'Original administrative note for holdings',
   editedAdministrativeNote: 'Updated administrative note for holdings',
-  profileBody: {
-    name: `AT_C740232 original holdings bulk edit profile ${getRandomPostfix()}`,
-    description: 'Original holdings profile description',
-    locked: false,
-    entityType: 'HOLDINGS_RECORD',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Original administrative note for holdings',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-            applyToItems: true,
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -62,7 +57,9 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.createBulkEditProfile(testData.profileBody).then((createdProfile) => {
+        // Create profile with factory
+        const profileBody = createProfileBody();
+        cy.createBulkEditProfile(profileBody).then((createdProfile) => {
           testData.originalProfileName = createdProfile.name;
           testData.profileId = createdProfile.id;
         });

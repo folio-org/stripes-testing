@@ -13,6 +13,40 @@ import InstancesBulkEditProfileView from '../../../support/fragments/settings/bu
 import AreYouSureModal from '../../../support/fragments/settings/bulk-edit/areYouSureModal';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  createSuppressFromDiscoveryRule,
+  ActionCreators,
+  MarcRules,
+  MarcActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+const { createMarcFieldRule } = MarcRules;
+
+// Profile factory function
+const createProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C740234 original MARC instances bulk edit profile ${getRandomPostfix()}`,
+    description: 'Original MARC instances profile description',
+    entityType: 'INSTANCE_MARC',
+    ruleDetails: [
+      createAdminNoteRule(
+        ActionCreators.addToExisting('Original administrative note for MARC instances'),
+      ),
+      createSuppressFromDiscoveryRule(true, true, true),
+    ],
+    marcRuleDetails: [
+      createMarcFieldRule('500', '1', '0', 'a', [
+        MarcActionCreators.addToExisting('Original MARC note data'),
+      ]),
+      createMarcFieldRule('856', '4', '1', 'u', [
+        MarcActionCreators.find('http://search.ebscohost.com/login.aspx?direct=true'),
+        MarcActionCreators.replaceWith('http://search.ebscohost.com/login.aspx?direct=false'),
+      ]),
+    ],
+  });
+};
 
 let user;
 const testData = {
@@ -39,80 +73,6 @@ const testData = {
   addedIndicator2: '\\',
   addedSubfield: 'a',
   addedMarcFieldValue: 'Added MARC note data',
-
-  profileBody: {
-    name: `AT_C740234 original MARC instances bulk edit profile ${getRandomPostfix()}`,
-    description: 'Original MARC instances profile description',
-    locked: false,
-    entityType: 'INSTANCE_MARC',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Original administrative note for MARC instances',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-            applyToHoldings: true,
-            applyToItems: true,
-          },
-        ],
-      },
-    ],
-    marcRuleDetails: [
-      {
-        tag: '500',
-        ind1: '1',
-        ind2: '0',
-        subfield: 'a',
-        actions: [
-          {
-            name: 'ADD_TO_EXISTING',
-            data: [
-              {
-                key: 'VALUE',
-                value: 'Original MARC note data',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        bulkOperationId: null,
-        tag: '856',
-        ind1: '4',
-        ind2: '1',
-        subfield: 'u',
-        actions: [
-          {
-            name: 'FIND',
-            data: [
-              {
-                key: 'VALUE',
-                value: 'http://search.ebscohost.com/login.aspx?direct=true',
-              },
-            ],
-          },
-          {
-            name: 'REPLACE_WITH',
-            data: [
-              {
-                key: 'VALUE',
-                value: 'http://search.ebscohost.com/login.aspx?direct=false',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -126,7 +86,9 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.createBulkEditProfile(testData.profileBody).then((createdProfile) => {
+        // Create hybrid profile with factory (both FOLIO and MARC rules)
+        const profileBody = createProfileBody();
+        cy.createBulkEditProfile(profileBody).then((createdProfile) => {
           testData.originalProfileName = createdProfile.name;
           testData.profileId = createdProfile.id;
         });
