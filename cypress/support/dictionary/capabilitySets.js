@@ -149,6 +149,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryInstanceView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance Staff-Suppressed-Records',
