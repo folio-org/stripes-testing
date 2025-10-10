@@ -378,6 +378,7 @@ export const ItemsRules = {
       ];
     } else if (action.type === BULK_EDIT_ACTION_TYPES.REMOVE_MARK_AS_STAFF_ONLY) {
       parameters = [
+        { key: 'ITEM_NOTE_TYPE_ID_KEY', value: noteTypeId },
         {
           key: 'STAFF_ONLY',
           value: false,
