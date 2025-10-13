@@ -159,6 +159,11 @@ export default {
     resource: 'UI-Data-Export',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryHoldingsCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Holdings',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiInventory: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory',
