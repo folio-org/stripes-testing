@@ -671,12 +671,12 @@ export default {
   checkFinancialSummeryQuality: (quantityValue1, quantityValue2) => {
     cy.expect(
       Section({ id: 'financial-summary' })
-        .find(HTML(including('Cash balance: $' + quantityValue1)))
+        .find(HTML(including('Cash balance: ' + quantityValue1)))
         .exists(),
     );
     cy.expect(
       Section({ id: 'financial-summary' })
-        .find(HTML(including('Available balance: $' + quantityValue2)))
+        .find(HTML(including('Available balance: ' + quantityValue2)))
         .exists(),
     );
   },
