@@ -1,7 +1,9 @@
 import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import FileManager from '../../../support/utils/fileManager';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -75,7 +77,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabel(0, 1);
         BulkEditSearchPane.verifyErrorByIdentifier(
           user.userId,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
         BulkEditActions.openActions();

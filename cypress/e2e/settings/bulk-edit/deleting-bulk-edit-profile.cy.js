@@ -8,59 +8,46 @@ import InstancesBulkEditProfileView from '../../../support/fragments/settings/bu
 import DeleteProfileModal from '../../../support/fragments/settings/bulk-edit/deleteProfileModal';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  createSuppressFromDiscoveryRule,
+  createAdminNoteRule,
+  ActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
 let user;
-const testData = {
-  unlockedProfileName: null, // Will be assigned after profile creation
-  lockedProfileName: null, // Will be assigned after profile creation
-  unlockedProfileId: null,
-  lockedProfileId: null,
-  originalDescription: 'Original instances profile description for deletion test',
-  originalAdministrativeNote: 'Original administrative note for instances',
-  unlockedProfileBody: {
+
+const createUnlockedProfileBody = () => {
+  return createBulkEditProfileBody({
     name: `AT_C740230 unlocked instances bulk edit profile ${getRandomPostfix()}`,
     description: 'Original instances profile description for deletion test',
     locked: false,
     entityType: 'INSTANCE',
     ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Original administrative note for instances',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-            applyToHoldings: true,
-            applyToItems: true,
-          },
-        ],
-      },
+      createAdminNoteRule(
+        ActionCreators.addToExisting('Original administrative note for instances'),
+      ),
+      createSuppressFromDiscoveryRule(true, true, true),
     ],
-  },
-  lockedProfileBody: {
+  });
+};
+
+const createLockedProfileBody = () => {
+  return createBulkEditProfileBody({
     name: `AT_C740230 locked instances bulk edit profile ${getRandomPostfix()}`,
     description: 'Locked instances profile description for deletion test',
     locked: true,
     entityType: 'INSTANCE',
     ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Administrative note for locked profile',
-          },
-        ],
-      },
+      createAdminNoteRule(ActionCreators.addToExisting('Administrative note for locked profile')),
     ],
-  },
+  });
+};
+
+const testData = {
+  originalDescription: 'Original instances profile description for deletion test',
+  lockedInstanceProfileDescription: 'Locked instances profile description for deletion test',
+  originalAdministrativeNote: 'Original administrative note for instances',
 };
 
 describe('Bulk-edit', () => {
@@ -75,13 +62,15 @@ describe('Bulk-edit', () => {
         user = userProperties;
 
         // Create unlocked profile
-        cy.createBulkEditProfile(testData.unlockedProfileBody).then((createdProfile) => {
+        const unlockedProfile = createUnlockedProfileBody();
+        cy.createBulkEditProfile(unlockedProfile).then((createdProfile) => {
           testData.unlockedProfileName = createdProfile.name;
           testData.unlockedProfileId = createdProfile.id;
         });
 
         // Create locked profile
-        cy.createBulkEditProfile(testData.lockedProfileBody).then((createdProfile) => {
+        const lockedProfile = createLockedProfileBody();
+        cy.createBulkEditProfile(lockedProfile).then((createdProfile) => {
           testData.lockedProfileName = createdProfile.name;
           testData.lockedProfileId = createdProfile.id;
         });
@@ -152,7 +141,7 @@ describe('Bulk-edit', () => {
         InstancesBulkEditProfileView.waitLoading();
         InstancesBulkEditProfileView.verifyProfileDetails(
           testData.lockedProfileName,
-          testData.lockedProfileBody.description,
+          testData.lockedInstanceProfileDescription,
         );
         InstancesBulkEditProfileView.verifyLockProfileCheckboxChecked(true);
         InstancesBulkEditProfileView.clickActionsButton();
