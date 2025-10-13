@@ -122,7 +122,6 @@ export const MarcActionCreators = {
 
   removeAll: () => ({
     name: 'REMOVE_ALL',
-    data: [],
   }),
 
   addToExisting: (value) => ({
@@ -143,6 +142,14 @@ export const MarcActionCreators = {
         value,
       },
     ],
+  }),
+
+  removeSubfield: () => ({
+    name: 'REMOVE_SUBFIELD',
+  }),
+
+  removeField: () => ({
+    name: 'REMOVE_FIELD',
   }),
 };
 
