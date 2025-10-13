@@ -26,6 +26,50 @@ import {
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  createTemporaryLocationRule,
+  ItemsRules,
+  ActionCreators,
+} from '../../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+const { createItemNoteRule, createStatusRule, createTemporaryLoanTypeRule, createCheckInNoteRule } =
+  ItemsRules;
+
+// Profile factory functions
+const createMainProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C770421_ItemsProfile_${getRandomPostfix()}`,
+    description: 'Test items bulk edit profile for executing bulk edit job in central tenant',
+    entityType: 'ITEM',
+    ruleDetails: [
+      createAdminNoteRule(ActionCreators.findAndReplace('admin', 'Administrative')),
+      createItemNoteRule(
+        ActionCreators.addToExisting('ADDED Electronic bookplate note'),
+        null, // Will be set to Electronic bookplate note type ID
+        false,
+      ),
+      createItemNoteRule(
+        ActionCreators.removeAll(),
+        null, // Will be set to Action note type ID
+      ),
+      createCheckInNoteRule(ActionCreators.markAsStaffOnly(false)),
+      createStatusRule(ActionCreators.replaceWith(ITEM_STATUS_NAMES.IN_PROCESS)),
+      createTemporaryLoanTypeRule(ActionCreators.clearField()),
+      createTemporaryLocationRule(ActionCreators.clearField()),
+    ],
+  });
+};
+
+const createSecondProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_ItemsProfile_${getRandomPostfix()}`,
+    description: 'Test profile for testing search and sort functionality',
+    entityType: 'ITEM',
+    ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('test'))],
+  });
+};
 
 const testData = {
   permissionsSet: [
@@ -45,115 +89,6 @@ const testData = {
   electronicBookplateNote: 'ADDED Electronic bookplate note',
   editedAdministrativeNote: 'Administrative note for testing',
   permanentLoanType: 'Reading room',
-  tempLocation: 'Popular Reading Collection',
-  profileBody: {
-    name: `AT_C770421_ItemsProfile_${getRandomPostfix()}`,
-    description: 'Test items bulk edit profile for executing bulk edit job in central tenant',
-    locked: false,
-    entityType: 'ITEM',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REPLACE',
-            initial: 'admin',
-            updated: 'Administrative',
-          },
-        ],
-      },
-      {
-        option: 'ITEM_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'ADDED Electronic bookplate note',
-            parameters: [
-              {
-                key: 'ITEM_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to Electronic bookplate note type ID
-              },
-              {
-                key: 'STAFF_ONLY',
-                value: false,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'ITEM_NOTE',
-        actions: [
-          {
-            type: 'REMOVE_ALL',
-            parameters: [
-              {
-                key: 'ITEM_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to Action note type ID
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'CHECK_IN_NOTE',
-        actions: [
-          {
-            type: 'MARK_AS_STAFF_ONLY',
-            parameters: [
-              {
-                key: 'STAFF_ONLY',
-                value: false,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'STATUS',
-        actions: [
-          {
-            type: 'REPLACE_WITH',
-            updated: ITEM_STATUS_NAMES.IN_PROCESS,
-          },
-        ],
-      },
-      {
-        option: 'TEMPORARY_LOAN_TYPE',
-        actions: [
-          {
-            type: 'CLEAR_FIELD',
-          },
-        ],
-      },
-      {
-        option: 'TEMPORARY_LOCATION',
-        actions: [
-          {
-            type: 'CLEAR_FIELD',
-          },
-        ],
-      },
-    ],
-  },
-  secondProfileBody: {
-    name: `Test_ItemsProfile_${getRandomPostfix()}`,
-    description: 'Test profile for testing search and sort functionality',
-    locked: false,
-    entityType: 'ITEM',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'test',
-            updated: null,
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -173,19 +108,31 @@ describe('Bulk-edit', () => {
             testData.adminSourceRecord = record;
           });
           InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
-            testData.profileBody.ruleDetails[2].actions[0].parameters[0].value = noteTypes[0].id;
+            testData.actionNoteTypeId = noteTypes[0].id;
 
             InventoryInstances.getItemNoteTypes({ query: 'name="Electronic bookplate"' }).then(
               (electronicBookplateNoteTypes) => {
-                testData.profileBody.ruleDetails[1].actions[0].parameters[0].value =
-                  electronicBookplateNoteTypes[0].id;
+                testData.electronicBookplateNoteTypeId = electronicBookplateNoteTypes[0].id;
 
-                cy.createBulkEditProfile(testData.profileBody).then((profile) => {
+                // Create profiles using factory functions
+                const mainProfile = createMainProfileBody();
+                mainProfile.ruleDetails[1].actions[0].parameters[0].value =
+                  testData.electronicBookplateNoteTypeId;
+                mainProfile.ruleDetails[2].actions[0].parameters[0].value =
+                  testData.actionNoteTypeId;
+
+                // Store profile descriptions for test assertions
+                testData.profileDescription = mainProfile.description;
+
+                const secondProfile = createSecondProfileBody();
+                testData.secondProfileDescription = secondProfile.description;
+
+                cy.createBulkEditProfile(mainProfile).then((profile) => {
                   testData.profileName = profile.name;
                   testData.profileIds.push(profile.id);
                 });
 
-                cy.createBulkEditProfile(testData.secondProfileBody).then((profile) => {
+                cy.createBulkEditProfile(secondProfile).then((profile) => {
                   testData.secondProfileName = profile.name;
                   testData.profileIds.push(profile.id);
                 });
@@ -242,8 +189,7 @@ describe('Bulk-edit', () => {
                     administrativeNotes: ['admin note for testing'],
                     notes: [
                       {
-                        itemNoteTypeId:
-                          testData.profileBody.ruleDetails[2].actions[0].parameters[0].value,
+                        itemNoteTypeId: testData.actionNoteTypeId,
                         note: testData.actionNote,
                         staffOnly: false,
                       },
@@ -339,7 +285,7 @@ describe('Bulk-edit', () => {
           // Step 4-5: Verify the table with the list of existing items bulk edit profiles
           SelectBulkEditProfileModal.verifyProfileInTable(
             testData.profileName,
-            testData.profileBody.description,
+            testData.profileDescription,
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfilesFoundText();
@@ -354,14 +300,14 @@ describe('Bulk-edit', () => {
           SelectBulkEditProfileModal.searchProfile('at_C770421');
           SelectBulkEditProfileModal.verifyProfileInTable(
             testData.profileName,
-            testData.profileBody.description,
+            testData.profileDescription,
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
           SelectBulkEditProfileModal.searchProfile(testData.profileName);
           SelectBulkEditProfileModal.verifyProfileInTable(
             testData.profileName,
-            testData.profileBody.description,
+            testData.profileDescription,
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
