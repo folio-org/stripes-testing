@@ -11,28 +11,29 @@ import UsersBulkEditProfilesPane from '../../../support/fragments/settings/bulk-
 import UsersBulkEditProfileView from '../../../support/fragments/settings/bulk-edit/profileView/usersBulkEditProfileView';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  ActionCreators,
+  UsersRules,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
 let user;
-const testData = {
-  usersProfileName: null,
-  profileDescription: 'Test users profile for viewing verification',
-  usersProfileBody: {
+
+const createUsersProfileBody = () => {
+  return createBulkEditProfileBody({
     name: `AT_C740207_UsersProfile_${getRandomPostfix()}`,
     description: 'Test users profile for viewing verification',
     locked: false,
     entityType: 'USER',
     ruleDetails: [
-      {
-        option: 'PATRON_GROUP',
-        actions: [
-          {
-            type: 'REPLACE_WITH',
-            updated: null,
-          },
-        ],
-      },
+      UsersRules.createPatronGroupRule(ActionCreators.replaceWith(null)), // Will be set dynamically
     ],
-  },
+  });
+};
+
+const testData = {
+  usersProfileName: null,
+  profileDescription: 'Test users profile for viewing verification',
 };
 
 describe('Bulk-edit', () => {
@@ -56,9 +57,10 @@ describe('Bulk-edit', () => {
           limit: 1,
           query: 'group=="faculty"',
         }).then((userPatronGroupId) => {
-          testData.usersProfileBody.ruleDetails[0].actions[0].updated = userPatronGroupId;
+          const usersProfile = createUsersProfileBody();
+          usersProfile.ruleDetails[0].actions[0].updated = userPatronGroupId;
 
-          cy.createBulkEditProfile(testData.usersProfileBody).then((profile) => {
+          cy.createBulkEditProfile(usersProfile).then((profile) => {
             testData.usersProfileName = profile.name;
             testData.createdProfileId = profile.id;
           });

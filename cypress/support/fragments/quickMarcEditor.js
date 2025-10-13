@@ -3238,4 +3238,10 @@ export default {
   close() {
     cy.do(QuickMarcEditor().find(PaneHeader()).find(closeButton).click());
   },
+
+  checkSomeDropdownsMarkedAsInvalid(tag, someInvalid = true) {
+    const invalidDropdown = getRowInteractorByTagName(tag).find(Select({ valid: false }));
+    if (someInvalid) cy.expect(invalidDropdown.exists());
+    else cy.expect(invalidDropdown.absent());
+  },
 };
