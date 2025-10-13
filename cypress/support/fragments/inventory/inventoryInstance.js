@@ -162,6 +162,7 @@ const versionHistoryButton = Button({ icon: 'clock' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
+  cannotViewAuthoritiesMessage: 'User does not have permission to search authority records.',
 };
 
 const validOCLC = {
@@ -1923,5 +1924,10 @@ export default {
 
   checkCloseButtonInFocus() {
     cy.expect(instanceDetailsSection.find(Button({ icon: 'times' })).has({ focused: true }));
+  },
+
+  verifyPermissionMessageInSelectAuthorityModal(isShown = true) {
+    const targetMessage = findAuthorityModal.find(HTML(messages.cannotViewAuthoritiesMessage));
+    cy.expect(isShown ? targetMessage.exists() : targetMessage.absent());
   },
 };
