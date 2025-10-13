@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -12,28 +12,32 @@ import DataExportResults from '../../../support/fragments/data-export/dataExport
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 
 let user;
 let exportedFileName;
+const authorityInstanceIds = [];
 const authorityUUIDsFileName = `AT_C446014_authorityUUIDs_${getRandomPostfix()}.csv`;
-let createdAuthoritySourceFileId;
 const deletedRecordsCount = 1;
 const notDeletedRecordsCount = 1;
 const totalRecordsCount = deletedRecordsCount + notDeletedRecordsCount;
-const authFile = {
-  sourceName: `AT_C446014_AuthoritySourceFile_${getRandomPostfix()}`,
-  prefix: getRandomLetters(8),
-  startWithNumber: '1',
-  hridStartsWith: '',
-};
 const authorityInstance = {
-  title: `AT_C446014_MarcAuthority_${getRandomPostfix()}`,
+  title: 'AT_C446014_MarcAuthority_1',
 };
-const authorityFields = [
-  { tag: '100', content: `$a ${authorityInstance.title}`, indicators: ['\\', '\\'] },
-];
-const authorityInstanceIds = [];
 const deletedAuthorityExportProfile = 'Deleted authority';
+const marcAuthFiles = [
+  {
+    marc: 'marcAuthFileC446014_1.mrc',
+    fileName: `testMarcAuthC446014File_1.${getRandomPostfix()}.mrc`,
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+  },
+  {
+    marc: 'marcAuthFileC446014_2.mrc',
+    fileName: `testMarcAuthC446014File_2.${getRandomPostfix()}.mrc`,
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+  },
+];
 
 describe('Data Export', () => {
   before('create test data', () => {
@@ -41,53 +45,47 @@ describe('Data Export', () => {
     cy.createTempUser([
       permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-
-      cy.createAuthoritySourceFileUsingAPI(
-        authFile.prefix,
-        authFile.startWithNumber,
-        authFile.sourceName,
-      )
-        .then((authoritySourceFileId) => {
-          createdAuthoritySourceFileId = authoritySourceFileId;
-
-          for (let i = 0; i < totalRecordsCount; i++) {
-            MarcAuthorities.createMarcAuthorityViaAPI(
-              authFile.prefix,
-              authFile.hridStartsWith,
-              authorityFields,
-            ).then((createdRecordId) => {
-              authorityInstanceIds.push(createdRecordId);
+    ])
+      .then((userProperties) => {
+        user = userProperties;
+      })
+      .then(() => {
+        marcAuthFiles.forEach((authFile) => {
+          DataImport.uploadFileViaApi(
+            authFile.marc,
+            authFile.fileName,
+            authFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              authorityInstanceIds.push(record.authority.id);
             });
-          }
-        })
-        .then(() => {
-          FileManager.createFile(
-            `cypress/fixtures/${authorityUUIDsFileName}`,
-            authorityInstanceIds.join('\n'),
-          );
-
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            query: `id="${authorityInstanceIds[1]}"`,
-          }).then((authorities) => {
-            authorityInstance.naturalId = authorities[0].naturalId;
-          });
-
-          MarcAuthority.deleteViaAPI(authorityInstanceIds[0]);
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.dataExportPath,
-            waiter: DataExportLogs.waitLoading,
           });
         });
-    });
+      })
+      .then(() => {
+        FileManager.createFile(
+          `cypress/fixtures/${authorityUUIDsFileName}`,
+          authorityInstanceIds.join('\n'),
+        );
+
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          query: `id="${authorityInstanceIds[0]}"`,
+        }).then((authorities) => {
+          authorityInstance.naturalId = authorities[0].naturalId;
+        });
+
+        MarcAuthority.deleteViaAPI(authorityInstanceIds[0]);
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
+      });
   });
 
   after('delete test data', () => {
     cy.getAdminToken();
     MarcAuthority.deleteViaAPI(authorityInstanceIds[1]);
-    cy.deleteAuthoritySourceFileViaAPI(createdAuthoritySourceFileId, true);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${authorityUUIDsFileName}`);
     FileManager.deleteFileFromDownloadsByMask(exportedFileName);
@@ -127,7 +125,6 @@ describe('Data Export', () => {
         DataExportLogs.clickButtonWithText(exportedFileName);
 
         // Step 6: Check exported records included in the file
-        const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
         const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
         const assertionsOnMarcFileContent = [
           {
@@ -139,7 +136,9 @@ describe('Data Export', () => {
                 expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
               },
               (record) => {
-                expect(record.get('008')[0].value.startsWith(todayDateYYMMDD)).to.be.true;
+                expect(record.get('008')[0].value).to.eq(
+                  '900423n| azannaabn          |n aaa      ',
+                );
               },
               (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
               (record) => expect(record.get('100')[0].subf[0][1]).to.eq(authorityInstance.title),

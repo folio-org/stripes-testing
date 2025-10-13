@@ -14,7 +14,7 @@ Cypress.Commands.add('getBulkEditProfile', (searchParams) => {
     searchParams,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    return body.content;
+    return body;
   });
 });
 

@@ -265,6 +265,24 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
+  fillInCommonRolloverInfoWithoutAllocation(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   fillInCommonRolloverInfoWithoutCheckboxOngoingEncumbrances(
     fiscalYear,
     rolloverBudgetValue,
@@ -653,12 +671,12 @@ export default {
   checkFinancialSummeryQuality: (quantityValue1, quantityValue2) => {
     cy.expect(
       Section({ id: 'financial-summary' })
-        .find(HTML(including('Cash balance: $' + quantityValue1)))
+        .find(HTML(including('Cash balance: ' + quantityValue1)))
         .exists(),
     );
     cy.expect(
       Section({ id: 'financial-summary' })
-        .find(HTML(including('Available balance: $' + quantityValue2)))
+        .find(HTML(including('Available balance: ' + quantityValue2)))
         .exists(),
     );
   },
@@ -776,21 +794,33 @@ export default {
   },
 
   checkDownloadedErrorFile(fileName, errorType, failedAction, amount, fundID) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000); // wait for the file to load
+    cy.wait(3000);
     cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
-      // Split the contents of a file into lines
-      const fileRows = fileContent.split('\n');
+      const [headerLine, dataLine] = fileContent.trim().split(/\r?\n/);
 
-      expect(fileRows[0].trim()).to.equal(
-        '"Ledger rollover ID","Error type","Failed action","Error message","Amount","Fund ID","Fund code","Purchase order ID","Purchase order line number","Purchase order line ID"',
-      );
+      const header = this.parseCsvLine(headerLine).map((s) => s.replace(/^"|"$/g, ''));
+      header[0] = header[0].replace(/^\uFEFF/, '');
 
-      const actualData = fileRows[1].trim().split(',');
-      expect(actualData[1]).to.equal(`"${errorType}"`);
-      expect(actualData[2]).to.equal(`"${failedAction}"`);
-      expect(actualData[5]).to.equal(amount);
-      expect(actualData[6]).to.equal(`"${fundID}"`);
+      const EXPECTED_HEADER = [
+        'Ledger rollover ID',
+        'Error type',
+        'Failed action',
+        'Error message',
+        'Amount',
+        'Fund ID',
+        'Fund code',
+        'Purchase order ID',
+        'Purchase order line number',
+        'Purchase order line ID',
+      ];
+
+      expect(header).to.deep.equal(EXPECTED_HEADER);
+
+      const row = this.parseCsvLine(dataLine).map((s) => s.replace(/^"|"$/g, ''));
+      expect(row[1]).to.equal(errorType);
+      expect(row[2]).to.equal(failedAction);
+      expect(row[4]).to.equal(amount);
+      expect(row[5]).to.equal(fundID);
     });
   },
 
@@ -1018,6 +1048,23 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
+  fillInRolloverWithAllocation(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   fillInRolloverForOneTimeOrdersWithoutBudgets(fiscalYear) {
     cy.wait(4000);
     cy.do(fiscalYearSelect.click());
@@ -1046,6 +1093,28 @@ export default {
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+  },
+
+  fillInTestRolloverForOneTimeOrdersWithoutAllocation(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
@@ -1391,6 +1460,47 @@ export default {
       expect(actualData[9]).to.equal(`"${fund.description}"`);
       expect(actualData[10]).to.equal('"No budget found"');
     });
+  },
+
+  parseCsvLine(line) {
+    const out = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (ch === ',' && !inQuotes) {
+        out.push(cur);
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out;
+  },
+
+  clickRolloverErrorsCsv(ledgerName, fyCode) {
+    const fileName = `${ledgerName}-rollover-errors-${fyCode}.csv`;
+
+    cy.contains(
+      '[role="alert"] [data-test-text-link="true"] [data-test-headline="true"]',
+      fileName,
+      { timeout: 60_000 },
+    )
+      .should('be.visible')
+      .click();
+
+    const downloadsFolder = Cypress.config('downloadsFolder') || 'cypress/downloads';
+    cy.readFile(`${downloadsFolder}/${fileName}`, { timeout: 30_000 }).should('exist');
+
+    return cy.wrap(fileName);
   },
 
   waitLoading(ms = DEFAULT_WAIT_TIME) {

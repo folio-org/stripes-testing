@@ -1674,8 +1674,9 @@ export default {
     });
   },
 
-  checkButtonNewExistsInActionDropdown() {
-    cy.expect(buttonNew.exists());
+  checkButtonNewExistsInActionDropdown(buttonShown = true) {
+    if (buttonShown) cy.expect(buttonNew.exists());
+    else cy.expect(buttonNew.absent());
   },
 
   checkAuthorityActionsDropDownExpanded() {
@@ -1795,5 +1796,20 @@ export default {
 
   checkSearchQuery(searchQuery) {
     cy.expect(SearchField({ id: 'textarea-authorities-search', value: searchQuery }).exists());
+  },
+
+  verifyMultiselectFilterOptionsCount(accordionName, expectedCount) {
+    cy.expect(Accordion(accordionName).find(MultiSelect()).has({ optionsCount: expectedCount }));
+  },
+
+  verifyMultiselectFilterOptionExists(accordionName, optionName) {
+    const optionRegExp = new RegExp(
+      `${optionName.replace(/[\\(\\)]/g, (match) => `\\${match}`)}\\(\\d+\\)`,
+    );
+    cy.expect(
+      Accordion(accordionName)
+        .find(MultiSelectOption(matching(optionRegExp), { visible: or(true, false) }))
+        .exists(),
+    );
   },
 };

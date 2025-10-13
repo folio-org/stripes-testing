@@ -45,7 +45,6 @@ export default {
   verifyProfilesFoundText() {
     cy.get('div[class^=modal] [class^=mclRow-]').then(($rows) => {
       const actualCount = $rows.length;
-
       cy.expect(
         Modal()
           .find(PaneHeader())
@@ -53,6 +52,36 @@ export default {
             subtitle: `${actualCount} profile${actualCount !== 1 ? 's' : ''} found`,
           }),
       );
+    });
+  },
+
+  verifyProfileNumberMatchesNumberInSettings(type) {
+    let entityType;
+
+    switch (type) {
+      case 'holdings':
+        entityType = 'HOLDINGS_RECORD';
+        break;
+      case 'items':
+        entityType = 'ITEM';
+        break;
+      case 'users':
+        entityType = 'USER';
+        break;
+      default:
+        throw new Error(`Unsupported entity type: ${type}`);
+    }
+    cy.get('div[class^=modal] [class^=mclRow-]').then(($rows) => {
+      const actualCount = $rows.length;
+
+      cy.getBulkEditProfile({ query: `entityType=${entityType}` }).then((profiles) => {
+        const totalRecords = profiles.totalRecords;
+
+        expect(actualCount).to.equal(
+          totalRecords,
+          `Number of profiles displayed (${actualCount}) should match totalRecords value (${totalRecords}) from the Settings`,
+        );
+      });
     });
   },
 

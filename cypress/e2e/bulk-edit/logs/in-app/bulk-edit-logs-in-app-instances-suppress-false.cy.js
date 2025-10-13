@@ -1,5 +1,7 @@
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -68,7 +70,7 @@ const actionOptions = {
   setFalse: 'Set false',
   setTrue: 'Set true',
 };
-const warningMessageForInstanceWithoutItems = 'No change in value required';
+const warningMessageForInstanceWithoutItems = ERROR_MESSAGES.NO_CHANGE_REQUIRED;
 const warningMessageForInstanceWithItems =
   'No change in value for instance required, suppressed associated records have been updated.';
 const createdInstanceIds = [];

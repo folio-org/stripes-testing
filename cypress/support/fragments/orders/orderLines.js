@@ -1057,7 +1057,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -2180,6 +2182,20 @@ export default {
       .contains(fundText)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  checkCurrentEncumbranceIsBlank() {
+    cy.get('#FundDistribution [role="gridcell"]')
+      .eq(5)
+      .then(($cell) => {
+        const noValue = $cell.find('[data-test-no-value="true"]').length > 0;
+        if (noValue) {
+          cy.wrap(noValue).should('be.true');
+        } else {
+          const text = $cell.text().trim().replace(/\s+/g, ' ');
+          expect(text).to.equal('$0.00');
+        }
+      });
   },
 
   openPageConnectedInstance: () => {
