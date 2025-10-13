@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -63,7 +65,7 @@ const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileNa
   instanceUUIDsFileName,
   true,
 );
-const errorReasonNotes = 'Bulk edit of instance notes is not supported for MARC Instances.';
+const errorReasonNotes = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
 const errorReasonAdminNotes =
   'Change note type for administrative notes is not supported for MARC Instances.';
 

@@ -1,5 +1,7 @@
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -81,7 +83,7 @@ const actionOptions = {
   setFalse: 'Set false',
   setTrue: 'Set true',
 };
-const warningMessageForInstanceWithoutHoldings = 'No change in value required';
+const warningMessageForInstanceWithoutHoldings = ERROR_MESSAGES.NO_CHANGE_REQUIRED;
 const warningMessageForInstanceWithHoldings =
   'No change in value for instance required, unsuppressed associated records have been updated.';
 const instanceUUIDsFileName = `instanceHRIDs_${getRandomPostfix()}.csv`;
