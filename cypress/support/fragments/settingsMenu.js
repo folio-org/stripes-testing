@@ -127,6 +127,8 @@ export default {
   tagsGeneralPath: 'settings/tags/general',
   // Software versions
   softwareVersionsPath: 'settings/about',
+  // Session locale path
+  sessionLocalePath: 'settings/developer/locale',
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());

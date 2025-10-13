@@ -87,18 +87,21 @@ export default {
       const prefix = 'data-test-eholdings-package-list-item';
       const sortedPackages = (links?.length ? [...links] : [])
         .map((link) => {
-          const countTotalTitles = link.querySelector(`[${prefix}-num-titles="true"]`).innerText;
-          const countSelected = link.querySelector(
+          const totalTitlesEl = link.querySelector(`[${prefix}-num-titles="true"]`);
+          const nameEl = link.querySelector(`[${prefix}-name="true"]`);
+          const selectedEl = link.querySelector(
             '[data-test-eholdings-provider-list-item-num-packages-selected="true"]',
-          ).innerText;
-
+          );
+          const countTotalTitles = totalTitlesEl.innerText || '0';
+          const countSelected = selectedEl ? selectedEl.innerText : '0';
           return {
-            id: link.getAttribute('href').replace('/eholdings/packages/', ''),
-            name: link.querySelector(`[${prefix}-name="true"]`).innerText,
+            id: link.getAttribute('href')?.replace('/eholdings/packages/', '') || '',
+            name: nameEl.innerText,
             countTotalTitles: parseFloat(countTotalTitles.replace(/,/g, '')),
             countSelected: parseFloat(countSelected.replace(/,/g, '')),
           };
         })
+        .filter((item) => item && item.id && item.name)
         .filter((item) => item.countTotalTitles >= minTitlesCount)
         .sort((a, b) => a.countTotalTitles - b.countTotalTitles);
 
