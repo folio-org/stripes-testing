@@ -65,6 +65,9 @@ export default {
       case 'items':
         entityType = 'ITEM';
         break;
+      case 'users':
+        entityType = 'USER';
+        break;
       default:
         throw new Error(`Unsupported entity type: ${type}`);
     }

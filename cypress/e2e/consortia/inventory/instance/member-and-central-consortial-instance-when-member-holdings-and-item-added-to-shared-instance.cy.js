@@ -69,7 +69,12 @@ describe('Inventory', () => {
           cy.deleteItemViaApi(instance.items[0].id);
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         });
-        Locations.deleteViaApi(testData.collegeLocation);
+        Locations.deleteViaApi({
+          id: testData.collegeLocation.id,
+          libraryId: testData.collegeLocation.libraryId,
+          campusId: testData.collegeLocation.campusId,
+          institutionId: testData.collegeLocation.institutionId,
+        });
         cy.resetTenant();
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
