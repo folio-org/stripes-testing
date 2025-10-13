@@ -62,7 +62,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409517 (CONSORTIA) Verify the "View source" button on Member tenant shared Instance page (folijet)',
+        'C409517 (CONSORTIA) Verify the "View source" button on Member tenant shared Instance page (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C409517'] },
         () => {
           InventoryInstances.waitContentLoading();

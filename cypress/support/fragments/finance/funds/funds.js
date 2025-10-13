@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { Heading, HTML, including } from '@interactors/html';
 import uuid from 'uuid';
 import {
   Accordion,
@@ -549,6 +549,28 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do(addTransferModal.find(confirmButton).click());
+  },
+
+  openIncreaseAllocationModal: () => {
+    cy.do([actionsButton.click(), Button('Increase allocation').click()]);
+  },
+
+  checkIncreaseAllocationModal() {
+    cy.do(Heading('Increase allocation').exists());
+    cy.expect(Button('Cancel').is({ disabled: false }));
+    cy.expect(Button('Confirm').is({ disabled: true }));
+  },
+
+  cancelIncreaseAllocationModal: () => {
+    cy.do(addTransferModal.find(cancelButton).click());
+  },
+
+  openDecreaseAllocationModal: () => {
+    cy.do([actionsButton.click(), Button('Decrease allocation').click()]);
+  },
+
+  cancelDecreaseAllocationModal: () => {
+    cy.do(addTransferModal.find(cancelButton).click());
   },
 
   transfer(toFund, fromFund) {
@@ -1309,5 +1331,24 @@ export default {
 
   clickOnLedgerTab: () => {
     cy.do(fundsFiltersSection.find(Button('Ledger')).click());
+  },
+
+  checkNegativeAvailableAmountModal: (budgetName) => {
+    cy.do(Modal('Negative available amount').exists());
+
+    cy.expect(
+      Modal('Negative available amount').has({
+        message: including(
+          `Completing this transfer will result in ${budgetName} having a negative available amount. Are you sure you would like to complete this transaction?`,
+        ),
+      }),
+    );
+
+    cy.expect(Modal('Negative available amount').find(Button('Cancel')).has({ disabled: false }));
+    cy.expect(Modal('Negative available amount').find(Button('Confirm')).has({ disabled: false }));
+  },
+
+  clickConfirmInNegativeAvailableAmountModal() {
+    cy.do(Modal('Negative available amount').find(confirmButton).click());
   },
 };

@@ -149,6 +149,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryInstanceView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance Staff-Suppressed-Records',
@@ -158,6 +163,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Data-Export',
     action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventoryHoldingsCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Holdings',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiInventory: {
     type: CAPABILITY_TYPES.DATA,
