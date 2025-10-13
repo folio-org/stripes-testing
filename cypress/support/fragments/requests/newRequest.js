@@ -198,6 +198,9 @@ export default {
     cy.do(enterItemBarcodeButton.click());
     this.waitForInstanceOrItemSpinnerToDisappear();
   },
+  verifyItemBarcodeFieldValue(barcode) {
+    cy.expect(itemBarcodeInput.has({ value: barcode }));
+  },
 
   enterHridInfo(hrid, selectTLR = true) {
     cy.wait(1000);
