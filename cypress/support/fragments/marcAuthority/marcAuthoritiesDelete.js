@@ -22,6 +22,8 @@ const confirmCancelButton = deleteConfirmModal.find(Button('Cancel'));
 const searchResults = PaneContent({ id: 'authority-search-results-pane-content' });
 const searchResultPane = Section({ id: 'marc-view-pane' });
 
+export const getDeleteModalMessage = (heading) => `Are you sure you want to permanently delete the authority record:  ${heading} ?`;
+
 export default {
   clickDeleteButton() {
     cy.do([actionsButton.click(), deleteButton.click()]);
