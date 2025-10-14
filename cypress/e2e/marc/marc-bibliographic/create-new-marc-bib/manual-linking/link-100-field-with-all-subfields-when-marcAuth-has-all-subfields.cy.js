@@ -20,12 +20,12 @@ describe('MARC', () => {
             tag245: '245',
             tag100: '100',
           },
-          authorityHeading: `AT_C569576_MarcAuthority_${randomPostfix} 1498-1578 best coin gas query volume xfiles yum zet`,
+          authorityHeading: `AT_C569576_MarcAuthority_${randomPostfix} 1498-1578 best coin gas query--volume--xfiles--yum--zet`,
           bibTitle: `AT_C569576_MarcBibInstance_${randomPostfix}`,
           authorityField100Content: `$a AT_C569576_MarcAuthority_${randomPostfix} $d 1498-1578 $b best $c coin $e empty $f fun $h hot $j joy $g gas $k key $l low $m medium $n no $o ops $p poem $q query $r row $s stay $v volume $x xfiles $y yum $z zet $6 six $7 seven $8 8`,
           bibField100Content: `$a AT_C569576_MarcAuthority_${randomPostfix} $d 1498-1578 $b best $c coin $j joy $q query $f fun $g gas $k key $l low $n no $p poem $t test $u ups`,
           browseOption: MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
-          searchQuery: `AT_C569576_MarcAuthority_${randomPostfix} 1498-1578 best coin joy query`,
+          searchQuery: `AT_C569576_MarcAuthority_${randomPostfix} 1498-1578 test`,
           valid245IndicatorValue: '1',
         };
 
