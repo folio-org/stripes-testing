@@ -23,10 +23,6 @@ describe('Inventory', () => {
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.sharedInstance = instanceData;
 
-          // cy.getInstanceById(testData.instance.instanceId).then((instance) => {
-          //   testData.instance.instanceHRID = instance.hrid;
-          // });
-
           // adding Holdings in College tenant
           cy.setTenant(Affiliations.College);
           cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
