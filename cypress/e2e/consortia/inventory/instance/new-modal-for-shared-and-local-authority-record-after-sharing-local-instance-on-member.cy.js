@@ -19,28 +19,36 @@ describe('Inventory', () => {
       const testData = {
         createdRecordIDs: [],
         rowIndex: 16,
-        authorityHeading: 'C405559 Lentz Shared',
+        authorityHeading: 'C411723 Lentz Shared',
         sectionId: 'list-contributors',
         instanceSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         heldByAccordionName: 'Held by',
-        instanceTitle: 'C405559 Instance Local M1',
+        instanceTitle: 'C411723 Instance Local M1',
       };
       const authFileForCentral = {
-        marc: 'marcAuthFileForC405559.mrc',
-        fileNameImported: `C411721 testMarcFile${getRandomPostfix()}.mrc`,
+        marc: 'marcAuthFileForC411723-s.mrc',
+        fileNameImported: `C411723 testMarcFile${getRandomPostfix()}.mrc`,
         propertyName: 'authority',
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       };
-      const marcFileForMember = {
-        marc: 'marcBibFileForC405559_2.mrc',
-        fileNameImported: `C411721 testMarcFile${getRandomPostfix()}.mrc`,
-        propertyName: 'instance',
-        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      };
+      const filesForMember = [
+        {
+          marc: 'marcBibFileForC411723.mrc',
+          fileNameImported: `C411723 testMarcFile${getRandomPostfix()}.mrc`,
+          propertyName: 'instance',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        },
+        {
+          marc: 'marcAuthFileForC411723-l.mrc',
+          fileNameImported: `C411723 testMarcFile${getRandomPostfix()}.mrc`,
+          propertyName: 'authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+        },
+      ];
 
       before('Create test data and login', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405559*');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C411723*');
         DataImport.uploadFileViaApi(
           authFileForCentral.marc,
           authFileForCentral.fileNameImported,
@@ -50,12 +58,17 @@ describe('Inventory', () => {
         });
         cy.setTenant(Affiliations.College)
           .then(() => {
-            DataImport.uploadFileViaApi(
-              marcFileForMember.marc,
-              marcFileForMember.fileNameImported,
-              marcFileForMember.jobProfileToRun,
-            ).then((response) => {
-              testData.createdRecordIDs.push(response[0].instance.id);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C411723*');
+            filesForMember.forEach((file) => {
+              DataImport.uploadFileViaApi(
+                file.marc,
+                file.fileNameImported,
+                file.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[file.propertyName].id);
+                });
+              });
             });
           })
           .then(() => {
@@ -71,12 +84,26 @@ describe('Inventory', () => {
             );
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.clickLinkIconInTagField(testData.rowIndex);
+
+            QuickMarcEditor.clickLinkIconInTagField(21);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(testData.authorityHeading);
+            cy.pause();
+            InventoryInstance.searchResults(
+              '',
+              // testData.authorityHeading
+            );
             InventoryInstance.clickLinkButton();
+
+            QuickMarcEditor.clickLinkIconInTagField(20);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults('C411723 Criticism and interpretation');
+            InventoryInstance.clickLinkButton();
+
+            cy.pause();
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
