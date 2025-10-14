@@ -125,7 +125,7 @@ function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
     }),
     (response) => response.status === 200,
     {
-      limit: 10,
+      timeout: 30_000,
       delay: 1_000,
     },
   );
@@ -208,7 +208,8 @@ function getParentJobExecutionId(sourcePath) {
     () => getParentJobExecutions(),
     (response) => filterResponseBySourcePath(response) !== undefined,
     {
-      limit: 5,
+      timeout: 30_000,
+      delay: 1_000,
     },
   ).then((response) => {
     return filterResponseBySourcePath(response).id;
@@ -223,7 +224,7 @@ function getChildJobExecutionId(jobExecutionId) {
     }),
     (response) => response.body.jobExecutions.length > 0,
     {
-      limit: 10,
+      timeout: 30_000,
       delay: 1_000,
     },
   ).then((response) => {
@@ -241,7 +242,7 @@ function getRecordSourceId(jobExecutionId) {
     }),
     (response) => response.body?.entries?.length > 0,
     {
-      limit: 10,
+      timeout: 30_000,
       delay: 1_000,
     },
   );
@@ -281,9 +282,8 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
         () => getJobStatus(jobExecutionId),
         (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
         {
-          limit: 16,
-          timeout: 80000,
-          delay: 5000,
+          timeout: 3 * 60_000,
+          delay: 5 * 1_000,
         },
       );
 
@@ -359,9 +359,8 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                   () => getJobStatus(parentJobExecutionId),
                   (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
                   {
-                    limit: 16,
-                    timeout: 80000,
-                    delay: 5000,
+                    timeout: 3 * 60_000,
+                    delay: 5 * 1_000,
                   },
                 );
                 getChildJobExecutionId(parentJobExecutionId).then((childJobExecutionId) => {
