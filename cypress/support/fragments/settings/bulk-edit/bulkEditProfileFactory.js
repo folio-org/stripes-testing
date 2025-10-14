@@ -392,6 +392,15 @@ export const InstancesRules = {
       },
     ],
   }),
+
+  createSetRecordsForDeletionRule: (setToTrue = true) => ({
+    option: 'SET_RECORDS_FOR_DELETE',
+    actions: [
+      {
+        type: setToTrue ? BULK_EDIT_ACTION_TYPES.SET_TO_TRUE : BULK_EDIT_ACTION_TYPES.SET_TO_FALSE,
+      },
+    ],
+  }),
 };
 
 // Items-specific rule creators
