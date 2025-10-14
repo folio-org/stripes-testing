@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -81,8 +83,6 @@ const marcInstanceFields = [
   },
 ];
 const warningMessage = 'No change in MARC fields required';
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
 const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
@@ -387,7 +387,10 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditSearchPane.clickShowWarningsCheckbox();
           BulkEditSearchPane.verifyError(marcInstanceWithoutFields.uuid, warningMessage, 'Warning');
-          BulkEditSearchPane.verifyError(folioInstanceWithFields.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstanceWithFields.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -408,7 +411,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `WARNING,${marcInstanceWithoutFields.uuid},${warningMessage}`,
-            `ERROR,${folioInstanceWithFields.uuid},${errorMessage}`,
+            `ERROR,${folioInstanceWithFields.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
           ]);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

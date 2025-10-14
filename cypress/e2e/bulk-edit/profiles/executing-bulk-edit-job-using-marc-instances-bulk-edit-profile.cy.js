@@ -318,7 +318,7 @@ describe('Bulk-edit', () => {
           1,
         );
 
-        // Remove earlier downloaded files
+        // remove earlier downloaded files
         BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
 
         // Step 12: Click "Logs" toggle in "Set criteria" pane and Check "Inventory - instances" checkbox

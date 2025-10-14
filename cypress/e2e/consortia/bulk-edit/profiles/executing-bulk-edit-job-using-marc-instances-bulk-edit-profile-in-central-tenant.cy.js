@@ -108,11 +108,11 @@ describe('Bulk-edit', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
         cy.getAdminToken();
-        cy.createTempUser(permissions).then((userProperties) => {
+        cy.createTempUser(testData.permissions).then((userProperties) => {
           testData.user = userProperties;
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, permissions);
+          cy.assignPermissionsToExistingUser(testData.user.userId, testData.permissions);
           cy.resetTenant();
           cy.getAdminUserDetails().then((record) => {
             testData.adminSourceRecord = record;
