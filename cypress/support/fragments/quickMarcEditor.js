@@ -2394,7 +2394,7 @@ export default {
     cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
-  verifyInvalidLDRValueCallout(positions) {
+  verifyInvalidLDRValueError(positions) {
     let positionsArray = positions;
     if (!Array.isArray(positions)) {
       positionsArray = [positions];
@@ -2415,8 +2415,9 @@ export default {
         return leaderText;
       })
       .join(' ');
-    const callOutText = `Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
-    cy.expect(Callout(callOutText).exists());
+    const errorText = `Fail: Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
+    const errorElement = getRowInteractorByTagName('LDR').find(HTML(including(errorText)));
+    cy.expect(errorElement.exists());
   },
 
   closeCallout(text) {
