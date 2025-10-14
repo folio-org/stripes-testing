@@ -360,7 +360,7 @@ describe('Bulk-edit', () => {
 
           instancesHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              testData.queryFileNames.previewFileName,
+              testData.queryFileNames.previewRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               hrid,
               editedHeaderValuesInFile,
@@ -368,14 +368,14 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.previewFileName,
+            testData.queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             testData.folioInstance.hrid,
             'Notes',
             '',
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.previewFileName,
+            testData.queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             testData.marcInstance.hrid,
             'Notes',
@@ -406,7 +406,7 @@ describe('Bulk-edit', () => {
 
           instancesHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              testData.queryFileNames.changedRecordsFileName,
+              testData.queryFileNames.changedRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               hrid,
               editedHeaderValuesInFile,
@@ -414,14 +414,14 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.changedRecordsFileName,
+            testData.queryFileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             testData.folioInstance.hrid,
             'Notes',
             '',
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.changedRecordsFileName,
+            testData.queryFileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             testData.marcInstance.hrid,
             'Notes',
@@ -430,7 +430,7 @@ describe('Bulk-edit', () => {
 
           // Step 10: Click "Actions" menu and Click "Download errors (CSV)" option
           BulkEditActions.downloadErrors();
-          ExportFile.verifyFileIncludes(testData.queryFileNames.errorsFromCommittingFileName, [
+          ExportFile.verifyFileIncludes(testData.queryFileNames.errorsFromCommitting, [
             `ERROR,${testData.marcInstance.uuid},${testData.errorMessage}`,
           ]);
 

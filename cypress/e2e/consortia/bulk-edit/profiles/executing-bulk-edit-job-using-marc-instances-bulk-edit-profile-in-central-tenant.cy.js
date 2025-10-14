@@ -420,7 +420,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadChangedCSV();
 
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            fileNames.changedRecordsFileName,
+            fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             testData.marcInstance.hrid,
             editedHeaderValuesInFile,
