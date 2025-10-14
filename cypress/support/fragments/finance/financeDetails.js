@@ -107,9 +107,11 @@ export default {
       percentExpended: 'Percent of total expended',
       status: 'Status',
     };
+    const list = Array.isArray(items) ? items : items ? [items] : [];
 
-    items.forEach((item) => {
+    list.forEach((item) => {
       let rowIndex;
+
       cy.do(
         section
           .find(
