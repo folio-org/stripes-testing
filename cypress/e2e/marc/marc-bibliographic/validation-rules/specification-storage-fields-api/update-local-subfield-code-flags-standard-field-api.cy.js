@@ -1,22 +1,27 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  findStandardField,
+  findLocalSubfield,
+  generateSubfieldData,
+  validateApiResponse,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Update Local Subfield Code of Standard Field flags API', () => {
   let user;
   let bibSpecId;
   let standardField;
   let createdSubfield;
+
+  const testCaseId = 'C511217';
   const STANDARD_FIELD_TAG = '011'; // Linking ISSN - Standard Field (deprecated)
 
-  // Subfield payload declaration
-  const subfieldPayload = {
-    code: 'r',
-    label: 'AT_C511217_Test subfield r',
-    repeatable: true,
-    required: false,
-    deprecated: false,
-  };
+  // Generate subfield payload using helper
+  const subfieldPayload = generateSubfieldData(testCaseId, 'r', {
+    label: 'Test_subfield_r',
+  });
 
   // Update payloads for different flag combinations
   const updatePayloads = {
@@ -65,28 +70,13 @@ describe('MARC Bibliographic Validation Rules - Update Local Subfield Code of St
     Permissions.specificationStorageUpdateSpecificationSubfield.gui,
   ];
 
-  // Helper functions
-  const findStandardField = (fields, tag) => {
-    return fields.find((field) => field.tag === tag && field.scope === 'standard');
-  };
-
-  const findLocalSubfield = (subfields, code) => {
-    return subfields.find((subfield) => subfield.code === code && subfield.scope === 'local');
-  };
-
-  const validateApiResponse = (response, expectedStatus) => {
-    expect(response.status, `Response status should be ${expectedStatus}`).to.eq(expectedStatus);
-  };
-
   before('Setup test data', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
     });
 
-    cy.getSpecificationIds().then((specs) => {
-      const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-      expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+    getBibliographicSpec().then((bibSpec) => {
       bibSpecId = bibSpec.id;
     });
   });

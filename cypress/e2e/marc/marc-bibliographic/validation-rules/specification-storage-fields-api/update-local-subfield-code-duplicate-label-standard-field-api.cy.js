@@ -1,6 +1,13 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  findStandardField,
+  findLocalSubfield,
+  generateSubfieldData,
+  validateApiResponse,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Update Local Subfield Code of Standard Field with duplicate label API', () => {
   let user;
@@ -8,24 +15,18 @@ describe('MARC Bibliographic Validation Rules - Update Local Subfield Code of St
   let standardField;
   let createdSubfield1;
   let createdSubfield2;
+
+  const testCaseId = 'C511216';
   const STANDARD_FIELD_TAG = '011'; // Linking ISSN - Standard Field (deprecated)
 
-  // Subfield payloads declaration
-  const subfield1Payload = {
-    code: 'm',
-    label: 'AT_C511216_Subfield name 1 test duplicate$ - test',
-    repeatable: true,
-    required: false,
-    deprecated: false,
-  };
+  // Generate subfield payloads using helper
+  const subfield1Payload = generateSubfieldData(testCaseId, 'm', {
+    label: 'Subfield_name_1_test_duplicate_test',
+  });
 
-  const subfield2Payload = {
-    code: 'n',
-    label: 'AT_C511216_Test subfield 2',
-    repeatable: true,
-    required: false,
-    deprecated: false,
-  };
+  const subfield2Payload = generateSubfieldData(testCaseId, 'n', {
+    label: 'Test_subfield_2',
+  });
 
   const requiredPermissions = [
     Permissions.specificationStorageGetSpecificationFields.gui,
@@ -35,28 +36,13 @@ describe('MARC Bibliographic Validation Rules - Update Local Subfield Code of St
     Permissions.specificationStorageUpdateSpecificationSubfield.gui,
   ];
 
-  // Helper functions
-  const findStandardField = (fields, tag) => {
-    return fields.find((field) => field.tag === tag && field.scope === 'standard');
-  };
-
-  const findLocalSubfield = (subfields, code) => {
-    return subfields.find((subfield) => subfield.code === code && subfield.scope === 'local');
-  };
-
-  const validateApiResponse = (response, expectedStatus) => {
-    expect(response.status, `Response status should be ${expectedStatus}`).to.eq(expectedStatus);
-  };
-
   before('Setup test data', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
     });
 
-    cy.getSpecificationIds().then((specs) => {
-      const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-      expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+    getBibliographicSpec().then((bibSpec) => {
       bibSpecId = bibSpec.id;
     });
   });
