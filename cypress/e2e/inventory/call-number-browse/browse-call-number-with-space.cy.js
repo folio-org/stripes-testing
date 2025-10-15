@@ -182,9 +182,10 @@ describe('Inventory', () => {
       },
     );
 
-    it(
+    // obsolete
+    it.skip(
       'C347909 Verify browse call numbers function and result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347909', 'eurekaPhase1'] },
+      { tags: [] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

@@ -87,7 +87,7 @@ describe('Inventory', () => {
 
       it(
         'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808499'] },
+        { tags: ['extendedPath', 'spitfire', 'C808499'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(user.username, user.password, {
