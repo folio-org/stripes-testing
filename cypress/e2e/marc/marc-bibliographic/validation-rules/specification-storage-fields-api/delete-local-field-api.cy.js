@@ -106,7 +106,7 @@ describe('MARC Bibliographic Validation Rules - Delete Local Field API', () => {
 
   it(
     'C491277 Delete Local Field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C491277', 'spitfire'] },
+    { tags: ['extendedPath', 'C491277', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

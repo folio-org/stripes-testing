@@ -213,7 +213,7 @@ describe('MARC Authority Validation Rules - System Fields API', () => {
 
   it(
     'C499838 Cannot update System Field (except "url") for MARC authority spec (API) (spitfire)',
-    { tags: ['smoke', 'C499838', 'spitfire'] },
+    { tags: ['criticalPath', 'C499838', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

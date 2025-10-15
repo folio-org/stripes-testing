@@ -39,7 +39,7 @@ describe('Specification Storage - System Fields API', () => {
 
   it(
     'C499785 Cannot update System Field (except "url") for MARC bib spec (API) (spitfire)',
-    { tags: ['smoke', 'C499785', 'spitfire'] },
+    { tags: ['criticalPath', 'C499785', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
