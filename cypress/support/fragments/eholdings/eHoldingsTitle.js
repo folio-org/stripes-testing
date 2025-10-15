@@ -17,6 +17,8 @@ const closeViewButton = Button({ dataTestID: 'close-details-view-button' });
 const packagesSection = Section({ id: 'titleShowPackages' });
 const titleSearchField = TextField({ id: 'eholdings-search' });
 const titleSearchButton = Button('Search');
+const actionsButton = Button('Actions');
+const editTitleButton = Button('Edit');
 const titleInformationSection = Section({ id: 'titleShowTitleInformation' });
 const publisherKeyValue = KeyValue('Publisher');
 const subjectKeyValue = KeyValue('Subjects');
@@ -24,6 +26,12 @@ const subjectKeyValue = KeyValue('Subjects');
 export default {
   waitLoading: (specialTitle) => {
     cy.expect(Section({ id: specialTitle.replaceAll(' ', '-').toLowerCase() }).exists());
+  },
+
+  editTitle: () => {
+    cy.do(actionsButton.click());
+    cy.do(editTitleButton.click());
+    cy.wait(1000);
   },
 
   filterPackages(selectionStatus = FILTER_STATUSES.NOT_SELECTED, packageName) {
@@ -117,6 +125,11 @@ export default {
   },
   verifySubjectIncludesValue(subject) {
     cy.expect(subjectKeyValue.has({ value: including(subject) }));
+  },
+  verifyContentTypeIncludesValue(contentType) {
+    cy.expect(
+      titleInformationSection.find(KeyValue('Content Type')).has({ value: including(contentType) }),
+    );
   },
 
   getTitleIdFromUrl() {

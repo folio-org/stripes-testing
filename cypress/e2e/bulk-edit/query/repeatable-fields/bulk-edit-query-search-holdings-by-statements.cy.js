@@ -169,9 +169,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield(folioInstance.id, 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Statements');
-          QueryModal.clickShowColumnsButton();
 
           // Expected to find: Holdings 1 and Holdings 2 (both have "1-86 (1941-1987)" statement)
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];

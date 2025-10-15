@@ -198,6 +198,9 @@ export default {
     cy.do(enterItemBarcodeButton.click());
     this.waitForInstanceOrItemSpinnerToDisappear();
   },
+  verifyItemBarcodeFieldValue(barcode) {
+    cy.expect(itemBarcodeInput.has({ value: barcode }));
+  },
 
   enterHridInfo(hrid, selectTLR = true) {
     cy.wait(1000);
@@ -466,5 +469,9 @@ export default {
         .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
+  },
+
+  openRequesterLookup: () => {
+    cy.do(Button('Requester look-up').click());
   },
 };
