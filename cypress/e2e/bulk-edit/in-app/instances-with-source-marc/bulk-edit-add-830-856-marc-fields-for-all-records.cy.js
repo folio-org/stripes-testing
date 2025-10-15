@@ -314,7 +314,7 @@ describe(
           const updatedHoldingElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccessFields.uri};-;-;${electronicAccessFields.newUrlPublicNote}`;
 
           BulkEditActions.downloadPreview();
-          FileManager.convertCsvToJson(queryFileNames.previewFileName).then((csvFileData) => {
+          FileManager.convertCsvToJson(queryFileNames.previewRecordsCSV).then((csvFileData) => {
             cy.expect(
               csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
             ).to.equal(seriesStatement);
@@ -337,18 +337,14 @@ describe(
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
-          FileManager.convertCsvToJson(queryFileNames.changedRecordsFileName).then(
-            (csvFileData) => {
-              cy.expect(
-                csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
-              ).to.equal(seriesStatement);
-              cy.expect(
-                csvFileData[0][
-                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS
-                ],
-              ).to.equal(updatedHoldingElectronicAccessInFile);
-            },
-          );
+          FileManager.convertCsvToJson(queryFileNames.changedRecordsCSV).then((csvFileData) => {
+            cy.expect(
+              csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT],
+            ).to.equal(seriesStatement);
+            cy.expect(
+              csvFileData[0][BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ELECTRONIC_ACCESS],
+            ).to.equal(updatedHoldingElectronicAccessInFile);
+          });
           BulkEditActions.downloadChangedMarc();
 
           parseMrcFileContentAndVerify(
