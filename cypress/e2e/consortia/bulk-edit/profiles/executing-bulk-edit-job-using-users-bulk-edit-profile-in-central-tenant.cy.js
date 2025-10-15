@@ -205,7 +205,7 @@ describe('Bulk-edit', () => {
           // Step 7: Click the "Download preview in CSV format" button
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            testData.queryFileNames.previewFileName,
+            testData.queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.BARCODE,
             testData.user.barcode,
             editedHeaderValues,
@@ -225,7 +225,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            testData.queryFileNames.changedRecordsFileName,
+            testData.queryFileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.BARCODE,
             testData.user.barcode,
             editedHeaderValues,

@@ -159,6 +159,8 @@ export const ERROR_MESSAGES = {
   NO_CHANGE_REQUIRED: 'No change in value required',
   INCORRECT_TOKEN_NUMBER:
     'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
+  FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT:
+    'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.',
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;

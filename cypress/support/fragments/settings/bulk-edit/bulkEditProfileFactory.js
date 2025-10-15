@@ -122,7 +122,6 @@ export const MarcActionCreators = {
 
   removeAll: () => ({
     name: 'REMOVE_ALL',
-    data: [],
   }),
 
   addToExisting: (value) => ({
@@ -143,6 +142,14 @@ export const MarcActionCreators = {
         value,
       },
     ],
+  }),
+
+  removeSubfield: () => ({
+    name: 'REMOVE_SUBFIELD',
+  }),
+
+  removeField: () => ({
+    name: 'REMOVE_FIELD',
   }),
 };
 
@@ -379,6 +386,15 @@ export const InstancesRules = {
 
   createStaffSuppressRule: (setToTrue = true) => ({
     option: 'STAFF_SUPPRESS',
+    actions: [
+      {
+        type: setToTrue ? BULK_EDIT_ACTION_TYPES.SET_TO_TRUE : BULK_EDIT_ACTION_TYPES.SET_TO_FALSE,
+      },
+    ],
+  }),
+
+  createSetRecordsForDeletionRule: (setToTrue = true) => ({
+    option: 'SET_RECORDS_FOR_DELETE',
     actions: [
       {
         type: setToTrue ? BULK_EDIT_ACTION_TYPES.SET_TO_TRUE : BULK_EDIT_ACTION_TYPES.SET_TO_FALSE,

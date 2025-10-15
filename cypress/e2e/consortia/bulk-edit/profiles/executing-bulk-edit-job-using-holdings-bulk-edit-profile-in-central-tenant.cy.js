@@ -332,20 +332,20 @@ describe('Bulk-edit', () => {
           const electronicAccessInFile = `${testData.electronicAccessTableHeadersInFile}-;${testData.uri};${testData.linkText};${testData.editedMaterialsSpecified};-`;
 
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            testData.queryFileNames.previewFileName,
+            testData.queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             testData.holdingHrid,
             editedHeaderValues,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.previewFileName,
+            testData.queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             testData.holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
             false,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.previewFileName,
+            testData.queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             testData.holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -380,20 +380,20 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            testData.queryFileNames.changedRecordsFileName,
+            testData.queryFileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             testData.holdingHrid,
             editedHeaderValues,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.changedRecordsFileName,
+            testData.queryFileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             testData.holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
             false,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            testData.queryFileNames.changedRecordsFileName,
+            testData.queryFileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             testData.holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,

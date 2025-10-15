@@ -252,7 +252,7 @@ describe('Bulk-edit', () => {
         const classificationInFile = `${classificationTableHeadersInFile}UDC;${testData.marcField080}`;
 
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -303,7 +303,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -319,7 +319,7 @@ describe('Bulk-edit', () => {
           1,
         );
 
-        // Remove earlier downloaded files
+        // remove earlier downloaded files
         BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
 
         // Step 12: Click "Logs" toggle in "Set criteria" pane and Check "Inventory - instances" checkbox
@@ -339,7 +339,7 @@ describe('Bulk-edit', () => {
         // Step 15: Click on the "File with the matching records" hyperlink
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -349,7 +349,7 @@ describe('Bulk-edit', () => {
         // Step 16: Click on the "File with the preview of proposed changes (CSV)" hyperlink
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -368,7 +368,7 @@ describe('Bulk-edit', () => {
         // Step 18: Click on the "File with updated records (CSV)" hyperlink
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
