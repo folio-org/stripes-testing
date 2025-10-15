@@ -96,6 +96,8 @@ export const holdingsFieldValues = {
   receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
+  holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
+  holdingsTags: 'Holdings — Tags',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
