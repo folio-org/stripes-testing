@@ -45,6 +45,16 @@ Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => 
   });
 });
 
+Cypress.Commands.add('getAuthoritySourceFileDataByIdViaAPI', (authorityFileId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `authority-source-files/${authorityFileId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
 Cypress.Commands.add(
   'createAuthoritySourceFileUsingAPI',
   (
