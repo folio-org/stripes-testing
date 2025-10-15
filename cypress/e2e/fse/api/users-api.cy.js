@@ -1,11 +1,4 @@
-const isEureka = Cypress.env('eureka');
-
 describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
-  if (!isEureka) {
-    it.skip('Skipping tests for okapi tenants', () => {});
-    return;
-  }
-
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -15,7 +8,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195518 - check users-keycloak API for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'loc'] },
+    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'loc'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -26,7 +19,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195517 - get user capabilities for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'capabilities', 'loc'] },
+    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'capabilities', 'loc'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.getCapabilitiesForUserApi(response.body.user.id).then((capabilitiesResponse) => {
@@ -39,7 +32,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195521 - get user policies for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'policies', 'loc'] },
+    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'policies', 'loc'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.getAuthorizationPoliciesForEntityApi('user', response.body.user.id).then(
@@ -54,7 +47,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195522 - get user migrations for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'migrations', 'loc'] },
+    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'migrations', 'loc'] },
     () => {
       cy.getUserMigrations().then((migrationsResponse) => {
         cy.expect(migrationsResponse.status).to.eq(200);

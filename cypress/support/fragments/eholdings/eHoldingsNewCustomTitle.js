@@ -8,6 +8,7 @@ import {
 } from '../../../../interactors';
 
 const nameField = TextField({ name: 'name' });
+const packageCreationCallout = 'Custom title created.';
 
 export default {
   waitLoading: () => {
@@ -40,5 +41,13 @@ export default {
   },
   saveAndClose: () => {
     cy.do(Button({ type: 'submit' }).click());
+  },
+
+  close: () => {
+    cy.do(Button({ icon: 'times' }).click());
+  },
+
+  checkCreationOfNewCustomTitle: () => {
+    cy.expect(HTML(including(packageCreationCallout)).exists());
   },
 };
