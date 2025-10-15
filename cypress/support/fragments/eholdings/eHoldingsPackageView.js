@@ -60,6 +60,8 @@ const patronRadioButton = FieldSet('Show titles in package to patrons');
 const packageInformationSection = Section({ id: 'packageShowInformation' });
 const notesSection = Section({ id: 'packageShowNotes' });
 const titlesSection = Section({ id: 'packageShowTitles' });
+const agreementsAccordion = Accordion('Agreements');
+const deleteAgreementModal = Modal('Delete agreement line');
 
 export default {
   getCalloutMessageText,
@@ -114,11 +116,7 @@ export default {
   },
 
   clickOnAgreementInAgreementSection(agreementName) {
-    cy.do(
-      Accordion('Agreements')
-        .find(MultiColumnListCell({ content: agreementName }))
-        .click(),
-    );
+    cy.do(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).click());
   },
 
   verifyPackageName(packageName) {
@@ -133,11 +131,7 @@ export default {
   },
 
   verifyLinkedAgreement(agreementName) {
-    cy.expect(
-      Accordion('Agreements')
-        .find(MultiColumnListCell({ content: agreementName }))
-        .exists(),
-    );
+    cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).exists());
   },
 
   verifyPackageDetailViewIsOpened: (name, titlesNumber, status) => {
@@ -368,5 +362,50 @@ export default {
 
   verifyNoCoveragesDatesSet() {
     cy.expect(KeyValue('Custom coverage dates').absent());
+  },
+
+  verifyCoverageDatesSet(startDate, endDate) {
+    cy.expect(KeyValue('Custom coverage dates').exists());
+    cy.expect(KeyValue('Custom coverage dates').has({ value: including(startDate) }));
+    cy.expect(KeyValue('Custom coverage dates').has({ value: including(endDate) }));
+  },
+
+  edit() {
+    cy.expect(KeyValue('Package type').exists());
+    cy.expect(KeyValue('Total titles').exists());
+    cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
+    cy.wait(3000);
+  },
+
+  verifyDeleteAgreementIconExists(agreementName) {
+    cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).exists());
+  },
+
+  clickDeleteAgreementIcon(agreementName) {
+    cy.get('#packageShowAgreements')
+      .contains('[role="row"]', agreementName)
+      .find('[data-test-delete-agreement="true"]')
+      .first()
+      .click();
+  },
+
+  verifyDeleteAgreementModal() {
+    cy.expect([
+      deleteAgreementModal.exists(),
+      deleteAgreementModal.find(Button('Cancel')).exists(),
+      deleteAgreementModal.find(Button('Delete')).exists(),
+    ]);
+  },
+
+  cancelDeleteAgreement() {
+    cy.do(deleteAgreementModal.find(Button('Cancel')).click());
+  },
+
+  confirmDeleteAgreement() {
+    cy.do(deleteAgreementModal.find(Button('Delete')).click());
+  },
+
+  verifyAgreementNotLinked(agreementName) {
+    cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).absent());
   },
 };
