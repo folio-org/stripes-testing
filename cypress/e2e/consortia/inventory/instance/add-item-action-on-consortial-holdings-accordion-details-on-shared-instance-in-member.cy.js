@@ -11,6 +11,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordNew from '../../../../support/fragments/inventory/item/itemRecordNew';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -21,7 +22,7 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         shadowInstance: {
-          instanceTitle: `C411654 Autotest Instance ${getRandomPostfix()}`,
+          instanceTitle: `C411655 Autotest Instance ${getRandomPostfix()}`,
         },
         shadowHoldings: {},
         shadowItem: { barcode: uuid() },
@@ -119,8 +120,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411654 (CONSORTIA) Verify Add item button on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411654'] },
+        'C411655 (CONSORTIA) Verify Add item action on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411655'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
@@ -135,10 +136,14 @@ describe('Inventory', () => {
             Affiliations.College,
             testData.collegeHoldingId,
           );
-          InstanceRecordView.verifyAddItemButtonVisibility({
+          InstanceRecordView.clickAddItemByHoldingName({
             holdingName: testData.shadowHoldings.locationName,
-            shouldBePresent: true,
           });
+          ItemRecordNew.waitLoading(testData.shadowInstance.instanceTitle);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ItemRecordNew.cancel();
+          InventoryInstance.waitInstanceRecordViewOpened();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
         },
       );
     });
