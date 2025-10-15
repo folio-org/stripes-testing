@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -60,8 +62,6 @@ const marcInstanceFields = [
     indicators: ['4', '0'],
   },
 ];
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
 const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
@@ -338,7 +338,10 @@ describe('Bulk-edit', () => {
             '-',
           );
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
-          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstance.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -354,7 +357,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(changedRecordsFileNameCsv, 1);
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `ERROR,${folioInstance.uuid},${errorMessage}`,
+            `ERROR,${folioInstance.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
           ]);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
