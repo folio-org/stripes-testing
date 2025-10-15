@@ -27,6 +27,48 @@ import {
 } from '../../../../support/constants';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  InstancesRules,
+  ActionCreators,
+} from '../../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+const { createInstanceNoteRule, createStatisticalCodeRule, createStaffSuppressRule } =
+  InstancesRules;
+
+// Profile factory functions
+const createMainProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C773244_InstancesProfile_${getRandomPostfix()}`,
+    description: 'Test instances bulk edit profile for executing bulk edit job in central tenant',
+    entityType: 'INSTANCE',
+    ruleDetails: [
+      createAdminNoteRule(ActionCreators.findAndRemove('admin')),
+      createStaffSuppressRule(true),
+      createStatisticalCodeRule(ActionCreators.removeSome(null)), // Will be set to statistical code id
+      createInstanceNoteRule(ActionCreators.removeAll()), // Note type id will be set after creation
+    ],
+  });
+};
+
+const createSecondProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_InstancesProfile_${getRandomPostfix()}`,
+    description: 'Test profile for testing search and sort functionality',
+    entityType: 'INSTANCE',
+    ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('test'))],
+  });
+};
+
+const createMarcInstanceProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_MarcInstancesProfile_${getRandomPostfix()}`,
+    description: 'Test MARC instances profile that should not appear in FOLIO instances list',
+    entityType: 'INSTANCE_MARC',
+    ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('marc'))],
+  });
+};
 
 const testData = {
   permissionsSet: [
@@ -46,88 +88,6 @@ const testData = {
   editedAdministrativeNote: ' note for testing',
   dissertationNote: 'Dissertation note for testing',
   errorMessage: ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED,
-  profileBody: {
-    name: `AT_C773244_InstancesProfile_${getRandomPostfix()}`,
-    description: 'Test instances bulk edit profile for executing bulk edit job in central tenant',
-    locked: false,
-    entityType: 'INSTANCE',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'admin',
-          },
-        ],
-      },
-      {
-        option: 'STAFF_SUPPRESS',
-        actions: [
-          {
-            type: 'SET_TO_TRUE',
-          },
-        ],
-      },
-      {
-        option: 'STATISTICAL_CODE',
-        actions: [
-          {
-            type: 'REMOVE_SOME',
-            updated: null, // Will be set to statistical code id
-          },
-        ],
-      },
-      {
-        option: 'INSTANCE_NOTE',
-        actions: [
-          {
-            type: 'REMOVE_ALL',
-            parameters: [
-              {
-                key: 'INSTANCE_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to Dissertation note type id
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  secondProfileBody: {
-    name: `Test_InstancesProfile_${getRandomPostfix()}`,
-    description: 'Test profile for testing search and sort functionality',
-    locked: false,
-    entityType: 'INSTANCE',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'test',
-          },
-        ],
-      },
-    ],
-  },
-  marcInstanceProfileBody: {
-    name: `Test_MarcInstancesProfile_${getRandomPostfix()}`,
-    description: 'Test MARC instances profile that should not appear in FOLIO instances list',
-    locked: false,
-    entityType: 'INSTANCE_MARC',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'marc',
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -152,13 +112,11 @@ describe('Bulk-edit', () => {
             query: 'name="Dissertation note"',
           })
             .then(({ instanceNoteTypes }) => {
-              testData.profileBody.ruleDetails[3].actions[0].parameters[0].value =
-                instanceNoteTypes[0].id;
+              testData.dissertationNoteTypeId = instanceNoteTypes[0].id;
 
               cy.getStatisticalCodes({ limit: 1 }).then((codes) => {
                 testData.statisticalCodeId = codes[0].id;
                 testData.statisticalCodeName = codes[0].name;
-                testData.profileBody.ruleDetails[2].actions[0].updated = codes[0].id;
 
                 cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
                   InventoryInstances.createFolioInstanceViaApi({
@@ -169,8 +127,7 @@ describe('Bulk-edit', () => {
                       administrativeNotes: [testData.administrativeNote],
                       notes: [
                         {
-                          instanceNoteTypeId:
-                            testData.profileBody.ruleDetails[3].actions[0].parameters[0].value,
+                          instanceNoteTypeId: testData.dissertationNoteTypeId,
                           note: testData.dissertationNote,
                           staffOnly: false,
                         },
@@ -227,11 +184,24 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
-              // Create all bulk edit profiles
+              // Create all bulk edit profiles using factory functions
+              const mainProfile = createMainProfileBody();
+              mainProfile.ruleDetails[2].actions[0].updated = testData.statisticalCodeId; // Set statistical code id
+              mainProfile.ruleDetails[3].actions[0].parameters[0].value =
+                testData.dissertationNoteTypeId;
+
+              const secondProfile = createSecondProfileBody();
+              const marcProfile = createMarcInstanceProfileBody();
+
+              // Store profile descriptions for test assertions
+              testData.profileDescription = mainProfile.description;
+              testData.secondProfileDescription = secondProfile.description;
+              testData.marcInstanceProfileDescription = marcProfile.description;
+
               const profileConfigs = [
-                { body: testData.profileBody, nameKey: 'profileName' },
-                { body: testData.secondProfileBody, nameKey: 'secondProfileName' },
-                { body: testData.marcInstanceProfileBody, nameKey: 'marcInstanceProfileName' },
+                { body: mainProfile, nameKey: 'profileName' },
+                { body: secondProfile, nameKey: 'secondProfileName' },
+                { body: marcProfile, nameKey: 'marcInstanceProfileName' },
               ];
 
               profileConfigs.forEach((config) => {
@@ -288,7 +258,7 @@ describe('Bulk-edit', () => {
       // Trillium
       it.skip(
         'C773244 ECS | Executing bulk edit job using FOLIO Instance bulk edit profile in Central tenant (Query) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C773244'] },
+        { tags: [] },
         () => {
           // Step 1: Click "Actions" menu
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);
@@ -310,7 +280,7 @@ describe('Bulk-edit', () => {
           // Step 4-5: Verify the table with the list of existing instances bulk edit profiles
           SelectBulkEditProfileModal.verifyProfileInTable(
             testData.profileName,
-            testData.profileBody.description,
+            testData.profileDescription,
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfilesFoundText();
@@ -324,7 +294,7 @@ describe('Bulk-edit', () => {
           SelectBulkEditProfileModal.searchProfile('at_C773244');
           SelectBulkEditProfileModal.verifyProfileInTable(
             testData.profileName,
-            testData.profileBody.description,
+            testData.profileDescription,
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
@@ -332,7 +302,7 @@ describe('Bulk-edit', () => {
           SelectBulkEditProfileModal.searchProfile(testData.profileName);
           SelectBulkEditProfileModal.verifyProfileInTable(
             testData.profileName,
-            testData.profileBody.description,
+            testData.profileDescription,
             testData.adminSourceRecord,
           );
           SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);

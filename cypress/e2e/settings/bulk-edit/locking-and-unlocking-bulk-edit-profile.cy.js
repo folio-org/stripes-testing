@@ -8,39 +8,33 @@ import InstancesBulkEditProfileForm from '../../../support/fragments/settings/bu
 import InstancesBulkEditProfileView from '../../../support/fragments/settings/bulk-edit/profileView/instancesBulkEditProfileView';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  ActionCreators,
+  InstancesRules,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
 
 let user;
-const testData = {
-  originalProfileName: null, // Will be assigned after profile creation
-  originalDescription: 'Original instances profile description for locking test',
-  originalAdministrativeNote: 'Original administrative note for instances',
-  profileBody: {
+
+const createProfileBody = () => {
+  return createBulkEditProfileBody({
     name: `AT_C740228 original instances bulk edit profile ${getRandomPostfix()}`,
     description: 'Original instances profile description for locking test',
     locked: false,
     entityType: 'INSTANCE',
     ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'ADD_TO_EXISTING',
-            updated: 'Original administrative note for instances',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_FALSE',
-            applyToHoldings: true,
-            applyToItems: true,
-          },
-        ],
-      },
+      createAdminNoteRule(
+        ActionCreators.addToExisting('Original administrative note for instances'),
+      ),
+      InstancesRules.createStaffSuppressRule(ActionCreators.setToFalse(), true, true),
     ],
-  },
+  });
+};
+const testData = {
+  originalProfileName: null, // Will be assigned after profile creation
+  originalDescription: 'Original instances profile description for locking test',
+  originalAdministrativeNote: 'Original administrative note for instances',
 };
 
 describe('Bulk-edit', () => {
@@ -54,7 +48,8 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.createBulkEditProfile(testData.profileBody).then((createdProfile) => {
+        const profileBody = createProfileBody();
+        cy.createBulkEditProfile(profileBody).then((createdProfile) => {
           testData.originalProfileName = createdProfile.name;
           testData.profileId = createdProfile.id;
         });
