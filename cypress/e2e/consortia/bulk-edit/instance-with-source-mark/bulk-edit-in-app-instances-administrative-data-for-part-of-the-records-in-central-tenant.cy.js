@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -35,8 +37,6 @@ const folioInstanceWithStatisticalCode = {
   title: `C663252_FolioInstance_${getRandomPostfix()}`,
 };
 const warningMessage = 'No change in administrative data required';
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 
@@ -267,8 +267,14 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditSearchPane.clickShowWarningsCheckbox();
           BulkEditSearchPane.verifyError(marcInstance.uuid, warningMessage, 'Warning');
-          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
-          BulkEditSearchPane.verifyError(folioInstanceWithStatisticalCode.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstance.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
+          BulkEditSearchPane.verifyError(
+            folioInstanceWithStatisticalCode.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -285,8 +291,8 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.changedRecordsCSV, 1);
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-            `ERROR,${folioInstance.uuid},${errorMessage}`,
-            `ERROR,${folioInstanceWithStatisticalCode.uuid},${errorMessage}`,
+            `ERROR,${folioInstance.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
+            `ERROR,${folioInstanceWithStatisticalCode.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
             `WARNING,${marcInstance.uuid},${warningMessage}`,
           ]);
 

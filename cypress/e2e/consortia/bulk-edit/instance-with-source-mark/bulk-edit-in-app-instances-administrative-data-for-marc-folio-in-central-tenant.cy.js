@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -27,8 +29,6 @@ const marcInstance = {
 const folioInstance = {
   title: `AT_C651445_FolioInstance_${getRandomPostfix()}`,
 };
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
 const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
@@ -227,7 +227,10 @@ describe('Bulk-edit', () => {
             statisticalCodeSecond.fullName,
           );
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
-          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstance.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -243,7 +246,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `ERROR,${folioInstance.uuid},${errorMessage}`,
+            `ERROR,${folioInstance.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
           ]);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

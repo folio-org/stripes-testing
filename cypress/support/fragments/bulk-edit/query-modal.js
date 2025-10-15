@@ -104,6 +104,7 @@ export const instanceFieldValues = {
   instanceSource: 'Instance — Source',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
+  flagForDeletion: 'Instance — Flag for deletion',
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',

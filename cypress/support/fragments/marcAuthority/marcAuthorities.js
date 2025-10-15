@@ -158,6 +158,9 @@ const resultsListColumns = [
   'Authority source',
   'Number of titles',
 ];
+const clearFieldIcon = Button({ icon: 'times-circle-solid' });
+const searchToggleButton = Button({ id: 'segment-navigation-search' });
+const browseToggleButton = Button({ id: 'segment-navigation-browse' });
 
 export default {
   valid008FieldValues,
@@ -828,7 +831,7 @@ export default {
 
   clickAdvancedSearchButton() {
     cy.do(buttonAdvancedSearch.click());
-    cy.expect(modalAdvancedSearch.exists());
+    cy.expect([modalAdvancedSearch.exists()]);
   },
 
   fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
@@ -836,6 +839,20 @@ export default {
     cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
     if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
     if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
+  },
+
+  focusOnAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(TextArea()).focus());
+  },
+
+  verifyClearIconInAdvancedSearchField(rowIndex, shouldExist = true) {
+    const targetIcon = AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon);
+    if (shouldExist) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  clickClearIconInAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon).click());
   },
 
   clickSearchButton() {
@@ -876,6 +893,7 @@ export default {
         .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
       modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonClose).exists(),
     ]);
     if (boolean) {
       cy.expect([
@@ -1813,6 +1831,30 @@ export default {
       Accordion(accordionName)
         .find(MultiSelectOption(matching(optionRegExp), { visible: or(true, false) }))
         .exists(),
+    );
+  },
+
+  verifyRecordFound(heading, isFound = true) {
+    const targetCell = searchResults.find(
+      MultiColumnListCell({ columnIndex: 2, content: heading }),
+    );
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  verifySearchTabIsOpened() {
+    cy.do(
+      searchToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  verifyBrowseTabIsOpened() {
+    cy.do(
+      browseToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
     );
   },
 };
