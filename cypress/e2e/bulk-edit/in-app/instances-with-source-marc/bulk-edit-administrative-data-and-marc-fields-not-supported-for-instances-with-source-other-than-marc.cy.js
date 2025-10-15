@@ -187,7 +187,7 @@ describe('Bulk-edit', () => {
 
         // Verify .csv file is saved with correct name and contains records with changes
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           folioInstance.instanceId,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
@@ -212,7 +212,7 @@ describe('Bulk-edit', () => {
 
         // Verify .csv file with changed records is saved
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           folioInstance.instanceId,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
