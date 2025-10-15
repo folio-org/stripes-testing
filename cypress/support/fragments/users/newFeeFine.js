@@ -185,6 +185,11 @@ export default {
     cy.expect(accessDeniedModal.find(HTML(including('You must select a service point'))).exists());
   },
 
+  closeAccessDeniedModal: () => {
+    cy.do(accessDeniedModal.find(Button('Back')).click());
+    cy.expect(accessDeniedModal.absent());
+  },
+
   verifyDefaultOwnerSelected: (ownerName) => {
     cy.expect(ownerTypeSelect.has({ checkedOptionText: ownerName }));
   },

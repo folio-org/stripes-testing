@@ -625,6 +625,10 @@ export default {
 
   verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),
 
+  verifyRequestsCount: (count) => {
+    cy.expect(loanAccordion.find(KeyValue('Requests', { value: count.toString() })).exists());
+  },
+
   addTag: (tagName) => {
     cy.expect(tagsAccordion.find(Spinner()).absent());
     cy.do(tagsAccordion.find(textFieldTagInput).choose(tagName));

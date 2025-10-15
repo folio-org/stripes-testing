@@ -671,12 +671,12 @@ export default {
   checkFinancialSummeryQuality: (quantityValue1, quantityValue2) => {
     cy.expect(
       Section({ id: 'financial-summary' })
-        .find(HTML(including('Cash balance: $' + quantityValue1)))
+        .find(HTML(including('Cash balance: ' + quantityValue1)))
         .exists(),
     );
     cy.expect(
       Section({ id: 'financial-summary' })
-        .find(HTML(including('Available balance: $' + quantityValue2)))
+        .find(HTML(including('Available balance: ' + quantityValue2)))
         .exists(),
     );
   },
@@ -1514,5 +1514,55 @@ export default {
 
   verifyLedgerLinkExists: (name) => {
     cy.expect(ledgerResultsPaneSection.find(Link(name)).exists());
+  },
+
+  checkColumnContentInDownloadedLedgerExport(
+    fileName,
+    fileRow,
+    fund,
+    budgetNameExpected, // pass the actual budget.name here
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+  ) {
+    cy.readFile(`cypress/downloads/${fileName}`, 'utf8', { timeout: 15000 }).then((fileContent) => {
+      const lines = fileContent.split(/\r?\n/).filter(Boolean);
+      const row = this.parseCsvLine(lines[fileRow]);
+
+      expect(row[0]).to.equal(fund.name); // Name (Fund)
+      expect(row[1]).to.equal(fund.code); // Code (Fund)
+      expect(row[9]).to.equal(fund.description); // Description
+      expect(row[10]).to.equal(budgetNameExpected); // Name (Budget)
+
+      expect(row[12]).to.equal(allowableEncumbrance);
+      expect(row[13]).to.equal(allowableExpenditure);
+      expect(row[15]).to.equal(initialAllocation);
+      expect(row[16]).to.equal(increase);
+      expect(row[17]).to.equal(decrease);
+      expect(row[18]).to.equal(totalAllocation);
+      expect(row[19]).to.equal(transfers);
+      expect(row[20]).to.equal(totalFunding);
+      expect(row[21]).to.equal(encumberedBudget);
+      expect(row[22]).to.equal(awaitingPaymentBudget);
+      expect(row[23]).to.equal(expendedBudget);
+      expect(row[25]).to.equal(unavailable);
+      expect(row[26]).to.equal(overEncumbered);
+      expect(row[27]).to.equal(overExpended);
+      expect(row[28]).to.equal(cashBalance);
+      expect(row[29]).to.equal(available);
+    });
   },
 };
