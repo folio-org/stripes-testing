@@ -964,9 +964,14 @@ export default {
     cy.expect(addHoldingsButton.absent());
   },
 
-  verifyAddItemButtonIsAbsent({ holdingName } = {}) {
+  verifyAddItemButtonVisibility({ holdingName, shouldBePresent = true } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
-    cy.do(holdingSection.find(addItemButton).absent());
+
+    if (shouldBePresent) {
+      cy.expect(holdingSection.find(addItemButton).exists());
+    } else {
+      cy.expect(holdingSection.find(addItemButton).absent());
+    }
   },
 
   verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {

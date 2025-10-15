@@ -1,12 +1,18 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -34,7 +40,7 @@ describe('Inventory', () => {
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
                 testData.shadowHoldings.holdingTypeId = res[0].id;
               });
-              cy.getLocations({ limit: 1 }).then((res) => {
+              cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
                 testData.shadowHoldings.locationId = res.id;
                 testData.shadowHoldings.locationName = res.name;
               });
@@ -66,10 +72,12 @@ describe('Inventory', () => {
                   },
                 ],
               }).then((specialInstanceIds) => {
-                testData.testInstanceIds = specialInstanceIds;
+                testData.instanceId = specialInstanceIds.instanceId;
+                testData.collegeHoldingId = specialInstanceIds.holdings[0].id;
+                testData.collegeItemId = specialInstanceIds.items[0].id;
 
                 InventoryInstance.shareInstanceViaApi(
-                  specialInstanceIds.instanceId,
+                  testData.instanceId,
                   testData.consortiaId,
                   Affiliations.College,
                   Affiliations.Consortia,
@@ -82,41 +90,54 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+          cy.resetTenant();
+          cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+          cy.setTenant(Affiliations.University);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+          cy.resetTenant();
+
+          cy.login(testData.user.username, testData.user.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
         });
       });
 
       after('Delete test data', () => {
-        cy.withinTenant(Affiliations.Consortia, () => {
-          cy.getAdminToken();
-          Users.deleteViaApi(testData.user.userId);
-        });
-        cy.withinTenant(Affiliations.College, () => {
-          InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-            testData.testInstanceIds.instanceId,
-          );
-        });
+        cy.resetTenant();
+        cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+        cy.deleteItemViaApi(testData.collegeItemId);
+        InventoryHoldings.deleteHoldingRecordViaApi(testData.collegeHoldingId);
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       });
 
       it(
-        'C411686 (CONSORTIA) Verify that the Add item button is not available in the Consortial accordion on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411686'] },
+        'C411654 (CONSORTIA) Verify Add item button on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411654'] },
         () => {
-          InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
-          InstanceRecordView.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
-          InstanceRecordView.expandHoldings([`${testData.shadowHoldings.locationName}`]);
+          InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
+            tenantNames.college,
+            Affiliations.College,
+            testData.collegeHoldingId,
+          );
           InstanceRecordView.verifyAddItemButtonVisibility({
             holdingName: testData.shadowHoldings.locationName,
-            shouldBePresent: false,
+            shouldBePresent: true,
           });
         },
       );

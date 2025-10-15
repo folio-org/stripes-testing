@@ -95,8 +95,9 @@ describe('Inventory', () => {
             Affiliations.College,
             testData.collegeHolding.id,
           );
-          InstanceRecordView.verifyAddItemButtonIsAbsent({
+          InstanceRecordView.verifyAddItemButtonVisibility({
             holdingName: testData.collegeLocation.name,
+            shouldBePresent: false,
           });
         },
       );
