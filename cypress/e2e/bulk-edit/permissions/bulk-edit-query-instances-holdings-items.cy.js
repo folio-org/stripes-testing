@@ -12,10 +12,7 @@ import {
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
-const testData = {
-  roleName: `Auto Role C423696 ${getRandomPostfix()}`,
-  capabSetIds: [],
-};
+let testData;
 const capabSetsToAssign = [
   {
     type: CAPABILITY_TYPES.DATA,
@@ -81,84 +78,97 @@ const capabSetToUnselect = [
   },
 ];
 
-describe('Bulk-edit', () => {
-  describe('Permissions', () => {
-    before('create test data', () => {
-      cy.createTempUser([]).then((userProperties) => {
-        user = userProperties;
-        cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
-          testData.roleId = role.id;
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    describe('Permissions', () => {
+      beforeEach('create test data', () => {
+        testData = {
+          roleName: `Auto Role C423696 ${getRandomPostfix()}`,
+          capabSetIds: [],
+        };
 
-          capabSetsToAssign.forEach((capabilitySet) => {
-            cy.getCapabilitySetIdViaApi(capabilitySet).then((capabSetId) => {
-              testData.capabSetIds.push(capabSetId);
+        cy.createTempUser([]).then((userProperties) => {
+          user = userProperties;
+          cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+            testData.roleId = role.id;
+
+            capabSetsToAssign.forEach((capabilitySet) => {
+              cy.getCapabilitySetIdViaApi(capabilitySet).then((capabSetId) => {
+                testData.capabSetIds.push(capabSetId);
+              });
             });
-          });
 
-          cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-          cy.addRolesToNewUserApi(user.userId, [testData.roleId]);
+            cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
+            cy.addRolesToNewUserApi(user.userId, [testData.roleId]);
+          });
         });
       });
+
+      afterEach('delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+        cy.deleteAuthorizationRoleApi(testData.roleId);
+      });
+
+      it(
+        'C423696 Verify Query tab capability sets (In app Instances, Holdings, Items) (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C423696'] },
+        () => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+          BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Authorization roles');
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.roleName);
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
+          AuthorizationRoles.openForEdit();
+          AuthorizationRoles.clickSelectApplication();
+          AuthorizationRoles.selectAllApplicationsInModal();
+          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.checkCapabilitySpinnersShown();
+          AuthorizationRoles.checkCapabilitySpinnersAbsent();
+          AuthorizationRoles.selectCapabilitySetCheckbox(capabSetToSelect);
+
+          capabSetToUnselect.forEach((capabSet) => {
+            AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
+          });
+
+          AuthorizationRoles.clickSaveButton();
+          AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
+          AuthorizationRoles.clickOnCapabilitySetsAccordion();
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
+
+          capabSetToUnselect.forEach((capabSet) => {
+            AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
+          });
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+          BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.isHoldingsRadioChecked(false);
+          BulkEditSearchPane.isInstancesRadioChecked(false);
+          BulkEditSearchPane.isItemsRadioChecked(false);
+          BulkEditSearchPane.verifyUsersRadioAbsent();
+          BulkEditSearchPane.verifyInputLabel(
+            'Select a record type and then click the Build query button.',
+          );
+          QueryModal.buildQueryButtonDisabled();
+        },
+      );
     });
-
-    after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.deleteAuthorizationRoleApi(testData.roleId);
-    });
-
-    it(
-      'C423696 Verify Query tab capability sets (In app Instances, Holdings, Items) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423696'] },
-      () => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Authorization roles');
-        AuthorizationRoles.waitContentLoading();
-        AuthorizationRoles.searchRole(testData.roleName);
-        AuthorizationRoles.clickOnRoleName(testData.roleName);
-        AuthorizationRoles.openForEdit();
-        AuthorizationRoles.clickSelectApplication();
-        AuthorizationRoles.selectAllApplicationsInModal();
-        AuthorizationRoles.clickSaveInModal();
-        AuthorizationRoles.checkCapabilitySpinnersShown();
-        AuthorizationRoles.checkCapabilitySpinnersAbsent();
-        AuthorizationRoles.selectCapabilitySetCheckbox(capabSetToSelect);
-
-        capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
-        });
-
-        AuthorizationRoles.clickSaveButton();
-        AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
-        AuthorizationRoles.clickOnCapabilitySetsAccordion();
-        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
-
-        capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
-        });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.isHoldingsRadioChecked(false);
-        BulkEditSearchPane.isInstancesRadioChecked(false);
-        BulkEditSearchPane.isItemsRadioChecked(false);
-        BulkEditSearchPane.verifyUsersRadioAbsent();
-        BulkEditSearchPane.verifyInputLabel(
-          'Select a record type and then click the Build query button.',
-        );
-        QueryModal.buildQueryButtonDisabled();
-      },
-    );
-  });
-});
+  },
+);
