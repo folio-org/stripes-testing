@@ -41,7 +41,7 @@ export default {
 
   sortByColumn: (columnName) => {
     cy.do(selectUserModal.find(MultiColumnListHeader(columnName)).click());
-    cy.wait(10000);
+    cy.wait(1000);
   },
 
   checkAllValuesInColumnSorted: (columnIndex) => {
