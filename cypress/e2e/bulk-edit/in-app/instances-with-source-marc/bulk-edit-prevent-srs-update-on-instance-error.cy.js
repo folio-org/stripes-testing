@@ -107,7 +107,7 @@ describe('Bulk-edit', () => {
     // Trillium
     it.skip(
       'C808444 Verify prevent of updating SRS record if an error occurs during Instance record update (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C808444'] },
+      { tags: [] },
       () => {
         // Step 1: Navigate to Inventory to edit the instance and create version conflict
         BulkEditActions.openActions();
