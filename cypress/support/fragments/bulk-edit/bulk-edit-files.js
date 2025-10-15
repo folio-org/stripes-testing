@@ -76,22 +76,22 @@ export default {
   getAllQueryDownloadedFileNames(bulkEditJobId, isDateIncluded = false) {
     return {
       identifiersQueryFilename: `Query-${bulkEditJobId}.csv`,
-      matchedRecordsQueryFileName: isDateIncluded
+      matchedRecordsCSV: isDateIncluded
         ? `${todayDate}-Matched-Records-Query-${bulkEditJobId}.csv`
         : `*-Matched-Records-Query-${bulkEditJobId}.csv`,
-      previewFileName: isDateIncluded
+      previewRecordsCSV: isDateIncluded
         ? `${todayDate}-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`
         : `*-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`,
       previewRecordsMarc: isDateIncluded
         ? `${todayDate}-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`
         : `*-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`,
-      changedRecordsFileName: isDateIncluded
+      changedRecordsCSV: isDateIncluded
         ? `${todayDate}-Changed-Records-CSV-Query-${bulkEditJobId}.csv`
         : `*-Changed-Records-CSV-Query-${bulkEditJobId}.csv`,
       changedRecordsMarc: isDateIncluded
         ? `${todayDate}-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`
         : `*-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`,
-      errorsFromCommittingFileName: isDateIncluded
+      errorsFromCommitting: isDateIncluded
         ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
         : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
       errorsFromMatching: isDateIncluded
