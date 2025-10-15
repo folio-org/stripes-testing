@@ -22,6 +22,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 let user;
 let createdAuthorityID100;
@@ -82,6 +83,7 @@ describe('Bulk-edit', () => {
 
         // make sure there are no duplicate authority records in the system
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C663255');
+        MarcFieldProtection.deleteProtectedFieldsViaApi(['100', '700']);
 
         // Create MARC bibliographic record with specified fields
         cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
