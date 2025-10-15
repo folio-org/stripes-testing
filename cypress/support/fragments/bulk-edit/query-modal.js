@@ -4,6 +4,7 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiSelect,
   MultiSelectOption,
   RepeatableFieldItem,
@@ -130,6 +131,10 @@ export const itemFieldValues = {
   instanceTitle: 'Instance — Resource title',
   itemAccessionNumber: 'Item — Accession number',
   itemBarcode: 'Item — Barcode',
+  itemCheckOutNotesNote: 'Item — Check out notes — Note',
+  itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
+  itemCheckInNotesNote: 'Item — Check in notes — Note',
+  itemCheckInNotesStaffOnly: 'Item — Check in notes — Staff only',
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
@@ -699,5 +704,13 @@ export default {
   clickCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).click());
     cy.wait(2000);
+  },
+
+  verifyColumnDisplayed(columnName) {
+    cy.expect(MultiColumnListHeader(columnName).exists());
+  },
+
+  scrollResultTable(direction) {
+    cy.get('div[class^="mclScrollable"]').scrollTo(direction);
   },
 };
