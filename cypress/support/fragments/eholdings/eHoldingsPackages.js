@@ -153,6 +153,10 @@ export default {
     return cy.get('@customePackageName');
   },
 
+  verifyContentType: (contentType) => {
+    cy.expect(KeyValue('Content type').has({ value: contentType }));
+  },
+
   getNotCustomSelectedPackageIdViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
