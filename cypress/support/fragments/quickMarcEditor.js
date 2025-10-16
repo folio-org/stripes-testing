@@ -3269,4 +3269,69 @@ export default {
     if (someInvalid) cy.expect(invalidDropdown.exists());
     else cy.expect(invalidDropdown.absent());
   },
+
+  checkUnlinkButtonShown(tag, isShown = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(unlinkIconButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  linkMarcRecordsViaApi({
+    bibId,
+    authorityId,
+    bibFieldTag,
+    authorityFieldTag,
+    finalBibFieldContent,
+    bibFieldIndex = null,
+  } = {}) {
+    let relatedRecordVersion;
+    let linkingRuleId;
+    let authorityNaturalId;
+    let sourceFileId;
+    let sourceFileUrl = '';
+
+    cy.then(() => {
+      cy.getAllRulesViaApi().then((rules) => {
+        linkingRuleId = rules
+          .filter((rule) => rule.bibField === bibFieldTag)
+          .find((rule) => rule.authorityField === authorityFieldTag).id;
+      });
+      cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
+        relatedRecordVersion = `${auditData.totalRecords}`;
+      });
+      cy.okapiRequest({
+        path: 'search/authorities',
+        searchParams: { query: `id=="${authorityId}"` },
+        isDefaultSearchParamsRequired: false,
+      }).then((res) => {
+        authorityNaturalId = res.body.authorities[0].naturalId;
+        sourceFileId = res.body.authorities[0].sourceFileId;
+
+        if (sourceFileId && sourceFileId !== 'NULL') {
+          cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
+            sourceFileUrl = sourceFileData.baseUrl;
+          });
+        }
+      });
+    }).then(() => {
+      cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
+        const updatedMarcData = marcData;
+        const targetFieldIndex =
+          bibFieldIndex !== null
+            ? bibFieldIndex - 1
+            : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
+        updatedMarcData.fields[targetFieldIndex].content =
+          `${finalBibFieldContent} $0 ${sourceFileUrl}${authorityNaturalId} $9 ${authorityId}`;
+        updatedMarcData.fields[targetFieldIndex].linkDetails = {
+          authorityId,
+          authorityNaturalId,
+          linkingRuleId,
+          status: 'NEW',
+        };
+        updatedMarcData.relatedRecordVersion = relatedRecordVersion;
+
+        cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
+      });
+    });
+  },
 };
