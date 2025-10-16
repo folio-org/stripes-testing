@@ -87,7 +87,7 @@ describe('MARC Authority Validation Rules - Local Fields Indicators API', () => 
 
   it(
     'C499696 Create Indicators of Local field for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499696', 'spitfire'] },
+    { tags: ['extendedPath', 'C499696', 'spitfire'] },
     () => {
       let firstIndicatorId;
       let secondIndicatorId;

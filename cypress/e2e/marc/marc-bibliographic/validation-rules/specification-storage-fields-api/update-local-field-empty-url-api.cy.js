@@ -65,7 +65,7 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Empty URL API
 
   it(
     'C490945 Update Local Field with empty "url" for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C490945', 'spitfire'] },
+    { tags: ['extendedPath', 'C490945', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

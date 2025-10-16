@@ -104,7 +104,7 @@ describe('Invoices', () => {
 
   it(
     'C466116 Invoices can be found by "Created by" filter (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C466116'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466116'] },
     () => {
       Invoices.selectCreatedByFilter(users.firstUser.username);
       Invoices.verifySearchResult(testData.firstInvoice.vendorInvoiceNo);
