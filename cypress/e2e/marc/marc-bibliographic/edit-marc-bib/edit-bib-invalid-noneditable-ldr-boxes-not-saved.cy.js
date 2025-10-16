@@ -12,9 +12,9 @@ import { including } from '../../../../../interactors';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Derive MARC bib', () => {
+    describe('Edit MARC bib', () => {
       const testData = {
-        instanceTitle: 'AT_C354283_MarcBibInstance',
+        instanceTitle: 'AT_C353982_MarcBibInstance',
         tag245: '245',
         invalidLDRValuesInEdit: ['a11', '3333'],
         defaultLDRValuesInView: ['a22', '4500'],
@@ -23,26 +23,25 @@ describe('MARC', () => {
       const updatedTitle = `${testData.instanceTitle}_upd`;
 
       const marcFile = {
-        marc: 'marcBibFileC354283.mrc',
-        fileName: `C354283.testMarcFile.${getRandomPostfix()}.mrc`,
+        marc: 'marcBibFileC353982.mrc',
+        fileName: `C353982.testMarcFile.${getRandomPostfix()}.mrc`,
       };
 
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-      const createdInstanceIds = [];
+      let createdInstanceId;
 
       before(() => {
         cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
-              createdInstanceIds.push(response[0].instance.id);
+              createdInstanceId = response[0].instance.id;
 
               cy.waitForAuthRefresh(() => {
                 cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -58,17 +57,17 @@ describe('MARC', () => {
       after('Deleting created user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
-        InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceId);
       });
 
       it(
-        'C354283 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user derive "MARC Bibliographic" record. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C354283'] },
+        'C353982 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user edit "MARC Bibliographic" record. (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C353982'] },
         () => {
-          InventoryInstances.searchByTitle(createdInstanceIds[0]);
-          InventoryInstances.selectInstanceById(createdInstanceIds[0]);
+          InventoryInstances.searchByTitle(createdInstanceId);
+          InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.waitLoading();
-          InventoryInstance.deriveNewMarcBibRecord();
+          InventoryInstance.editMarcBibliographicRecord();
 
           QuickMarcEditor.verifyValuesInLdrNonEditableBoxes({
             positions9to16BoxValues: including(testData.invalidLDRValuesInEdit[0]),
@@ -79,7 +78,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndCloseDerive();
+          QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.verifyInstanceTitle(updatedTitle);
 
           InventoryInstance.viewSource();
