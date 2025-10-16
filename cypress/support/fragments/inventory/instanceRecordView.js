@@ -550,15 +550,6 @@ export default {
     cy.expect(list.find(MultiColumnListCell({ columnIndex: 1, content: classification })).exists());
   },
 
-  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
-    cy.expect(
-      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .find(HTML(including(itemBarcode)))
-        .exists(),
-    );
-  },
-
   verifyModeOfIssuance(value) {
     cy.expect(KeyValue('Mode of issuance').has({ value }));
   },
@@ -725,11 +716,15 @@ export default {
     cy.wait(6000);
   },
 
-  verifyIsItemCreated: (itemBarcode, index = 2) => {
+  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
     cy.expect(
-      rootSection
-        .find(MultiColumnListCell({ columnIndex: index, content: itemBarcode }))
-        .find(Button(including(itemBarcode)))
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .find(
+          MultiColumnListCell({
+            column: 'Item: barcode',
+            content: itemBarcode,
+          }),
+        )
         .exists(),
     );
   },
@@ -964,9 +959,14 @@ export default {
     cy.expect(addHoldingsButton.absent());
   },
 
-  verifyAddItemButtonIsAbsent({ holdingName } = {}) {
+  verifyAddItemButtonVisibility({ holdingName, shouldBePresent = true } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
-    cy.do(holdingSection.find(addItemButton).absent());
+
+    if (shouldBePresent) {
+      cy.expect(holdingSection.find(addItemButton).exists());
+    } else {
+      cy.expect(holdingSection.find(addItemButton).absent());
+    }
   },
 
   verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
