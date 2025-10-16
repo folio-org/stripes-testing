@@ -1930,4 +1930,13 @@ export default {
     const targetMessage = findAuthorityModal.find(HTML(messages.cannotViewAuthoritiesMessage));
     cy.expect(isShown ? targetMessage.exists() : targetMessage.absent());
   },
+
+  verifyEditButtonsShown({ folioEdit = true, marcEdit = true } = {}) {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    if (folioEdit) cy.expect(editInstanceButton.exists());
+    else cy.expect(editInstanceButton.absent());
+    if (marcEdit) cy.expect(editMARCBibRecordButton.exists());
+    else cy.expect(editMARCBibRecordButton.absent());
+  },
 };
