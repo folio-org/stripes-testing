@@ -98,6 +98,9 @@ export default {
       );
     }
   },
+  cancel: () => {
+    cy.do(cancelBtn.click());
+  },
 
   createViaApi: ({ holdingsId, itemBarcode, materialTypeId, permanentLoanTypeId, ...props }) => {
     return cy
