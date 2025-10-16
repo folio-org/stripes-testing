@@ -92,8 +92,6 @@ describe('Inventory', () => {
           testData.itemBarcode,
           3,
         );
-
-        // InstanceRecordView.verifyIsItemCreated(testData.itemBarcode, 3);
         InstanceRecordView.verifyMoveToButtonState(testData.permanentLocationUI, isEnubled);
       },
     );
