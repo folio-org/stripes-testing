@@ -36,7 +36,7 @@ describe('Organizations --> Interface details', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C1324 Edit interface details (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+  it('C1324 Edit interface details (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.openInterfaceSection();

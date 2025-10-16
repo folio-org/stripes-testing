@@ -44,7 +44,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Delete Local Ind
 
   it(
     'C503103 Delete Local Indicator Code of Standard Field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C503103', 'spitfire'] },
+    { tags: ['extendedPath', 'C503103', 'spitfire'] },
     () => {
       let createdIndicatorCodeId;
 
