@@ -152,4 +152,8 @@ export default {
   closeHoldingsResourceView() {
     cy.do(closeViewButton.click());
   },
+
+  verifyNoCustomCoverageDates() {
+    cy.expect(KeyValue('Custom coverage dates').absent());
+  },
 };
