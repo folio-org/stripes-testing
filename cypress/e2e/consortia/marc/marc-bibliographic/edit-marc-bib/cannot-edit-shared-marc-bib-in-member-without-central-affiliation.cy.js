@@ -7,7 +7,6 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
@@ -24,7 +23,6 @@ describe('MARC', () => {
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ];
-        const heldByAccordionName = 'Held by';
         const testData = {
           tag008: '008',
           tag245: '245',
@@ -96,7 +94,6 @@ describe('MARC', () => {
           'C405506 User without affiliation or edit permissions in Central tenant cannot edit shared "MARC Bib" in member tenant (consortia) (spitfire)',
           { tags: ['extendedPathECS', 'spitfire', 'C405506'] },
           () => {
-            InventorySearchAndFilter.clearDefaultFilter(heldByAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);
             InstanceRecordView.verifyWarningMessage();
@@ -111,7 +108,6 @@ describe('MARC', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
 
-            InventorySearchAndFilter.clearDefaultFilter(heldByAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);
             InventoryInstance.checkInstanceTitle(testData.marcInstanceTitle);
