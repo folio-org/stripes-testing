@@ -805,3 +805,32 @@ Cypress.Commands.add('getRtacBatchViaApi', (instanceIds, fullPeriodicals = true)
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getMarcRecordDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `records-editor/records?externalId=${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('updateMarcRecordDataViaAPI', (parsedRecordId, updatedData) => {
+  const body = updatedData;
+  body._actionType = 'edit';
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `records-editor/records/${parsedRecordId}`,
+    isDefaultSearchParamsRequired: false,
+    body,
+  });
+});
+
+Cypress.Commands.add('getInstanceAuditDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `audit-data/inventory/instance/${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});

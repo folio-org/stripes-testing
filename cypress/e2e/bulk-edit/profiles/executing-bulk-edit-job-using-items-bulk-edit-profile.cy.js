@@ -302,21 +302,21 @@ describe('Bulk-edit', () => {
         // Step 7: Click the "Download preview in CSV format" button
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
           false,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
           'note for testing',
         );
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           editedHeaderValues,
@@ -345,20 +345,20 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
           false,
         );
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           editedHeaderValues,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -383,7 +383,7 @@ describe('Bulk-edit', () => {
         // Step 13: Click on the "File with the matching records" hyperlink
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
@@ -393,20 +393,20 @@ describe('Bulk-edit', () => {
         // Step 14: Click on the "File with the preview of proposed changes (CSV)" hyperlink
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           editedHeaderValues,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
           false,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -416,20 +416,20 @@ describe('Bulk-edit', () => {
         // Step 15: Click on the "File with updated records (CSV)" hyperlink
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           editedHeaderValues,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
           false,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           testData.itemBarcode,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,

@@ -96,7 +96,10 @@ describe('Inventory', () => {
             testData.instanceHRID = initialInstanceHrId;
 
             InstanceRecordView.verifyInstanceSource(testData.instanceSource);
-            InstanceRecordView.verifyAddItemButtonIsAbsent({ holdingName: 'Consortial holdings' });
+            InstanceRecordView.verifyAddItemButtonVisibility({
+              holdingName: 'Consortial holdings',
+              shouldBePresent: true,
+            });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);

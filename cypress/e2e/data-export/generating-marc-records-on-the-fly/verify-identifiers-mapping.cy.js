@@ -85,7 +85,7 @@ describe('Data Export', () => {
 
     it(
       'C350411 Verify appending subfields to Identifiers (ASIN, BNB, Local identifiers, StEdNL, UKMac) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C350411'] },
+      { tags: ['extendedPath', 'firebird', 'C350411'] },
       () => {
         // Step 1: Go to the "Data Export" app (already logged in from before block)
         DataExportLogs.verifyDragAndDropAreaExists();

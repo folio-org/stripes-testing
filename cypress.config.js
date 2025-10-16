@@ -31,6 +31,8 @@ module.exports = defineConfig({
   video: false,
   defaultCommandTimeout: 51000,
   pageLoadTimeout: 60000,
+  requestTimeout: 60000,
+  responseTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',

@@ -356,6 +356,11 @@ export const INSTANCE_SOURCE_NAMES = {
   LDE: 'LINKED_DATA',
 };
 
+export const HOLDINGS_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO',
+};
+
 export const PROFILE_TYPE_NAMES = {
   JOB_PROFILE: 'JOB_PROFILE',
   MATCH_PROFILE: 'MATCH_PROFILE',
@@ -1099,6 +1104,62 @@ export const LOAN_TYPE_IDS = {
 export const MATERIAL_TYPE_IDS = {
   DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
 };
+
+export const EHOLDINGS_PACKAGE_HEADERS = [
+  'Provider Level Token',
+  'Provider Name',
+  'Provider Id',
+  'Package Level Token',
+  'Package Name',
+  'Package Id',
+  'Package Type',
+  'Package Content Type',
+  'Package Holdings Status',
+  'Package Custom Coverage',
+  'Package Show To Patrons',
+  'Package Automatically Select',
+  'Package Proxy',
+  'Package Access Status Type',
+  'Package Tags',
+  'Package Agreements',
+  'Package Note',
+];
+
+export const EHOLDINGS_TITLE_HEADERS = [
+  'Title Name',
+  'Alternate Titles',
+  'Title Id',
+  'Publication Type',
+  'Title Type',
+  'Title Holdings Status',
+  'Title Show To Patrons',
+  'Managed Coverage',
+  'Managed Embargo',
+  'Custom Coverage',
+  'Custom Embargo',
+  'Coverage Statement',
+  'Title Proxy',
+  'Url',
+  'Title Access Status Type',
+  'Title Tags',
+  'Contributors',
+  'Edition',
+  'Publisher',
+  'ISSN Print',
+  'ISSN Online',
+  'ISBN Print',
+  'ISBN Online',
+  'Subjects',
+  'Peer Reviewed',
+  'Description',
+  'Custom Value 1',
+  'Custom Value 2',
+  'Custom Value 3',
+  'Custom Value 4',
+  'Custom Value 5',
+  'Title Agreements',
+  'Title Note',
+];
 
 export const CLASSIFICATION_IDENTIFIER_TYPES = {
   ADDITIONAL_DEWEY: '74c08086-81a4-4466-93d8-d117ce8646db',
