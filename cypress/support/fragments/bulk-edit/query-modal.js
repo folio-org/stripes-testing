@@ -128,6 +128,9 @@ export const instanceFieldValues = {
   contributorPrimary: 'Instance — Contributors — Primary',
   publicationRange: 'Instance — Publication range',
   publicationFrequency: 'Instance — Publication frequency',
+  natureOfContent: 'Instance — Nature of content',
+  editions: 'Instance — Editions',
+  physicalDescriptions: 'Instance — Physical descriptions',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',

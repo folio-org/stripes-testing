@@ -1,15 +1,15 @@
-import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
+import permissions from '../../../../support/dictionary/permissions';
+import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import QueryModal, {
   instanceFieldValues,
   STRING_OPERATORS,
   QUERY_OPERATIONS,
-} from '../../../support/fragments/bulk-edit/query-modal';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../../support/utils/stringTools';
+} from '../../../../support/fragments/bulk-edit/query-modal';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let user;
 const expectedInstances = [
