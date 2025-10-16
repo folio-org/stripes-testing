@@ -38,7 +38,7 @@ describe('Organizations --> Interface details', () => {
 
   it(
     'C1323 Edit an existing interface to an Organization record > Assign an interface type (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
