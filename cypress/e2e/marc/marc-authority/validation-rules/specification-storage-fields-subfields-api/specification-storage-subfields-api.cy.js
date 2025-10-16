@@ -165,7 +165,7 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
 
   it(
     'C499710 Create Subfield Code of Local Field (repeatable, required, deprecated) for MARC authority spec (API) (spitfire)',
-    { tags: ['C499710', 'criticalPath', 'spitfire'] },
+    { tags: ['C499710', 'extendedPath', 'spitfire'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {

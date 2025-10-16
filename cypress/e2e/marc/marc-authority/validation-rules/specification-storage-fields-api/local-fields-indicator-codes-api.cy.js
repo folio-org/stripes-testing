@@ -89,7 +89,7 @@ describe('MARC Authority Validation Rules - Local Fields Indicator Codes API', (
 
   it(
     'C499697 Create Indicator Code of Local Field for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499697', 'spitfire'] },
+    { tags: ['extendedPath', 'C499697', 'spitfire'] },
     () => {
       let firstIndicatorId;
       let secondIndicatorId;

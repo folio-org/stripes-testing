@@ -130,7 +130,7 @@ describe('Consortia', () => {
 
         it(
           'C594399 User without "inventory-storage.subject-types.collection.get" permission is NOT able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594399'] },
+          { tags: ['extendedPathECS', 'folijet', 'C594399'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(2);
