@@ -30,6 +30,7 @@ import FinanceHelp from '../financeHelper';
 import FiscalYears from '../fiscalYears/fiscalYears';
 import FundDetails from './fundDetails';
 import FundEditForm from './fundEditForm';
+import Headline from '../../../../../interactors/headline';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -443,6 +444,10 @@ export default {
       transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
     );
+  },
+
+  assertHasTagWithInteractors(tag) {
+    cy.expect(KeyValue('Tags').has({ value: including(tag) }));
   },
 
   checkStatusInTransactionDetails: (status) => {
@@ -1361,5 +1366,10 @@ export default {
 
   clickConfirmInNegativeAvailableAmountModal() {
     cy.do(Modal('Negative available amount').find(confirmButton).click());
+  },
+
+  assertAllocationToolsSubmenuAbsent() {
+    cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
+    cy.expect(Headline('Allocation tools').absent());
   },
 };
