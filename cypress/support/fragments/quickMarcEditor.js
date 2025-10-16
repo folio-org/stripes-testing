@@ -3284,6 +3284,7 @@ export default {
     finalBibFieldContent,
     bibFieldIndex = null,
   } = {}) {
+    let relatedRecordVersion;
     let linkingRuleId;
     let authorityNaturalId;
     let sourceFileId;
@@ -3294,6 +3295,9 @@ export default {
         linkingRuleId = rules
           .filter((rule) => rule.bibField === bibFieldTag)
           .find((rule) => rule.authorityField === authorityFieldTag).id;
+      });
+      cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
+        relatedRecordVersion = `${auditData.totalRecords}`;
       });
       cy.okapiRequest({
         path: 'search/authorities',
@@ -3324,6 +3328,7 @@ export default {
           linkingRuleId,
           status: 'NEW',
         };
+        updatedMarcData.relatedRecordVersion = relatedRecordVersion;
 
         cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
       });
