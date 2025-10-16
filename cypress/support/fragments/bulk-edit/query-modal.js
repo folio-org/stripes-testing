@@ -60,6 +60,7 @@ const embeddedTableHeadersMap = {
     'Primary',
   ],
   alternativeTitles: ['Alternative title', 'Alternative title type'],
+  subjects: ['Subject headings', 'Subject source', 'Subject type'],
 };
 
 export const holdingsFieldValues = {
@@ -134,6 +135,9 @@ export const instanceFieldValues = {
   physicalDescriptions: 'Instance — Physical descriptions',
   alternativeTitlesAlternativeTitle: 'Instance — Alternative titles — Alternative title',
   alternativeTitlesAlternativeTitleType: 'Instance — Alternative titles — Alternative title type',
+  subjectsSubjectHeadings: 'Instance — Subjects — Subject headings',
+  subjectsSubjectSource: 'Instance — Subjects — Subject source',
+  subjectsSubjectType: 'Instance — Subjects — Subject type',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -675,6 +679,8 @@ export default {
         ];
       case 'alternativeTitles':
         return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
+      case 'subjects':
+        return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -745,6 +751,10 @@ export default {
       instanceIdentifier,
       expectedAlternativeTitles,
     );
+  },
+
+  verifySubjectsEmbeddedTableInQueryModal(instanceIdentifier, expectedSubjects) {
+    this.verifyEmbeddedTableInQueryModal('subjects', instanceIdentifier, expectedSubjects);
   },
 
   clickShowColumnsButton() {

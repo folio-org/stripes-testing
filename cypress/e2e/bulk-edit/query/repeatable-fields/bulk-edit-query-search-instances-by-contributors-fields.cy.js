@@ -193,6 +193,7 @@ describe('Bulk-edit', () => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
+
           QueryModal.verifySubsetOfFieldsSortedAlphabetically(contributorsFields);
 
           // Step 2: Search instances using AND operator with multiple contributor fields
