@@ -540,11 +540,22 @@ export default {
     cy.do(Accordion('Type').find(Checkbox(option)).click());
   },
 
-  increaseAllocation: () => {
+  increaseAllocation: (ammount = '50') => {
     cy.do([
       actionsButton.click(),
       Button('Increase allocation').click(),
-      amountTextField.fillIn('50'),
+      amountTextField.fillIn(ammount),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(addTransferModal.find(confirmButton).click());
+  },
+
+  decreaseAllocation: (ammount = '50') => {
+    cy.do([
+      actionsButton.click(),
+      Button('Decrease allocation').click(),
+      amountTextField.fillIn(ammount),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
