@@ -126,6 +126,8 @@ export const instanceFieldValues = {
   contributorType: 'Instance — Contributors — Contributor type',
   contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
+  publicationRange: 'Instance — Publication range',
+  publicationFrequency: 'Instance — Publication frequency',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
