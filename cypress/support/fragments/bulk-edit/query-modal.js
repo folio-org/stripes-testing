@@ -59,6 +59,7 @@ const embeddedTableHeadersMap = {
     'Contributor type, free text',
     'Primary',
   ],
+  alternativeTitles: ['Alternative title', 'Alternative title type'],
 };
 
 export const holdingsFieldValues = {
@@ -131,6 +132,8 @@ export const instanceFieldValues = {
   natureOfContent: 'Instance — Nature of content',
   editions: 'Instance — Editions',
   physicalDescriptions: 'Instance — Physical descriptions',
+  alternativeTitlesAlternativeTitle: 'Instance — Alternative titles — Alternative title',
+  alternativeTitlesAlternativeTitleType: 'Instance — Alternative titles — Alternative title type',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -287,6 +290,33 @@ export default {
         const textArray = optionsText.get().map((el) => el.innerText);
         const sortedArray = [...textArray].sort((a, b) => a - b);
         expect(sortedArray).to.eql(textArray);
+      });
+  },
+
+  verifySubsetOfFieldsSortedAlphabetically(expectedAlphabeticalOptions) {
+    this.clickSelectFieldButton();
+    cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
+      .children()
+      .then((optionsText) => {
+        const actualOptionsArray = optionsText.get().map((el) => el.innerText);
+
+        // Find the indices of expected options in the actual array
+        const foundIndices = expectedAlphabeticalOptions.map((option) => {
+          const index = actualOptionsArray.indexOf(option);
+          if (index === -1) {
+            throw new Error(`Expected option "${option}" not found in actual options`);
+          }
+          return index;
+        });
+
+        // Verify that the indices are consecutive (each index should be previous index + 1)
+        for (let i = 1; i < foundIndices.length; i++) {
+          if (foundIndices[i] !== foundIndices[i - 1] + 1) {
+            throw new Error(
+              `Options "${expectedAlphabeticalOptions[i]}" are not consecutive in alphabetical order.`,
+            );
+          }
+        }
       });
   },
 
@@ -643,6 +673,8 @@ export default {
           dataObj.contributorTypeFreeText,
           dataObj.primary,
         ];
+      case 'alternativeTitles':
+        return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -705,6 +737,14 @@ export default {
 
   verifyContributorsEmbeddedTableInQueryModal(instanceIdentifier, expectedContributors) {
     this.verifyEmbeddedTableInQueryModal('contributors', instanceIdentifier, expectedContributors);
+  },
+
+  verifyAlternativeTitlesEmbeddedTableInQueryModal(instanceIdentifier, expectedAlternativeTitles) {
+    this.verifyEmbeddedTableInQueryModal(
+      'alternativeTitles',
+      instanceIdentifier,
+      expectedAlternativeTitles,
+    );
   },
 
   clickShowColumnsButton() {

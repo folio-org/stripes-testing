@@ -255,17 +255,19 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.verify();
 
-          [
+          const electronicAccessFields = [
             holdingsFieldValues.electronicAccessLinkText,
             holdingsFieldValues.electronicAccessMaterialSpecified,
             holdingsFieldValues.electronicAccessURI,
             holdingsFieldValues.electronicAccessURLPublicNote,
             holdingsFieldValues.electronicAccessURLRelationship,
-          ].forEach((field) => {
+          ];
+
+          electronicAccessFields.forEach((field) => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
-          QueryModal.verifyFieldsSortedAlphabetically();
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(electronicAccessFields);
           QueryModal.clickSelectFieldButton();
 
           // Step 2: Search holdings by "Holdings — Electronic access — URL relationship", "Holdings — Electronic access — URI" fields using AND operator
@@ -353,6 +355,18 @@ describe('Bulk-edit', () => {
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
+
+          // Step 6: Check display of Holdings data from Preconditions in "Holdings — Electronic access" column in the result table
+          QueryModal.clickGarbage(1);
+          QueryModal.selectField(holdingsFieldValues.holdingsHrid);
+          QueryModal.selectOperator(STRING_OPERATORS.EQUAL);
+          QueryModal.fillInValueTextfield(expectedHoldings[3].hrid);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedHoldings[3].hrid,
+            'Holdings — Electronic access',
+            '',
+          );
         },
       );
     });

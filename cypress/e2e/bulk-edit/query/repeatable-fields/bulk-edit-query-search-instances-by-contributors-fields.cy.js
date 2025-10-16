@@ -193,7 +193,7 @@ describe('Bulk-edit', () => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
-          QueryModal.verifyFieldsSortedAlphabetically();
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(contributorsFields);
 
           // Step 2: Search instances using AND operator with multiple contributor fields
           QueryModal.clickSelectFieldButton();
@@ -290,6 +290,15 @@ describe('Bulk-edit', () => {
           notExpectedConsultantHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
+
+          // Step 5: Check display of Instance data from Preconditions in "Instance — Contributors" column in the result table
+          QueryModal.clickGarbage(0);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            mappedInstancesDataToUIView[3].hrid,
+            'Instance — Contributors',
+            '',
+          );
         },
       );
     });

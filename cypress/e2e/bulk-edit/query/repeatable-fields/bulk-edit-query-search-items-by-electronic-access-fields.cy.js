@@ -265,16 +265,19 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.verify();
 
-          [
+          const electronicAccessFields = [
             itemFieldValues.electronicAccessLinkText,
             itemFieldValues.electronicAccessMaterialSpecified,
             itemFieldValues.electronicAccessURI,
             itemFieldValues.electronicAccessURLPublicNote,
             itemFieldValues.electronicAccessURLRelationship,
-          ].forEach((field) => {
+          ];
+
+          electronicAccessFields.forEach((field) => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
+
           QueryModal.verifyFieldsSortedAlphabetically();
           QueryModal.clickSelectFieldButton();
 
@@ -362,7 +365,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
 
-          // Step 6-7: Search items by "Items — Electronic access — URL public note" field using "contains" operator
+          // Step 6: Search items by "Items — Electronic access — URL public note" field using "contains" operator
           QueryModal.selectField(itemFieldValues.electronicAccessURLPublicNote);
           QueryModal.verifySelectedField(itemFieldValues.electronicAccessURLPublicNote);
           QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
@@ -381,6 +384,15 @@ describe('Bulk-edit', () => {
           notExpectedToFindItemBarcodes.forEach((barcode) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
+
+          // Step 7: Check display of Items data from Preconditions in "Item — Electronic access" column in the result table
+          QueryModal.clickGarbage(0);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedItems[3].barcode,
+            'Item — Electronic access',
+            '',
+          );
         },
       );
     });

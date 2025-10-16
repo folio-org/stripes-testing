@@ -226,7 +226,7 @@ describe('Bulk-edit', () => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
-          QueryModal.verifyFieldsSortedAlphabetically();
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(checkOutNotesFields);
 
           // Step 2-3: Search items by "Items — Check out notes — Note", "Items — Check out notes — Staff only" fields using AND operator
           QueryModal.clickSelectFieldButton();
@@ -325,6 +325,15 @@ describe('Bulk-edit', () => {
           notExpectedToFindByStaffOnly.forEach((barcode) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
+
+          // Step 7: Check display of Item data from Preconditions in "Item — Check in notes" column in the result table
+          QueryModal.clickGarbage(0);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedItems[3].barcode,
+            'Item — Check in notes',
+            '',
+          );
         },
       );
     });
