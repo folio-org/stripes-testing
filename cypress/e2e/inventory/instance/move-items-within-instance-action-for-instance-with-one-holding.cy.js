@@ -87,7 +87,13 @@ describe('Inventory', () => {
         const isEnubled = true;
         InstanceRecordView.verifyMoveToButtonState(testData.permanentLocationUI, isEnubled);
         InstanceRecordView.openHoldingsAccordion(testData.permanentLocationUI);
-        InstanceRecordView.verifyIsItemCreated(testData.itemBarcode, 3);
+        InstanceRecordView.verifyItemIsCreated(
+          testData.permanentLocationUI,
+          testData.itemBarcode,
+          3,
+        );
+
+        // InstanceRecordView.verifyIsItemCreated(testData.itemBarcode, 3);
         InstanceRecordView.verifyMoveToButtonState(testData.permanentLocationUI, isEnubled);
       },
     );
