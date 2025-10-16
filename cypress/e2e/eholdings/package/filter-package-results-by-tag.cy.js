@@ -15,13 +15,11 @@ describe('eHoldings', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      // Create a new package for testing
       EHoldingsPackages.createPackageViaAPI(EHoldingsPackages.getdefaultPackage())
         .then((newPackage) => {
           testPackage = newPackage;
         })
         .then(() => {
-          // Create user with required permissions
           cy.createTempUser([
             Permissions.uieHoldingsRecordsEdit.gui,
             Permissions.uiTagsPermissionAll.gui,
