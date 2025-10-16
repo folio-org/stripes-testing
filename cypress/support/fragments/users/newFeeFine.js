@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   Modal,
   Option,
   Select,
@@ -185,6 +186,11 @@ export default {
     cy.expect(accessDeniedModal.find(HTML(including('You must select a service point'))).exists());
   },
 
+  closeAccessDeniedModal: () => {
+    cy.do(accessDeniedModal.find(Button('Back')).click());
+    cy.expect(accessDeniedModal.absent());
+  },
+
   verifyDefaultOwnerSelected: (ownerName) => {
     cy.expect(ownerTypeSelect.has({ checkedOptionText: ownerName }));
   },
@@ -200,5 +206,19 @@ export default {
 
   verifyNoOwnerSelected: () => {
     cy.expect(ownerTypeSelect.has({ checkedOptionText: 'Select one' }));
+  },
+
+  selectFeeFineType: (feeFineType) => {
+    cy.do(feeFineTypeSelect.choose(feeFineType));
+  },
+
+  verifyNotifyPatronCheckboxChecked: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).exists());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).has({ checked: true }));
+  },
+
+  verifyNotifyPatronCheckboxNotPresent: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).absent());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).absent());
   },
 };

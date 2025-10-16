@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -28,8 +30,6 @@ let instanceUUIDsFileName;
 let fileNames;
 
 const field933a = 'Electronic reproduction.';
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const warningMessage = 'No change in MARC fields required';
 
 describe(
@@ -252,11 +252,17 @@ describe(
           BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
 
           // Step 13: Check errors table (errors only)
-          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstance.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
 
           // Step 14: Show warnings
           BulkEditSearchPane.clickShowWarningsCheckbox();
-          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstance.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
           BulkEditSearchPane.verifyError(marcInstance.uuid, warningMessage, 'Warning');
           BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
 
@@ -264,7 +270,7 @@ describe(
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-            `ERROR,${folioInstance.uuid},${errorMessage}`,
+            `ERROR,${folioInstance.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
             `WARNING,${marcInstance.uuid},${warningMessage}`,
           ]);
 

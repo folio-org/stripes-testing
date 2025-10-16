@@ -214,6 +214,7 @@ export const actionsMenuOptions = {
   newRequest: 'New request',
   setRecordForDeletion: 'Set record for deletion',
   newMarcBibRecord: 'New MARC bibliographic record',
+  exportInstanceMarc: 'Export instance (MARC)',
 };
 
 export default {
@@ -679,11 +680,6 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
-  exportInstanceMarcButtonAbsent: () => {
-    clickActionsButton();
-    cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
-  },
-
   setRecordForDeletion: () => {
     cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
   },
@@ -766,7 +762,7 @@ export default {
     }
   },
 
-  validateHoldingsAbsent(holdingsLocation) {
+  verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 
@@ -822,6 +818,10 @@ export default {
 
   verifyInstanceSubjectAbsent: () => {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
+  },
+
+  verifyItemsListIsEmpty() {
+    cy.expect(HTML(including('The list contains no items')).exists());
   },
 
   checkNotesByType(

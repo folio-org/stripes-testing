@@ -28,6 +28,44 @@ import {
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
 } from '../../../support/constants';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  createSuppressFromDiscoveryRule,
+  HoldingsRules,
+  ActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+const {
+  createElectronicAccessLinkTextRule,
+  createMarkAsStaffOnlyRule,
+  createRemoveMarkAsStaffOnlyRule,
+} = HoldingsRules;
+
+// Profile factory functions
+const createMainProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C773231_HoldingsProfile_${getRandomPostfix()}`,
+    description: 'Test profile for executing bulk edit job',
+    entityType: 'HOLDINGS_RECORD',
+    ruleDetails: [
+      createAdminNoteRule(ActionCreators.findAndRemove('admin')),
+      createSuppressFromDiscoveryRule(false, true),
+      createElectronicAccessLinkTextRule(ActionCreators.findAndRemove('link')),
+      createMarkAsStaffOnlyRule(null), // Will be set to Action note type ID
+      createRemoveMarkAsStaffOnlyRule(null), // Will be set to Binding note type ID
+    ],
+  });
+};
+
+const createSecondProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_HoldingsProfile_${getRandomPostfix()}`,
+    description: 'Test profile for executing bulk edit job',
+    entityType: 'HOLDINGS_RECORD',
+    ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('admin'))],
+  });
+};
 
 let user;
 let bulkEditJobId;
@@ -44,93 +82,8 @@ const testData = {
   administrativeNote: 'admin note for testing',
   editedAdministrativeNote: ' note for testing',
   electronicAccessTableHeadersInFile:
-    'URL relationship;URI;Link text;Materials specified;URL public note\n',
+    'URL relationship;URI;Link text;Material specified;URL public note\n',
   errorMessage: 'Holdings records that have source "MARC" cannot be changed',
-  profileBody: {
-    name: `AT_C773231_HoldingsProfile_${getRandomPostfix()}`,
-    description: 'Test profile for executing bulk edit job',
-    locked: false,
-    entityType: 'HOLDINGS_RECORD',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'admin',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_TRUE',
-            parameters: [
-              {
-                key: 'APPLY_TO_ITEMS',
-                value: 'true',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'ELECTRONIC_ACCESS_LINK_TEXT',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'link',
-          },
-        ],
-      },
-      {
-        option: 'HOLDINGS_NOTE',
-        actions: [
-          {
-            type: 'MARK_AS_STAFF_ONLY',
-            parameters: [
-              {
-                key: 'HOLDINGS_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to Action note type ID
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'HOLDINGS_NOTE',
-        actions: [
-          {
-            type: 'REMOVE_MARK_AS_STAFF_ONLY',
-            parameters: [
-              {
-                key: 'HOLDINGS_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to Binding note type ID
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  secondProfileBody: {
-    name: `Test_HoldingsProfile_${getRandomPostfix()}`,
-    description: 'Test profile for executing bulk edit job',
-    locked: false,
-    entityType: 'HOLDINGS_RECORD',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'admin',
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -149,23 +102,32 @@ describe('Bulk-edit', () => {
           testData.adminSourceRecord = record;
         });
         cy.getHoldingNoteTypeIdViaAPI('Action note').then((actionNoteTypeId) => {
-          testData.profileBody.ruleDetails[3].actions[0].parameters[0].value = actionNoteTypeId;
           testData.actionNoteTypeId = actionNoteTypeId;
         });
         cy.getHoldingNoteTypeIdViaAPI('Binding')
           .then((bindingNoteTypeId) => {
-            testData.profileBody.ruleDetails[4].actions[0].parameters[0].value = bindingNoteTypeId;
             testData.bindingNoteTypeId = bindingNoteTypeId;
           })
           .then(() => {
+            // Create profiles using factory functions
+            const mainProfile = createMainProfileBody();
+            mainProfile.ruleDetails[3].actions[0].parameters[0].value = testData.actionNoteTypeId;
+            mainProfile.ruleDetails[4].actions[0].parameters[0].value = testData.bindingNoteTypeId;
+
+            // Store profile description for test assertions
+            testData.profileDescription = mainProfile.description;
+
+            const secondProfile = createSecondProfileBody();
+            testData.secondProfileDescription = secondProfile.description;
+
             // Create main bulk edit profile
-            cy.createBulkEditProfile(testData.profileBody).then((profile) => {
+            cy.createBulkEditProfile(mainProfile).then((profile) => {
               testData.profileName = profile.name;
               testData.profileIds.push(profile.id);
             });
 
             // Create second bulk edit profile to verify search and sorting
-            cy.createBulkEditProfile(testData.secondProfileBody).then((profile) => {
+            cy.createBulkEditProfile(secondProfile).then((profile) => {
               testData.secondProfileName = profile.name;
               testData.profileIds.push(profile.id);
             });
@@ -383,7 +345,7 @@ describe('Bulk-edit', () => {
         // Step 4-5: Verify the table with the list of existing holdings bulk edit profiles
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfilesSortedByName();
@@ -396,14 +358,14 @@ describe('Bulk-edit', () => {
         SelectBulkEditProfileModal.searchProfile('at_C773231');
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
         SelectBulkEditProfileModal.searchProfile(testData.profileName);
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
@@ -460,27 +422,27 @@ describe('Bulk-edit', () => {
 
         holdingHrids.forEach((holdingHrid) => {
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
             true,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
             testData.editedAdministrativeNote.trim(),
           );
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             editedHeaderValues,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -522,27 +484,27 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
           true,
         );
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           editedHeaderValues,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
           testData.editedAdministrativeNote.trim(),
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -555,7 +517,7 @@ describe('Bulk-edit', () => {
           .join('\n');
 
         BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(queryFileNames.errorsFromCommittingFileName, [
+        ExportFile.verifyFileIncludes(queryFileNames.errorsFromCommitting, [
           expectedErrorMessagesInFile,
         ]);
 
@@ -582,7 +544,7 @@ describe('Bulk-edit', () => {
 
         holdingHrids.forEach((holdingHrid) => {
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.matchedRecordsQueryFileName,
+            queryFileNames.matchedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
@@ -595,27 +557,27 @@ describe('Bulk-edit', () => {
 
         holdingHrids.forEach((holdingHrid) => {
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             editedHeaderValues,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
             true,
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
             testData.editedAdministrativeNote.trim(),
           );
           BulkEditFiles.verifyValueInRowByUUID(
-            queryFileNames.previewFileName,
+            queryFileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
             holdingHrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -627,27 +589,27 @@ describe('Bulk-edit', () => {
         BulkEditLogs.downloadFileWithUpdatedRecords();
 
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           editedHeaderValues,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
           true,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
           testData.editedAdministrativeNote.trim(),
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           testData.folioHoldingsHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -656,7 +618,7 @@ describe('Bulk-edit', () => {
 
         // Step 17: Click on the "File with errors encountered when committing the changes" hyperlink
         BulkEditLogs.downloadFileWithCommitErrors();
-        ExportFile.verifyFileIncludes(queryFileNames.errorsFromCommittingFileName, [
+        ExportFile.verifyFileIncludes(queryFileNames.errorsFromCommitting, [
           expectedErrorMessagesInFile,
         ]);
 

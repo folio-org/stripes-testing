@@ -201,4 +201,8 @@ export default {
       SearchField({ id: 'textarea-authorities-search' }).has({ selectedFilterText: parameter }),
     );
   },
+
+  selectSearchOption: (parameter) => {
+    cy.do(SearchField({ id: 'textarea-authorities-search' }).selectIndex(parameter));
+  },
 };

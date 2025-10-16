@@ -66,7 +66,7 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Invali
 
   it(
     'C490949 Cannot update Local Field with invalid value in "required" field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C490949', 'spitfire'] },
+    { tags: ['extendedPath', 'C490949', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

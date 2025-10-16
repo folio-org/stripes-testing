@@ -2389,7 +2389,7 @@ export default {
     cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
-  verifyInvalidLDRValueCallout(positions) {
+  verifyInvalidLDRValueError(positions) {
     let positionsArray = positions;
     if (!Array.isArray(positions)) {
       positionsArray = [positions];
@@ -2410,8 +2410,9 @@ export default {
         return leaderText;
       })
       .join(' ');
-    const callOutText = `Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
-    cy.expect(Callout(callOutText).exists());
+    const errorText = `Fail: Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
+    const errorElement = getRowInteractorByTagName('LDR').find(HTML(including(errorText)));
+    cy.expect(errorElement.exists());
   },
 
   closeCallout(text) {
@@ -3237,5 +3238,71 @@ export default {
 
   close() {
     cy.do(QuickMarcEditor().find(PaneHeader()).find(closeButton).click());
+  },
+
+  checkSomeDropdownsMarkedAsInvalid(tag, someInvalid = true) {
+    const invalidDropdown = getRowInteractorByTagName(tag).find(Select({ valid: false }));
+    if (someInvalid) cy.expect(invalidDropdown.exists());
+    else cy.expect(invalidDropdown.absent());
+  },
+
+  checkUnlinkButtonShown(tag, isShown = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(unlinkIconButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  linkMarcRecordsViaApi({
+    bibId,
+    authorityId,
+    bibFieldTag,
+    authorityFieldTag,
+    finalBibFieldContent,
+    bibFieldIndex = null,
+  } = {}) {
+    let linkingRuleId;
+    let authorityNaturalId;
+    let sourceFileId;
+    let sourceFileUrl = '';
+
+    cy.then(() => {
+      cy.getAllRulesViaApi().then((rules) => {
+        linkingRuleId = rules
+          .filter((rule) => rule.bibField === bibFieldTag)
+          .find((rule) => rule.authorityField === authorityFieldTag).id;
+      });
+      cy.okapiRequest({
+        path: 'search/authorities',
+        searchParams: { query: `id=="${authorityId}"` },
+        isDefaultSearchParamsRequired: false,
+      }).then((res) => {
+        authorityNaturalId = res.body.authorities[0].naturalId;
+        sourceFileId = res.body.authorities[0].sourceFileId;
+
+        if (sourceFileId && sourceFileId !== 'NULL') {
+          cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
+            sourceFileUrl = sourceFileData.baseUrl;
+          });
+        }
+      });
+    }).then(() => {
+      cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
+        const updatedMarcData = marcData;
+        const targetFieldIndex =
+          bibFieldIndex !== null
+            ? bibFieldIndex - 1
+            : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
+        updatedMarcData.fields[targetFieldIndex].content =
+          `${finalBibFieldContent} $0 ${sourceFileUrl}${authorityNaturalId} $9 ${authorityId}`;
+        updatedMarcData.fields[targetFieldIndex].linkDetails = {
+          authorityId,
+          authorityNaturalId,
+          linkingRuleId,
+          status: 'NEW',
+        };
+
+        cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
+      });
+    });
   },
 };
