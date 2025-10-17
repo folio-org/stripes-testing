@@ -404,6 +404,9 @@ export default {
 
   waitInventoryLoading() {
     cy.expect(instanceDetailsSection.exists());
+    // Wait for the title to gain focus. There is a slight delay before focus is achieved,
+    // and if you open any dropdown before then, it will immediately close, and the test will fail.
+    cy.wait(1000);
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
@@ -1931,5 +1934,14 @@ export default {
   verifyPermissionMessageInSelectAuthorityModal(isShown = true) {
     const targetMessage = findAuthorityModal.find(HTML(messages.cannotViewAuthoritiesMessage));
     cy.expect(isShown ? targetMessage.exists() : targetMessage.absent());
+  },
+
+  verifyEditButtonsShown({ folioEdit = true, marcEdit = true } = {}) {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    if (folioEdit) cy.expect(editInstanceButton.exists());
+    else cy.expect(editInstanceButton.absent());
+    if (marcEdit) cy.expect(editMARCBibRecordButton.exists());
+    else cy.expect(editMARCBibRecordButton.absent());
   },
 };

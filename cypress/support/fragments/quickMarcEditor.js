@@ -3245,4 +3245,98 @@ export default {
     if (someInvalid) cy.expect(invalidDropdown.exists());
     else cy.expect(invalidDropdown.absent());
   },
+
+  checkUnlinkButtonShown(tag, isShown = true, rowIndex = null) {
+    const targetButton =
+      rowIndex === null
+        ? getRowInteractorByTagName(tag).find(unlinkIconButton)
+        : getRowInteractorByRowNumber(rowIndex).find(unlinkIconButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  /**
+    A method for linking MARC bibliographic and authority records via API.
+    `bibFieldIndexes` to be used in case of multiple bib fields with the same tag
+  */
+  linkMarcRecordsViaApi({
+    bibId,
+    authorityIds,
+    bibFieldTags,
+    authorityFieldTags,
+    finalBibFieldContents,
+    bibFieldIndexes = null,
+  } = {}) {
+    let relatedRecordVersion;
+    const linkingRuleIds = [];
+    const authorityNaturalIds = [];
+    const sourceFileIds = [];
+    const sourceFileUrls = [];
+
+    cy.then(() => {
+      cy.getAllRulesViaApi().then((rules) => {
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          linkingRuleIds.push(
+            rules
+              .filter((rule) => rule.bibField === bibFieldTag)
+              .find((rule) => rule.authorityField === authorityFieldTags[index]).id,
+          );
+        });
+      });
+      cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
+        relatedRecordVersion = `${auditData.totalRecords}`;
+      });
+      authorityIds.forEach((authorityId) => {
+        cy.okapiRequest({
+          path: 'search/authorities',
+          searchParams: { query: `id=="${authorityId}"` },
+          isDefaultSearchParamsRequired: false,
+        }).then((res) => {
+          authorityNaturalIds.push(res.body.authorities[0].naturalId);
+          const sourceFileId = res.body.authorities[0].sourceFileId;
+          sourceFileIds.push(sourceFileId);
+
+          if (sourceFileId && sourceFileId !== 'NULL') {
+            cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
+              sourceFileUrls.push(sourceFileData.baseUrl);
+            });
+          } else sourceFileUrls.push('');
+        });
+      });
+    }).then(() => {
+      cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
+        const updatedMarcData = marcData;
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          const targetFieldIndex =
+            bibFieldIndexes !== null
+              ? bibFieldIndexes[index] - 1
+              : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
+          updatedMarcData.fields[targetFieldIndex].content =
+            `${finalBibFieldContents[index]} $0 ${sourceFileUrls[index]}${authorityNaturalIds[index]} $9 ${authorityIds[index]}`;
+          updatedMarcData.fields[targetFieldIndex].linkDetails = {
+            authorityId: authorityIds[index],
+            authorityNaturalId: authorityNaturalIds[index],
+            linkingRuleId: linkingRuleIds[index],
+            status: 'NEW',
+          };
+        });
+        updatedMarcData.relatedRecordVersion = relatedRecordVersion;
+
+        cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
+      });
+    });
+  },
+
+  verifyValuesInLdrNonEditableBoxes({
+    positions0to4BoxValues,
+    positions9to16BoxValues,
+    positions20to23BoxValues,
+  } = {}) {
+    const positions0to4Box = TextField({ name: 'records[0].content.Record length' });
+    const positions9to16Box = TextField({ name: 'records[0].content.9-16 positions' });
+    const positions20to23Box = TextField({ name: 'records[0].content.20-23 positions' });
+    if (positions0to4BoxValues) cy.expect(positions0to4Box.has({ value: positions0to4BoxValues, disabled: true }));
+    if (positions9to16BoxValues) cy.expect(positions9to16Box.has({ value: positions9to16BoxValues, disabled: true }));
+    if (positions20to23BoxValues) cy.expect(positions20to23Box.has({ value: positions20to23BoxValues, disabled: true }));
+  },
 };

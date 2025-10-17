@@ -55,7 +55,10 @@ describe('Inventory', () => {
           InstanceRecordView.waitLoading();
           InstanceRecordView.verifyAddHoldingsButtonIsAbsent();
           InstanceRecordView.expandConsortiaHoldings();
-          InstanceRecordView.verifyAddItemButtonIsAbsent({ holdingName: 'Consortial holdings' });
+          InstanceRecordView.verifyAddItemButtonVisibility({
+            holdingName: 'Consortial holdings',
+            shouldBePresent: false,
+          });
         },
       );
     });
