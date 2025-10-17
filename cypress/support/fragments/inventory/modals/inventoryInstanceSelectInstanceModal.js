@@ -1,7 +1,6 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  HTML,
-  including,
   Modal,
   MultiColumnList,
   MultiColumnListCell,

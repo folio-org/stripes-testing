@@ -8,6 +8,7 @@ import {
   PaneHeader,
   Section,
   TextArea,
+  Link,
 } from '../../../../interactors';
 import {
   FULFILMENT_PREFERENCES,
@@ -197,17 +198,26 @@ export default {
   },
 
   openHoldingsAccordion(holdingId) {
+    cy.wait(1000);
     cy.do(Button({ id: `accordion-toggle-button-holdings.${holdingId}` }).click());
   },
 
+  // openItem(itemBarcode) {
+  //   cy.wait(1500);
+  //   cy.do(
+  //     Section({ id: 'pane-instancedetails' })
+  //       .find(MultiColumnListCell({ content: itemBarcode }))
+  //       .find(Button(including(itemBarcode)))
+  //       .click(),
+  //   );
+  // },
   openItem(itemBarcode) {
-    cy.wait(1500);
-    cy.do(
-      Section({ id: 'pane-instancedetails' })
-        .find(MultiColumnListCell({ content: itemBarcode }))
-        .find(Button(including(itemBarcode)))
-        .click(),
-    );
+    cy.wait(3000);
+    const barcodeLink = Section({ id: 'pane-instancedetails' })
+      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(Link({ text: including(itemBarcode) }));
+
+    cy.do(barcodeLink.click());
   },
 
   checkIsMarkAsMissingExist(isExist) {
