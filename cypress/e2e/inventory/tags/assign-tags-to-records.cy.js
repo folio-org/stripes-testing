@@ -93,6 +93,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
+        InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.filterHoldingsByTag(tagName);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
@@ -146,6 +147,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
+        InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.filterItemsByTag(tagName);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.folioInstances[0].barcodes[0]);
