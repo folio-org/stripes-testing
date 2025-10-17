@@ -186,7 +186,7 @@ describe('Orders', () => {
       Funds.openTransactions(); // Budget details -> Transactions
       Transactions.waitLoading();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.checkStatusInTransactionDetails('Released'); // Note: Before Trillium - "Unreleased"
     },
   );
 });
