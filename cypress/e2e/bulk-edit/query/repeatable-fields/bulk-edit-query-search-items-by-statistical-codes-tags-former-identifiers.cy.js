@@ -216,57 +216,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
 
-          // Step 2: Search items by "Item — Tags" field using "equals" operator
-          QueryModal.selectField(itemFieldValues.itemTags);
-          QueryModal.verifySelectedField(itemFieldValues.itemTags);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.chooseValueSelect('important');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyQueryAreaContent(
-            '(items.tags == important) AND (items.barcode starts with AT_C813673_Item)',
-          );
-          QueryModal.verifyPreviewOfRecordsMatched();
-
-          // Expected to find: Items 1, 2
-          expectedItemsToFind.forEach((item) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              item.barcode,
-              itemFieldValues.itemTags,
-              item.tagsString,
-            );
-          });
-
-          // Not expected to find: Items 3 and 4
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
-
-          // Step 3: Search items by "Item — Former identifiers" field using "starts with" operator
-          QueryModal.selectField(itemFieldValues.itemFormerIdentifiers);
-          QueryModal.verifySelectedField(itemFieldValues.itemFormerIdentifiers);
-          QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
-          QueryModal.fillInValueTextfield('abc');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyQueryAreaContent(
-            '(items.former_ids starts with abc) AND (items.barcode starts with AT_C813673_Item)',
-          );
-          QueryModal.verifyPreviewOfRecordsMatched();
-
-          // Expected to find: Items 1, 2
-          expectedItemsToFind.forEach((item) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              item.barcode,
-              itemFieldValues.itemFormerIdentifiers,
-              item.formerIdsString,
-            );
-          });
-
-          // Not expected to find: Items 3, 4
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
-
-          // Step 5: Click "Run query" button and check "Statistical codes" column in Preview of records matched
+          // Step 2: Click "Run query" button and check "Statistical codes" column in Preview of records matched
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
@@ -292,7 +242,7 @@ describe('Bulk-edit', () => {
               expectedItems[1].statisticalCodeNameInBulkEditForm,
             );
 
-            // Step 6: Download matched records (CSV) and check populating "Statistical codes" column in the file
+            // Step 3: Download matched records (CSV) and check populating "Statistical codes" column in the file
             fileNames = BulkEditFiles.getAllQueryDownloadedFileNames(bulkEditJobId, true);
 
             BulkEditActions.openActions();
@@ -312,6 +262,67 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATISTICAL_CODES,
               expectedItems[1].statisticalCodeNameInBulkEditForm,
             );
+          });
+
+          // Step 4: Navigate back to build query
+          BulkEditSearchPane.clickToBulkEditMainButton();
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkItemsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
+
+          // Step 5: Search items by "Item — Tags" field using "equals" operator
+          QueryModal.selectField(itemFieldValues.itemTags);
+          QueryModal.verifySelectedField(itemFieldValues.itemTags);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.chooseValueSelect('important');
+          QueryModal.addNewRow();
+          QueryModal.selectField(itemFieldValues.itemBarcode, 1);
+          QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
+          QueryModal.fillInValueTextfield('AT_C813673_Item', 1);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            '(items.tags == important) AND (items.barcode starts with AT_C813673_Item)',
+          );
+          QueryModal.verifyPreviewOfRecordsMatched();
+
+          // Expected to find: Items 1, 2
+          expectedItemsToFind.forEach((item) => {
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              item.barcode,
+              itemFieldValues.itemTags,
+              item.tagsString,
+            );
+          });
+
+          // Not expected to find: Items 3 and 4
+          notExpectedToFindItemBarcodes.forEach((barcode) => {
+            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+          });
+
+          // Step 6: Search items by "Item — Former identifiers" field using "starts with" operator
+          QueryModal.selectField(itemFieldValues.itemFormerIdentifiers);
+          QueryModal.verifySelectedField(itemFieldValues.itemFormerIdentifiers);
+          QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
+          QueryModal.fillInValueTextfield('abc');
+          QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            '(items.former_ids starts with abc) AND (items.barcode starts with AT_C813673_Item)',
+          );
+          QueryModal.verifyPreviewOfRecordsMatched();
+
+          // Expected to find: Items 1, 2
+          expectedItemsToFind.forEach((item) => {
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              item.barcode,
+              itemFieldValues.itemFormerIdentifiers,
+              item.formerIdsString,
+            );
+          });
+
+          // Not expected to find: Items 3, 4
+          notExpectedToFindItemBarcodes.forEach((barcode) => {
+            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
         },
       );

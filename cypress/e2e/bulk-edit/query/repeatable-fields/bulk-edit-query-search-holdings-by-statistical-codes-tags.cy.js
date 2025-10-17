@@ -204,42 +204,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
 
-          // Step 2: Search holdings by "Holdings — Tags" field using "equals" operator
-          QueryModal.selectField(holdingsFieldValues.holdingsTags);
-          QueryModal.verifySelectedField(holdingsFieldValues.holdingsTags);
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.chooseValueSelect('important');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyQueryAreaContent(
-            `(holdings.tags == important) AND (holdings.instance_id == ${folioInstance.id})`,
-          );
-          QueryModal.verifyPreviewOfRecordsMatched();
-
-          // Expected to find: Holdings 1, 2
-          expectedHoldingsToFind.forEach((holding) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              holding.hrid,
-              holdingsFieldValues.holdingsTags,
-              holding.tagsString,
-            );
-          });
-
-          // Not expected to find: Holdings 3, 4
-          notExpectedToFindHoldingHrids.forEach((hrid) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
-          });
-
-          // Step 3: Check display of Holdings data in "Holdings — Statistical code names", "Holdings — Tags" columns
-          // Verify the format of rendered statistical codes matches the expected format
-          expectedHoldingsToFind.forEach((holding) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              holding.hrid,
-              holdingsFieldValues.holdingsStatisticalCodeNames,
-              holding.statisticalCodeName,
-            );
-          });
-
-          // Step 4: Click "Run query" button and check "Statistical codes" column in Preview of records matched
+          // Step 2: Click "Run query" button and check "Statistical codes" column in Preview of records matched
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
@@ -265,7 +230,7 @@ describe('Bulk-edit', () => {
               expectedHoldings[1].statisticalCodeNameInBulkEditForm,
             );
 
-            // Step 5: Download matched records (CSV) and check populating "Statistical codes" column in the file
+            // Step 3: Download matched records (CSV) and check populating "Statistical codes" column in the file
             fileNames = BulkEditFiles.getAllQueryDownloadedFileNames(bulkEditJobId, true);
 
             BulkEditActions.openActions();
@@ -285,6 +250,42 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.STATISTICAL_CODES,
               expectedHoldings[1].statisticalCodeNameInBulkEditForm,
             );
+          });
+
+          // Step 4: Navigate back to build query
+          BulkEditSearchPane.clickToBulkEditMainButton();
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkHoldingsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
+
+          // Step 5: Search holdings by "Holdings — Tags" field using "equals" operator
+          QueryModal.selectField(holdingsFieldValues.holdingsTags);
+          QueryModal.verifySelectedField(holdingsFieldValues.holdingsTags);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.chooseValueSelect('important');
+          QueryModal.addNewRow();
+          QueryModal.selectField(holdingsFieldValues.instanceUuid, 1);
+          QueryModal.selectOperator(STRING_OPERATORS.EQUAL, 1);
+          QueryModal.fillInValueTextfield(folioInstance.id, 1);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            `(holdings.tags == important) AND (holdings.instance_id == ${folioInstance.id})`,
+          );
+          QueryModal.verifyPreviewOfRecordsMatched();
+
+          // Expected to find: Holdings 1, 2
+          expectedHoldingsToFind.forEach((holding) => {
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              holding.hrid,
+              holdingsFieldValues.holdingsTags,
+              holding.tagsString,
+            );
+          });
+
+          // Not expected to find: Holdings 3, 4
+          notExpectedToFindHoldingHrids.forEach((hrid) => {
+            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
         },
       );
