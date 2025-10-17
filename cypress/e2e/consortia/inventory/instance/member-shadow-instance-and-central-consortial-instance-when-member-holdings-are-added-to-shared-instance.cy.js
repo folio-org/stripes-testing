@@ -84,10 +84,9 @@ describe('Inventory', () => {
         'C411388 (CONSORTIA) Check member shadow instance and central consortial instance when member holdings are added to a shared instance (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C411388'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
-          InstanceRecordView.waitLoading();
+          InstanceRecordView.verifyInstanceRecordViewOpened();
           InstanceRecordView.addHoldings();
           InventoryNewHoldings.fillPermanentLocation(testData.location.name);
           InventoryNewHoldings.saveAndClose();
@@ -96,11 +95,14 @@ describe('Inventory', () => {
             testData.instanceHRID = initialInstanceHrId;
 
             InstanceRecordView.verifyInstanceSource(testData.instanceSource);
-            InstanceRecordView.verifyAddItemButtonIsAbsent({ holdingName: 'Consortial holdings' });
+            InstanceRecordView.verifyAddItemButtonVisibility({
+              holdingName: 'Consortial holdings',
+              shouldBePresent: true,
+            });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
-            InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstanceRecordViewOpened();
             InventoryInstance.verifyConsortiaHoldingsAccordion(false);
             InventoryInstance.expandConsortiaHoldings();
             InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
