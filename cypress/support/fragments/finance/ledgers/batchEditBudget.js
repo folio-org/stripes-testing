@@ -215,28 +215,18 @@ export default {
   },
 
   increaseAllocationForFund(fundName, increaseValue) {
-    const tableSelector = '#batch-allocation-form-content';
-    cy.get(`${tableSelector} div[role="row"]`)
-      .filter((i, r) => {
-        const aria = r.getAttribute('aria-rowindex');
-        return aria && Number(aria) > 1;
-      })
-      .then(($rows) => {
-        const targetRow = [...$rows].find((r) => {
-          const text = Cypress.$(r).find('div[role="gridcell"]').eq(0).text()
-            .trim();
-          return text === fundName;
-        });
-        // eslint-disable-next-line no-unused-expressions
-        expect(targetRow, `row for fund ${fundName}`).to.exist;
-        const $row = Cypress.$(targetRow);
-        const $cell = $row.find('div[role="gridcell"]').filter((i, c) => {
-          return Cypress.$(c).find('input[name*="budgetAllocationChange"]').length > 0;
-        });
-        expect($cell.length, `allocation change cell in row ${fundName}`).to.be.greaterThan(0);
-        const $input = $cell.find('input[name*="budgetAllocationChange"]');
-        expect($input.length, `input for allocation change for ${fundName}`).to.be.greaterThan(0);
-        cy.wrap($input).clear().type(String(increaseValue), { delay: 0 });
+    const table = '#batch-allocation-form-content';
+    const escaped = Cypress._.escapeRegExp(String(fundName)); // lodash в Cypress
+    cy.contains(
+      `${table} [role="row"] [role="gridcell"] [class^="col-xs"]`,
+      new RegExp(`\\b${escaped}\\b`), // без якоря $, чтобы не мешал скрытый текст
+    )
+      .closest('[role="row"]')
+      .within(() => {
+        cy.get('input[name*="budgetAllocationChange"]')
+          .should('be.visible')
+          .clear()
+          .type(String(increaseValue), { delay: 0 });
       });
   },
 
@@ -288,19 +278,16 @@ export default {
   },
 
   getFundRow(fundName) {
+    const escapeRx = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const table = '#batch-allocation-form-content';
+    const rx = new RegExp(`^\\s*${escapeRx(fundName)}\\s*$`);
+
+    // ищем текст именно внутри первой ячейки с названием и поднимаемся к <div role="row">
     return cy
-      .get('#batch-allocation-form-content div[role="row"]')
-      .filter((i, r) => {
-        const aria = r.getAttribute('aria-rowindex');
-        return aria && Number(aria) > 1;
-      })
-      .then(($rows) => {
-        const found = Cypress.$.makeArray($rows).find((r) => {
-          const nameCell = Cypress.$(r).find('div[role="gridcell"]').eq(0);
-          return nameCell.text().trim() === fundName;
-        });
-        return cy.wrap(found);
-      });
+      .contains(`${table} [role="row"] [role="gridcell"]:first-child .col-xs---h2D6d`, rx)
+      .scrollIntoView() // на случай, если строка вне видимой области
+      .should('be.visible') // убеждаемся, что она видима
+      .closest('[role="row"]'); // возвращаем сам ряд
   },
 
   setFundStatus(fundName, status) {
@@ -311,10 +298,7 @@ export default {
   },
 
   setBudgetStatus(fundName, status) {
-    this.getFundRow(fundName).then(($row) => {
-      const sel = $row.find('select[name*="budgetStatus"]');
-      cy.wrap(sel).select(status);
-    });
+    this.getFundRow(fundName).find('select[name*="budgetStatus"]').should('exist').select(status);
   },
 
   setAllocationChange(fundName, value) {
@@ -325,10 +309,11 @@ export default {
   },
 
   setAllowableEncumbrance(fundName, value) {
-    this.getFundRow(fundName).then(($row) => {
-      const input = $row.find('input[name*="budgetAllowableEncumbrance"]');
-      cy.wrap(input).clear().type(String(value), { delay: 0 });
-    });
+    this.getFundRow(fundName)
+      .find('input[name*="budgetAllowableEncumbrance"]')
+      .should('exist')
+      .clear()
+      .type(String(value), { delay: 0 });
   },
 
   setAllowableExpenditure(fundName, value) {
@@ -348,6 +333,10 @@ export default {
         cy.wrap(combo).type(tag + '{enter}', { delay: 0 });
       });
     });
+  },
+
+  checkErrorMessageForNegativeEncumbranceOrExpenditure() {
+    cy.get('[role="alert"]').contains('Can not be negative').should('be.visible');
   },
 
   checkErrorMessageForNegativeAllocation() {

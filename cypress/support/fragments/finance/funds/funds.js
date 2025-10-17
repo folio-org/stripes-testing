@@ -1005,6 +1005,10 @@ export default {
     cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
   },
 
+  checkFundStatus(status) {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
   closeBudgetDetails() {
     cy.do(budgetPane.find(Button({ icon: 'times' })).click());
     cy.expect(fundDetailsPane.visible());
