@@ -62,6 +62,23 @@ const embeddedTableHeadersMap = {
   ],
   alternativeTitles: ['Alternative title', 'Alternative title type'],
   subjects: ['Subject headings', 'Subject source', 'Subject type'],
+  identifiers: ['Type', 'Identifier'],
+  classifications: ['Classification identifier type', 'Classification'],
+};
+
+export const embeddedFields = {
+  receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
+  contributors: [
+    'Contributor name',
+    'Contributor name type',
+    'Contributor type',
+    'Contributor type, free text',
+    'Primary',
+  ],
+  alternativeTitles: ['Alternative title', 'Alternative title type'],
+  subjects: ['Subject headings', 'Subject source', 'Subject type'],
+  identifiers: ['Identifier', 'Identifier type'],
+  classifications: ['Classification', 'Classification identifier type'],
 };
 
 export const holdingsFieldValues = {
@@ -139,6 +156,11 @@ export const instanceFieldValues = {
   subjectsSubjectHeadings: 'Instance — Subjects — Subject headings',
   subjectsSubjectSource: 'Instance — Subjects — Subject source',
   subjectsSubjectType: 'Instance — Subjects — Subject type',
+  identifiersIdentifier: 'Instance — Identifiers — Identifier',
+  identifiersIdentifierType: 'Instance — Identifiers — Identifier type',
+  classificationsClassification: 'Instance — Classifications — Classification',
+  classificationsClassificationIdentifierType:
+    'Instance — Classifications — Classification identifier type',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -684,6 +706,10 @@ export default {
         return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
       case 'publications':
         return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
+      case 'identifiers':
+        return [dataObj.identifierType, dataObj.identifier];
+      case 'classifications':
+        return [dataObj.classificationIdentifierType, dataObj.classification];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -765,6 +791,18 @@ export default {
     expectedPublications, // Can be a single publication object or array of publication objects, ex: { publisher: 'test publisher', role: 'test role', place: 'test place', dateOfPublication: 'test date' }
   ) {
     this.verifyEmbeddedTableInQueryModal('publications', instanceIdentifier, expectedPublications);
+  },
+
+  verifyIdentifiersEmbeddedTableInQueryModal(instanceIdentifier, expectedIdentifiers) {
+    this.verifyEmbeddedTableInQueryModal('identifiers', instanceIdentifier, expectedIdentifiers);
+  },
+
+  verifyClassificationsEmbeddedTableInQueryModal(instanceIdentifier, expectedClassifications) {
+    this.verifyEmbeddedTableInQueryModal(
+      'classifications',
+      instanceIdentifier,
+      expectedClassifications,
+    );
   },
 
   clickShowColumnsButton() {
