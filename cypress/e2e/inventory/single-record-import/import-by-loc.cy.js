@@ -49,12 +49,12 @@ describe('Inventory', () => {
     beforeEach('Login', () => {
       cy.getAdminToken();
       cy.toggleLocSingleImportProfileViaAPI();
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      cy.reload();
-      cy.wait('@/authn/refresh', { timeout: 20000 });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+      }, 20_000);
       InventoryInstances.waitContentLoading();
       cy.wait(3000);
     });
