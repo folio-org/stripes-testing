@@ -100,10 +100,12 @@ describe('MARC', () => {
             .then(() => {
               QuickMarcEditor.linkMarcRecordsViaApi({
                 bibId: createdInstanceIds[0],
-                authorityId: createdAuthorityId,
-                bibFieldTag: testData.tag700,
-                authorityFieldTag: testData.tag100,
-                finalBibFieldContent: `$a ${testData.authorityHeading} ${testData.nonControllableSubfield}`,
+                authorityIds: [createdAuthorityId],
+                bibFieldTags: [testData.tag700],
+                authorityFieldTags: [testData.tag100],
+                finalBibFieldContents: [
+                  `$a ${testData.authorityHeading} ${testData.nonControllableSubfield}`,
+                ],
               });
             })
             .then(() => {

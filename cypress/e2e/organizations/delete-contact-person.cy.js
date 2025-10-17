@@ -36,7 +36,7 @@ describe('Organizations', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C729 Delete a contact person (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+  it('C729 Delete a contact person (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
