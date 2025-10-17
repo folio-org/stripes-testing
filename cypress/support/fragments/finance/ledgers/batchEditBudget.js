@@ -216,10 +216,10 @@ export default {
 
   increaseAllocationForFund(fundName, increaseValue) {
     const table = '#batch-allocation-form-content';
-    const escaped = Cypress._.escapeRegExp(String(fundName)); // lodash в Cypress
+    const escaped = Cypress._.escapeRegExp(String(fundName));
     cy.contains(
       `${table} [role="row"] [role="gridcell"] [class^="col-xs"]`,
-      new RegExp(`\\b${escaped}\\b`), // без якоря $, чтобы не мешал скрытый текст
+      new RegExp(`\\b${escaped}\\b`),
     )
       .closest('[role="row"]')
       .within(() => {
@@ -282,12 +282,11 @@ export default {
     const table = '#batch-allocation-form-content';
     const rx = new RegExp(`^\\s*${escapeRx(fundName)}\\s*$`);
 
-    // ищем текст именно внутри первой ячейки с названием и поднимаемся к <div role="row">
     return cy
       .contains(`${table} [role="row"] [role="gridcell"]:first-child .col-xs---h2D6d`, rx)
-      .scrollIntoView() // на случай, если строка вне видимой области
-      .should('be.visible') // убеждаемся, что она видима
-      .closest('[role="row"]'); // возвращаем сам ряд
+      .scrollIntoView()
+      .should('be.visible')
+      .closest('[role="row"]');
   },
 
   setFundStatus(fundName, status) {
