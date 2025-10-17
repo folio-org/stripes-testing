@@ -1374,6 +1374,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ITEM_HRID: 'Item HRID',
+    STATISTICAL_CODES: 'Statistical codes',
   },
   USERS: {
     USERNAME: 'Username',
