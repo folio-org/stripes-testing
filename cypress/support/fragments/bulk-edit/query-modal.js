@@ -161,6 +161,11 @@ export const instanceFieldValues = {
   classificationsClassification: 'Instance — Classifications — Classification',
   classificationsClassificationIdentifierType:
     'Instance — Classifications — Classification identifier type',
+  electronicAccessLinkText: 'Instance — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Instance — Electronic access — Material specified',
+  electronicAccessURI: 'Instance — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Instance — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -681,7 +686,7 @@ export default {
           dataObj.relationship,
           dataObj.uri,
           dataObj.linkText,
-          dataObj.materialsSpecified,
+          dataObj.materialsSpecification,
           dataObj.publicNote,
         ];
       case 'notes':

@@ -101,7 +101,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         uri: 'ftp://harvarda.harvard.edu',
         linkText: 'Electronic resource (PDF)',
-        materialsSpecified: 'Table of contents',
+        materialsSpecification: 'Table of contents',
         publicNote:
           'FTP access to PostScript version includes groups of article files with .pdf extension',
       },
@@ -114,7 +114,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         uri: 'http://susdl.fcla.edu',
         linkText: 'Electronic resource (JPEG)',
-        materialsSpecified: 'Table of contents',
+        materialsSpecification: 'Table of contents',
         publicNote:
           'HTTP access to PostScript version includes groups of article files with .jpeg extension',
       },
@@ -122,7 +122,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE,
         uri: 'ftp://harvarda.harvard.edu',
         linkText: 'Electronic resource (PNG)',
-        materialsSpecified: 'Volume 1',
+        materialsSpecification: 'Volume 1',
         publicNote:
           'FTP access to PostScript version includes groups of article files with .png extension',
       },
@@ -130,7 +130,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         uri: 'telnet://maine.maine.edu',
         linkText: 'Electronic resource (PDF)',
-        materialsSpecified: 'Volume 2',
+        materialsSpecification: 'Volume 2',
         publicNote:
           'TELNET access to PostScript version includes groups of article files with .pdf extension',
       },
@@ -143,7 +143,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         uri: 'telnet://maine.maine.edu',
         linkText: '',
-        materialsSpecified: 'content',
+        materialsSpecification: 'content',
         publicNote: 'access to PostScript version',
       },
     ],
