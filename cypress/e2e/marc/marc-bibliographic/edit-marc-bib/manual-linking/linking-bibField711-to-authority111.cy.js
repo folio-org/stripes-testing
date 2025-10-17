@@ -138,7 +138,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
             InventoryInstance.goToPreviousPage();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();

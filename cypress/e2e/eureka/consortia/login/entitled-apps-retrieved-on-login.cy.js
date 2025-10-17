@@ -70,7 +70,6 @@ describe('Eureka', () => {
           });
           cy.intercept('GET', testData.appCallRegexpCollege).as('appCallCollege');
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           SettingsPane.waitLoading();
           cy.wait('@appCallCollege').then(({ response }) => {
             const retrievedAppIds = response.body.applicationDescriptors.map(
