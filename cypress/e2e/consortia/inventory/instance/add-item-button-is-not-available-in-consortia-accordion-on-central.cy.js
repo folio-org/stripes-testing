@@ -114,8 +114,9 @@ describe('Inventory', () => {
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
           InstanceRecordView.expandHoldings([`${testData.shadowHoldings.locationName}`]);
-          InstanceRecordView.verifyAddItemButtonIsAbsent({
+          InstanceRecordView.verifyAddItemButtonVisibility({
             holdingName: testData.shadowHoldings.locationName,
+            shouldBePresent: false,
           });
         },
       );

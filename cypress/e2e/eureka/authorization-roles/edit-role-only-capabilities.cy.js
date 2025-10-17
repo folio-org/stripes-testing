@@ -215,11 +215,19 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
           });
 
-          cy.intercept('GET', capabilitiesCallRegExp).as('capabilities');
-          cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
+          cy.intercept('GET', '/capabilities?*').as('capabilities');
+          cy.intercept('GET', '/capability-sets?*').as('capabilitySets');
           AuthorizationRoles.openForEdit();
-          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
-          cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
+          cy.wait('@capabilities').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitiesCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
+          cy.wait('@capabilitySets').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitySetsCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
           testData.originalCapabilities.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
           });

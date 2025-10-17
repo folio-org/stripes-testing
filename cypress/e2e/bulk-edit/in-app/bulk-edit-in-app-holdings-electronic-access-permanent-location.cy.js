@@ -188,7 +188,7 @@ describe('Bulk-edit', () => {
           secondItem.holdingsHRID,
         );
 
-        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
+        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};-;-|-;${secondElectronicAccess.uri};-;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
 
         verifyValuesInCsvFile(
           matchedRecordsFileName,

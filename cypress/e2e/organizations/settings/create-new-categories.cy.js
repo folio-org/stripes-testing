@@ -40,7 +40,7 @@ describe('Organizations --> Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C731 Create new categories (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+  it('C731 Create new categories (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
     SettingsOrganizations.selectCategories();
     SettingsOrganizations.clickNewCategoriesButton();
     SettingsOrganizations.fillCategoryName(categoryName);

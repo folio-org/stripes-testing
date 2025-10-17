@@ -173,6 +173,11 @@ describe('fse-edge', () => {
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
       cy.getHoldings().then((holdings) => {
+        // If no holdings returned from '/holdings-storage/holdings', then skip edge-rtac test
+        if (!holdings || !holdings[0]) {
+          cy.log('No holdings returned. Skipping edge-rtac test.');
+          return;
+        }
         cy.log(holdings[0]);
         // If instance uuid is returned from '/holdings-storage/holdings', then call edge-rtac api with it,
         // else skip edge-rtac
@@ -180,6 +185,8 @@ describe('fse-edge', () => {
           cy.getEdgeRtac(holdings[0].instanceId).then((response) => {
             cy.expect(response.status).to.eq(200);
           });
+        } else {
+          cy.log('No instanceId in holdings. Skipping edge-rtac test.');
         }
       });
     },

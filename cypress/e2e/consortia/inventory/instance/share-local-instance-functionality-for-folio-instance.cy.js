@@ -46,7 +46,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411289 (CONSORTIA) Check the action of the "Share local instance" button on Source = FOLIO Instance on Member tenant (folijet)',
+        'C411289 (CONSORTIA) Check the action of the "Share local instance" button on Source = FOLIO Instance on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C411289'] },
         () => {
           cy.resetTenant();

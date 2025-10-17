@@ -26,6 +26,42 @@ import {
 } from '../../../support/constants';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import {
+  createBulkEditProfileBody,
+  MarcRules,
+  MarcActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+const { createMarcFieldRule } = MarcRules;
+
+// Profile factory functions
+const createMainProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C788738_MarcInstancesProfile_${getRandomPostfix()}`,
+    description: 'Test MARC instances profile for 080 and 919 field operations',
+    entityType: 'INSTANCE_MARC',
+    marcRuleDetails: [
+      createMarcFieldRule('080', '\\', '\\', 'a', [
+        MarcActionCreators.find('821.113.1'),
+        MarcActionCreators.append('2', '[edition information]'),
+      ]),
+      createMarcFieldRule('919', '\\', '\\', 'a', [MarcActionCreators.removeAll()]),
+    ],
+  });
+};
+
+const createSecondProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_InstancesProfile_${getRandomPostfix()}`,
+    description: 'Test profile for executing bulk edit job',
+    entityType: 'INSTANCE_MARC',
+    marcRuleDetails: [
+      createMarcFieldRule('500', '1', '0', 'a', [
+        MarcActionCreators.addToExisting('Original MARC note data'),
+      ]),
+    ],
+  });
+};
 
 let user;
 let bulkEditJobId;
@@ -38,83 +74,6 @@ const testData = {
   marcField919: 'Test 919 field content',
   subfield2: '[edition information]',
   editedClassification: '821.113.1',
-
-  profileBody: {
-    name: `AT_C788738_MarcInstancesProfile_${getRandomPostfix()}`,
-    description: 'Test MARC instances profile for 080 and 919 field operations',
-    locked: false,
-    entityType: 'INSTANCE_MARC',
-    marcRuleDetails: [
-      {
-        tag: '080',
-        ind1: '\\',
-        ind2: '\\',
-        subfield: 'a',
-        actions: [
-          {
-            name: 'FIND',
-            data: [
-              {
-                key: 'VALUE',
-                value: '821.113.1',
-              },
-            ],
-          },
-          {
-            name: 'APPEND',
-            data: [
-              {
-                key: 'SUBFIELD',
-                value: '2',
-              },
-              {
-                key: 'VALUE',
-                value: '[edition information]',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        tag: '919',
-        ind1: '\\',
-        ind2: '\\',
-        subfield: 'a',
-        actions: [
-          {
-            name: 'REMOVE_ALL',
-            data: [],
-          },
-        ],
-      },
-    ],
-  },
-
-  secondProfileBody: {
-    name: `Test_InstancesProfile_${getRandomPostfix()}`,
-    description: 'Test profile for executing bulk edit job',
-    locked: false,
-    entityType: 'INSTANCE_MARC',
-    marcRuleDetails: [
-      {
-        tag: '500',
-        ind1: '1',
-        ind2: '0',
-        subfield: 'a',
-        actions: [
-          {
-            name: 'ADD_TO_EXISTING',
-            data: [
-              {
-                key: 'VALUE',
-                value: 'Original MARC note data',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -134,12 +93,19 @@ describe('Bulk-edit', () => {
           testData.adminSourceRecord = record;
         });
 
-        cy.createBulkEditProfile(testData.profileBody).then((profile) => {
+        // Create main profile with factory
+        const mainProfile = createMainProfileBody();
+        cy.createBulkEditProfile(mainProfile).then((profile) => {
           testData.profileName = profile.name;
+          testData.profileDescription = profile.description;
           testData.profileIds.push(profile.id);
         });
-        cy.createBulkEditProfile(testData.secondProfileBody).then((profile) => {
+
+        // Create second profile with factory
+        const secondProfile = createSecondProfileBody();
+        cy.createBulkEditProfile(secondProfile).then((profile) => {
           testData.secondProfileName = profile.name;
+          testData.secondProfileDescription = profile.description;
           testData.profileIds.push(profile.id);
         });
 
@@ -234,12 +200,12 @@ describe('Bulk-edit', () => {
         // Step 4: Verify the table with the list of existing instances bulk edit profiles
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.secondProfileName,
-          testData.secondProfileBody.description,
+          testData.secondProfileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfilesSortedByName();
@@ -252,14 +218,14 @@ describe('Bulk-edit', () => {
         SelectBulkEditProfileModal.searchProfile('at_C788738');
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
         SelectBulkEditProfileModal.searchProfile(testData.profileName);
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
@@ -285,7 +251,7 @@ describe('Bulk-edit', () => {
         const classificationInFile = `${classificationTableHeadersInFile}UDC;${testData.marcField080}`;
 
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -336,7 +302,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -352,7 +318,7 @@ describe('Bulk-edit', () => {
           1,
         );
 
-        // Remove earlier downloaded files
+        // remove earlier downloaded files
         BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
 
         // Step 12: Click "Logs" toggle in "Set criteria" pane and Check "Inventory - instances" checkbox
@@ -372,7 +338,7 @@ describe('Bulk-edit', () => {
         // Step 15: Click on the "File with the matching records" hyperlink
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -382,7 +348,7 @@ describe('Bulk-edit', () => {
         // Step 16: Click on the "File with the preview of proposed changes (CSV)" hyperlink
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
@@ -401,7 +367,7 @@ describe('Bulk-edit', () => {
         // Step 18: Click on the "File with updated records (CSV)" hyperlink
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.marcInstanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION,
