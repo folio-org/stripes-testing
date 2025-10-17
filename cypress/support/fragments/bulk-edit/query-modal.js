@@ -40,6 +40,7 @@ const embeddedTableHeadersMap = {
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
+  publications: ['Publisher', 'Publisher role', 'Place of publication', 'Publication date'],
   statements: ['Statement', 'Statement public note', 'Statement staff note'],
   statementsForSupplements: [
     'Statement for supplement',
@@ -119,10 +120,10 @@ export const instanceFieldValues = {
   noteType: 'Instance — Notes — Note type',
   note: 'Instance — Notes — Note',
   noteStaffOnly: 'Instance — Notes — Staff only',
-  publicationsPublisher: 'Instance — Publication — Publisher',
-  publicationsRole: 'Instance — Publication — Publisher role',
-  publicationsPlace: 'Instance — Publication — Place of publication',
-  publicationsDate: 'Instance — Publication — Publication date',
+  publicationsPublisher: 'Instance — Publications — Publisher',
+  publicationsRole: 'Instance — Publications — Publisher role',
+  publicationsPlace: 'Instance — Publications — Place of publication',
+  publicationsDate: 'Instance — Publications — Publication date',
   contributorName: 'Instance — Contributors — Contributor name',
   contributorNameType: 'Instance — Contributors — Contributor name type',
   contributorType: 'Instance — Contributors — Contributor type',
@@ -681,6 +682,8 @@ export default {
         return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
       case 'subjects':
         return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
+      case 'publications':
+        return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -755,6 +758,13 @@ export default {
 
   verifySubjectsEmbeddedTableInQueryModal(instanceIdentifier, expectedSubjects) {
     this.verifyEmbeddedTableInQueryModal('subjects', instanceIdentifier, expectedSubjects);
+  },
+
+  verifyPublicationsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedPublications, // Can be a single publication object or array of publication objects, ex: { publisher: 'test publisher', role: 'test role', place: 'test place', dateOfPublication: 'test date' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('publications', instanceIdentifier, expectedPublications);
   },
 
   clickShowColumnsButton() {

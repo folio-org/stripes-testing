@@ -132,8 +132,8 @@ describe('Bulk-edit', () => {
           QueryModal.verify();
 
           const publicationsFields = [
-            instanceFieldValues.publicationsDate,
             instanceFieldValues.publicationsPlace,
+            instanceFieldValues.publicationsDate,
             instanceFieldValues.publicationsPublisher,
             instanceFieldValues.publicationsRole,
           ];
@@ -142,6 +142,7 @@ describe('Bulk-edit', () => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
+
           QueryModal.verifySubsetOfFieldsSortedAlphabetically(publicationsFields);
 
           // Step 2: Search instances by "Instance — Publications — Publisher" field using "contains" operator
@@ -155,6 +156,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C808476_FolioInstance', 1);
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.publication[*]->publisher contains University Press) AND (instance.title starts with AT_C808476_FolioInstance)',
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
 
           const expectedInstancesToFind = [testInstancesData[0], testInstancesData[1]];
@@ -181,6 +185,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.fillInValueTextfield('Production');
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.publication[*]->role == Production) AND (instance.title starts with AT_C808476_FolioInstance)',
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
 
           expectedInstancesToFind.forEach((instance) => {
@@ -200,6 +207,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
           QueryModal.fillInValueTextfield('Cambridge, M');
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.publication[*]->place starts with Cambridge, M) AND (instance.title starts with AT_C808476_FolioInstance)',
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
 
           expectedInstancesToFind.forEach((instance) => {
@@ -219,6 +229,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.fillInValueTextfield('2003.');
           QueryModal.clickTestQuery();
+          QueryModal.verifyQueryAreaContent(
+            '(instance.publication[*]->date_of_publication == 2003.) AND (instance.title starts with AT_C808476_FolioInstance)',
+          );
           QueryModal.verifyPreviewOfRecordsMatched();
 
           expectedInstancesToFind.forEach((instance) => {
