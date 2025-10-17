@@ -143,8 +143,7 @@ export default {
   },
 
   checkAmount: (amount) => {
-    const amountValue = typeof amount === 'number' ? amount.toFixed(2) : amount.toString();
-    cy.expect(amountTextField.has({ value: amountValue }));
+    cy.expect(amountTextField.has({ value: amount.toFixed(2) }));
     cy.expect(amountTextField.has({ disabled: false }));
   },
 
