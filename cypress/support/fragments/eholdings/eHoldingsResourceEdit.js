@@ -1,4 +1,11 @@
-import { TextField, Button, RadioButton, Accordion } from '../../../../interactors';
+import {
+  TextField,
+  Button,
+  RadioButton,
+  Accordion,
+  TextArea,
+  Select,
+} from '../../../../interactors';
 
 const addNewRange = () => {
   cy.do(Button('Add date range').click());
@@ -10,9 +17,14 @@ const saveAndClose = () => {
 const customCoveredDatesRadioButton = RadioButton(
   'Custom coverage dates (enter multiple date ranges in descending order)',
 );
+const coverageStatementRadioButton = RadioButton('Coverage statement');
+const coverageStatementTextArea = TextArea({ name: 'coverageStatement' });
 
 const customLabelsAccordion = Accordion('Custom labels');
 const customLabelInput = (label) => customLabelsAccordion.find(TextField({ label }));
+const customEmbargoValueField = TextField({ name: 'customEmbargoPeriod[0].embargoValue' });
+const customEmbargoUnitSelect = Select({ name: 'customEmbargoPeriod[0].embargoUnit' });
+const saveButton = Button('Save & close');
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -41,5 +53,22 @@ export default {
   },
   fillCustomLabelValue(labelName, value) {
     cy.do(customLabelInput(labelName).fillIn(value));
+  },
+
+  chooseCoverageStatement() {
+    cy.do(coverageStatementRadioButton.click());
+  },
+
+  fillCoverageStatement(statement) {
+    cy.do(coverageStatementTextArea.fillIn(statement));
+  },
+
+  fillCustomEmbargo(value, unit) {
+    cy.wait(500);
+    cy.do([customEmbargoValueField.fillIn(value), customEmbargoUnitSelect.choose(unit)]);
+  },
+
+  verifySaveButtonEnabled() {
+    cy.expect(saveButton.has({ disabled: false }));
   },
 };
