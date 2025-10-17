@@ -23,10 +23,10 @@ describe('MARC', () => {
             tag245: '245',
             tag700: '700',
           },
-          bibTitle: `AT_C380759_MarcBibInstance_${randomPostfix}`,
-          authorityField100Content: `$a AT_C380759_MarcAuthority_${randomPostfix}`,
+          bibTitle: `AT_C773208_MarcBibInstance_${randomPostfix}`,
+          authorityField100Content: `$a AT_C773208_MarcAuthority_${randomPostfix}`,
           bibField700Content: '$e letterer. $j not important value $2 tes34',
-          authorityHeading: `AT_C380759_MarcAuthority_${randomPostfix}`,
+          authorityHeading: `AT_C773208_MarcAuthority_${randomPostfix}`,
           searchQuery: 'not important value',
           browseOption: MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
           contributorAccordion: 'Contributor',
@@ -76,7 +76,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // Make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C380759_MarcAuthority');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C773208_MarcAuthority');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -123,8 +123,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380759 Link "MARC Bib" field without controlled subfields to "MARC Authority" record. "Authority source file" value is "Not specified" (700 field to 100) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C380759'] },
+          'C773208 Link "MARC Bib" field without controlled subfields to "MARC Authority" record. "Authority source file" value is "Not specified" (700 field to 100) (spitfire)',
+          { tags: ['extendedPath', 'spitfire', 'C773208'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceIds[0]);
             InventoryInstances.selectInstanceById(createdInstanceIds[0]);

@@ -40,7 +40,7 @@ describe('MARC', () => {
           bibTitle: `AT_C380460_MarcBibInstance_${randomPostfix}`,
           authorityHeadingPrefix: `AT_C380460_MarcAuthority_${randomPostfix}`,
           bibField655Content: `$a AT_C380460_Field655_${randomPostfix} $t test $2 fast`,
-          browseQuery: `AT_C380460_Field655_${randomPostfix}`,
+          browseQuery: `AT_C380460_Field655_${randomPostfix} test`,
           browseOption: MARC_AUTHORITY_BROWSE_OPTIONS.GENRE,
           contributorAccordion: 'Contributor',
           errorMessage:
