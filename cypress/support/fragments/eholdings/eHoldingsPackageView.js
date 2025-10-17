@@ -408,4 +408,50 @@ export default {
   verifyAgreementNotLinked(agreementName) {
     cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).absent());
   },
+
+  verifyTitlesTableColumns(columns) {
+    columns.forEach((column) => {
+      cy.expect(titlesSection.find(HTML(including(column))).exists());
+    });
+  },
+
+  verifyTitlesSearchElements() {
+    cy.expect([
+      titlesSection.find(Button('Actions')).exists(),
+      titlesSection.find(TextField()).exists(),
+    ]);
+  },
+
+  findTitleInList(titleName) {
+    cy.expect(titlesSection.find(MultiColumnListCell(including(titleName))).exists());
+  },
+
+  verifyPaginationButtonState(buttonName, isEnabled) {
+    const buttonSelector = Button(buttonName);
+    if (isEnabled) {
+      cy.expect(buttonSelector.has({ disabled: false }));
+    } else {
+      cy.expect(buttonSelector.has({ disabled: true }));
+    }
+  },
+
+  clickNextPaginationButton() {
+    cy.do(Button('Next').click());
+    cy.wait(1000);
+  },
+
+  verifyNextPageTitlesDisplayed() {
+    cy.wait(500);
+    cy.expect(titlesSection.exists());
+  },
+
+  clickPreviousPaginationButton() {
+    cy.do(Button('Previous').click());
+    cy.wait(1000);
+  },
+
+  verifyFirstPageTitlesDisplayed() {
+    cy.wait(500);
+    cy.expect([titlesSection.exists(), Button('Previous').has({ disabled: true })]);
+  },
 };
