@@ -323,9 +323,7 @@ describe('Patron notices', () => {
             NewNoticePolicyTemplate.checkAfterSaving(template);
           });
 
-          cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
           cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           NewNoticePolicy.waitLoading();
 
           NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });

@@ -107,9 +107,13 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
           cy.wait(1000);
-          cy.intercept('GET', capabilityCallRegExp).as('capabilities');
+          cy.intercept('GET', '/capabilities?*').as('capabilities');
           AuthorizationRoles.clickSaveInModal();
-          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
+          cy.wait('@capabilities').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilityCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
           cy.wait(3000);
           AuthorizationRoles.verifyAppNamesInCapabilityTables([
             testData.originalApplications[1],

@@ -69,6 +69,15 @@ export default {
     cy.expect(Section({ id: getElementIdByName(specialPackage) }).exists());
     cy.expect(tagsSection.find(MultiSelect()).exists());
   },
+  verifySectionsToggle: (sectionIds = []) => {
+    sectionIds.forEach((id) => {
+      const section = Section({ id });
+      cy.do(section.toggle());
+      cy.expect(section.is({ expanded: false }));
+      cy.do(section.toggle());
+      cy.expect(section.is({ expanded: true }));
+    });
+  },
 
   filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
     cy.do([titlesSection.find(actionsButton).click(), RadioButton(selectionStatus).click()]);
@@ -348,5 +357,9 @@ export default {
   closeEditingWindow: () => {
     cy.expect(closeIconButton.exists());
     cy.do(closeIconButton.click());
+  },
+  openTitle: (titleName) => {
+    cy.expect(titlesSection.exists());
+    cy.do(titlesSection.find(Button(titleName)).click());
   },
 };

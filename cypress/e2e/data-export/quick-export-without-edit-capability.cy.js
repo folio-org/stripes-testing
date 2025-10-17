@@ -1,9 +1,11 @@
-import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
+import Permissions from '../../support/dictionary/permissions';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -16,10 +18,10 @@ describe('Data Export', () => {
     cy.getAdminToken()
       .then(() => {
         cy.createTempUser([
-          permissions.dataExportViewOnly.gui,
-          permissions.dataExportSettingsViewOnly.gui,
-          permissions.dataExportViewAddUpdateProfiles.gui,
-          permissions.inventoryAll.gui,
+          Permissions.dataExportViewOnly.gui,
+          Permissions.dataExportSettingsViewOnly.gui,
+          Permissions.dataExportViewAddUpdateProfiles.gui,
+          Permissions.inventoryAll.gui,
         ]).then((userProperties) => {
           user = userProperties;
 
@@ -76,7 +78,10 @@ describe('Data Export', () => {
       InstanceRecordView.verifyInstanceRecordViewOpened();
 
       // Step 6: Click on "Actions" button from 3rd "Instance • <instance name>" pane
-      InstanceRecordView.exportInstanceMarcButtonAbsent();
+      InstanceRecordView.validateOptionInActionsMenu(
+        actionsMenuOptions.setRecordForDeletion,
+        false,
+      );
     },
   );
 });

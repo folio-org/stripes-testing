@@ -1,26 +1,32 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('fse-marc-authority - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.marcAuthorities,
-      waiter: MarcAuthorities.waitLoading,
+      path: SettingsMenu.sessionLocalePath,
+      waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
   });
 
   it(
     `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'marc-authorities'] },
     () => {
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
       MarcAuthorities.waitLoading();
     },
   );

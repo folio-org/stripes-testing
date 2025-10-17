@@ -28,6 +28,45 @@ import {
 } from '../../../support/constants';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
+import {
+  createBulkEditProfileBody,
+  createAdminNoteRule,
+  createSuppressFromDiscoveryRule,
+  InstancesRules,
+  ActionCreators,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditProfileFactory';
+
+const { createInstanceNoteRule } = InstancesRules;
+
+// Profile factory functions
+const createMainProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `AT_C773241_InstancesProfile_${getRandomPostfix()}`,
+    description: 'Test profile for executing bulk edit job using instances',
+    entityType: 'INSTANCE',
+    ruleDetails: [
+      createAdminNoteRule(ActionCreators.findAndReplace('admin', 'Administrative')),
+      createSuppressFromDiscoveryRule(false, true, true),
+      createInstanceNoteRule(
+        ActionCreators.findAndRemove('action'),
+        null, // Will be set to Action note type ID
+      ),
+      createInstanceNoteRule(
+        ActionCreators.findAndReplace('general', 'General'),
+        null, // Will be set to General note type ID
+      ),
+    ],
+  });
+};
+
+const createSecondProfileBody = () => {
+  return createBulkEditProfileBody({
+    name: `Test_InstancesProfile_${getRandomPostfix()}`,
+    description: 'Test profile for executing bulk edit job',
+    entityType: 'INSTANCE',
+    ruleDetails: [createAdminNoteRule(ActionCreators.findAndRemove('admin'))],
+  });
+};
 
 let user;
 let bulkEditJobId;
@@ -41,90 +80,6 @@ const testData = {
   editedAdministrativeNote: 'Administrative note for testing',
   editedActionNote: ' note for testing',
   editedGeneralNote: 'General note for testing',
-  profileBody: {
-    name: `AT_C773241_InstancesProfile_${getRandomPostfix()}`,
-    description: 'Test profile for executing bulk edit job using instances',
-    locked: false,
-    entityType: 'INSTANCE',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REPLACE',
-            initial: 'admin',
-            updated: 'Administrative',
-          },
-        ],
-      },
-      {
-        option: 'SUPPRESS_FROM_DISCOVERY',
-        actions: [
-          {
-            type: 'SET_TO_TRUE',
-            parameters: [
-              {
-                key: 'APPLY_TO_HOLDINGS',
-                value: true,
-              },
-              {
-                key: 'APPLY_TO_ITEMS',
-                value: true,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'INSTANCE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'action',
-            parameters: [
-              {
-                key: 'INSTANCE_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to Action note type ID
-              },
-            ],
-          },
-        ],
-      },
-      {
-        option: 'INSTANCE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REPLACE',
-            initial: 'general',
-            updated: 'General',
-            parameters: [
-              {
-                key: 'INSTANCE_NOTE_TYPE_ID_KEY',
-                value: null, // Will be set to General note type ID
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  secondProfileBody: {
-    name: `Test_InstancesProfile_${getRandomPostfix()}`,
-    description: 'Test profile for executing bulk edit job',
-    locked: false,
-    entityType: 'INSTANCE',
-    ruleDetails: [
-      {
-        option: 'ADMINISTRATIVE_NOTE',
-        actions: [
-          {
-            type: 'FIND_AND_REMOVE_THESE',
-            initial: 'admin',
-          },
-        ],
-      },
-    ],
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -144,26 +99,33 @@ describe('Bulk-edit', () => {
         });
         InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="Action note"' }).then(
           ({ instanceNoteTypes }) => {
-            testData.profileBody.ruleDetails[2].actions[0].parameters[0].value =
-              instanceNoteTypes[0].id;
             testData.actionNoteTypeId = instanceNoteTypes[0].id;
           },
         );
         InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="General note"' })
           .then(({ instanceNoteTypes }) => {
-            testData.profileBody.ruleDetails[3].actions[0].parameters[0].value =
-              instanceNoteTypes[0].id;
             testData.generalNoteTypeId = instanceNoteTypes[0].id;
           })
           .then(() => {
+            // Create profiles using factory functions
+            const mainProfile = createMainProfileBody();
+            mainProfile.ruleDetails[2].actions[0].parameters[0].value = testData.actionNoteTypeId;
+            mainProfile.ruleDetails[3].actions[0].parameters[0].value = testData.generalNoteTypeId;
+
+            // Store profile description for test assertions
+            testData.profileDescription = mainProfile.description;
+
+            const secondProfile = createSecondProfileBody();
+            testData.secondProfileDescription = secondProfile.description;
+
             // Create main bulk edit profile
-            cy.createBulkEditProfile(testData.profileBody).then((profile) => {
+            cy.createBulkEditProfile(mainProfile).then((profile) => {
               testData.profileName = profile.name;
               testData.profileIds.push(profile.id);
             });
 
             // Create second bulk edit profile to verify search and sorting
-            cy.createBulkEditProfile(testData.secondProfileBody).then((profile) => {
+            cy.createBulkEditProfile(secondProfile).then((profile) => {
               testData.secondProfileName = profile.name;
               testData.profileIds.push(profile.id);
             });
@@ -298,7 +260,7 @@ describe('Bulk-edit', () => {
         // Step 4: Verify the table with the list of existing instances bulk edit profiles
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfilesSortedByName();
@@ -311,14 +273,14 @@ describe('Bulk-edit', () => {
         SelectBulkEditProfileModal.searchProfile('at_C773241');
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
         SelectBulkEditProfileModal.searchProfile(testData.profileName);
         SelectBulkEditProfileModal.verifyProfileInTable(
           testData.profileName,
-          testData.profileBody.description,
+          testData.profileDescription,
           testData.adminSourceRecord,
         );
         SelectBulkEditProfileModal.verifyProfileAbsentInTable(testData.secondProfileName);
@@ -361,21 +323,21 @@ describe('Bulk-edit', () => {
         // Step 7: Click the "Download preview in CSV format" button
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
           testData.editedAdministrativeNote,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           true,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           'Notes',
@@ -405,21 +367,21 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
           testData.editedAdministrativeNote,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           true,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           'Notes',
@@ -446,21 +408,21 @@ describe('Bulk-edit', () => {
         // Step 13: Click on the "File with the matching records" hyperlink
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
           testData.administrativeNote,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           false,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           'Notes',
@@ -470,21 +432,21 @@ describe('Bulk-edit', () => {
         // Step 14: Click on the "File with the preview of proposed changes (CSV)" hyperlink
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
           testData.editedAdministrativeNote,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           true,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.previewFileName,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           'Notes',
@@ -494,21 +456,21 @@ describe('Bulk-edit', () => {
         // Step 15: Click on the "File with updated records (CSV)" hyperlink
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
           testData.editedAdministrativeNote,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           true,
         );
         BulkEditFiles.verifyValueInRowByUUID(
-          queryFileNames.changedRecordsFileName,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
           testData.instanceHrid,
           'Notes',

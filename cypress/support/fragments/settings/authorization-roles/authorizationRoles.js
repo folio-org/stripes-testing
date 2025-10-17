@@ -629,11 +629,13 @@ export default {
   verifyGeneralInformationWhenCollapsed: (updatedDate) => {
     const momentDate = moment.utc(updatedDate, generalInfoDateFormat);
     const updatedDatePlus1Minute = momentDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDateMinus1Minute = momentDate.subtract(1, 'minute').format(generalInfoDateFormat);
     cy.expect(
       generalInformationAccordion.has({
         content: or(
           including(`Record last updated: ${updatedDate}`),
           including(`Record last updated: ${updatedDatePlus1Minute}`),
+          including(`Record last updated: ${updatedDateMinus1Minute}`),
         ),
       }),
     );
@@ -641,9 +643,15 @@ export default {
 
   verifyGeneralInformationWhenExpanded: (updatedDate, updatedUser, createdDate, createdUser) => {
     const momentUpdatedDate = moment.utc(updatedDate, generalInfoDateFormat);
-    const momentCreatedDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const momentCreatedDate = moment.utc(createdDate, generalInfoDateFormat);
     const updatedDatePlus1Minute = momentUpdatedDate.add(1, 'minute').format(generalInfoDateFormat);
     const createdDatePlus1Minute = momentCreatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDateMinus1Minute = momentUpdatedDate
+      .subtract(1, 'minute')
+      .format(generalInfoDateFormat);
+    const createdDateMinus1Minute = momentCreatedDate
+      .subtract(1, 'minute')
+      .format(generalInfoDateFormat);
     cy.do(recordLastUpdatedHeader.click());
     cy.expect([
       generalInformationAccordion.has({
@@ -651,11 +659,13 @@ export default {
           or(
             including(`Record last updated: ${updatedDate}`),
             including(`Record last updated: ${updatedDatePlus1Minute}`),
+            including(`Record last updated: ${updatedDateMinus1Minute}`),
           ),
           including(`Source: ${updatedUser}`),
           or(
             including(`Record created: ${createdDate}`),
             including(`Record created: ${createdDatePlus1Minute}`),
+            including(`Record created: ${createdDateMinus1Minute}`),
           ),
           including(`Source: ${createdUser}`),
         ),
@@ -770,8 +780,8 @@ export default {
   },
 
   checkNoUsernameErrorCallout: () => {
-    InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
-    InteractorsTools.dismissCallout(noUsernameCalloutText);
+    InteractorsTools.checkCalloutErrorMessage(including(noUsernameCalloutText));
+    InteractorsTools.dismissCallout(including(noUsernameCalloutText));
   },
 
   checkNewButtonShown: (isShown = true) => {
