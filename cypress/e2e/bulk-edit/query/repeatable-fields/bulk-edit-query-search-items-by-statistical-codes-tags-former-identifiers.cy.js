@@ -88,17 +88,17 @@ describe('Bulk-edit', () => {
                   const codeNames = itemData.statisticalCodeIds.map(
                     (id) => statCodes.find((c) => c.id === id).fullName,
                   );
-                  itemData.statisticalCodeName = codeNames.reverse().join(' | ');
-                  itemData.statisticalCodeNameInBulkEditForm = codeNames.reverse().join('|');
+                  itemData.statisticalCodeName = codeNames.join(' | ');
+                  itemData.statisticalCodeNameInBulkEditForm = codeNames.join('|');
                 }
               };
 
               // Statistical code assignments for each item
               const itemStatisticalCodeConfig = [
-                { itemIndex: 0, codeIndexes: [0] }, // Item 1: 1 statistical code
-                { itemIndex: 1, codeIndexes: [0, 1, 2] }, // Item 2: 3 statistical codes
-                { itemIndex: 2, codeIndexes: [3] }, // Item 3: 1 statistical code
-                { itemIndex: 3, codeIndexes: [] }, // Item 4: no statistical codes
+                { itemIndex: 0, codeIndexes: [0] },
+                { itemIndex: 1, codeIndexes: [0, 1, 2] },
+                { itemIndex: 2, codeIndexes: [3] },
+                { itemIndex: 3, codeIndexes: [] },
               ];
 
               // Assign statistical codes to items based on configuration

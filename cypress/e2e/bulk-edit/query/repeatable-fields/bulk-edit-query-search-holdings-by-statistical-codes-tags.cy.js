@@ -22,19 +22,19 @@ const folioInstance = {
 };
 const expectedHoldings = [
   {
-    // Holdings 1
+    // Holding 1
     tags: { tagList: ['important'] },
   },
   {
-    // Holdings 2
+    // Holding 2
     tags: { tagList: ['important', 'urgent', 'test'] },
   },
   {
-    // Holdings 3
+    // Holding 3
     tags: { tagList: ['test'] },
   },
   {
-    // Holdings 4
+    // Holding 4
     tags: { tagList: [] },
   },
 ];
@@ -55,8 +55,8 @@ const populateHoldingStringProperties = (holdingData, statCodes) => {
     const codeNames = holdingData.statisticalCodeIds.map(
       (id) => statCodes.find((c) => c.id === id).fullName,
     );
-    holdingData.statisticalCodeName = codeNames.reverse().join(' | ');
-    holdingData.statisticalCodeNameInBulkEditForm = codeNames.reverse().join('|');
+    holdingData.statisticalCodeName = codeNames.join(' | ');
+    holdingData.statisticalCodeNameInBulkEditForm = codeNames.join('|');
   }
 };
 

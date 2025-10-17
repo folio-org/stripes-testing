@@ -166,6 +166,8 @@ export const instanceFieldValues = {
   electronicAccessURI: 'Instance — Electronic access — URI',
   electronicAccessURLPublicNote: 'Instance — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
+  tags: 'Instance — Tags',
+  series: 'Instance — Series',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
