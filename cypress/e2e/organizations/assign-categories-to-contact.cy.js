@@ -45,7 +45,7 @@ describe('Organizations', () => {
 
   it(
     'C732 Assign categories to contact person (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

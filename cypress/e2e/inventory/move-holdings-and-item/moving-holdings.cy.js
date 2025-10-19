@@ -77,6 +77,7 @@ describe('Inventory', () => {
         InventoryInstancesMovement.verifyHoldingsMoved(secondItem.name, '3');
 
         InventoryInstance.moveItemBackToInstance(secondItem.name, item.instanceName);
+        InventoryInstance.openHoldings([item.name]);
         InventoryInstancesMovement.verifyHoldingsMoved(item.name, '2');
       },
     );

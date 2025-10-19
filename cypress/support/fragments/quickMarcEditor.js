@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
@@ -10,6 +11,7 @@ import {
   TextField,
   Spinner,
   and,
+  or,
   some,
   Pane,
   HTML,
@@ -153,6 +155,7 @@ const tagLengthNumbersOnlyInlineErrorText =
   'Fail: Tag must contain three characters and can only accept numbers 0-9.';
 const tag1XXNonRepeatableRequiredCalloutText = 'Field 1XX is non-repeatable and required.';
 const getSubfieldNonRepeatableInlineErrorText = (subfield) => `Fail: Subfield '${subfield}' is non-repeatable.`;
+const paneheaderDateFormat = 'M/D/YYYY h:mm A';
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -3246,63 +3249,119 @@ export default {
     else cy.expect(invalidDropdown.absent());
   },
 
-  checkUnlinkButtonShown(tag, isShown = true) {
-    const targetButton = getRowInteractorByTagName(tag).find(unlinkIconButton);
+  checkUnlinkButtonShown(tag, isShown = true, rowIndex = null) {
+    const targetButton =
+      rowIndex === null
+        ? getRowInteractorByTagName(tag).find(unlinkIconButton)
+        : getRowInteractorByRowNumber(rowIndex).find(unlinkIconButton);
     if (isShown) cy.expect(targetButton.exists());
     else cy.expect(targetButton.absent());
   },
 
+  /**
+    A method for linking MARC bibliographic and authority records via API.
+    `bibFieldIndexes` to be used in case of multiple bib fields with the same tag
+  */
   linkMarcRecordsViaApi({
     bibId,
-    authorityId,
-    bibFieldTag,
-    authorityFieldTag,
-    finalBibFieldContent,
-    bibFieldIndex = null,
+    authorityIds,
+    bibFieldTags,
+    authorityFieldTags,
+    finalBibFieldContents,
+    bibFieldIndexes = null,
   } = {}) {
-    let linkingRuleId;
-    let authorityNaturalId;
-    let sourceFileId;
-    let sourceFileUrl = '';
+    let relatedRecordVersion;
+    const linkingRuleIds = [];
+    const authorityNaturalIds = [];
+    const sourceFileIds = [];
+    const sourceFileUrls = [];
 
     cy.then(() => {
       cy.getAllRulesViaApi().then((rules) => {
-        linkingRuleId = rules
-          .filter((rule) => rule.bibField === bibFieldTag)
-          .find((rule) => rule.authorityField === authorityFieldTag).id;
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          linkingRuleIds.push(
+            rules
+              .filter((rule) => rule.bibField === bibFieldTag)
+              .find((rule) => rule.authorityField === authorityFieldTags[index]).id,
+          );
+        });
       });
-      cy.okapiRequest({
-        path: 'search/authorities',
-        searchParams: { query: `id=="${authorityId}"` },
-        isDefaultSearchParamsRequired: false,
-      }).then((res) => {
-        authorityNaturalId = res.body.authorities[0].naturalId;
-        sourceFileId = res.body.authorities[0].sourceFileId;
+      cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
+        relatedRecordVersion = `${auditData.totalRecords}`;
+      });
+      authorityIds.forEach((authorityId) => {
+        cy.okapiRequest({
+          path: 'search/authorities',
+          searchParams: { query: `id=="${authorityId}"` },
+          isDefaultSearchParamsRequired: false,
+        }).then((res) => {
+          authorityNaturalIds.push(res.body.authorities[0].naturalId);
+          const sourceFileId = res.body.authorities[0].sourceFileId;
+          sourceFileIds.push(sourceFileId);
 
-        if (sourceFileId && sourceFileId !== 'NULL') {
-          cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
-            sourceFileUrl = sourceFileData.baseUrl;
-          });
-        }
+          if (sourceFileId && sourceFileId !== 'NULL') {
+            cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
+              sourceFileUrls.push(sourceFileData.baseUrl);
+            });
+          } else sourceFileUrls.push('');
+        });
       });
     }).then(() => {
       cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
         const updatedMarcData = marcData;
-        const targetFieldIndex =
-          bibFieldIndex !== null
-            ? bibFieldIndex - 1
-            : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
-        updatedMarcData.fields[targetFieldIndex].content =
-          `${finalBibFieldContent} $0 ${sourceFileUrl}${authorityNaturalId} $9 ${authorityId}`;
-        updatedMarcData.fields[targetFieldIndex].linkDetails = {
-          authorityId,
-          authorityNaturalId,
-          linkingRuleId,
-          status: 'NEW',
-        };
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          const targetFieldIndex =
+            bibFieldIndexes !== null
+              ? bibFieldIndexes[index] - 1
+              : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
+          updatedMarcData.fields[targetFieldIndex].content =
+            `${finalBibFieldContents[index]} $0 ${sourceFileUrls[index]}${authorityNaturalIds[index]} $9 ${authorityIds[index]}`;
+          updatedMarcData.fields[targetFieldIndex].linkDetails = {
+            authorityId: authorityIds[index],
+            authorityNaturalId: authorityNaturalIds[index],
+            linkingRuleId: linkingRuleIds[index],
+            status: 'NEW',
+          };
+        });
+        updatedMarcData.relatedRecordVersion = relatedRecordVersion;
 
         cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
       });
     });
+  },
+
+  verifyValuesInLdrNonEditableBoxes({
+    positions0to4BoxValues,
+    positions9to16BoxValues,
+    positions20to23BoxValues,
+  } = {}) {
+    const positions0to4Box = TextField({ name: 'records[0].content.Record length' });
+    const positions9to16Box = TextField({ name: 'records[0].content.9-16 positions' });
+    const positions20to23Box = TextField({ name: 'records[0].content.20-23 positions' });
+    if (positions0to4BoxValues) cy.expect(positions0to4Box.has({ value: positions0to4BoxValues, disabled: true }));
+    if (positions9to16BoxValues) cy.expect(positions9to16Box.has({ value: positions9to16BoxValues, disabled: true }));
+    if (positions20to23BoxValues) cy.expect(positions20to23Box.has({ value: positions20to23BoxValues, disabled: true }));
+  },
+
+  checkMarcBibHeader({ instanceTitle, status }, userName) {
+    const dateMatchers = [];
+    for (let i = -2; i <= 2; i++) {
+      dateMatchers.push(
+        including(`Last updated: ${moment.utc().add(i, 'minutes').format(paneheaderDateFormat)}`),
+      );
+    }
+    const targetPane = Pane(matching(new RegExp(`Edit .*MARC record - ${instanceTitle}`)));
+    cy.expect(targetPane.exists());
+    cy.expect(
+      targetPane.has({
+        subtitle: and(
+          including('Status:'),
+          including(status),
+          including('Last updated:'),
+          including(`Source: ${userName}`),
+        ),
+      }),
+    );
+    cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
   },
 };

@@ -6,6 +6,7 @@ import {
   RadioButton,
   Section,
   Spinner,
+  TextField,
   including,
   MultiSelect,
   MultiSelectOption,
@@ -58,6 +59,14 @@ export default {
     // wait for titles section to be loaded
     cy.wait(2000);
     cy.do(searchIcon.click());
+  },
+
+  searchPackageByName(packageName) {
+    cy.expect(searchIcon.exists());
+    cy.do(searchIcon.click());
+    cy.do(TextField({ name: 'search' }).fillIn(packageName));
+    cy.do(Button('Search').click());
+    cy.expect(Spinner().absent());
   },
 
   bySelectionStatus(selectionStatus) {
@@ -136,5 +145,14 @@ export default {
     cy.xpath(
       `//div[contains(text(), '${tag}')]/../../button[contains(@class, 'iconButton')]`,
     ).click();
+  },
+
+  verifyPackageWithTag(packageName, tagName) {
+    cy.get('[id="providerShowProviderList"]')
+      .contains(packageName)
+      .parent()
+      .parent()
+      .parent()
+      .should('contain', tagName);
   },
 };

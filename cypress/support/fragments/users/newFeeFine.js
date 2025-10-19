@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   Modal,
   Option,
   Select,
@@ -205,5 +206,38 @@ export default {
 
   verifyNoOwnerSelected: () => {
     cy.expect(ownerTypeSelect.has({ checkedOptionText: 'Select one' }));
+  },
+
+  selectFeeFineType: (feeFineType) => {
+    cy.do(feeFineTypeSelect.choose(feeFineType));
+  },
+
+  verifyNotifyPatronCheckboxChecked: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).exists());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).has({ checked: true }));
+  },
+
+  verifyNotifyPatronCheckboxNotPresent: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).absent());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).absent());
+  },
+
+  verifyItemDataPopulated: (itemData) => {
+    cy.expect(rootModal.find(HTML(including(itemData.barcode))).exists());
+    cy.expect(rootModal.find(HTML(including(itemData.instanceTitle))).exists());
+  },
+
+  verifyAmountFieldValue: (expectedValue) => {
+    const amountValue =
+      typeof expectedValue === 'number' ? expectedValue.toFixed(2) : expectedValue.toString();
+    cy.expect(amountTextField.has({ value: amountValue }));
+  },
+
+  clickAmountField: () => {
+    cy.do(amountTextField.click());
+  },
+
+  clickInactiveZone: () => {
+    cy.do(rootModal.find(TextField({ name: 'itemBarcode' })).click());
   },
 };
