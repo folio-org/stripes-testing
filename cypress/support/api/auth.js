@@ -107,10 +107,11 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
   });
 });
 
+// eslint-disable-next-line no-unused-vars
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
-  //cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
+  // cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
   cy.wait(2000);
 });
 

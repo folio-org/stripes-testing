@@ -320,7 +320,7 @@ export default {
     cy.expect(previewModal.absent());
   },
 
-  createPatronNoticeTemplate(template, dublicate = false) {
+  createPatronNoticeTemplate(template, duplicate = false) {
     cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
       statusCode: 201,
       body: {
@@ -329,7 +329,7 @@ export default {
       },
     });
 
-    if (dublicate) {
+    if (duplicate) {
       this.duplicateTemplate();
       this.typeTemplateName(template.name);
       this.typeTemplateSubject(template.subject);
