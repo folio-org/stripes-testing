@@ -90,6 +90,9 @@ describe('Inventory', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
     ];
+    const Dropdowns = {
+      HELDBY: 'Held by',
+    };
 
     before('Create user, data', () => {
       cy.getAdminToken();
@@ -192,7 +195,10 @@ describe('Inventory', () => {
         SelectInstanceModal.waitLoading();
         SelectInstanceModal.verifyAccordionExistance(sharedAccordion.name);
 
-        // 3 Expand the "Shared" accordion button by clicking on it
+        // 3 Uncheck selected option in "Held by" face
+        SelectInstanceModal.clearDefaultFilter(Dropdowns.HELDBY);
+
+        // 4 Expand the "Shared" accordion button by clicking on it
         SelectInstanceModal.clickAccordionByName(sharedAccordion.name);
         SelectInstanceModal.verifyCheckboxInAccordion(
           sharedAccordion.name,
@@ -205,7 +211,7 @@ describe('Inventory', () => {
           false,
         );
 
-        // 4 Execute search which will not return records:
+        // 5 Execute search which will not return records:
         // - Input the search query which will not return records in the search box, ex.: "abracadabratesting"
         // - Click on the "Search" button
         SelectInstanceModal.fillInSearchField(invalidSearchQuery);
@@ -213,10 +219,13 @@ describe('Inventory', () => {
         SelectInstanceModal.checkEmptySearchResults(invalidSearchQuery);
         cy.wait(1000);
 
-        // 5 Click "Reset all" button
+        // 6 Click "Reset all" button
         SelectInstanceModal.clickResetAllButton();
 
-        // 6 Execute search which will return Instances created at preconditions:
+        // 7 Uncheck selected option in "Held by" facet
+        SelectInstanceModal.clearDefaultFilter(Dropdowns.HELDBY);
+
+        // 8 Execute search which will return Instances created at preconditions:
         // -Input the following search query in the search box: "C410702 Test Shared facet"
         // -Click on the "Search" button.
         SelectInstanceModal.fillInSearchField('C410702 Test Shared facet');
@@ -244,7 +253,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 7 Check "Yes" checkbox in "Shared" accordion
+        // 9 Check "Yes" checkbox in "Shared" accordion
         SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.yes);
         sharedFOLIOInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
@@ -267,7 +276,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 8 Click on "Source" accordion header → Select "MARC" option in expanded accordion
+        // 10 Click on "Source" accordion header → Select "MARC" option in expanded accordion
         SelectInstanceModal.clickAccordionByName(filterName);
         SelectInstanceModal.selectOptionInExpandedFilter(filterName, INSTANCE_SOURCE_NAMES.MARC);
         sharedMARCInstances.forEach((instance) => {
@@ -290,7 +299,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 9 Check "No" checkbox in "Shared" accordion
+        // 11 Check "No" checkbox in "Shared" accordion
         SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.no);
         sharedMARCInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
@@ -313,7 +322,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 10 Cancel applied "Source" facet by clicking on the "x" icon placed next to its header
+        // 12 Cancel applied "Source" facet by clicking on the "x" icon placed next to its header
         SelectInstanceModal.clearSourceFilter();
         sharedFOLIOInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
