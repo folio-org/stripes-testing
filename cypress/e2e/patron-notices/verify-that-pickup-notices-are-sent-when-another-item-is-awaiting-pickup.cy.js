@@ -1,29 +1,29 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES, REQUEST_TYPES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import NewNoticePolicyTemplate, {
-  createNoticeTemplate,
-} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import NoticePolicyApi, {
   NOTICE_CATEGORIES,
 } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import TopMenu from '../../support/fragments/topMenu';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import { REQUEST_TYPES } from '../../support/constants';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
-import Requests from '../../support/fragments/requests/requests';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
   describe('Request notice triggers', () => {
@@ -150,7 +150,8 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplate);
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates: [noticeTemplate] });
         NewNoticePolicy.checkPolicyName(noticePolicy);
@@ -165,7 +166,8 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.visit(TopMenu.requestsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+        Requests.waitLoading();
         NewRequest.createNewRequest({
           itemBarcode: testData.itemBarcode,
           itemTitle: testData.folioInstances.instanceTitle,
@@ -174,14 +176,16 @@ describe('Patron notices', () => {
           requestType: REQUEST_TYPES.RECALL,
         });
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+        CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(testData.itemBarcode);
         AwaitingPickupForARequest.unselectCheckboxPrintSlip();
         AwaitingPickupForARequest.closeModal();
         CheckInActions.verifyLastCheckInItem(testData.itemBarcode);
         CheckInActions.endCheckInSession();
 
-        cy.visit(TopMenu.circulationLogPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        SearchPane.waitLoading();
         cy.log(testData.itemBarcode);
         SearchPane.searchByItemBarcode(testData.itemBarcode);
         const searchResults = {

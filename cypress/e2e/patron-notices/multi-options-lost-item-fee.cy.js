@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
@@ -9,6 +10,7 @@ import NoticePolicyApi, {
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -18,7 +20,6 @@ describe('Patron notices', () => {
       name: 'groupToTestNotices' + getRandomPostfix(),
     };
     const userData = {};
-    const testData = {};
     const noticeTemplates = [
       createNoticeTemplate({
         name: 'Lost_item_fee_upon_at',
@@ -77,7 +78,9 @@ describe('Patron notices', () => {
 
     after('Deleting created entities', () => {
       cy.getAdminToken();
-      NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        NoticePolicyApi.deleteViaApi(noticePolicyRes[0].id);
+      });
       Users.deleteViaApi(userData.userId);
       PatronGroups.deleteViaApi(patronGroup.id);
       noticeTemplates.forEach((template) => {
@@ -97,15 +100,13 @@ describe('Patron notices', () => {
           NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
           NewNoticePolicyTemplate.checkAfterSaving(template);
         });
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
+
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
         NewNoticePolicy.checkPolicyName(noticePolicy.name);
-
-        cy.getAdminToken();
-        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-          testData.noticePolicyId = noticePolicyRes[0].id;
-        });
       },
     );
   });

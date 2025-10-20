@@ -324,8 +324,10 @@ describe('Patron notices', () => {
             NewNoticePolicyTemplate.checkAfterSaving(template);
           });
 
-          cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          NewNoticePolicy.openTabCirculationPatronNoticePolicies();
           NewNoticePolicy.waitLoading();
+          cy.wait(2000);
 
           NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
           NewNoticePolicy.checkPolicyName(noticePolicy);

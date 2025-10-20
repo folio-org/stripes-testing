@@ -112,7 +112,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C5557_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
