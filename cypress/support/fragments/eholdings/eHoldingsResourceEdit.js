@@ -5,6 +5,9 @@ import {
   Accordion,
   TextArea,
   Select,
+  KeyValue,
+  HTML,
+  including,
 } from '../../../../interactors';
 
 const addNewRange = () => {
@@ -25,6 +28,7 @@ const customLabelInput = (label) => customLabelsAccordion.find(TextField({ label
 const customEmbargoValueField = TextField({ name: 'customEmbargoPeriod[0].embargoValue' });
 const customEmbargoUnitSelect = Select({ name: 'customEmbargoPeriod[0].embargoUnit' });
 const saveButton = Button('Save & close');
+const proxySelect = Select({ name: 'proxyId' });
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -68,7 +72,59 @@ export default {
     cy.do([customEmbargoValueField.fillIn(value), customEmbargoUnitSelect.choose(unit)]);
   },
 
+  addCustomEmbargo() {
+    cy.do(Button('Add custom embargo period').click());
+  },
+
   verifySaveButtonEnabled() {
     cy.expect(saveButton.has({ disabled: false }));
+  },
+
+  changeProxy: () => {
+    return cy
+      .then(() => proxySelect.checkedOptionText())
+      .then((selectedProxy) => {
+        cy.getEholdingsProxiesViaAPI().then((existingProxies) => {
+          const notSelectedProxy = existingProxies.filter(
+            (existingProxy) => existingProxy !== selectedProxy,
+          )[0];
+          cy.do(proxySelect.choose(notSelectedProxy));
+          cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
+          return cy.wrap(notSelectedProxy);
+        });
+      });
+  },
+
+  verifyProxiedURLNotDisplayed() {
+    cy.expect(KeyValue('Proxied URL').absent());
+  },
+
+  removeCustomEmbargoViaAPI(resourceId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `eholdings/resources/${resourceId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        const resourceData = response.body.data;
+
+        return cy.okapiRequest({
+          method: 'PUT',
+          path: `eholdings/resources/${resourceId}`,
+          contentTypeHeader: 'application/vnd.api+json',
+          body: {
+            data: {
+              id: resourceId,
+              type: 'resources',
+              attributes: {
+                ...resourceData.attributes,
+                customEmbargoPeriod: null,
+              },
+            },
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      });
   },
 };
