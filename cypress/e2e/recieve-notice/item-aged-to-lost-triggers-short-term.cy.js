@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -18,7 +19,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -251,7 +252,8 @@ describe.skip('Patron notices', () => {
           NewNoticePolicyTemplate.checkAfterSaving(template);
         });
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
 
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
@@ -260,16 +262,19 @@ describe.skip('Patron notices', () => {
         createCirculationRule();
 
         const itemBarcode = testData.folioInstances[0].barcodes[0];
-        cy.visit(TopMenu.checkOutPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
+        CheckOutActions.waitLoading();
+
         CheckOutActions.checkOutUserByBarcode({ ...testData.user, patronGroup });
         CheckOutActions.checkOutItem(itemBarcode);
         Checkout.verifyResultsInTheRow([itemBarcode]);
         CheckOutActions.endCheckOutSession();
         UserLoans.changeDueDateForAllOpenPatronLoans(testData.user.userId, -1);
 
-        cy.visit(TopMenu.circulationLogPath);
         // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
         cy.wait(250000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        SearchPane.waitLoading();
         noticeTemplates.forEach((template) => {
           const searchResults = {
             userBarcode: testData.user.barcode,
@@ -284,12 +289,14 @@ describe.skip('Patron notices', () => {
           SearchPane.checkSearchResultByBarcode({ barcode: itemBarcode, searchResults });
         });
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+        CheckInActions.waitLoading();
         CheckInActions.checkInItemByBarcode(itemBarcode);
 
-        cy.visit(TopMenu.circulationLogPath);
         // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
         cy.wait(10000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        SearchPane.waitLoading();
         SearchPane.searchByUserBarcode(testData.user.barcode);
         SearchPane.checkResultSearch({ object: 'Loan', circAction: 'Closed loan' }, 0);
       },

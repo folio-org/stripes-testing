@@ -157,10 +157,14 @@ export default {
     Requests.selectFirstRequest(instanceRecordData.instanceTitle);
     this.openRequestEditForm();
     this.waitRequestEditFormLoad();
+    cy.wait(1000);
   },
 
   openRequestEditForm() {
-    cy.do([actionsButton.click(), editRequestButton.click()]);
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.wait(3000);
+    cy.do(editRequestButton.click());
   },
 
   saveAndClose() {

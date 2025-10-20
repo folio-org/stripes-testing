@@ -119,6 +119,9 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
     }
     if (parameters.email) {
       userBody.personal.email = parameters.email;
+    } else {
+      // if a user should have only unique email
+      // userBody.personal.email = `test_${getRandomPostfix()}@test.com`;
     }
   } else {
     userBody = userModel;

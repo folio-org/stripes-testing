@@ -11,7 +11,6 @@ describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
     beforeEach(() => {
       cy.loginAsAdmin({ path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
-      cy.getAdminToken();
       Conditions.resetConditions();
     });
 
@@ -47,7 +46,10 @@ describe('Fees&Fines', () => {
 
           // revert changed condition into initial state
           Conditions.resetCondition(conditionType);
-          cy.reload();
+          cy.reload().then(() => {
+            Conditions.waitLoading();
+            cy.wait(2000);
+          });
         });
       },
     );

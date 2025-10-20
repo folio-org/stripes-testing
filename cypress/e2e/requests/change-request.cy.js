@@ -47,7 +47,7 @@ describe('Title Level Request', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C380544_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanType = loanType;
         });
