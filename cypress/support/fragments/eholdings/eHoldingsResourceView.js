@@ -152,4 +152,23 @@ export default {
   closeHoldingsResourceView() {
     cy.do(closeViewButton.click());
   },
+
+  verifyNoCustomCoverageDates() {
+    cy.expect(KeyValue('Custom coverage dates').absent());
+  },
+
+  verifyCoverageStatement(statement) {
+    cy.expect(KeyValue('Coverage statement').has({ value: statement }));
+  },
+
+  verifyCustomEmbargoExists() {
+    cy.expect(KeyValue('Custom embargo period').exists());
+  },
+
+  verifyCustomEmbargoValue(value, unit) {
+    const formattedUnit = unit.toLowerCase().replace(/s$/, '(s)');
+    cy.expect(
+      KeyValue('Custom embargo period').has({ value: including(`${value} ${formattedUnit}`) }),
+    );
+  },
 };

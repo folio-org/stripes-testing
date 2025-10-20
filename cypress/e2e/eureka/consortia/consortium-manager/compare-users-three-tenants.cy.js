@@ -198,7 +198,7 @@ describe('Eureka', () => {
 
     it(
       "C552452 ECS | Eureka | Compare same user's capabilities from three tenants (consortia) (thunderjet)",
-      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C552452'] },
+      { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C552452'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.waitLoading();

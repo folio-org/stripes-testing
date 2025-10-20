@@ -29,11 +29,6 @@ describe('MARC', () => {
 
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-      const invalidLDRValuesInFields = [
-        ['records[0].content.9-16 positions', including(testData.invalidLDRValuesInEdit[0]), true],
-        ['records[0].content.20-23 positions', testData.invalidLDRValuesInEdit[1], true],
-      ];
-
       const createdInstanceIds = [];
 
       before(() => {
@@ -75,8 +70,9 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.deriveNewMarcBibRecord();
 
-          invalidLDRValuesInFields.forEach((fieldData) => {
-            QuickMarcEditor.verifyLDRPositionsDefaultValues(...fieldData);
+          QuickMarcEditor.verifyValuesInLdrNonEditableBoxes({
+            positions9to16BoxValues: including(testData.invalidLDRValuesInEdit[0]),
+            positions20to23BoxValues: testData.invalidLDRValuesInEdit[1],
           });
 
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${updatedTitle}`);

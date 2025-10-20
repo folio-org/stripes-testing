@@ -825,3 +825,12 @@ Cypress.Commands.add('updateMarcRecordDataViaAPI', (parsedRecordId, updatedData)
     body,
   });
 });
+
+Cypress.Commands.add('getInstanceAuditDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `audit-data/inventory/instance/${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});

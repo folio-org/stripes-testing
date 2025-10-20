@@ -146,4 +146,12 @@ export default {
       modal.find(Button(buttonAction)).click(),
     ]);
   },
+
+  addDefaultChargeNoticeToOwner(noticeName) {
+    cy.do(Button({ id: 'charge-notice-primary' }).click());
+    cy.wait(1000);
+    cy.do(Select({ id: 'defaultChargeNotice' }).choose(noticeName));
+    cy.do(Button('Save').click());
+    cy.wait(1000);
+  },
 };

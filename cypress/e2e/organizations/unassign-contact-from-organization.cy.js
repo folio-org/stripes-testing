@@ -38,7 +38,7 @@ describe('Organizations', () => {
 
   it(
     'C727 Unassign contact from an organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
