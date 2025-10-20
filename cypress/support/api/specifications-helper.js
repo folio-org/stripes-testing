@@ -33,6 +33,9 @@ export function findSystemSubfield(subfields, code) {
   return findSubfieldByCodeAndScope(subfields, code, 'system');
 }
 
+export function findStandardSubfield(subfields, code) {
+  return findSubfieldByCodeAndScope(subfields, code, 'standard');
+}
 // API response validation
 export function validateApiResponse(response, expectedStatus) {
   expect(response.status, `Response status should be ${expectedStatus}`).to.eq(expectedStatus);
