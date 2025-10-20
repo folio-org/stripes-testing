@@ -160,7 +160,7 @@ describe('Circulation log', () => {
         testData.holdingTypeId = testData.folioInstances[0].holdings[0].id;
       });
     cy.createLoanType({
-      name: getTestEntityValue('loan'),
+      name: 'C16995_' + getTestEntityValue('loan'),
     }).then((loanType) => {
       testData.loanTypeId = loanType.id;
       cy.getItems({
