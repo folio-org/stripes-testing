@@ -26,7 +26,7 @@ const newExpirationDate = new Date();
 const newExpirationDateWithSlashes = DateTools.getFormattedDateWithSlashes({
   date: new Date(),
 });
-const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })} 23:59:59.000Z`;
+const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })}`;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userUUIDsFileName, true);
 const previewFileName = BulkEditFiles.getPreviewFileName(userUUIDsFileName, true);

@@ -111,8 +111,7 @@ describe('Bulk-edit', () => {
         // Step 3: Click "Edit" button
         UsersBulkEditProfileView.selectEditProfile();
         UsersBulkEditProfileForm.verifyFormElements(testData.originalProfileName);
-        // TODO: Uncomment after UIBULKED-693 is done
-        // UsersBulkEditProfileForm.verifyMetadataSectionExists();
+        UsersBulkEditProfileForm.verifyMetadataSectionExists();
 
         // Step 4: Verify elements under "Summary" accordion
         UsersBulkEditProfileForm.verifySummaryAccordionElements();
