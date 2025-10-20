@@ -146,13 +146,18 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.verify();
 
-          QueryModal.selectField(holdingsFieldValues.receivingHistoryChronology);
-          QueryModal.verifySelectedField(holdingsFieldValues.receivingHistoryChronology);
-          QueryModal.selectField(holdingsFieldValues.receivingHistoryEnumeration);
-          QueryModal.verifySelectedField(holdingsFieldValues.receivingHistoryEnumeration);
-          QueryModal.selectField(holdingsFieldValues.receivingHistoryPublicDisplay);
-          QueryModal.verifySelectedField(holdingsFieldValues.receivingHistoryPublicDisplay);
-          QueryModal.verifyFieldsSortedAlphabetically();
+          const receivingHistoryFields = [
+            holdingsFieldValues.receivingHistoryChronology,
+            holdingsFieldValues.receivingHistoryEnumeration,
+            holdingsFieldValues.receivingHistoryPublicDisplay,
+          ];
+
+          receivingHistoryFields.forEach((field) => {
+            QueryModal.selectField(field);
+            QueryModal.verifySelectedField(field);
+          });
+
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(receivingHistoryFields);
 
           // Step 2: Search holdings by "Holdings — Receiving history — Enumeration" field using "equals" operator
           QueryModal.clickSelectFieldButton();
@@ -235,6 +240,15 @@ describe('Bulk-edit', () => {
           notExpectedWithFalseDisplay.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
+
+          // Step 5: Check display of Holdings data from Preconditions in "Holdings — Receiving history" column in the result table
+          QueryModal.clickGarbage(0);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            mappedHoldingsDatatoUIView[3].hrid,
+            'Holdings — Receiving history',
+            '',
+          );
         },
       );
     });

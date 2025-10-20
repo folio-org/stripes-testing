@@ -114,7 +114,7 @@ const authoritySourceOptions = [
   'LC Subject Headings (LCSH)',
   "LC Children's Subject Headings",
   'LC Genre/Form Terms (LCGFT)',
-  'LC Demographic Group Terms (LCFGT)',
+  'LC Demographic Group Terms (LCDGT)',
   'LC Medium of Performance Thesaurus for Music (LCMPT)',
   'Faceted Application of Subject Terminology (FAST)',
   'Medical Subject Headings (MeSH)',
@@ -971,7 +971,7 @@ export default {
         .find(MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')))
         .exists(),
       sourceFileAccordion
-        .find(MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')))
+        .find(MultiSelectOption(including('LC Demographic Group Terms (LCDGT)')))
         .exists(),
       sourceFileAccordion
         .find(MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')))
@@ -1006,7 +1006,7 @@ export default {
       MultiSelectOption(including('LC Subject Headings (LCSH)')).exists(),
       MultiSelectOption(including("LC Children's Subject Headings")).exists(),
       MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')).exists(),
-      MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')).exists(),
+      MultiSelectOption(including('LC Demographic Group Terms (LCDGT)')).exists(),
       MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')).exists(),
       MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)')).exists(),
       MultiSelectOption(including('Medical Subject Headings (MeSH)')).exists(),
