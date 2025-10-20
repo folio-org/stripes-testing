@@ -215,7 +215,7 @@ describe('Bulk-edit', () => {
           // Step 7: Select Permanent item location
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
-          BulkEditActions.selectSecondAction('Clear field');
+          BulkEditActions.selectAction('Clear field');
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 8: Add new row for Temporary item location
@@ -223,7 +223,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary item location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary item location', 1);
-          BulkEditActions.selectSecondAction('Clear field', 1);
+          BulkEditActions.selectAction('Clear field', 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 9: Confirm changes and verify preview

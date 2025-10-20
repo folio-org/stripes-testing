@@ -55,7 +55,7 @@ export default {
   },
 
   verifyMetadataSectionExists() {
-    cy.expect(summaryAccordion.find(MetaSection()).exists());
+    cy.expect(summaryAccordion.find(MetaSection({ open: false })).exists());
   },
 
   verifySummaryAccordionElements(isLockProfileCheckboxDisabled = true) {

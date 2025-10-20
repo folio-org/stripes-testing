@@ -154,6 +154,7 @@ describe('Bulk-edit', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(instanceToEditIdInInventoryId);
           InventoryInstances.selectInstance();
           InstanceRecordView.verifyInstancePaneExists();
@@ -259,6 +260,7 @@ describe('Bulk-edit', () => {
             // Step 20: Verify changes were applied to the instance not affected by optimistic locking
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.waitLoading();
+            InventorySearchAndFilter.clearDefaultFilter('Held by');
             InventorySearchAndFilter.searchInstanceByTitle(instanceEditedDuringBulkEditId);
             InventoryInstances.selectInstance();
             InstanceRecordView.verifyInstancePaneExists();

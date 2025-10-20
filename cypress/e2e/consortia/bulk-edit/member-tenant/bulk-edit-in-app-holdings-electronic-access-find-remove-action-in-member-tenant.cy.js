@@ -288,8 +288,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(holdingIds.length);
 
-          const editedElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}`;
-          const editedElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote}|;${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote.trim()}`;
+          const editedElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}-${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}`;
+          const editedElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote}|-;${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote.trim()}`;
 
           holdingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -347,7 +347,7 @@ describe('Bulk-edit', () => {
               sharedUrlRelationshipData.payload.name,
               electronicAccessFieldsEdited.uri,
               electronicAccessFieldsEdited.linkText,
-              '-',
+              electronicAccessFieldsEdited.materialsSpecification,
               electronicAccessFieldsEdited.publicNote,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(
@@ -360,8 +360,9 @@ describe('Bulk-edit', () => {
               '-',
               electronicAccessFieldsEdited.uri,
               electronicAccessFieldsEdited.linkText,
+              electronicAccessFieldsEdited.materialsSpecification,
               electronicAccessFieldsEdited.publicNote,
-              '-',
+
               1,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(

@@ -32,7 +32,7 @@ const newExpirationDate = new Date();
 const newExpirationDateWithSlashes = DateTools.getFormattedDateWithSlashes({
   date: new Date(),
 });
-const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })} 23:59:59.000Z`;
+const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })}`;
 const newPatronGroup = 'faculty';
 
 describe('Bulk-edit', () => {
@@ -98,7 +98,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 user');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(users.type == Staff) AND (users.last_name == ${user.personal.lastName})`,
+              `(users.type == staff) AND (users.last_name == ${user.personal.lastName})`,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               user.barcode,
