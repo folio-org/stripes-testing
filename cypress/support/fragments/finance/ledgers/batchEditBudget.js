@@ -286,6 +286,7 @@ export default {
               );
             });
           } else {
+            // eslint-disable-next-line cypress/no-force
             cy.wrap($sortControls).first().click({ force: true });
             cy.wait(200);
             getColumnValues().then((afterVals) => {
@@ -421,6 +422,7 @@ export default {
     cy.contains(`${logsTable} [role="row"] a`, partialText)
       .closest('[role="row"]')
       .within(() => {
+        // eslint-disable-next-line cypress/no-force
         cy.get('input[type="checkbox"]')
           .should('exist')
           .and('not.be.disabled')
