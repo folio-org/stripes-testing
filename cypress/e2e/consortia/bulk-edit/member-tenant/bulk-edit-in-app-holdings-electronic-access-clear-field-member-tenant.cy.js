@@ -196,7 +196,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
           );
 
-          const holdingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-shared-uri.comCollege shared link textCollege shared material specifiedCollege shared url public note${localUrlRelationship.name}https://college-uri.comCollege link textCollege materials specifiedCollege url public note`;
+          const holdingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-shared-uri.comCollege shared link textCollege shared material specifiedCollege shared url public note${localUrlRelationship.name}https://college-uri.comCollege link textCollege material specifiedCollege url public note`;
 
           holdingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -220,7 +220,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
-          const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-shared-uri.com;College shared link text;College shared material specified;College shared url public note|${localUrlRelationship.name};https://college-uri.com;College link text;College materials specified;College url public note`;
+          const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-shared-uri.com;College shared link text;College shared material specified;College shared url public note|${localUrlRelationship.name};https://college-uri.com;College link text;College material specified;College url public note`;
 
           FileManager.convertCsvToJson(fileNames.matchedRecordsCSV).then((csvFileData) => {
             const holdingRows = getRowsInCsvFileMatchingHrids(csvFileData, holdingHrids);
@@ -264,8 +264,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(holdingIds.length);
 
-          const updatedHoldingsElectronicAccess = electronicAccessTableHeaders;
-          const updatedHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile};;;;|;;;;`;
+          const updatedHoldingsElectronicAccess = `${electronicAccessTableHeaders}--------`;
+          const updatedHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}-;;-;-;-|-;;-;-;-`;
 
           holdingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(

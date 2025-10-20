@@ -129,6 +129,7 @@ describe('Bulk-edit', () => {
                 cy.wait(1000);
               });
             });
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

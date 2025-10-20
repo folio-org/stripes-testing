@@ -363,13 +363,21 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-          const editedHoldingElectronicAccessFields = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}`;
+          const editedHoldingElectronicAccessFieldsInCollege = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}-------`;
+          const editedHoldingElectronicAccessFieldsInUniversity = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}---`;
 
-          holdingHrids.forEach((holdingHrid) => {
+          collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
               holdingHrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
-              editedHoldingElectronicAccessFields,
+              editedHoldingElectronicAccessFieldsInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              holdingHrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+              editedHoldingElectronicAccessFieldsInUniversity,
             );
           });
 
@@ -377,8 +385,8 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInAreYouSureForm(4);
           BulkEditActions.downloadPreview();
 
-          const editedHoldingElectronicAccessFieldsInCollegeInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;;;|;;;;`;
-          const editedHoldingElectronicAccessFieldsInUniversityInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;;;`;
+          const editedHoldingElectronicAccessFieldsInCollegeInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;-;-;-|-;;-;-;-`;
+          const editedHoldingElectronicAccessFieldsInUniversityInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;-;-;-`;
 
           verifyElectronicAccessFieldsInCSVFile(
             previewFileName,
@@ -388,11 +396,18 @@ describe('Bulk-edit', () => {
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
-          holdingHrids.forEach((holdingHrid) => {
+          collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
               holdingHrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
-              editedHoldingElectronicAccessFields,
+              editedHoldingElectronicAccessFieldsInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+              holdingHrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+              editedHoldingElectronicAccessFieldsInUniversity,
             );
           });
 
