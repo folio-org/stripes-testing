@@ -5,7 +5,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-// import LinkedToLocalAuthoritiesModal from '../../../../support/fragments/inventory/modals/linkedToLocalAuthoritiesModal';
+import LinkedToLocalAuthoritiesModal from '../../../../support/fragments/inventory/modals/linkedToLocalAuthoritiesModal';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -84,26 +84,22 @@ describe('Inventory', () => {
             );
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
-
-            QuickMarcEditor.clickLinkIconInTagField(21);
+            QuickMarcEditor.clickLinkIconInTagField(16);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            cy.pause();
             InventoryInstance.searchResults(
-              '',
+              'C411723 Lentz Shared',
               // testData.authorityHeading
             );
             InventoryInstance.clickLinkButton();
-
-            QuickMarcEditor.clickLinkIconInTagField(20);
+            cy.wait(1000);
+            QuickMarcEditor.clickLinkIconInTagField(32);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults('C411723 Criticism and interpretation');
+            InventoryInstance.searchResults('C411723 Lentz Local M1');
             InventoryInstance.clickLinkButton();
-
-            cy.pause();
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
@@ -151,26 +147,27 @@ describe('Inventory', () => {
         'C411723 (CONSORTIA) Verify the new modal for shared and local authority record after sharing the local instance on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C411723'] },
         () => {
-          //     InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
-          //     InventorySearchAndFilter.searchByParameter(
-          //       testData.instanceSearchOption,
-          //       testData.createdRecordIDs[1],
-          //     );
-          //     InventoryInstances.selectInstance();
-          //     InventoryInstance.waitLoading();
-          //     InventoryInstance.clickShareLocalInstanceButton();
-          //     InventoryInstance.clickShareInstance();
-          //     LinkedToLocalAuthoritiesModal.isNotDisplayed();
-          //     InventoryInstance.verifyCalloutMessage(
-          //       `Local instance ${testData.instanceTitle} has been successfully shared`,
-          //     );
-          //     InventoryInstance.checkSharedTextInDetailView(true);
-          //     InventoryInstance.checkExpectedMARCSource();
-          //     InventoryInstance.checkAuthorityAppIconLink(
-          //       testData.sectionId,
-          //       testData.authorityHeading,
-          //       testData.createdRecordIDs[0],
-          //     );
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+          InventorySearchAndFilter.searchByParameter(
+            testData.instanceSearchOption,
+            testData.createdRecordIDs[1],
+          );
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.clickShareLocalInstanceButton();
+          InventoryInstance.clickShareInstance();
+          LinkedToLocalAuthoritiesModal.isNotDisplayed();
+          InventoryInstance.verifyCalloutMessage(
+            `Local instance ${testData.instanceTitle} has been successfully shared`,
+          );
+          InventoryInstance.checkSharedTextInDetailView(true);
+          InventoryInstance.checkExpectedMARCSource();
+          cy.pause();
+          // InventoryInstance.checkAuthorityAppIconLink(
+          //   testData.sectionId,
+          //   testData.authorityHeading,
+          //   testData.createdRecordIDs[0],
+          // );
         },
       );
     });
