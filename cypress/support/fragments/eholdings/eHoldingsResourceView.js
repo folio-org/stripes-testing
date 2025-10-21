@@ -38,6 +38,12 @@ const resourceSettingsAccordion = Accordion('Resource settings');
 const resourceSettingsAccordionButton = Button({
   id: 'accordion-toggle-button-resourceShowSettings',
 });
+const customCoverageDatesKeyValue = KeyValue('Custom coverage dates');
+const customCoverageStatementKeyValue = KeyValue('Custom coverage statement');
+const customEmbargoPeriodKeyValue = KeyValue('Custom embargo period');
+const showToPatronsKeyValue = KeyValue('Show to patrons');
+const proxyKeyValue = KeyValue('Proxy');
+const proxiedURLKeyValue = KeyValue('Proxied URL');
 
 export default {
   waitLoading: () => {
@@ -159,23 +165,22 @@ export default {
   },
 
   verifyNoCustomCoverageDates() {
-    cy.expect(KeyValue('Custom coverage dates').absent());
+    cy.expect(customCoverageDatesKeyValue.absent());
   },
 
   verifyCoverageStatement(statement) {
-    cy.expect(KeyValue('Coverage statement').has({ value: statement }));
+    cy.expect(customCoverageStatementKeyValue.has({ value: statement }));
   },
 
   verifyCustomEmbargoExists() {
-    cy.expect(KeyValue('Custom embargo period').exists());
+    cy.expect(customEmbargoPeriodKeyValue.exists());
   },
 
   verifyCustomEmbargoValue(value, unit) {
     const formattedUnit = unit.toLowerCase().replace(/s$/, '(s)');
-    cy.expect(
-      KeyValue('Custom embargo period').has({ value: including(`${value} ${formattedUnit}`) }),
-    );
+    cy.expect(customEmbargoPeriodKeyValue.has({ value: including(`${value} ${formattedUnit}`) }));
   },
+
   expandResourceSettingsAccordion() {
     cy.wait(500);
     cy.then(() => resourceSettingsAccordionButton.ariaExpanded()).then((isExpanded) => {
@@ -187,38 +192,38 @@ export default {
   },
 
   verifyCustomEmbargoAbsent() {
-    cy.expect(KeyValue('Custom embargo period').absent());
+    cy.expect(customEmbargoPeriodKeyValue.absent());
   },
 
   verifyResourceSettingsAccordion() {
     this.expandResourceSettingsAccordion();
     cy.expect(resourceSettingsAccordion.exists());
-    cy.expect(KeyValue('Show to patrons').exists());
-    cy.expect(KeyValue('Proxy').exists());
+    cy.expect(showToPatronsKeyValue.exists());
+    cy.expect(proxyKeyValue.exists());
   },
 
   verifyProxy(proxyName) {
     this.expandResourceSettingsAccordion();
     if (proxyName) {
-      cy.expect(KeyValue('Proxy').has({ value: proxyName }));
+      cy.expect(proxyKeyValue.has({ value: proxyName }));
     } else {
-      cy.expect(KeyValue('Proxy').exists());
+      cy.expect(proxyKeyValue.exists());
     }
   },
 
   verifyProxiedURL() {
     this.expandResourceSettingsAccordion();
-    cy.expect(KeyValue('Proxied URL').exists());
+    cy.expect(proxiedURLKeyValue.exists());
   },
 
   verifyProxiedURLNotDisplayed() {
     this.expandResourceSettingsAccordion();
-    cy.expect(KeyValue('Proxied URL').absent());
+    cy.expect(proxiedURLKeyValue.absent());
   },
 
   verifyProxiedURLLink() {
     this.expandResourceSettingsAccordion();
-    cy.then(() => KeyValue('Proxied URL').value()).then((url) => {
+    cy.then(() => proxiedURLKeyValue.value()).then((url) => {
       const trimmedUrl = url.trim();
       cy.expect(resourceSettingsAccordion.find(Link({ href: including(trimmedUrl) })).exists());
     });
