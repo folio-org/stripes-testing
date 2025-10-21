@@ -9,6 +9,7 @@ import {
   Section,
   Select,
   TextField,
+  matching,
 } from '../../../../../interactors';
 import OrderStorageSettings from '../../orders/orderStorageSettings';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -114,7 +115,16 @@ export default {
   },
 
   verifyPurchaseOrderLinesLimitValue: (value) => {
-    cy.expect(TextField('Set purchase order lines limit').has({ value }));
+    const limit = String(value);
+    cy.expect(TextField('Set purchase order lines limit').has({ value: limit }));
+  },
+
+  verifyPurchaseOrderLinesLimit: () => {
+    cy.expect(
+      TextField('Set purchase order lines limit').has({
+        value: matching(/^([1-9]|[1-9][0-9]|100)$/),
+      }),
+    );
   },
 
   fillRequiredFields: (info) => {

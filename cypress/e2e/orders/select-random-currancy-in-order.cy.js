@@ -57,7 +57,7 @@ describe('Orders', () => {
         location = res;
       });
     });
-    OrderLinesLimit.setPOLLimit(2);
+    OrderLinesLimit.setPOLLimitViaApi(2);
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
@@ -74,7 +74,7 @@ describe('Orders', () => {
 
   afterEach(() => {
     cy.getAdminToken();
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Users.deleteViaApi(user.userId);
   });
 

@@ -30,7 +30,7 @@ describe('Orders', () => {
         cy.getAdminSourceRecord().then((record) => {
           adminSourceRecord = record;
         });
-        OrderLinesLimit.setPOLLimit(10);
+        OrderLinesLimit.setPOLLimitViaApi(10);
 
         Organizations.createOrganizationViaApi(testData.organization).then(() => {
           cy.getAcquisitionMethodsApi({
@@ -72,7 +72,7 @@ describe('Orders', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Orders.deleteOrderViaApi(testData.order.id);
       Users.deleteViaApi(user.userId);

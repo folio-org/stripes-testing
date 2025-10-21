@@ -110,7 +110,7 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
 
   it(
     'C499699 Create Local Indicator code of Standard Field for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499699', 'spitfire'] },
+    { tags: ['extendedPath', 'C499699', 'spitfire'] },
     () => {
       let createdIndicatorCode1Id;
       let createdIndicatorCode2Id;

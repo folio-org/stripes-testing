@@ -149,7 +149,7 @@ describe('Bulk-edit', () => {
                   );
                 });
             });
-
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -226,7 +226,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectOption(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
           );
-          BulkEditActions.selectSecondAction('Set true');
+          BulkEditActions.selectAction('Set true');
 
           // Step 5: Uncheck checkboxes for Apply to all holdings/items records
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);

@@ -80,7 +80,7 @@ describe('Finance: Transactions', () => {
                     cy.getBatchGroups().then((batchGroup) => {
                       invoice.batchGroup = batchGroup.name;
                     });
-                    OrderLinesLimit.setPOLLimit(3);
+                    OrderLinesLimit.setPOLLimitViaApi(3);
                     const firstOrderLine = {
                       ...BasicOrderLine.defaultOrderLine,
                       cost: {
@@ -201,7 +201,7 @@ describe('Finance: Transactions', () => {
   after(() => {
     cy.getAdminToken();
 
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });

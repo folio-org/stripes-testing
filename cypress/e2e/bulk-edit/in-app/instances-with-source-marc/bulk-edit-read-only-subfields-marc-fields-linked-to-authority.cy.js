@@ -33,7 +33,7 @@ const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName,
 const marcInstance = {
   title: `AT_C663262_MarcInstance_${getRandomPostfix()}`,
 };
-const authorityHeadingToLink610Field = 'AT_C663262_Radio "Vaticana".';
+const authorityHeadingToLink610Field = 'AT_C663262_Radio Vaticana.';
 const authorityHeadingToLink240Field = 'AT_C663262_Variations,';
 const marcInstanceFields = [
   {
@@ -135,7 +135,7 @@ describe('Bulk-edit', () => {
             InventoryInstance.verifyAndClickLinkIcon('610');
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorities.switchToSearch();
-            InventoryInstance.searchResults('AT_C663262_Radio "Vaticana".');
+            InventoryInstance.searchResults(authorityHeadingToLink610Field);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority('610');
             QuickMarcEditor.updateLDR06And07Positions();

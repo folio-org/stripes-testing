@@ -231,6 +231,9 @@ describe('Bulk-edit', () => {
             `(holdings.administrative_notes == Geography & Map Reading Room) AND (holdings.instance_id == ${folioInstance.id})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.clickShowColumnsButton();
+          QueryModal.clickCheckboxInShowColumns('Holdings — Notes');
+          QueryModal.clickShowColumnsButton();
 
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 
@@ -289,7 +292,7 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('True');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            `(holdings.notes[*]->staff_only == true) AND (holdings.instance_id == ${folioInstance.id}) and (notes.type_id == ${HOLDING_NOTE_TYPES.COPY_NOTE}) and (notes.staff_only == true)`,
+            `(holdings.notes[*]->staff_only == true) AND (holdings.instance_id == ${folioInstance.id})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 

@@ -1279,6 +1279,19 @@ export default {
     });
   },
 
+  checkColumnNamesInDownloadedLedgerAllocationWorksheet(fileName) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Fiscal year","Fund name","Fund code","Fund UUID","Fund status","Budget name","Budget UUID","Budget status","Budget initial allocation","Budget current allocation","Budget allowable expenditure","Budget allowable encumbrance","Allocation adjustment","Transaction tag","Transaction description"',
+      );
+    });
+  },
+
   checkColumnContentInDownloadedLedgerExportFile(
     fileName,
     fileRow,
@@ -1460,6 +1473,95 @@ export default {
       expect(actualData[9]).to.equal(`"${fund.description}"`);
       expect(actualData[10]).to.equal('"No budget found"');
     });
+  },
+
+  checkLedgerExportRow(fileName, matcher, expected) {
+    cy.readFile(`cypress/downloads/${fileName}`, { log: false }).then((fileContent) => {
+      const lines = fileContent.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      const header = this.parseCsvLine(lines[0]);
+      const cell = (rowArr, colName) => {
+        const idx = header.indexOf(colName);
+        return this.clean(rowArr[idx]);
+      };
+
+      let targetIndex;
+      if (typeof matcher?.rowIndex === 'number') {
+        targetIndex = matcher.rowIndex;
+      } else if (matcher?.fundName) {
+        const fundNameCol = header.indexOf('Fund name');
+        targetIndex = lines.findIndex((l, i) => {
+          if (i === 0) return false;
+          const arr = this.parseCsvLine(l);
+          return this.clean(arr[fundNameCol]) === this.clean(matcher.fundName);
+        });
+      }
+
+      const row = this.parseCsvLine(lines[targetIndex]);
+      if (expected.fiscalYear != null) {
+        expect(cell(row, 'Fiscal year')).to.equal(this.clean(expected.fiscalYear));
+      }
+      if (expected.fundName != null) {
+        expect(cell(row, 'Fund name')).to.equal(this.clean(expected.fundName));
+      }
+      if (expected.fundCode != null) {
+        expect(cell(row, 'Fund code')).to.equal(this.clean(expected.fundCode));
+      }
+      if (expected.fundUUID != null) {
+        expect(cell(row, 'Fund UUID')).to.equal(this.clean(expected.fundUUID));
+      }
+      if (expected.fundStatus != null) {
+        expect(cell(row, 'Fund status')).to.equal(this.clean(expected.fundStatus));
+      }
+      if (expected.budgetName != null) {
+        expect(cell(row, 'Budget name')).to.equal(this.clean(expected.budgetName));
+      }
+      if (expected.budgetUUID != null) {
+        expect(cell(row, 'Budget UUID')).to.equal(this.clean(expected.budgetUUID));
+      }
+      if (expected.budgetStatus != null) {
+        expect(cell(row, 'Budget status')).to.equal(this.clean(expected.budgetStatus));
+      }
+      if (expected.budgetInitialAllocation != null) {
+        expect(cell(row, 'Budget initial allocation')).to.equal(
+          this.clean(expected.budgetInitialAllocation),
+        );
+      }
+      if (expected.budgetCurrentAllocation != null) {
+        expect(cell(row, 'Budget current allocation')).to.equal(
+          this.clean(expected.budgetCurrentAllocation),
+        );
+      }
+      if (expected.budgetAllowableEncumbrance != null) {
+        expect(cell(row, 'Budget allowable encumbrance')).to.equal(
+          this.clean(expected.budgetAllowableEncumbrance),
+        );
+      }
+      if (expected.budgetAllowableExpenditure != null) {
+        expect(cell(row, 'Budget allowable expenditure')).to.equal(
+          this.clean(expected.budgetAllowableExpenditure),
+        );
+      }
+      if (expected.allocationAdjustment != null) {
+        expect(cell(row, 'Allocation adjustment')).to.equal(
+          this.clean(expected.allocationAdjustment),
+        );
+      }
+      if (expected.transactionTag != null) {
+        expect(cell(row, 'Transaction tag')).to.equal(this.clean(expected.transactionTag));
+      }
+      if (expected.transactionDescription != null) {
+        expect(cell(row, 'Transaction description')).to.equal(
+          this.clean(expected.transactionDescription),
+        );
+      }
+    });
+  },
+
+  clean(v) {
+    if (v == null) return '';
+    let s = String(v).trim();
+    if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
+    return s;
   },
 
   parseCsvLine(line) {

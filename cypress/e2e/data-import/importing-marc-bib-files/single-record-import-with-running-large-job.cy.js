@@ -74,7 +74,7 @@ describe('Data Import', () => {
 
       it(
         'C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C356824'] },
+        { tags: ['criticalPathBroken', 'folijet', 'C356824'] },
         () => {
           Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 

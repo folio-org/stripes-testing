@@ -4,6 +4,7 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiSelect,
   MultiSelectOption,
   RepeatableFieldItem,
@@ -39,6 +40,7 @@ const embeddedTableHeadersMap = {
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
+  publications: ['Publisher', 'Publisher role', 'Place of publication', 'Publication date'],
   statements: ['Statement', 'Statement public note', 'Statement staff note'],
   statementsForSupplements: [
     'Statement for supplement',
@@ -58,6 +60,25 @@ const embeddedTableHeadersMap = {
     'Contributor type, free text',
     'Primary',
   ],
+  alternativeTitles: ['Alternative title', 'Alternative title type'],
+  subjects: ['Subject headings', 'Subject source', 'Subject type'],
+  identifiers: ['Type', 'Identifier'],
+  classifications: ['Classification identifier type', 'Classification'],
+};
+
+export const embeddedFields = {
+  receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
+  contributors: [
+    'Contributor name',
+    'Contributor name type',
+    'Contributor type',
+    'Contributor type, free text',
+    'Primary',
+  ],
+  alternativeTitles: ['Alternative title', 'Alternative title type'],
+  subjects: ['Subject headings', 'Subject source', 'Subject type'],
+  identifiers: ['Identifier', 'Identifier type'],
+  classifications: ['Classification', 'Classification identifier type'],
 };
 
 export const holdingsFieldValues = {
@@ -95,6 +116,8 @@ export const holdingsFieldValues = {
   receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
+  holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
+  holdingsTags: 'Holdings — Tags',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -104,6 +127,7 @@ export const instanceFieldValues = {
   instanceSource: 'Instance — Source',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
+  flagForDeletion: 'Instance — Flag for deletion',
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
@@ -113,15 +137,37 @@ export const instanceFieldValues = {
   noteType: 'Instance — Notes — Note type',
   note: 'Instance — Notes — Note',
   noteStaffOnly: 'Instance — Notes — Staff only',
-  publicationsPublisher: 'Instance — Publication — Publisher',
-  publicationsRole: 'Instance — Publication — Publisher role',
-  publicationsPlace: 'Instance — Publication — Place of publication',
-  publicationsDate: 'Instance — Publication — Publication date',
+  publicationsPublisher: 'Instance — Publications — Publisher',
+  publicationsRole: 'Instance — Publications — Publisher role',
+  publicationsPlace: 'Instance — Publications — Place of publication',
+  publicationsDate: 'Instance — Publications — Publication date',
   contributorName: 'Instance — Contributors — Contributor name',
   contributorNameType: 'Instance — Contributors — Contributor name type',
   contributorType: 'Instance — Contributors — Contributor type',
   contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
+  publicationRange: 'Instance — Publication range',
+  publicationFrequency: 'Instance — Publication frequency',
+  natureOfContent: 'Instance — Nature of content',
+  editions: 'Instance — Editions',
+  physicalDescriptions: 'Instance — Physical descriptions',
+  alternativeTitlesAlternativeTitle: 'Instance — Alternative titles — Alternative title',
+  alternativeTitlesAlternativeTitleType: 'Instance — Alternative titles — Alternative title type',
+  subjectsSubjectHeadings: 'Instance — Subjects — Subject headings',
+  subjectsSubjectSource: 'Instance — Subjects — Subject source',
+  subjectsSubjectType: 'Instance — Subjects — Subject type',
+  identifiersIdentifier: 'Instance — Identifiers — Identifier',
+  identifiersIdentifierType: 'Instance — Identifiers — Identifier type',
+  classificationsClassification: 'Instance — Classifications — Classification',
+  classificationsClassificationIdentifierType:
+    'Instance — Classifications — Classification identifier type',
+  electronicAccessLinkText: 'Instance — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Instance — Electronic access — Material specified',
+  electronicAccessURI: 'Instance — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Instance — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
+  tags: 'Instance — Tags',
+  series: 'Instance — Series',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -129,6 +175,10 @@ export const itemFieldValues = {
   instanceTitle: 'Instance — Resource title',
   itemAccessionNumber: 'Item — Accession number',
   itemBarcode: 'Item — Barcode',
+  itemCheckOutNotesNote: 'Item — Check out notes — Note',
+  itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
+  itemCheckInNotesNote: 'Item — Check in notes — Note',
+  itemCheckInNotesStaffOnly: 'Item — Check in notes — Staff only',
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
@@ -147,6 +197,9 @@ export const itemFieldValues = {
   electronicAccessURLPublicNote: 'Item — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Item — Electronic access — URL relationship',
   yearCaption: 'Item — Year, caption',
+  itemStatisticalCodeNames: 'Item — Statistical code',
+  itemTags: 'Item — Tags',
+  itemFormerIdentifiers: 'Item — Former identifiers',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -271,6 +324,33 @@ export default {
         const textArray = optionsText.get().map((el) => el.innerText);
         const sortedArray = [...textArray].sort((a, b) => a - b);
         expect(sortedArray).to.eql(textArray);
+      });
+  },
+
+  verifySubsetOfFieldsSortedAlphabetically(expectedAlphabeticalOptions) {
+    this.clickSelectFieldButton();
+    cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
+      .children()
+      .then((optionsText) => {
+        const actualOptionsArray = optionsText.get().map((el) => el.innerText);
+
+        // Find the indices of expected options in the actual array
+        const foundIndices = expectedAlphabeticalOptions.map((option) => {
+          const index = actualOptionsArray.indexOf(option);
+          if (index === -1) {
+            throw new Error(`Expected option "${option}" not found in actual options`);
+          }
+          return index;
+        });
+
+        // Verify that the indices are consecutive (each index should be previous index + 1)
+        for (let i = 1; i < foundIndices.length; i++) {
+          if (foundIndices[i] !== foundIndices[i - 1] + 1) {
+            throw new Error(
+              `Options "${expectedAlphabeticalOptions[i]}" are not consecutive in alphabetical order.`,
+            );
+          }
+        }
       });
   },
 
@@ -608,7 +688,7 @@ export default {
           dataObj.relationship,
           dataObj.uri,
           dataObj.linkText,
-          dataObj.materialsSpecified,
+          dataObj.materialsSpecification,
           dataObj.publicNote,
         ];
       case 'notes':
@@ -627,6 +707,16 @@ export default {
           dataObj.contributorTypeFreeText,
           dataObj.primary,
         ];
+      case 'alternativeTitles':
+        return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
+      case 'subjects':
+        return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
+      case 'publications':
+        return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
+      case 'identifiers':
+        return [dataObj.identifierType, dataObj.identifier];
+      case 'classifications':
+        return [dataObj.classificationIdentifierType, dataObj.classification];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -691,6 +781,37 @@ export default {
     this.verifyEmbeddedTableInQueryModal('contributors', instanceIdentifier, expectedContributors);
   },
 
+  verifyAlternativeTitlesEmbeddedTableInQueryModal(instanceIdentifier, expectedAlternativeTitles) {
+    this.verifyEmbeddedTableInQueryModal(
+      'alternativeTitles',
+      instanceIdentifier,
+      expectedAlternativeTitles,
+    );
+  },
+
+  verifySubjectsEmbeddedTableInQueryModal(instanceIdentifier, expectedSubjects) {
+    this.verifyEmbeddedTableInQueryModal('subjects', instanceIdentifier, expectedSubjects);
+  },
+
+  verifyPublicationsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedPublications, // Can be a single publication object or array of publication objects, ex: { publisher: 'test publisher', role: 'test role', place: 'test place', dateOfPublication: 'test date' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('publications', instanceIdentifier, expectedPublications);
+  },
+
+  verifyIdentifiersEmbeddedTableInQueryModal(instanceIdentifier, expectedIdentifiers) {
+    this.verifyEmbeddedTableInQueryModal('identifiers', instanceIdentifier, expectedIdentifiers);
+  },
+
+  verifyClassificationsEmbeddedTableInQueryModal(instanceIdentifier, expectedClassifications) {
+    this.verifyEmbeddedTableInQueryModal(
+      'classifications',
+      instanceIdentifier,
+      expectedClassifications,
+    );
+  },
+
   clickShowColumnsButton() {
     cy.do(showColumnsButton.click());
   },
@@ -698,5 +819,13 @@ export default {
   clickCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).click());
     cy.wait(2000);
+  },
+
+  verifyColumnDisplayed(columnName) {
+    cy.expect(MultiColumnListHeader(columnName).exists());
+  },
+
+  scrollResultTable(direction) {
+    cy.get('div[class^="mclScrollable"]').scrollTo(direction);
   },
 };

@@ -470,4 +470,8 @@ export default {
         .click(),
     );
   },
+
+  openRequesterLookup: () => {
+    cy.do(Button('Requester look-up').click());
+  },
 };

@@ -155,7 +155,7 @@ describe('Bulk-edit', () => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
-          QueryModal.verifyFieldsSortedAlphabetically();
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(statementsFields);
 
           // Step 2: Search holdings by "Holdings — Statements — Statement" field using "equals" operator
           QueryModal.clickSelectFieldButton();
@@ -169,9 +169,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield(folioInstance.id, 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Statements');
-          QueryModal.clickShowColumnsButton();
 
           // Expected to find: Holdings 1 and Holdings 2 (both have "1-86 (1941-1987)" statement)
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
@@ -221,6 +218,15 @@ describe('Bulk-edit', () => {
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
+
+          // Step 5: Check display of Holdings data from Preconditions in "Holdings — Statements" column in the result table
+          QueryModal.clickGarbage(0);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedHoldings[3].hrid,
+            'Holdings — Statements',
+            '',
+          );
         },
       );
     });

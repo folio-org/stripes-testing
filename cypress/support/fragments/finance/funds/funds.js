@@ -30,6 +30,7 @@ import FinanceHelp from '../financeHelper';
 import FiscalYears from '../fiscalYears/fiscalYears';
 import FundDetails from './fundDetails';
 import FundEditForm from './fundEditForm';
+import Headline from '../../../../../interactors/headline';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -445,6 +446,10 @@ export default {
     );
   },
 
+  assertHasTagWithInteractors(tag) {
+    cy.expect(KeyValue('Tags').has({ value: including(tag) }));
+  },
+
   checkStatusInTransactionDetails: (status) => {
     cy.expect(transactionDetailSection.find(KeyValue('Status')).has({ value: status }));
   },
@@ -540,11 +545,22 @@ export default {
     cy.do(Accordion('Type').find(Checkbox(option)).click());
   },
 
-  increaseAllocation: () => {
+  increaseAllocation: (ammount = '50') => {
     cy.do([
       actionsButton.click(),
       Button('Increase allocation').click(),
-      amountTextField.fillIn('50'),
+      amountTextField.fillIn(ammount),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(addTransferModal.find(confirmButton).click());
+  },
+
+  decreaseAllocation: (ammount = '50') => {
+    cy.do([
+      actionsButton.click(),
+      Button('Decrease allocation').click(),
+      amountTextField.fillIn(ammount),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -989,6 +1005,10 @@ export default {
     cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
   },
 
+  checkFundStatus(status) {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
   closeBudgetDetails() {
     cy.do(budgetPane.find(Button({ icon: 'times' })).click());
     cy.expect(fundDetailsPane.visible());
@@ -1350,5 +1370,10 @@ export default {
 
   clickConfirmInNegativeAvailableAmountModal() {
     cy.do(Modal('Negative available amount').find(confirmButton).click());
+  },
+
+  assertAllocationToolsSubmenuAbsent() {
+    cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
+    cy.expect(Headline('Allocation tools').absent());
   },
 };

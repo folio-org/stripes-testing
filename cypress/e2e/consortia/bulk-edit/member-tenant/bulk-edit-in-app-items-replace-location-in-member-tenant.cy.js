@@ -239,7 +239,7 @@ describe('Bulk-edit', () => {
           // Step 7-10: Select Permanent item location
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
-          BulkEditActions.selectSecondAction('Replace with');
+          BulkEditActions.selectAction('Replace with');
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup();
           BulkEditActions.verifyLocationLookupModal();

@@ -364,6 +364,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 3);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -383,6 +384,7 @@ describe('Bulk-edit', () => {
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

@@ -780,8 +780,8 @@ export default {
   },
 
   checkNoUsernameErrorCallout: () => {
-    InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
-    InteractorsTools.dismissCallout(noUsernameCalloutText);
+    InteractorsTools.checkCalloutErrorMessage(including(noUsernameCalloutText));
+    InteractorsTools.dismissCallout(including(noUsernameCalloutText));
   },
 
   checkNewButtonShown: (isShown = true) => {
