@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Button,
   Modal,
@@ -289,6 +289,17 @@ export default {
       sourceAccordion
         .find(Button({ ariaLabel: including('Clear selected Source filters') }))
         .click(),
+    );
+  },
+
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
     );
   },
 };
