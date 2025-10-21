@@ -27,7 +27,7 @@ const createProfileBody = () => {
       createAdminNoteRule(
         ActionCreators.addToExisting('Original administrative note for instances'),
       ),
-      InstancesRules.createStaffSuppressRule(ActionCreators.setToFalse(), true, true),
+      InstancesRules.createStaffSuppressRule(false),
     ],
   });
 };

@@ -70,8 +70,8 @@ export default {
     cy.do(lockProfileCheckbox.click());
   },
 
-  verifyLockProfileCheckboxChecked(isChecked) {
-    cy.expect(lockProfileCheckbox.has({ checked: isChecked }));
+  verifyLockProfileCheckboxChecked(isChecked, isDisabled = false) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
   },
 
   verifyBulkEditsAccordionElements() {
@@ -87,6 +87,10 @@ export default {
   fillProfileName(name) {
     cy.do(nameField.fillIn(name));
     cy.expect(nameField.has({ value: name }));
+  },
+
+  verifyProfileNameValue(expectedValue) {
+    cy.expect(nameField.has({ value: expectedValue }));
   },
 
   fillDescription(description) {
