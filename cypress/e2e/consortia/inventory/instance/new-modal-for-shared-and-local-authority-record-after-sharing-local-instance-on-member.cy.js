@@ -10,8 +10,9 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-// import Users from '../../../../support/fragments/users/users';
+import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -19,7 +20,8 @@ describe('Inventory', () => {
       const testData = {
         createdRecordIDs: [],
         rowIndex: 16,
-        authorityHeading: 'C411723 Lentz Shared',
+        sharedAuthorityHeading: 'C411723 Lentz Shared',
+        localAuthorityHeading: 'C411723 Lentz Local M1',
         sectionId: 'list-contributors',
         instanceSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         heldByAccordionName: 'Held by',
@@ -88,20 +90,16 @@ describe('Inventory', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(
-              'C411723 Lentz Shared',
-              // testData.authorityHeading
-            );
+            InventoryInstance.searchResults(testData.sharedAuthorityHeading);
             InventoryInstance.clickLinkButton();
-            cy.wait(1000);
+            cy.wait(2000);
             QuickMarcEditor.clickLinkIconInTagField(32);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults('C411723 Lentz Local M1');
+            InventoryInstance.searchResults(testData.localAuthorityHeading);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
+            cy.wait(2000);
             QuickMarcEditor.clickSaveAndKeepEditing();
           });
         cy.resetTenant();
@@ -125,6 +123,7 @@ describe('Inventory', () => {
               CapabilitySets.uiInventory,
               CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
               CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+              CapabilitySets.uiQuickMarcQuickMarcEditor,
             ],
           );
           cy.resetTenant();
@@ -136,12 +135,17 @@ describe('Inventory', () => {
         });
       });
 
-      // after('Delete test data', () => {
-      //   cy.getAdminToken();
-      //   Users.deleteViaApi(testData.user.userId);
-      //   cy.setTenant(Affiliations.College);
-      //   InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
-      // });
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+        InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2], true);
+        cy.resetTenant();
+        cy.getAdminToken();
+        MarcAuthority.deleteViaAPI(testData.createdRecordIDs[0], true);
+        Users.deleteViaApi(testData.user.userId);
+      });
 
       it(
         'C411723 (CONSORTIA) Verify the new modal for shared and local authority record after sharing the local instance on Member tenant (consortia) (folijet)',
@@ -156,18 +160,29 @@ describe('Inventory', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.clickShareLocalInstanceButton();
           InventoryInstance.clickShareInstance();
+          LinkedToLocalAuthoritiesModal.waitLoading();
+          LinkedToLocalAuthoritiesModal.verifyModalView(1);
+          LinkedToLocalAuthoritiesModal.clickProceed();
           LinkedToLocalAuthoritiesModal.isNotDisplayed();
           InventoryInstance.verifyCalloutMessage(
             `Local instance ${testData.instanceTitle} has been successfully shared`,
           );
           InventoryInstance.checkSharedTextInDetailView(true);
           InventoryInstance.checkExpectedMARCSource();
-          cy.pause();
-          // InventoryInstance.checkAuthorityAppIconLink(
-          //   testData.sectionId,
-          //   testData.authorityHeading,
-          //   testData.createdRecordIDs[0],
-          // );
+          InventoryInstance.checkAuthorityAppIconLink(
+            testData.sectionId,
+            testData.sharedAuthorityHeading,
+            testData.createdRecordIDs[0],
+          );
+
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(
+            32,
+            '650',
+            '\\',
+            '7',
+            '$a C411723 Lentz Local M1 $z Latin America $x Mexico. $0 http://id.loc.gov/authorities/names/n2011049161405560 $2 bisacsh',
+          );
         },
       );
     });
