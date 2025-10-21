@@ -215,6 +215,8 @@ describe('MARC', () => {
               testData.fieldIndexes.tag700,
               testData.messages.failInvalidSubfield,
             );
+            QuickMarcEditor.verifyValidationCallout();
+            QuickMarcEditor.closeAllCallouts();
 
             // Step 5: Add subfield "$9" with valid UUID format in field eligible for linking (700)
             QuickMarcEditor.updateExistingField(
@@ -233,6 +235,8 @@ describe('MARC', () => {
               testData.fieldIndexes.tag700,
               testData.messages.failInvalidSubfield,
             );
+            QuickMarcEditor.verifyValidationCallout();
+            QuickMarcEditor.closeAllCallouts();
 
             // Step 8: Add two subfields "$9" in field eligible for linking (700)
             QuickMarcEditor.updateExistingField(
@@ -255,6 +259,8 @@ describe('MARC', () => {
               testData.fieldIndexes.tag700,
               testData.messages.failNonRepeatable,
             );
+            QuickMarcEditor.verifyValidationCallout();
+            QuickMarcEditor.closeAllCallouts();
 
             QuickMarcEditor.updateExistingField(
               testData.tags.tag700,
@@ -280,6 +286,8 @@ describe('MARC', () => {
               testData.fieldIndexes.tag100,
               testData.messages.failNonRepeatable,
             );
+            QuickMarcEditor.verifyValidationCallout();
+            QuickMarcEditor.closeAllCallouts();
 
             // Step 13: Delete changes made in step 11
             QuickMarcEditor.fillLinkedFieldBox(testData.fieldIndexes.tag100, 5, '');
@@ -301,6 +309,8 @@ describe('MARC', () => {
               testData.fieldIndexes.tag100,
               testData.messages.failNonRepeatable,
             );
+            QuickMarcEditor.verifyValidationCallout();
+            QuickMarcEditor.closeAllCallouts();
 
             // Step 16: Delete changes made in step 14
             QuickMarcEditor.fillLinkedFieldBox(testData.fieldIndexes.tag100, 7, '');
@@ -325,11 +335,11 @@ describe('MARC', () => {
               testData.tags.tag337,
               updatedBibFieldContents.tag337First,
             );
-            QuickMarcEditor.closeAllCallouts();
 
             // Step 19: Click "Save & close" button
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyValidationCallout();
+            QuickMarcEditor.closeAllCallouts();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag040,
               testData.messages.subfieldUndefined,

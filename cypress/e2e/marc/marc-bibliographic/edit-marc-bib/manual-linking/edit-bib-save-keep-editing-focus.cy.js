@@ -49,7 +49,7 @@ describe('MARC', () => {
           startWithNumber: '1',
         };
 
-        const pauseAfterEdit = () => cy.wait(1000);
+        const pauseAfterEdit = () => cy.wait(2000);
 
         const authorityFields = [
           {
@@ -126,6 +126,7 @@ describe('MARC', () => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
             });
           });
