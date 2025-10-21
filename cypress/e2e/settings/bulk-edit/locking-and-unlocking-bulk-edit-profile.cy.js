@@ -111,7 +111,7 @@ describe('Bulk-edit', () => {
           testData.originalProfileName,
           testData.originalDescription,
           user,
-          false,
+          true,
         );
 
         // Step 6: Click on the row with edited bulk edit profile

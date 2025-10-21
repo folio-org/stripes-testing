@@ -41,7 +41,7 @@ export default {
     );
   },
 
-  verifyProfileInTable(name, description, userObject, isActive = true) {
+  verifyProfileInTable(name, description, userObject, isLocked = false) {
     const targetProfileRow = profilesList.find(
       MultiColumnListRow({ content: including(name), isContainer: false }),
     );
@@ -74,7 +74,7 @@ export default {
       targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: 'Active' }),
     );
 
-    if (!isActive) {
+    if (isLocked) {
       cy.do(
         targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).perform((el) => {
           cy.get(el).find('svg').should('have.class', 'icon-lock');
