@@ -38,7 +38,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       // Make sure that defaulted value is "1" in "Purchase order lines limit setting"
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.uiOrganizationsView.gui,

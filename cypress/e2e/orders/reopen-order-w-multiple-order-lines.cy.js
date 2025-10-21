@@ -24,7 +24,7 @@ describe('Orders', () => {
       testData.fund = fund;
       testData.budget = budget;
 
-      OrderLinesLimit.setPOLLimit(orderLinesCount);
+      OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
       Organizations.createOrganizationViaApi(testData.organization).then(() => {
         testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
 
@@ -77,7 +77,7 @@ describe('Orders', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
@@ -144,7 +144,7 @@ describe('Orders', () => {
         Budgets.createViaApi(budget);
       });
 
-      OrderLinesLimit.setPOLLimit(orderLinesCount);
+      OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
       Organizations.createOrganizationViaApi(testData.organization).then(() => {
         testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
 
@@ -197,7 +197,7 @@ describe('Orders', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
