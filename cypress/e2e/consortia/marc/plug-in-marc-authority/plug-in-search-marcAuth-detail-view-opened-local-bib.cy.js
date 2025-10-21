@@ -7,7 +7,6 @@ import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/st
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import Affiliations from '../../../../support/dictionary/affiliations';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../../support/fragments/topMenu';
 
 describe('MARC', () => {
@@ -21,7 +20,6 @@ describe('MARC', () => {
         authorityHeading: `AT_C410882_MarcAuthority_${randomPostfix}`,
         bibTitle: `AT_C410882_MarcBibInstance_${randomPostfix}`,
         user: {},
-        heldByAccordionName: 'Held by',
       };
 
       const authData = {
@@ -128,7 +126,6 @@ describe('MARC', () => {
             authRefresh: true,
           });
 
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.waitLoading();
