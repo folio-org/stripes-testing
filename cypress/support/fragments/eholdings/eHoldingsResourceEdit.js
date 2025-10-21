@@ -29,6 +29,9 @@ const customEmbargoValueField = TextField({ name: 'customEmbargoPeriod[0].embarg
 const customEmbargoUnitSelect = Select({ name: 'customEmbargoPeriod[0].embargoUnit' });
 const saveButton = Button('Save & close');
 const proxySelect = Select({ name: 'proxyId' });
+const addCustomEmbargoPeriodButton = Button('Add custom embargo period');
+const removeCustomEmbargoButton = Button({ icon: 'trash', ariaLabel: 'Clear embargo period' });
+const proxiedURLKeyValue = KeyValue('Proxied URL');
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -73,7 +76,15 @@ export default {
   },
 
   addCustomEmbargo() {
-    cy.do(Button('Add custom embargo period').click());
+    cy.do(addCustomEmbargoPeriodButton.click());
+  },
+
+  removeCustomEmbargo() {
+    cy.do(removeCustomEmbargoButton.click());
+  },
+
+  verifyCustomEmbargoRemovalMessage() {
+    cy.contains('Nothing set. Saving will remove custom embargo period.').should('be.visible');
   },
 
   verifySaveButtonEnabled() {
@@ -96,7 +107,7 @@ export default {
   },
 
   verifyProxiedURLNotDisplayed() {
-    cy.expect(KeyValue('Proxied URL').absent());
+    cy.expect(proxiedURLKeyValue.absent());
   },
 
   removeCustomEmbargoViaAPI(resourceId) {
@@ -120,6 +131,38 @@ export default {
               attributes: {
                 ...resourceData.attributes,
                 customEmbargoPeriod: null,
+              },
+            },
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      });
+  },
+
+  addCustomEmbargoViaAPI(resourceId, { embargoValue, embargoUnit }) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `eholdings/resources/${resourceId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        const resourceData = response.body.data;
+
+        return cy.okapiRequest({
+          method: 'PUT',
+          path: `eholdings/resources/${resourceId}`,
+          contentTypeHeader: 'application/vnd.api+json',
+          body: {
+            data: {
+              id: resourceId,
+              type: 'resources',
+              attributes: {
+                ...resourceData.attributes,
+                customEmbargoPeriod: {
+                  embargoUnit,
+                  embargoValue: parseInt(embargoValue, 10),
+                },
               },
             },
           },
