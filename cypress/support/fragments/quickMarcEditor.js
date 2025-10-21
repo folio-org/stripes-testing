@@ -3388,4 +3388,27 @@ export default {
     );
     cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
   },
+
+  verifyBoxIsFocusedInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.expect(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .has({ focused: true }),
+    );
+  },
+
+  verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ focused: isFocused }));
+  },
 };
