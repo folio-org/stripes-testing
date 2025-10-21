@@ -8,6 +8,7 @@ import {
   Modal,
   Accordion,
   MultiColumnListCell,
+  Link,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import EHoldingsResourceEdit from './eHoldingsResourceEdit';
@@ -33,6 +34,16 @@ const openActionsMenu = () => {
 
 const customLabelsAccordion = Accordion('Custom labels');
 const customLabelValue = (label) => customLabelsAccordion.find(KeyValue(label));
+const resourceSettingsAccordion = Accordion('Resource settings');
+const resourceSettingsAccordionButton = Button({
+  id: 'accordion-toggle-button-resourceShowSettings',
+});
+const customCoverageDatesKeyValue = KeyValue('Custom coverage dates');
+const customCoverageStatementKeyValue = KeyValue('Custom coverage statement');
+const customEmbargoPeriodKeyValue = KeyValue('Custom embargo period');
+const showToPatronsKeyValue = KeyValue('Show to patrons');
+const proxyKeyValue = KeyValue('Proxy');
+const proxiedURLKeyValue = KeyValue('Proxied URL');
 
 export default {
   waitLoading: () => {
@@ -151,5 +162,70 @@ export default {
   },
   closeHoldingsResourceView() {
     cy.do(closeViewButton.click());
+  },
+
+  verifyNoCustomCoverageDates() {
+    cy.expect(customCoverageDatesKeyValue.absent());
+  },
+
+  verifyCoverageStatement(statement) {
+    cy.expect(customCoverageStatementKeyValue.has({ value: statement }));
+  },
+
+  verifyCustomEmbargoExists() {
+    cy.expect(customEmbargoPeriodKeyValue.exists());
+  },
+
+  verifyCustomEmbargoValue(value, unit) {
+    const formattedUnit = unit.toLowerCase().replace(/s$/, '(s)');
+    cy.expect(customEmbargoPeriodKeyValue.has({ value: including(`${value} ${formattedUnit}`) }));
+  },
+
+  expandResourceSettingsAccordion() {
+    cy.wait(500);
+    cy.then(() => resourceSettingsAccordionButton.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded === 'false') {
+        cy.do(resourceSettingsAccordion.click());
+        cy.wait(1000);
+      }
+    });
+  },
+
+  verifyCustomEmbargoAbsent() {
+    cy.expect(customEmbargoPeriodKeyValue.absent());
+  },
+
+  verifyResourceSettingsAccordion() {
+    this.expandResourceSettingsAccordion();
+    cy.expect(resourceSettingsAccordion.exists());
+    cy.expect(showToPatronsKeyValue.exists());
+    cy.expect(proxyKeyValue.exists());
+  },
+
+  verifyProxy(proxyName) {
+    this.expandResourceSettingsAccordion();
+    if (proxyName) {
+      cy.expect(proxyKeyValue.has({ value: proxyName }));
+    } else {
+      cy.expect(proxyKeyValue.exists());
+    }
+  },
+
+  verifyProxiedURL() {
+    this.expandResourceSettingsAccordion();
+    cy.expect(proxiedURLKeyValue.exists());
+  },
+
+  verifyProxiedURLNotDisplayed() {
+    this.expandResourceSettingsAccordion();
+    cy.expect(proxiedURLKeyValue.absent());
+  },
+
+  verifyProxiedURLLink() {
+    this.expandResourceSettingsAccordion();
+    cy.then(() => proxiedURLKeyValue.value()).then((url) => {
+      const trimmedUrl = url.trim();
+      cy.expect(resourceSettingsAccordion.find(Link({ href: including(trimmedUrl) })).exists());
+    });
   },
 };

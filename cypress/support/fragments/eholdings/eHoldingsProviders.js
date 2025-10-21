@@ -6,9 +6,12 @@ import {
   RadioButton,
   Section,
   Spinner,
+  TextField,
   including,
   MultiSelect,
   MultiSelectOption,
+  HTML,
+  ValueChipRoot,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
@@ -33,6 +36,7 @@ const providerInfAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderInformation',
 });
 const tagsSection = Section({ id: 'providerShowTags' });
+const closeButton = Button({ icon: 'times' });
 
 export default {
   waitLoading: () => {
@@ -58,6 +62,14 @@ export default {
     // wait for titles section to be loaded
     cy.wait(2000);
     cy.do(searchIcon.click());
+  },
+
+  searchPackageByName(packageName) {
+    cy.expect(searchIcon.exists());
+    cy.do(searchIcon.click());
+    cy.do(TextField({ name: 'search' }).fillIn(packageName));
+    cy.do(Button('Search').click());
+    cy.expect(Spinner().absent());
   },
 
   bySelectionStatus(selectionStatus) {
@@ -136,5 +148,40 @@ export default {
     cy.xpath(
       `//div[contains(text(), '${tag}')]/../../button[contains(@class, 'iconButton')]`,
     ).click();
+  },
+
+  verifyPackageWithTag(packageName, tagName) {
+    cy.get('[id="providerShowProviderList"]')
+      .contains(packageName)
+      .parent()
+      .parent()
+      .parent()
+      .should('contain', tagName);
+  },
+
+  verifyExistingTags: (...expectedTags) => {
+    cy.wait(1000);
+    cy.then(() => tagsAccordion.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded === 'false') {
+        cy.do(tagsAccordion.click());
+        cy.wait(1000);
+      }
+    });
+    expectedTags.forEach((tag) => {
+      cy.expect(tagsSection.find(HTML(including(tag))).exists());
+    });
+  },
+
+  removeExistingTags: () => {
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then((selectedTags) => {
+      selectedTags.forEach((selectedTag) => {
+        const specialTagElement = tagsSection.find(ValueChipRoot(selectedTag));
+        cy.do(specialTagElement.find(closeButton).click());
+        cy.expect(specialTagElement.absent());
+        cy.wait(500);
+      });
+      cy.do(providerAccordion.click());
+      cy.wait(2000);
+    });
   },
 };

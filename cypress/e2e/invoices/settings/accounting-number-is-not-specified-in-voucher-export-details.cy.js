@@ -49,7 +49,7 @@ describe('Invoices', () => {
             reEncumber: true,
           };
 
-          OrderLinesLimit.setPOLLimit(orderLinesCount);
+          OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
           Orders.createOrderViaApi(testData.order)
             .then((order) => {
               testData.order = order;
@@ -121,7 +121,7 @@ describe('Invoices', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFileFromDownloadsByMask(testData.fileMask);

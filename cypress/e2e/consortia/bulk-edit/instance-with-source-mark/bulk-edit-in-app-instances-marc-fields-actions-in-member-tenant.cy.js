@@ -358,6 +358,7 @@ describe('Bulk-edit', () => {
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

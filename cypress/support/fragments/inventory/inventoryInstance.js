@@ -404,6 +404,9 @@ export default {
 
   waitInventoryLoading() {
     cy.expect(instanceDetailsSection.exists());
+    // Wait for the title to gain focus. There is a slight delay before focus is achieved,
+    // and if you open any dropdown before then, it will immediately close, and the test will fail.
+    cy.wait(1000);
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
@@ -1013,9 +1016,11 @@ export default {
     ]);
   },
 
-  openMoveItemsWithinAnInstance: () => {
+  openMoveItemsWithinAnInstance() {
+    this.waitInventoryLoading();
     cy.do(actionsButton.click());
     cy.wait(1000);
+    cy.expect(moveItemsButton.exists());
     cy.do(moveItemsButton.click());
   },
 

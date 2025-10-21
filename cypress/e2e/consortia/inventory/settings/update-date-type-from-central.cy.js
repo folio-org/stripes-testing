@@ -98,12 +98,12 @@ describe('Inventory', () => {
                 )[0];
                 expect(matchedDateTypeMember.name).to.eq(testData.newName);
 
-                cy.login(user.username, user.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                cy.wait('@/authn/refresh', { timeout: 20000 });
+                cy.waitForAuthRefresh(() => {
+                  cy.login(user.username, user.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
+                }, 20_000);
                 InventoryInstances.waitContentLoading();
                 InventoryInstances.addNewInventory();
                 InventoryNewInstance.fillRequiredValues(testData.instanceTitle);

@@ -70,11 +70,9 @@ describe('Loans', () => {
               });
             })
             .then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.login(checkOutUser.username, checkOutUser.password, {
-                  path: TopMenu.checkOutPath,
-                  waiter: Checkout.waitLoading,
-                });
+              cy.login(checkOutUser.username, checkOutUser.password, {
+                path: TopMenu.checkOutPath,
+                waiter: Checkout.waitLoading,
               });
 
               CheckOutActions.checkOutItemUser(

@@ -739,6 +739,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
     cy.wait(500);
+    cy.expect(MultiSelectOption(including(tag)).exists());
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
   },
@@ -749,6 +750,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'holdingsTags-multiselect' }).toggle());
     cy.wait(500);
+    cy.expect(MultiSelectOption(including(tag)).exists());
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
   },
