@@ -1016,9 +1016,11 @@ export default {
     ]);
   },
 
-  openMoveItemsWithinAnInstance: () => {
+  openMoveItemsWithinAnInstance() {
+    this.waitInventoryLoading();
     cy.do(actionsButton.click());
     cy.wait(1000);
+    cy.expect(moveItemsButton.exists());
     cy.do(moveItemsButton.click());
   },
 
