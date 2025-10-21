@@ -23,9 +23,6 @@ import SettingsDataImport, {
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -94,22 +91,6 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken().then(() => {
-        ['GIFTS-ONE-TIME', 'HIST', 'EUROHIST', 'MISCHIST', 'LATAMHIST'].forEach((code) => {
-          const budget = {
-            ...Budgets.getDefaultBudget(),
-            allocated: 1000,
-          };
-          FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
-            budget.fiscalYearId = resp.fiscalYears[0].id;
-            Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
-              budget.fundId = body.funds[0].id;
-
-              Budgets.createViaApi(budget);
-            });
-          });
-        });
-      });
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
