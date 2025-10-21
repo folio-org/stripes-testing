@@ -101,7 +101,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         uri: 'ftp://harvarda.harvard.edu',
         linkText: 'Electronic resource (PDF)',
-        materialsSpecified: 'Table of contents',
+        materialsSpecification: 'Table of contents',
         publicNote:
           'FTP access to PostScript version includes groups of article files with .pdf extension',
       },
@@ -114,7 +114,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         uri: 'http://susdl.fcla.edu',
         linkText: 'Electronic resource (JPEG)',
-        materialsSpecified: 'Table of contents',
+        materialsSpecification: 'Table of contents',
         publicNote:
           'HTTP access to PostScript version includes groups of article files with .jpeg extension',
       },
@@ -122,7 +122,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE,
         uri: 'ftp://harvarda.harvard.edu',
         linkText: 'Electronic resource (PNG)',
-        materialsSpecified: 'Volume 1',
+        materialsSpecification: 'Volume 1',
         publicNote:
           'FTP access to PostScript version includes groups of article files with .png extension',
       },
@@ -130,7 +130,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         uri: 'telnet://maine.maine.edu',
         linkText: 'Electronic resource (PDF)',
-        materialsSpecified: 'Volume 2',
+        materialsSpecification: 'Volume 2',
         publicNote:
           'TELNET access to PostScript version includes groups of article files with .pdf extension',
       },
@@ -143,7 +143,7 @@ const createExpectedHoldings = (holdingHrids) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         uri: 'telnet://maine.maine.edu',
         linkText: '',
-        materialsSpecified: 'content',
+        materialsSpecification: 'content',
         publicNote: 'access to PostScript version',
       },
     ],
@@ -255,17 +255,19 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.verify();
 
-          [
+          const electronicAccessFields = [
             holdingsFieldValues.electronicAccessLinkText,
             holdingsFieldValues.electronicAccessMaterialSpecified,
             holdingsFieldValues.electronicAccessURI,
             holdingsFieldValues.electronicAccessURLPublicNote,
             holdingsFieldValues.electronicAccessURLRelationship,
-          ].forEach((field) => {
+          ];
+
+          electronicAccessFields.forEach((field) => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
-          QueryModal.verifyFieldsSortedAlphabetically();
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(electronicAccessFields);
           QueryModal.clickSelectFieldButton();
 
           // Step 2: Search holdings by "Holdings — Electronic access — URL relationship", "Holdings — Electronic access — URI" fields using AND operator
@@ -353,6 +355,18 @@ describe('Bulk-edit', () => {
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
+
+          // Step 6: Check display of Holdings data from Preconditions in "Holdings — Electronic access" column in the result table
+          QueryModal.clickGarbage(1);
+          QueryModal.selectField(holdingsFieldValues.holdingsHrid);
+          QueryModal.selectOperator(STRING_OPERATORS.EQUAL);
+          QueryModal.fillInValueTextfield(expectedHoldings[3].hrid);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedHoldings[3].hrid,
+            'Holdings — Electronic access',
+            '',
+          );
         },
       );
     });

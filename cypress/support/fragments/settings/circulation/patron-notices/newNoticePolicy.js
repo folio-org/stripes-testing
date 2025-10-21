@@ -46,6 +46,11 @@ export default {
     };
   },
 
+  openTabCirculationPatronNoticePolicies() {
+    cy.do(NavListItem('Circulation').click());
+    cy.do(NavListItem('Patron notice policies').click());
+  },
+
   waitLoading() {
     cy.do(Link('Patron notice policies').click());
     return cy.expect(Heading('Patron notice policies').exists());

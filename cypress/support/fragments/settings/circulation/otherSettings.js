@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, Checkbox, Form, Label, Pane, TextField } from '../../../../../interactors';
+import { Button, Checkbox, Form, Label, NavListItem, Pane, TextField } from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
@@ -13,6 +13,11 @@ export default {
       checkoutForm.find(Label('Patron id(s) for checkout scanning*')).exists(),
     ]);
     cy.wait(2000);
+  },
+
+  openTabCirculationOtherSettings() {
+    cy.do(NavListItem('Circulation').click());
+    cy.do(NavListItem('Other settings').click());
   },
 
   verifyUserCustomFieldsCheckboxIsSelected(selected = true) {

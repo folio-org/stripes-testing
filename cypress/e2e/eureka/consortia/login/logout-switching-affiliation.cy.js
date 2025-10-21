@@ -27,7 +27,6 @@ describe('Eureka', () => {
         () => {
           cy.login(user.username, user.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           cy.logout();
         },
       );

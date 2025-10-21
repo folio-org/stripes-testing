@@ -1038,6 +1038,14 @@ export default {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
   },
+  uiFinanceFundUpdateLogsView: {
+    internal: 'ui-finance.fund-update-logs.view',
+    gui: 'Finance: View batch allocation logs',
+  },
+  uiFinanceFundUpdateLogsDelete: {
+    internal: 'ui-finance.fund-update-logs.delete',
+    gui: 'Finance: Delete batch allocation logs',
+  },
   // Organizations
   uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
     internal: 'ui-organizations.privileged-contacts.edit',
