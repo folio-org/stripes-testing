@@ -1,7 +1,7 @@
 /**
  * MetaSection interactor
  */
-
+import { isVisible } from 'element-is-visible';
 import Accordion from './accordion';
 
 export default Accordion.extend('meta-section')
@@ -13,6 +13,7 @@ export default Accordion.extend('meta-section')
     updatedText: (el) => el.querySelector('div[class^=metaHeader] div[class^=metaHeaderLabel]')?.textContent,
     updatedByLink: (el) => el.querySelector('[data-test-updated-by] a')?.textContent,
     updatedByText: (el) => el.querySelector('[data-test-updated-by]')?.textContent,
+    open: (el) => isVisible(el.querySelector('[class^=content-region]')),
   })
   .actions({
     clickHeader: ({ perform }) => perform((el) => el.querySelector('button').click()),

@@ -1,5 +1,12 @@
 import { including } from '@interactors/html';
-import { Button, Modal, Section, SelectionList } from '../../../../../interactors';
+import {
+  Button,
+  HTML,
+  Modal,
+  SearchField,
+  Section,
+  SelectionList,
+} from '../../../../../interactors';
 
 const batchAllocationButton = Button('Batch allocations');
 const downloadAllocationWorksheetButton = Button('Download allocation worksheet (CSV)');
@@ -7,6 +14,9 @@ const batchAllocationModal = Modal('Select fiscal year');
 const saveAndClose = Button('Save & close');
 const ledgerDetailsSection = Section({ id: 'pane-ledger-details' });
 const actionsButton = Button('Actions');
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
+const resetButton = Button('Reset all');
 
 export default {
   clickBatchAllocationButton() {
@@ -42,6 +52,18 @@ export default {
 
   clickSaveAndCloseButton() {
     cy.do(Button('Save & close').click());
+  },
+
+  clickActionsButton() {
+    cy.do(actionsButton.click());
+  },
+
+  clickDeleteAllocationLogs() {
+    cy.do(Button('Delete selected logs').click());
+  },
+
+  clickDeleteButton() {
+    cy.do(Button('Delete').click());
   },
 
   selectFiscalYearInConfirmModal(fiscalYear) {
@@ -264,6 +286,7 @@ export default {
               );
             });
           } else {
+            // eslint-disable-next-line cypress/no-force
             cy.wrap($sortControls).first().click({ force: true });
             cy.wait(200);
             getColumnValues().then((afterVals) => {
@@ -334,6 +357,13 @@ export default {
     });
   },
 
+  setTransactionDescription(fundName, text) {
+    this.getFundRow(fundName).then(($row) => {
+      const input = $row.find('input[name*="transactionDescription"]');
+      cy.wrap(input).should('be.visible').clear().type(String(text), { delay: 0 });
+    });
+  },
+
   checkErrorMessageForNegativeEncumbranceOrExpenditure() {
     cy.get('[role="alert"]').contains('Can not be negative').should('be.visible');
   },
@@ -374,5 +404,65 @@ export default {
           }
         });
     });
+  },
+
+  openBatchAllocationLogsFromLedgerList() {
+    cy.do([actionsButton.click(), Button('Batch allocation logs').click()]);
+  },
+
+  assertDeleteLogsOptionDisabled() {
+    cy.expect(Button('Delete selected logs').has({ disabled: true }));
+  },
+
+  selectLogWithNamePart(fyCode, ledgerCode) {
+    const partialText = `${fyCode}-${ledgerCode}-`;
+    const logsTable = '#batch-allocation-logs-list';
+
+    cy.get(`${logsTable} [role="row"]`, { timeout: 10000 }).should('exist');
+    cy.contains(`${logsTable} [role="row"] a`, partialText)
+      .closest('[role="row"]')
+      .within(() => {
+        // eslint-disable-next-line cypress/no-force
+        cy.get('input[type="checkbox"]')
+          .should('exist')
+          .and('not.be.disabled')
+          .check({ force: true });
+      });
+  },
+
+  searchLogs(fyCode, ledgerCode) {
+    const pattern = `${fyCode}-${ledgerCode}`;
+    cy.do([searchField.fillIn(pattern), searchButton.click()]);
+  },
+
+  verifyNoResultsMessage(fiscalYearCode, ledgerCode) {
+    cy.expect(
+      HTML(
+        `No results found for "${fiscalYearCode}-${ledgerCode}". Please check your spelling and filters.`,
+      ).exists(),
+    );
+  },
+
+  resetFiltersIfActive: () => {
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
+        }
+      });
+  },
+
+  clickLogForLedger(fyCode, ledgerCode) {
+    const partialText = `${fyCode}-${ledgerCode}-`;
+
+    cy.contains('#batch-allocation-logs-list a[data-test-text-link]', partialText, {
+      timeout: 15000,
+    })
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
   },
 };

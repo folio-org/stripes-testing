@@ -2,6 +2,8 @@
 import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
 
+let authRefreshCounter = 0;
+
 Cypress.Commands.add('getToken', (username, password, getServicePoint = false) => {
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
@@ -107,11 +109,41 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
   });
 });
 
+// eslint-disable-next-line no-unused-vars
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
-  cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+  authRefreshCounter++;
+  const alias = `authnRefreshCall_${authRefreshCounter}`;
+  cy.intercept('POST', '/authn/refresh').as(alias);
+
   callback();
-  //cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
-  cy.wait(2000);
+
+  // cy.log(`Waiting ${timeout / 1000} sec for /authn/refresh call...`);
+  // cy.window({ log: false }).then(() => {
+  //   return cy.wrap(null, { log: false }).then(() => {
+  //     const pollInterval = 100;
+  //     const startTime = Date.now();
+
+  //     const checkForRequest = () => {
+  //       return cy.get(`@${alias}.all`, { log: false }).then((interceptions) => {
+  //         if (interceptions.length > 0) {
+  //           return cy
+  //             .wait(`@${alias}`)
+  //             .its('response.statusCode')
+  //             .should('eq', 201)
+  //             .then(() => {
+  //               cy.wait(500);
+  //             });
+  //         }
+  //         if (Date.now() - startTime >= timeout) {
+  //           cy.log('No /authn/refresh call made - continuing the test.');
+  //           return;
+  //         }
+  //         return cy.wait(pollInterval, { log: false }).then(checkForRequest);
+  //       });
+  //     };
+  //     return checkForRequest();
+  //   });
+  // });
 });
 
 Cypress.Commands.add('getConsortiaStatus', () => {

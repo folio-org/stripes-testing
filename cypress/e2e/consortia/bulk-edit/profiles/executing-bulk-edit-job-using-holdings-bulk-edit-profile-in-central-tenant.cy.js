@@ -423,7 +423,7 @@ describe('Bulk-edit', () => {
             testData.electronicBookplateNote,
             'No',
           );
-          HoldingsRecordView.checkTemporaryLocation('No value set-');
+          HoldingsRecordView.checkTemporaryLocation('-');
           HoldingsRecordView.close();
           InventoryInstance.openHoldingsAccordion(testData.locationName);
           InventoryInstance.openItemByBarcode(testData.folioInstance.itemBarcode);

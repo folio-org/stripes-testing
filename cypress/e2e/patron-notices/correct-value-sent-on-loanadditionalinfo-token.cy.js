@@ -1,28 +1,29 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import NewNoticePolicyTemplate, {
-  createNoticeTemplate,
-} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import TopMenu from '../../support/fragments/topMenu';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
   const testData = {
@@ -166,7 +167,7 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkAfterSaving(template);
       });
 
-      cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+      NewNoticePolicy.openTabCirculationPatronNoticePolicies();
       NewNoticePolicy.waitLoading();
 
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
@@ -187,7 +188,7 @@ describe('Patron notices', () => {
         userBarcode: testData.user.barcode,
       });
 
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByUsername(testData.user.username);
@@ -198,7 +199,7 @@ describe('Patron notices', () => {
       ChangeDueDateForm.fillDate(moment().add(10, 'days').calendar());
       ChangeDueDateForm.saveAndClose();
 
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       cy.log(testData.itemBarcodes[0]);
       SearchPane.searchByUserBarcode(testData.user.barcode);
       const searchResults = {

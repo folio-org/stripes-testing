@@ -10,6 +10,8 @@ import {
   including,
   MultiSelect,
   MultiSelectOption,
+  HTML,
+  ValueChipRoot,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
@@ -34,6 +36,7 @@ const providerInfAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderInformation',
 });
 const tagsSection = Section({ id: 'providerShowTags' });
+const closeButton = Button({ icon: 'times' });
 
 export default {
   waitLoading: () => {
@@ -154,5 +157,31 @@ export default {
       .parent()
       .parent()
       .should('contain', tagName);
+  },
+
+  verifyExistingTags: (...expectedTags) => {
+    cy.wait(1000);
+    cy.then(() => tagsAccordion.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded === 'false') {
+        cy.do(tagsAccordion.click());
+        cy.wait(1000);
+      }
+    });
+    expectedTags.forEach((tag) => {
+      cy.expect(tagsSection.find(HTML(including(tag))).exists());
+    });
+  },
+
+  removeExistingTags: () => {
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then((selectedTags) => {
+      selectedTags.forEach((selectedTag) => {
+        const specialTagElement = tagsSection.find(ValueChipRoot(selectedTag));
+        cy.do(specialTagElement.find(closeButton).click());
+        cy.expect(specialTagElement.absent());
+        cy.wait(500);
+      });
+      cy.do(providerAccordion.click());
+      cy.wait(2000);
+    });
   },
 };

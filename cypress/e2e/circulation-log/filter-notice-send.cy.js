@@ -66,7 +66,7 @@ describe('Circulation log', () => {
       })
       .then(() => {
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C17092_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
