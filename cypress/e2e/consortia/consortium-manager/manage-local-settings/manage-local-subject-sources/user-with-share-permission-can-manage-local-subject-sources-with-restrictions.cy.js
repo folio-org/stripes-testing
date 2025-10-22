@@ -5,21 +5,21 @@ import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
-  settingsItems,
   messages,
+  settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SubjectSourcesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectSourcesConsortiumManager';
 import ConfirmCreate from '../../../../../support/fragments/consortium-manager/modal/confirm-create';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SubjectSources from '../../../../../support/fragments/settings/inventory/instances/subjectSources';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 // import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import Permissions from '../../../../../support/dictionary/permissions';
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';
@@ -41,6 +41,28 @@ describe('Consortia', () => {
         };
 
         before('Create test data', () => {
+          // Create User B in Central tenant
+          cy.getAdminToken();
+          cy.createTempUser([Permissions.uiSettingsSubjectSourceCreateEditDelete.gui]).then(
+            (userBProperties) => {
+              userB = userBProperties;
+
+              // Assign User B affiliations and permissions
+              cy.assignAffiliationToUser(Affiliations.College, userB.userId);
+              cy.assignAffiliationToUser(Affiliations.University, userB.userId);
+              cy.setTenant(Affiliations.College);
+              cy.assignPermissionsToExistingUser(userB.userId, [
+                Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
+              ]);
+              cy.resetTenant();
+              cy.setTenant(Affiliations.University);
+              cy.assignPermissionsToExistingUser(userB.userId, [
+                Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
+              ]);
+              cy.resetTenant();
+            },
+          );
+
           cy.getAdminToken();
           // Create User A in College (member-1) tenant as per TestRail preconditions
           cy.setTenant(Affiliations.College);
@@ -49,6 +71,7 @@ describe('Consortia', () => {
 
             // Assign User A permissions in Central tenant
             cy.resetTenant();
+            cy.getAdminToken();
             cy.assignPermissionsToExistingUser(userA.userId, [
               Permissions.consortiaSettingsConsortiumManagerShare.gui,
               Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
@@ -61,32 +84,11 @@ describe('Consortia', () => {
               Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
             ]);
 
-            // Create User B in Central tenant
+            // User A is logged in and switch affiliation to central tenant
             cy.resetTenant();
-            cy.createTempUser([Permissions.uiSettingsSubjectSourceCreateEditDelete.gui]).then(
-              (userBProperties) => {
-                userB = userBProperties;
-
-                // Assign User B affiliations and permissions
-                cy.resetTenant();
-                cy.assignAffiliationToUser(Affiliations.College, userB.userId);
-                cy.assignAffiliationToUser(Affiliations.University, userB.userId);
-                cy.setTenant(Affiliations.College);
-                cy.assignPermissionsToExistingUser(userB.userId, [
-                  Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-                ]);
-
-                cy.setTenant(Affiliations.University);
-                cy.assignPermissionsToExistingUser(userB.userId, [
-                  Permissions.uiSettingsSubjectSourceCreateEditDelete.gui,
-                ]);
-
-                // User A is logged in and switch affiliation to central tenant
-                cy.resetTenant();
-                cy.login(userA.username, userA.password);
-                ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-              },
-            );
+            cy.setTenant(Affiliations.College);
+            cy.login(userA.username, userA.password);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           });
         });
 
@@ -336,6 +338,8 @@ describe('Consortia', () => {
             );
 
             // Step 21: Login as User B
+            cy.resetTenant();
+            cy.getAdminToken();
             cy.login(userB.username, userB.password);
 
             // Step 22: Verify subject source in Central tenant Settings
