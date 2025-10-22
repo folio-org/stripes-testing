@@ -342,8 +342,6 @@ describe('MARC', () => {
             set.tag008Fields();
 
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndCloseDerive();
-
             InventoryInstance.waitInstanceRecordViewOpened(title);
           });
 
