@@ -1,25 +1,25 @@
-import { DEFAULT_LOCALE_OBJECT } from '../constants';
+import { DEFAULT_LOCALE_STRING } from '../constants';
 
-const localeConfigName = 'tenantLocaleSettings';
+const localeConfigName = 'localeSettings';
 
 Cypress.Commands.add('getConfigForTenantByName', (configName) => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'settings/entries',
+    path: 'configurations/entries',
     searchParams: {
-      query: `(scope==stripes-core.prefs.manage and key==${configName})`,
+      query: `(module==ORG and configName==${configName})`,
     },
     failOnStatusCode: true,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    return body.items.length ? body.items[0] : null;
+    return body.configs.length ? body.configs[0] : null;
   });
 });
 
 Cypress.Commands.add('updateConfigForTenantById', (configId, body) => {
   return cy.okapiRequest({
     method: 'PUT',
-    path: `settings/entries/${configId}`,
+    path: `configurations/entries/${configId}`,
     body,
     failOnStatusCode: true,
     isDefaultSearchParamsRequired: false,
@@ -74,7 +74,7 @@ Cypress.Commands.add('setDefaultLocaleApi', () => {
   cy.getConfigForTenantByName(localeConfigName).then((config) => {
     if (config) {
       const updatedConfig = { ...config };
-      updatedConfig.value = DEFAULT_LOCALE_OBJECT;
+      updatedConfig.value = DEFAULT_LOCALE_STRING;
       cy.updateConfigForTenantById(config.id, updatedConfig);
     }
   });

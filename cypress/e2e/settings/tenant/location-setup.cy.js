@@ -22,11 +22,11 @@ describe('Settings: Tenant', () => {
       cy.getAdminToken().then(() => {
         testData.institution = Institutions.getDefaultInstitution({
           id: uuid(),
-          name: `1_autotest_institution_${getRandomPostfix()}`,
+          name: `11_autotest_institution_${getRandomPostfix()}`,
         });
         testData.campus = Campuses.getDefaultCampuse({
           id: uuid(),
-          name: `1_autotest_campuse_${getRandomPostfix()}`,
+          name: `11_autotest_campuse_${getRandomPostfix()}`,
           institutionId: testData.institution.id,
         });
         testData.library = Libraries.getDefaultLibrary({

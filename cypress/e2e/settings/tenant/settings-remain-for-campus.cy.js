@@ -29,14 +29,14 @@ describe('Settings: Tenant', () => {
 
       [...Array(2)].forEach(() => {
         const institution = Institutions.getDefaultInstitution({
-          name: `1_autotest_institution ${getRandomPostfix()}`,
+          name: `11_autotest_institution ${getRandomPostfix()}`,
         });
 
         Institutions.createViaApi(institution).then((locinst) => {
           testData.institutions.push(locinst);
           [...Array(2)].forEach(() => {
             const campus = Campuses.getDefaultCampuse({
-              name: `1_autotest_campus ${getRandomPostfix()}`,
+              name: `11_autotest_campus ${getRandomPostfix()}`,
               institutionId: locinst.id,
             });
 
