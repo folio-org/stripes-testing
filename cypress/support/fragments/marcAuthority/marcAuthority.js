@@ -436,21 +436,92 @@ export default {
   },
 
   getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {
-    cy.okapiRequest({
-      method: 'GET',
-      isDefaultSearchParamsRequired: false,
-      path: 'authority-storage/authorities',
-      searchParams: {
-        limit: 1000,
-        deleted,
-        idOnly,
-        query: query || '',
-      },
-      additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
-    }).then(({ body }) => {
-      cy.wrap(body).as('records');
+    const maxRecords = 10000;
+    const limit = 2000;
+    let allRecords = [];
+    let allTextRecords = [];
+    let totalRecords = 0;
+    let offset = 0;
+    let isTextPlainResponse = false;
+
+    const fetchPage = () => {
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          isDefaultSearchParamsRequired: false,
+          path: 'authority-storage/authorities',
+          searchParams: {
+            limit,
+            offset,
+            deleted,
+            idOnly,
+            query: query || '',
+          },
+          additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
+        })
+        .then((response) => {
+          const { body, headers } = response;
+          const contentType = headers['content-type'] || '';
+          isTextPlainResponse = contentType.includes('text/plain');
+
+          if (isTextPlainResponse) {
+            // Handle text/plain response (newline-separated UUIDs)
+            const records = body.split('\n').filter((record) => record.trim() !== '');
+            allTextRecords = allTextRecords.concat(records);
+
+            // For text/plain, we need to estimate totalRecords since it's not provided
+            // If we got fewer records than the limit, we've reached the end
+            if (records.length < limit) {
+              totalRecords = allTextRecords.length;
+            } else {
+              // Continue fetching - we'll stop when we get fewer than limit records
+              totalRecords = allTextRecords.length + 1; // Keep it higher to continue
+            }
+          } else {
+            // Handle JSON response
+            allRecords = allRecords.concat(body.authorities || []);
+            totalRecords = body.totalRecords || 0;
+          }
+
+          offset += limit;
+
+          // Continue fetching if:
+          // 1. We haven't reached the total records count
+          // 2. We haven't hit our safety limit
+          // 3. The current page returned records
+          const currentRecordCount = isTextPlainResponse
+            ? allTextRecords.length
+            : allRecords.length;
+          const lastPageRecordCount = isTextPlainResponse
+            ? body.split('\n').filter((record) => record.trim() !== '').length
+            : (body.authorities || []).length;
+
+          if (
+            currentRecordCount < totalRecords &&
+            currentRecordCount < maxRecords &&
+            lastPageRecordCount > 0
+          ) {
+            return fetchPage();
+          }
+
+          // Return combined result based on response format
+          if (isTextPlainResponse) {
+            const result = allTextRecords.slice(0, maxRecords).join('\n');
+            return cy.wrap(result);
+          } else {
+            const result = {
+              authorities: allRecords.slice(0, maxRecords),
+              totalRecords: Math.min(totalRecords, maxRecords),
+            };
+            return cy.wrap(result);
+          }
+        });
+    };
+
+    return fetchPage().then((result) => {
+      cy.wrap(result).as('records');
+      return cy.get('@records');
     });
-    return cy.get('@records');
   },
 
   checkSourceFileSelectShown: (isShown = true) => {
