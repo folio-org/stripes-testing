@@ -1,6 +1,11 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  REQUEST_TYPES,
+  LOCATION_IDS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -12,7 +17,6 @@ import Renewals from '../../support/fragments/loans/renewals';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -85,8 +89,7 @@ describe('TLR: Item renew', () => {
       .then(() => {
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
-          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-          Location.createViaApi(testData.defaultLocation);
+          testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
         });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
@@ -127,7 +130,7 @@ describe('TLR: Item renew', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: testData.defaultLocationId,
             },
           ],
           items: instanceData.itemsData,
@@ -236,12 +239,6 @@ describe('TLR: Item renew', () => {
     Users.deleteViaApi(userForRenew.userId);
     Users.deleteViaApi(userForCheckOut.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
   });
 
   afterEach('Deleting created entities', () => {
