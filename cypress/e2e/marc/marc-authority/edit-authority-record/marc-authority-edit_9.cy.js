@@ -108,9 +108,7 @@ describe('MARC', () => {
           tags.forEach((tag) => {
             QuickMarcEditor.afterDeleteNotification(tag);
           });
-          for (let i = 0; i < 4; i++) {
-            QuickMarcEditor.undoDelete();
-          }
+          QuickMarcEditor.undoDelete();
 
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.deleteField(11);

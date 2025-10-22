@@ -226,9 +226,11 @@ describe('MARC', () => {
             QuickMarcEditor.setRulesForField(tag, true);
           });
           Users.deleteViaApi(userData.userId);
-          createdAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
-          });
+          Cypress.Promise.all(
+            createdAuthorityIDs.map((id) => {
+              return MarcAuthority.deleteViaAPI(id);
+            }),
+          );
           InventoryInstance.deleteInstanceViaApi(createdInstanceID);
         });
 
