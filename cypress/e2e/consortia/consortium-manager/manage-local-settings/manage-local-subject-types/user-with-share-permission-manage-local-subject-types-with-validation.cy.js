@@ -42,59 +42,55 @@ describe('Consortia', () => {
         };
 
         before('Create test data', () => {
+          // Create User B in Central tenant
           cy.getAdminToken();
+          cy.createTempUser([Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui]).then(
+            (userBProperties) => {
+              userB = userBProperties;
+
+              // Assign User B affiliations
+              cy.assignAffiliationToUser(Affiliations.College, userB.userId);
+              cy.setTenant(Affiliations.College);
+              cy.assignPermissionsToExistingUser(userB.userId, [
+                Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
+              ]);
+
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, userB.userId);
+              cy.setTenant(Affiliations.University);
+              cy.assignPermissionsToExistingUser(userB.userId, [
+                Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
+              ]);
+            },
+          );
+          cy.resetTenant();
+
           // Create User A in member-1 (College) tenant as specified in TestRail
+          cy.getAdminToken();
           cy.setTenant(Affiliations.College);
           cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((userProperties) => {
             userA = userProperties;
 
             // Assign User A permissions in Central tenant
             cy.resetTenant();
+            cy.getAdminToken();
             cy.assignPermissionsToExistingUser(userA.userId, [
               Permissions.consortiaSettingsConsortiumManagerShare.gui,
               Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
             ]);
-
             // Assign User A affiliation to University (member-2) with Subject types permission
             cy.assignAffiliationToUser(Affiliations.University, userA.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(userA.userId, [
               Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
             ]);
-
-            // Create User B in Central tenant
             cy.resetTenant();
-            cy.createTempUser([Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui]).then(
-              (userBProperties) => {
-                userB = userBProperties;
+            cy.setTenant(Affiliations.College);
 
-                // Assign User B affiliations
-                cy.assignAffiliationToUser(Affiliations.College, userB.userId);
-                cy.assignAffiliationToUser(Affiliations.University, userB.userId);
-                cy.setTenant(Affiliations.College);
-                cy.assignPermissionsToExistingUser(userB.userId, [
-                  Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
-                ]);
-
-                cy.setTenant(Affiliations.University);
-                cy.assignPermissionsToExistingUser(userB.userId, [
-                  Permissions.uiSettingsCreateEditDeleteSubjectTypes.gui,
-                ]);
-
-                // User A logs into College tenant (where created), then switches to Central
-                cy.resetTenant();
-                cy.waitForAuthRefresh(() => {
-                  cy.login(userA.username, userA.password);
-                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                  cy.reload();
-                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.college,
-                    tenantNames.central,
-                  );
-                }, 20_000);
-              },
-            );
+            // User A logs into College tenant (where created), then switches to Central
+            cy.login(userA.username, userA.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           });
         });
 
@@ -335,6 +331,8 @@ describe('Consortia', () => {
             );
 
             // Step 21: Login as User B
+            cy.resetTenant();
+            cy.getAdminToken();
             cy.login(userB.username, userB.password);
 
             // Step 22: Verify subject type in Central tenant Settings

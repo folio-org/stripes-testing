@@ -23,6 +23,8 @@ describe('Consortia', () => {
   after('Delete users, data', () => {
     cy.resetTenant();
     cy.getAdminToken();
+    cy.resetTenant();
+    cy.setTenant(Affiliations.College);
     Users.deleteViaApi(user.userId);
   });
 
