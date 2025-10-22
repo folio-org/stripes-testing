@@ -278,11 +278,10 @@ describe('TLR: Item renew', () => {
     'C360533 TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C360533'] },
     () => {
-      cy.waitForAuthRefresh(() => {
-        cy.login(userForRenew.username, userForRenew.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
-        });
+      cy.login(userForRenew.username, userForRenew.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+        authRefresh: true,
       });
 
       NewRequest.createNewRequest({
