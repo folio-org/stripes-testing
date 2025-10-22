@@ -52,12 +52,8 @@ describe('Inventory', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            });
-          });
+            authRefresh: true,
+          }).then(() => {});
 
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

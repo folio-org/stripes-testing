@@ -119,13 +119,13 @@ describe('Inventory', () => {
         cy.getAdminToken();
         // Delete existing instances for this test
         InventoryInstances.deleteInstanceByTitleViaApi(instanceTitlePrefix);
+        cy.setTenant(Affiliations.College);
         cy.createTempUser(userPermissions).then((createdUser) => {
           user = createdUser;
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, userPermissions);
+
           // Create Shared identifier type on Central
           cy.resetTenant();
+          cy.assignPermissionsToExistingUser(user.userId, userPermissions);
           ClassificationIdentifierTypesConsortiumManager.createViaApi({
             payload: { name: localSharedTypeName },
           }).then((shared) => {
@@ -193,7 +193,6 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C468273'] },
         () => {
           cy.waitForAuthRefresh(() => {
-            cy.resetTenant();
             cy.setTenant(Affiliations.College);
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
@@ -202,7 +201,6 @@ describe('Inventory', () => {
           }, 20_000);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
-          cy.setTenant(Affiliations.College);
           testClassifications.slice(0, -1).forEach((row) => {
             BrowseClassifications.waitForClassificationNumberToAppear(row.value);
             InventorySearchAndFilter.selectBrowseOption(

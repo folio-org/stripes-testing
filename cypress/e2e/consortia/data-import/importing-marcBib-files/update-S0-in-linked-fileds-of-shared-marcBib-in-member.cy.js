@@ -203,7 +203,6 @@ describe('Data Import', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
             }, 20_000);
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -218,9 +217,7 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -250,7 +247,6 @@ describe('Data Import', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
             }, 20_000);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

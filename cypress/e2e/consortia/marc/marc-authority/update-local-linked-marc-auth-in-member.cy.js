@@ -58,6 +58,8 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C407654');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407654');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -85,6 +87,8 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
+            InventoryInstances.deleteInstanceByTitleViaApi('C407654');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407654');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -95,6 +99,8 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.University);
+            InventoryInstances.deleteInstanceByTitleViaApi('C407654');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407654');
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -132,9 +138,7 @@ describe('MARC', () => {
                 linkingTagAndValues.tag,
                 linkingTagAndValues.rowIndex,
               );
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(4000);
-              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.saveAndCloseWithValidationWarnings();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
