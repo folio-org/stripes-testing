@@ -280,13 +280,13 @@ export default {
     if (isExists) {
       cy.expect(
         getTargetRow(rowIndex)
-          .find(Select({ id: 'noteHoldingsType', optionsText: some(noteType) }))
+          .find(Select({ id: or('noteHoldingsType', 'noteType'), optionsText: some(noteType) }))
           .exists(),
       );
     } else {
       cy.expect(
         getTargetRow(rowIndex)
-          .find(Select({ id: 'noteHoldingsType', optionsText: some(noteType) }))
+          .find(Select({ id: or('noteHoldingsType', 'noteType'), optionsText: some(noteType) }))
           .absent(),
       );
     }
@@ -296,7 +296,7 @@ export default {
     cy.do(
       bulkEditsAccordion
         .find(getTargetRow(rowIndex))
-        .find(Select({ id: 'noteHoldingsType' }))
+        .find(Select({ id: or('noteHoldingsType', 'noteType') }))
         .choose(noteType),
     );
   },
