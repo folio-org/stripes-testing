@@ -202,15 +202,6 @@ export default {
     cy.do(Button({ id: `accordion-toggle-button-holdings.${holdingId}` }).click());
   },
 
-  // openItem(itemBarcode) {
-  //   cy.wait(1500);
-  //   cy.do(
-  //     Section({ id: 'pane-instancedetails' })
-  //       .find(MultiColumnListCell({ content: itemBarcode }))
-  //       .find(Button(including(itemBarcode)))
-  //       .click(),
-  //   );
-  // },
   openItem(itemBarcode) {
     cy.wait(3000);
     const barcodeLink = Section({ id: 'pane-instancedetails' })
