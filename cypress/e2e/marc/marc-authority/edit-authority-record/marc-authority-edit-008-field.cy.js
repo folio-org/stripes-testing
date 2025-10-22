@@ -30,7 +30,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe.skip('MARC', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
       const testData = {

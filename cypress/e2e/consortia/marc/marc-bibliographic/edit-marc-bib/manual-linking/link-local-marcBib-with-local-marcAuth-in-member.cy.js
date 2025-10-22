@@ -58,6 +58,8 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405560');
+          InventoryInstances.deleteInstanceByTitleViaApi('C405560');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -79,6 +81,8 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405560');
+              InventoryInstances.deleteInstanceByTitleViaApi('C405560');
               cy.wait(10_000);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
@@ -87,6 +91,8 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405560');
+              InventoryInstances.deleteInstanceByTitleViaApi('C405560');
               marcFiles.forEach((marcFile) => {
                 DataImport.uploadFileViaApi(
                   marcFile.marc,

@@ -125,7 +125,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
