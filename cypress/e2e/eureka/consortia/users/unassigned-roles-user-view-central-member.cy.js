@@ -113,8 +113,6 @@ describe('Eureka', () => {
             path: TopMenu.usersPath,
             waiter: Users.waitLoading,
           });
-          cy.reload();
-          Users.waitLoading();
         }, 20_000);
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
