@@ -31,7 +31,6 @@ describe('Title Level Request. Request detail', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
@@ -42,9 +41,11 @@ describe('Title Level Request. Request detail', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          testData.userServicePoint = servicePoint;
+          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+          Location.createViaApi(testData.defaultLocation);
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -143,8 +144,6 @@ describe('Title Level Request. Request detail', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     Location.deleteInstitutionCampusLibraryLocationViaApi(
