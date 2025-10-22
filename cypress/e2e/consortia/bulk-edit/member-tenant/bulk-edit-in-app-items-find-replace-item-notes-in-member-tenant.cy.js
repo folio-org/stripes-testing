@@ -76,6 +76,7 @@ describe('Bulk-edit', () => {
         // Create shared item note type in central tenant
         ItemNoteTypesConsortiumManager.createViaApi(sharedItemNoteType).then((newItemNoteType) => {
           sharedNoteTypeData = newItemNoteType;
+          cy.wait(5000);
 
           cy.withinTenant(Affiliations.College, () => {
             cy.createTempUser([
