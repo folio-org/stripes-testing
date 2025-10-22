@@ -1,5 +1,10 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import {
+  ITEM_STATUS_NAMES,
+  REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -9,7 +14,6 @@ import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -43,8 +47,7 @@ describe('Title Level Request. Request detail', () => {
       .then(() => {
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
-          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-          Location.createViaApi(testData.defaultLocation);
+          testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
         });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
@@ -70,7 +73,7 @@ describe('Title Level Request. Request detail', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: testData.defaultLocationId,
             },
           ],
           items: [
@@ -146,12 +149,6 @@ describe('Title Level Request. Request detail', () => {
     cy.deleteLoanType(testData.loanTypeId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
   });
 
   afterEach('deleting request', () => {
@@ -170,7 +167,7 @@ describe('Title Level Request. Request detail', () => {
       NewRequest.verifyItemInformation([
         testData.itemBarcode,
         instanceData.title,
-        testData.defaultLocation.name,
+        LOCATION_NAMES.MAIN_LIBRARY,
         ITEM_STATUS_NAMES.AVAILABLE,
       ]);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
@@ -203,7 +200,7 @@ describe('Title Level Request. Request detail', () => {
       NewRequest.verifyItemInformation([
         testData.itemBarcode,
         instanceData.title,
-        testData.defaultLocation.name,
+        LOCATION_NAMES.MAIN_LIBRARY,
         ITEM_STATUS_NAMES.AVAILABLE,
       ]);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
