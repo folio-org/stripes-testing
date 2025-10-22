@@ -37,9 +37,7 @@ describe('TLR: Item renew', () => {
   const instanceData = {
     title: `Instance ${getRandomPostfix()}`,
   };
-  const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-  };
+  const testData = {};
   const loanPolicyBody = {
     renewable: {
       id: uuid(),
@@ -85,9 +83,11 @@ describe('TLR: Item renew', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          testData.userServicePoint = servicePoint;
+          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+          Location.createViaApi(testData.defaultLocation);
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -233,13 +233,6 @@ describe('TLR: Item renew', () => {
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     cy.deleteLoanPolicy(loanPolicyBody.renewable.id);
     cy.deleteLoanPolicy(loanPolicyBody.nonRenewable.id);
-    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [
-      testData.userServicePoint.id,
-    ]);
-    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [
-      testData.userServicePoint.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForRenew.userId);
     Users.deleteViaApi(userForCheckOut.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
