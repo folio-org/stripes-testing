@@ -15,9 +15,9 @@ describe('MARC', () => {
       const testData = {
         tag245rowIndex: 14,
         tag245value1: '$a Edited $h [Sound Recording] / $c Cypress Automation',
-        instanceTitle1: 'Instance • Edited [Sound Recording] / Cypress Automation',
+        instanceTitle1: ' • Edited [Sound Recording] / Cypress Automation',
         tag245value2: '$a Edited Twice $h [Sound Recording] / $c Cypress Automation',
-        instanceTitle2: 'Instance • Edited Twice [Sound Recording] / Cypress Automation',
+        instanceTitle2: ' • Edited Twice [Sound Recording] / Cypress Automation',
         expectedInSourceRow: '245\t1 0\t$a Edited $h [Sound Recording] / $c Cypress Automation',
         successMsg:
           'This record has successfully saved and is in process. Changes may not appear immediately.',

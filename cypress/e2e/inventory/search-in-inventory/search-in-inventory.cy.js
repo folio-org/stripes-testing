@@ -139,6 +139,9 @@ describe('Inventory', () => {
         });
         InventoryInstances.searchByTitle('*');
         InventoryInstances.waitLoading();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.selectInstance();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.switchToBrowseTab();
