@@ -1741,6 +1741,17 @@ export default {
     });
   },
 
+  deleteMarcAuthorityByIdentifierViaAPI(identifier, authRefType = 'Authorized') {
+    const query = `((identifiers.value=="${identifier}" or naturalId=="${identifier}") and authRefType=="${authRefType}")`;
+    this.getMarcAuthoritiesViaApi({ limit: 100, query }).then((records) => {
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          this.deleteViaAPI(record.id, true);
+        });
+      }
+    });
+  },
+
   createMarcAuthorityRecordViaApiByReadingFromMrkFile(
     mrkFileName,
     field008Values = valid008FieldValues,

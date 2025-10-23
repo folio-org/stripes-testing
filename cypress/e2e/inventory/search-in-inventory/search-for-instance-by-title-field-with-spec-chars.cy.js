@@ -77,10 +77,10 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C368027', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
+          InventoryInstances.searchByTitle(query);
           cy.ifConsortia(() => {
             InventorySearchAndFilter.byShared('No');
           });
-          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(8);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);

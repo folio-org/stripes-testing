@@ -63,6 +63,7 @@ describe('MARC', () => {
         querySearch.forEach((query) => {
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
+        MarcAuthorities.deleteMarcAuthorityByIdentifierViaAPI('n  42008104');
 
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,

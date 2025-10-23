@@ -180,7 +180,7 @@ describe('MARC', () => {
             });
           });
 
-          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489*');
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

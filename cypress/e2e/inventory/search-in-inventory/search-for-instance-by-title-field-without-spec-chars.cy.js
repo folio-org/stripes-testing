@@ -114,6 +114,9 @@ describe('Inventory', () => {
         });
 
         testData.negativeSearchQueries.forEach((query) => {
+          cy.ifConsortia(() => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
           InventoryInstances.resetAllFilters();
