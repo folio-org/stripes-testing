@@ -27,7 +27,7 @@ const createProfileBody = () => {
       createAdminNoteRule(
         ActionCreators.addToExisting('Original administrative note for instances'),
       ),
-      InstancesRules.createStaffSuppressRule(ActionCreators.setToFalse(), true, true),
+      InstancesRules.createStaffSuppressRule(false),
     ],
   });
 };
@@ -109,7 +109,7 @@ describe('Bulk-edit', () => {
         testData.originalProfileName,
         testData.originalDescription,
         user,
-        false,
+        true,
       );
 
       // Step 6: Click on the row with edited bulk edit profile
