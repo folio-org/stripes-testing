@@ -189,21 +189,21 @@ describe('Invoices', () => {
 
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: defaultFund.name, currentEncumbrance: '50.00' },
+        { name: defaultFund.name, currentEncumbrance: '0.00' },
       ]);
 
       const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
       TransactionDetails.checkTransactionDetails({
         information: [
           { key: 'Fiscal year', value: defaultFiscalYear.code },
-          { key: 'Amount', value: '50.00' },
+          { key: 'Amount', value: '0.00' },
           { key: 'Source', value: orderLine.poLineNumber },
           { key: 'Type', value: 'Encumbrance' },
           { key: 'From', value: defaultFund.name },
           { key: 'Initial encumbrance', value: '100.00' },
           { key: 'Awaiting payment', value: '0.00' },
           { key: 'Expended', value: '50.00' },
-          { key: 'Status', value: 'Unreleased' },
+          { key: 'Status', value: 'Released' },
         ],
       });
       TransactionDetails.openSourceInTransactionDetails(orderLine.poLineNumber);
