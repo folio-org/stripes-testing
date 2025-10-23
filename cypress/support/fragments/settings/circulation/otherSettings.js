@@ -1,5 +1,13 @@
 import uuid from 'uuid';
-import { Button, Checkbox, Form, Label, NavListItem, Pane, TextField } from '../../../../../interactors';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Label,
+  NavListItem,
+  Pane,
+  TextField,
+} from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
