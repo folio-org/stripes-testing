@@ -199,13 +199,14 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
-    cy.do([
+    cy.do(
       MultiColumnListCell({
         content: `${jobType} export job profile`,
         columnIndex: 0,
       }).click(),
-      areYouSureModal.find(Select()).choose(selectType),
-    ]);
+    );
+    cy.expect(areYouSureModal.exists());
+    cy.do(areYouSureModal.find(Select()).choose(selectType));
     cy.expect(areYouSureModal.find(Button('Cancel')).has({ disabled: false }));
     cy.do(Button('Run').click());
     cy.get('#job-logs-list').contains(fileName.replace(fileType, ''));
