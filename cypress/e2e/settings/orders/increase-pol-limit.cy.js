@@ -77,7 +77,7 @@ describe('Orders', () => {
 
     after(() => {
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(

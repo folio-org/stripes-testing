@@ -263,7 +263,7 @@ describe('Patron notices', () => {
 
       afterEach('Deleting created entities', () => {
         cy.getAdminToken();
-        cy.waitForAuthRefresh(() => { }, 20_000);
+        cy.waitForAuthRefresh(() => {}, 20_000);
         UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
           testData.userServicePoint.id,
         ]);

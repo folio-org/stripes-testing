@@ -99,7 +99,7 @@ describe('Export Manager', () => {
         organization.accounts[1].accountNo,
         'Purchase',
       );
-      OrderLinesLimit.setPOLLimit(2);
+      OrderLinesLimit.setPOLLimitViaApi(2);
 
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
@@ -148,7 +148,7 @@ describe('Export Manager', () => {
     after(() => {
       cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
