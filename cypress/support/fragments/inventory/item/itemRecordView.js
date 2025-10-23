@@ -405,9 +405,6 @@ export default {
   ),
 
   verifyLoanAndAvailabilitySection(data) {
-    this.collapseAll();
-    cy.wait(1000);
-    this.expandAll();
     verifyPermanentLoanType(
       data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
     );
