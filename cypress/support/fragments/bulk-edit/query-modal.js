@@ -377,7 +377,7 @@ export default {
 
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.do([MultiSelectOption(text).click(), buildQueryModal.click()]);
     cy.wait(1000);
   },
 
@@ -466,9 +466,11 @@ export default {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
-          const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
+          const numberMatches = text.match(/[\d,]+/g);
+          const [totalRecordsStr, previewRecordsStr] = numberMatches;
+          const previewRecords = Number(previewRecordsStr.replace(/,/g, ''));
           const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
-          expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
+          expect(text.startsWith(`Query would return ${totalRecordsStr} records.`)).to.equal(true);
           expect(previewLabel).to.equal(
             `Preview of first ${Math.min(previewRecords, 100)} records.`,
           );

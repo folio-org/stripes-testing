@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -131,7 +132,7 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.statisticalCodeNames, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS_ANY, 1);
-          QueryModal.chooseFromValueMultiselect(statisticalCode.name, 1);
+          QueryModal.chooseFromValueMultiselect(including(statisticalCode.name), 1);
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 2);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 2);
