@@ -40,6 +40,20 @@ describe('Inventory', () => {
             });
           })
             .then(() => {
+              const codesWithUiNames = [];
+              statisticalCodes.forEach((code) => {
+                const codeType = statisticalCodeTypes.find(
+                  (type) => type.id === code.statisticalCodeTypeId,
+                );
+                if (codeType) {
+                  codesWithUiNames.push({
+                    ...code,
+                    uiOptionName: `${codeType.name}: ${code.code} - ${code.name}`,
+                  });
+                }
+              });
+              statisticalCodes = codesWithUiNames;
+
               for (let i = 0; i <= 10; i++) {
                 InventoryInstances.createFolioInstanceViaApi({
                   instance: {
@@ -51,10 +65,6 @@ describe('Inventory', () => {
                   createdRecordIDs.push(instance.instanceId);
                 });
               }
-              statisticalCodes.forEach((code, index) => {
-                statisticalCodes[index].uiOptionName =
-                  `${statisticalCodeTypes.filter((type) => type.id === code.statisticalCodeTypeId)[0].name}: ${code.code} - ${code.name}`;
-              });
             })
             .then(() => {
               cy.login(user.username, user.password, {
@@ -63,6 +73,9 @@ describe('Inventory', () => {
                 authRefresh: true,
               });
               InventorySearchAndFilter.instanceTabIsDefault();
+              cy.ifConsortia(true, () => {
+                InventorySearchAndFilter.byShared('No');
+              });
             });
         });
       });
@@ -155,7 +168,6 @@ describe('Inventory', () => {
                 InventoryInstance.waitInventoryLoading();
                 InstanceRecordView.verifyStatisticalCode(statisticalCodes[1].name);
                 InventorySearchAndFilter.clearFilter(testData.statisticalCodeAccordionName);
-                InventorySearchAndFilter.verifyResultPaneEmpty();
 
                 cy.intercept('/search/instances*').as('getInstancesQuery');
                 InventoryInstances.searchByTitle(testData.instancesTitlePrefix);

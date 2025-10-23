@@ -201,6 +201,10 @@ export default {
     cy.expect(confirmationModal.absent());
   },
 
+  verifyNotSelectedPackage: () => {
+    cy.expect(packageHoldingStatusSection.find(Button('Add package to holdings')).exists());
+  },
+
   editProxyActions: () => {
     cy.expect(Spinner().absent());
     cy.do(PaneHeader().find(actionsButton).click());

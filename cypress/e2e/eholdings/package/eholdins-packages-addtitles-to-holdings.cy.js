@@ -45,16 +45,15 @@ describe('eHoldings', () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.openPackage();
-        cy.wait(3000);
+        EHoldingsPackage.waitLoading(testData.packageName);
         EHoldingsPackage.addToHoldings();
         cy.wait(3000);
         EHoldingsPackage.verifyHoldingStatus();
         EHoldingsPackage.filterTitles();
-        cy.wait(3000);
         EHoldingsPackage.checkEmptyTitlesList();
         // reset test data
         EHoldingsPackage.removeFromHoldings();
-        cy.wait(5000);
+        EHoldingsPackage.verifyNotSelectedPackage();
       },
     );
   });
