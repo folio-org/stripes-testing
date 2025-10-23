@@ -75,6 +75,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C473260');
       testData.instanceTitlePrefixes.forEach((titlePrefix) => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,

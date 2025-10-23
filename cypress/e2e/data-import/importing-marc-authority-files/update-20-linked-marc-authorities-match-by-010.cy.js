@@ -298,8 +298,6 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
@@ -337,9 +335,7 @@ describe('Data Import', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
           }, 20_000);
-          MarcAuthorities.waitLoading();
           MarcAuthorities.verifyDisabledSearchButton();
         });
       });
