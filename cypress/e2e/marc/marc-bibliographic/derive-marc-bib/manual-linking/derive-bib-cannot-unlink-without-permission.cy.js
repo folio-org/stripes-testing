@@ -14,7 +14,7 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const randomLetters = getRandomLetters(15);
       const testData = {
-        authorityHeading: `AT_C366531_MarcAuthority_${randomPostfix}`,
+        authorityHeading: `AT_C366529_MarcAuthority_${randomPostfix}`,
         instanceTitle: `AT_C366529_MarcBibInstance_${randomPostfix}`,
         contributorValue: `AT_C366529_Contributor_${randomPostfix}`,
         nonControllableSubfield: '$e artist.',
@@ -71,7 +71,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C366531_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C366529_MarcAuthority');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,

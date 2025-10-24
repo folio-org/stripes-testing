@@ -164,6 +164,10 @@ export default {
     cy.do(editButton.click());
   },
 
+  selectDuplicateProfile() {
+    cy.do(duplicateButton.click());
+  },
+
   selectDeleteProfile() {
     cy.do(deleteButton.click());
   },
