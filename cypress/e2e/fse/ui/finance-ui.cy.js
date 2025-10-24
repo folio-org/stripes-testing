@@ -20,7 +20,7 @@ describe('fse-finance - UI (no data manipulation)', () => {
 
   it(
     `TC195278 - verify that finance-fiscal year is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'finance', 'fast-check'] },
+    { tags: ['sanity', 'fse', 'ui', 'finance'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
       FinanceHelp.selectFiscalYearsNavigation();
