@@ -7,7 +7,6 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/uti
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import Affiliations from '../../../../support/dictionary/affiliations';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../../support/fragments/topMenu';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
@@ -156,7 +155,6 @@ describe('MARC', () => {
             authRefresh: true,
           });
 
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.waitLoading();

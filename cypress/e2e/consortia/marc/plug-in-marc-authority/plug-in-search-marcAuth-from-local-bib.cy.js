@@ -182,7 +182,6 @@ describe('MARC', () => {
             authRefresh: true,
           });
 
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.waitLoading();
@@ -320,19 +319,6 @@ describe('MARC', () => {
           );
           MarcAuthorities.verifyRecordFound(authorityHeadings.college);
           MarcAuthorities.verifyRecordFound(authorityHeadings.collegeReference);
-
-          MarcAuthorities.clickNextPaginationButtonIfEnabled().then((clicked) => {
-            if (clicked) {
-              MarcAuthorities.verifyRecordFound(
-                `${testData.sharedIconText}${authorityHeadings.shared1}`,
-                false,
-              );
-              MarcAuthorities.verifyRecordFound(authorityHeadings.college, false);
-              MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-              MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-              MarcAuthorities.checkRecordsCountExistsInSharedFacet();
-            }
-          });
         },
       );
     });

@@ -183,7 +183,6 @@ describe('MARC', () => {
             authRefresh: true,
           });
 
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.waitLoading();

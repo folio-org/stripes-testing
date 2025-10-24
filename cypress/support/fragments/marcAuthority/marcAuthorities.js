@@ -1871,13 +1871,17 @@ export default {
 
   clickNextPaginationButtonIfEnabled() {
     return cy
-      .then(() => Button({
-        id: 'authority-result-list-next-paging-button',
-        disabled: or(true, false),
-      }).disabled())
+      .then(() => {
+        return Button({
+          id: 'authority-result-list-next-paging-button',
+          disabled: or(true, false),
+        }).disabled();
+      })
       .then((isDisabled) => {
-        if (!isDisabled) cy.do(nextButton.click());
-        return !isDisabled;
+        if (!isDisabled) {
+          cy.do(nextButton.click());
+        }
+        return cy.wrap(!isDisabled);
       });
   },
 };
