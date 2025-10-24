@@ -16,6 +16,7 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -48,6 +49,7 @@ describe('MARC', () => {
           cy.login(user.userAProperties.username, user.userAProperties.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
+            authRefresh: true,
           }).then(() => {
             DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
               (response) => {
@@ -79,6 +81,7 @@ describe('MARC', () => {
             cy.login(user.userBProperties.username, user.userBProperties.password, {
               path: TopMenu.usersPath,
               waiter: UsersSearchPane.waitLoading,
+              authRefresh: true,
             });
           });
         });
@@ -86,16 +89,7 @@ describe('MARC', () => {
 
     after('Deleting created user', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
-      InventorySearchAndFilter.searchInstanceByTitle(instanceID);
-      InventorySearchAndFilter.selectViewHoldings();
-      HoldingsRecordView.delete();
-      // need to wait until holding will be deleted
-      cy.wait(3000);
-      if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceID);
       Users.deleteViaApi(user.userBProperties.userId);
     });
 

@@ -60,7 +60,11 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        cy.loginAsAdmin({
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+          authRefresh: true,
+        });
         cy.reload();
         DataImport.waitLoading();
       }, 20_000).then(() => {
@@ -68,16 +72,7 @@ describe('Inventory', () => {
           InventoryInstances.deleteFullInstancesByTitleViaApi(query);
         });
         testData.searchQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -131,6 +126,10 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
           authRefresh: true,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
         });
         InventoryInstances.searchByTitle('Bible');
         testData.searchResults.forEach((result) => {

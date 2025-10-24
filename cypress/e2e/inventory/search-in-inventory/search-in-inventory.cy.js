@@ -137,11 +137,13 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
           authRefresh: true,
         });
-        InventoryInstances.searchByTitle('*');
-        InventoryInstances.waitLoading();
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
+        cy.ifConsortia(false, () => {
+          InventoryInstances.searchByTitle('*');
+        });
+        InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.switchToBrowseTab();

@@ -265,8 +265,12 @@ describe('MARC', () => {
       () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
         });
+        cy.intercept('GET', '/search/instances?*').as('getInstances');
         InventoryInstances.searchBySource(testData.sourceMARC);
+        cy.wait('@getInstances').its('response.statusCode').should('eq', 200);
+        InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();

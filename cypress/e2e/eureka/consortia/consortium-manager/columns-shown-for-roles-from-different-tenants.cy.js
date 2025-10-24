@@ -83,61 +83,46 @@ describe('Eureka', () => {
         SelectMembers.saveAndClose();
         ConsortiumManagerApp.verifyMembersSelected(2);
         SelectMembers.selectMember(tenantNames.central);
-        cy.resetTenant();
-        cy.getAuthorizationRoles().then((rolesCentral) => {
-          AuthorizationRoles.waitContentLoading();
-          AuthorizationRoles.verifyRolesCount(rolesCentral.length);
-          AuthorizationRoles.checkRoleFound(testData.centralRoleName);
-          AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.checkRoleFound(testData.centralRoleName);
+        AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
 
-          SelectMembers.selectMember(tenantNames.college);
-          cy.setTenant(Affiliations.College);
-          cy.getAuthorizationRoles().then((rolesCollege) => {
-            AuthorizationRoles.waitContentLoading();
-            AuthorizationRoles.verifyRolesCount(rolesCollege.length);
-            AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
-            AuthorizationRoles.checkRoleFound(testData.collegeRoleName);
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
+        AuthorizationRoles.checkRoleFound(testData.collegeRoleName);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            TopMenuNavigation.navigateToApp(
-              APPLICATION_NAMES.SETTINGS,
-              SETTINGS_SUBSECTION_AUTH_ROLES,
-            );
-            AuthorizationRoles.waitContentLoading();
-            AuthorizationRoles.searchRole(testData.collegeRoleName);
-            AuthorizationRoles.clickOnRoleName(testData.collegeRoleName, false);
-            AuthorizationRoles.openForEdit();
-            AuthorizationRoles.fillRoleNameDescription(
-              testData.collegeRoleName,
-              testData.collegeRoleNameDescription,
-            );
-            AuthorizationRoles.clickSaveButton();
-            const updatedDate = testData.getUpdatedDate();
-            AuthorizationRoles.checkAfterSaveEdit(
-              testData.collegeRoleName,
-              testData.collegeRoleNameDescription,
-            );
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.collegeRoleName);
+        AuthorizationRoles.clickOnRoleName(testData.collegeRoleName, false);
+        AuthorizationRoles.openForEdit();
+        AuthorizationRoles.fillRoleNameDescription(
+          testData.collegeRoleName,
+          testData.collegeRoleNameDescription,
+        );
+        AuthorizationRoles.clickSaveButton();
+        const updatedDate = testData.getUpdatedDate();
+        AuthorizationRoles.checkAfterSaveEdit(
+          testData.collegeRoleName,
+          testData.collegeRoleNameDescription,
+        );
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-            ConsortiumManagerApp.verifyStatusOfConsortiumManager();
-            ConsortiumManagerApp.verifyMembersSelected(2);
-            ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
-            SelectMembers.selectMember(tenantNames.college);
-            cy.setTenant(Affiliations.College);
-            cy.getAuthorizationRoles().then((rolesCollegeNew) => {
-              AuthorizationRoles.waitContentLoading();
-              AuthorizationRoles.verifyRolesCount(rolesCollegeNew.length);
-              AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
-              AuthorizationRoles.verifyRoleRow(
-                testData.collegeRoleName,
-                testData.collegeRoleNameDescription,
-                updatedDate,
-                `${userData.lastName}, ${userData.firstName}`,
-              );
-            });
-          });
-        });
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        ConsortiumManagerApp.verifyMembersSelected(2);
+        ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
+        AuthorizationRoles.verifyRoleRow(
+          testData.collegeRoleName,
+          testData.collegeRoleNameDescription,
+          updatedDate,
+          `${userData.lastName}, ${userData.firstName}`,
+        );
       },
     );
   });

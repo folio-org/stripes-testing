@@ -86,8 +86,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -133,8 +131,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });
@@ -156,6 +152,10 @@ describe('Inventory', () => {
           testData.querySearchOption,
           testData.searchQueries.allRecords,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
+        });
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondLinkedRecord);
