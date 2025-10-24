@@ -1868,4 +1868,20 @@ export default {
       }),
     );
   },
+
+  clickNextPaginationButtonIfEnabled() {
+    return cy
+      .then(() => {
+        return Button({
+          id: 'authority-result-list-next-paging-button',
+          disabled: or(true, false),
+        }).disabled();
+      })
+      .then((isDisabled) => {
+        if (!isDisabled) {
+          cy.do(nextButton.click());
+        }
+        return cy.wrap(!isDisabled);
+      });
+  },
 };
