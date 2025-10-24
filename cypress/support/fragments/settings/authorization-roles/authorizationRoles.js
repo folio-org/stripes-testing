@@ -628,7 +628,9 @@ export default {
 
   verifyGeneralInformationWhenCollapsed: (updatedDate) => {
     const momentDate = moment.utc(updatedDate, generalInfoDateFormat);
-    const updatedDatePlus1Minute = momentDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDatePlus1Minute = updatedDate
+      ? momentDate.add(1, 'minute').format(generalInfoDateFormat)
+      : '';
     cy.expect(
       generalInformationAccordion.has({
         content: or(
@@ -642,8 +644,12 @@ export default {
   verifyGeneralInformationWhenExpanded: (updatedDate, updatedUser, createdDate, createdUser) => {
     const momentUpdatedDate = moment.utc(updatedDate, generalInfoDateFormat);
     const momentCreatedDate = moment.utc(updatedDate, generalInfoDateFormat);
-    const updatedDatePlus1Minute = momentUpdatedDate.add(1, 'minute').format(generalInfoDateFormat);
-    const createdDatePlus1Minute = momentCreatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDatePlus1Minute = updatedDate
+      ? momentUpdatedDate.add(1, 'minute').format(generalInfoDateFormat)
+      : '';
+    const createdDatePlus1Minute = createdDate
+      ? momentCreatedDate.add(1, 'minute').format(generalInfoDateFormat)
+      : '';
     cy.do(recordLastUpdatedHeader.click());
     cy.expect([
       generalInformationAccordion.has({

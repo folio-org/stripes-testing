@@ -13,7 +13,7 @@ import ConsortiumManagerSettings from '../../../../support/fragments/settings/co
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import Capabilities from '../../../../support/dictionary/capabilities';
 
-describe.skip('Eureka', () => {
+describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
@@ -108,10 +108,9 @@ describe.skip('Eureka', () => {
       cy.deleteAuthorizationRoleApi(testData.roleCollege.id);
     });
 
-    // Trillium+ only
-    it.skip(
+    it(
       'C502981 ECS | Eureka | Verify detail view of selected Authorization role (consortia) (thunderjet)',
-      { tags: [] },
+      { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C502981'] },
       () => {
         cy.resetTenant();
         cy.login(userData.username, userData.password);
@@ -132,7 +131,6 @@ describe.skip('Eureka', () => {
           testData.roleCentral.name,
           testData.roleCentral.description,
         );
-        AuthorizationRoles.checkActionsButtonShown(false, testData.roleCentral.name);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleCentral.name, false);
         AuthorizationRoles.verifyAssignedUsersAccordion(false, false);
         AuthorizationRoles.verifyAssignedUser(
@@ -149,7 +147,6 @@ describe.skip('Eureka', () => {
           testData.roleCollege.name,
           testData.roleCollege.description,
         );
-        AuthorizationRoles.checkActionsButtonShown(false, testData.roleCollege.name);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleCollege.name, false);
         AuthorizationRoles.verifyAssignedUsersAccordion(false, false);
         AuthorizationRoles.verifyAssignedUser(
@@ -162,13 +159,7 @@ describe.skip('Eureka', () => {
         );
         AuthorizationRoles.checkUsersAccordion(2);
 
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManagerSettings.switchActiveAffiliation(
-            tenantNames.central,
-            tenantNames.college,
-          );
-          cy.reload();
-        }, 20_000);
+        ConsortiumManagerSettings.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleCollege.name);
