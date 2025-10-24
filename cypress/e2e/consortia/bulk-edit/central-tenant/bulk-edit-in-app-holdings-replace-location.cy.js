@@ -336,6 +336,7 @@ describe('Bulk-edit', () => {
             tenantNames.university,
           );
           SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
+          SelectLocationsModal.searchLocation(locationsInCollegeData.temporaryLocation.name);
           SelectLocationsModal.selectLocation(locationsInCollegeData.temporaryLocation.name);
           SelectLocationsModal.verifySelectLocationModalExists(false);
           BulkEditActions.verifyLocationValue(
@@ -351,6 +352,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup(1);
           SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
+          SelectLocationsModal.searchLocation(locationsInCollegeData.permanentLocation.name);
           SelectLocationsModal.selectLocation(locationsInCollegeData.permanentLocation.name);
           SelectLocationsModal.verifySelectLocationModalExists(false);
           BulkEditActions.verifyLocationValue(

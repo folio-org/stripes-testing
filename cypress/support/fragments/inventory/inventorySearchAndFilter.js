@@ -256,7 +256,7 @@ export default {
     cy.wait(2000);
     cy.do([
       languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
-      MultiSelectOption(including(lang ?? 'English(')).click(),
+      MultiSelectOption(including(lang ?? 'English(')).clickSegment(),
     ]);
   },
 

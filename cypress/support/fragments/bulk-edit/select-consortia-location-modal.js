@@ -21,6 +21,7 @@ const selectAffiliationButton = Button({
   id: 'undefined-affiliations-select',
 });
 const searchButton = Button('Search');
+const searchField = TextField({ id: 'input-record-search' });
 const resetAllButton = Button('Reset all');
 const institutionAccordion = Accordion('Institution');
 const campusAccordion = Accordion('Campus');
@@ -50,7 +51,7 @@ export default {
       selectLocationsModal.find(closeButton).has({ disabled: false }),
       selectLocationsModal.find(Label('Affiliation')).exists(),
       selectLocationsModal.find(selectAffiliationButton).exists(),
-      selectLocationsModal.find(TextField({ id: 'input-record-search' })).exists(),
+      selectLocationsModal.find(searchField).exists(),
       selectLocationsModal.find(searchButton).has({ disabled: true }),
       selectLocationsModal.find(resetAllButton).has({ disabled: true }),
       selectLocationsModal.find(institutionAccordion).has({ open: true }),
@@ -116,7 +117,11 @@ export default {
   selectLocation(locationName) {
     // need to scroll down if the list of locations is long
     this.scrollListOfResults('bottom');
-    cy.do(selectLocationsModal.find(MultiColumnListCell({ content: locationName })).click());
+    cy.do(
+      selectLocationsModal
+        .find(MultiColumnListCell({ content: locationName, column: 'Name' }))
+        .click(),
+    );
   },
 
   verifySelectLocationModalExists(isExist = true) {
@@ -125,5 +130,10 @@ export default {
     } else {
       cy.expect(selectLocationsModal.absent());
     }
+  },
+
+  searchLocation(locationName) {
+    cy.do([selectLocationsModal.find(searchField).fillIn(locationName), searchButton.click()]);
+    cy.wait(1000);
   },
 };

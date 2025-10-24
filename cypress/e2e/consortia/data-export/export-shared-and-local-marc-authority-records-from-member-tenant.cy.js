@@ -248,6 +248,7 @@ describe('Data Export', () => {
               'Authorities',
               '.csv',
             );
+            cy.wait(3000);
 
             cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
               const { jobExecutions } = response.body;
