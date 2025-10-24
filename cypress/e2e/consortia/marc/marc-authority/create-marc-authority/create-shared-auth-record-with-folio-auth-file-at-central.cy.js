@@ -54,7 +54,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
           }, 20_000);
           MarcAuthorities.waitLoading();
         });
