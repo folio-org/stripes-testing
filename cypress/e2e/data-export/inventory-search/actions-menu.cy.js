@@ -18,6 +18,9 @@ describe('Data Export', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
         permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
+        permissions.uiInventorySingleRecordImport.gui,
+        permissions.inventoryCreateAndDownloadInTransitItemsReport.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -36,12 +39,54 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196752 verifies action menu options before any search is conducted (firebird)',
+      'C196752 Verify "Actions" menu options in three segments when no search results are returned (firebird)',
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C196752'] },
       () => {
         InventoryActions.open();
 
         cy.expect(InventorySearchAndFilter.getAllSearchResults().absent());
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.import,
+        ]);
+        InventoryActions.optionsIsDisabled([
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.switchToHoldings();
+        InventoryActions.open();
+        cy.expect(InventorySearchAndFilter.getAllSearchResults().absent());
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.import,
+        ]);
+        InventoryActions.optionsIsDisabled([
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveHoldingsUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.switchToItem();
+        InventoryActions.open();
+        cy.expect(InventorySearchAndFilter.getAllSearchResults().absent());
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.import,
+        ]);
         InventoryActions.optionsIsDisabled([
           InventoryActions.options.saveUUIDs,
           InventoryActions.options.saveCQLQuery,
@@ -56,13 +101,93 @@ describe('Data Export', () => {
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C196753'] },
       () => {
         InventorySearchAndFilter.byKeywords(item.instanceName);
-        InventorySearchAndFilter.selectResultCheckboxes(1);
         InventoryActions.open();
-
         InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.import,
+        ]);
+        InventoryActions.optionsIsDisabled([
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.selectResultCheckboxes(1);
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
           InventoryActions.options.saveUUIDs,
           InventoryActions.options.saveCQLQuery,
           InventoryActions.options.exportMARC,
+          InventoryActions.options.import,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.byKeywords(item.instanceName);
+        InventoryActions.open();
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveHoldingsUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.import,
+        ]);
+        InventoryActions.optionsIsDisabled([
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.selectResultCheckboxes(1);
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveHoldingsUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.import,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.byKeywords(item.instanceName);
+        InventoryActions.open();
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.import,
+        ]);
+        InventoryActions.optionsIsDisabled([
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.showSelectedRecords,
+        ]);
+
+        InventorySearchAndFilter.selectResultCheckboxes(1);
+        InventoryActions.optionsIsEnabled([
+          InventoryActions.options.new,
+          InventoryActions.options.newFastAddRecord,
+          InventoryActions.options.newMarcBibRecord,
+          InventoryActions.options.InTransitItemsReport,
+          InventoryActions.options.saveUUIDs,
+          InventoryActions.options.saveCQLQuery,
+          InventoryActions.options.exportMARC,
+          InventoryActions.options.import,
           InventoryActions.options.showSelectedRecords,
         ]);
       },

@@ -25,13 +25,16 @@ export default {
   open,
   options: {
     new: Button('New'),
+    newFastAddRecord: Button('New fast add record'),
+    newMarcBibRecord: Button('New MARC bibliographic record'),
+    InTransitItemsReport: Button('In transit items report (CSV)'),
     saveUUIDs: Button('Save instances UUIDs'),
-    saveHoldingsUUIDs: Button('Save holdings UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
     exportMARC: Button('Export instances (MARC)'),
+    import: Button('Import'),
+    saveHoldingsUUIDs: Button('Save holdings UUIDs'),
     showSelectedRecords: Button('Show selected records'),
     newRequest: Button('New Request'),
-    newFastAddRecord: Button('New Fast Add Record'),
   },
   openNewFastAddRecordForm() {
     cy.do([
