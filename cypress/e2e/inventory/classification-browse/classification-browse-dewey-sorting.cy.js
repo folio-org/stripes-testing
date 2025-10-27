@@ -57,31 +57,33 @@ describe('Inventory', () => {
         user = createdUser;
         cy.getInstanceTypes({ limit: 1 }).then((types) => {
           instanceTypeId = types[0].id;
-          // Create instances for each Dewey classification number
-          deweyClassifications.forEach((classificationNumber, idx) => {
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId,
-                title: `${instanceTitlePrefix}_${idx + 1}`,
-                classifications: [
-                  {
-                    classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
-                    classificationNumber,
-                  },
-                ],
-              },
-            }).then((instance) => {
-              createdInstanceIds.push(instance.instanceId);
-            });
-          });
-
-          // Set Dewey browse option to Dewey, Additional Dewey, LC
-          ClassificationBrowse.updateIdentifierTypesAPI(deweyBrowseId, deweyBrowseAlgorithm, [
-            CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
-            CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-            CLASSIFICATION_IDENTIFIER_TYPES.LC,
-          ]);
         });
+      });
+      cy.then(() => {
+        deweyClassifications.forEach((classificationNumber, idx) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId,
+              title: `${instanceTitlePrefix}_${idx + 1}`,
+              classifications: [
+                {
+                  classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+                  classificationNumber,
+                },
+              ],
+            },
+          }).then((instance) => {
+            createdInstanceIds.push(instance.instanceId);
+          });
+        });
+      });
+
+      cy.then(() => {
+        ClassificationBrowse.updateIdentifierTypesAPI(deweyBrowseId, deweyBrowseAlgorithm, [
+          CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+          CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
+          CLASSIFICATION_IDENTIFIER_TYPES.LC,
+        ]);
       });
     });
 
