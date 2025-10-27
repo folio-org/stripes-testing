@@ -4,6 +4,8 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -12,7 +14,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -27,8 +28,6 @@ describe('Title Level Request', () => {
   let requestId;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ count: 1 }),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    servicePoint2: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   const patronGroup = {
@@ -37,15 +36,18 @@ describe('Title Level Request', () => {
 
   before('Preconditions:', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    ServicePoints.createViaApi(testData.servicePoint2);
+    ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+      testData.servicePoint = servicePoint;
+    });
+    ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint2) => {
+      testData.servicePoint2 = servicePoint2;
+    });
     TitleLevelRequests.enableTLRViaApi();
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Location.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
+    testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
+    const location = { id: testData.defaultLocationId };
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location,
     });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
@@ -88,22 +90,11 @@ describe('Title Level Request', () => {
   after('Deleting created entities', () => {
     cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
-      testData.servicePoint.id,
-      testData.servicePoint2.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    ServicePoints.deleteViaApi(testData.servicePoint2.id);
+
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
       testData.folioInstances[0].barcodes[0],
-    );
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
     );
   });
 
@@ -125,7 +116,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: testData.folioInstances[0].barcodes[0],
         title: testData.folioInstances[0].instanceTitle,
-        effectiveLocation: testData.defaultLocation.name,
+        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
         itemStatus: ITEM_STATUS_NAMES.IN_TRANSIT,
         requestsOnItem: '1',
       });
