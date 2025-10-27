@@ -173,17 +173,21 @@ export default {
       saveButtonInModal.exists(),
       cancelButtonInModal.exists(),
       selectAppSearchInput.exists(),
-      selectApplicationModal
-        .find(MultiColumnListRow({ index: 0, isContainer: false }))
-        .find(Checkbox())
-        .exists(),
+      selecAllAppsCheckbox.exists(),
     ]);
     this.checkButtonsEnabledInSelectAppModal({ resetAll: false, search: false });
   },
 
-  selectApplicationInModal: (appName, isSelected = true) => {
+  selectApplicationInModal(appName, isSelected = true) {
+    this.searchForAppInModal(appName);
+    cy.expect();
     const targetCheckbox = selectApplicationModal
-      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
+      .find(
+        MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), {
+          index: 0,
+          isContainer: false,
+        }),
+      )
       .find(Checkbox());
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
