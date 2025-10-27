@@ -36,6 +36,7 @@ const testData = {
     numberOfRecords: 8,
     propertyName: 'instance',
   },
+  sharedAccordionName: 'Shared',
 };
 
 describe('Inventory', () => {
@@ -77,10 +78,11 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C368027', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
-          cy.ifConsortia(() => {
-            InventorySearchAndFilter.byShared('No');
-          });
           InventoryInstances.searchByTitle(query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+            InventoryInstances.waitLoading();
+          });
           InventorySearchAndFilter.checkRowsCount(8);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -88,8 +90,14 @@ describe('Inventory', () => {
           InventoryInstances.resetAllFilters();
         });
 
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(
+            testData.sharedAccordionName,
+            false,
+          );
           InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
         });
         InventoryInstances.searchByTitle('Harry Potter and the cursed child Parts one, two');
         InventorySearchAndFilter.checkRowsCount(3);
@@ -98,8 +106,14 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(
+            testData.sharedAccordionName,
+            false,
+          );
           InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
         });
         InventoryInstances.searchByTitle(
           'Harry Potter & the cursed child : Parts one / two, (a new play by writer Jack Thorne).',
@@ -108,6 +122,15 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(
+            testData.sharedAccordionName,
+            false,
+          );
+          InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
+        });
         InventoryInstances.searchByTitle('Harry Potter - the cursed child Parts one, two', false);
         InventorySearchAndFilter.verifyNoRecordsFound();
       },

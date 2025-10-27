@@ -226,8 +226,6 @@ const openItemByBarcode = (itemBarcode) => {
 };
 
 const verifyInstanceTitle = (title) => {
-  // don't have elem on page for waiter
-  cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 

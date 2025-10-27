@@ -906,13 +906,17 @@ export default {
   },
 
   updateCurrency: (currency) => {
-    cy.do([
-      invoiceDetailsPaneHeader.find(actionsButton).click(),
-      Button('Edit').click(),
-      Selection('Currency*').open(),
-      SelectionList().select(currency),
-      saveAndClose.click(),
-    ]);
+    cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+    cy.wait(500);
+    cy.do(Button('Edit').click());
+    cy.wait(1000);
+    cy.get('label[id=sl-label-currency]').scrollIntoView();
+    cy.do(Selection('Currency*').open());
+    cy.wait(500);
+    cy.do(SelectionList().select(currency));
+    cy.wait(500);
+    cy.do(saveAndClose.click());
+    cy.wait(500);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 

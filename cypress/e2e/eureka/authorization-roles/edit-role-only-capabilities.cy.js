@@ -197,7 +197,8 @@ describe('Eureka', () => {
         });
       });
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[0]}-.{1,}or.{1,}${testData.originalApplications[1]}-.{1,}\\)`;
+      const appRegExpPart = `(?:${testData.originalApplications[0]}|${testData.originalApplications[1]})-.{1,}`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${appRegExpPart}or.{1,}${appRegExpPart}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 

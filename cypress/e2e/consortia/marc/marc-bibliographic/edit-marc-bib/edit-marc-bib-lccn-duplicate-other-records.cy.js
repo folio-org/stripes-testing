@@ -71,6 +71,7 @@ describe('MARC', () => {
             cy.then(() => {
               cy.resetTenant();
               cy.getAdminToken();
+              InventoryInstances.toggleMarcBibLccnValidationRule({ enable: false });
               InventoryInstances.deleteInstanceByTitleViaApi('AT_C514853');
               cy.createTempUser([
                 Permissions.inventoryAll.gui,

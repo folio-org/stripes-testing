@@ -46,6 +46,7 @@ const testData = {
     numberOfRecords: 3,
     propertyName: 'instance',
   },
+  sharedAccordionName: 'Shared',
 };
 
 describe('Inventory', () => {
@@ -83,8 +84,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });
@@ -102,8 +101,9 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C368026', 'eurekaPhase1'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
+            InventoryInstances.waitLoading();
           });
           InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
@@ -114,11 +114,29 @@ describe('Inventory', () => {
         });
 
         testData.negativeSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+            InventorySearchAndFilter.verifyAccordionByNameExpanded(
+              testData.sharedAccordionName,
+              false,
+            );
+            InventorySearchAndFilter.byShared('No');
+            InventoryInstances.waitLoading();
+          });
           InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
           InventoryInstances.resetAllFilters();
         });
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(
+            testData.sharedAccordionName,
+            false,
+          );
+          InventorySearchAndFilter.byShared('No');
+          InventoryInstances.waitLoading();
+        });
         InventoryInstances.searchByTitle('Fight Club by writer Chuck Palahniuk');
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);

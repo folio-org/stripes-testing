@@ -21,12 +21,16 @@ describe('Inventory', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
+        });
+        cy.resetTenant();
 
-        cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
-          .then((userProperties) => {
+        cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+          (userProperties) => {
             testData.user = userProperties;
-          })
-          .then(() => {
+
             cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
@@ -35,14 +39,12 @@ describe('Inventory', () => {
 
             cy.resetTenant();
             cy.login(testData.user.username, testData.user.password);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-              testData.instance = instanceData;
-            });
-          });
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+          },
+        );
       });
 
       after('Delete test data', () => {

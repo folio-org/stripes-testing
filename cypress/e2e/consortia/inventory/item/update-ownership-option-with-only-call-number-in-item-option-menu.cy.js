@@ -72,7 +72,7 @@ describe('Inventory', () => {
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 testData.collegeTenant.item.loanTypeId = res[0].id;
               });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+              cy.getBookMaterialType().then((res) => {
                 testData.collegeTenant.item.materialTypeId = res.id;
               });
             })
@@ -128,7 +128,7 @@ describe('Inventory', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.universityTenant.item.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getBookMaterialType().then((res) => {
               testData.universityTenant.item.materialTypeId = res.id;
             });
           })

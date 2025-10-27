@@ -51,7 +51,7 @@ describe('Inventory', () => {
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             testData.shadowItem.loanTypeId = res[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getBookMaterialType().then((res) => {
             testData.shadowItem.materialTypeId = res.id;
           });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {

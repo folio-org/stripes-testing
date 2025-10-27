@@ -180,7 +180,7 @@ describe('MARC', () => {
             });
           });
 
-          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489*');
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -226,9 +226,11 @@ describe('MARC', () => {
             QuickMarcEditor.setRulesForField(tag, true);
           });
           Users.deleteViaApi(userData.userId);
-          createdAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
-          });
+          Cypress.Promise.all(
+            createdAuthorityIDs.map((id) => {
+              return MarcAuthority.deleteViaAPI(id);
+            }),
+          );
           InventoryInstance.deleteInstanceViaApi(createdInstanceID);
         });
 

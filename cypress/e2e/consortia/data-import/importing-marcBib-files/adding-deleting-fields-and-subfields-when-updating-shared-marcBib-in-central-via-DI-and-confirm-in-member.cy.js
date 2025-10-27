@@ -112,6 +112,13 @@ describe('Data Import', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: '"title"=="C405531*"',
+        }).then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
         NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
             NewActionProfile.createActionProfileViaApi(
@@ -168,6 +175,7 @@ describe('Data Import', () => {
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
         FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
+        FileManager.deleteFile(`cypress/downloads/${testData.marcFile.exportedFileName}`);
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
@@ -195,6 +203,7 @@ describe('Data Import', () => {
             // download exported marc file
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.waitLandingPageOpened();
+            cy.wait(2000); // for the file to appear in the list
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               expectedRecordHrid,
               testData.marcFile.exportedFileName,
@@ -216,10 +225,8 @@ describe('Data Import', () => {
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.resetAllFilters();
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.checkContributor(testData.contributorName);

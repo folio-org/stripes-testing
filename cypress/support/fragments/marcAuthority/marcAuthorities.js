@@ -1741,6 +1741,17 @@ export default {
     });
   },
 
+  deleteMarcAuthorityByIdentifierViaAPI(identifier, authRefType = 'Authorized') {
+    const query = `((identifiers.value=="${identifier}" or naturalId=="${identifier}") and authRefType=="${authRefType}")`;
+    this.getMarcAuthoritiesViaApi({ limit: 100, query }).then((records) => {
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          this.deleteViaAPI(record.id, true);
+        });
+      }
+    });
+  },
+
   createMarcAuthorityRecordViaApiByReadingFromMrkFile(
     mrkFileName,
     field008Values = valid008FieldValues,
@@ -1856,5 +1867,21 @@ export default {
         expect(element.classList[2]).to.include('primary');
       }),
     );
+  },
+
+  clickNextPaginationButtonIfEnabled() {
+    return cy
+      .then(() => {
+        return Button({
+          id: 'authority-result-list-next-paging-button',
+          disabled: or(true, false),
+        }).disabled();
+      })
+      .then((isDisabled) => {
+        if (!isDisabled) {
+          cy.do(nextButton.click());
+        }
+        return cy.wrap(!isDisabled);
+      });
   },
 };

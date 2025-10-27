@@ -2,12 +2,11 @@ import Permissions from '../../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import Users from '../../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -120,14 +119,11 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.loginAsAdmin();
-                TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-                InventoryInstances.waitContentLoading();
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
+              cy.resetTenant({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
+              });
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -163,7 +159,7 @@ describe('MARC', () => {
           cy.resetTenant();
           Users.deleteViaApi(users.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-          MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+          MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
         });
 
         it(

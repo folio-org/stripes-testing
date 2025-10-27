@@ -39,7 +39,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a Johnson, Samuel, $d 1709-1784',
-            '$x Criticism and interpretation.',
+            '',
             '$0 http://id.loc.gov/authorities/names/n78095825C400663',
             '',
           ],
@@ -123,7 +123,7 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
+              cy.getAdminToken().then(() => {
                 marcFiles.forEach((marcFile) => {
                   DataImport.uploadFileViaApi(
                     marcFile.marc,
@@ -143,6 +143,7 @@ describe('MARC', () => {
                 cy.login(users.userProperties.username, users.userProperties.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
               });
             });
@@ -162,9 +163,6 @@ describe('MARC', () => {
           'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C400663'] },
           () => {
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-            }, 30_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkExpectedMARCSource();

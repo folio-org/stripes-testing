@@ -83,8 +83,8 @@ const UI = {
     cy.get('[class^="spinner"]').should('not.exist');
   },
 
-  waitForCompilingToComplete() {
-    cy.wait(1000);
+  waitForCompilingToComplete(delay = 1500) {
+    cy.wait(delay);
     cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
     cy.wait(1000);
     cy.get('body').then(($body) => {
@@ -397,6 +397,10 @@ const UI = {
 
   verifyRecordType(recordType) {
     this.checkKeyValue('Record type', recordType);
+  },
+
+  verifyStatusLabel(value) {
+    this.checkKeyValue('Status', value);
   },
 
   selectVisibility(visibility) {
@@ -949,9 +953,7 @@ const API = {
 
   getTypeIdByNameViaApi(type) {
     return this.getTypesViaApi().then((response) => {
-      return response.body.entityTypes.find(
-        (entityType) => entityType.label === type,
-      ).id;
+      return response.body.entityTypes.find((entityType) => entityType.label === type).id;
     });
   },
 

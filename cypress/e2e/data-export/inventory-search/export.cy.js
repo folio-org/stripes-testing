@@ -39,7 +39,7 @@ describe('Data Export', () => {
           },
         );
         cy.getInstanceById(item.instanceId).then((body) => {
-          body.languages = ['eng'];
+          body.languages = ['rus'];
           cy.updateInstance(body);
         });
         cy.login(user.username, user.password);
@@ -94,7 +94,7 @@ describe('Data Export', () => {
       'C9287 Export CQL query (firebird)',
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C9287'] },
       () => {
-        InventorySearchAndFilter.byLanguage();
+        InventorySearchAndFilter.byLanguage('Russian');
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',
           item.instanceName,
@@ -106,7 +106,7 @@ describe('Data Export', () => {
           InventoryActions.verifySaveCQLQueryFileName,
           'SearchInstanceCQLQuery*',
           InventoryActions.verifySaveCQLQuery,
-          [LOCATION_IDS.MAIN_LIBRARY, item.instanceName, 'eng'],
+          [LOCATION_IDS.MAIN_LIBRARY, item.instanceName, 'rus'],
         );
       },
     );

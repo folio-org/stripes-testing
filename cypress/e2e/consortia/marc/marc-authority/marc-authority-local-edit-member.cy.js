@@ -42,6 +42,7 @@ describe('MARC', () => {
 
         before('Create test data', () => {
           cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405544');
           cy.setTenant(Affiliations.College);
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -54,6 +55,7 @@ describe('MARC', () => {
           });
 
           cy.resetTenant();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405544');
           cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
             (createdUserProperties) => {
               testData.userProperties = createdUserProperties;

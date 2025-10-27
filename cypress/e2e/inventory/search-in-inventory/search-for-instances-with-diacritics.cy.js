@@ -75,17 +75,9 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C473260');
       testData.instanceTitlePrefixes.forEach((titlePrefix) => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `title="${titlePrefix}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
       });
 
       cy.createTempUser([

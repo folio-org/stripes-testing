@@ -1,5 +1,10 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import {
+  ITEM_STATUS_NAMES,
+  REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -11,7 +16,6 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -25,7 +29,7 @@ describe('Title Level Request', () => {
     itemBarcode: `item${generateUniqueItemBarcodeWithShift()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    requestType: REQUEST_TYPES.PAGE,
   };
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD],
@@ -37,9 +41,10 @@ describe('Title Level Request', () => {
     cy.getAdminToken()
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+          testData.userServicePoint = servicePoint;
+          testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -64,7 +69,7 @@ describe('Title Level Request', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: testData.defaultLocationId,
             },
           ],
           items: [
@@ -130,18 +135,8 @@ describe('Title Level Request', () => {
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     Requests.deleteRequestViaApi(testData.requestId);
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
-      testData.userServicePoint.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(testData.user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
   });
 
   it(
@@ -169,7 +164,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: instanceData.itemBarcode,
         title: instanceData.title,
-        effectiveLocation: testData.defaultLocation.name,
+        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });
@@ -198,7 +193,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: instanceData.itemBarcode,
         title: instanceData.title,
-        effectiveLocation: testData.defaultLocation.name,
+        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });

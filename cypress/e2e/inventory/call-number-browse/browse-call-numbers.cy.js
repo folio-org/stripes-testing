@@ -29,12 +29,12 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
-        InventorySearchAndFilter.fillInBrowseSearch('DE3');
+        InventorySearchAndFilter.fillInBrowseSearch('DE4');
         InventorySearchAndFilter.verifySearchButtonDisabled(false);
         InventorySearchAndFilter.verifyResetAllButtonDisabled(false);
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: 'DE3' }],
+          records: [{ callNumber: 'DE4' }],
         });
         InventorySearchAndFilter.validateSearchTableHeaders();
       },

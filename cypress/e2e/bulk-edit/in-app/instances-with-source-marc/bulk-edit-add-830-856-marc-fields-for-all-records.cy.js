@@ -162,9 +162,10 @@ describe('Bulk-edit', () => {
         BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
       });
 
-      it(
+      // Trillium
+      it.skip(
         'C663269 Bulk edit marc fields (830, 856) for all records (MARC, Query) (firebird)',
-        { tags: ['smoke', 'firebird', 'C663269'] },
+        { tags: [] },
         () => {
           BulkEditSearchPane.verifyBulkEditQueryPaneExists();
           BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 instance');

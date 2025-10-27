@@ -1,7 +1,7 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import { CallNumberTypes } from '../../../../support/fragments/settings/inventory/instances/callNumberTypes';
@@ -20,6 +20,8 @@ import BrowseCallNumber from '../../../../support/fragments/inventory/search/bro
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     const permissions = [Permissions.uiInventoryViewInstances.gui];
+    const randomDigits = randomFourDigitNumber();
+    const callNumberPostfix = `651515${randomDigits}${randomDigits}`;
     let callNumberTypes = null;
     const getIdByName = (name) => callNumberTypes.find((type) => type.name === name)?.id;
     const getNameById = (id) => callNumberTypes.find((type) => type.id === id)?.name;
@@ -42,55 +44,55 @@ describe('Inventory', () => {
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance1 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: '595.0994',
+            itemLevelCallNumber: `595.0994 ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance2 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'QS 11 .GA1 E59 2005',
+            itemLevelCallNumber: `QS 11 .GA1 E59 2005 ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance3 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'SB999.A5',
+            itemLevelCallNumber: `SB999.A5 ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance4 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'Valery P',
+            itemLevelCallNumber: `Valery P ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance5 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'L39.s:Oc1/2/991',
+            itemLevelCallNumber: `L39.s:Oc1/2/991 ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.SUDOC),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance6 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'VP000333',
+            itemLevelCallNumber: `VP000333 ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(centralSharedItemCallNumberType.payload.name),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance7 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'ECS test 01',
+            itemLevelCallNumber: `ECS test 01 ${callNumberPostfix}`,
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance8 ${rndm}`,
           itemsProperties: {
-            itemLevelCallNumber: 'UDC test 01',
+            itemLevelCallNumber: `UDC test 01 ${callNumberPostfix}`,
             itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.UDC),
           },
         }),

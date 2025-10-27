@@ -79,8 +79,8 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               subjectType.name,
               subjectType.source,
-              subjectType.consortiaUser,
               subjectType.memberLibraries,
+              subjectType.consortiaUser,
               { actions: ['edit', 'trash'] },
             );
 
@@ -132,8 +132,8 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               subjectType.editedName,
               subjectType.source,
-              subjectType.consortiaUser,
               subjectType.memberLibraries,
+              subjectType.consortiaUser,
               { actions: ['edit', 'trash'] },
             );
 

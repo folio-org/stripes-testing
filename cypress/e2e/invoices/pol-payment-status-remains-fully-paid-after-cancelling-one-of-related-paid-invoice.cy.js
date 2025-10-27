@@ -179,8 +179,8 @@ describe('Invoices', () => {
   });
 
   it(
-    'C466209 POL payment status remains "Fully paid" after cancelling one of related paid invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    'C889711 POL payment status remains "Fully paid" after cancelling one of related paid invoice (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'C889711'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);

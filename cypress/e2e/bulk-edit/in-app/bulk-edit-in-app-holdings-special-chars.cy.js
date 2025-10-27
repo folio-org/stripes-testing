@@ -9,13 +9,18 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  CALL_NUMBER_TYPE_NAMES,
+  LOCATION_IDS,
+} from '../../../support/constants';
 
 let user;
 let validHoldingHRIDsFileName;
 let secondValidHoldingHRIDsFileName;
 let inventoryEntity;
 let item;
+let callNumberTypeId;
 
 describe(
   'Bulk-edit',
@@ -67,6 +72,11 @@ describe(
             limit: 1,
             query: `"instanceId"="${instanceId}"`,
           }).then((holdings) => {
+            InventoryInstances.getCallNumberTypes({
+              query: `name="${CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL}"`,
+            }).then((res) => {
+              callNumberTypeId = res[0].id;
+            });
             item.holdingHRID = holdings[0].hrid;
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
@@ -75,7 +85,7 @@ describe(
               callNumber: 'number;special&characters',
               callNumberPrefix: 'number-prefix;special&characters',
               callNumberSuffix: 'number-prefix;special&characters',
-              callNumberTypeId: '5ba6b62e-6858-490a-8102-5b1369873835',
+              callNumberTypeId,
               copyNumber: 'copy-number;special&characters',
               formerIds: ['former-id;special&characters'],
               numberOfItems: 'number-items;special&characters',

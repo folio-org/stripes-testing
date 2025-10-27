@@ -4,6 +4,8 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -13,7 +15,6 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -33,7 +34,6 @@ describe('Title Level Request. Request detail', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
@@ -44,9 +44,10 @@ describe('Title Level Request. Request detail', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          testData.userServicePoint = servicePoint;
+          testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -71,7 +72,7 @@ describe('Title Level Request. Request detail', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: testData.defaultLocationId,
             },
           ],
           items: [
@@ -174,18 +175,9 @@ describe('Title Level Request. Request detail', () => {
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userForTLR.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForTLR.userId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
   });
   it(
     'C350415 Check that the user can see "Request Detail" for Item request (vega)',
@@ -204,7 +196,7 @@ describe('Title Level Request. Request detail', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: testData.itemBarcode,
         title: instanceData.title,
-        effectiveLocation: testData.defaultLocation.name,
+        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });

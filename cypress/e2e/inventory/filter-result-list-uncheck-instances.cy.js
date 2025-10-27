@@ -11,6 +11,8 @@ import { APPLICATION_NAMES } from '../../support/constants';
 describe('Inventory', () => {
   let userId;
   const testData = {};
+  const instanceIds = [];
+
   beforeEach('create tests data', () => {
     testData.instanceTitle = `!_AutoTestInstanceTitle ${getRandomPostfix()}`;
     cy.getAdminToken()
@@ -20,15 +22,16 @@ describe('Inventory', () => {
         });
       })
       .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle,
-          },
-        });
-      })
-      .then((instance) => {
-        testData.instanceId = instance.instanceId;
+        for (let i = 0; i < 100; i++) {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: `${testData.instanceTitle}_${i}`,
+            },
+          }).then((instance) => {
+            instanceIds.push(instance.instanceId);
+          });
+        }
       });
 
     cy.createTempUser([
@@ -45,8 +48,10 @@ describe('Inventory', () => {
 
   afterEach('delete test data', () => {
     cy.getAdminToken();
+    instanceIds.forEach((instanceId) => {
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
+    });
     Users.deleteViaApi(userId);
-    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
   });
 
   it(
@@ -63,7 +68,7 @@ describe('Inventory', () => {
       InventoryInstances.verifyAllCheckboxesAreChecked(true);
       InventoryInstances.checkSearchResultCount(/\d+ record(s?|) found\d+ record(s?|) selected/);
 
-      InventorySearchAndFilter.executeSearch(testData.instanceTitle);
+      InventorySearchAndFilter.executeSearch(`${testData.instanceTitle}_1`);
       InventoryInstances.verifyInstanceResultListIsAbsent(false);
       InventoryInstances.verifyAllCheckboxesAreChecked(true);
       InventoryInstances.checkSearchResultCount(/1 record found100 records selected/);
