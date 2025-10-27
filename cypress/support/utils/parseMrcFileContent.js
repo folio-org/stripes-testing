@@ -27,7 +27,6 @@ const getDefaultAssertions = () => {
  *       Each function receives the record as its argument and performs specific checks.
  * @param {number} expectedTotalRecords - The expected total number of records in the file.
  * @param {boolean} [isDefaultAssertionRequired=true] - Whether to run default assertions in addition to custom ones.
- * @param {boolean} [isAuthority=false] - A flag indicating whether the records are authority records.
  * @returns {Promise<void>} - A promise that resolves when all assertions pass, or rejects with an error.
  */
 
@@ -36,7 +35,6 @@ export default function parseMrcFileContentAndVerify(
   recordsToVerify,
   expectedTotalRecords,
   isDefaultAssertionRequired = true,
-  isAuthority = false,
 ) {
   return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
     if (!fileContent) {
@@ -57,8 +55,10 @@ export default function parseMrcFileContentAndVerify(
       reader.on('data', (record) => {
         totalRecordsCount++;
 
-        const uuidField = record.get('999');
-        const recordUuid = isAuthority ? uuidField[0].subf[1][1] : uuidField[0].subf[0][1];
+        const uuidField = record.get('999').find((field) => {
+          return field.ind1 === 'f';
+        });
+        const recordUuid = uuidField.subf.find((subfield) => subfield[0] === 'i')[1];
 
         if (uuidAssertionsMap.has(recordUuid)) {
           let assertions = uuidAssertionsMap.get(recordUuid);

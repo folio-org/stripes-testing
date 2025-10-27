@@ -180,7 +180,7 @@ describe('Bulk-edit', () => {
           DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
         let assertionsOnMarcFileContent = [
           {
-            uuid: note999a,
+            uuid: marcInstance.uuid,
             assertions: [
               (record) => {
                 expect(
