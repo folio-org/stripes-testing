@@ -949,18 +949,24 @@ export default {
       openHoldings(fromHolding, toHolding);
     }
 
-    cy.do([
+    cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(MultiColumnListRow({ index: 0 }))
         .find(Checkbox())
         .click(),
+    );
+    cy.wait(500);
+    cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(Button('Move to'))
         .click(),
+    );
+    cy.wait(500);
+    cy.do(
       DropdownMenu()
         .find(Button(including(toHolding)))
         .click(),
-    ]);
+    );
 
     if (itemMoved) {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
