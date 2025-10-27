@@ -168,7 +168,7 @@ async function removeAutotestInstances() {
 
 async function removeAutotestAuthorities() {
   const autotestAuthorities = await axios.get(
-    '/search/authorities?limit=500&query=(keyword="autotest" or keyword="AT_" and authRefType="Authorized")',
+    '/search/authorities?limit=500&query=(keyword="autotest" or keyword="AT_" or keyword="C*" and authRefType="Authorized")',
   );
   if (!autotestAuthorities.data.authorities) return;
   console.log('Removing autotest authorities');
