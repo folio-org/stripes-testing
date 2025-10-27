@@ -286,8 +286,10 @@ describe('Data Import', () => {
     const openOrder = (number) => {
       Orders.clearSearchField();
       cy.intercept('/organizations/organizations*').as('getOrganizations');
+      cy.wait(2000);
       Orders.searchByParameter('PO number', number);
       cy.wait('@getOrganizations', getLongDelay()).then(() => {
+        cy.wait(2000);
         Orders.selectFromResultsList(number);
       });
       OrderDetails.openOrder();
