@@ -92,8 +92,6 @@ describe('Eureka', () => {
               path: TopMenu.settingsAuthorizationRoles,
               waiter: AuthorizationRoles.waitContentLoading,
             });
-            cy.reload();
-            AuthorizationRoles.waitContentLoading();
           }, 20_000);
         });
       });
@@ -154,7 +152,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(applicationNames[0], false);
           AuthorizationRoles.selectApplicationInModal(applicationNames[1]);
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           AuthorizationRoles.verifyAppNamesInCapabilityTables([applicationNames[1]]);
           ebsconetResourceNames.forEach((resourceName) => {
             AuthorizationRoles.verifyResourceOrAppPresent(resourceName, 1);

@@ -113,6 +113,8 @@ const createNameErrorText = 'Role could not be created: Failed to create keycloa
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
+const unselectAppConfirmationModal = Modal({ id: 'unselect-application-confirmation-modal' });
+const okayButton = Button('Okay');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -166,6 +168,9 @@ export default {
       selectAppResetAllButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
     ]);
+    const listSelector = 'div#applications-paneset [class^="mclScrollable"]';
+    cy.get(listSelector).scrollTo('bottom').scrollTo('top');
+    cy.expect(MultiColumnListRow({ index: 0 }).exists());
   },
 
   verifySelectApplicationModal() {
@@ -179,12 +184,9 @@ export default {
   },
 
   selectApplicationInModal(appName, isSelected = true) {
-    this.searchForAppInModal(appName);
-    cy.expect();
     const targetCheckbox = selectApplicationModal
       .find(
         MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), {
-          index: 0,
           isContainer: false,
         }),
       )
@@ -198,8 +200,10 @@ export default {
     cy.expect(selecAllAppsCheckbox.has({ checked: isSelected }));
   },
 
-  clickSaveInModal: () => {
+  clickSaveInModal({ confirmUnselect = null } = {}) {
     cy.do(saveButtonInModal.click());
+    if (confirmUnselect === true) this.confirmAppUnselection();
+    if (confirmUnselect === false) this.cancelAppUnselection();
     cy.expect(selectApplicationModal.absent());
   },
 
@@ -1048,5 +1052,15 @@ export default {
   clickResetAllInSelectAppModal() {
     cy.do(selectAppResetAllButton.click());
     this.verifySelectApplicationModal();
+  },
+
+  confirmAppUnselection() {
+    cy.do(unselectAppConfirmationModal.find(okayButton).click());
+    cy.expect(unselectAppConfirmationModal.absent());
+  },
+
+  cancelAppUnselection() {
+    cy.do(unselectAppConfirmationModal.find(cancelButton).click());
+    cy.expect(unselectAppConfirmationModal.absent());
   },
 };
