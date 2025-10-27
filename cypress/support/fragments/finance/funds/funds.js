@@ -289,6 +289,10 @@ export default {
     cy.do(codeField.has({ error: 'This Fund code is already in use.' }));
   },
 
+  checkAmountInputError: (errorMessage) => {
+    cy.do(amountTextField.has({ error: errorMessage }));
+  },
+
   checkCreatedFund: (fundName) => {
     cy.xpath(createdFundNameXpath).should('be.visible').and('have.text', fundName);
   },
@@ -606,10 +610,10 @@ export default {
     ]);
     cy.wait(4000);
   },
-  moveAllocation({ fromFund, toFund, amount }) {
+  moveAllocation({ fromFund, toFund, amount, isDisabledConfirm = false }) {
     cy.do([actionsButton.click(), moveAllocationButton.click()]);
     cy.wait(4000);
-    this.fillAllocationFields({ toFund, fromFund, amount });
+    this.fillAllocationFields({ toFund, fromFund, amount, isDisabledConfirm });
   },
 
   openMoveAllocationModal() {
@@ -618,7 +622,7 @@ export default {
   closeTransferModal() {
     cy.do(addTransferModal.find(cancelButton).click());
   },
-  fillAllocationFields({ toFund, fromFund, amount }) {
+  fillAllocationFields({ toFund, fromFund, amount, isDisabledConfirm = false }) {
     if (toFund) {
       cy.do([
         addTransferModal.find(Button({ name: 'toFundId' })).click(),
@@ -632,11 +636,15 @@ export default {
         SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       ]);
     }
-    cy.do([
-      addTransferModal.find(amountTextField).fillIn(amount),
-      addTransferModal.find(confirmButton).click(),
-    ]);
+
+    cy.do(addTransferModal.find(amountTextField).fillIn(amount));
+    if (!isDisabledConfirm) {
+      cy.do(addTransferModal.find(confirmButton).click());
+    } else {
+      cy.expect(addTransferModal.find(confirmButton).is({ disabled: true }));
+    }
   },
+
   fillInAllAllocationFields(toFund, fromFund, amount) {
     cy.wait(4000);
     cy.do([
