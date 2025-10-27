@@ -75,8 +75,6 @@ describe('Consortia', () => {
               subjectSourceNames.name1,
             );
             ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSourceNames.name1);
-            cy.reload();
-            cy.wait(3000);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSourceNames.name1,
               user: 'System, System user - mod-consortia-keycloak ',

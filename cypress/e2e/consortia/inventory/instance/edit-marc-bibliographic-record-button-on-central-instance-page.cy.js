@@ -18,7 +18,7 @@ describe('Inventory', () => {
         marcFileName: `C409474 autotestFileName ${getRandomPostfix()}`,
         tag010: {
           tag: '010',
-          content: 'test',
+          content: '0123456789',
         },
         source: 'MARC',
       };
