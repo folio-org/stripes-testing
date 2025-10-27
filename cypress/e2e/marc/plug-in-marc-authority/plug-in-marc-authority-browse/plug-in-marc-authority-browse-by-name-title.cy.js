@@ -104,6 +104,10 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter(testData.searchOptionA, testData.value);
           // wait for the results to be loaded.
           cy.wait(1000);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.checkAuthorizedReferenceColumn(testData.authorized, testData.reference);
           MarcAuthorities.checkHeadingType(
             testData.authorized,
