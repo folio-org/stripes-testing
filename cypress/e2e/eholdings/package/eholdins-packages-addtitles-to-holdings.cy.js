@@ -40,14 +40,12 @@ describe('eHoldings', () => {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
-          cy.reload();
-          EHoldingsTitlesSearch.waitLoading();
         }, 20_000);
 
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.openPackage();
-        cy.wait(3000);
+        EHoldingsPackage.waitLoading(testData.packageName);
         EHoldingsPackage.addToHoldings();
         EHoldingsPackage.verifyHoldingStatus();
         EHoldingsPackage.filterTitles();
@@ -55,7 +53,7 @@ describe('eHoldings', () => {
         EHoldingsPackage.checkEmptyTitlesList();
         // reset test data
         EHoldingsPackage.removeFromHoldings();
-        cy.wait(5000);
+        EHoldingsPackage.verifyNotSelectedPackage();
       },
     );
   });
