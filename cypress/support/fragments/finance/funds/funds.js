@@ -636,16 +636,15 @@ export default {
         SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       ]);
     }
+
+    cy.do(addTransferModal.find(amountTextField).fillIn(amount));
     if (!isDisabledConfirm) {
-      cy.do([
-        addTransferModal.find(amountTextField).fillIn(amount),
-        addTransferModal.find(confirmButton).click(),
-      ]);
+      cy.do(addTransferModal.find(confirmButton).click());
     } else {
-      cy.do([addTransferModal.find(amountTextField).fillIn(amount)]);
       cy.expect(addTransferModal.find(confirmButton).is({ disabled: true }));
     }
   },
+
   fillInAllAllocationFields(toFund, fromFund, amount) {
     cy.wait(4000);
     cy.do([
