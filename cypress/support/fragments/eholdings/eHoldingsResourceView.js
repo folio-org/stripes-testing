@@ -44,6 +44,7 @@ const customEmbargoPeriodKeyValue = KeyValue('Custom embargo period');
 const showToPatronsKeyValue = KeyValue('Show to patrons');
 const proxyKeyValue = KeyValue('Proxy');
 const proxiedURLKeyValue = KeyValue('Proxied URL');
+const customUrlKeyValue = KeyValue('Custom');
 
 export default {
   waitLoading: () => {
@@ -227,5 +228,9 @@ export default {
       const trimmedUrl = url.trim();
       cy.expect(resourceSettingsAccordion.find(Link({ href: including(trimmedUrl) })).exists());
     });
+  },
+
+  verifyCustomUrl(customUrl) {
+    cy.expect(customUrlKeyValue.has({ value: including(customUrl) }));
   },
 };
