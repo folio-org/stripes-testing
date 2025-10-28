@@ -16,6 +16,9 @@ import InteractorsTools from '../../../utils/interactorsTools';
 
 const ORDER_NUMBER_SETTING_KEY = 'orderNumber';
 
+const INSTANCE_MATCHING_DESCRIPTION =
+  'With instance matching disabled, purchase order lines will create new instances and will not be linked with existing instance records. With instance matching enabled, FOLIO will first search instances to find a match for one or more product IDs provided on the PO Line. If a product ID is found, that instance will be linked to the POL and FOLIO will NOT create a new instance for that POL. If no matches are found, the system will create a new instance record and link the POL to that instance.';
+
 const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
 const trashIconButton = Button({ icon: 'trash' });
@@ -304,8 +307,6 @@ export default {
   },
 
   verifyInstanceMatchingDescription() {
-    cy.contains(
-      'With instance matching disabled, purchase order lines will create new instances and will not be linked with existing instance records. With instance matching enabled, FOLIO will first search instances to find a match for one or more product IDs provided on the PO Line. If a product ID is found, that instance will be linked to the POL and FOLIO will NOT create a new instance for that POL. If no matches are found, the system will create a new instance record and link the POL to that instance.',
-    ).should('exist');
+    cy.contains(INSTANCE_MATCHING_DESCRIPTION).should('exist');
   },
 };
