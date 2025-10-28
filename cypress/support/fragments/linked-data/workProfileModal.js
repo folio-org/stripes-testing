@@ -1,9 +1,11 @@
+const profileModalSelector = 'div[class="modal modal-choose-profile"]';
+
 export default {
   waitLoading() {
-    cy.get('div[class="modal modal-choose-profile"]').should('be.visible');
+    cy.get(profileModalSelector).should('be.visible');
   },
   checkOptionSelected(option) {
-    cy.get('div[class="modal modal-choose-profile"]').then((modal) => {
+    cy.get(profileModalSelector).then((modal) => {
       if (modal.is(':visible')) {
         // verify selected option
         cy.get('select#select-profile option:selected').should('have.text', option);
@@ -13,7 +15,7 @@ export default {
     });
   },
   selectDefaultOption() {
-    cy.get('div[class="modal modal-choose-profile"]').then((modal) => {
+    cy.get(profileModalSelector).then((modal) => {
       if (modal.is(':visible')) {
         cy.xpath('//button[@data-testid="modal-button-submit"]').click();
         cy.wait(1000);
