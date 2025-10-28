@@ -154,7 +154,6 @@ describe('Data Export', () => {
           assertionsOnMarcFileContent,
           notDeletedRecordsCount,
           false,
-          true,
         );
 
         // Step 7: Click on the row with completed with errors data export job at the "Data Export" logs table

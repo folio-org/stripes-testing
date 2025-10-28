@@ -167,4 +167,10 @@ export default {
       `//div[text()="${section}"]/../..//input[@class="input edit-section-field-input" and @value="${textValue}"]`,
     ).should('be.visible');
   },
+
+  checkHeadingProfile(profileName) {
+    cy.xpath(`//strong[@class='heading' and contains(text(), '${profileName}')]`)
+      .scrollIntoView()
+      .should('be.visible');
+  },
 };
