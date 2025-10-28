@@ -233,4 +233,25 @@ export default {
   verifyCustomUrl(customUrl) {
     cy.expect(customUrlKeyValue.has({ value: including(customUrl) }));
   },
+
+  verifyResourceInformationAccordionExists() {
+    cy.expect(Accordion('Resource information').exists());
+  },
+
+  verifyResourceInformationFieldsInOrder(fields) {
+    fields.forEach((fieldName) => {
+      cy.expect(KeyValue(fieldName).exists());
+    });
+  },
+
+  verifyAlternateTitlesSeparatedBySemicolon() {
+    cy.then(() => KeyValue('Alternate title(s)').value()).then((value) => {
+      if (value && value.trim() !== '') {
+        const alternateTitles = value.split(';');
+        if (alternateTitles.length > 1) {
+          cy.expect(value).to.include(';');
+        }
+      }
+    });
+  },
 };
