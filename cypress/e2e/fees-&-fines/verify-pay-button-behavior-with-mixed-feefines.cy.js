@@ -64,24 +64,22 @@ describe('Verify behavior when "Pay" button pressed within "All" tab of Fee/Fine
           { amount: 30.0 },
         ];
 
-        cy.wrap(
-          Cypress.Promise.all(
-            feeFinesToCreate.map((feeFine) => {
-              const feeFineAccount = {
-                userId: userData.userId,
-                feeFineId: manualCharge.id,
-                ownerId: feeFineOwner.id,
-                amount: feeFine.amount,
-                feeFineType: manualCharge.feeFineType,
-              };
+        Cypress.Promise.all(
+          feeFinesToCreate.map((feeFine) => {
+            const feeFineAccount = {
+              userId: userData.userId,
+              feeFineId: manualCharge.id,
+              ownerId: feeFineOwner.id,
+              amount: feeFine.amount,
+              feeFineType: manualCharge.feeFineType,
+            };
 
-              return NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-                createdFeeFines.push(feeFineAccount);
-                return feeFineAccountId;
-              });
-            }),
-          ),
+            return NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+              feeFineAccount.id = feeFineAccountId;
+              createdFeeFines.push(feeFineAccount);
+              return feeFineAccountId;
+            });
+          }),
         );
       })
       .then(() => {
