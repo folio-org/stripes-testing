@@ -19,3 +19,14 @@ Cypress.Commands.add('runDataExportAuthorityDeleted', (query) => {
     })
     .then((response) => response);
 });
+
+Cypress.Commands.add('createDataExportCustomMappingProfile', (body) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-export/mapping-profiles',
+      body,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response.body);
+});
