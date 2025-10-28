@@ -1,4 +1,4 @@
-import { Pane, Select } from '../../../../../../interactors';
+import { Pane, Select, some, SelectionList, Button } from '../../../../../../interactors';
 import { BULK_EDIT_ACTIONS } from '../../../../constants';
 import BulkEditProfileForm from './bulkEditProfileForm';
 
@@ -113,5 +113,25 @@ export default {
         );
       }
     });
+  },
+
+  expandSelectLoanTypeDropdown() {
+    cy.do(Button({ id: 'loanType' }).click());
+  },
+
+  verifyLoanTypeExistsInSelectOptionDropdown(loanTypeName, isExists = true) {
+    if (isExists) {
+      cy.expect(
+        SelectionList({ id: 'sl-container-loanType', optionList: some(loanTypeName) }).exists(),
+      );
+    } else {
+      cy.expect(
+        SelectionList({ id: 'sl-container-loanType', optionList: some(loanTypeName) }).absent(),
+      );
+    }
+  },
+
+  selectLoanTypeWhenChangingIt(loanTypeName) {
+    cy.do(SelectionList({ id: 'sl-container-loanType' }).select(loanTypeName));
   },
 };

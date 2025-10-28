@@ -256,7 +256,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
           );
 
-          const collegeHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-shared-uri.comCollege shared link textCollege shared material specifiedCollege shared url public note${localUrlRelationship.name}https://college-uri.comCollege link textCollege materials specifiedCollege url public note`;
+          const collegeHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-shared-uri.comCollege shared link textCollege shared material specifiedCollege shared url public note${localUrlRelationship.name}https://college-uri.comCollege link textCollege material specifiedCollege url public note`;
           const universityHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://university-shared-uri.comUniversity shared link textUniversity shared material specifiedUniversity shared url public note`;
 
           collegeHoldingHrids.forEach((holdingHrid) => {
@@ -287,7 +287,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
-          const collegeHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-shared-uri.com;College shared link text;College shared material specified;College shared url public note|${localUrlRelationship.name};https://college-uri.com;College link text;College materials specified;College url public note`;
+          const collegeHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-shared-uri.com;College shared link text;College shared material specified;College shared url public note|${localUrlRelationship.name};https://college-uri.com;College link text;College material specified;College url public note`;
           const universityHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://university-shared-uri.com;University shared link text;University shared material specified;University shared url public note`;
 
           FileManager.convertCsvToJson(matchedRecordsFileName).then((csvFileData) => {
@@ -339,15 +339,23 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-          const updatedHoldingsElectronicAccess = electronicAccessTableHeaders;
-          const updatedHoldingsCollegeElectronicAccessInFile = `${electronicAccessTableHeadersInFile};;;;|;;;;`;
-          const updatedHoldingsUniversityElectronicAccessInFile = `${electronicAccessTableHeadersInFile};;;;`;
+          const updatedHoldingsElectronicAccessInCollege = `${electronicAccessTableHeaders}--------`;
+          const updatedHoldingsElectronicAccessInUniversity = `${electronicAccessTableHeaders}----`;
+          const updatedHoldingsCollegeElectronicAccessInFile = `${electronicAccessTableHeadersInFile}-;;-;-;-|-;;-;-;-`;
+          const updatedHoldingsUniversityElectronicAccessInFile = `${electronicAccessTableHeadersInFile}-;;-;-;-`;
 
-          holdingHrids.forEach((holdingHrid) => {
+          collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
               holdingHrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
-              updatedHoldingsElectronicAccess,
+              updatedHoldingsElectronicAccessInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              holdingHrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+              updatedHoldingsElectronicAccessInUniversity,
             );
           });
 
@@ -384,11 +392,18 @@ describe('Bulk-edit', () => {
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
-          holdingHrids.forEach((holdingHrid) => {
+          collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
               holdingHrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
-              updatedHoldingsElectronicAccess,
+              updatedHoldingsElectronicAccessInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+              holdingHrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+              updatedHoldingsElectronicAccessInUniversity,
             );
           });
 

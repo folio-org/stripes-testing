@@ -41,7 +41,7 @@ describe('Orders', () => {
     Organizations.createOrganizationViaApi(testData.organization).then(() => {
       testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
 
-      OrderLinesLimit.setPOLLimit(orderLinesCount);
+      OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
       Orders.createOrderViaApi(testData.order).then((order) => {
         testData.order = order;
 
@@ -92,7 +92,7 @@ describe('Orders', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Orders.deleteOrderViaApi(testData.order.id);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);

@@ -88,14 +88,11 @@ describe('Eureka', () => {
             });
           });
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.settingsAuthorizationRoles,
-              waiter: AuthorizationRoles.waitContentLoading,
-            });
-            cy.reload();
-            AuthorizationRoles.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+            authRefresh: true,
+          });
         });
       });
 
@@ -154,7 +151,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectAllApplicationsInModal();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName, false);
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           AuthorizationRoles.verifyResourceOrAppPresent(testData.applicationName, 0, false);
           AuthorizationRoles.closeRoleEditView();
           AuthorizationRoles.verifyRoleViewPane(testData.roleName);

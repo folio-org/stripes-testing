@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  generateTestFieldData,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with Duplicate Tag API', () => {
   // User with both GET and POST permissions to create fields (but validation should prevent duplicate tags)
@@ -12,18 +16,13 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with D
   let user;
   let bibSpecId;
 
-  const baseFieldPayload = {
-    label: 'AT_C490925_Custom Field - Contributor Data',
-    url: 'http://www.example.org/field100.html',
-  };
+  const testCaseId = 'C490925';
 
   before('Create user and fetch MARC bib specification', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificationIds().then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
       });
     });
@@ -63,12 +62,13 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with D
 
       // Test each duplicate tag scenario
       duplicateTagScenarios.forEach((scenario, index) => {
-        const payload = {
-          ...baseFieldPayload,
+        const fieldData = generateTestFieldData(testCaseId, {
           tag: scenario.tag,
-        };
+          label: 'Custom_Field_Contributor_Data',
+          url: 'http://www.example.org/field100.html',
+        });
 
-        cy.createSpecificationField(bibSpecId, payload, false).then((response) => {
+        cy.createSpecificationField(bibSpecId, fieldData, false).then((response) => {
           cy.log(`Step ${index + 1}: Testing duplicate ${scenario.description} (${scenario.tag})`);
           if (response.status === 400) {
             // This is the expected behavior for duplicate tags

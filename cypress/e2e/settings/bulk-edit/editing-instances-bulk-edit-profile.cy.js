@@ -108,8 +108,7 @@ describe('Bulk-edit', () => {
 
         // Step 4: Verify elements under "Summary" accordion
         InstancesBulkEditProfileForm.verifySummaryAccordionElements();
-        // TODO: Uncomment after UIBULKED-693 is done
-        // InstancesBulkEditProfileForm.verifyMetadataSectionExists();
+        InstancesBulkEditProfileForm.verifyMetadataSectionExists();
 
         // Step 5: Verify elements under "Bulk edits" accordion
         InstancesBulkEditProfileForm.verifySelectedOption(INSTANCE_NOTE_TYPES.ADMINISTRATIVE_NOTE);

@@ -9,8 +9,10 @@ import {
   including,
   RepeatableFieldItem,
   Selection,
+  SelectionList,
   MetaSection,
   or,
+  some,
 } from '../../../../../../interactors';
 
 const collapseAllLink = Button('Collapse all');
@@ -55,7 +57,7 @@ export default {
   },
 
   verifyMetadataSectionExists() {
-    cy.expect(summaryAccordion.find(MetaSection()).exists());
+    cy.expect(summaryAccordion.find(MetaSection({ open: false })).exists());
   },
 
   verifySummaryAccordionElements(isLockProfileCheckboxDisabled = true) {
@@ -70,8 +72,8 @@ export default {
     cy.do(lockProfileCheckbox.click());
   },
 
-  verifyLockProfileCheckboxChecked(isChecked) {
-    cy.expect(lockProfileCheckbox.has({ checked: isChecked }));
+  verifyLockProfileCheckboxChecked(isChecked, isDisabled = false) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
   },
 
   verifyBulkEditsAccordionElements() {
@@ -89,18 +91,26 @@ export default {
     cy.expect(nameField.has({ value: name }));
   },
 
+  verifyProfileNameValue(expectedValue) {
+    cy.expect(nameField.has({ value: expectedValue }));
+  },
+
   fillDescription(description) {
     cy.do(descriptionField.fillIn(description));
     cy.expect(descriptionField.has({ value: description }));
   },
 
-  selectOption(option, rowIndex = 0) {
+  clickSelectOptionDropdown(rowIndex = 0) {
     cy.get('[class^="repeatableFieldItem-"]')
       .eq(rowIndex)
       .find('[class^="selectionControlContainer"]')
       .contains('Select control')
       .eq(0)
       .click();
+  },
+
+  selectOption(option, rowIndex = 0) {
+    this.clickSelectOptionDropdown(rowIndex);
 
     cy.get('[class^="selectionListRoot"]:not([hidden])').find('li').contains(option).click();
 
@@ -248,5 +258,75 @@ export default {
 
   checkStaffOnlyCheckbox(rowIndex = 0) {
     cy.do(getTargetRow(rowIndex).find(Checkbox('Staff only')).click());
+  },
+
+  verifyOptionExistsInSelectOptionDropdown(option, rowIndex = 0, isExists = true) {
+    cy.then(() => {
+      getTargetRow(rowIndex)
+        .find(bulkEditsAccordion)
+        .find(SelectionList({ placeholder: 'Filter options list' }))
+        .optionList()
+        .then((list) => {
+          if (isExists) {
+            expect(list).to.include(option);
+          } else {
+            expect(list).to.not.include(option);
+          }
+        });
+    });
+  },
+
+  verifyNoteTypeExistsInSelectOptionDropdown(noteType, rowIndex = 0, isExists = true) {
+    if (isExists) {
+      cy.expect(
+        getTargetRow(rowIndex)
+          .find(Select({ id: or('noteHoldingsType', 'noteType'), optionsText: some(noteType) }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        getTargetRow(rowIndex)
+          .find(Select({ id: or('noteHoldingsType', 'noteType'), optionsText: some(noteType) }))
+          .absent(),
+      );
+    }
+  },
+
+  selectNoteTypeWhenChangingIt(noteType, rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(Select({ id: or('noteHoldingsType', 'noteType') }))
+        .choose(noteType),
+    );
+  },
+
+  verifyUrlRelationshipExistsInSelectOptionDropdown(
+    urlRelationship,
+    rowIndex = 0,
+    isExists = true,
+  ) {
+    if (isExists) {
+      cy.expect(
+        getTargetRow(rowIndex)
+          .find(Select({ id: 'urlRelationship', optionsText: some(urlRelationship) }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        getTargetRow(rowIndex)
+          .find(Select({ id: 'urlRelationship', optionsText: some(urlRelationship) }))
+          .absent(),
+      );
+    }
+  },
+
+  selectUrlRelationshipType(urlRelationship, rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordion
+        .find(getTargetRow(rowIndex))
+        .find(Select({ id: 'urlRelationship' }))
+        .choose(urlRelationship),
+    );
   },
 };

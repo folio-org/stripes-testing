@@ -355,6 +355,10 @@ export default {
     internal: 'inventory-storage.items.batch.post',
     gui: 'inventory storage - create or update a number of items',
   },
+  inventoryStorageBatchUpdateItemsPatch: {
+    internal: 'inventory-storage.items.collection.patch',
+    gui: 'inventory storage - update items collection',
+  },
   inventoryFastAddCreate: {
     internal: 'ui-plugin-create-inventory-records.create',
     gui: 'Fast add: Create',

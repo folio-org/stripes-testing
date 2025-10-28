@@ -1,6 +1,12 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  findLocalField,
+  getBibliographicSpec,
+  validateApiResponse,
+  createFieldTestDataBuilder,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Validation API', () => {
   const requiredPermissions = [
@@ -16,32 +22,31 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Va
   let bibSpecId;
   let localField;
   let localFieldIndicator;
-  const TAG = '997';
 
-  const localFieldData = {
-    tag: TAG,
-    label: 'Test Local Field',
-    repeatable: true,
-    required: false,
-    deprecated: false,
-    scope: 'local',
-  };
+  const TEST_CASE_ID = 'C502977';
+  const LOCAL_FIELD_TAG = '997';
+
+  // Generate test data using builder pattern
+  const fieldTestDataBuilder = createFieldTestDataBuilder(TEST_CASE_ID);
+  const testData = fieldTestDataBuilder
+    .withField(LOCAL_FIELD_TAG, 'Local_Field')
+    .withIndicator(1, 'Test_Indicator_Label')
+    .build();
+
+  const localFieldData = testData.field;
+  const indicatorData = testData.indicators[0];
 
   before('Create user and fetch MARC bib specification', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificationIds().then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
 
         // Clean up any existing local field with tag before test execution
         cy.getSpecificationFields(bibSpecId).then((response) => {
           if (response.status === 200) {
-            const existingLocalField = response.body.fields.find(
-              (f) => f.tag === TAG && f.scope === 'local',
-            );
+            const existingLocalField = findLocalField(response.body.fields, LOCAL_FIELD_TAG);
             if (existingLocalField) {
               cy.deleteSpecificationField(existingLocalField.id, false);
             }
@@ -69,21 +74,18 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Va
 
       // Create local field since we cleaned up any existing one in before hook
       cy.createSpecificationField(bibSpecId, localFieldData).then((createResp) => {
-        expect(createResp.status).to.eq(201);
+        validateApiResponse(createResp, 201);
         localField = createResp.body;
 
-        // Create indicator for the local field
-        cy.createSpecificationFieldIndicator(localField.id, {
-          order: 1,
-          label: 'Test Indicator Label',
-        }).then((indicatorResp) => {
-          expect(indicatorResp.status).to.eq(201);
+        // Create indicator for the local field using builder data
+        cy.createSpecificationFieldIndicator(localField.id, indicatorData).then((indicatorResp) => {
+          validateApiResponse(indicatorResp, 201);
           localFieldIndicator = indicatorResp.body;
 
           // Step 1: Test update without "label" field
           cy.updateSpecificationFieldIndicator(localFieldIndicator.id, { order: 1 }, false).then(
             (updateResp) => {
-              expect(updateResp.status, 'Step 1: Missing label field').to.eq(400);
+              validateApiResponse(updateResp, 400);
               expect(updateResp.body.errors[0].message).to.include(
                 "The 'label' field is required.",
               );
@@ -96,7 +98,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Va
             { order: 1, label: '' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 2: Empty label field').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.include("The 'label' field is required.");
           });
 
@@ -106,7 +108,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Va
             { order: 1, label: ' ' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 3: Whitespace only label field').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.include("The 'label' field is required.");
           });
 
@@ -116,7 +118,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Va
             { order: 1, label: 'Valid Label' },
             true,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Verification: Valid label update').to.eq(202);
+            validateApiResponse(updateResp, 202);
             expect(updateResp.body.order).to.eq(1);
             expect(updateResp.body.label).to.eq('Valid Label');
           });

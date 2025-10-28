@@ -336,6 +336,7 @@ describe('Bulk-edit', () => {
           // Step 19: Inventory app verification
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -349,6 +350,7 @@ describe('Bulk-edit', () => {
             notes.reproductionUpper,
           );
           InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -459,6 +461,7 @@ describe('Bulk-edit', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -472,6 +475,7 @@ describe('Bulk-edit', () => {
             notes.reproductionUpper,
           );
           InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

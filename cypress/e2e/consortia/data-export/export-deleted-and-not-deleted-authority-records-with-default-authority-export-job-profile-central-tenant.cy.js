@@ -89,7 +89,7 @@ describe('Data Export', () => {
               [...sharedMarcAuthIds, ...localMarcAuthIds, ...nonExistentMarcAuthIds].join('\n'),
             );
           });
-
+        cy.resetTenant();
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,

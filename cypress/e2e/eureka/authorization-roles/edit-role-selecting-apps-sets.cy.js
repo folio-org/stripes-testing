@@ -189,7 +189,7 @@ describe('Eureka', () => {
           cy.wait(1000);
           cy.intercept('GET', '/capabilities?*').as('capabilities');
           cy.intercept('GET', '/capability-sets?*').as('capabilitySets');
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           cy.wait('@capabilities').then(({ request, response }) => {
             const url = decodeURIComponent(request.url);
             expect(url).to.match(capabilitiesCallRegExp);

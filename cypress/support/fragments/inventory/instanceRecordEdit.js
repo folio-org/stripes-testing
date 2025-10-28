@@ -221,7 +221,12 @@ export default {
     cy.do([Selection({ id: 'additem_permanentlocation' }).choose(including(locationName))]);
   },
   chooseTemporaryLocation(locationName) {
-    cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
+    cy.do(Button({ id: 'additem_temporarylocation' }).click());
+    cy.do([
+      SelectionList({ id: 'sl-container-additem_temporarylocation' }).select(
+        including(locationName),
+      ),
+    ]);
   },
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(including(statusTerm)));
