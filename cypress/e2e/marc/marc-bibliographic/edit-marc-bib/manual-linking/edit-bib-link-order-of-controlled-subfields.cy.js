@@ -251,6 +251,7 @@ describe('MARC', () => {
               testData.bibFieldIndexes.field240,
               ...Object.values(linkedFieldsData[0]),
             );
+            QuickMarcEditor.closeAllCallouts();
 
             QuickMarcEditor.clickLinkIconInTagField(testData.bibFieldIndexes.field651_1);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -262,6 +263,7 @@ describe('MARC', () => {
               testData.bibFieldIndexes.field651_1,
               ...Object.values(linkedFieldsData[1]),
             );
+            QuickMarcEditor.closeAllCallouts();
 
             QuickMarcEditor.clickLinkIconInTagField(testData.bibFieldIndexes.field651_2);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -273,6 +275,7 @@ describe('MARC', () => {
               testData.bibFieldIndexes.field651_2,
               ...Object.values(linkedFieldsData[2]),
             );
+            QuickMarcEditor.closeAllCallouts();
 
             QuickMarcEditor.clickLinkIconInTagField(testData.bibFieldIndexes.field651_3);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -287,6 +290,7 @@ describe('MARC', () => {
               testData.bibFieldIndexes.field651_3,
               ...Object.values(linkedFieldsData[3]),
             );
+            QuickMarcEditor.closeAllCallouts();
 
             QuickMarcEditor.fillLinkedFieldBox(
               testData.bibFieldIndexes.field651_3,

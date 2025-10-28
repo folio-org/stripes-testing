@@ -16,7 +16,7 @@ describe('MARC', () => {
         tag245: '245',
         tag852: '852',
         bibTitle: `AT_C389503_MarcBibInstance_${getRandomPostfix()}`,
-        headerTitle: /New .*MARC holdings record/,
+        headerTitle: /new .*MARC holdings record/i,
         location: QuickMarcEditor.getExistingLocation(),
       };
 
@@ -80,7 +80,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateIndicatorValue(testData.tag852, value);
 
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveHoldings();
+            HoldingsRecordView.waitLoading();
 
             HoldingsRecordView.checkCallNumberType(callNumberTypeName);
             HoldingsRecordView.close();
