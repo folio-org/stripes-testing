@@ -1,11 +1,15 @@
 import { including } from '@interactors/html';
 import {
+  Accordion,
   Button,
   HTML,
   Modal,
+  MultiColumnList,
+  MultiColumnListRow,
   SearchField,
   Section,
   SelectionList,
+  TextField,
 } from '../../../../../interactors';
 
 const batchAllocationButton = Button('Batch allocations');
@@ -17,6 +21,14 @@ const actionsButton = Button('Actions');
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
 const resetButton = Button('Reset all');
+const toggleButtonDate = Button({ id: 'accordion-toggle-button-metadata.createdDate' });
+const dateAccordion = Section({ id: 'metadata.createdDate' });
+const startDateField = TextField({ name: 'startDate' });
+const endDateField = TextField({ name: 'endDate' });
+const applyButton = Button('Apply');
+const toggleButtonUser = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
+const searchButtonInModal = Button({ type: 'submit' });
+const searchInput = SearchField({ id: 'input-record-search' });
 
 export default {
   clickBatchAllocationButton() {
@@ -435,10 +447,10 @@ export default {
     cy.do([searchField.fillIn(pattern), searchButton.click()]);
   },
 
-  verifyNoResultsMessage(fiscalYearCode, ledgerCode) {
+  verifyNoResultsMessage(searchRequest) {
     cy.expect(
       HTML(
-        `No results found for "${fiscalYearCode}-${ledgerCode}". Please check your spelling and filters.`,
+        `No results found for "${searchRequest}". Please check your spelling and filters.`,
       ).exists(),
     );
   },
@@ -464,5 +476,98 @@ export default {
       .scrollIntoView()
       .should('be.visible')
       .click();
+  },
+
+  filterLogsByFiscalYear: (fiscalYearCode) => {
+    cy.do([
+      Accordion({ id: 'fiscalYearId' }).clickHeader(),
+      Button({ id: 'fiscalYearId-selection' }).click(),
+      SelectionList({ id: 'sl-container-fiscalYearId-selection' }).select(fiscalYearCode),
+    ]);
+  },
+
+  verifyLogExists: (fiscalYearCode, ledgerCode) => {
+    const needle = `${fiscalYearCode}-${ledgerCode}`;
+    cy.get('#batch-allocation-logs-list [data-row-index]', { timeout: 15000 }).should(
+      'have.length.greaterThan',
+      0,
+    );
+    cy.get('#batch-allocation-logs-list [data-test-text-link]', { timeout: 15000 }).then(
+      ($links) => {
+        const link = [...$links].find((el) => (el.textContent || '').trim().includes(needle));
+        // eslint-disable-next-line no-unused-expressions
+        expect(link, `link containing "${needle}"`).to.exist;
+        cy.wrap(link)
+          .scrollIntoView()
+          .should('be.visible')
+          .closest('[data-row-index]')
+          .should('contain.text', 'Completed');
+      },
+    );
+  },
+
+  collapseSearchPane() {
+    cy.do(Button({ icon: 'caret-left' }).click());
+  },
+
+  openSearchPane() {
+    cy.do(Button({ icon: 'caret-right' }).click());
+  },
+
+  filterByDate(startDate, endDate) {
+    cy.do([
+      toggleButtonDate.click(),
+      dateAccordion.find(startDateField).fillIn(startDate),
+      dateAccordion.find(endDateField).fillIn(endDate),
+      dateAccordion.find(applyButton).click(),
+    ]);
+  },
+
+  filterLogsByLedger: (ledgerCode) => {
+    cy.do([
+      Accordion({ id: 'ledgerId' }).clickHeader(),
+      Button({ id: 'ledgerId-selection' }).click(),
+      SelectionList({ id: 'sl-container-ledgerId-selection' }).select(ledgerCode),
+    ]);
+  },
+
+  filterLogsByGroup: (groupCode) => {
+    cy.do([
+      Accordion({ id: 'groupId' }).clickHeader(),
+      Button({ id: 'groupId-selection' }).click(),
+      SelectionList({ id: 'sl-container-groupId-selection' }).select(groupCode),
+    ]);
+  },
+
+  filterLogsByUser: (userName) => {
+    cy.do([
+      toggleButtonUser.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(userName),
+      searchButtonInModal.click(),
+    ]);
+    cy.wait(2000);
+    cy.do(
+      MultiColumnList({ id: 'list-plugin-find-user' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
+    );
+  },
+
+  searchByParameters: (parameter, value) => {
+    cy.wait(4000);
+    cy.do([
+      searchInput.selectIndex(parameter),
+      searchInput.fillIn(value),
+      Button('Search').click(),
+    ]);
+  },
+
+  getLogsId: (rowIndex = 0) => {
+    return cy
+      .get(`#batch-allocation-logs-list [data-row-index="row-${rowIndex}"] [role="gridcell"]`)
+      .last()
+      .invoke('text')
+      .then((text) => text.trim());
   },
 };
