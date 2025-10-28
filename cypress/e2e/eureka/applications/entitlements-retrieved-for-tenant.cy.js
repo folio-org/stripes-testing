@@ -83,8 +83,9 @@ describe('Eureka', () => {
           path: `entitlements/${testData.currentTenantId}`,
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
-        }).then(({ status }) => {
-          expect([500, 501]).to.include(status);
+        }).then(({ status, body }) => {
+          expect(status).to.eq(404);
+          expect(body.message).to.include('no Route');
         });
       },
     );

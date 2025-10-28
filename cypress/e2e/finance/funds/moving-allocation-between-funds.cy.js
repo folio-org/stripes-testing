@@ -8,7 +8,6 @@ import {
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Finance: Funds', () => {
@@ -80,19 +79,16 @@ describe('Finance: Funds', () => {
 
   it(
     'C374166 Moving allocation between funds is NOT successful if it results in negative available amount (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C374166'] },
     () => {
       FinanceHelper.searchByName(fromFund.name);
       Funds.selectFund(fromFund.name);
 
       Funds.checkBudgetDetails([{ ...fromBudget, available: fromBudget.allocated }]);
       Funds.selectBudgetDetails();
-
       const amount = '100';
-      Funds.moveAllocation({ fromFund, toFund, amount });
-      InteractorsTools.checkCalloutErrorMessage(
-        `$${amount}.00 was not successfully allocated to the budget ${toBudget.name} because it exceeds the total allocation amount of ${fromBudget.name} and ledger fund restrictions are active`,
-      );
+      Funds.moveAllocation({ fromFund, toFund, amount, isDisabledConfirm: true });
+      Funds.checkAmountInputError('Total allocation cannot be less than zero');
       Funds.closeTransferModal();
       Funds.closeBudgetDetails();
       Funds.checkBudgetDetails([{ ...fromBudget, available: fromBudget.allocated }]);

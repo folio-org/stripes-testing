@@ -107,6 +107,7 @@ async function deleteItemsForHoldings(holdingsId) {
   const itemsResponse = await axios.get(
     `inventory/items-by-holdings-id?query=holdingsRecordId==${holdingsId}`,
   );
+  if (!itemsResponse.data.items) return;
   const deletePromises = [];
   // eslint-disable-next-line guard-for-in
   for (const item of itemsResponse.data.items) {
@@ -123,6 +124,7 @@ async function deleteHoldingsForInstance(instanceId) {
   const holdingsResponse = await axios(
     `holdings-storage/holdings?limit=200&query=instanceId="${instanceId}"`,
   );
+  if (!holdingsResponse.data.holdingsRecords) return;
   const deletePromises = [];
   // eslint-disable-next-line guard-for-in
   for (const holdings of holdingsResponse.data.holdingsRecords) {
@@ -139,8 +141,9 @@ async function deleteHoldingsForInstance(instanceId) {
 async function removeAutotestInstances() {
   const batchSize = 15;
   const autotestInstances = await axios.get(
-    '/search/instances?limit=500&query=(title all "autotest")',
+    '/search/instances?limit=500&query=(title all "autotest" or title all "AT_")',
   );
+  if (!autotestInstances.data.instances) return;
   console.log('Removing autotest instances');
   const deletePromises = [];
   const deletePromisesBatches = [];
@@ -165,8 +168,9 @@ async function removeAutotestInstances() {
 
 async function removeAutotestAuthorities() {
   const autotestAuthorities = await axios.get(
-    '/search/authorities?limit=500&query=(keyword="autotest" or keyword="auto" or keyword="C*" and authRefType="Authorized")',
+    '/search/authorities?limit=500&query=(keyword="autotest" or keyword="AT_" or keyword="C*" and authRefType="Authorized")',
   );
+  if (!autotestAuthorities.data.authorities) return;
   console.log('Removing autotest authorities');
   let counter = 1;
   for (const authority of autotestAuthorities.data.authorities) {
@@ -182,7 +186,10 @@ async function removeAuthoritiesWithSpecificSource(sourceFileId) {
   const authoritiesWithSource = await axios.get(
     `/search/authorities?limit=500&query=(sourceFileId==("${sourceFileId}"))`,
   );
-  if (authoritiesWithSource.data.authorities.length <= 100) {
+  if (
+    authoritiesWithSource.data.authorities &&
+    authoritiesWithSource.data.authorities.length <= 100
+  ) {
     for (const [index, authority] of authoritiesWithSource.data.authorities.entries()) {
       if (!((index + 1) % 15)) await wait(1500);
       await axios.delete(`/authority-storage/authorities/${authority.id}`);
@@ -382,6 +389,44 @@ async function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileNam
   );
 }
 
+async function getMarcSpecifications() {
+  const response = await axios.get('/specification-storage/specifications?query=family=MARC');
+  return response.data.specifications;
+}
+
+async function disableLccnDuplicateCheck() {
+  console.log('Disabling LCCN duplicate check');
+  try {
+    const settingEntriesResponse = await axios.get('/settings/entries');
+    const targetEntry = settingEntriesResponse.data.items.find(
+      (entry) => entry.key === 'lccn-duplicate-check',
+    );
+    if (targetEntry && targetEntry.value.duplicateLccnCheckingEnabled === true) {
+      await axios.put(`/settings/entries/${targetEntry.id}`, {
+        data: {
+          ...targetEntry,
+          value: { duplicateLccnCheckingEnabled: false },
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Error disabling LCCN duplicate check:', error);
+  }
+}
+
+async function resetMarcValidationRules() {
+  console.log('Resetting MARC validation rules');
+  try {
+    const marcSpecifications = await getMarcSpecifications();
+    const marcBibSpecId = marcSpecifications.find((spec) => spec.profile === 'bibliographic').id;
+    const marcAuthSpecId = marcSpecifications.find((spec) => spec.profile === 'authority').id;
+    await axios.post(`/specification-storage/specifications/${marcBibSpecId}/sync`);
+    await axios.post(`/specification-storage/specifications/${marcAuthSpecId}/sync`);
+  } catch (error) {
+    console.error('Error resetting MARC validation rules:', error);
+  }
+}
+
 (async () => {
   await getToken();
 
@@ -401,4 +446,6 @@ async function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileNam
   await removeAutotestInstances();
   await removeAutotestAuthorities();
   await removeUserAuthoritySourceFiles();
+  await disableLccnDuplicateCheck();
+  await resetMarcValidationRules();
 })();
