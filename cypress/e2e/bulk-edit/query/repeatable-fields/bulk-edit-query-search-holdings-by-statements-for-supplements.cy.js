@@ -159,7 +159,8 @@ describe('Bulk-edit', () => {
             QueryModal.selectField(field);
             QueryModal.verifySelectedField(field);
           });
-          QueryModal.verifyFieldsSortedAlphabetically();
+
+          QueryModal.verifySubsetOfFieldsSortedAlphabetically(statementsFields);
 
           // Step 2: Search holdings by "Statement for supplement" field using "starts with" operator
           QueryModal.clickSelectFieldButton();
@@ -208,7 +209,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
 
-          // Step 4-5: Search holdings by "Statement for supplement staff note" field using "contains" operator
+          // Step 4: Search holdings by "Statement for supplement staff note" field using "contains" operator
           QueryModal.selectField(holdingsFieldValues.statementsForSupplementsStaffNote);
           QueryModal.verifySelectedField(holdingsFieldValues.statementsForSupplementsStaffNote);
           QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
@@ -223,6 +224,15 @@ describe('Bulk-edit', () => {
           notExpectedToFindHoldingHrids.forEach((hrid) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
+
+          // Step 5: Check display of Holdings data from Preconditions in "Holdings — Statements for supplements" column in the result table
+          QueryModal.clickGarbage(0);
+          QueryModal.clickTestQuery();
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedHoldings[3].hrid,
+            'Holdings — Statements for supplements',
+            '',
+          );
         },
       );
     });

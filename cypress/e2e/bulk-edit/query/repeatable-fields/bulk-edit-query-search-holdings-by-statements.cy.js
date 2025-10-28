@@ -153,7 +153,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(field);
           QueryModal.verifySelectedField(field);
         });
-        QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.verifySubsetOfFieldsSortedAlphabetically(statementsFields);
 
         // Step 2: Search holdings by "Holdings — Statements — Statement" field using "equals" operator
         QueryModal.clickSelectFieldButton();
@@ -216,6 +216,15 @@ describe('Bulk-edit', () => {
         notExpectedToFindHoldingHrids.forEach((hrid) => {
           QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
         });
+
+        // Step 5: Check display of Holdings data from Preconditions in "Holdings — Statements" column in the result table
+        QueryModal.clickGarbage(0);
+        QueryModal.clickTestQuery();
+        QueryModal.verifyMatchedRecordsByIdentifier(
+          expectedHoldings[3].hrid,
+          'Holdings — Statements',
+          '',
+        );
       });
     });
   });

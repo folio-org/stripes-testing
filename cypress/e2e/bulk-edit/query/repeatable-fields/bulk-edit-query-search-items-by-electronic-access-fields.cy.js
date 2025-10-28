@@ -105,7 +105,7 @@ const createExpectedItems = (itemBarcodes) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.NO_DISPLAY_CONSTANT_GENERATED,
         uri: 'http://www.mapnetwork.org/',
         linkText: 'Monitoring the AIDS Pandemic (Network)',
-        materialsSpecified: 'Book',
+        materialsSpecification: 'Book',
         publicNote:
           'Available from: http://www.mapnetwork.org/reports/aidsinasia.html; http://www.who.int/hiv/pub/epidemiology/aidsinasia/en/; http://www.fhi.org/en/HIVAIDS/Publications/survreports/aidsinasia.htm',
       },
@@ -118,21 +118,21 @@ const createExpectedItems = (itemBarcodes) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
         uri: 'http://www.mapnetwork.org/reports/aidsinasia.html',
         linkText: 'Monitoring the Aids Pandemic, [Washington, D.C.]',
-        materialsSpecified: 'Digital (Online)',
+        materialsSpecification: 'Digital (Online)',
         publicNote: '',
       },
       {
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.NO_DISPLAY_CONSTANT_GENERATED,
         uri: 'http://catalog.hathitrust.org/Record/009596148',
         linkText: 'Electronic copy from HathiTrust',
-        materialsSpecified: 'Book',
+        materialsSpecification: 'Book',
         publicNote: 'Also available in digital form',
       },
       {
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.NO_INFORMATION_PROVIDED,
         uri: 'http://purl.nysed.gov/nysl/1290403048',
         linkText: 'COVID-19 Pandemic--(2020-)',
-        materialsSpecified: 'Book',
+        materialsSpecification: 'Book',
         publicNote: 'Prepared by the Office of Budget and Policy Analysis',
       },
     ],
@@ -144,7 +144,8 @@ const createExpectedItems = (itemBarcodes) => [
         relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         uri: 'https://www.unicef.org/india/media/6761/file/Assessing%20impact%20of%20the%20COVID-19%20pandemic%20.pdf',
         linkText: 'Includes statistical tables',
-        materialsSpecified: '1 online resource (xxix, 65 pages) : color illustrations, 1 color map',
+        materialsSpecification:
+          '1 online resource (xxix, 65 pages) : color illustrations, 1 color map',
         publicNote: 'Study conducted in 12 districts of seven states',
       },
     ],
@@ -263,16 +264,19 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
 
-        [
+        const electronicAccessFields = [
           itemFieldValues.electronicAccessLinkText,
           itemFieldValues.electronicAccessMaterialSpecified,
           itemFieldValues.electronicAccessURI,
           itemFieldValues.electronicAccessURLPublicNote,
           itemFieldValues.electronicAccessURLRelationship,
-        ].forEach((field) => {
+        ];
+
+        electronicAccessFields.forEach((field) => {
           QueryModal.selectField(field);
           QueryModal.verifySelectedField(field);
         });
+
         QueryModal.verifyFieldsSortedAlphabetically();
         QueryModal.clickSelectFieldButton();
 
@@ -363,7 +367,7 @@ describe('Bulk-edit', () => {
           QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
         });
 
-        // Step 6-7: Search items by "Items — Electronic access — URL public note" field using "contains" operator
+        // Step 6: Search items by "Items — Electronic access — URL public note" field using "contains" operator
         QueryModal.selectField(itemFieldValues.electronicAccessURLPublicNote);
         QueryModal.verifySelectedField(itemFieldValues.electronicAccessURLPublicNote);
         QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
@@ -382,6 +386,15 @@ describe('Bulk-edit', () => {
         notExpectedToFindItemBarcodes.forEach((barcode) => {
           QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
         });
+
+        // Step 7: Check display of Items data from Preconditions in "Item — Electronic access" column in the result table
+        QueryModal.clickGarbage(0);
+        QueryModal.clickTestQuery();
+        QueryModal.verifyMatchedRecordsByIdentifier(
+          expectedItems[3].barcode,
+          'Item — Electronic access',
+          '',
+        );
       });
     });
   });
