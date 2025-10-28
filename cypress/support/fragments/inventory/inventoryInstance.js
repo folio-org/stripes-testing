@@ -1073,7 +1073,10 @@ export default {
   },
 
   edit() {
-    cy.do([Button('Actions').click(), Button('Edit').click()]);
+    cy.expect(Button('Actions').exists());
+    cy.do(Button('Actions').click());
+    cy.expect(Button('Edit').exists());
+    cy.do(Button('Edit').click());
   },
 
   closeInstancePage() {
