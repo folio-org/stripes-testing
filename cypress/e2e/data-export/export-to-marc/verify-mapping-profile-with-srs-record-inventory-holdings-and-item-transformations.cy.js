@@ -321,7 +321,10 @@ describe('Data Export', () => {
         SelectJobProfile.verifySearchButton(true);
 
         // Step 2: Run custom job profile
-        ExportFileHelper.exportWithCreatedJobProfile(csvFileName, jobProfileName);
+        ExportFileHelper.exportWithDefaultJobProfile(
+          csvFileName,
+          `AT_C196759_JobProfile_${randomPostfix}`,
+        );
 
         // Step 3: Wait for job completion and verify logs table
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');
