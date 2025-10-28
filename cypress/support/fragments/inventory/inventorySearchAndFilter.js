@@ -793,6 +793,8 @@ export default {
   resetAllAndVerifyNoResultsAppear() {
     cy.do(resetAllButton.click());
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+    // Wait until focus appears in the search field to avoid closing open dropdowns.
+    cy.wait(1000);
   },
 
   closeInstanceDetailPane() {

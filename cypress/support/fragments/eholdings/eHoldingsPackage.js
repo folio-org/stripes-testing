@@ -276,6 +276,9 @@ export default {
     cy.do(titlesSection.toggle());
     cy.expect(titlesSection.is({ expanded: isOpen }));
   },
+  verifyNotSelectedPackage: () => {
+    cy.expect(packageHoldingStatusSection.find(Button('Add package to holdings')).exists());
+  },
 
   /**
    * Waits until the title with the given name in the specified package
