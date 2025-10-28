@@ -48,7 +48,7 @@ export default {
           const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
             Cypress.env('users')[0].personal.lastName
           }`;
-          cy.do([
+          cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),
             resultRow.exported.is({ content: recordsCount.toString() }),
@@ -68,7 +68,7 @@ export default {
         expect(element.innerText).to.include(`-${jobId}.mrc`);
       }),
     );
-    cy.do(resultRow.fileName.find(HTML({ className: including('button') })).exists());
+    cy.expect(resultRow.fileName.find(HTML({ className: including('button') })).exists());
 
     // verify date (ended running)
     const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
