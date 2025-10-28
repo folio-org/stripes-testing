@@ -102,9 +102,13 @@ describe('Citation: duplicate resource', () => {
       EditResource.saveAndKeepEditing();
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
+      // check that duplicated work has 'Books' profile - same as original work has
+      EditResource.checkHeadingProfile('Books');
       // add instance
       // click on new instance button since resource was duplicated without instances
       EditResource.openNewInstanceFormViaNewInstanceButton();
+      // check that selection modal is shown with 'Monograhphs' profile selected by default
+      EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
