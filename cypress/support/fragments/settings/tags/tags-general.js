@@ -30,15 +30,15 @@ export default {
           cy.do(enableTagsCheckbox.click());
           cy.wait(1000);
           cy.do(saveButton.click());
-          cy.wait('@saveTagsSettings');
           InteractorsTools.checkCalloutMessage(successCalloutMessage);
+          cy.wait('@saveTagsSettings');
         } else if (checked && status === 'disable') {
           cy.expect(Checkbox({ name: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
           cy.wait(1000);
           cy.do(saveButton.click());
-          cy.wait('@saveTagsSettings');
           InteractorsTools.checkCalloutMessage(successCalloutMessage);
+          cy.wait('@saveTagsSettings');
         }
       });
   },
