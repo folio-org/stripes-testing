@@ -64,25 +64,25 @@ describe('Verify behavior when "Pay" button pressed within "All" tab of Fee/Fine
           { amount: 30.0 },
         ];
 
-        let promise = Promise.resolve();
-        feeFinesToCreate.forEach((feeFine) => {
-          promise = promise.then(() => {
-            const feeFineAccount = {
-              userId: userData.userId,
-              feeFineId: manualCharge.id,
-              ownerId: feeFineOwner.id,
-              amount: feeFine.amount,
-              feeFineType: manualCharge.feeFineType,
-            };
+        cy.wrap(
+          Cypress.Promise.all(
+            feeFinesToCreate.map((feeFine) => {
+              const feeFineAccount = {
+                userId: userData.userId,
+                feeFineId: manualCharge.id,
+                ownerId: feeFineOwner.id,
+                amount: feeFine.amount,
+                feeFineType: manualCharge.feeFineType,
+              };
 
-            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-              feeFineAccount.id = feeFineAccountId;
-              createdFeeFines.push(feeFineAccount);
-              return feeFineAccount;
-            });
-          });
-        });
-        return promise;
+              return NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                feeFineAccount.id = feeFineAccountId;
+                createdFeeFines.push(feeFineAccount);
+                return feeFineAccountId;
+              });
+            }),
+          ),
+        );
       })
       .then(() => {
         cy.getAdminSourceRecord()
