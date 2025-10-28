@@ -382,7 +382,10 @@ describe('Data Export', () => {
         SelectJobProfile.verifySearchButton(true);
 
         // Step 2: Run the Custom job profile created in Preconditions by clicking on it > Specify "instances" type > Click on "Run" button
-        ExportFileHelper.exportWithCreatedJobProfile(csvFileName, customJobProfileName);
+        ExportFileHelper.exportWithDefaultJobProfile(
+          csvFileName,
+          `AT_C11086_CustomJobProfile_${randomPostfix}`,
+        );
 
         // Step 3: Check the table with data export logs on the "Logs" main page
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');
