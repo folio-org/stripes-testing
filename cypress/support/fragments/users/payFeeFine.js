@@ -65,4 +65,17 @@ export default {
   verifyDeselectToContinueText: () => {
     cy.expect(warningModal.find(HTML(including('Deselect to continue'))).exists());
   },
+
+  deselectFeeFine() {
+    cy.get('span[class*="alertDetails"]')
+      .contains('Deselect to continue')
+      .parent()
+      .prev('div')
+      .find('input[type="checkbox"]')
+      .click();
+  },
+
+  clickContinue: () => {
+    cy.do(warningModal.find(Button('Continue')).click());
+  },
 };
