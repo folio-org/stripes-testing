@@ -167,6 +167,7 @@ export default {
       selectAppSearchButton.has({ disabled: true }),
       selectAppResetAllButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
+      selectApplicationModal.find(MultiColumnListRow()).exists(),
     ]);
     const listSelector = 'div#applications-paneset [class^="mclScrollable"]';
     cy.get(listSelector).scrollTo('bottom').scrollTo('top');
