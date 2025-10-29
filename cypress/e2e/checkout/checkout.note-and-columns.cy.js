@@ -3,20 +3,19 @@ import { ServicePoints } from '../../support/fragments/settings/tenant';
 import { Permissions } from '../../support/dictionary';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import CheckOutModal from '../../support/fragments/check-out-actions/checkOutModal';
 import DateTools from '../../support/utils/dateTools';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 
 describe('Check out', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePoint(),
   };
+  let servicePoint;
 
   const note1 = { title: 'Note 1', source: 'ADMINISTRATOR, DIKU' };
   const note2 = { title: 'Note 2', source: 'ADMINISTRATOR, DIKU' };
@@ -24,25 +23,20 @@ describe('Check out', () => {
 
   before('Creating data', () => {
     cy.getAdminToken();
+    ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+      servicePoint = sp;
+    });
     cy.getAdminSourceRecord().then((record) => {
       note1.source = record;
       note2.source = record;
     });
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Location.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
     });
     cy.createTempUser([Permissions.checkoutCirculatingItems.gui]).then((userProperties) => {
       testData.user = userProperties;
-      UserEdit.addServicePointViaApi(
-        testData.servicePoint.id,
-        testData.user.userId,
-        testData.servicePoint.id,
-      );
+      UserEdit.addServicePointViaApi(servicePoint.id, testData.user.userId, servicePoint.id);
 
       cy.getItems({
         limit: 1,
@@ -82,13 +76,10 @@ describe('Check out', () => {
     cy.getAdminToken();
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
-    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(

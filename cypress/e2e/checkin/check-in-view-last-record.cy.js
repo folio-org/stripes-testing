@@ -1,9 +1,8 @@
 import moment from 'moment';
 import { Permissions } from '../../support/dictionary';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -16,6 +15,7 @@ describe('Check in', () => {
   let userData;
   let testData;
   let ITEM_BARCODE;
+  let servicePoint;
   const todayDate = moment(new Date()).format('M/D/YYYY');
   const itemEditedTime = '7:00 AM';
   const itemEditedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -29,29 +29,24 @@ describe('Check in', () => {
       .then((userProperties) => {
         userData = userProperties;
 
-        cy.getAdminToken();
+        cy.getAdminToken().then(() => {
+          ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+            servicePoint = sp;
+          });
+        });
         testData = {
           folioInstances: InventoryInstances.generateFolioInstances(),
-          servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
           requestsId: '',
         };
         ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
 
-        ServicePoints.createViaApi(testData.servicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-        Locations.createViaApi(testData.defaultLocation).then((location) => {
-          InventoryInstances.createFolioInstancesViaApi({
-            folioInstances: testData.folioInstances,
-            location,
-          });
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
         });
       })
       .then(() => {
-        UserEdit.addServicePointsViaApi(
-          [testData.servicePoint.id],
-          userData.userId,
-          testData.servicePoint.id,
-        );
+        UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
         cy.login(userData.username, userData.password, {
           path: TopMenu.checkInPath,
           waiter: CheckInActions.waitLoading,
@@ -61,15 +56,12 @@ describe('Check in', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
     Users.deleteViaApi(userData.userId);
-    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(
@@ -80,11 +72,7 @@ describe('Check in', () => {
       CheckInPane.verifyResultCells();
       CheckInActions.openItemDetails(ITEM_BARCODE);
       ItemRecordView.waitLoading();
-      ItemRecordView.checkItemCirculationHistory(
-        todayDate,
-        testData.servicePoint.name,
-        userData.username,
-      );
+      ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, userData.username);
 
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
@@ -93,11 +81,7 @@ describe('Check in', () => {
       CheckInPane.verifyResultCells();
       CheckInActions.openItemDetails(ITEM_BARCODE);
       ItemRecordView.waitLoading();
-      ItemRecordView.checkItemCirculationHistory(
-        todayDate,
-        testData.servicePoint.name,
-        userData.username,
-      );
+      ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, userData.username);
     },
   );
 });
