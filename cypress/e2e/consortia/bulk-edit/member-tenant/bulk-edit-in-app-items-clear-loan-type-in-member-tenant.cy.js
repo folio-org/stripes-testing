@@ -235,7 +235,7 @@ describe('Bulk-edit', () => {
           // Step 7: Select Temporary loan type
           BulkEditActions.selectOption('Temporary loan type');
           BulkEditSearchPane.verifyInputLabel('Temporary loan type');
-          BulkEditActions.selectSecondAction('Clear field');
+          BulkEditActions.selectAction('Clear field');
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 8: Confirm changes and verify preview

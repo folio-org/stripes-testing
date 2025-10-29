@@ -192,15 +192,15 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
 
-        const dublicate = true;
+        const duplicate = true;
         NewNoticePolicyTemplate.createPatronNoticeTemplate(
           noticeTemplates.cancelRequest,
-          dublicate,
+          duplicate,
         );
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-        cy.wait(5000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();

@@ -73,7 +73,7 @@ describe('Data Export', () => {
             localMarcAuthId = record.authority.id;
           });
         });
-
+        cy.resetTenant();
         cy.login(user.username, user.password);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

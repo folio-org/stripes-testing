@@ -108,7 +108,7 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
           cy.wait(1000);
           cy.intercept('GET', '/capabilities?*').as('capabilities');
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           cy.wait('@capabilities').then(({ request, response }) => {
             const url = decodeURIComponent(request.url);
             expect(url).to.match(capabilityCallRegExp);

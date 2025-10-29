@@ -949,18 +949,24 @@ export default {
       openHoldings(fromHolding, toHolding);
     }
 
-    cy.do([
+    cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(MultiColumnListRow({ index: 0 }))
         .find(Checkbox())
         .click(),
+    );
+    cy.wait(500);
+    cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(Button('Move to'))
         .click(),
+    );
+    cy.wait(500);
+    cy.do(
       DropdownMenu()
         .find(Button(including(toHolding)))
         .click(),
-    ]);
+    );
 
     if (itemMoved) {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
@@ -1016,9 +1022,11 @@ export default {
     ]);
   },
 
-  openMoveItemsWithinAnInstance: () => {
+  openMoveItemsWithinAnInstance() {
+    this.waitInventoryLoading();
     cy.do(actionsButton.click());
     cy.wait(1000);
+    cy.expect(moveItemsButton.exists());
     cy.do(moveItemsButton.click());
   },
 
@@ -1071,7 +1079,10 @@ export default {
   },
 
   edit() {
-    cy.do([Button('Actions').click(), Button('Edit').click()]);
+    cy.expect(Button('Actions').exists());
+    cy.do(Button('Actions').click());
+    cy.expect(Button('Edit').exists());
+    cy.do(Button('Edit').click());
   },
 
   closeInstancePage() {

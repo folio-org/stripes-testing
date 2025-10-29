@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  validateApiResponse,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with Empty URL API', () => {
   // User with both GET and POST permissions to create fields
@@ -13,19 +17,14 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
   let bibSpecId;
   const createdFieldIds = [];
 
-  const baseFieldPayload = {
-    label: 'Test name',
-    repeatable: true,
-    required: false,
-  };
+  const LOCAL_FIELD_TAG_BASE = '987'; // Use for first test scenario
+  const LOCAL_FIELD_TAG_EMPTY_URL = '988'; // Use for second test scenario
 
   before('Create user and fetch MARC bib specification', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificationIds().then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
       });
     });
@@ -50,65 +49,50 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
     'C490929 Create Local Field with empty "url" for MARC bib spec (API) (spitfire)',
     { tags: ['C490929', 'extendedPath', 'spitfire'] },
     () => {
-      // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
 
-      // Test scenarios for URL validation
-      const urlTestScenarios = [
-        {
-          description: 'field without url property (should succeed)',
-          tag: '899',
-          payload: {
-            ...baseFieldPayload,
-            tag: '899',
-          },
-          expectedStatus: 201,
-          expectedUrlBehavior: 'absent', // url key should not be present in response
-        },
-        {
-          description: 'field with empty url string (should fail)',
-          tag: '901',
-          payload: {
-            ...baseFieldPayload,
-            tag: '901',
-            url: '',
-          },
-          expectedStatus: 400,
-          expectedError: "The 'url' field should be valid URL.",
-        },
-      ];
+      // Test 1: Create field WITHOUT URL property (TestRail expects 201)
+      const fieldWithoutUrl = {
+        tag: LOCAL_FIELD_TAG_BASE,
+        label: 'AT_C490929_Test name',
+        repeatable: true,
+        required: false,
+        deprecated: false,
+        scope: 'local',
+      };
 
-      // Test each URL validation scenario
-      urlTestScenarios.forEach((scenario) => {
-        cy.createSpecificationField(bibSpecId, scenario.payload, false).then((response) => {
-          expect(response.status).to.eq(scenario.expectedStatus);
+      cy.createSpecificationField(bibSpecId, fieldWithoutUrl, false).then((response) => {
+        expect(response.body.id).to.exist;
+        expect(response.body.tag).to.eq(LOCAL_FIELD_TAG_BASE);
+        expect(response.body.label).to.eq('AT_C490929_Test name');
+        expect(response.body).to.not.have.property('url'); // URL key should not be present
+        createdFieldIds.push(response.body.id);
+      });
 
-          if (scenario.expectedStatus === 400) {
-            // Validation should fail - check error message
-            expect(response.body.errors).to.exist;
-            expect(response.body.errors).to.have.length.greaterThan(0);
+      // Test 2: Create field WITH empty URL (should fail with 400)
+      const fieldWithEmptyUrl = {
+        tag: LOCAL_FIELD_TAG_EMPTY_URL,
+        label: 'AT_C490929_Test name',
+        url: '', // Empty URL string should cause validation error
+        repeatable: true,
+        required: false,
+        deprecated: false,
+        scope: 'local',
+      };
 
-            const errorMessages = response.body.errors.map((error) => error.message);
-            expect(
-              errorMessages.some((msg) => msg.includes(scenario.expectedError)),
-              `Expected error message "${scenario.expectedError}" not found for ${scenario.description}. Actual errors: ${JSON.stringify(errorMessages)}`,
-            ).to.be.true;
-          } else if (scenario.expectedStatus === 201) {
-            // Field should be created successfully
-            expect(response.body.id).to.exist;
-            expect(response.body.tag).to.eq(scenario.tag);
-            expect(response.body.label).to.eq(scenario.payload.label);
+      cy.createSpecificationField(bibSpecId, fieldWithEmptyUrl, false).then((response) => {
+        validateApiResponse(response, 400);
 
-            // Check URL behavior based on test scenario
-            if (scenario.expectedUrlBehavior === 'absent') {
-              // URL key should not be present in response when not provided in payload
-              expect(response.body).to.not.have.property('url');
-            }
+        // Validate error response structure
+        expect(response.body).to.exist;
+        expect(response.body.errors).to.exist;
+        expect(response.body.errors).to.have.length.greaterThan(0);
 
-            // Store field ID for cleanup
-            createdFieldIds.push(response.body.id);
-          }
-        });
+        const errorMessages = response.body.errors.map((error) => error.message);
+        expect(
+          errorMessages.some((msg) => msg.includes("The 'url' field should be valid URL.")),
+          `Expected error message "The 'url' field should be valid URL." not found. Actual errors: ${JSON.stringify(errorMessages)}`,
+        ).to.be.true;
       });
     },
   );

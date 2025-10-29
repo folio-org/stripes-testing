@@ -184,6 +184,16 @@ export default {
     resource: 'Consortia Data-Import Central-Record-Update',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiMarcAuthoritiesAuthorityRecordView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiQuickMarcQuickMarcEditor: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Editor',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {

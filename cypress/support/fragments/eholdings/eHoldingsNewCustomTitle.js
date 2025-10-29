@@ -27,6 +27,27 @@ export default {
     cy.do(nameField.fillIn(packageName));
   },
 
+  fillInTitleName: (titleName) => {
+    cy.do(TextField({ name: 'name' }).fillIn(titleName));
+  },
+
+  openPackageDropdown: () => {
+    cy.do(Selection({ value: including('Choose a package') }).open());
+  },
+
+  verifyPackageDropdownExpanded: () => {
+    cy.expect(SelectionList().exists());
+  },
+
+  selectPackage: (packageName) => {
+    cy.do(SelectionList().filter(packageName));
+    cy.do(SelectionList().select(packageName));
+  },
+
+  verifyPackageSelected: (packageName) => {
+    cy.expect(Selection({ value: including(packageName) }).exists());
+  },
+
   fillInRequiredProperties: (packageName, titleName) => {
     cy.do(TextField({ name: 'name' }).fillIn(titleName));
     cy.do(Selection({ value: including('Choose a package') }).open());

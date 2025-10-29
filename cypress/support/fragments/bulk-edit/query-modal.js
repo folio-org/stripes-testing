@@ -461,8 +461,7 @@ export default {
   },
 
   removeValueFromMultiselect(text) {
-    cy.contains('[data-test-selection-option-segment="true"]', text)
-      .parent()
+    cy.get(`[id^="${text}-0_multiselect_selected_label"]`)
       .siblings('[icon="times"]')
       .focus()
       .click();

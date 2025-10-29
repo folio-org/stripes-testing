@@ -160,7 +160,6 @@ describe('Data Export', () => {
           assertionsOnMarcFileContent,
           recordsCount,
           false,
-          true,
         );
       });
 
@@ -250,7 +249,6 @@ describe('Data Export', () => {
           assertionsOnUpdatedMarcFileContent,
           recordsCount,
           false,
-          true,
         );
       });
     },

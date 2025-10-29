@@ -70,7 +70,7 @@ describe('Finance: Transactions', () => {
                   (responseOrganizations) => {
                     organization.id = responseOrganizations;
                     firstOrder.vendor = organization.id;
-                    OrderLinesLimit.setPOLLimit(3);
+                    OrderLinesLimit.setPOLLimitViaApi(3);
                     const firstOrderLine = {
                       ...BasicOrderLine.defaultOrderLine,
                       cost: {
@@ -168,7 +168,7 @@ describe('Finance: Transactions', () => {
   after(() => {
     cy.getAdminToken();
 
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Users.deleteViaApi(user.userId);
   });
 

@@ -157,6 +157,11 @@ export default {
       .find(HTML(including(statement)))
       .exists(),
   ),
+  checkHoldingsStatementForIndexes: (statement) => cy.expect(
+    MultiColumnList({ id: 'list-holdingsStatementForIndexes' })
+      .find(HTML(including(statement)))
+      .exists(),
+  ),
   checkStatisticalCode: (code) => cy.expect(
     MultiColumnList({ id: 'list-statistical-codes' })
       .find(MultiColumnListCell({ content: code }))

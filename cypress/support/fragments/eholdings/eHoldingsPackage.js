@@ -276,6 +276,21 @@ export default {
     cy.do(titlesSection.toggle());
     cy.expect(titlesSection.is({ expanded: isOpen }));
   },
+  verifyNotSelectedPackage: () => {
+    cy.expect(packageHoldingStatusSection.find(Button('Add package to holdings')).exists());
+  },
+
+  verifySelectedPackage: () => {
+    cy.expect(packageHoldingStatusSection.find(Button('Add package to holdings')).absent());
+  },
+
+  verifyTitlesAccordion: () => {
+    cy.expect(titlesSection.exists());
+  },
+
+  verifyTitlesLoadingIndicator: () => {
+    cy.expect(titlesSection.find(Spinner()).exists());
+  },
 
   /**
    * Waits until the title with the given name in the specified package
