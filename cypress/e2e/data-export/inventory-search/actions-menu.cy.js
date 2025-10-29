@@ -36,8 +36,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196752 verifies action menu options before any search is conducted (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C196752'] },
+      'C773248 verifies action menu options before any search is conducted (firebird)',
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C773248'] },
       () => {
         InventoryActions.open();
 
@@ -52,8 +52,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C196753 Verify Action menu options - search results pane populated (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C196753'] },
+      'C773249 Verify Action menu options - search results pane populated (firebird)',
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C773249'] },
       () => {
         InventorySearchAndFilter.byKeywords(item.instanceName);
         InventorySearchAndFilter.selectResultCheckboxes(1);

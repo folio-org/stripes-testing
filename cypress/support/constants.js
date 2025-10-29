@@ -635,7 +635,7 @@ export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   G: 'g - Projected medium',
   I: 'i - Nonmusical sound recording',
   J: 'j - Musical sound recording',
-  K: 'k - Two-dimensional nonprojectable graphic',
+  K: 'k - Two-dimensional nonprojectable  graphic',
   M: 'm - Computer file',
   O: 'o - Kit',
   P: 'p - Mixed materials',
@@ -1374,6 +1374,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ITEM_HRID: 'Item HRID',
+    STATISTICAL_CODES: 'Statistical codes',
   },
   USERS: {
     USERNAME: 'Username',

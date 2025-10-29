@@ -1,8 +1,11 @@
 import uuid from 'uuid';
+import Budgets from '../support/fragments/finance/budgets/budgets';
+import FiscalYears from '../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../support/fragments/finance/funds/funds';
+import ExpenseClasses from '../support/fragments/settings/finance/expenseClasses';
+import BatchGroups from '../support/fragments/settings/invoices/batchGroups';
 import ServicePoints from '../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../support/fragments/users/userEdit';
-import BatchGroups from '../support/fragments/settings/invoices/batchGroups';
-import ExpenseClasses from '../support/fragments/settings/finance/expenseClasses';
 
 describe('Prepare test data', () => {
   const ensureFolioBatchGroupExists = () => {
@@ -50,6 +53,76 @@ describe('Prepare test data', () => {
     });
   };
 
+  const ensureBudgetsExist = () => {
+    const fundCodes = [
+      'HIST',
+      'LATAMHIST',
+      'ASIAHIST',
+      'MISCHIST',
+      'GIFTS-ONE-TIME',
+      'EUROHIST',
+      'AFRICAHIST',
+    ];
+
+    return cy.wrap(null).then(() => {
+      const budgetPromises = fundCodes.map((code) => {
+        return FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
+          if (!resp.fiscalYears?.[0]) {
+            throw new Error('FY2025 fiscal year not found');
+          }
+
+          return Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
+            if (!body.funds?.[0]) {
+              cy.log(`Fund with code "${code}" not found, skipping budget creation`);
+              return null;
+            }
+
+            const budget = {
+              ...Budgets.getDefaultBudget(),
+              allocated: 1000,
+              fiscalYearId: resp.fiscalYears[0].id,
+              fundId: body.funds[0].id,
+            };
+
+            return Budgets.createViaApi(budget);
+          });
+        });
+      });
+
+      return Promise.all(budgetPromises);
+    });
+  };
+
+  const addElectronicExpenseClassToBudget = () => {
+    return ExpenseClasses.getExpenseClassesViaApi({ query: 'name="Electronic"' }).then(
+      (ecList = []) => {
+        const expenseClassResp = ecList.find((ec) => ec.name === 'Electronic');
+
+        if (!expenseClassResp) {
+          cy.log('Electronic expense class not found, skipping budget update');
+          return null;
+        }
+
+        return Budgets.getBudgetViaApi({ query: 'code=AFRICAHIST' }).then(({ budgetResp }) => {
+          if (!budgetResp) {
+            cy.log('AFRICAHIST budget not found, skipping expense class assignment');
+            return null;
+          }
+
+          return Budgets.updateBudgetViaApi({
+            ...budgetResp,
+            statusExpenseClasses: [
+              {
+                status: 'Active',
+                expenseClassId: expenseClassResp.id,
+              },
+            ],
+          });
+        });
+      },
+    );
+  };
+
   it('001 Assign service points to admin user', { tags: ['prepareTestData', 'smoke'] }, () => {
     const servicePointIds = [];
     let defaultServicePointId;
@@ -79,7 +152,9 @@ describe('Prepare test data', () => {
           );
         })
         .then(() => ensureFolioBatchGroupExists())
-        .then(() => ensureElectronicAndPrintExpenseClasses());
+        .then(() => ensureElectronicAndPrintExpenseClasses())
+        .then(() => ensureBudgetsExist())
+        .then(() => addElectronicExpenseClassToBudget());
     });
   });
 });

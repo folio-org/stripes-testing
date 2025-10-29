@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
 const cypressConfig = require('../cypress.config');
+const { uploadFileViaApi, wait } = require('./helpers/data-import.helper');
 require('dotenv').config();
 
 const envData = {
@@ -27,20 +26,6 @@ async function getToken() {
   axios.defaults.headers.common.Cookie = setCookieHeader;
   axios.defaults.headers.common['Content-Type'] = 'application/json';
   axios.defaults.validateStatus = (status) => status < 500;
-}
-
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function checkResponse(response, message, validStatus = 200) {
-  process.stdout.write(message.padEnd(32, '.'));
-  if (response.status === validStatus) {
-    process.stdout.write('OK\n');
-  } else {
-    process.stdout.write('ERROR ' + response.status + '\n');
-  }
-  return response;
 }
 
 async function getEholdingsKbs() {
@@ -205,188 +190,49 @@ async function removeUserAuthoritySourceFiles() {
     counter++;
   }
 }
-
-async function uploadDefinitions(keyValue, fileName) {
-  const response = await axios.post('/data-import/uploadDefinitions', {
-    fileDefinitions: [{ uiKey: keyValue, size: 2, name: fileName }],
-  });
-  return checkResponse(response, 'Uploading definition', 201).data;
+async function getMarcSpecifications() {
+  const response = await axios.get('/specification-storage/specifications?query=family=MARC');
+  return response.data.specifications;
 }
 
-async function uploadDefinitionWithId(uploadDefinitionId) {
-  const response = await axios.get(`/data-import/uploadDefinitions/${uploadDefinitionId}`);
-  return checkResponse(response, 'Uploading definition with id', 200).data;
-}
-
-async function processFileWithSplitFiles(
-  uploadDefinitionId,
-  uploadDefinition,
-  jobProfileId,
-  jobProfileName,
-) {
-  const response = await axios.post(
-    `/data-import/uploadDefinitions/${uploadDefinitionId}/processFiles?defaultMapping=false`,
-    {
-      uploadDefinition,
-      jobProfileInfo: {
-        id: jobProfileId,
-        name: jobProfileName,
-        dataType: 'MARC',
-      },
-    },
-  );
-  return checkResponse(response, 'Processing file', 204)?.data;
-}
-
-async function getUploadUrl(fileName) {
-  const response = await axios.get(`/data-import/uploadUrl?filename=${fileName}`, {
-    headers: { 'Content-Type': 'application/octet-stream' },
-  });
-  return checkResponse(response, 'Getting upload url', 200)?.data;
-}
-
-async function getTag(uploadUrl, filePath) {
-  const absolutePath = path.resolve(filePath);
-  const fileStream = fs.createReadStream(absolutePath);
-  const fileStats = fs.statSync(absolutePath);
-
-  const response = await axios.put(uploadUrl, fileStream, {
-    headers: {
-      'Content-Type': 'application/octet-stream',
-      'Content-Length': fileStats.size,
-    },
-  });
-  return checkResponse(response, 'Uploading file')?.headers?.etag;
-}
-
-async function getJobProfilesViaApi(profileName) {
-  const response = await axios.get('/data-import-profiles/jobProfiles', {
-    params: { query: `name="${profileName}"` },
-  });
-  return checkResponse(response, 'Getting job profile', 200).data;
-}
-
-async function getParentJobExecutionId(sourcePath) {
-  let attempts = 10;
-  while (attempts--) {
-    const response = await axios.get('/metadata-provider/jobExecutions', {
-      params: { limit: 10_000, sortBy: 'started_date,desc' },
-    });
-    checkResponse(response, `\tGetting parent job executions (${attempts} attempts left)`, 200);
-    const jobExecution = response.data.jobExecutions.find((job) => job.sourcePath === sourcePath);
-    if (jobExecution) return jobExecution.id;
-    await wait(5_000);
-  }
-  throw new Error('Parent job execution not found');
-}
-
-async function getJobStatus(jobExecutionId) {
-  let attempts = 16;
-  while (attempts--) {
-    const response = await axios.get(`/change-manager/jobExecutions/${jobExecutionId}`);
-    checkResponse(
-      response,
-      `\t\tGetting parent job execution status (${attempts} attempts left)`,
-      200,
+async function disableLccnDuplicateCheck() {
+  console.log('Disabling LCCN duplicate check');
+  try {
+    const settingEntriesResponse = await axios.get('/settings/entries');
+    const targetEntry = settingEntriesResponse.data.items.find(
+      (entry) => entry.key === 'lccn-duplicate-check',
     );
-    const status = response.data;
-    if (status.status === 'COMMITTED' && status.uiStatus === 'RUNNING_COMPLETE') return status;
-    await wait(5_000);
+    if (targetEntry && targetEntry.value.duplicateLccnCheckingEnabled === true) {
+      await axios.put(`/settings/entries/${targetEntry.id}`, {
+        data: {
+          ...targetEntry,
+          value: { duplicateLccnCheckingEnabled: false },
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Error disabling LCCN duplicate check:', error);
   }
-  throw new Error('Parent job execution status is not RUNNING_COMPLETE');
 }
 
-async function getChildJobExecutionId(jobExecutionId) {
-  const response = await axios.get(`/change-manager/jobExecutions/${jobExecutionId}/children`);
-  return checkResponse(response, '\tGetting child job execution id', 200).data.jobExecutions[0].id;
-}
-
-async function getRecordSourceId(jobExecutionId) {
-  const response = await axios.get(`/metadata-provider/jobLogEntries/${jobExecutionId}`, {
-    params: { limit: 100, query: 'order=asc' },
-  });
-  return checkResponse(response, 'Getting job Log Entries', 200).data.entries;
-}
-
-async function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
-  let attempts = 10;
-  while (attempts--) {
-    const response = await axios.get(
-      `/metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
-      {
-        params: { limit: 100 },
-      },
-    );
-    checkResponse(response, `Getting created record info (${attempts} attempts left)`, 200);
-    if (response.status === 200) return response.data;
-    await wait(1_000);
+async function resetMarcValidationRules() {
+  console.log('Resetting MARC validation rules');
+  try {
+    const marcSpecifications = await getMarcSpecifications();
+    const marcBibSpecId = marcSpecifications.find((spec) => spec.profile === 'bibliographic').id;
+    const marcAuthSpecId = marcSpecifications.find((spec) => spec.profile === 'authority').id;
+    await axios.post(`/specification-storage/specifications/${marcBibSpecId}/sync`);
+    await axios.post(`/specification-storage/specifications/${marcAuthSpecId}/sync`);
+  } catch (error) {
+    console.error('Error resetting MARC validation rules:', error);
   }
-  throw new Error('Record not found in job log entries');
-}
-
-async function uploadDefinitionWithAssembleStorageFile(
-  uploadId,
-  fileId,
-  s3UploadId,
-  s3UploadKey,
-  s3Etag,
-) {
-  const response = await axios.post(
-    `/data-import/uploadDefinitions/${uploadId}/files/${fileId}/assembleStorageFile`,
-    {
-      uploadId: s3UploadId,
-      key: s3UploadKey,
-      tags: [s3Etag],
-    },
-  );
-  return checkResponse(response, 'Assembling storage file', 204).data;
-}
-
-async function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
-  const { fileDefinitions } = await uploadDefinitions(filePathName, fileName);
-  const uploadDefinitionId = fileDefinitions[0].uploadDefinitionId;
-  const fileId = fileDefinitions[0].id;
-
-  const uploadUrlData = await getUploadUrl(fileName);
-  const s3Etag = await getTag(uploadUrlData.url, filePathName);
-  await uploadDefinitionWithAssembleStorageFile(
-    uploadDefinitionId,
-    fileId,
-    uploadUrlData.uploadId,
-    uploadUrlData.key,
-    s3Etag,
-  );
-  const uploadDefinition = await uploadDefinitionWithId(uploadDefinitionId);
-  const jobProfile = (await getJobProfilesViaApi(profileName)).jobProfiles[0];
-  await processFileWithSplitFiles(
-    uploadDefinitionId,
-    uploadDefinition,
-    jobProfile.id,
-    jobProfile.name,
-  );
-  const parentJobExecutionId = await getParentJobExecutionId(
-    uploadDefinition.fileDefinitions[0].sourcePath,
-  );
-  await getJobStatus(parentJobExecutionId);
-  const childJobExecutionId = await getChildJobExecutionId(parentJobExecutionId);
-  const records = await getRecordSourceId(childJobExecutionId);
-  const recordInfo = await getCreatedRecordInfoWithSplitFiles(
-    childJobExecutionId,
-    records[0].sourceRecordId,
-  );
-
-  return (
-    recordInfo.sourceRecordId !== '' &&
-    recordInfo.sourceRecordActionStatus === 'CREATED' &&
-    recordInfo.error === ''
-  );
 }
 
 (async () => {
   await getToken();
 
   try {
-    const filesUploadedStatus = await uploadFileWithSplitFilesViaApi(
+    const filesUploadedStatus = await uploadFileViaApi(
       'cypress/fixtures/marcFileForC375261.mrc',
       'autotest-00.mrc',
       'Default - Create SRS MARC Authority',
@@ -401,4 +247,6 @@ async function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileNam
   await removeAutotestInstances();
   await removeAutotestAuthorities();
   await removeUserAuthoritySourceFiles();
+  await disableLccnDuplicateCheck();
+  await resetMarcValidationRules();
 })();

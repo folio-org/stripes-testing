@@ -33,10 +33,6 @@ describe('Inventory', () => {
         permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
 
         [item, secondItem].forEach((el) => {
           el.instanceId = InventoryInstances.createInstanceViaApi(el.instanceName, el.barcode);
@@ -49,6 +45,11 @@ describe('Inventory', () => {
               permanentLocationId: el.permanentLocationId,
             });
           });
+        });
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
         });
       });
     });
