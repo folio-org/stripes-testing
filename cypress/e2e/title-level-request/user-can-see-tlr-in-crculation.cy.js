@@ -35,7 +35,10 @@ describe('Create Item or Title level request', () => {
         });
       })
       .then(() => {
-        cy.login(userData.username, userData.password);
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
       });
   });
 
@@ -50,8 +53,6 @@ describe('Create Item or Title level request', () => {
     'C1287 Check that user can see Title level request in Circulation (vega)',
     { tags: ['criticalPath', 'vega', 'C1287'] },
     () => {
-      cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
-      TitleLevelRequests.waitLoading();
       TitleLevelRequests.checkCirculationHasTLR();
     },
   );
