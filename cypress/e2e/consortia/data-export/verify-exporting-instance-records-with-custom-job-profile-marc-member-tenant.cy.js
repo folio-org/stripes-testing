@@ -454,7 +454,7 @@ describe('Data Export', () => {
           // Step 4: Download the recently created file with extension .mrc
           DataExportLogs.clickButtonWithText(testData.resultFileName);
 
-          // Steps 5-6: Verify file includes both local and shared instances with Holdings and Items
+          // Steps 5-7: Verify file includes both local and shared instances with Holdings and Items
           const commonAssertions = (instanceData, instanceTitle, electronicAccessData) => [
             (record) => {
               expect(record.get('001')[0].value).to.eq(instanceData.hrid);
