@@ -76,7 +76,6 @@ describe('Eureka', () => {
         path: TopMenu.usersPath,
         waiter: Users.waitLoading,
       });
-      UsersSearchPane.searchByUsername(testData.userB.username);
     });
 
     after('Delete roles, users', () => {
@@ -93,13 +92,16 @@ describe('Eureka', () => {
       'C627435 [UIU-3301] Assigned roles shown in user detailed view while having ui-users.roles - Manage (eureka)',
       { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C627435'] },
       () => {
-        UsersSearchPane.selectUserFromList(testData.userB.username);
+        UsersSearchPane.searchByUsername(testData.userB.username);
+        UsersCard.waitLoading();
+        UsersCard.verifyUserLastFirstNameInCard(testData.userB.lastName, testData.userB.firstName);
         UsersCard.verifyUserRolesCounter('1');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.role0Name]);
 
         UsersSearchPane.searchByUsername(testData.userA.username);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
+        UsersCard.waitLoading();
+        UsersCard.verifyUserLastFirstNameInCard(testData.userA.lastName, testData.userA.firstName);
         UsersCard.verifyUserRolesCounter('0');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRolesAccordionEmpty();
@@ -122,10 +124,8 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        UsersSearchPane.resetAllFilters();
-        UsersSearchPane.searchByUsername(testData.userA.username);
-        cy.wait(3000);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
+        UsersCard.waitLoading();
+        UsersCard.verifyUserLastFirstNameInCard(testData.userA.lastName, testData.userA.firstName);
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);
