@@ -172,7 +172,7 @@ describe('Title Level Request', () => {
 
   it(
     'C357532 Check that "Title level requests" section on Request Detail page and New Request page counted correctly (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega', 'C357532'] },
+    { tags: ['extendedPathBroken', 'vega', 'C357532'] },
     () => {
       // #1 Click on "Title" checkbox on Search & filter section
       Requests.selectTitleRequestLevel();
