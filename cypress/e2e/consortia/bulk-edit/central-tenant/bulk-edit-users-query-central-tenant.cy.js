@@ -128,7 +128,7 @@ describe('Bulk-edit', () => {
             const furureDateWithSlashes = DateTools.getFormattedDateWithSlashes({
               date: futureDate,
             });
-            const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: futureDate })} 23:59:59.000Z`;
+            const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: futureDate })}`;
 
             BulkEditActions.fillExpirationDate(futureDate, 1);
             BulkEditActions.replaceWithIsDisabled(1);

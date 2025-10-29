@@ -8,7 +8,7 @@ describe('Lists', () => {
     const userData = {};
 
     const duplicateListData = {
-      name: Lists.cannedListInactivePatronsWithOpenLoans + ' - copy',
+      name: 'Inactive patrons 0 with open loans - copy',
       description: 'Returns all loans with a status of open by inactive users',
       recordType: 'Loans',
       status: 'Active',
@@ -51,10 +51,11 @@ describe('Lists', () => {
         Lists.openList(Lists.cannedListInactivePatronsWithOpenLoans);
         Lists.openActions();
         Lists.duplicateList();
+        Lists.setName(duplicateListData.name);
 
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
-        Lists.waitForCompilingToComplete();
+        Lists.waitForCompilingToComplete(5000);
 
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);

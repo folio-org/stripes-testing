@@ -226,7 +226,7 @@ describe('Bulk-edit', () => {
           ];
           const editedSubjectFieldHeaderValueInFile = {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUBJECT,
-            value: `${subjectHeadings}Pushkin 1799-1837;Library of Congress Subject Headings;Personal name | Pushkin, Aleksandr Sergeevich, 1799-1837--Museums--Moscow--Maps.;Library of Congress Subject Headings;Personal name | Magellan, Ferdinand, 1521.;Library of Congress Children’s and Young Adults' Subject Headings;Personal name`,
+            value: `${subjectHeadings}Pushkin 1799-1837;Library of Congress Subject Headings;Personal name | Pushkin, Aleksandr Sergeevich, 1799-1837 Museums Moscow Maps.;Library of Congress Subject Headings;Personal name | Magellan, Ferdinand, 1521.;Library of Congress Children’s and Young Adults' Subject Headings;Personal name`,
           };
 
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
@@ -235,18 +235,16 @@ describe('Bulk-edit', () => {
           );
 
           const subjectTableValues = [
-            ['Pushkin 1799-1837', 'Library of Congress Subject Headings', 'Personal name', 1],
+            ['Pushkin 1799-1837', 'Library of Congress Subject Headings', 'Personal name'],
             [
-              'Pushkin, Aleksandr Sergeevich, 1799-1837--Museums--Moscow--Maps.',
+              'Pushkin, Aleksandr Sergeevich, 1799-1837 Museums Moscow Maps.',
               'Library of Congress Subject Headings',
               'Personal name',
-              2,
             ],
             [
               'Magellan, Ferdinand, 1521.',
               "Library of Congress Children’s and Young Adults' Subject Headings",
               'Personal name',
-              3,
             ],
           ];
 

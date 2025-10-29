@@ -94,7 +94,7 @@ describe('Data Export', () => {
             });
           });
         });
-
+        cy.resetTenant();
         cy.login(user.username, user.password);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -240,7 +240,7 @@ describe('Data Export', () => {
             DataExportLogs.waitLoading();
 
             // Step 9-10: Upload CSV and run export job
-            cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+            cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
             ExportFileHelper.uploadFile(exportedCSVFileName);
             ExportFileHelper.exportWithDefaultJobProfile(
               exportedCSVFileName,
@@ -250,7 +250,7 @@ describe('Data Export', () => {
             );
             DataExportLogs.verifyAreYouSureModalAbsent();
 
-            cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+            cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
               const { jobExecutions } = response.body;
               const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
               const jobId = jobData.hrId;

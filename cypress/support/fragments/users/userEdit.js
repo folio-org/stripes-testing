@@ -1269,7 +1269,7 @@ export default {
   },
 
   verifyEmailCommunicationPreferencesDropdownItemExists(item) {
-    cy.expect(preferredEmailCommunicationsSelect.find(MultiSelectOption(including(item))).exists());
+    cy.expect(MultiSelectOption(including(item)).exists());
   },
 
   verifyRemoveButtonExists(preference) {

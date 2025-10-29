@@ -153,6 +153,9 @@ const searchButtonIn010Field = Button({ ariaLabel: 'search' });
 const getTag008BoxErrorText = (boxName) => `Fail: Record cannot be saved. Field 008 contains an invalid value in "${boxName}" position.`;
 const tagLengthNumbersOnlyInlineErrorText =
   'Fail: Tag must contain three characters and can only accept numbers 0-9.';
+const tagLengthInlineErrorText =
+  'Fail: Record cannot be saved. A MARC tag must contain three characters.';
+const invalidTagInlineErrorText = 'Fail: Invalid MARC tag. Please try again.';
 const tag1XXNonRepeatableRequiredCalloutText = 'Field 1XX is non-repeatable and required.';
 const getSubfieldNonRepeatableInlineErrorText = (subfield) => `Fail: Subfield '${subfield}' is non-repeatable.`;
 const paneheaderDateFormat = 'M/D/YYYY h:mm A';
@@ -541,6 +544,8 @@ export default {
   tagLengthNumbersOnlyInlineErrorText,
   tag1XXNonRepeatableRequiredCalloutText,
   getSubfieldNonRepeatableInlineErrorText,
+  tagLengthInlineErrorText,
+  invalidTagInlineErrorText,
 
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
@@ -3308,7 +3313,7 @@ export default {
       });
     }).then(() => {
       cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
-        const updatedMarcData = marcData;
+        const updatedMarcData = { ...marcData };
         bibFieldTags.forEach((bibFieldTag, index) => {
           const targetFieldIndex =
             bibFieldIndexes !== null
@@ -3326,6 +3331,25 @@ export default {
         updatedMarcData.relatedRecordVersion = relatedRecordVersion;
 
         cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
+        cy.recurse(
+          () => cy.getMarcRecordDataViaAPI(bibId),
+          (marcBibData) => {
+            bibFieldTags.forEach((bibFieldTag, index) => {
+              const targetFieldIndex =
+                bibFieldIndexes !== null
+                  ? bibFieldIndexes[index] - 1
+                  : marcBibData.fields.findIndex((field) => field.tag === bibFieldTag);
+              expect(marcBibData.fields[targetFieldIndex].linkDetails?.authorityId).to.equal(
+                authorityIds[index],
+              );
+            });
+          },
+          {
+            limit: 20,
+            timeout: 40000,
+            delay: 1000,
+          },
+        );
       });
     });
   },
@@ -3363,5 +3387,28 @@ export default {
       }),
     );
     cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
+  },
+
+  verifyBoxIsFocusedInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.expect(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .has({ focused: true }),
+    );
+  },
+
+  verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ focused: isFocused }));
   },
 };

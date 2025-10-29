@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -20,6 +20,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -135,7 +136,7 @@ describe('Patron notices', () => {
             testData.holdingTypeId = holdingTypes[0].id;
           });
           cy.createLoanType({
-            name: getTestEntityValue('type'),
+            name: getTestEntityValue('type_C347865'),
           }).then((loanType) => {
             testData.loanTypeId = loanType.id;
           });
@@ -190,8 +191,6 @@ describe('Patron notices', () => {
               testData.user.userId,
               testData.userServicePoint.id,
             );
-            cy.getToken(testData.user.username, testData.user.password);
-            cy.getAdminToken();
             cy.login(testData.user.username, testData.user.password, {
               path: SettingsMenu.circulationPatronNoticeTemplatesPath,
               waiter: NewNoticePolicyTemplate.waitLoading,
@@ -201,7 +200,6 @@ describe('Patron notices', () => {
     });
 
     after('Deleting created entities', () => {
-      cy.getToken(testData.user.username, testData.user.password);
       cy.getAdminToken();
       CirculationRules.deleteRuleViaApi(testData.addedRule);
       UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
@@ -237,7 +235,8 @@ describe('Patron notices', () => {
           NewNoticePolicyTemplate.checkAfterSaving(template);
         });
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
 
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
@@ -254,20 +253,24 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(testData.user.username, testData.user.password);
-        cy.visit(TopMenu.checkOutPath);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
         CheckOutActions.checkOutUserByBarcode({ ...testData.user, patronGroup });
         CheckOutActions.checkOutItem(instanceData.itemBarcode);
         Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
         CheckOutActions.endCheckOutSession();
         cy.getAdminToken();
         UserLoans.changeDueDateForAllOpenPatronLoans(testData.user.userId, -1);
-        cy.getToken(testData.user.username, testData.user.password);
-        cy.visit(TopMenu.circulationLogPath);
         // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(250000);
-        cy.reload();
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.circulationLogPath,
+          waiter: SearchPane.waitLoading,
+        });
+
         noticeTemplates.forEach((template) => {
           const searchResults = {
             userBarcode: testData.user.barcode,
@@ -282,11 +285,9 @@ describe('Patron notices', () => {
           SearchPane.checkSearchResultByBarcode({ barcode: testData.user.barcode, searchResults });
         });
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.checkInItemByBarcode(instanceData.itemBarcode);
-
-        cy.visit(TopMenu.circulationLogPath);
-        // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(100000);
         SearchPane.searchByUserBarcode(testData.user.barcode);

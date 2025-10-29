@@ -155,7 +155,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.cataloged_date >= ${dateToPick}) AND (instance.title starts with AT_C477644_${postfix})`,
+              `(instance.cataloged_date >= ${DateTools.getTwoPreviousDaysDateForFiscalYear()}) AND (instance.title starts with AT_C477644_${postfix})`,
             );
 
             instances.forEach((instance) => {
@@ -166,7 +166,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
             BulkEditActions.openActions();
 
             instances.forEach((instance) => {

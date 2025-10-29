@@ -3,7 +3,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.postEdgeErm().then((response) => {
@@ -14,7 +14,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete', 'fast-check'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
       // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
@@ -50,7 +50,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgeOai().then((response) => {
@@ -61,7 +61,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgePatron().then((response) => {

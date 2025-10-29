@@ -32,7 +32,7 @@ const newExpirationDate = new Date();
 const newExpirationDateWithSlashes = DateTools.getFormattedDateWithSlashes({
   date: new Date(),
 });
-const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })} 23:59:59.000Z`;
+const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })}`;
 const newPatronGroup = 'faculty';
 
 describe('Bulk-edit', () => {
