@@ -320,7 +320,7 @@ export default {
   },
 
   verifyUserIsInUserList(name) {
-    cy.expect(logsUsersAccordion.find(SelectionOption(including(name))).exists());
+    cy.expect(SelectionOption(including(name)).exists());
   },
 
   verifyEmptyUserDropdown() {

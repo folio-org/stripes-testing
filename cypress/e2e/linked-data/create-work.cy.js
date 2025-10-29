@@ -8,6 +8,7 @@ import { APPLICATION_NAMES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
 
 describe('Citation: create work', () => {
   const testData = {
@@ -34,6 +35,11 @@ describe('Citation: create work', () => {
     () => {
       // open new resource form
       LinkedDataEditor.openNewResourceForm();
+      // check that modal is displayed
+      WorkProfileModal.waitLoading();
+      // check that default option 'Books' is there
+      WorkProfileModal.checkOptionSelected('Books');
+      WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading();
       // change data, but do not enter title
       EditResource.setValueForTheField(testData.partName, 'Part name');
