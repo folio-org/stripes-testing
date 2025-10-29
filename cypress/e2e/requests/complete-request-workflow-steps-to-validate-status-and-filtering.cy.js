@@ -3,6 +3,8 @@ import {
   FULFILMENT_PREFERENCES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -14,7 +16,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
-import { Locations } from '../../support/fragments/settings/tenant';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../support/fragments/topMenu';
@@ -28,27 +29,26 @@ describe('Requests', () => {
   let itemData;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    requestServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
   };
+  let userServicePoint;
+  let requestServicePoint;
   const checkInResultsData = {
-    statusForS: [`In transit - ${testData.requestServicePoint.name}`],
     statusForS1: ['Awaiting pickup'],
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(testData.userServicePoint);
-    ServicePoints.createViaApi(testData.requestServicePoint);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.userServicePoint.id,
-    }).location;
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
+    ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+      userServicePoint = sp1;
+    });
+    ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+      requestServicePoint = sp2;
+      checkInResultsData.statusForS = [`In transit - ${sp2.name}`];
+    });
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
     });
     cy.createTempUser([
       Permissions.uiRequestsAll.gui,
@@ -63,9 +63,9 @@ describe('Requests', () => {
       })
       .then(() => {
         UserEdit.addServicePointsViaApi(
-          [testData.userServicePoint.id, testData.requestServicePoint.id],
+          [userServicePoint.id, requestServicePoint.id],
           testData.user.userId,
-          testData.userServicePoint.id,
+          userServicePoint.id,
         );
         Requests.createNewRequestViaApi({
           fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
@@ -73,7 +73,7 @@ describe('Requests', () => {
           instanceId: itemData.instanceId,
           item: { barcode: itemData.barcodes[0] },
           itemId: itemData.itemIds[0],
-          pickupServicePointId: testData.requestServicePoint.id,
+          pickupServicePointId: requestServicePoint.id,
           requestDate: new Date(),
           requestExpirationDate: new Date(new Date().getTime() + 86400000),
           requestLevel: REQUEST_LEVELS.ITEM,
@@ -82,11 +82,9 @@ describe('Requests', () => {
         }).then((createdRequest) => {
           testData.requestId = createdRequest.body.id;
         });
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.checkInPath,
-            waiter: CheckInActions.waitLoading,
-          });
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.checkInPath,
+          waiter: CheckInActions.waitLoading,
         });
       });
   });
@@ -94,18 +92,12 @@ describe('Requests', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestId);
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
-      testData.userServicePoint.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    ServicePoints.deleteViaApi(testData.requestServicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: itemData,
-      servicePoint: testData.requestServicePoint,
+      servicePoint: requestServicePoint,
       shouldCheckIn: true,
     });
     Users.deleteViaApi(testData.user.userId);
-    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(
@@ -121,8 +113,8 @@ describe('Requests', () => {
       RequestDetail.checkRequestStatus('Open - In transit');
       CheckInActions.openCheckInPane();
       // Change your logged in service point to match the pickup service point for your request
-      SwitchServicePoint.switchServicePoint(testData.requestServicePoint.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.requestServicePoint.name);
+      SwitchServicePoint.switchServicePoint(requestServicePoint.name);
+      SwitchServicePoint.checkIsServicePointSwitched(requestServicePoint.name);
       // Check in Item for which the request was created again
       CheckInActions.checkInItemGui(itemData.barcodes[0]);
       AwaitingPickupForARequest.verifyModalTitle();
