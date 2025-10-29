@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -6,7 +6,6 @@ import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipie
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -26,11 +25,13 @@ describe('Check out', () => {
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
         cy.getLoanTypes({ limit: 1 });
         cy.getDefaultMaterialType().then(({ id, name }) => {
           materialTypeName = { id, name };
         });
-        cy.getLocations({ limit: 2 });
         cy.getHoldingTypes({ limit: 2 });
         cy.getInstanceTypes({ limit: 1 });
       })
@@ -66,7 +67,7 @@ describe('Check out', () => {
           holdings: [
             {
               holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-              permanentLocationId: Cypress.env('locations')[0].id,
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
             },
           ],
           items: testItems,
@@ -77,8 +78,6 @@ describe('Check out', () => {
     cy.createTempUser([permissions.checkoutCirculatingItems.gui])
       .then((userProperties) => {
         user = userProperties;
-        servicePoint = NewServicePoint.getDefaultServicePoint();
-        ServicePoints.createViaApi(servicePoint);
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
@@ -106,10 +105,7 @@ describe('Check out', () => {
     ).then(() => {
       InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
     });
-    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
-      ServicePoints.deleteViaApi(servicePoint.id);
-      Users.deleteViaApi(user.userId);
-    });
+    Users.deleteViaApi(user.userId);
   });
 
   const fullCheckOut = ({

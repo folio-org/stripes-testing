@@ -1,11 +1,14 @@
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
@@ -18,22 +21,21 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
-  servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   requestsId: '',
 };
 let userData;
 let ITEM_BARCODE;
+let servicePoint;
 
 describe('Circulation log', () => {
   before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
+    ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+      servicePoint = sp;
+    });
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
     });
     cy.createTempUser([
       Permissions.circulationLogAll.gui,
@@ -46,11 +48,11 @@ describe('Circulation log', () => {
         userData = userProperties;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
         ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
         Checkout.checkoutItemViaApi({
           itemBarcode: ITEM_BARCODE,
-          servicePointId: testData.servicePoint.id,
+          servicePointId: servicePoint.id,
           userBarcode: userData.barcode,
         });
 
@@ -71,18 +73,15 @@ describe('Circulation log', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
-      servicePointId: testData.servicePoint.id,
+      servicePointId: servicePoint.id,
       checkInDate: new Date().toISOString(),
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(
@@ -94,7 +93,7 @@ describe('Circulation log', () => {
         itemBarcode: ITEM_BARCODE,
         object: 'Loan',
         circAction: 'Renewed',
-        servicePoint: testData.servicePoint.name,
+        servicePoint: servicePoint.name,
         source: testData.adminSourceRecord,
       };
       // Expand the Loans section

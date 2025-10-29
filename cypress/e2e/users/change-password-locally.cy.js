@@ -9,7 +9,7 @@ import Users from '../../support/fragments/users/users';
 describe('Users', () => {
   let userData;
   let servicePointId;
-  const newPassword = generatePassword();
+  const newPassword = `${generatePassword()}_${generatePassword()}`;
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
