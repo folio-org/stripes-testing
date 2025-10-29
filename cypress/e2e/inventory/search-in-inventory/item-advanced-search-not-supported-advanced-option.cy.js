@@ -18,7 +18,7 @@ describe('Inventory', () => {
       searchQuery: 'The',
       generatedAdvancedSearchQuery: 'keyword containsAll The',
       advancedSearchOption: searchItemsOptions[13],
-      keywordSearchOption: 'Keyword (title, contributor, identifier)',
+      keywordSearchOption: searchItemsOptions[0],
       advSearchModifier: ADVANCED_SEARCH_MODIFIERS.CONTAINS_ALL,
     };
 
