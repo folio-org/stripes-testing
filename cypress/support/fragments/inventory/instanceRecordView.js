@@ -377,6 +377,17 @@ export default {
     ItemRecordView.waitLoading();
   },
 
+  openItemByHyperlink(barcode) {
+    cy.wait(2000);
+    cy.do(
+      rootSection
+        .find(MultiColumnListCell({ column: 'Item: barcode', content: barcode }))
+        .find(Link({ href: including('/inventory/view/') }))
+        .click(),
+    );
+    ItemRecordView.waitLoading();
+  },
+
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
 
   duplicate: () => {
