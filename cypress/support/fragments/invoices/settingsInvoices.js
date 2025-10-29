@@ -19,6 +19,7 @@ const saveButton = Button('Save');
 const deleteButton = Button('Delete');
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
+const showCredentialsButton = Button('Show credentials');
 
 function getEditableListRow(rowNumber) {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
@@ -197,11 +198,11 @@ export default {
   },
 
   checkShowCredentialsButton() {
-    cy.expect(Button('Show credentials').exists());
+    cy.expect(showCredentialsButton.exists());
   },
 
   clickShowCredentialsButton() {
-    cy.do(Button('Show credentials').click());
+    cy.do(showCredentialsButton.click());
   },
 
   selectBatchGroup(batchGroupname) {
