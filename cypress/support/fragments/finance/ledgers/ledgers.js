@@ -1667,4 +1667,8 @@ export default {
       expect(row[29]).to.equal(available);
     });
   },
+
+  checkNoResultsMessage(absenceMessage) {
+    cy.expect(ledgerResultsPaneSection.find(HTML(including(absenceMessage))).exists());
+  },
 };

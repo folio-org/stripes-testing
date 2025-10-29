@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../support/utils/fileManager';
@@ -57,7 +57,8 @@ describe('Citation: LDE permissions', () => {
     'C651426 [User journey] LDE - non-monograph format (citation)',
     { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // search inventory instance
+      // search inventory instance and limit search to MARC type
+      InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.MARC);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
       // 'Edit in LDE' not displayed since format is non-monograph
       InventoryInstance.checkEditInstanceInLdeButtonNotDisplayed();
