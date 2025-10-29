@@ -666,6 +666,12 @@ export default {
     InventoryNewHoldings.waitLoading();
   },
 
+  addConsortiaHoldings: (memberTenantName) => {
+    cy.wait(2000);
+    cy.do(Accordion(memberTenantName).find(addHoldingsButton).click());
+    InventoryNewHoldings.waitLoading();
+  },
+
   clickAddItemByHoldingName({ holdingName } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).click());

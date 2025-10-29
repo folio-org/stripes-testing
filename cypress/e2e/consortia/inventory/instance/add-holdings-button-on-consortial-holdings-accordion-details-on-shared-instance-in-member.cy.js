@@ -8,7 +8,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
-import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -21,7 +20,7 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         shadowInstance: {
-          instanceTitle: `C411658 Autotest Instance ${getRandomPostfix()}`,
+          instanceTitle: `C411657 Autotest Instance ${getRandomPostfix()}`,
           instanceTypeId: '',
         },
         holdings: {},
@@ -130,8 +129,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411658 (CONSORTIA) Verify Item barcode hyperlink on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411658'] },
+        'C411657 (CONSORTIA) Verify Add holdings button on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411657'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
@@ -146,13 +145,8 @@ describe('Inventory', () => {
             Affiliations.College,
             testData.holdings.id,
           );
-          InstanceRecordView.expandHoldings([`${testData.holdings.locationName}`]);
-          InstanceRecordView.openItemByHyperlink(testData.item.barcode);
+          InstanceRecordView.addConsortiaHoldings(tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          ItemRecordView.checkBarcode(testData.item.barcode);
-          ItemRecordView.closeDetailView();
-          InventoryInstance.waitLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
         },
       );
     });

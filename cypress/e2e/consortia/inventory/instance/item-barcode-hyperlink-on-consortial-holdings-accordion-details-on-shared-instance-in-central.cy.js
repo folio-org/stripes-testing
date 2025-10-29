@@ -21,7 +21,7 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         shadowInstance: {
-          instanceTitle: `C411647 Autotest Instance ${getRandomPostfix()}`,
+          instanceTitle: `C411656 Autotest Instance ${getRandomPostfix()}`,
           instanceTypeId: '',
         },
         holdings: {},
