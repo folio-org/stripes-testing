@@ -831,6 +831,10 @@ export default {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
+  invoiceSettingsBatchGroupView: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.view',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view',
+  },
   uiInvoicesCancelInvoices: {
     internal: 'ui-invoice.invoice.cancel.execute',
     gui: 'Invoice: Cancel invoices',

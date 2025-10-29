@@ -9,6 +9,8 @@ import {
   PaneHeader,
   Checkbox,
   Modal,
+  NavListItem,
+  Select,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
@@ -17,6 +19,7 @@ const saveButton = Button('Save');
 const deleteButton = Button('Delete');
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
+
 function getEditableListRow(rowNumber) {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
 }
@@ -159,5 +162,72 @@ export default {
       }
     });
     cy.wait(2000);
+  },
+
+  selectAdjustments: () => {
+    cy.do(NavListItem('Adjustments').click());
+  },
+
+  checkNewButtonExists() {
+    cy.expect(Button('New').exists());
+  },
+
+  selectBatchGroups: () => {
+    cy.do(NavListItem('Batch groups').click());
+  },
+
+  checkRowActionButtons(batchGroupName) {
+    cy.do(
+      MultiColumnListCell({ content: batchGroupName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.expect(getEditableListRow(rowNumber).find(editIconButton).exists());
+        cy.expect(getEditableListRow(rowNumber).find(trashIconButton).exists());
+        cy.expect(getEditableListRow(rowNumber).find(editIconButton).is({ disabled: false }));
+        cy.expect(getEditableListRow(rowNumber).find(trashIconButton).is({ disabled: false }));
+      }),
+    );
+  },
+
+  checkNewBatchGroupButtonExists() {
+    cy.expect(Button({ id: 'clickable-add-batch-groups' }).exists());
+  },
+
+  selectBatchGroupConfiguration: () => {
+    cy.do(NavListItem('Batch group configuration').click());
+  },
+
+  checkShowCredentialsButton() {
+    cy.expect(Button('Show credentials').exists());
+  },
+
+  clickShowCredentialsButton() {
+    cy.do(Button('Show credentials').click());
+  },
+
+  selectBatchGroup(batchGroupname) {
+    cy.do([Select('Batch group*').choose(batchGroupname)]);
+  },
+
+  checkVisibilityOfUsernameAndPassword() {
+    cy.expect(TextField({ id: 'username' }).has({ type: 'text' }));
+    cy.expect(TextField({ id: 'password' }).has({ type: 'text' }));
+  },
+
+  changeUsernameAndPassword(newUsername, newPassword) {
+    cy.do(TextField({ id: 'username' }).fillIn(newUsername));
+    cy.do(TextField({ id: 'password' }).fillIn(newPassword));
+  },
+
+  assertCredentialsMaskedAndNotEditable: () => {
+    cy.expect(TextField({ id: 'username' }).absent());
+    cy.expect(TextField({ id: 'password' }).absent());
+  },
+
+  selectVoucherNumber: () => {
+    cy.do(NavListItem('Voucher number').click());
+  },
+
+  checkResetSequenceButton() {
+    cy.expect(Button('Reset sequence').exists());
   },
 };
