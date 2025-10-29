@@ -6,6 +6,8 @@ import StaffSlips from '../../support/fragments/settings/circulation/staffSlips/
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import AppPaths from '../../support/fragments/app-paths';
+import UsersCard from '../../support/fragments/users/usersCard';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -54,12 +56,12 @@ describe('Staff slips', () => {
           StaffSlip.checkAfterUpdate(slipName);
         });
 
-        cy.getAdminToken();
-        Users.deleteViaApi(userData.userId).then((status) => {
-          if (status !== 204) {
-            throw new Error(`User with id=${userData.userId} was not deleted`);
-          }
+        cy.loginAsAdmin({
+          path: AppPaths.getUserPreviewPath(userData.userId),
+          waiter: UsersCard.waitLoading,
         });
+
+        UsersCard.deleteUser();
 
         cy.createTempUser(
           [Permissions.uiCirculationCreateEditRemoveStaffSlips.gui, Permissions.uiUsersView.gui],
