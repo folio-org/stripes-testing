@@ -377,6 +377,17 @@ export default {
     ItemRecordView.waitLoading();
   },
 
+  openItemByHyperlink(barcode) {
+    cy.wait(2000);
+    cy.do(
+      rootSection
+        .find(MultiColumnListCell({ column: 'Item: barcode', content: barcode }))
+        .find(Link({ href: including('/inventory/view/') }))
+        .click(),
+    );
+    ItemRecordView.waitLoading();
+  },
+
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
 
   duplicate: () => {
@@ -652,6 +663,12 @@ export default {
 
   addHoldings: () => {
     cy.do(addHoldingsButton.click());
+    InventoryNewHoldings.waitLoading();
+  },
+
+  addConsortiaHoldings: (memberTenantName) => {
+    cy.wait(2000);
+    cy.do(Accordion(memberTenantName).find(addHoldingsButton).click());
     InventoryNewHoldings.waitLoading();
   },
 
