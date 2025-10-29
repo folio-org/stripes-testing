@@ -14,7 +14,6 @@ import OrderStorageSettings from '../../orders/orderStorageSettings';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const ORDER_NUMBER_SETTING_KEY = 'orderNumber';
-
 const INSTANCE_MATCHING_DESCRIPTION =
   'When active, instance matching will cause purchase order lines that are set to create instances, but are not manually linked to an instance record, to first search instances to find a match for one or more of the product IDs provided on the POL. If a product ID is found, that instance will be linked to the POL, and the system will NOT create a new instance for that POL. If no matches are found, the system will create a new instance record and link the POL to that instance.';
 
@@ -298,5 +297,11 @@ export default {
 
   verifyInstanceMatchingDescription() {
     cy.contains(INSTANCE_MATCHING_DESCRIPTION).should('exist');
+  },
+
+  verifyOptionsAbsentInSettingsOrders(options) {
+    options.forEach((option) => {
+      cy.contains(option).should('not.exist');
+    });
   },
 };
