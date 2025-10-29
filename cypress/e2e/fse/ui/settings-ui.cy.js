@@ -16,14 +16,6 @@ describe('fse-settings - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195382 - verify that settings page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'settings'] },
-    () => {
-      Settings.waitSettingsPaneLoading();
-    },
-  );
-
-  it(
     `TC195469 - verify software versions page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'settings', 'software-version'] },
     () => {

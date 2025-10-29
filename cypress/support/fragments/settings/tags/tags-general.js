@@ -19,18 +19,26 @@ export default {
     cy.get('input[name="tags_enabled"]')
       .invoke('is', ':checked')
       .then((checked) => {
+        if ((!checked && status === 'enable') || (checked && status === 'disable')) {
+          cy.intercept({ method: /POST|PUT/, url: /\/configurations\/entries(\/.+)?$/ }).as(
+            'saveTagsSettings',
+          );
+        }
+
         if (!checked && status === 'enable') {
           cy.expect(Checkbox({ name: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
           cy.wait(1000);
           cy.do(saveButton.click());
           InteractorsTools.checkCalloutMessage(successCalloutMessage);
+          cy.wait('@saveTagsSettings');
         } else if (checked && status === 'disable') {
           cy.expect(Checkbox({ name: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
           cy.wait(1000);
           cy.do(saveButton.click());
           InteractorsTools.checkCalloutMessage(successCalloutMessage);
+          cy.wait('@saveTagsSettings');
         }
       });
   },

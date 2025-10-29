@@ -148,7 +148,9 @@ Cypress.Commands.add(
         });
       });
       // check the button
-      cy.xpath("//a[contains(@id, 'saml') or contains(@id, 'sso')]").should('be.visible');
+      cy.xpath("//a[contains(@id, 'saml') or contains(@id, 'sso') or contains(@id, 'SSO')]").should(
+        'be.visible',
+      );
     }
   },
 );

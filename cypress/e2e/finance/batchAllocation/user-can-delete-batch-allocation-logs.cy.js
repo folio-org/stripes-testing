@@ -218,7 +218,7 @@ describe('Finance › Batch allocation', () => {
       BatchEditBudget.clickConfirmButton();
       InteractorsTools.checkCalloutMessage('Log(s) successfully deleted');
       BatchEditBudget.searchLogs(fiscalYear.code, ledgers[0].code);
-      BatchEditBudget.verifyNoResultsMessage(fiscalYear.code, ledgers[0].code);
+      BatchEditBudget.verifyNoResultsMessage(`${fiscalYear.code}-${ledgers[0].code}`);
       BatchEditBudget.resetFiltersIfActive();
       BatchEditBudget.selectLogWithNamePart(fiscalYear.code, ledgers[1].code);
       BatchEditBudget.selectLogWithNamePart(fiscalYear.code, ledgers[2].code);
@@ -227,10 +227,10 @@ describe('Finance › Batch allocation', () => {
       BatchEditBudget.clickConfirmButton();
       InteractorsTools.checkCalloutMessage('Log(s) successfully deleted');
       BatchEditBudget.searchLogs(fiscalYear.code, ledgers[1].code);
-      BatchEditBudget.verifyNoResultsMessage(fiscalYear.code, ledgers[1].code);
+      BatchEditBudget.verifyNoResultsMessage(`${fiscalYear.code}-${ledgers[1].code}`);
       BatchEditBudget.resetFiltersIfActive();
       BatchEditBudget.searchLogs(fiscalYear.code, ledgers[2].code);
-      BatchEditBudget.verifyNoResultsMessage(fiscalYear.code, ledgers[2].code);
+      BatchEditBudget.verifyNoResultsMessage(`${fiscalYear.code}-${ledgers[2].code}`);
       BatchEditBudget.resetFiltersIfActive();
       BatchEditBudget.clickLogForLedger(fiscalYear.code, ledgers[3].code);
       BatchEditBudget.clickActionsButton();
@@ -241,7 +241,7 @@ describe('Finance › Batch allocation', () => {
       BatchEditBudget.clickDeleteButton();
       InteractorsTools.checkCalloutMessage('Log(s) successfully deleted');
       BatchEditBudget.searchLogs(fiscalYear.code, ledgers[3].code);
-      BatchEditBudget.verifyNoResultsMessage(fiscalYear.code, ledgers[3].code);
+      BatchEditBudget.verifyNoResultsMessage(`${fiscalYear.code}-${ledgers[3].code}`);
     },
   );
 });

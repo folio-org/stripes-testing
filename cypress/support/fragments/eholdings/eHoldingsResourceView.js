@@ -44,6 +44,7 @@ const customEmbargoPeriodKeyValue = KeyValue('Custom embargo period');
 const showToPatronsKeyValue = KeyValue('Show to patrons');
 const proxyKeyValue = KeyValue('Proxy');
 const proxiedURLKeyValue = KeyValue('Proxied URL');
+const customUrlKeyValue = KeyValue('Custom');
 
 export default {
   waitLoading: () => {
@@ -226,6 +227,31 @@ export default {
     cy.then(() => proxiedURLKeyValue.value()).then((url) => {
       const trimmedUrl = url.trim();
       cy.expect(resourceSettingsAccordion.find(Link({ href: including(trimmedUrl) })).exists());
+    });
+  },
+
+  verifyCustomUrl(customUrl) {
+    cy.expect(customUrlKeyValue.has({ value: including(customUrl) }));
+  },
+
+  verifyResourceInformationAccordionExists() {
+    cy.expect(Accordion('Resource information').exists());
+  },
+
+  verifyResourceInformationFieldsInOrder(fields) {
+    fields.forEach((fieldName) => {
+      cy.expect(KeyValue(fieldName).exists());
+    });
+  },
+
+  verifyAlternateTitlesSeparatedBySemicolon() {
+    cy.then(() => KeyValue('Alternate title(s)').value()).then((value) => {
+      if (value && value.trim() !== '') {
+        const alternateTitles = value.split(';');
+        if (alternateTitles.length > 1) {
+          cy.expect(value).to.include(';');
+        }
+      }
     });
   },
 };

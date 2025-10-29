@@ -130,8 +130,8 @@ describe('Inventory', () => {
         InventoryInstance.checkHoldingsTableContent({
           name: testData.locations[1].name,
           records: [
-            { barcode: testData.items[0].barcode, status: 'Available' },
             { barcode: testData.items[1].barcode, status: 'Available' },
+            { barcode: testData.items[0].barcode, status: 'Available' },
           ],
           columnIndex: 2,
           shouldOpen: false,

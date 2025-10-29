@@ -262,9 +262,6 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('duplicate copies');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
-          QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns('Holdings — Notes');
-          QueryModal.clickShowColumnsButton();
 
           let expectedHoldingsToFind = [
             expectedHoldings[0],

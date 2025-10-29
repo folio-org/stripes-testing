@@ -32,6 +32,7 @@ const proxySelect = Select({ name: 'proxyId' });
 const addCustomEmbargoPeriodButton = Button('Add custom embargo period');
 const removeCustomEmbargoButton = Button({ icon: 'trash', ariaLabel: 'Clear embargo period' });
 const proxiedURLKeyValue = KeyValue('Proxied URL');
+const customUrlField = TextField('Custom URL');
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -108,6 +109,14 @@ export default {
 
   verifyProxiedURLNotDisplayed() {
     cy.expect(proxiedURLKeyValue.absent());
+  },
+
+  fillInCustomUrl(customUrl) {
+    cy.do(customUrlField.fillIn(customUrl));
+  },
+
+  verifyCustomUrlFilled(customUrl) {
+    cy.expect(customUrlField.has({ value: customUrl }));
   },
 
   removeCustomEmbargoViaAPI(resourceId) {
