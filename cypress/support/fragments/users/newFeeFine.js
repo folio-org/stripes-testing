@@ -143,7 +143,8 @@ export default {
   },
 
   checkAmount: (amount) => {
-    cy.expect(amountTextField.has({ value: amount.toFixed(2) }));
+    const amountValue = typeof amount === 'number' ? amount.toFixed(2) : amount.toString();
+    cy.expect(amountTextField.has({ value: amountValue }));
     cy.expect(amountTextField.has({ disabled: false }));
   },
 
@@ -220,5 +221,24 @@ export default {
   verifyNotifyPatronCheckboxNotPresent: () => {
     cy.expect(rootModal.find(HTML(including('Notify patron'))).absent());
     cy.expect(rootModal.find(Checkbox({ name: 'notify' })).absent());
+  },
+
+  verifyItemDataPopulated: (itemData) => {
+    cy.expect(rootModal.find(HTML(including(itemData.barcode))).exists());
+    cy.expect(rootModal.find(HTML(including(itemData.instanceTitle))).exists());
+  },
+
+  verifyAmountFieldValue: (expectedValue) => {
+    const amountValue =
+      typeof expectedValue === 'number' ? expectedValue.toFixed(2) : expectedValue.toString();
+    cy.expect(amountTextField.has({ value: amountValue }));
+  },
+
+  clickAmountField: () => {
+    cy.do(amountTextField.click());
+  },
+
+  clickInactiveZone: () => {
+    cy.do(rootModal.find(TextField({ name: 'itemBarcode' })).click());
   },
 };
