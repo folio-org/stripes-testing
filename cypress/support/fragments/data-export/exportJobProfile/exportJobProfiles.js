@@ -131,4 +131,8 @@ export default {
   verifyNewButtonAbsent() {
     cy.expect(newButton.absent());
   },
+
+  verifyNewButtonEnabled() {
+    cy.expect(newButton.has({ disabled: false }));
+  },
 };
