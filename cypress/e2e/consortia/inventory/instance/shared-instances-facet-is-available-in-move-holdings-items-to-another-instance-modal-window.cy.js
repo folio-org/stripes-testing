@@ -49,7 +49,7 @@ describe('Inventory', () => {
           }).then((loanType) => {
             testData.localInstance.loanTypeId = loanType.id;
           });
-          cy.getMaterialTypes({ limit: 1 })
+          cy.getBookMaterialType()
             .then((materialTypes) => {
               testData.localInstance.materialTypeId = materialTypes.id;
             })

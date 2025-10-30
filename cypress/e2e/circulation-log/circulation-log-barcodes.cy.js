@@ -1,12 +1,16 @@
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Requests from '../../support/fragments/requests/requests';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -31,26 +35,25 @@ describe('Circulation log', () => {
   };
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
   };
   let firstUser;
   let requestId;
   let FIRST_ITEM_BARCODE;
   let SECOND_ITEM;
+  let servicePoint;
 
   before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
-      FIRST_ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
-      SECOND_ITEM = testData.folioInstances[1];
+    ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+      servicePoint = sp;
     });
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+    });
+    FIRST_ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
+    SECOND_ITEM = testData.folioInstances[1];
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
@@ -69,7 +72,7 @@ describe('Circulation log', () => {
             instanceId: SECOND_ITEM.instanceId,
             item: { barcode: testData.itemBarcode },
             itemId: SECOND_ITEM.itemIds[0],
-            pickupServicePointId: testData.servicePoint.id,
+            pickupServicePointId: servicePoint.id,
             requestDate: new Date(),
             requestLevel: REQUEST_LEVELS.ITEM,
             requestType: REQUEST_TYPES.PAGE,
@@ -79,10 +82,10 @@ describe('Circulation log', () => {
           });
         })
         .then(() => {
-          UserEdit.addServicePointViaApi(testData.servicePoint.id, firstUser.userId);
+          UserEdit.addServicePointViaApi(servicePoint.id, firstUser.userId);
           Checkout.checkoutItemViaApi({
             itemBarcode: FIRST_ITEM_BARCODE,
-            servicePointId: testData.servicePoint.id,
+            servicePointId: servicePoint.id,
             userBarcode: firstUser.barcode,
           });
         });
@@ -101,19 +104,16 @@ describe('Circulation log', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: FIRST_ITEM_BARCODE,
-      servicePointId: testData.servicePoint.id,
+      servicePointId: servicePoint.id,
       checkInDate: new Date().toISOString(),
     });
-    UserEdit.changeServicePointPreferenceViaApi(firstUser.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     testData.folioInstances.forEach((item) => {
       InventoryInstances.deleteInstanceViaApi({
         instance: item,
-        servicePoint: testData.servicePoint,
+        servicePoint,
       });
     });
     Requests.deleteRequestViaApi(requestId);
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(secondUser.userId);
     Users.deleteViaApi(firstUser.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
@@ -128,7 +128,7 @@ describe('Circulation log', () => {
         itemBarcode: FIRST_ITEM_BARCODE,
         object: 'Loan',
         circAction: 'Checked out',
-        servicePoint: testData.servicePoint.name,
+        servicePoint: servicePoint.name,
         source: testData.adminSourceRecord,
         desc: 'Checked out to proxy: no.',
       };
@@ -137,7 +137,7 @@ describe('Circulation log', () => {
         itemBarcode: SECOND_ITEM.barcodes[0],
         object: 'Request',
         circAction: 'Created',
-        servicePoint: testData.servicePoint.name,
+        servicePoint: servicePoint.name,
         source: testData.adminSourceRecord,
         desc: 'Type: Page.',
       };

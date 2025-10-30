@@ -1,7 +1,12 @@
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
+} from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import { Permissions } from '../../support/dictionary';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import { DateTools } from '../../support/utils';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
@@ -15,25 +20,22 @@ import Users from '../../support/fragments/users/users';
 describe('Circulation log', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   let instanceData;
   let requestDateAndTime;
+  let servicePoint;
 
   before('create test data', () => {
     cy.getAdminToken();
+    ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+      servicePoint = sp;
+    });
     cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
       testData.holdingTypeId = holdingTypes[0].id;
     });
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.servicePoint.id,
-    }).location;
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
     });
     cy.createTempUser([
       Permissions.circulationLogAll.gui,
@@ -47,14 +49,14 @@ describe('Circulation log', () => {
       })
       .then(() => {
         instanceData = testData.folioInstances[0];
-        UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.user.userId);
+        UserEdit.addServicePointViaApi(servicePoint.id, testData.user.userId);
         Requests.createNewRequestViaApi({
           fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
           holdingsRecordId: testData.holdingTypeId,
           instanceId: instanceData.instanceId,
           item: { barcode: instanceData.barcodes[0] },
           itemId: instanceData.itemIds[0],
-          pickupServicePointId: testData.servicePoint.id,
+          pickupServicePointId: servicePoint.id,
           requestDate: new Date(),
           requestExpirationDate: new Date(new Date().getTime() + 86400000),
           requestLevel: REQUEST_LEVELS.ITEM,
@@ -69,15 +71,12 @@ describe('Circulation log', () => {
 
   after('Delete all data', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Requests.deleteRequestViaApi(testData.requestsId);
     InventoryInstances.deleteInstanceViaApi({
       instance: instanceData,
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -100,7 +99,7 @@ describe('Circulation log', () => {
             circAction: 'Created',
             object: 'Request',
             date: DateTools.getFormattedDateWithTime(requestDateAndTime),
-            servicePoint: testData.servicePoint.name,
+            servicePoint: servicePoint.name,
           },
           rowIndex,
         );

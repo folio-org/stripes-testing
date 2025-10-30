@@ -4,6 +4,7 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -12,7 +13,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -32,9 +32,9 @@ describe('Request Detail.TLR', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
+  let userServicePoint;
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD],
     name: `requestPolicy${getRandomPostfix()}`,
@@ -44,9 +44,9 @@ describe('Request Detail.TLR', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          userServicePoint = sp;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -71,7 +71,7 @@ describe('Request Detail.TLR', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
             },
           ],
           items: [
@@ -103,11 +103,7 @@ describe('Request Detail.TLR', () => {
     });
     cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then((userProperties) => {
       userForTLR = userProperties;
-      UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
-        userForTLR.userId,
-        testData.userServicePoint.id,
-      );
+      UserEdit.addServicePointViaApi(userServicePoint.id, userForTLR.userId, userServicePoint.id);
     });
 
     cy.createTempUser(
@@ -122,11 +118,7 @@ describe('Request Detail.TLR', () => {
       patronGroup.name,
     ).then((userProperties) => {
       userData = userProperties;
-      UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
-        userData.userId,
-        testData.userServicePoint.id,
-      );
+      UserEdit.addServicePointViaApi(userServicePoint.id, userData.userId, userServicePoint.id);
       TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
@@ -134,7 +126,7 @@ describe('Request Detail.TLR', () => {
         instanceId: instanceData.instanceId,
         item: { barcode: testData.itemBarcode },
         itemId: instanceData.itemId[0],
-        pickupServicePointId: testData.userServicePoint.id,
+        pickupServicePointId: userServicePoint.id,
         requestDate: new Date(),
         requestLevel: REQUEST_LEVELS.ITEM,
         requestType: REQUEST_TYPES.PAGE,
@@ -145,7 +137,7 @@ describe('Request Detail.TLR', () => {
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: instanceData.instanceId,
-        pickupServicePointId: testData.userServicePoint.id,
+        pickupServicePointId: userServicePoint.id,
         requestDate: new Date(),
         requestLevel: REQUEST_LEVELS.TITLE,
         requestType: REQUEST_TYPES.HOLD,
@@ -169,18 +161,9 @@ describe('Request Detail.TLR', () => {
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userForTLR.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForTLR.userId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
   });
 
   it(
