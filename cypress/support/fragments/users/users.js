@@ -121,6 +121,16 @@ export default {
       });
   },
 
+  getUser: ({ id, failOnStatusCode = false }) => {
+    if (!id) return null;
+
+    return cy.okapiRequest({
+      path: `users/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode, // don't fail test if user is not found
+    });
+  },
+
   getAutomatedPatronBlocksApi(userId) {
     return cy
       .okapiRequest({
@@ -221,6 +231,23 @@ export default {
         limit: Math.trunc(secondsToWait / 10),
         timeout: secondsToWait * 1000,
         delay: 10000,
+      },
+    );
+  },
+
+  waitForUserDeletion({
+    id,
+    maxIterations = 20,
+    delay = 2000,
+    timeout = maxIterations * delay + 10000, // 40s polling + 10s buffer for API response overhead
+  }) {
+    recurse(
+      () => this.getUser({ id }),
+      ({ status }) => status === 404,
+      {
+        limit: maxIterations,
+        timeout,
+        delay,
       },
     );
   },
