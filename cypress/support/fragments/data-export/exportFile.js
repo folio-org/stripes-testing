@@ -183,7 +183,7 @@ const waitLandingPageOpened = () => {
 };
 
 const uploadFile = (fileName) => {
-  cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+  cy.get('input[type=file]', getLongDelay()).attachFile(fileName, { allowEmpty: true });
 };
 
 export default {
