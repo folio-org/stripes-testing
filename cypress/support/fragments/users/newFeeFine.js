@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   Modal,
   Option,
   Select,
@@ -205,5 +206,14 @@ export default {
 
   verifyNoOwnerSelected: () => {
     cy.expect(ownerTypeSelect.has({ checkedOptionText: 'Select one' }));
+  },
+
+  selectFeeFineType: (feeFineType) => {
+    cy.do(feeFineTypeSelect.choose(feeFineType));
+  },
+
+  verifyNotifyPatronCheckboxChecked: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).exists());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).has({ checked: true }));
   },
 };
