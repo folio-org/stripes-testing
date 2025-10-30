@@ -1,9 +1,18 @@
-import { matching } from '@interactors/html';
-import { MultiColumnListRow, MultiColumnListCell, including } from '../../../../interactors';
+import {
+  Button,
+  matching,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  including,
+} from '../../../../interactors';
 
 export default {
   openFeeFine: (index = 0) => {
     return cy.do(MultiColumnListRow({ indexRow: `row-${index}` }).click());
+  },
+
+  closeFeeFine: () => {
+    cy.do(Button({ icon: 'times' }).click());
   },
 
   checkResultsInTheRowByBarcode: (allContentToCheck, feeFineOwner) => {
