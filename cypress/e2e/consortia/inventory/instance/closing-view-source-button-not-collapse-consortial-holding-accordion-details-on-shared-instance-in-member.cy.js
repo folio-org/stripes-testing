@@ -11,6 +11,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -26,7 +27,7 @@ describe('Inventory', () => {
       };
       const marcFile = {
         marc: 'oneMarcBib.mrc',
-        marcFileName: `C411662 marcFileName${getRandomPostfix()}.mrc`,
+        marcFileName: `C411663 marcFileName${getRandomPostfix()}.mrc`,
       };
 
       before('Create test data', () => {
@@ -34,7 +35,7 @@ describe('Inventory', () => {
         cy.getConsortiaId().then((consortiaId) => {
           testData.consortiaId = consortiaId;
 
-          cy.setTenant(Affiliations.College);
+          cy.setTenant(Affiliations.University);
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.marcFileName,
@@ -44,14 +45,14 @@ describe('Inventory', () => {
               testData.shadowInstance = response[0].instance;
 
               cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-                testData.collegeLocation = res;
+                testData.location = res;
                 InventoryHoldings.getHoldingSources({
                   limit: 1,
                   query: `(name=="${HOLDINGS_SOURCE_NAMES.FOLIO}")`,
                 }).then((holdingSources) => {
                   InventoryHoldings.createHoldingRecordViaApi({
                     instanceId: testData.shadowInstance.id,
-                    permanentLocationId: testData.collegeLocation.id,
+                    permanentLocationId: testData.location.id,
                     sourceId: holdingSources[0].id,
                   }).then((holding) => {
                     testData.shadowHoldings = holding;
@@ -63,47 +64,53 @@ describe('Inventory', () => {
               InventoryInstance.shareInstanceViaApi(
                 testData.shadowInstance.id,
                 testData.consortiaId,
-                Affiliations.College,
+                Affiliations.University,
                 Affiliations.Consortia,
               );
             });
         });
         cy.resetTenant();
 
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        ]).then((userProperties) => {
+        cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
           testData.user = userProperties;
 
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+          ]);
+          cy.resetTenant();
+
           cy.login(testData.user.username, testData.user.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
 
       after('Delete test data', () => {
-        cy.withinTenant(Affiliations.College, () => {
-          InventoryHoldings.deleteHoldingRecordViaApi(testData.shadowHoldings.id);
-        });
-        cy.withinTenant(Affiliations.Consortia, () => {
-          cy.getAdminToken();
-          Users.deleteViaApi(testData.user.userId);
-          InventoryInstance.deleteInstanceViaApi(testData.shadowInstance.id);
-        });
+        cy.resetTenant();
+        cy.getAdminToken();
+        cy.setTenant(Affiliations.University);
+        InventoryHoldings.deleteHoldingRecordViaApi(testData.shadowHoldings.id);
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.shadowInstance.id);
       });
 
       it(
-        'C411662 (CONSORTIA) Verify closing the View source button does not close Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411662'] },
+        'C411663 (CONSORTIA) Verify closing View source does not collapse Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411663'] },
         () => {
-          InventoryInstances.searchByTitle(testData.shadowInstance.id);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
           InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
           InstanceRecordView.expandConsortiaHoldings();
-          InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
+          InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
           InstanceRecordView.viewSource();
           InstanceRecordView.verifySrsMarcRecord();
           InventoryViewSource.waitLoading();
