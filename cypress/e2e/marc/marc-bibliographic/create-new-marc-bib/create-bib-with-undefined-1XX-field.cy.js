@@ -44,8 +44,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519973 Create MARC bib record with undefined 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519973'] },
+        'C895665 Create MARC bib record with undefined 1XX field (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C895665'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

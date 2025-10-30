@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519974 Derive MARC bib record with undefined 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519974'] },
+        'C895667 Derive MARC bib record with undefined 1XX field (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C895667'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
