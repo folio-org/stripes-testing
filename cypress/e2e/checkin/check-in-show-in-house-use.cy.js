@@ -4,7 +4,6 @@ import SwitchServicePoint from '../../support/fragments/settings/tenant/serviceP
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -15,6 +14,8 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -22,24 +23,24 @@ import Users from '../../support/fragments/users/users';
 describe('Check in', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ itemsCount: 3 }),
-    itemServicePoint1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   let itemAData;
   let itemBData;
   let itemCData;
+  let servicePoint;
+  let itemServicePoint1;
 
   before('Create test data', () => {
-    cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    ServicePoints.createViaApi(testData.itemServicePoint1);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.servicePoint.id,
-    }).location;
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
+    cy.getAdminToken().then(() => {
+      ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+        servicePoint = sp1;
+      });
+      ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+        itemServicePoint1 = sp2;
+      });
       InventoryInstances.createFolioInstancesViaApi({
         folioInstances: testData.folioInstances,
-        location,
+        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
       });
     });
     itemAData = testData.folioInstances[0].items[0];
@@ -48,12 +49,12 @@ describe('Check in', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       testData.user = userProperties;
       UserEdit.addServicePointsViaApi(
-        [testData.servicePoint.id, testData.itemServicePoint1.id],
+        [servicePoint.id, itemServicePoint1.id],
         testData.user.userId,
       );
       Checkout.checkoutItemViaApi({
         itemBarcode: itemAData.barcode,
-        servicePointId: testData.servicePoint.id,
+        servicePointId: servicePoint.id,
         userBarcode: testData.user.barcode,
       });
       Requests.createNewRequestViaApi({
@@ -62,7 +63,7 @@ describe('Check in', () => {
         instanceId: testData.folioInstances[0].instanceId,
         item: { barcode: itemBData.barcode },
         itemId: itemBData.id,
-        pickupServicePointId: testData.servicePoint.id,
+        pickupServicePointId: servicePoint.id,
         requestDate: new Date(),
         requestExpirationDate: new Date(new Date().getTime() + 86400000),
         requestLevel: REQUEST_LEVELS.ITEM,
@@ -83,17 +84,10 @@ describe('Check in', () => {
     cy.getAdminToken();
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
-      testData.servicePoint.id,
-      testData.itemServicePoint1.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    ServicePoints.deleteViaApi(testData.itemServicePoint1.id);
     Requests.deleteRequestViaApi(testData.requestsId);
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -113,8 +107,8 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AWAITING_PICKUP, itemBData.barcode]);
       CheckInPane.checkInHouseUseIcon(false);
       // Switch user to service point that is not the primary service point for the effective location for item C
-      SwitchServicePoint.switchServicePoint(testData.itemServicePoint1.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.itemServicePoint1.name);
+      SwitchServicePoint.switchServicePoint(itemServicePoint1.name);
+      SwitchServicePoint.checkIsServicePointSwitched(itemServicePoint1.name);
 
       // Check in item C
       CheckInActions.checkInItemGui(itemCData.barcode);
@@ -122,13 +116,13 @@ describe('Check in', () => {
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       CheckInPane.checkResultsInTheRow([
-        `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${testData.servicePoint.name}`,
+        `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${servicePoint.name}`,
         itemCData.barcode,
       ]);
       CheckInPane.checkInHouseUseIcon(false);
       // Change user's service point to the service point that is the primary service point for the item's effective location
-      SwitchServicePoint.switchServicePoint(testData.servicePoint.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint.name);
+      SwitchServicePoint.switchServicePoint(servicePoint.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePoint.name);
       // Check in item C again
       CheckInActions.checkInItemGui(itemCData.barcode);
       CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemCData.barcode]);

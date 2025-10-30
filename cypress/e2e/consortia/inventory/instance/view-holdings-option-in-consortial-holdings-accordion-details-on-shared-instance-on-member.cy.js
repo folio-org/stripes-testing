@@ -7,7 +7,7 @@ import {
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import holdingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -49,7 +49,7 @@ describe('Inventory', () => {
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 testData.item.loanTypeId = res[0].id;
               });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+              cy.getBookMaterialType().then((res) => {
                 testData.item.materialTypeId = res.id;
               });
             })
@@ -145,8 +145,8 @@ describe('Inventory', () => {
           );
           InstanceRecordView.openHoldingView();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          holdingsRecordView.waitLoading();
-          holdingsRecordView.checkSource(HOLDINGS_SOURCE_NAMES.FOLIO);
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.checkSource(HOLDINGS_SOURCE_NAMES.FOLIO);
         },
       );
     });

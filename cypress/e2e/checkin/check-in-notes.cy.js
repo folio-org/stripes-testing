@@ -1,8 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
-
 import { Permissions } from '../../support/dictionary';
-import { Locations } from '../../support/fragments/settings/tenant';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -10,16 +9,15 @@ import CheckInModal from '../../support/fragments/check-in-actions/checkInModal'
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import DateTools from '../../support/utils/dateTools';
 import UserEdit from '../../support/fragments/users/userEdit';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Checkout from '../../support/fragments/checkout/checkout';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
 describe('Check in', () => {
   let userData;
+  let servicePoint;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
   };
   const note1 = { title: 'Note 1', details: 'This is Note 1', source: 'ADMINISTRATOR, DIKU' };
@@ -27,32 +25,28 @@ describe('Check in', () => {
   const itemBarcode = testData.folioInstances[0].barcodes[0];
 
   before('Creating test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken().then(() => {
+      ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+        servicePoint = sp;
+      });
+    });
     cy.getAdminSourceRecord().then((record) => {
       note1.source = record;
       note2.source = record;
     });
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
-      ServicePoints.createViaApi(testData.servicePoint);
-      testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-      Locations.createViaApi(testData.defaultLocation).then((location) => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location,
-        });
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
       });
-      UserEdit.addServicePointViaApi(
-        testData.servicePoint.id,
-        userProperties.userId,
-        testData.servicePoint.id,
-      );
+      UserEdit.addServicePointViaApi(servicePoint.id, userProperties.userId, servicePoint.id);
       Checkout.checkoutItemViaApi({
         id: uuid(),
         itemBarcode: testData.folioInstances[0].barcodes[0],
         loanDate: moment.utc().format(),
         userBarcode: userData.barcode,
-        servicePointId: testData.servicePoint.id,
+        servicePointId: servicePoint.id,
       });
       cy.getItems({
         limit: 1,
@@ -91,17 +85,14 @@ describe('Check in', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
-      servicePointId: testData.servicePoint.id,
+      servicePointId: servicePoint.id,
       checkInDate: new Date().toISOString(),
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(userData.userId);
   });
 
