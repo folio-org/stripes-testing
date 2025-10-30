@@ -76,7 +76,11 @@ export default HTML.extend('selection')
       return perform(() => SelectionList().filter(value));
     },
     choose: async ({ perform }, value) => {
-      await perform((el) => el.scrollIntoView());
+      await perform((el) => {
+        if (typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView();
+        }
+      });
 
       const optionsList = document.querySelector('[class^=selectionListRoot]');
       if (!(optionsList && isVisible(optionsList))) {
