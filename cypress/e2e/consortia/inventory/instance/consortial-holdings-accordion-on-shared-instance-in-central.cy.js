@@ -72,7 +72,10 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.sharedInstance.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(
+            testData.sharedInstance.instanceId,
+            false,
+          );
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
         },

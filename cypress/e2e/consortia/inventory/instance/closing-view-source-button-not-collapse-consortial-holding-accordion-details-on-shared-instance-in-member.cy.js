@@ -108,7 +108,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
           InstanceRecordView.viewSource();
@@ -116,7 +116,7 @@ describe('Inventory', () => {
           InventoryViewSource.waitLoading();
           InventoryViewSource.close();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(true);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
         },
       );
     });

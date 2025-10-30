@@ -130,7 +130,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
@@ -160,7 +160,7 @@ describe('Inventory', () => {
           ItemRecordNew.saveAndClose(true);
           InstanceRecordView.waitLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(true);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
         },
       );
     });
