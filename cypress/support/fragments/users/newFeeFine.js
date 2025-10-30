@@ -216,4 +216,9 @@ export default {
     cy.expect(rootModal.find(HTML(including('Notify patron'))).exists());
     cy.expect(rootModal.find(Checkbox({ name: 'notify' })).has({ checked: true }));
   },
+
+  verifyNotifyPatronCheckboxNotPresent: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).absent());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).absent());
+  },
 };
