@@ -101,6 +101,7 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.openNewJobProfileForm();
         NewJobProfile.fillJobProfile(jobProfile);
+        cy.wait(1000);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForNonMatches(defaultActionProfileName);
         // wait for the action profile to be linked

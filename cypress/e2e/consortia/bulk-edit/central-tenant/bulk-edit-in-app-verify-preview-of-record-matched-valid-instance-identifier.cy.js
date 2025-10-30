@@ -1,5 +1,7 @@
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -21,7 +23,7 @@ const secondInstance = {
   title: `C476785 second instance-${getRandomPostfix()}`,
 };
 const recordIdentifier = 'Instance HRIDs';
-const errorText = 'Duplicate entry';
+const errorText = ERROR_MESSAGES.DUPLICATE_ENTRY;
 const firstInstanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const secondInstanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
 const firstMatchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(

@@ -4,7 +4,6 @@ import {
   and,
   Badge,
   Button,
-  Callout,
   Checkbox,
   Image,
   KeyValue,
@@ -85,10 +84,6 @@ const firstNameField = KeyValue('First name');
 const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 const closeIconButton = Button({ icon: 'times' });
 const preferredEmailCommunicationsField = KeyValue('Preferred email communications');
-const deleteUserAction = Button('Check for open transactions/delete user');
-const deleteUserModal = Modal('Check for open transactions/delete user');
-const confirmDeleteUserButton = deleteUserModal.find(Button('Yes'));
-const deleteUserCallout = Callout(including('deleted successfully.'));
 
 export default {
   errors,
@@ -927,16 +922,5 @@ export default {
         }),
       ),
     );
-  },
-  deleteUser() {
-    cy.expect(actionsButton.exists());
-    cy.do(actionsButton.click());
-    cy.expect(deleteUserAction.exists());
-    cy.do(deleteUserAction.click());
-    cy.expect(deleteUserModal.exists());
-    cy.expect(deleteUserModal.find(HTML(including('No open transactions for user'))).exists());
-    cy.expect(confirmDeleteUserButton.exists());
-    cy.do(confirmDeleteUserButton.click());
-    cy.expect(deleteUserCallout.exists());
   },
 };
