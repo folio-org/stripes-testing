@@ -1,5 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances, {
+  searchInstancesOptions,
+} from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -14,7 +16,7 @@ describe('Inventory', () => {
     const accordionName = 'Staff suppress';
     const staffSuppressedInstanceIndexes = [3, 4];
     const notStaffSuppressedInstanceIndexes = [1, 2];
-    const keywordSearchOption = 'Keyword (title, contributor, identifier)';
+    const keywordSearchOption = searchInstancesOptions[0];
     const advSearchModifier = ADVANCED_SEARCH_MODIFIERS.CONTAINS_ALL;
 
     const isStaffSuppressed = (index) => [...staffSuppressedInstanceIndexes].includes(index);
