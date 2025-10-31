@@ -10,6 +10,17 @@ export default {
       id: uuid(),
     };
   },
+  getExpenseClassesViaApi({ query = 'cql.allRecords=1 sortby name', limit = 2000 } = {}) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'finance/expense-classes',
+        searchParams: { query, limit: String(limit) },
+      })
+      .then(({ body }) => {
+        return body.expenseClasses || [];
+      });
+  },
   createExpenseClassViaApi(expenseClass) {
     return cy
       .okapiRequest({
@@ -27,14 +38,5 @@ export default {
       method: 'DELETE',
       path: `finance/expense-classes/${expenseClassId}`,
     });
-  },
-  getExpenseClassesViaApi(searchParams = {}) {
-    return cy
-      .okapiRequest({
-        path: 'finance/expense-classes',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body.expenseClasses ?? []);
   },
 };

@@ -330,10 +330,11 @@ describe('Organizations', () => {
         permissions.uiOrganizationsViewBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-          authRefresh: true,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
       });
     });
@@ -371,6 +372,7 @@ describe('Organizations', () => {
           firstOrganization,
         );
         Orders.resetFilters();
+        cy.wait(4000);
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'Bank account number',
@@ -388,6 +390,7 @@ describe('Organizations', () => {
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex('All', firstBankingInformation.accountNumber, firstOrganization);
         Orders.resetFilters();
+        cy.wait(4000);
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'All',
@@ -406,6 +409,7 @@ describe('Organizations', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchAbsentVendorbyindex(
           'All',

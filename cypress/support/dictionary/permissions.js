@@ -355,6 +355,10 @@ export default {
     internal: 'inventory-storage.items.batch.post',
     gui: 'inventory storage - create or update a number of items',
   },
+  inventoryStorageBatchUpdateItemsPatch: {
+    internal: 'inventory-storage.items.collection.patch',
+    gui: 'inventory storage - update items collection',
+  },
   inventoryFastAddCreate: {
     internal: 'ui-plugin-create-inventory-records.create',
     gui: 'Fast add: Create',
@@ -831,6 +835,10 @@ export default {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
+  invoiceSettingsBatchGroupView: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.view',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view',
+  },
   uiInvoicesCancelInvoices: {
     internal: 'ui-invoice.invoice.cancel.execute',
     gui: 'Invoice: Cancel invoices',
@@ -1037,6 +1045,14 @@ export default {
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
+  },
+  uiFinanceFundUpdateLogsView: {
+    internal: 'ui-finance.fund-update-logs.view',
+    gui: 'Finance: View batch allocation logs',
+  },
+  uiFinanceFundUpdateLogsDelete: {
+    internal: 'ui-finance.fund-update-logs.delete',
+    gui: 'Finance: Delete batch allocation logs',
   },
   // Organizations
   uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
