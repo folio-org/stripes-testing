@@ -223,19 +223,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tags.tag518, newValues.field518);
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(
-            testData.fieldIndexes.tag024,
-            testData.messages.subfieldUndefined,
-          );
-          QuickMarcEditor.checkErrorMessage(
-            testData.fieldIndexes.tag042,
-            testData.messages.subfieldUndefined,
-          );
-          QuickMarcEditor.checkErrorMessage(
-            testData.fieldIndexes.tag518,
-            testData.messages.subfieldUndefined,
-          );
-          QuickMarcEditor.verifyValidationCallout();
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();

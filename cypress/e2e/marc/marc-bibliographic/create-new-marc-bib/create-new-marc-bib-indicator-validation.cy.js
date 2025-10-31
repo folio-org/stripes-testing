@@ -7,6 +7,10 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES } from '../../../../support/constants';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -63,6 +67,8 @@ describe('MARC', () => {
       ];
       const user = {};
 
+      let specId;
+
       before('Create test data', () => {
         cy.getAdminToken();
         cy.createTempUser([
@@ -71,6 +77,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
         ]).then((createdUserProperties) => {
           user.userProperties = createdUserProperties;
+
+          getBibliographicSpec().then((spec) => {
+            specId = spec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           cy.login(user.userProperties.username, user.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -83,11 +94,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userProperties.userId);
         InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
         'C422108 Indicator boxes validation during creation of MARC bib record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C422108'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C422108'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.checkPaneheaderContains(testData.paneHeaderCreateRecordText);

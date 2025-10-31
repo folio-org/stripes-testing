@@ -6,6 +6,10 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -76,6 +80,8 @@ describe('MARC', () => {
         (field) => `${field.tag}\t${field.values[0].replace('\\', ' ')} ${field.values[1].replace('\\', ' ')}\t`,
       );
 
+      let specId;
+
       before('Create test data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C543844_MarcAuthority');
@@ -87,6 +93,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          getAuthoritySpec().then((spec) => {
+            specId = spec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile);
 
@@ -103,11 +114,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
         'C543844 Indicator boxes validation during creation of MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543844'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543844'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);

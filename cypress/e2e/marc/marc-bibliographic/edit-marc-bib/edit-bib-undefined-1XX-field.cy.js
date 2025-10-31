@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       it(
         'C519975 Edit MARC bib record with undefined 1XX field when Undefined rules are enabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519975'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519975'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

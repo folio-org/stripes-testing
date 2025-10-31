@@ -7,6 +7,10 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
 import { including } from '../../../../../interactors';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -26,6 +30,8 @@ describe('MARC', () => {
         tag008Index: 3,
       };
 
+      let specId;
+
       before('Create test data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C709271_MarcAuthority');
@@ -37,6 +43,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          getAuthoritySpec().then((spec) => {
+            specId = spec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile);
 
@@ -53,11 +64,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
         'C709271 Create MARC authority record using "Save & keep editing" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C709271'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C709271'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkButtonsDisabled();

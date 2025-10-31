@@ -6,6 +6,10 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -35,6 +39,8 @@ describe('MARC', () => {
         { tag: testData.tags.tag599, content: testData.undefinedFieldContent },
       ];
 
+      let specId;
+
       before('Create test data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C519983_MarcAuthority');
@@ -44,6 +50,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          getAuthoritySpec().then((spec) => {
+            specId = spec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile);
 
@@ -60,11 +71,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
-        'C519983 Create MARC authority record with undefined 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519983'] },
+        'C519983 Create MARC authority record with undefined 1XX field when Undefined rules are enabled (spitfire)',
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519983'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008);

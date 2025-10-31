@@ -6,6 +6,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -60,9 +64,16 @@ describe('MARC', () => {
       const updatedTitle = `${testData.instanceTitle} UPD`;
       const user = {};
       let createdInstanceId;
+      let specId;
 
       before('Create test data', () => {
         cy.getAdminToken();
+
+        getBibliographicSpec().then((spec) => {
+          specId = spec.id;
+          toggleAllUndefinedValidationRules(specId, { enable: true });
+        });
+
         cy.createTempUser([
           Permissions.uiInventoryViewInstances.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -86,11 +97,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdInstanceId);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
         'C543838 Indicator boxes validation during editing of MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543838'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543838'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
