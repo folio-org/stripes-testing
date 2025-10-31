@@ -90,8 +90,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           cy.wait(1000);
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
