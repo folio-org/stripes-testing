@@ -72,6 +72,7 @@ describe('Data Export', () => {
           updatedFieldMappingProfileName,
           updatedDescription,
         );
+        SingleFieldMappingProfilePane.verifyMetadataSectionExists();
         SingleFieldMappingProfilePane.checkRecordType('Item');
         SingleFieldMappingProfilePane.clickEditTransformations();
         ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
@@ -80,6 +81,13 @@ describe('Data Export', () => {
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         InteractorsTools.checkCalloutMessage(updatedTransformationCalloutMessage);
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Item - ID',
+          '458',
+          '1',
+          '2',
+          'a',
+        );
 
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(updatedFieldMappingProfileCalloutMessage);
@@ -95,6 +103,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
         SingleFieldMappingProfilePane.verifyActionOptions();
         SingleFieldMappingProfilePane.duplicateFieldMappingProfile();
+        SingleFieldMappingProfilePane.verifyMetadataSectionExists();
 
         InteractorsTools.checkCalloutMessage(duplicatedFieldMappingProfileCalloutMessage);
         ExportFieldMappingProfiles.searchFieldMappingProfile(duplicatedFieldMappingProfileName);

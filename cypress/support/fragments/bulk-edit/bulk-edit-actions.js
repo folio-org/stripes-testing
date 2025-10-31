@@ -425,6 +425,7 @@ export default {
   startBulkEditLocalButtonExists() {
     cy.expect(startBulkEditLocalButton.exists());
   },
+
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([downloadChangedRecordsButton.exists(), downloadErrorsButton.exists()]);
@@ -886,24 +887,6 @@ export default {
         bulkEditsAccordions
           .find(RepeatableFieldItem({ index: rowIndex }))
           .find(Select('Actions select'))
-          .allOptionsText()
-          .then((actualOptions) => {
-            const actualEnabledOptions = actualOptions.filter(
-              (actualOption) => !actualOption.includes('disabled'),
-            );
-            expect(actualEnabledOptions).to.deep.equal(expectedOptions);
-          }),
-      );
-    });
-  },
-
-  verifyTheActionOptionsForMarcInstances(expectedOptions, rowIndex = 0) {
-    cy.then(() => {
-      cy.wait(1000);
-      cy.do(
-        bulkEditsMarcInstancesAccordion
-          .find(RepeatableFieldItem({ index: rowIndex }))
-          .find(bulkPageSelections.action)
           .allOptionsText()
           .then((actualOptions) => {
             const actualEnabledOptions = actualOptions.filter(
@@ -1660,12 +1643,21 @@ export default {
     });
   },
 
-  verifyNoteTypeInNoteHoldingTypeDropdown(noteType, rowIndex = 0) {
-    cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
-        .find(selectNoteHoldingTypeDropdown)
-        .has({ content: including(noteType) }),
-    );
+  verifyNoteTypeInNoteHoldingTypeDropdown(noteType, isExist = true, rowIndex = 0) {
+    if (isExist) {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(selectNoteHoldingTypeDropdown)
+          .has({ content: including(noteType) }),
+      );
+    } else {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(selectNoteHoldingTypeDropdown)
+          .find(Option({ text: noteType }))
+          .absent(),
+      );
+    }
   },
 
   verifyAreYouSureFormAbsents() {
@@ -2365,21 +2357,23 @@ export default {
     );
   },
 
-  verifyTheActionOptionsForMarcInstance(expectedOptions, rowIndex = 0) {
-    cy.then(() => {
-      cy.do(
-        bulkEditsMarcInstancesAccordion
-          .find(RepeatableFieldItem({ index: rowIndex }))
-          .find(Select('Actions'))
-          .allOptionsText()
-          .then((actualOptions) => {
-            const actualEnabledOptions = actualOptions.filter(
-              (actualOption) => !actualOption.includes('disabled'),
-            );
-            expect(actualEnabledOptions).to.deep.equal(expectedOptions);
-          }),
-      );
-    });
+  verifyTheActionOptionsEqual(expectedOptions, isMarcInstancesAccordion = true, rowIndex = 0) {
+    const targetAccordion = isMarcInstancesAccordion
+      ? bulkEditsMarcInstancesAccordion
+      : bulkEditsAccordions;
+
+    cy.do(
+      targetAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select(including('Actions select')))
+        .allOptionsText()
+        .then((actualOptions) => {
+          const actualEnabledOptions = actualOptions.filter(
+            (actualOption) => !actualOption.includes('disabled'),
+          );
+          expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+        }),
+    );
   },
 
   verifyAdditionalSubfieldRowInitialState(rowIndex = 0) {

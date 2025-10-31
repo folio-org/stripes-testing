@@ -5,6 +5,7 @@ import InstanceRecordView, {
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -12,6 +13,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 let user;
 let instanceTypeId;
 const instance = { title: `AT_C423452_FolioInstance_${getRandomPostfix()}` };
+const marcInstance = { title: `AT_C423452_MarcInstance_${getRandomPostfix()}` };
 
 describe('Data Export', () => {
   before('Create test data', () => {
@@ -22,6 +24,7 @@ describe('Data Export', () => {
           Permissions.dataExportSettingsViewOnly.gui,
           Permissions.dataExportViewAddUpdateProfiles.gui,
           Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((userProperties) => {
           user = userProperties;
 
@@ -39,6 +42,10 @@ describe('Data Export', () => {
         }).then((instanceData) => {
           instance.id = instanceData.instanceId;
         });
+
+        cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+          marcInstance.id = instanceId;
+        });
       })
       .then(() => {
         cy.login(user.username, user.password, {
@@ -52,6 +59,7 @@ describe('Data Export', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     InventoryInstance.deleteInstanceViaApi(instance.id);
+    InventoryInstance.deleteInstanceViaApi(marcInstance.id);
   });
 
   it(
@@ -82,6 +90,22 @@ describe('Data Export', () => {
         actionsMenuOptions.setRecordForDeletion,
         false,
       );
+      InventorySearchAndFilter.resetAll();
+
+      // Step 7: From any MARC instance detailed view click "Actions" > "View source"
+      InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
+      InventorySearchAndFilter.selectSearchResultItem();
+      InventoryInstance.waitLoading();
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+      InstanceRecordView.viewSource();
+      InventoryViewSource.waitLoading();
+
+      // Step 8: Click "Actions" on MARC bibliographic record page
+      InventoryViewSource.validateOptionsInActionsMenu({
+        edit: true,
+        print: true,
+        quickExport: false,
+      });
     },
   );
 });

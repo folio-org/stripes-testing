@@ -9,6 +9,7 @@ import {
   TextArea,
   Checkbox,
   HTML,
+  MetaSection,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -98,6 +99,14 @@ export default {
       nameTextfield.fillIn(newName),
       descriptionTextarea.fillIn(newDescription),
     ]);
+  },
+
+  verifyMetadataSectionExists() {
+    cy.expect(
+      Accordion('Summary')
+        .find(MetaSection({ open: false }))
+        .exists(),
+    );
   },
 
   duplicateFieldMappingProfile() {
