@@ -1,6 +1,7 @@
 import { including } from '@interactors/html';
 import {
   Button,
+  Callout,
   Checkbox,
   Heading,
   KeyValue,
@@ -178,6 +179,8 @@ export default {
     cy.get('button[id="footer-save-entity"]').click();
     cy.wait(1000);
     cy.expect(staffSlipPaneContent.absent());
+    cy.expect(Callout().exists());
+    cy.do(Callout().dismiss());
   },
   checkAfterUpdate(staffSlipType) {
     InteractorsTools.checkCalloutMessage(
