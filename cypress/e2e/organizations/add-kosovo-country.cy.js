@@ -68,12 +68,12 @@ describe('Organizations', () => {
       Organizations.fillInInfoNewOrganization(organization1);
       Organizations.openContactInformationSection();
       Organizations.clickAddAdressButton();
-      Organizations.addAdressToOrganization(adress);
+      Organizations.addAdressToOrganization(adress, 0);
       Organizations.saveOrganization();
       Organizations.searchByParameters('Name', organization2.name);
       Organizations.selectOrganization(organization2.name);
       Organizations.editOrganization();
-      Organizations.addAdressToOrganization(adress);
+      Organizations.addAdressToOrganization(adress, 0);
       Organizations.saveOrganization();
       Organizations.resetFilters();
       Organizations.selectCountryFilter('Kosovo');

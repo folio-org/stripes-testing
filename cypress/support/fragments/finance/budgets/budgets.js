@@ -123,4 +123,18 @@ export default {
     Ledgers.deleteledgerViaApi(ledgerId);
     FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
   },
+
+  batchProcessTransactions(batchBody) {
+    return cy
+      .okapiRequest({
+        path: 'finance/transactions/batch-all-or-nothing',
+        body: batchBody,
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: true,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
 };

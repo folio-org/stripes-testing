@@ -469,7 +469,7 @@ export default {
   verifyRequestIsCreated: () => {
     cy.expect(
       Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ columnIndex: 8, content: 'Yes' }))
+        .find(MultiColumnListCell({ columnIndex: 11, content: 'Yes' }))
         .exists(),
     );
   },

@@ -50,6 +50,7 @@ describe(
       });
       cy.createOrderApi(order).then((orderResponse) => {
         orderNumber = orderResponse.body.poNumber;
+        Orders.resetFiltersIfActive();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();

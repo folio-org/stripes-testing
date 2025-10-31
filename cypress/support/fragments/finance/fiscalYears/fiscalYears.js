@@ -19,6 +19,7 @@ import {
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 import FiscalYearDetails from './fiscalYearDetails';
+import Headline from '../../../../../interactors/headline';
 
 const createdFiscalYearNameXpath =
   '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
@@ -314,5 +315,10 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
+  },
+
+  assertAllocationToolsSubmenuAbsent() {
+    cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
+    cy.expect(Headline('Allocation tools').absent());
   },
 };

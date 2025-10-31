@@ -1,3 +1,4 @@
+import { HTML } from '@interactors/html';
 import {
   Button,
   ConfirmationModal,
@@ -108,5 +109,9 @@ export default {
         matching(new RegExp(States.amountAllocatedSuccessfully)),
       );
     }
+  },
+
+  expectError: (message) => {
+    cy.expect(HTML({ className: including('feedbackError') }).has({ text: including(message) }));
   },
 };

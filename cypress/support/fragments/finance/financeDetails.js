@@ -99,49 +99,46 @@ export default {
     }
   },
   checkExpenseClassesTableContent({ section, items }) {
-    items.forEach((item, index) => {
-      if (item.name) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Expense class' }))
-            .has({ content: including(item.name) }),
-        );
-      }
-      if (item.encumbered) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Encumbered' }))
-            .has({ content: including(item.encumbered) }),
-        );
-      }
-      if (item.awaitingPayment) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Awaiting payment' }))
-            .has({ content: including(item.awaitingPayment) }),
-        );
-      }
-      if (item.expended) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Expended' }))
-            .has({ content: including(item.expended) }),
-        );
-      }
-      if (item.percentExpended) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Percent of total expended' }))
-            .has({ content: including(item.percentExpended) }),
-        );
-      }
-      if (item.status) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Status' }))
-            .has({ content: including(item.status) }),
-        );
-      }
+    const col = {
+      name: 'Expense class',
+      encumbered: 'Encumbered',
+      awaitingPayment: 'Awaiting payment',
+      expended: 'Expended',
+      percentExpended: 'Percent of total expended',
+      status: 'Status',
+    };
+    const list = Array.isArray(items) ? items : items ? [items] : [];
+
+    list.forEach((item) => {
+      let rowIndex;
+
+      cy.do(
+        section
+          .find(
+            MultiColumnListCell({
+              column: col.name,
+              content: including(item.name),
+            }),
+          )
+          .perform((el) => {
+            const attr = el.closest('[data-row-index]')?.getAttribute('data-row-index');
+            rowIndex = Number(attr.replace('row-', ''));
+          }),
+      );
+
+      cy.then(() => {
+        Object.entries(item).forEach(([key, val]) => {
+          if (val == null) return;
+          const column = col[key];
+          if (!column) return;
+
+          cy.expect(
+            section
+              .find(MultiColumnListCell({ row: rowIndex, column }))
+              .has({ content: including(String(val)) }),
+          );
+        });
+      });
     });
   },
   checkLedgersDetails(ledgers = []) {
