@@ -112,13 +112,17 @@ export default {
     });
   },
 
-  verifyFieldMappingProfilesPane() {
+  verifyFieldMappingProfilesPane(isNewButtonExist = true) {
     cy.expect([
       fieldMappingProfilesPane.exists(),
-      newButton.has({ disabled: false }),
       TextField('Search Field mapping profiles').exists(),
       searchButton.has({ disabled: true }),
     ]);
+    if (isNewButtonExist) {
+      cy.expect(newButton.has({ disabled: false }));
+    } else {
+      cy.expect(newButton.absent());
+    }
     cy.do(cy.get('[class^=mclEndOfListContainer--]').should('have.text', 'End of list'));
     cy.wait(3000);
     this.verifyFieldMappingProfilesCount();
@@ -168,12 +172,14 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
-    this.scrollDownIfListOfResultsIsLong();
-
     cy.expect(MultiColumnListRow(including(name)).exists());
   },
 
   clickProfileNameFromTheList(name) {
     cy.do(MultiColumnListCell(including(name)).click());
+  },
+
+  verifyNewButtonAbsent() {
+    cy.expect(newButton.absent());
   },
 };

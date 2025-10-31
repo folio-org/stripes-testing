@@ -128,4 +128,12 @@ export default {
   clickCancelButton() {
     cy.do(cancelButton.click());
   },
+
+  verifyActionsButtonAbsent() {
+    cy.expect(actionsButton.absent());
+  },
+
+  clickXButton() {
+    cy.do(Button({ icon: 'times' }).click());
+  },
 };

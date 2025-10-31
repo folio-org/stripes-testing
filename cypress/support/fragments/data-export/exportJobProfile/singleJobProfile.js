@@ -69,4 +69,12 @@ export default {
     InteractorsTools.checkCalloutMessage(`Job profile ${name} has been successfully deleted`);
     cy.expect(MultiColumnListCell(name).absent());
   },
+
+  verifyActionsButtonAbsent() {
+    cy.expect(actionsButton.absent());
+  },
+
+  clickXButton() {
+    cy.do(Button({ icon: 'times' }).click());
+  },
 };
