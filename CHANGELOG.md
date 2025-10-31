@@ -5,6 +5,7 @@
 * Removed alerts and reporting codes. Refs MODORDERS-1269.
 * Use MessageBanner stripes component for user patron blocks warning. Update its message. Refs UITEST-136.
 * Update label for 38 position of MARC authority "008" field to "Mod Rec". Refs FAT-21567.
+* Delete broken Dockerfile (Node 8, Ubuntu Xenial). Refs UITEST-139.
 
 ## [5.0.0](https://github.com/folio-org/stripes-testing/tree/v5.0.0) (2025-02-24)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.8.0...v5.0.0)
