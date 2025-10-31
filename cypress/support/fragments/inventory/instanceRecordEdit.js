@@ -245,10 +245,15 @@ export default {
     cy.do(contributorButton.click());
   },
 
-  fillContributorData(indexRow, name, nameType, type) {
+  fillContributorData(indexRow, name, nameType, type, typeFreeText) {
     cy.do(TextArea({ name: `contributors[${indexRow}].name` }).fillIn(name));
     cy.do(Select({ name: `contributors[${indexRow}].contributorNameTypeId` }).choose(nameType));
     cy.do(Select({ name: `contributors[${indexRow}].contributorTypeId` }).choose(type));
+    if (typeFreeText) {
+      cy.do(
+        TextArea({ name: `contributors[${indexRow}].contributorTypeText` }).fillIn(typeFreeText),
+      );
+    }
   },
 
   fillResourceTitle(title) {
