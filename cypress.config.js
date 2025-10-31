@@ -20,41 +20,39 @@ const reportportalOptions = {
 };
 
 module.exports = defineConfig({
+  watchForFileChanges: false,
   retries: {
     runMode: 0,
     openMode: 0,
   },
   numTestsKeptInMemory: 1,
-  watchForFileChanges: true,
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
   defaultCommandTimeout: 51000,
   pageLoadTimeout: 60000,
-  requestTimeout: 60000,
-  responseTimeout: 60000,
+  responseTimeout: 240000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    OKAPI_HOST: 'https://kong-ptf-s-con.int.aws.folio.org',
+    OKAPI_TENANT: 'cs00000int',
+    diku_login: 'EBSCOAdmin',
+    diku_password: 'oaK0zRrMqd0v40YfMUucpiGw',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
-    // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
-    ecs_env_name: 'snapshot',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
     allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    rtrAuth: true,
-    ecsEnabled: false,
+    rtrAuth: false,
+    ecsEnabled: true,
     eureka: true,
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     newSettings: false,
+    ecs_env_name: 'snapshot',
   },
   reporterOptions: reportportalOptions,
   e2e: {
@@ -155,7 +153,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: 'https://ptf-s-con.int.aws.folio.org/',
     testIsolation: false,
   },
 });

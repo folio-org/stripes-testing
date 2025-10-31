@@ -359,7 +359,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                   () => getJobStatus(parentJobExecutionId),
                   (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
                   {
-                    timeout: 3 * 60_000,
+                    timeout: 3 * 240_000,
                     delay: 5 * 1_000,
                   },
                 );
