@@ -76,6 +76,7 @@ describe('Data Export', () => {
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
         cy.wait(1000);
+        ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
 
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(fieldMappingProfileName);
@@ -137,12 +138,14 @@ describe('Data Export', () => {
         ExportNewFieldMappingProfile.fillInFieldsSuppressionTextarea('501,', '502,', '503');
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(updatedFieldMappingProfileCalloutMessage);
+        ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
 
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(fieldMappingProfileName);
         SingleFieldMappingProfilePane.verifyActionOptions();
         SingleFieldMappingProfilePane.duplicateFieldMappingProfile();
         InteractorsTools.checkCalloutMessage(duplicatedFieldMappingProfileCalloutMessage);
+        ExportFieldMappingProfiles.searchFieldMappingProfile(duplicatedFieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(duplicatedFieldMappingProfileName);
         ExportFieldMappingProfiles.deleteMappingProfile(duplicatedFieldMappingProfileName);
       },

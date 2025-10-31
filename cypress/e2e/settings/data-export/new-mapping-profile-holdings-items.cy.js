@@ -93,7 +93,7 @@ describe('Data Export', () => {
 
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-
+        ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
       },
     );
