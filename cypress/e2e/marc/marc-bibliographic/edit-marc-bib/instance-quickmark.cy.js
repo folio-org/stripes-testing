@@ -45,7 +45,6 @@ describe('MARC', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
 
-            cy.reload();
             InventoryActions.import();
             InventoryInstance.getId().then((id) => {
               instanceID = id;
@@ -128,8 +127,6 @@ describe('MARC', () => {
                 checkedTypeDropdownOption,
               );
               cy.wait(1_000);
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(3_000);
               QuickMarcEditor.pressSaveAndClose();
               InventoryInstance.waitLoading();
             }
