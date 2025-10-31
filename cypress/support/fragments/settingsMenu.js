@@ -93,6 +93,7 @@ export default {
   ordersLoanTypePath: 'settings/orders/loan-type',
   ordersRoutingAddressPath: 'settings/orders/routing-address',
   ordersListConfigurationPath: 'settings/orders/list-configuration',
+  ordersClosingPurchaseOrderReasonsPath: 'settings/orders/closing-reasons',
   // Users
   patronGroups: 'settings/users/groups',
   addressTypes: 'settings/users/addresstypes',
