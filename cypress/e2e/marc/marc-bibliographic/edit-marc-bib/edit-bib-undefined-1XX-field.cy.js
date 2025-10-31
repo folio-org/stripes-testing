@@ -50,8 +50,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519975 Edit MARC bib record with undefined 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519975'] },
+        'C895670 Edit MARC bib record with undefined 1XX field (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C895670'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
