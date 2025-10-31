@@ -49,10 +49,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              });
               InventoryInstances.searchByTitle(testData.instanceID);
             });
         });
@@ -76,7 +72,9 @@ describe('MARC', () => {
               const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
                 QuickMarcEditor.getFreeTags()[1],
               );
-              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.deleteConfirmationPresented();
+              QuickMarcEditor.confirmDelete();
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.contains(expectedInSourceRow);
@@ -116,10 +114,10 @@ describe('MARC', () => {
           () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
-            cy.reload();
-            QuickMarcEditor.waitLoading();
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.deleteConfirmationPresented();
+              QuickMarcEditor.confirmDelete();
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.notContains(deletedTag);
