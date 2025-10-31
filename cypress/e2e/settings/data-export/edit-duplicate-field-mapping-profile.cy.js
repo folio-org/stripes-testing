@@ -83,7 +83,7 @@ describe('Data Export', () => {
 
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(updatedFieldMappingProfileCalloutMessage);
-
+        ExportFieldMappingProfiles.searchFieldMappingProfile(updatedFieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
       },
     );
@@ -97,7 +97,8 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.duplicateFieldMappingProfile();
 
         InteractorsTools.checkCalloutMessage(duplicatedFieldMappingProfileCalloutMessage);
-        ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
+        ExportFieldMappingProfiles.searchFieldMappingProfile(duplicatedFieldMappingProfileName);
+        ExportFieldMappingProfiles.verifyProfileNameOnTheList(duplicatedFieldMappingProfileName);
       },
     );
   });
