@@ -140,8 +140,6 @@ describe('MARC', () => {
 
           // 5. Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthorities.verifyViewPaneContentExists();
           expectedSourceControlFields.forEach((field) => {

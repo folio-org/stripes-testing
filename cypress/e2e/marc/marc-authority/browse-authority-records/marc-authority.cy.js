@@ -148,7 +148,7 @@ describe('MARC', () => {
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
           MarcAuthority.change008Field('b', 'f', 'a');
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.contains('bfa');
         },
       );
