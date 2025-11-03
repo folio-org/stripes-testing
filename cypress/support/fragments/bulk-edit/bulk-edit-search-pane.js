@@ -165,6 +165,7 @@ export const ERROR_MESSAGES = {
   OPTIMISTIC_LOCKING:
     'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version',
   DUPLICATE_ENTRY: 'Duplicate entry',
+  SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
@@ -1401,6 +1402,10 @@ export default {
         });
       });
     });
+  },
+
+  verifyCheckboxesAbsentInActionsDropdownMenu() {
+    cy.expect(DropdownMenu().find(Checkbox()).absent());
   },
 
   verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
