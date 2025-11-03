@@ -188,6 +188,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyTheActionOptions(['Add', 'Remove', 'Remove all']);
 
         // Step 11: Select new statistical codes to add
+        BulkEditActions.verifyStatisticalCodesSortedAlphabetically();
+
         newStatisticalCodes.forEach((code) => {
           BulkEditActions.selectStatisticalCodeValue(code.fullName);
         });
@@ -200,6 +202,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectAction('Remove', 1);
 
         // Step 14: Select initial statistical codes to remove
+        BulkEditActions.verifyStatisticalCodesSortedAlphabetically(1);
+
         initialStatisticalCodes.forEach((code) => {
           BulkEditActions.selectStatisticalCodeValue(code.fullName, 1);
         });
