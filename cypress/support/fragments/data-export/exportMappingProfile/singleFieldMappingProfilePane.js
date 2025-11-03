@@ -9,6 +9,7 @@ import {
   TextArea,
   Checkbox,
   HTML,
+  MetaSection,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -100,6 +101,14 @@ export default {
     ]);
   },
 
+  verifyMetadataSectionExists() {
+    cy.expect(
+      Accordion('Summary')
+        .find(MetaSection({ open: false }))
+        .exists(),
+    );
+  },
+
   duplicateFieldMappingProfile() {
     cy.do([duplicateButton.click(), saveAndCloseButton.click()]);
   },
@@ -127,5 +136,13 @@ export default {
 
   clickCancelButton() {
     cy.do(cancelButton.click());
+  },
+
+  verifyActionsButtonAbsent() {
+    cy.expect(actionsButton.absent());
+  },
+
+  clickXButton() {
+    cy.do(Button({ icon: 'times' }).click());
   },
 };
