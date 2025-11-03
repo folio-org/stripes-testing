@@ -5,6 +5,7 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
@@ -231,6 +232,7 @@ describe('MARC', () => {
                 InventoryInstance.verifySelectMarcAuthorityModal();
                 InventoryInstance.verifySearchOptions();
                 InventoryInstance.searchResults(linking.value);
+                MarcAuthoritiesSearch.selectExcludeReferencesFilter();
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
@@ -311,7 +313,7 @@ describe('MARC', () => {
             });
             // 4 Click on the "Save & close" button.
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
             // 5 Scroll down to the "Subject" accordion button. "MARC authority" app icon is displayed next to each linked subject name
