@@ -6,6 +6,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -61,6 +65,8 @@ describe('MARC', () => {
       const user = {};
       let createdInstanceId;
 
+      let specId;
+
       before('Create test data', () => {
         cy.getAdminToken();
         cy.createTempUser([
@@ -69,6 +75,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           user.userProperties = createdUserProperties;
+
+          getBibliographicSpec().then((spec) => {
+            specId = spec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
             createdInstanceId = instanceId;
@@ -87,11 +98,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userProperties.userId);
         InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
         'C543837 Indicator boxes validation during deriving of MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543837'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543837'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
