@@ -135,8 +135,6 @@ describe('MARC', () => {
 
           // 3. Click on the "Save & close" button.
           MarcAuthority.clickSaveAndCloseButton();
-          cy.wait(1500);
-          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           expectedSourceControlFieldsWithoutIndicator.forEach((field) => {
             MarcAuthority.contains(field);
@@ -161,8 +159,6 @@ describe('MARC', () => {
 
           // 6. Click "Save & close" button
           MarcAuthority.clickSaveAndCloseButton();
-          cy.wait(1500);
-          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           expectedSourceControlFieldsWithIndicator.forEach((field) => {
             MarcAuthority.contains(field);
@@ -186,8 +182,6 @@ describe('MARC', () => {
           });
 
           // 9. Click "Save & keep editing" button
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           controlFieldWithoutIndicator.forEach((field, index) => {
