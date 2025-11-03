@@ -1,13 +1,13 @@
-import permissions from '../../../support/dictionary/permissions';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
-import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
-import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../../support/dictionary/permissions';
+import ExportJobProfiles from '../../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportNewJobProfile from '../../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
+import SingleJobProfile from '../../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
+import SelectJobProfile from '../../../../support/fragments/data-export/selectJobProfile';
+import SettingsDataExport from '../../../../support/fragments/data-export/settingsDataExport';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let user;
 const jobProfile = {

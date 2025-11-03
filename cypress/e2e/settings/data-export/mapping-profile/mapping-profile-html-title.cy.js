@@ -1,13 +1,13 @@
-import permissions from '../../../support/dictionary/permissions';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
-import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../../support/dictionary/permissions';
+import ExportJobProfiles from '../../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import ExportNewFieldMappingProfile from '../../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import SingleFieldMappingProfilePane from '../../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
+import SettingsDataExport from '../../../../support/fragments/data-export/settingsDataExport';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let user;
 const mappingProfile = {
