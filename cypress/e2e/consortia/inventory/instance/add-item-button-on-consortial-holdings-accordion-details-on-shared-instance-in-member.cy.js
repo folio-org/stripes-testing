@@ -125,7 +125,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitInstanceRecordViewOpened();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.college);

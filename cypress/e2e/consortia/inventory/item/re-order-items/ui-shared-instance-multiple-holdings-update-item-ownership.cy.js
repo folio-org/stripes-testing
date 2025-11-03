@@ -233,7 +233,7 @@ describe.skip('Inventory', () => {
             InventoryInstance.waitLoading();
 
             // Step 3: Expand Holdings A accordion and check the order field
-            InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+            InstanceRecordView.verifyConsortiaHoldingsAccordion(instanceId, false);
             InstanceRecordView.expandConsortiaHoldings();
             InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
             InstanceRecordView.expandMemberSubHoldings(tenantNames.university);

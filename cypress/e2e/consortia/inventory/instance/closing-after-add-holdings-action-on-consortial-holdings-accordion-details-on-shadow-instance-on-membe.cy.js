@@ -6,13 +6,14 @@ import {
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryNewHoldings from '../../../../support/fragments/inventory/inventoryNewHoldings';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordNew from '../../../../support/fragments/inventory/item/itemRecordNew';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -22,37 +23,44 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         shadowInstance: {
-          instanceTitle: `C411655 Autotest Instance ${getRandomPostfix()}`,
+          instanceTitle: `C411676 Autotest Instance ${getRandomPostfix()}`,
+          instanceTypeId: '',
         },
-        shadowHoldings: {},
-        shadowItem: { barcode: uuid() },
+        holdings: {},
+        item: { barcode: uuid() },
       };
 
-      before('Create test data', () => {
+      before('Create test data and login', () => {
         cy.getAdminToken();
         cy.getConsortiaId().then((consortiaId) => {
           testData.consortiaId = consortiaId;
 
-          cy.setTenant(Affiliations.College)
+          cy.setTenant(Affiliations.University)
             .then(() => {
               cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
                 testData.shadowInstance.instanceTypeId = instanceTypes[0].id;
               });
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
-                testData.shadowHoldings.holdingTypeId = res[0].id;
+                testData.holdings.holdingTypeId = res[0].id;
               });
               cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-                testData.shadowHoldings.locationId = res.id;
-                testData.shadowHoldings.locationName = res.name;
+                testData.holdings.locationId = res.id;
+              });
+              const locationData = Locations.getDefaultLocation({
+                servicePointId: ServicePoints.getDefaultServicePoint().id,
+              }).location;
+              Locations.createViaApi(locationData).then((location) => {
+                testData.location = location;
               });
               cy.getLoanTypes({ limit: 1 }).then((res) => {
-                testData.shadowItem.loanTypeId = res[0].id;
+                testData.item.loanTypeId = res[0].id;
               });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                testData.shadowItem.materialTypeId = res.id;
+              cy.getBookMaterialType().then((res) => {
+                testData.item.materialTypeId = res.id;
               });
             })
             .then(() => {
+              // create shadow instance with holdings and item
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
                   instanceTypeId: testData.shadowInstance.instanceTypeId,
@@ -60,27 +68,27 @@ describe('Inventory', () => {
                 },
                 holdings: [
                   {
-                    holdingsTypeId: testData.shadowHoldings.holdingTypeId,
-                    permanentLocationId: testData.shadowHoldings.locationId,
+                    holdingsTypeId: testData.holdings.holdingTypeId,
+                    permanentLocationId: testData.holdings.locationId,
                   },
                 ],
                 items: [
                   {
-                    barcode: testData.shadowItem.barcode,
+                    barcode: testData.item.barcode,
                     status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    permanentLoanType: { id: testData.shadowItem.loanTypeId },
-                    materialType: { id: testData.shadowItem.materialTypeId },
+                    permanentLoanType: { id: testData.item.loanTypeId },
+                    materialType: { id: testData.item.materialTypeId },
                   },
                 ],
               }).then((specialInstanceIds) => {
-                testData.instanceId = specialInstanceIds.instanceId;
-                testData.collegeHoldingId = specialInstanceIds.holdings[0].id;
-                testData.collegeItemId = specialInstanceIds.items[0].id;
+                testData.shadowInstance.id = specialInstanceIds.instanceId;
+                testData.holdings.id = specialInstanceIds.holdingIds[0].id;
+                testData.item.id = specialInstanceIds.items[0].id;
 
                 InventoryInstance.shareInstanceViaApi(
-                  testData.instanceId,
+                  testData.shadowInstance.id,
                   testData.consortiaId,
-                  Affiliations.College,
+                  Affiliations.University,
                   Affiliations.Consortia,
                 );
               });
@@ -88,7 +96,8 @@ describe('Inventory', () => {
         });
         cy.resetTenant();
 
-        cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        cy.getAdminToken();
+        cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
           testData.user = userProperties;
 
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
@@ -101,7 +110,7 @@ describe('Inventory', () => {
           cy.resetTenant();
 
           cy.login(testData.user.username, testData.user.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
         });
@@ -110,39 +119,38 @@ describe('Inventory', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.setTenant(Affiliations.College);
-        cy.deleteItemViaApi(testData.collegeItemId);
-        InventoryHoldings.deleteHoldingRecordViaApi(testData.collegeHoldingId);
+        cy.setTenant(Affiliations.University);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.barcode);
+        Locations.deleteViaApi(testData.location);
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        InventoryInstance.deleteInstanceViaApi(testData.shadowInstance.id);
       });
 
       it(
-        'C411655 (CONSORTIA) Verify Add item action on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411655'] },
+        'C411676 (CONSORTIA) Verify the closing after Add holdings action on Consortial holdings accordion details on shadow Instance on Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411676'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
-          InventoryInstance.waitInstanceRecordViewOpened();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, false);
           InstanceRecordView.expandConsortiaHoldings();
-          InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
-          InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
+          InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
+          InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
           InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
-            tenantNames.college,
-            Affiliations.College,
-            testData.collegeHoldingId,
+            tenantNames.university,
+            Affiliations.University,
+            testData.holdings.id,
           );
-          InstanceRecordView.clickAddItemByHoldingName({
-            holdingName: testData.shadowHoldings.locationName,
-          });
-          ItemRecordNew.waitLoading(testData.shadowInstance.instanceTitle);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          ItemRecordNew.cancel();
-          InventoryInstance.waitInstanceRecordViewOpened();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          InstanceRecordView.addConsortiaHoldings(tenantNames.university);
+          InventoryNewHoldings.fillPermanentLocation(testData.location.name);
+          InventoryNewHoldings.saveAndClose();
+          InstanceRecordView.waitLoading();
+          InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
         },
       );
     });

@@ -134,7 +134,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
       // check college holdings
-      InstanceRecordView.verifyConsortiaHoldingsAccordion();
+      InstanceRecordView.verifyConsortialHoldingsAccordion();
       InstanceRecordView.expandConsortiaHoldings();
       InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
     },
