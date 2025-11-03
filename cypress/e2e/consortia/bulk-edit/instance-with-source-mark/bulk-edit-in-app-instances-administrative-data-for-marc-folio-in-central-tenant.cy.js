@@ -174,6 +174,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.selectAction('Add');
           BulkEditActions.verifyActionSelected('Add');
+          BulkEditActions.verifyStatisticalCodesSortedAlphabetically();
           BulkEditActions.selectStatisticalCodeValue(statisticalCodeSecond.fullName);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
@@ -182,6 +183,7 @@ describe('Bulk-edit', () => {
             1,
           );
           BulkEditActions.selectAction('Remove', 1);
+          BulkEditActions.verifyStatisticalCodesSortedAlphabetically(1);
           BulkEditActions.selectStatisticalCodeValue(statisticalCodeFirst.fullName, 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();

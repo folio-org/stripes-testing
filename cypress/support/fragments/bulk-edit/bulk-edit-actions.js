@@ -958,10 +958,55 @@ export default {
     cy.do(
       bulkEditsAccordions
         .find(RepeatableFieldItem({ index: rowIndex }))
-        .find(MultiSelect({ id: 'statisticalCodes' }))
+        .find(statisticalCodeSelection)
         .select(value),
     );
     cy.wait(500);
+  },
+
+  verifyStatisticalCodesSortedAlphabetically(rowIndex = 0) {
+    cy.do(
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(statisticalCodeSelection)
+        .open(),
+    );
+    cy.then(() => {
+      return MultiSelectMenu().optionList({ id: 'multiselect-option-list-statisticalCodes' });
+    }).then((actualOptions) => {
+      const parsedOptions = actualOptions.map((option) => {
+        const match = option.match(/^([^:]+):\s*([^-]+)\s*-\s*(.+)\+$/);
+        if (match) {
+          return {
+            original: option,
+            type: match[1].trim(),
+            code: match[2].trim(),
+            name: match[3].trim(),
+          };
+        }
+        return {
+          original: option,
+          type: '',
+          code: '',
+          name: option,
+        };
+      });
+
+      const sortedOptions = [...parsedOptions].sort((a, b) => {
+        const typeCompare = a.type.localeCompare(b.type);
+        if (typeCompare !== 0) return typeCompare;
+
+        const codeCompare = a.code.localeCompare(b.code);
+        if (codeCompare !== 0) return codeCompare;
+
+        return a.name.localeCompare(b.name);
+      });
+
+      const actualOrder = parsedOptions.map((opt) => opt.original);
+      const expectedOrder = sortedOptions.map((opt) => opt.original);
+
+      expect(actualOrder).to.deep.equal(expectedOrder);
+    });
   },
 
   verifyValueInSecondTextArea(value, rowIndex = 0) {
