@@ -199,7 +199,7 @@ describe(
           BulkEditActions.verifySubfield('a');
 
           // Step 21: Verify action options
-          BulkEditActions.verifyTheActionOptionsForMarcInstances(['Add', 'Find', 'Remove all']);
+          BulkEditActions.verifyTheActionOptionsEqual(['Add', 'Find', 'Remove all']);
 
           // Step 22: Select "Add" option
           BulkEditActions.selectActionForMarcInstance('Add');

@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -24,8 +26,7 @@ const instanceUUIDsFileName = `instanceUUIDs_${getRandomPostfix()}.csv`;
 const newAdministrativeNote = 'Admin note added in Inventory';
 const dissertationNote = 'Dissertation note added during Bulk Edit';
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
-const errorMessage =
-  'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version';
+const errorMessage = ERROR_MESSAGES.OPTIMISTIC_LOCKING;
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {

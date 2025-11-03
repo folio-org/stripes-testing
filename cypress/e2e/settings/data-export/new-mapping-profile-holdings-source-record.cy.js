@@ -81,7 +81,7 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-
+        ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
       },
     );
