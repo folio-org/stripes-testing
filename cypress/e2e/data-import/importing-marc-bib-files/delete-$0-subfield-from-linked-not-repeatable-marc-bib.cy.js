@@ -36,6 +36,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -272,6 +273,7 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
+        SelectJobProfile.searchForAJobProfile('Default instances export job profile');
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
         ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

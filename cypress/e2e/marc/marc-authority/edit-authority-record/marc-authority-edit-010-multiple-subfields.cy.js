@@ -83,8 +83,9 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.field010.subfield1, 5);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
+          cy.wait(3000);
           MarcAuthority.changeField(
             testData.field010.tag,
             `${testData.field010.subfield1} ${testData.field010.subfield2}`,

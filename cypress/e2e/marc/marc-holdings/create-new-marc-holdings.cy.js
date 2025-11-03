@@ -273,8 +273,8 @@ describe('MARC', () => {
         QuickMarcEditor.verifyTagValue(5, '85');
         QuickMarcEditor.checkContent('', 5);
         QuickMarcEditor.updateExistingTagName('85', testData.tag852);
-        QuickMarcEditor.selectExistingHoldingsLocation(location);
-        QuickMarcEditor.checkContent(`$b ${location.code} `, 5);
+        QuickMarcEditor.updateExistingField(testData.tag852, `$b ${location.code}`);
+        QuickMarcEditor.checkContentByTag(testData.tag852, `$b ${location.code}`);
         QuickMarcEditor.updateExistingTagName(testData.tag852, '85');
         QuickMarcEditor.deleteFieldAndCheck(5, testData.tag852);
         QuickMarcEditor.afterDeleteNotification('85');
