@@ -1024,6 +1024,7 @@ export default {
 
   openMoveItemsWithinAnInstance() {
     this.waitInventoryLoading();
+    cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.expect(moveItemsButton.exists());
