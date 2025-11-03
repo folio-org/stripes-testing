@@ -1,4 +1,5 @@
-import permissions from '../../support/dictionary/permissions';
+import Affiliations from '../../support/dictionary/affiliations';
+import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
@@ -9,18 +10,18 @@ describe('Consortia', () => {
   let secondUser;
 
   before(() => {
-    cy.setTenant('consortium');
     cy.getAdminToken();
+    cy.setTenant(Affiliations.Consortia);
 
     cy.createTempUser([]).then((userProperties) => {
       firstUser = userProperties;
     });
 
     cy.createTempUser([
-      permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-      permissions.consortiaSettingsConsortiaAffiliationsView.gui,
-      permissions.uiUsersPermissionsView.gui,
-      permissions.uiUsersView.gui,
+      Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
+      Permissions.consortiaSettingsConsortiaAffiliationsView.gui,
+      Permissions.uiUsersPermissionsView.gui,
+      Permissions.uiUsersView.gui,
     ]).then((secondUserProperties) => {
       secondUser = secondUserProperties;
       cy.login(secondUser.username, secondUser.password, {
@@ -31,7 +32,7 @@ describe('Consortia', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin();
+    cy.getAdminToken();
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
   });
@@ -45,7 +46,7 @@ describe('Consortia', () => {
       UsersCard.varifyUserCardOpened();
       UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('Consortium', 1, 'Consortium');
+      UsersCard.verifyAffiliationsDetails('Central Office', 1, 'Central Office');
       UsersCard.expandAffiliationsAccordion();
       UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.affiliationsAccordionCovered();

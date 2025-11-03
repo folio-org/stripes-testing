@@ -1,11 +1,11 @@
-import Permissions from '../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import Users from '../../../support/fragments/users/users';
+import Permissions from '../../../support/dictionary/permissions';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -29,6 +29,8 @@ describe('Consortia', () => {
             Permissions.consortiaSettingsSettingsMembershipEdit.gui,
             Permissions.consortiaSettingsSettingsMembershipView.gui,
           ]);
+          cy.resetTenant();
+
           cy.login(user.username, user.password, {
             path: SettingsMenu.consortiumManagerPath,
             waiter: ConsortiumManager.waitLoading,
@@ -37,7 +39,6 @@ describe('Consortia', () => {
     });
 
     after('Delete users, data', () => {
-      cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
@@ -47,7 +48,6 @@ describe('Consortia', () => {
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
         ConsortiumManager.varifyConsortiumManagerOnPage();
-        ConsortiumManager.switchActiveAffiliationExists();
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         ConsortiumManager.varifyConsortiumManagerIsAbsent();
