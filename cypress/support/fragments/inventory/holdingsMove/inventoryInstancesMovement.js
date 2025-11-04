@@ -42,6 +42,13 @@ export default {
         .click(),
     );
   },
+  closeInRightForm() {
+    cy.do(
+      Section({ id: 'movement-to-instance-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
   verifyHoldingsMoved(holdingName, itemCount) {
     cy.expect(
       Accordion({ label: including(`Holdings: ${holdingName}`) })
