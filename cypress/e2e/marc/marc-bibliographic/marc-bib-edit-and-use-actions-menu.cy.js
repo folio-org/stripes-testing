@@ -47,7 +47,7 @@ describe('MARC', () => {
     });
 
     it(
-      'C10929 Change the classification field in quickMARC and verify change in the instance record (spitfire)',
+      'C10929 Inventory Action menu use after closing quickMARC (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C10929'] },
       () => {
         InventoryInstances.searchByTitle(createdInstanceId);
