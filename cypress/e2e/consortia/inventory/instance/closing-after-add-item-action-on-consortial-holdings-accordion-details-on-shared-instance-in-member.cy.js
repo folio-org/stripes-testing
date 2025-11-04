@@ -1,16 +1,17 @@
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordNew from '../../../../support/fragments/inventory/item/itemRecordNew';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -20,7 +21,7 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         shadowInstance: {
-          instanceTitle: `C411657 Autotest Instance ${getRandomPostfix()}`,
+          instanceTitle: `C411664 Autotest Instance ${getRandomPostfix()}`,
           instanceTypeId: '',
         },
         holdings: {},
@@ -40,21 +41,17 @@ describe('Inventory', () => {
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
                 testData.holdings.holdingTypeId = res[0].id;
               });
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.holdings.location = location;
-                  testData.holdings.locationId = location.id;
-                  testData.holdings.locationName = location.name;
-                });
+              cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
+                testData.holdings.locationId = res.id;
+                testData.holdings.locationName = res.name;
               });
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 testData.item.loanTypeId = res[0].id;
+                testData.item.loanTypeName = res[0].name;
               });
               cy.getBookMaterialType().then((res) => {
                 testData.item.materialTypeId = res.id;
+                testData.item.materialTypeName = res.name;
               });
             })
             .then(() => {
@@ -109,7 +106,6 @@ describe('Inventory', () => {
 
           cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
         });
@@ -119,9 +115,7 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        InventoryItems.deleteItemViaApi(testData.item.id);
-        InventoryHoldings.deleteHoldingRecordViaApi(testData.holdings.id);
-        Locations.deleteViaApi(testData.holdings.location);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.barcode);
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
@@ -129,8 +123,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411657 (CONSORTIA) Verify Add holdings button on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411657'] },
+        'C411664 (CONSORTIA) Verify the closing after Add item action on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411664'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
@@ -145,8 +139,28 @@ describe('Inventory', () => {
             Affiliations.College,
             testData.holdings.id,
           );
-          InstanceRecordView.addConsortiaHoldings(tenantNames.college);
+          InstanceRecordView.clickAddItemByHoldingName({
+            holdingName: testData.holdings.locationName,
+          });
+          ItemRecordNew.waitLoading(testData.shadowInstance.instanceTitle);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ItemRecordNew.cancel();
+          InstanceRecordView.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          InstanceRecordView.clickAddItemByHoldingName({
+            holdingName: testData.holdings.locationName,
+          });
+          ItemRecordNew.waitLoading(testData.shadowInstance.instanceTitle);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ItemRecordNew.fillItemRecordFields({
+            barcode: `C411664-${getRandomPostfix()}`,
+            materialType: testData.item.materialTypeName,
+            loanType: testData.item.loanTypeName,
+          });
+          ItemRecordNew.saveAndClose(true);
+          InstanceRecordView.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
         },
       );
     });

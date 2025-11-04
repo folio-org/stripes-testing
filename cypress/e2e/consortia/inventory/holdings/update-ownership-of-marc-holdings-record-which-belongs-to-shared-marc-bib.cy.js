@@ -129,7 +129,7 @@ describe('Inventory', () => {
             );
           });
           InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
