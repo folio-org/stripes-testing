@@ -668,8 +668,11 @@ export default {
 
   addConsortiaHoldings: (memberTenantName) => {
     cy.wait(2000);
+    cy.intercept('locations?*').as('getHoldingsPage');
     cy.do(Accordion(memberTenantName).find(addHoldingsButton).click());
-    InventoryNewHoldings.waitLoading();
+    cy.wait('@getHoldingsPage', { timeout: 5_000 }).then(() => {
+      InventoryNewHoldings.waitLoading();
+    });
   },
 
   clickAddItemByHoldingName({ holdingName } = {}) {
@@ -916,10 +919,17 @@ export default {
     cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
   },
 
-  verifyConsortiaHoldingsAccordion(isOpen = false) {
+  verifyConsortialHoldingsAccordion(isOpen = false) {
     cy.expect([
       Section({ id: including('consortialHoldings') }).exists(),
       consortiaHoldingsAccordion.has({ open: isOpen }),
+    ]);
+  },
+
+  verifyConsortiaHoldingsAccordion(instanceId, isOpen = false) {
+    cy.expect([
+      Section({ id: `consortialHoldings.${instanceId}` }).exists(),
+      Accordion({ id: `consortialHoldings.${instanceId}` }).has({ open: isOpen }),
     ]);
   },
 

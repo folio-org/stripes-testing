@@ -6,7 +6,6 @@ import {
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -22,13 +21,14 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         shadowInstance: {
-          instanceTitle: `C411655 Autotest Instance ${getRandomPostfix()}`,
+          instanceTitle: `C411664 Autotest Instance ${getRandomPostfix()}`,
+          instanceTypeId: '',
         },
-        shadowHoldings: {},
-        shadowItem: { barcode: uuid() },
+        holdings: {},
+        item: { barcode: uuid() },
       };
 
-      before('Create test data', () => {
+      before('Create test data and login', () => {
         cy.getAdminToken();
         cy.getConsortiaId().then((consortiaId) => {
           testData.consortiaId = consortiaId;
@@ -39,20 +39,23 @@ describe('Inventory', () => {
                 testData.shadowInstance.instanceTypeId = instanceTypes[0].id;
               });
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
-                testData.shadowHoldings.holdingTypeId = res[0].id;
+                testData.holdings.holdingTypeId = res[0].id;
               });
               cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-                testData.shadowHoldings.locationId = res.id;
-                testData.shadowHoldings.locationName = res.name;
+                testData.holdings.locationId = res.id;
+                testData.holdings.locationName = res.name;
               });
               cy.getLoanTypes({ limit: 1 }).then((res) => {
-                testData.shadowItem.loanTypeId = res[0].id;
+                testData.item.loanTypeId = res[0].id;
+                testData.item.loanTypeName = res[0].name;
               });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                testData.shadowItem.materialTypeId = res.id;
+              cy.getBookMaterialType().then((res) => {
+                testData.item.materialTypeId = res.id;
+                testData.item.materialTypeName = res.name;
               });
             })
             .then(() => {
+              // create shadow instance with holdings and item
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
                   instanceTypeId: testData.shadowInstance.instanceTypeId,
@@ -60,25 +63,25 @@ describe('Inventory', () => {
                 },
                 holdings: [
                   {
-                    holdingsTypeId: testData.shadowHoldings.holdingTypeId,
-                    permanentLocationId: testData.shadowHoldings.locationId,
+                    holdingsTypeId: testData.holdings.holdingTypeId,
+                    permanentLocationId: testData.holdings.locationId,
                   },
                 ],
                 items: [
                   {
-                    barcode: testData.shadowItem.barcode,
+                    barcode: testData.item.barcode,
                     status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    permanentLoanType: { id: testData.shadowItem.loanTypeId },
-                    materialType: { id: testData.shadowItem.materialTypeId },
+                    permanentLoanType: { id: testData.item.loanTypeId },
+                    materialType: { id: testData.item.materialTypeId },
                   },
                 ],
               }).then((specialInstanceIds) => {
-                testData.instanceId = specialInstanceIds.instanceId;
-                testData.collegeHoldingId = specialInstanceIds.holdings[0].id;
-                testData.collegeItemId = specialInstanceIds.items[0].id;
+                testData.shadowInstance.id = specialInstanceIds.instanceId;
+                testData.holdings.id = specialInstanceIds.holdingIds[0].id;
+                testData.item.id = specialInstanceIds.items[0].id;
 
                 InventoryInstance.shareInstanceViaApi(
-                  testData.instanceId,
+                  testData.shadowInstance.id,
                   testData.consortiaId,
                   Affiliations.College,
                   Affiliations.Consortia,
@@ -88,6 +91,7 @@ describe('Inventory', () => {
         });
         cy.resetTenant();
 
+        cy.getAdminToken();
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
@@ -111,38 +115,52 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        cy.deleteItemViaApi(testData.collegeItemId);
-        InventoryHoldings.deleteHoldingRecordViaApi(testData.collegeHoldingId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.barcode);
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        InventoryInstance.deleteInstanceViaApi(testData.shadowInstance.id);
       });
 
       it(
-        'C411655 (CONSORTIA) Verify Add item action on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411655'] },
+        'C411664 (CONSORTIA) Verify the closing after Add item action on Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411664'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
-          InventoryInstance.waitInstanceRecordViewOpened();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
           InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
             tenantNames.college,
             Affiliations.College,
-            testData.collegeHoldingId,
+            testData.holdings.id,
           );
           InstanceRecordView.clickAddItemByHoldingName({
-            holdingName: testData.shadowHoldings.locationName,
+            holdingName: testData.holdings.locationName,
           });
           ItemRecordNew.waitLoading(testData.shadowInstance.instanceTitle);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           ItemRecordNew.cancel();
-          InventoryInstance.waitInstanceRecordViewOpened();
+          InstanceRecordView.waitLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          InstanceRecordView.clickAddItemByHoldingName({
+            holdingName: testData.holdings.locationName,
+          });
+          ItemRecordNew.waitLoading(testData.shadowInstance.instanceTitle);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ItemRecordNew.fillItemRecordFields({
+            barcode: `C411664-${getRandomPostfix()}`,
+            materialType: testData.item.materialTypeName,
+            loanType: testData.item.loanTypeName,
+          });
+          ItemRecordNew.saveAndClose(true);
+          InstanceRecordView.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
         },
       );
     });
