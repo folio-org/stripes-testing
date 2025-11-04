@@ -9,12 +9,19 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import { matching } from '../../../interactors';
 import OrderStates from '../../support/fragments/orders/orderStates';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
   const isOpenOrderEnabled = true;
   const testData = {
     organization: NewOrganization.getDefaultOrganization(),
-    orderTemplate: OrderTemplates.getDefaultOrderTemplate({ orderType: 'Ongoing' }),
+    orderTemplate: OrderTemplates.getDefaultOrderTemplate({
+      additionalProperties: {
+        orderType: 'Ongoing',
+        checkinItems: false,
+        renewalNote: `autotest_renewal_note_${getRandomPostfix()}`,
+      },
+    }),
     user: {},
   };
 
