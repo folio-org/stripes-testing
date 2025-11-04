@@ -220,7 +220,7 @@ export default {
   },
 
   openCancelRequestForm() {
-    cy.do([actionsButton.click(), cancelRequestButton.click()]);
+    cy.do([actionsButton.click(), cy.wait(3000), cancelRequestButton.click()]);
   },
 
   verifyCancelRequestModalDisplayed() {
