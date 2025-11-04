@@ -5,12 +5,19 @@ import { NewOrganization, Organizations } from '../../support/fragments/organiza
 import { OpenOrder, OrderTemplates } from '../../support/fragments/settings/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
   const isOpenOrderEnabled = true;
   const testData = {
     organization: NewOrganization.getDefaultOrganization(),
-    orderTemplate: OrderTemplates.getDefaultOrderTemplate({ orderType: 'Ongoing' }),
+    orderTemplate: OrderTemplates.getDefaultOrderTemplate({
+      additionalProperties: {
+        orderType: 'Ongoing',
+        checkinItems: false,
+        renewalNote: `autotest_renewal_note_${getRandomPostfix()}`,
+      },
+    }),
     user: {},
   };
 
