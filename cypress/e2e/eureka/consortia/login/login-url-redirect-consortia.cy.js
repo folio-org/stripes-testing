@@ -8,64 +8,66 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 
 describe('Eureka', () => {
   describe('Login', () => {
-    const capabSetsToAssign = [
-      CapabilitiySets.uiInventory,
-      CapabilitiySets.uiCheckin,
-      CapabilitiySets.uiCourses,
-      CapabilitiySets.uiMarcAuthoritiesAuthorityRecordView,
-    ];
+    describe('Consortia', () => {
+      const capabSetsToAssign = [
+        CapabilitiySets.uiInventory,
+        CapabilitiySets.uiCheckin,
+        CapabilitiySets.uiCourses,
+        CapabilitiySets.uiMarcAuthoritiesAuthorityRecordView,
+      ];
 
-    let tempUser;
+      let tempUser;
 
-    before('Create users, data', () => {
-      cy.getAdminToken();
-      cy.createTempUser([]).then((createdUserProperties) => {
-        tempUser = createdUserProperties;
-        cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssign);
+      before('Create users, data', () => {
+        cy.getAdminToken();
+        cy.createTempUser([]).then((createdUserProperties) => {
+          tempUser = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssign);
+        });
       });
+
+      after('Delete users, data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(tempUser.userId);
+      });
+
+      it(
+        'C451520 Original URL restored after logging in to ECS environment (consortia) (eureka)',
+        { tags: ['smokeECS', 'eureka', 'C451520'] },
+        () => {
+          cy.login(tempUser.username, tempUser.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
+          cy.logout();
+
+          cy.login(tempUser.username, tempUser.password, {
+            path: TopMenu.checkInPath,
+            waiter: CheckInActions.verifyAccessDeniedModal,
+            authRefresh: true,
+          });
+          CheckInActions.closeAccessDeniedModal();
+          cy.logout();
+
+          cy.login(tempUser.username, tempUser.password, {
+            path: TopMenu.coursesPath,
+            waiter: Courses.waitLoading,
+            authRefresh: true,
+          });
+          cy.logout();
+
+          cy.login(tempUser.username, tempUser.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
+          });
+          cy.logout();
+
+          cy.login(tempUser.username, tempUser.password);
+        },
+      );
     });
-
-    after('Delete users, data', () => {
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(tempUser.userId);
-    });
-
-    it(
-      'C451520 Original URL restored after logging in to ECS environment (consortia) (eureka)',
-      { tags: ['smokeECS', 'eureka', 'C451520'] },
-      () => {
-        cy.login(tempUser.username, tempUser.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-          authRefresh: true,
-        });
-        cy.logout();
-
-        cy.login(tempUser.username, tempUser.password, {
-          path: TopMenu.checkInPath,
-          waiter: CheckInActions.verifyAccessDeniedModal,
-          authRefresh: true,
-        });
-        CheckInActions.closeAccessDeniedModal();
-        cy.logout();
-
-        cy.login(tempUser.username, tempUser.password, {
-          path: TopMenu.coursesPath,
-          waiter: Courses.waitLoading,
-          authRefresh: true,
-        });
-        cy.logout();
-
-        cy.login(tempUser.username, tempUser.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-          authRefresh: true,
-        });
-        cy.logout();
-
-        cy.login(tempUser.username, tempUser.password);
-      },
-    );
   });
 });
