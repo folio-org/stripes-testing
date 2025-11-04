@@ -1,7 +1,9 @@
 import uuid from 'uuid';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
@@ -147,6 +149,7 @@ describe('Bulk-edit', () => {
               fileName: userUUIDsFileName,
               errorsFileName: errorsFromMatchingFileNameWithUUIDs,
               identifiers: [collegeUser.userId, invalidIdentifier, universityUser.userId],
+              isShadowUserError: true,
             },
             {
               user: users[1],
@@ -171,56 +174,107 @@ describe('Bulk-edit', () => {
             },
           ];
 
-          testParams.forEach(({ user, identifierType, fileName, errorsFileName, identifiers }) => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', identifierType);
-            BulkEditSearchPane.uploadFile(fileName);
-            BulkEditSearchPane.verifyPaneTitleFileName(fileName);
-            BulkEditSearchPane.verifyPaneRecordsCount('0 user');
-            BulkEditSearchPane.verifyFileNameHeadLine(fileName);
-            BulkEditSearchPane.verifyErrorLabel(3);
-            BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
-            BulkEditSearchPane.verifyPaginatorInErrorsAccordion(3);
+          testParams.forEach(
+            ({
+              user,
+              identifierType,
+              fileName,
+              errorsFileName,
+              identifiers,
+              isShadowUserError,
+            }) => {
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', identifierType);
+              BulkEditSearchPane.uploadFile(fileName);
+              BulkEditSearchPane.verifyPaneTitleFileName(fileName);
+              BulkEditSearchPane.verifyPaneRecordsCount('0 user');
+              BulkEditSearchPane.verifyFileNameHeadLine(fileName);
+              BulkEditSearchPane.verifyErrorLabel(3);
+              BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
+              BulkEditSearchPane.verifyPaginatorInErrorsAccordion(3);
 
-            identifiers.forEach((identifier) => {
-              BulkEditSearchPane.verifyNonMatchedResults(identifier);
-            });
+              const noMatchIdentifiers = identifiers.slice(0, 2);
+              const shadowRecordIdentifier = identifiers[2];
 
-            BulkEditActions.openActions();
-            BulkEditSearchPane.searchColumnNameTextfieldAbsent();
-            BulkEditActions.downloadErrors();
+              if (isShadowUserError) {
+                noMatchIdentifiers.forEach((identifier) => {
+                  BulkEditSearchPane.verifyNonMatchedResults(identifier);
+                });
 
-            identifiers.forEach((identifier) => {
-              ExportFile.verifyFileIncludes(errorsFileName, [`ERROR,${identifier},${errorReason}`]);
-            });
+                BulkEditSearchPane.verifyErrorByIdentifier(
+                  shadowRecordIdentifier,
+                  ERROR_MESSAGES.SHADOW_RECORDS_CANNOT_BE_BULK_EDITED,
+                );
+              } else {
+                identifiers.forEach((identifier) => {
+                  BulkEditSearchPane.verifyNonMatchedResults(identifier);
+                });
+              }
 
-            BulkEditFiles.verifyCSVFileRecordsNumber(errorsFileName, 3);
+              BulkEditActions.openActions();
+              BulkEditSearchPane.verifyCheckboxesAbsentInActionsDropdownMenu();
+              BulkEditSearchPane.searchColumnNameTextfieldAbsent();
+              BulkEditActions.downloadErrors();
 
-            // remove earlier diwnloaded files
-            FileManager.deleteFile(`cypress/fixtures/${fileName}`);
-            FileManager.deleteFileFromDownloadsByMask(errorsFileName);
+              if (isShadowUserError) {
+                noMatchIdentifiers.forEach((identifier) => {
+                  ExportFile.verifyFileIncludes(errorsFileName, [
+                    `ERROR,${identifier},${errorReason}`,
+                  ]);
+                });
 
-            BulkEditSearchPane.openLogsSearch();
-            BulkEditLogs.verifyLogsPane();
-            BulkEditLogs.checkUsersCheckbox();
-            BulkEditLogs.verifyLogStatus(user.username, 'Completed with errors');
-            BulkEditLogs.clickActionsRunBy(user.username);
-            BulkEditLogs.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
-            BulkEditLogs.downloadFileUsedToTrigger();
-            BulkEditFiles.verifyCSVFileRows(fileName, identifiers);
-            BulkEditFiles.verifyCSVFileRecordsNumber(fileName, 3);
-            BulkEditLogs.downloadFileWithErrorsEncountered();
+                ExportFile.verifyFileIncludes(errorsFileName, [
+                  `ERROR,${shadowRecordIdentifier},${ERROR_MESSAGES.SHADOW_RECORDS_CANNOT_BE_BULK_EDITED}`,
+                ]);
+              } else {
+                identifiers.forEach((identifier) => {
+                  ExportFile.verifyFileIncludes(errorsFileName, [
+                    `ERROR,${identifier},${errorReason}`,
+                  ]);
+                });
+              }
 
-            identifiers.forEach((identifier) => {
-              ExportFile.verifyFileIncludes(errorsFileName, [`ERROR,${identifier},${errorReason}`]);
-            });
+              BulkEditFiles.verifyCSVFileRecordsNumber(errorsFileName, 3);
 
-            BulkEditFiles.verifyCSVFileRecordsNumber(errorsFileName, 3);
-          });
+              // remove earlier diwnloaded files
+              FileManager.deleteFile(`cypress/fixtures/${fileName}`);
+              FileManager.deleteFileFromDownloadsByMask(errorsFileName);
+
+              BulkEditSearchPane.openLogsSearch();
+              BulkEditLogs.verifyLogsPane();
+              BulkEditLogs.checkUsersCheckbox();
+              BulkEditLogs.verifyLogStatus(user.username, 'Completed with errors');
+              BulkEditLogs.clickActionsRunBy(user.username);
+              BulkEditLogs.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
+              BulkEditLogs.downloadFileUsedToTrigger();
+              BulkEditFiles.verifyCSVFileRows(fileName, identifiers);
+              BulkEditFiles.verifyCSVFileRecordsNumber(fileName, 3);
+              BulkEditLogs.downloadFileWithErrorsEncountered();
+
+              if (isShadowUserError) {
+                noMatchIdentifiers.forEach((identifier) => {
+                  ExportFile.verifyFileIncludes(errorsFileName, [
+                    `ERROR,${identifier},${errorReason}`,
+                  ]);
+                });
+
+                ExportFile.verifyFileIncludes(errorsFileName, [
+                  `ERROR,${shadowRecordIdentifier},${ERROR_MESSAGES.SHADOW_RECORDS_CANNOT_BE_BULK_EDITED}`,
+                ]);
+              } else {
+                identifiers.forEach((identifier) => {
+                  ExportFile.verifyFileIncludes(errorsFileName, [
+                    `ERROR,${identifier},${errorReason}`,
+                  ]);
+                });
+              }
+              BulkEditFiles.verifyCSVFileRecordsNumber(errorsFileName, 3);
+            },
+          );
         },
       );
     });

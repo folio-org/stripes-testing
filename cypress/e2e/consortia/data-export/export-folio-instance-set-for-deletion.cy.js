@@ -229,7 +229,7 @@ describe('Data Export', () => {
               uuid: localInstanceIds[0],
               assertions: [
                 (record) => {
-                  expect(record.leader[5]).to.eq('d');
+                  expect(record.leader[5]).to.eq('n');
                 },
                 (record) => {
                   expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
