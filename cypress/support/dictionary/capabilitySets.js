@@ -129,6 +129,16 @@ export default {
     resource: 'UI-Checkout',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiCheckin: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Checkin',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiCourses: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Courses',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   consortiaSharingRolesAllItemCreate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Consortia Sharing-Roles-All Item',
