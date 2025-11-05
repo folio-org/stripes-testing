@@ -127,7 +127,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib800LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(
               0,
@@ -161,7 +160,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyIconsAfterUnlinking(bib800UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

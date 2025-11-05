@@ -138,7 +138,7 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.authority700FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.checkCallout(testData.successMsg);
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
               linkedField.tag,
@@ -163,7 +163,7 @@ describe('MARC', () => {
               unlinkedField.indicator1,
               unlinkedField.content,
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(0, 1, contributors.firstName);
             InventoryInstance.checkMarcAppIconAbsent(0);

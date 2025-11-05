@@ -126,7 +126,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, testData.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.verifyContributorWithMarcAppLink(3, 1, testData.contributor);
           },
         );
