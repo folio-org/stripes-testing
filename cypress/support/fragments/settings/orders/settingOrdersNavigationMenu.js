@@ -55,4 +55,7 @@ export default {
   selectListConfiguration: () => {
     cy.do(NavListItem('List configuration').click());
   },
+  selectOrderTemplateCategories: () => {
+    cy.do(NavListItem('Order template categories').click());
+  },
 };
