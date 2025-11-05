@@ -179,6 +179,7 @@ describe('Data Export', () => {
         // Step 7: Click on "x" next to "Job profile" accordion
         DataExportViewAllLogs.clickClearJobProfileFilter();
         DataExportViewAllLogs.verifyResetAllIsDisabled();
+        // TODO: Uncomment after behavior will be clarified
         // DataExportViewAllLogs.verifyJobProfileDropdownExists();
         DataExportLogs.verifyRecordsFoundSubtitleExists();
 
@@ -212,6 +213,7 @@ describe('Data Export', () => {
         DataExportViewAllLogs.resetAll();
         DataExportViewAllLogs.verifyResetAllIsDisabled();
         DataExportViewAllLogs.verifyClearFilterButtonExists(false);
+        // TODO: Uncomment after behavior will be clarified
         // DataExportViewAllLogs.verifyJobProfileDropdownExists();
         DataExportViewAllLogs.verifyLogsTable();
         DataExportLogs.verifyRecordsFoundSubtitleExists();
