@@ -115,9 +115,9 @@ describe('Data Export', () => {
           );
           DataExportLogs.clickButtonWithText(exportedFileName);
 
-          const commonAssertions = (instanceId) => [
+          const commonAssertions = (instanceId, leaderStatus) => [
             (record) => {
-              expect(record.leader[5]).to.eq('d');
+              expect(record.leader[5]).to.eq(leaderStatus);
             },
             (record) => {
               expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
@@ -125,10 +125,16 @@ describe('Data Export', () => {
             (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
             (record) => expect(record.get('999')[0].subf[0][1]).to.eq(instanceId),
           ];
-          const recordsToVerify = createdInstanceIds.map((id) => ({
-            uuid: id,
-            assertions: commonAssertions(id),
-          }));
+          const recordsToVerify = [
+            {
+              uuid: createdInstanceIds[0],
+              assertions: commonAssertions(createdInstanceIds[0], 'n'),
+            },
+            {
+              uuid: createdInstanceIds[1],
+              assertions: commonAssertions(createdInstanceIds[1], 'd'),
+            },
+          ];
 
           parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, numberOfInstances);
         });

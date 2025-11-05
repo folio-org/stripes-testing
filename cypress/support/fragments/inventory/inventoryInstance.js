@@ -944,14 +944,20 @@ export default {
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
   },
 
-  moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false }) {
+  moveItemToAnotherHolding({
+    fromHolding,
+    toHolding,
+    shouldOpen = true,
+    itemMoved = false,
+    itemIndex = 0,
+  } = {}) {
     if (shouldOpen) {
       openHoldings(fromHolding, toHolding);
     }
 
     cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: itemIndex }))
         .find(Checkbox())
         .click(),
     );
@@ -971,9 +977,11 @@ export default {
     if (itemMoved) {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
     }
+
+    cy.wait(1000);
   },
 
-  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true) {
+  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true, itemIndex = 0) {
     cy.wait(5000);
     if (shouldOpen) {
       openHoldings(fromHolding);
@@ -981,7 +989,7 @@ export default {
     cy.wait(5000);
     cy.do([
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index: itemIndex }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
@@ -992,7 +1000,7 @@ export default {
     InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
   },
 
-  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
+  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true, itemIndex = 0 } = {}) {
     cy.wait(1000);
     cy.do(actionsButton.click());
     cy.wait(1000);
@@ -1000,7 +1008,7 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
-    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen);
+    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen, itemIndex);
   },
 
   confirmOrCancel(action) {
@@ -1024,6 +1032,7 @@ export default {
 
   openMoveItemsWithinAnInstance() {
     this.waitInventoryLoading();
+    cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.expect(moveItemsButton.exists());
@@ -1954,5 +1963,17 @@ export default {
     else cy.expect(editInstanceButton.absent());
     if (marcEdit) cy.expect(editMARCBibRecordButton.exists());
     else cy.expect(editMARCBibRecordButton.absent());
+  },
+
+  checkItemOrderValueInHoldings(holdingsLocation, itemIndex, orderValue, whileMoving = false) {
+    const holdingSection = Accordion(including(holdingsLocation));
+    const targetEl = whileMoving
+      ? holdingSection
+        .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
+        .find(TextField({ value: `${orderValue}` }))
+      : holdingSection.find(
+        MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
+      );
+    cy.expect(targetEl.exists());
   },
 };

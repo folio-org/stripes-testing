@@ -94,6 +94,7 @@ export default {
   ordersRoutingAddressPath: 'settings/orders/routing-address',
   ordersListConfigurationPath: 'settings/orders/list-configuration',
   ordersClosingPurchaseOrderReasonsPath: 'settings/orders/closing-reasons',
+  ordersTemplateCategoriesPath: 'settings/orders/order-template-categories',
   // Users
   patronGroups: 'settings/users/groups',
   addressTypes: 'settings/users/addresstypes',
