@@ -141,7 +141,7 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldData));
 
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
 
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldData));

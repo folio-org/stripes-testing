@@ -86,7 +86,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(15, testData.nonRepeatableError);
-          QuickMarcEditor.verifyValidationCallout(17, 1);
+          QuickMarcEditor.verifyValidationCallout(0, 1);
         },
       );
     });

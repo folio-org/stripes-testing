@@ -259,7 +259,7 @@ describe('MARC', () => {
             6,
           );
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkInstanceTitle(title);
 

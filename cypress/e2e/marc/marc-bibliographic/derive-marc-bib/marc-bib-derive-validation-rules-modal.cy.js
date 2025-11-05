@@ -70,8 +70,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifySlowInternetConnectionModal();
 
           cy.wait('@slowNetworkRequest');
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
 
           QuickMarcEditor.checkCallout(testData.successMessage);
           cy.wait(2000);
