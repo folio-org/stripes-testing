@@ -67,7 +67,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkFieldAbsense(testData.tags.tag006);
           QuickMarcEditor.checkFieldAbsense(testData.tags.tag007);
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkInstanceTitle(updatedTitle);
         },

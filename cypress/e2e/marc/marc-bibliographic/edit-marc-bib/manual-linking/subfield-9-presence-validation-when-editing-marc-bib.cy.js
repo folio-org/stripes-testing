@@ -389,7 +389,7 @@ describe('MARC', () => {
             );
 
             // Step 23: Click "Save & close" button two times (ignore warn errors)
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             // Step 24: View source

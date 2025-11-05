@@ -111,6 +111,10 @@ describe('Data Import', () => {
       };
       const jobProfileName = `C411794 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
+
       before('Create test data and login', () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(
@@ -285,6 +289,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.checkContributor(testData.contributorName);

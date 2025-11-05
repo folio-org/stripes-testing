@@ -102,7 +102,7 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingField(personalName.tag, personalName.updatedFieldValue);
           QuickMarcEditor.checkContentByTag(personalName.tag, personalName.updatedFieldValue);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           InteractorsTools.closeAllVisibleCallouts();
           MarcAuthorities.clickResetAndCheck(personalName.originalHeading);
@@ -113,7 +113,7 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingField(corporateName.tag, corporateName.updatedFieldValue);
           QuickMarcEditor.checkContentByTag(corporateName.tag, corporateName.updatedFieldValue);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           InteractorsTools.closeAllVisibleCallouts();
           MarcAuthorities.clickResetAndCheck(corporateName.originalHeading);
