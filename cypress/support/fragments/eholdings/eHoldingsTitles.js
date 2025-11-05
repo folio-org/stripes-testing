@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   ListItem,
@@ -99,6 +100,14 @@ export default {
       .then(({ body }) => body);
   },
 
+  getTitleByIdViaApi(packageId) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/titles/${packageId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   createEHoldingTitleVIaApi({ packageId, titleName = `AT_Title_${getRandomPostfix()}` }) {
     const payload = {
       data: {
@@ -132,7 +141,18 @@ export default {
         contentTypeHeader: 'application/vnd.api+json',
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body }) => body.data);
+      .then(({ body }) => {
+        return recurse(
+          () => this.getTitleByIdViaApi(body.data.id),
+          (getTitleResponse) => getTitleResponse.body.data.attributes.name === titleName,
+          {
+            timeout: 60_000,
+            delay: 1_000,
+          },
+        ).then(() => {
+          return body.data;
+        });
+      });
   },
 
   getEHoldingsTitlesByTitleNameViaApi({ titleName, include = 'resources' }) {
