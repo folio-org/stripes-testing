@@ -108,6 +108,11 @@ describe('Data Import', () => {
           boxSeventh: '',
         },
       ];
+
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
+
       const mappingProfile = {
         name: `C407696 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -135,9 +140,6 @@ describe('Data Import', () => {
       };
       const jobProfileName = `C407696 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
       const createdAuthorityIDs = [];
-      const Dropdowns = {
-        HELDBY: 'Held by',
-      };
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -157,6 +159,7 @@ describe('Data Import', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           Permissions.dataExportViewAddUpdateProfiles.gui,
+          Permissions.consortiaCentralAll.gui,
         ])
           .then((userProperties) => {
             testData.userProperties = userProperties;
@@ -182,6 +185,7 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
               Permissions.dataExportViewAddUpdateProfiles.gui,
+              Permissions.consortiaCentralAll.gui,
             ]);
           })
           .then(() => {
@@ -207,7 +211,6 @@ describe('Data Import', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
             }, 20_000);
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -283,6 +286,7 @@ describe('Data Import', () => {
         'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
         () => {
+          cy.setTenant(Affiliations.College);
           InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -336,6 +340,7 @@ describe('Data Import', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventorySearchAndFilter.verifyPanesExist();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.editMarcBibliographicRecord();
