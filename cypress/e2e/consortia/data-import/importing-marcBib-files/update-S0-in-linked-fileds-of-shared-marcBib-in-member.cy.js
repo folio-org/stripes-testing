@@ -135,6 +135,9 @@ describe('Data Import', () => {
       };
       const jobProfileName = `C407696 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
       const createdAuthorityIDs = [];
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -168,6 +171,7 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
               Permissions.dataExportViewAddUpdateProfiles.gui,
+              Permissions.consortiaCentralAll.gui,
             ]);
           })
           .then(() => {
@@ -218,8 +222,6 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
@@ -281,6 +283,7 @@ describe('Data Import', () => {
         'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
         () => {
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           // download .csv file
