@@ -74,6 +74,7 @@ describe('Orders', () => {
         Orders.checkCreatedOrderFromTemplate(organization.name);
         TopMenuNavigation.navigateToApp('Settings');
         OrderTemplate.goToTemplatesFromOrders();
+        OrderTemplate.selectTemplate(`${orderTemplateName}-edited`);
         OrderTemplate.deleteTemplate(`${orderTemplateName}-edited`);
       },
     );
