@@ -299,7 +299,10 @@ export default {
   },
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(Layer({ ariaLabel: 'Mapping profile details' }).find(actionsButton).absent()),
-  verifyMappingProfileOpened: () => cy.expect(Layer({ ariaLabel: 'Mapping profile details' }).exists()),
+  verifyMappingProfileOpened: () => {
+    cy.wait(500);
+    cy.expect(Layer({ ariaLabel: 'Mapping profile details' }).exists());
+  },
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
   verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
   verifyDefaultPurchaseOrderLinesLimit: (value) => cy.expect(KeyValue('Purchase order lines limit setting').has({ value })),
