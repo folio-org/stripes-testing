@@ -1,20 +1,21 @@
 import { calloutTypes } from '../../../../../../interactors';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
+import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import Permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import CancellationReason from '../../../../../support/fragments/settings/circulation/cancellationReason';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -38,6 +39,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.settingsCircView.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
@@ -96,9 +98,9 @@ describe('Consortia', () => {
 
         it(
           'C410843 Request cancellation reason can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410843'] },
           () => {
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
@@ -141,8 +143,10 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.clickCancel();
 
             cy.logout();
-            cy.login(userBData.username, userBData.password,
-              { path: SettingsMenu.circulationRequestCancellationReasonsPath, waiter: () => cy.wait(4000) });
+            cy.login(userBData.username, userBData.password, {
+              path: SettingsMenu.circulationRequestCancellationReasonsPath,
+              waiter: () => cy.wait(4000),
+            });
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               Object.values(firstCancelReason),

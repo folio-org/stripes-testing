@@ -17,11 +17,11 @@ import {
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Permissions from '../../support/dictionary/permissions';
-import Approvals from '../../support/fragments/settings/invoices/approvals';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import ApproveInvoiceModal from '../../support/fragments/invoices/modal/approveInvoiceModal';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: { runMode: 1 } }, () => {
   const organization = NewOrganization.getDefaultOrganization();
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
@@ -40,11 +40,6 @@ describe('Invoices', () => {
     firstInvoice: {},
     secondInvoice: {},
     user: {},
-  };
-  const setApprovePayValue = (isEnabled) => {
-    cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(isEnabled);
-    });
   };
 
   before('Create test data and login', () => {
@@ -172,15 +167,18 @@ describe('Invoices', () => {
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiInvoicesApproveInvoices.gui,
       Permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
-      setApprovePayValue(isApprovePayEnabled);
+      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
+      cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.sortInvoicesBy('Status');
     });
   });
 
@@ -193,7 +191,7 @@ describe('Invoices', () => {
     'C440075 Check invoice duplicate validation on "Approve & pay" option (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 0);
+      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 1);
       InvoiceView.clickApproveAndPayInvoice({ isApprovePayEnabled });
       ApproveInvoiceModal.verifyModalViewForDuplicateInvoice(
         { isApprovePayEnabled },
@@ -204,7 +202,7 @@ describe('Invoices', () => {
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
       });
       Invoices.closeInvoiceDetailsPane();
-      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 1);
+      Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 0);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
       });

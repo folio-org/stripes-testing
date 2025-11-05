@@ -21,11 +21,9 @@ describe('INN-Reach Integration', () => {
 
     before('Preconditions', () => {
       cy.getAdminToken().then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-          (servicePoints) => {
-            servicePointId = servicePoints[0].id;
-          },
-        );
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          servicePointId = servicePoint.id;
+        });
         PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
           patronGroup.id = patronGroupResponse;
         });
@@ -52,7 +50,7 @@ describe('INN-Reach Integration', () => {
 
     it(
       'C411863 Verify that record meta data is present on staff slips (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C411863'] },
+      { tags: ['extendedPathFlaky', 'volaris', 'C411863'] },
       () => {
         StaffSlips.chooseStaffClip(staffSlip);
         StaffSlip.edit(staffSlip);

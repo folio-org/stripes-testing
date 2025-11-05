@@ -1,7 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -61,7 +63,7 @@ const marcInstanceFields = [
     indicators: ['\\', '\\'],
   },
 ];
-const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
+const errorReason = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -146,7 +148,7 @@ describe('Bulk-edit', () => {
           folioItem.instanceId,
           marcInstance.instanceId,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.noteRemove('Dissertation note', 'Test');
         BulkEditActions.addNewBulkEditFilterString();
@@ -159,7 +161,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Staff suppress', 2);
         BulkEditSearchPane.verifyInputLabel('Staff suppress', 2);
-        BulkEditActions.selectSecondAction('Set true', 2);
+        BulkEditActions.selectAction('Set true', 2);
         BulkEditActions.addNewBulkEditFilterString();
         const suppressFromDiscovery = true;
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 3);
@@ -338,7 +340,7 @@ describe('Bulk-edit', () => {
           ],
         );
         BulkEditActions.downloadErrors();
-        BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
           `ERROR,${marcInstance.instanceId},${errorReason}`,
           `ERROR,${marcInstance.instanceId},${errorReason}`,
         ]);
@@ -348,7 +350,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
           0,
           'No',
@@ -374,7 +376,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
           0,
           'No',

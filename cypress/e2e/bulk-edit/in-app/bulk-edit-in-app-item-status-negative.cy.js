@@ -42,9 +42,9 @@ describe('Bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-          .then((servicePoints) => {
-            servicePointId = servicePoints[0].id;
+        ServicePoints.getCircDesk1ServicePointViaApi()
+          .then((servicePoint) => {
+            servicePointId = servicePoint.id;
           })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
@@ -81,7 +81,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceItemStatus('Available');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

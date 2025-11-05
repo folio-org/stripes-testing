@@ -49,21 +49,26 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = true) => {
-  const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
-  cy.okapiRequest({
-    method: 'GET',
-    path: 'capabilities',
-    searchParams: {
-      limit,
-      query,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    cy.wrap(body.capabilities).as('capabs');
-  });
-  return cy.get('@capabs');
-});
+Cypress.Commands.add(
+  'getCapabilitiesApi',
+  (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null } = {}) => {
+    const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
+    const requestData = {
+      method: 'GET',
+      path: 'capabilities',
+      searchParams: {
+        limit,
+        query,
+      },
+      isDefaultSearchParamsRequired: false,
+    };
+    if (customTimeout) requestData.customTimeout = customTimeout;
+    cy.okapiRequest(requestData).then(({ body }) => {
+      cy.wrap(body.capabilities).as('capabs');
+    });
+    return cy.get('@capabs');
+  },
+);
 
 Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
   cy.okapiRequest({
@@ -346,10 +351,11 @@ Cypress.Commands.add('updateCapabilitySetsForRoleApi', (roleId, capabilitySetIds
   });
 });
 
-Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId) => {
+Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId, searchParams = { limit: 1000 }) => {
   cy.okapiRequest({
     path: `roles/${roleId}/capabilities`,
     isDefaultSearchParamsRequired: false,
+    searchParams,
   });
 });
 
@@ -360,10 +366,11 @@ Cypress.Commands.add('getCapabilitySetsForRoleApi', (roleId) => {
   });
 });
 
-Cypress.Commands.add('getAuthorizationRoles', () => {
+Cypress.Commands.add('getAuthorizationRoles', (searchParams = { limit: 500 }) => {
   cy.okapiRequest({
-    path: 'roles?limit=500',
+    path: 'roles',
     isDefaultSearchParamsRequired: false,
+    searchParams,
   }).then(({ body }) => {
     cy.wrap(body.roles).as('roles');
   });

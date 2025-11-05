@@ -11,7 +11,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -47,7 +47,7 @@ describe('Data Import', () => {
         '1',
         '0',
         '$a C374189 Chin, Staceyann, $d 1972-',
-        '',
+        '$x Childhood and youth.',
         '$0 http://id.loc.gov/authorities/names/n2008052404',
         '',
       ],
@@ -185,9 +185,7 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
       });

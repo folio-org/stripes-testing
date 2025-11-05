@@ -18,6 +18,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'corporateNameTitle',
           tag711: '711',
           contributor: 'C375082 Mostly Mozart Festival. sonet',
           linkedIconText: 'Linked to MARC authority',
@@ -117,6 +118,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib711FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag711);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorityBrowse.searchBy(marcFiles[1].searchOption, marcFiles[1].authorityHeading);
@@ -125,7 +127,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib711AfterLinkingToAuth111);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -136,7 +137,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
             InventoryInstance.goToPreviousPage();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
@@ -156,7 +156,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib711AfterUnlinking);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(5, 1, testData.contributor);
             InventoryInstance.checkMarcAppIconAbsent(5);

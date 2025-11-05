@@ -39,9 +39,16 @@ export const actionsButtons = {
 };
 
 export default {
-  defaultUi: {
-    name: `Test_notice_${getRandomPostfix()}`,
-    description: 'Created by autotest team',
+  getDefaultUI() {
+    return {
+      name: `Test_notice_${getRandomPostfix()}`,
+      description: 'Created by autotest team',
+    };
+  },
+
+  openTabCirculationPatronNoticePolicies() {
+    cy.do(NavListItem('Circulation').click());
+    cy.do(NavListItem('Patron notice policies').click());
   },
 
   waitLoading() {

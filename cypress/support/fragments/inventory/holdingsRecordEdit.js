@@ -3,6 +3,7 @@ import {
   Button,
   Callout,
   calloutTypes,
+  Checkbox,
   FieldSet,
   HTML,
   including,
@@ -33,7 +34,7 @@ const readonlyFields = [holdingsHrId, sourceSelect];
 const callNumberField = rootForm.find(TextArea({ name: 'callNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
-const callNumberType = rootForm.find(Select('Call number type'));
+const callNumberTypeSelect = rootForm.find(Select('Call number type'));
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
@@ -43,6 +44,9 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const addElectronicAccessButton = Button('Add electronic access');
 const relationshipSelectDropdown = Select('Relationship');
 const uriTextarea = TextArea({ ariaLabel: 'URI' });
+const saveAndKeepEditingButton = footerPane.find(Button('Save & keep editing'));
+const holdingsTypeSelect = Select({ id: 'additem_holdingstype' });
+const numberOfItemsField = TextField('Number of items');
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -61,7 +65,13 @@ export default {
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(cancelButton.click()),
-  fillHoldingFields({ permanentLocation, callNumber, holdingsNote, holdingType } = {}) {
+  fillHoldingFields({
+    permanentLocation,
+    callNumber,
+    holdingsNote,
+    holdingType,
+    numberOfItems,
+  } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);
     }
@@ -75,7 +85,11 @@ export default {
     }
 
     if (holdingType) {
-      cy.do([Select({ id: 'additem_holdingstype' }).choose(holdingType)]);
+      cy.do([holdingsTypeSelect.choose(holdingType)]);
+    }
+
+    if (numberOfItems) {
+      cy.do(numberOfItemsField.fillIn(numberOfItems));
     }
   },
   changePermanentLocation: (location) => {
@@ -196,10 +210,14 @@ export default {
     }
   },
   chooseCallNumberType(type) {
-    cy.do(callNumberType.choose(type));
+    cy.do(callNumberTypeSelect.choose(type));
   },
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
+  },
+  selectTemporaryLocation(location) {
+    this.openTemporaryLocation();
+    cy.do([SelectionList().filter(location), SelectionList().select(including(location))]);
   },
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
@@ -241,5 +259,43 @@ export default {
         .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
+  },
+  fillCallNumberValues({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+    copyNumber,
+  }) {
+    if (callNumber !== undefined) this.fillCallNumber(callNumber);
+    if (callNumberType) this.chooseCallNumberType(callNumberType);
+    if (callNumberPrefix !== undefined) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
+    if (callNumberSuffix !== undefined) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
+    if (copyNumber !== undefined) cy.do(TextField('Copy number').fillIn(copyNumber));
+  },
+  markAsSuppressedFromDiscovery() {
+    cy.do(Checkbox('Suppress from discovery').click());
+  },
+  checkMarkedAsSuppressedFromDiscovery(isMarked = true) {
+    cy.expect(Checkbox('Suppress from discovery').is({ checked: isMarked }));
+  },
+  checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
+    cy.expect(saveAndCloseButton.has({ disabled: !saveAndClose }));
+    cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
+    cy.expect(cancelButton.has({ disabled: !cancel }));
+  },
+  saveAndKeepEditing({ holdingSaved = false } = {}) {
+    cy.do(saveAndKeepEditingButton.click());
+    if (holdingSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(InstanceStates.holdingSavedSuccessfully)),
+      );
+    }
+  },
+  verifyHoldingsTypeSelected(selectedType) {
+    cy.expect(holdingsTypeSelect.has({ checkedOptionText: selectedType }));
+  },
+  verifyNumberOfItems(numberOfItems) {
+    cy.expect(numberOfItemsField.has({ value: numberOfItems }));
   },
 };

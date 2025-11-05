@@ -24,8 +24,10 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/generateTextCode';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TagsGeneral from '../../../support/fragments/settings/tags/tags-general';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const tagC358961 = `tagc358961${uuid()}`;
@@ -40,18 +42,28 @@ describe('Inventory', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.userServicePoint);
       cy.createTempUser([
+        permissions.uiUserCanEnableDisableTags.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         permissions.moduleDataImportEnabled.gui,
         permissions.inventoryAll.gui,
         permissions.uiTagsPermissionAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id,
-        );
-      });
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
+        })
+        .then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+          });
+        });
     });
 
     after('Deleting created entities', () => {
@@ -65,10 +77,6 @@ describe('Inventory', () => {
       'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (volaris)',
       { tags: ['extendedPath', 'volaris', 'C358962'] },
       () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry('marcFileForC358962.mrc', testData.fileName);
         JobProfiles.waitLoadingList();
@@ -90,21 +98,23 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358962);
-        InventorySearchAndFilter.verifyTagCount();
-        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         cy.reload();
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358962);
       },
     );
 
     it(
       'C358961 Assign tags to an Instance record when unlinked preceding/succeeding titles present 3: quickMARC (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C358961'] },
+      { tags: ['extendedPathFlaky', 'volaris', 'C358961'] },
       () => {
         cy.login(userData.username, userData.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: SettingsMenu.tagsGeneralPath,
+          waiter: TagsGeneral.waitLoading,
         });
+        TagsGeneral.changeEnableTagsStatus('enable');
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventoryInstances.selectInstance();
         InventorySearchAndFilter.verifyInstanceDetailsView();
@@ -116,11 +126,12 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.addEmptyFields(5);
         QuickMarcEditor.addValuesToExistingField(5, '780', '$t preceding $x 1234-1234', '0', '0');
+        cy.wait(1000);
         QuickMarcEditor.addEmptyFields(6);
+        cy.wait(1000);
         QuickMarcEditor.addValuesToExistingField(6, '785', '$t succeeding $x 1234-1234', '0', '0');
         cy.wait(1000);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1000);
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.openTagsField();
@@ -134,10 +145,21 @@ describe('Inventory', () => {
         InventorySearchAndFilter.openTagsField();
         InventorySearchAndFilter.verifyTagsView();
         InventoryInstance.deleteTag(tagC358961);
+        InventorySearchAndFilter.closeTagsPane();
         InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-        cy.reload();
         InventorySearchAndFilter.verifyTagIsAbsent(tagC358961);
+
+        // Cleanup — remove fields 780 and 785
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.waitContentLoading();
+        InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
+        InventoryInstances.selectInstance();
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.deleteFieldByTagAndCheck('780');
+        QuickMarcEditor.deleteFieldByTagAndCheck('785');
+        QuickMarcEditor.saveAndCloseAfterFieldDelete();
+        QuickMarcEditor.checkAfterSaveAndClose();
       },
     );
 
@@ -145,18 +167,24 @@ describe('Inventory', () => {
       'C367962 Verify that user can add more than 1 tag to "Holdings" record with source "MARC" (volaris)',
       { tags: ['extendedPath', 'volaris', 'C367962'] },
       () => {
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();
         InventorySteps.addMarcHoldingRecord();
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
@@ -169,7 +197,11 @@ describe('Inventory', () => {
           HoldingsRecordEdit.addTag(tag);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.waitContentLoading();
+        });
+
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();

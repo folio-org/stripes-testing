@@ -35,23 +35,25 @@ describe('eHoldings', () => {
       'C688 Add all titles in a package to your holdings (spitfire)',
       { tags: ['smoke', 'spitfire', 'C688'] },
       () => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+          });
+        }, 20_000);
+
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.openPackage();
-        cy.wait(3000);
+        EHoldingsPackage.waitLoading(testData.packageName);
         EHoldingsPackage.addToHoldings();
-        cy.wait(3000);
         EHoldingsPackage.verifyHoldingStatus();
-        cy.wait(3000);
         EHoldingsPackage.filterTitles();
+        cy.wait(3000);
         EHoldingsPackage.checkEmptyTitlesList();
         // reset test data
         EHoldingsPackage.removeFromHoldings();
-        cy.wait(5000);
+        EHoldingsPackage.verifyNotSelectedPackage();
       },
     );
   });

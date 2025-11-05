@@ -9,7 +9,7 @@ import Licenses from '../../../support/fragments/licenses/licenses';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('fse-agreements - UI for production tenants', () => {
+describe('fse-agreements - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -30,7 +30,7 @@ describe('fse-agreements - UI for production tenants', () => {
   );
 });
 
-describe('fse-agreements - UI for non-production tenants', () => {
+describe('fse-agreements - UI (data manipulation)', () => {
   const defaultAgreement = { ...NewAgreement.getdefaultAgreement() };
   const defaultLicense = { ...NewLicense.defaultLicense };
 
@@ -39,7 +39,7 @@ describe('fse-agreements - UI for non-production tenants', () => {
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
       path: TopMenu.agreementsPath,
-      waiter: SearchAgreements.verifyAgreementsFilterPane,
+      waiter: Agreements.waitLoading,
     });
     cy.allure().logCommandSteps();
   });

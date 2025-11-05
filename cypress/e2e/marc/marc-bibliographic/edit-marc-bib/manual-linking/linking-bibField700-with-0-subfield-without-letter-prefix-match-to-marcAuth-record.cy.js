@@ -21,7 +21,7 @@ describe('MARC', () => {
           rowIndex: 76,
           content: '$a C380750 Martin, Laura $c (Comic book artist), $e colorist. $0 2014052262',
           searchValue:
-            'keyword exactPhrase C380750 Martin, Laura or identifiers.value exactPhrase 2014052262',
+            'keyword exactPhrase C380750 Martin, Laura (Comic book artist), or identifiers.value exactPhrase 2014052262',
           selectedFilterValue: 'advancedSearch',
           toggle: 'Search',
           contributor: 'C380750 Martin, Laura (Comic book artist)',
@@ -127,9 +127,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, testData.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributorWithMarcAppLink(3, 1, testData.contributor);
           },
         );

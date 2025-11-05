@@ -1,13 +1,16 @@
 import uuid from 'uuid';
+
 import { Button, DropdownMenu, NavListItem, Pane, PaneContent } from '../../../../../interactors';
-import OrderTemplateForm from './orderTemplateForm';
-import getRandomPostfix from '../../../utils/stringTools';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
+import getRandomPostfix from '../../../utils/stringTools';
+import OrderTemplateForm from './orderTemplateForm';
 
 const actionsButton = Button('Actions');
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(Pane({ id: 'order-settings-order-templates-list' }).exists());
   },
 
@@ -72,17 +75,16 @@ export default {
 
     OrderTemplateForm.clickSaveButton();
   },
-  getDefaultOrderTemplate({
-    orderType = 'One-time',
-    renewalNote = `autotest_renewal_note_${getRandomPostfix()}`,
-  } = {}) {
+  getDefaultOrderTemplate({ isPackage = false, currency = 'USD', additionalProperties = {} }) {
     return {
-      isPackage: false,
-      templateName: `autotest_template_name_${getRandomPostfix()}`,
-      templateCode: getRandomPostfix(),
-      orderType,
-      renewalNote,
+      cost: {
+        currency,
+      },
       id: uuid(),
+      isPackage,
+      templateCode: getRandomPostfix(),
+      templateName: `autotest_template_name_${getRandomPostfix()}`,
+      ...additionalProperties,
     };
   },
   createOrderTemplateViaApi(orderTemplate) {

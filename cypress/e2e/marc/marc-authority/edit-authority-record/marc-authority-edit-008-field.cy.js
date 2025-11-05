@@ -1,4 +1,26 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES,
+  AUTHORITY_008_FIELD_GEOSUBD_DROPDOWN,
+  AUTHORITY_008_FIELD_ROMAN_DROPDOWN,
+  AUTHORITY_008_FIELD_LANG_DROPDOWN,
+  AUTHORITY_008_FIELD_KINDREC_DROPDOWN,
+  AUTHORITY_008_FIELD_CATRULES_DROPDOWN,
+  AUTHORITY_008_FIELD_SHSYS_DROPDOWN,
+  AUTHORITY_008_FIELD_SERIES_DROPDOWN,
+  AUTHORITY_008_FIELD_NUMBSERIES_DROPDOWN,
+  AUTHORITY_008_FIELD_MAINUSE_DROPDOWN,
+  AUTHORITY_008_FIELD_SUBJUSE_DROPDOWN,
+  AUTHORITY_008_FIELD_SERIESUSE_DROPDOWN,
+  AUTHORITY_008_FIELD_SUBDTYPE_DROPDOWN,
+  AUTHORITY_008_FIELD_GOVTAG_DROPDOWN,
+  AUTHORITY_008_FIELD_REFEVAL_DROPDOWN,
+  AUTHORITY_008_FIELD_RECUPD_DROPDOWN,
+  AUTHORITY_008_FIELD_PERSNAME_DROPDOWN,
+  AUTHORITY_008_FIELD_LEVELEST_DROPDOWN,
+  AUTHORITY_008_FIELD_MODREC_DROPDOWN,
+  AUTHORITY_008_FIELD_SOURCE_DROPDOWN,
+} from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -28,12 +50,132 @@ describe('MARC', () => {
         ],
         deletedFieldTags: ['380', '642', '645'],
         editedFieldValues: ['edited 1 time', 'edited 2 times', 'edited 3 times'],
+        editedDropdownOptions: 'dabababaaaan          |a aba    sd',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFiles = [
         { marc: 'oneMarcAuthority.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc` },
       ];
       const createdAuthorityID = [];
+      const dropdownSelections = {
+        'Geo Subd': 'd',
+        Roman: 'a',
+        Lang: 'b',
+        'Kind rec': 'a',
+        'Cat Rules': 'b',
+        'SH Sys': 'a',
+        Series: 'b',
+        'Numb Series': 'a',
+        'Main use': 'a',
+        'Subj use': 'a',
+        'Series use': 'a',
+        'Subd type': 'a',
+        'Govt Ag': '|',
+        RefEval: 'a',
+        RecUpd: 'a',
+        'Pers Name': 'b',
+        'Level Est': 'a',
+        'Mod Rec': 's',
+        Source: 'd',
+      };
+      const geosubdDropdownOptions = Object.values(AUTHORITY_008_FIELD_GEOSUBD_DROPDOWN);
+      const romanDropdownOptions = Object.values(AUTHORITY_008_FIELD_ROMAN_DROPDOWN);
+      const langDropdownOptions = Object.values(AUTHORITY_008_FIELD_LANG_DROPDOWN);
+      const kindrecDropdownOptions = Object.values(AUTHORITY_008_FIELD_KINDREC_DROPDOWN);
+      const catrulesDropdownOptions = Object.values(AUTHORITY_008_FIELD_CATRULES_DROPDOWN);
+      const shsysDropdownOptions = Object.values(AUTHORITY_008_FIELD_SHSYS_DROPDOWN);
+      const seriesDropdownOptions = Object.values(AUTHORITY_008_FIELD_SERIES_DROPDOWN);
+      const numbseriesDropdownOptions = Object.values(AUTHORITY_008_FIELD_NUMBSERIES_DROPDOWN);
+      const mainuseDropdownOptions = Object.values(AUTHORITY_008_FIELD_MAINUSE_DROPDOWN);
+      const subjuseDropdownOptions = Object.values(AUTHORITY_008_FIELD_SUBJUSE_DROPDOWN);
+      const seriesuseDropdownOptions = Object.values(AUTHORITY_008_FIELD_SERIESUSE_DROPDOWN);
+      const subdtypeDropdownOptions = Object.values(AUTHORITY_008_FIELD_SUBDTYPE_DROPDOWN);
+      const govtagDropdownOptions = Object.values(AUTHORITY_008_FIELD_GOVTAG_DROPDOWN);
+      const refevalDropdownOptions = Object.values(AUTHORITY_008_FIELD_REFEVAL_DROPDOWN);
+      const recupdDropdownOptions = Object.values(AUTHORITY_008_FIELD_RECUPD_DROPDOWN);
+      const persnameDropdownOptions = Object.values(AUTHORITY_008_FIELD_PERSNAME_DROPDOWN);
+      const levelestDropdownOptions = Object.values(AUTHORITY_008_FIELD_LEVELEST_DROPDOWN);
+      const modrecDropdownOptions = Object.values(AUTHORITY_008_FIELD_MODREC_DROPDOWN);
+      const sourceDropdownOptions = Object.values(AUTHORITY_008_FIELD_SOURCE_DROPDOWN);
+      const dropdownOptionSets = [
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.GEOSUBD,
+          options: geosubdDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.ROMAN,
+          options: romanDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+          options: langDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.KINDREC,
+          options: kindrecDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.CATRULES,
+          options: catrulesDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.SHSYS,
+          options: shsysDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.SERIES,
+          options: seriesDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.NUMBSERIES,
+          options: numbseriesDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.MAINUSE,
+          options: mainuseDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.SUBJUSE,
+          options: subjuseDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.SERIESUSE,
+          options: seriesuseDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.SUBDTYPE,
+          options: subdtypeDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.GOVTAG,
+          options: govtagDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.REFEVAL,
+          options: refevalDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.RECUPD,
+          options: recupdDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.PERSNAME,
+          options: persnameDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.LEVELEST,
+          options: levelestDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.MODREC,
+          options: modrecDropdownOptions,
+        },
+        {
+          name: AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.SOURCE,
+          options: sourceDropdownOptions,
+        },
+      ];
+      const tag008 = '008';
 
       before('Create test data', () => {
         cy.createTempUser([
@@ -78,17 +220,32 @@ describe('MARC', () => {
       });
 
       it(
-        'C350691 Update 008 field of MARC Authority record (spitfire) (TaaS)',
+        'C350691 Verify "008" field dropdowns on Edit MARC authority pane (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C350691'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.select(createdAuthorityID[0]);
           MarcAuthority.edit();
-          MarcAuthority.change008Field('x', 'x', 'x');
+
+          dropdownOptionSets.forEach((dropdownOptionSet) => {
+            QuickMarcEditor.check008FieldLabels(dropdownOptionSet.name);
+          });
+
+          QuickMarcEditor.verifyMarcAuth008DropdownsHoverTexts();
+
+          dropdownOptionSets.forEach((dropdownOptionSet) => {
+            dropdownOptionSet.options.forEach((dropdownOption) => {
+              QuickMarcEditor.verifyFieldsDropdownOption(
+                tag008,
+                dropdownOptionSet.name,
+                dropdownOption,
+              );
+            });
+          });
+
+          MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          MarcAuthority.clickSaveAndCloseButton();
-          MarcAuthority.contains('xxx');
+          MarcAuthority.contains(testData.editedDropdownOptions);
         },
       );
 

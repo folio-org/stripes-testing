@@ -34,7 +34,7 @@ describe('Orders', () => {
           testData.locations.forEach((location) => Locations.createViaApi(location));
         })
         .then(() => {
-          cy.getMaterialTypes({ limit: 1 }).then(({ id: materialTypeId }) => {
+          cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
             testData.orderLine = {
               ...BasicOrderLine.getDefaultOrderLine(),
               cost: {
@@ -110,6 +110,7 @@ describe('Orders', () => {
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Open Order
+      Orders.resetFiltersIfActive();
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 

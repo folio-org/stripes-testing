@@ -14,7 +14,15 @@ import { CallNumberBrowseSettings } from '../../../support/fragments/settings/in
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
-    const testData = {};
+    const testData = {
+      browseOptions: [
+        'Dewey Decimal classification',
+        'Library of Congress classification',
+        'National Library of Medicine classification',
+        'Other scheme',
+        'Superintendent of Documents classification',
+      ],
+    };
     const randomLetters = getRandomLetters(7);
     let callNumberTypes = null;
     const getIdByName = (name) => callNumberTypes.find((type) => type.name === name)?.id;
@@ -22,7 +30,7 @@ describe('Inventory', () => {
     const rnd = getRandomPostfix();
     const localCallNumberTypeName = `AT_C414972 Local CN type ${rnd}`;
     const callNumbers = [
-      { type: 'Dewey Decimal classification', value: `414.972${randomLetters}` },
+      { type: 'Dewey Decimal classification', value: `304 H981${randomLetters}` },
       { type: 'Library of Congress classification', value: `Z668.R360 1987${randomLetters}` },
       {
         type: 'National Library of Medicine classification',
@@ -34,7 +42,6 @@ describe('Inventory', () => {
         value: `T22.19:M54/2005${randomLetters}`,
       },
       { type: 'UDC', value: `338.48${randomLetters}` },
-      { type: localCallNumberTypeName, value: `localCallNumberTypeName${randomLetters}` },
       { value: `Local.315${randomLetters}` },
     ];
     const callNumberTypesSettings = [
@@ -123,10 +130,14 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
@@ -142,7 +153,7 @@ describe('Inventory', () => {
 
     it(
       'C414972 Browsing call number types when "Number of titles" > 1 (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C414972', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C414972', 'eurekaPhase1'] },
       () => {
         const callNumber = folioInstances[1].items[0].itemLevelCallNumber;
         InventorySearchAndFilter.switchToBrowseTab();
@@ -160,13 +171,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(marcInstances[1].instanceTitle);
         InventorySearchAndFilter.verifyNumberOfSearchResults(2);
 
-        [
-          'Dewey Decimal classification',
-          'Library of Congress classification',
-          'National Library of Medicine classification',
-          'Other scheme',
-          'Superintendent of Documents classification',
-        ].forEach((browseOption) => {
+        testData.browseOptions.forEach((browseOption) => {
           folioInstances.forEach((instance, idx) => {
             const itemCallNumberType = getNameById(instance.items[0].itemLevelCallNumberTypeId);
             const itemCallNumberValue = instance.items[0].itemLevelCallNumber;

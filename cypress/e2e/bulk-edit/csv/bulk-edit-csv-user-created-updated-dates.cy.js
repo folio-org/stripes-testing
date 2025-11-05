@@ -34,8 +34,7 @@ describe(
         editedFileName = `edited-records-${getRandomPostfix()}.csv`;
         matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userUUIDsFileName);
         changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
-        previewOfProposedChangesFileName =
-          BulkEditFiles.getPreviewOfProposedChangesFileName(userUUIDsFileName);
+        previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(userUUIDsFileName);
         updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
 
         cy.clearLocalStorage();
@@ -124,7 +123,7 @@ describe(
             newName,
           );
 
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.clickNext();

@@ -83,6 +83,7 @@ const lastNameField = KeyValue('Last name');
 const firstNameField = KeyValue('First name');
 const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 const closeIconButton = Button({ icon: 'times' });
+const preferredEmailCommunicationsField = KeyValue('Preferred email communications');
 
 export default {
   errors,
@@ -153,6 +154,12 @@ export default {
 
     return openLoans && this.verifyQuantityOfOpenAndClaimReturnedLoans(openLoans, returnedLoans);
   },
+
+  expandLoansAccordion() {
+    cy.do(loansAccordion.clickHeader());
+    cy.expect(loansAccordion.has({ open: true }));
+  },
+
   expandNotesSection({ details = '' } = {}) {
     cy.do(notesSection.clickHeader());
 
@@ -168,12 +175,11 @@ export default {
     if (isRoomCreated) {
       cy.do(
         MultiColumnListCell({ content: readingRoomName }).perform((element) => {
-          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
           cy.expect(
             readingRoomAccessAccordion
-              .find(MultiColumnListRow({ indexRow: rowNumber }))
-              .find(MultiColumnListCell({ content: status }))
+              .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+              .find(MultiColumnListCell({ innerText: status }))
               .exists(),
           );
         }),
@@ -512,10 +518,19 @@ export default {
     cy.do(Button('New block').click());
   },
 
-  openTagsPane: () => {
+  openTagsPane() {
+    this.verifyTagsIconIsPresent();
     cy.do(Button({ id: 'clickable-show-tags' }).click());
     cy.expect(Pane('Tags').exists());
     cy.wait(2000);
+  },
+
+  verifyTagsIconIsPresent: () => {
+    cy.expect(Button({ icon: 'tag' }).exists());
+  },
+
+  verifyTagsIconIsAbsent: () => {
+    cy.expect(Button({ icon: 'tag' }).absent());
   },
 
   addTag: (tag) => {
@@ -551,13 +566,14 @@ export default {
     cy.expect(rootSection.find(MessageBanner()).has({ textContent: errorMessage }));
   },
   startFeeFineAdding() {
-    cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
+    cy.do(feesFinesAccordion.find(Button('New fee/fine')).click());
   },
   startRequestAdding() {
     cy.do(requestsAccordion.find(createRequestButton).click());
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
+    cy.wait(2000);
   },
   viewAllClosedFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewclosedaccounts' })).click());
@@ -686,7 +702,9 @@ export default {
   },
 
   close() {
+    this.verifyUserInformationPresence();
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
     cy.expect(rootSection.absent());
   },
 
@@ -698,6 +716,10 @@ export default {
     points.forEach((point) => {
       cy.expect(servicePointsAccordion.find(HTML(including(point))).exists());
     });
+  },
+
+  verifyNoServicePointsFound() {
+    cy.expect(servicePointsAccordion.find(HTML(including('No service points found'))).exists());
   },
 
   openServicePointsAccordion() {
@@ -713,6 +735,56 @@ export default {
   openExtendedInformationAccordion() {
     cy.do(extendedInfoSection.clickHeader());
     cy.wait(1000);
+  },
+
+  verifyExtendedInformationFieldsPresence() {
+    cy.expect([
+      KeyValue('Date enrolled').exists(),
+      KeyValue('External system ID').exists(),
+      KeyValue('Birth date').exists(),
+      KeyValue('Folio number').exists(),
+
+      KeyValue('Request preferences').exists(),
+      KeyValue('Default pickup service point').exists(),
+      KeyValue('Fulfillment preference').exists(),
+      KeyValue('Default delivery address').exists(),
+
+      KeyValue('Department name').exists(),
+      KeyValue('Username').exists(),
+    ]);
+  },
+
+  verifyPronounsOnUserDetailsPane(pronouns) {
+    cy.expect(rootSection.find(KeyValue('Pronouns')).has({ value: `${pronouns}` }));
+  },
+
+  verifyPronounsWrappedVisible(text) {
+    cy.expect(rootSection.find(HTML(including(text))).exists());
+  },
+
+  verifyPronounsFieldEmpty() {
+    cy.expect(rootSection.find(KeyValue('Pronouns')).has({ value: '' }));
+  },
+
+  verifyFullNameAndPronouns(
+    status,
+    lastName,
+    preferredName = 'preferredName',
+    testMiddleName = 'testMiddleName',
+    pronouns = '',
+  ) {
+    cy.expect(
+      Section({ id: 'pane-userdetails' })
+        .find(HTML(`${lastName}, ${preferredName} ${testMiddleName}`))
+        .exists(),
+    );
+    if (status === 'with') {
+      cy.expect(
+        Section({ id: 'pane-userdetails' })
+          .find(HTML(`(${pronouns})`))
+          .exists(),
+      );
+    }
   },
 
   openProxySponsorAccordion() {
@@ -732,7 +804,17 @@ export default {
   },
 
   checkKeyValue(label, value) {
-    cy.expect(KeyValue(label, { value }).exists());
+    if (label === 'Expiration date') {
+      const formatDateForUI = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return `${day}/${month}/${year}`;
+      };
+
+      const uiFormattedDate = formatDateForUI(value);
+      cy.expect(KeyValue(label, { value: uiFormattedDate }).exists());
+    } else {
+      cy.expect(KeyValue(label, { value }).exists());
+    }
   },
 
   verifyUserDetails(user) {
@@ -782,5 +864,63 @@ export default {
       createPatronBlockActionsButton.absent(),
     ]);
     cy.do(actionsButton.click());
+  },
+
+  verifyLastUpdatedDate() {
+    const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+    cy.expect(
+      Accordion({ headline: 'Update information' })
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .exists(),
+    );
+  },
+
+  verifyLastUpdatedSource(userName) {
+    cy.expect(
+      Accordion({ headline: 'Update information' })
+        .find(HTML(including(`Source: ${userName}`)))
+        .exists(),
+    );
+  },
+
+  verifyEmailCommunicationPreferencesField() {
+    cy.expect(Accordion('Contact information').find(preferredEmailCommunicationsField).exists());
+  },
+
+  verifyEmailCommunicationPreferenceSelected(preferences) {
+    const preferencesArray = Array.isArray(preferences) ? preferences : [preferences];
+    preferencesArray.forEach((preference) => {
+      cy.expect(preferredEmailCommunicationsField.find(HTML(including(preference))).exists());
+    });
+  },
+
+  verifyRemovedEmailCommunicationPreference(preference) {
+    cy.expect(preferredEmailCommunicationsField.find(HTML(including(preference))).absent());
+  },
+
+  verifyUserDetailsPaneOpen() {
+    cy.expect(rootSection.exists());
+  },
+
+  checkNoNotesInAccordion() {
+    cy.expect(rootSection.find(HTML(including('No notes found'))).exists());
+  },
+
+  verifyNotesCounter(expectedCount) {
+    cy.expect([
+      notesAccordion.find(Spinner()).absent(),
+      notesAccordion.has({ counter: expectedCount }),
+    ]);
+  },
+
+  verifyNoteInAccordion({ title, details = '' } = {}) {
+    cy.expect(
+      notesAccordion.find(
+        MultiColumnListCell({
+          columnIndex: 1,
+          content: and(including(`Title: ${title}`), including(`Details: ${details}`)),
+        }),
+      ),
+    );
   },
 };

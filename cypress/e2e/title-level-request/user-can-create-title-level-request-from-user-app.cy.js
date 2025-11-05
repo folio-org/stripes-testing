@@ -38,7 +38,7 @@ describe('Create Item or Title level request', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           instanceData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })
@@ -89,9 +89,12 @@ describe('Create Item or Title level request', () => {
         instanceData.instanceHRID = instance.hrid;
       });
       TitleLevelRequests.enableTLRViaApi();
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
       });
     });
   });

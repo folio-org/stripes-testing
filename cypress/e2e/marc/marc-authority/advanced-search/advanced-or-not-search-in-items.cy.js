@@ -50,7 +50,7 @@ describe('MARC', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               testData.materialTypeId = res.id;
             });
           })
@@ -228,14 +228,14 @@ describe('MARC', () => {
             1,
             testData.instances[2].title,
             'Starts with',
-            'Keyword (title, contributor)',
+            'Keyword (title, contributor, identifier)',
             'NOT',
           );
           InventoryInstances.checkAdvSearchModalItemValues(
             1,
             testData.instances[2].title,
             'Starts with',
-            'Keyword (title, contributor)',
+            'Keyword (title, contributor, identifier)',
             'NOT',
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();

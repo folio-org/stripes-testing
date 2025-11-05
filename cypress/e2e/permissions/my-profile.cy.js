@@ -18,11 +18,9 @@ describe('Permissions', () => {
 
       before('Preconditions', () => {
         cy.getAdminToken().then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-            (servicePoints) => {
-              servicePointId = servicePoints[0].id;
-            },
-          );
+          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            servicePointId = servicePoint.id;
+          });
           cy.createTempUser([Permissions.uiSettingsCanChangeLoacalPassword.gui]).then(
             (userProperties) => {
               userData = userProperties;
@@ -49,6 +47,7 @@ describe('Permissions', () => {
           MyProfile.waitLoading();
           MyProfile.openChangePassword();
           ChangePassword.waitLoading();
+          cy.logout();
         },
       );
 
@@ -71,12 +70,13 @@ describe('Permissions', () => {
 
           ChangePassword.typeConfirmPassword('bB1!');
           ChangePassword.verifyConfirmPasswordMessage(ChangePassword.messages.mismatch);
+          cy.logout();
         },
       );
 
       it(
         'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C375097'] },
+        { tags: ['extendedPathFlaky', 'volaris', 'C375097'] },
         () => {
           ChangePassword.openChangePasswordViaUserProfile();
           ChangePassword.checkInitialState();

@@ -115,7 +115,9 @@ export default {
   },
 
   endCheckOutSession: () => {
+    cy.intercept('POST', '**/circulation/end-patron-action-session').as('endPatronActionSession');
     cy.do(endSessionButton.click());
+    cy.wait('@endPatronActionSession');
     cy.expect(endSessionButton.absent());
   },
 
@@ -277,5 +279,27 @@ export default {
       MultiColumnListRow(including(itemBarcode)).absent(),
       HTML(including('No items have been entered yet')),
     ]);
+  },
+  clickOnUserBarcodeLink: (barcode) => {
+    cy.do(Link(barcode).click());
+  },
+
+  checkLoanPolicyInLoanDetails(loanPolicyId) {
+    cy.expect(KeyValue('Loan policy').find(Link(loanPolicyId)).exists());
+  },
+  checkOverdueFinePolicyInLoanDetails(overdueFinePolicyId) {
+    cy.expect(KeyValue('Overdue fine policy').find(Link(overdueFinePolicyId)).exists());
+  },
+  checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyId) {
+    cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyId)).exists());
+  },
+
+  verifyFeeFinesOwed(amount) {
+    cy.expect(KeyValue({ value: including(amount) }).exists());
+  },
+
+  waitLoading() {
+    cy.expect(Pane('Scan patron card').exists());
+    cy.expect(Pane('Scan items').exists());
   },
 };

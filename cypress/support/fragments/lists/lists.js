@@ -22,6 +22,8 @@ import {
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 
+const listInformationAccording = Accordion('List information');
+const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
 const listNameTextField = TextField({ name: 'listName' });
 const listDescriptionTextArea = TextArea({ name: 'description' });
 const saveButton = Button('Save');
@@ -33,6 +35,7 @@ const closeWithoutSavingButton = Button('Close without saving');
 const keepEditingButton = Button('Keep editing');
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
+const cancelRefreshList = Button('Cancel refresh');
 const editList = Button('Edit list');
 const duplicateList = Button('Duplicate list');
 const deleteList = Button('Delete list');
@@ -81,8 +84,8 @@ const UI = {
     cy.get('[class^="spinner"]').should('not.exist');
   },
 
-  waitForCompilingToComplete() {
-    cy.wait(1000);
+  waitForCompilingToComplete(delay = 1500) {
+    cy.wait(delay);
     cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
     cy.wait(1000);
     cy.get('body').then(($body) => {
@@ -92,6 +95,30 @@ const UI = {
         cy.log('"View updated list" didn\'t appear');
       }
     });
+  },
+
+  clickOnListInformationAccordion() {
+    cy.do(listInformationAccording.click());
+    cy.wait(500);
+  },
+
+  expandListInformationAccordion() {
+    cy.do(listInformationAccording.open());
+    cy.wait(500);
+  },
+
+  clickOnQueryAccordion() {
+    cy.do(queryAccordion.click());
+    cy.wait(500);
+  },
+
+  expandQueryAccordion() {
+    cy.do(queryAccordion.open());
+    cy.wait(500);
+  },
+
+  collapseQueryAccordion() {
+    cy.do(queryAccordion.close());
   },
 
   openActions() {
@@ -106,7 +133,12 @@ const UI = {
 
   refreshList() {
     cy.do(refreshList.click());
-    cy.wait(3000);
+    cy.wait(2000);
+  },
+
+  cancelRefreshList() {
+    cy.do(cancelRefreshList.click());
+    cy.wait(1000);
   },
 
   verifyRefreshListButtonIsActive() {
@@ -380,8 +412,24 @@ const UI = {
     cy.expect(KeyValue(label, { value }).exists());
   },
 
+  verifyListNameLabel(value) {
+    this.checkKeyValue('List name', value);
+  },
+
+  verifyListDescriptionLabel(value) {
+    this.checkKeyValue('Description', value);
+  },
+
+  verifyVisibilityLabel(value) {
+    this.checkKeyValue('Visibility', value);
+  },
+
   verifyRecordType(recordType) {
     this.checkKeyValue('Record type', recordType);
+  },
+
+  verifyStatusLabel(value) {
+    this.checkKeyValue('Status', value);
   },
 
   selectVisibility(visibility) {
@@ -792,9 +840,26 @@ const API = {
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"3"}',
+          fqlQuery: '{"users.active":{"$eq":"true"}}',
         },
         fields: ['users.active', 'user.id'],
+        uiQuery: 'users.active == True',
+      };
+    });
+  },
+
+  buildQueryOnActiveUsersWithZeroRecords() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"users.id":{"$eq":"1234567890"}}',
+        },
+        fields: ['users.active', 'user.id'],
+        uiQuery: 'users.id == 1234567890',
       };
     });
   },
@@ -808,9 +873,30 @@ const API = {
         query: {
           entityTypeId: filteredEntityTypeId,
           fqlQuery:
-            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}],"_version":"3"}',
+            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}]}',
         },
         fields: ['users.active', 'users.id', 'users.username'],
+      };
+    });
+  },
+
+  // supposed to contain big amount of data (on cypress env it approximately contains 6000+ records)
+  buildQueryOnAllInstances() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Instances',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"instance.source":{"$ne":"LINKED_DATA"}}',
+        },
+        fields: [
+          'instance.hrid',
+          'instance.title',
+          'instance.instance_type_name',
+          'instance.source',
+        ],
       };
     });
   },
@@ -829,6 +915,15 @@ const API = {
           fqlQuery: query.fqlQuery,
         };
       });
+  },
+
+  getQueryViaApi(queryId, searchParameters) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `query/${queryId}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: searchParameters,
+    });
   },
 
   createViaApi(list) {
@@ -856,10 +951,55 @@ const API = {
     });
   },
 
+  getListByIdViaApi(listId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}`,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  waitForListToCompleteRefreshViaApi(listId) {
+    cy.wait(1000);
+    return recurse(
+      () => this.getListByIdViaApi(listId),
+      (body) => {
+        if (body.inProgressRefresh) {
+          return false;
+        } else if (!body.successRefresh || body.successRefresh.status === 'SUCCESS') {
+          return true;
+        } else {
+          throw new Error('Unknown status of list refresh!');
+        }
+      },
+      {
+        limit: 6,
+        timeout: 30 * 1000,
+        delay: 5000,
+      },
+    );
+  },
+
+  getVersionApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'fqm/version',
+    });
+  },
+
   getTypesViaApi() {
     return cy.okapiRequest({
       method: 'GET',
       path: 'entity-types',
+    });
+  },
+
+  getTypeIdByNameViaApi(type) {
+    return this.getTypesViaApi().then((response) => {
+      return response.body.entityTypes.find((entityType) => entityType.label === type).id;
     });
   },
 
@@ -873,13 +1013,116 @@ const API = {
   deleteRecursivelyViaApi(id) {
     recurse(
       () => this.deleteViaApi(id),
-      (response) => response.status === 204,
+      (response) => response.status === 204 || response.body.code === 'delete-list.not.found',
       {
         limit: 3,
         timeout: 30 * 1000,
         delay: 10000,
       },
     );
+  },
+
+  editViaApi(id, list) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `lists/${id}`,
+        body: list,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
+      });
+  },
+
+  refreshViaApi(id) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `lists/${id}/refresh`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
+      });
+  },
+
+  cancelRefreshViaApi(id) {
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `lists/${id}/refresh`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
+      });
+  },
+
+  // input parameter 'fields' should be an array of field names to export
+  // e.g. ['users.active', 'users.id', 'users.username']
+  postExportViaApi(id, fields) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `lists/${id}/exports`,
+        body: fields,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response;
+      });
+  },
+
+  getExportStatusViaApi(listId, exportId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}/exports/${exportId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response;
+      });
+  },
+
+  downloadViaApi(listId, exportId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `lists/${listId}/exports/${exportId}/download`,
+        failOnStatusCode: false,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/octet-stream',
+        encoding: 'binary',
+      })
+      .then((getDownloadResponse) => {
+        return getDownloadResponse;
+      });
+  },
+
+  // input parameter 'fields' should be an array of field names to export
+  // e.g. ['users.active', 'users.id', 'users.username']
+  exportViaApiFullFlow(id, fields) {
+    return this.postExportViaApi(id, fields).then((postExportResponse) => {
+      recurse(
+        () => this.getExportStatusViaApi(id, postExportResponse.body.exportId),
+        (response) => response.body.status === 'SUCCESS',
+        {
+          limit: 10,
+          timeout: 10 * 1000,
+          delay: 1000,
+        },
+      );
+      return this.getExportStatusViaApi(id, postExportResponse.body.exportId).then(
+        (getExportResponse) => {
+          return this.downloadViaApi(id, getExportResponse.body.exportId);
+        },
+      );
+    });
   },
 
   deleteViaApi(id) {

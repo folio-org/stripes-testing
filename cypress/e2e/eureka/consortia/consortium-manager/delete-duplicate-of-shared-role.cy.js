@@ -4,15 +4,13 @@ import SelectMembers from '../../../../support/fragments/consortium-manager/moda
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { including } from '../../../../../interactors';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -22,46 +20,14 @@ describe('Eureka', () => {
     };
     const duplicatedRoleNamePart = `${testData.roleName} (duplicate)`;
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'Consortia Sharing-Roles-All Item',
-        action: CAPABILITY_ACTIONS.CREATE,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'Consortia Sharing-Roles-All Item',
-        action: CAPABILITY_ACTIONS.DELETE,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.uiAuthorizationRolesUsersSettingsView,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
+      CapabilitySets.consortiaSharingRolesAllItemCreate,
+      CapabilitySets.consortiaSharingRolesAllItemDelete,
     ];
-    const capabSetsToAssignMembers = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
-    const capabsToAssign = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabSetsToAssignMembers = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
+    const capabsToAssign = [Capabilities.settingsEnabled];
     const testUser = {};
     const assignUserCentral = {};
 

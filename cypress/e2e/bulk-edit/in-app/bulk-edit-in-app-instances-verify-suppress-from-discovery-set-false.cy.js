@@ -90,7 +90,7 @@ describe('Bulk-edit', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        cy.getDefaultMaterialType().then((res) => {
           materialTypeId = res.id;
         });
         InventoryHoldings.getHoldingsFolioSource()
@@ -305,15 +305,15 @@ describe('Bulk-edit', () => {
           ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [invalidInstanceId]);
         });
 
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(optionToSelect.suppressFromDiscovery);
         BulkEditActions.verifyOptionSelected(optionToSelect.suppressFromDiscovery);
         BulkEditActions.verifyTheActionOptions(Object.values(actionOptions));
-        BulkEditActions.selectSecondAction(actionOptions.setTrue);
-        BulkEditActions.verifySecondActionSelected(actionOptions.setTrue);
+        BulkEditActions.selectAction(actionOptions.setTrue);
+        BulkEditActions.verifyActionSelected(actionOptions.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -342,8 +342,8 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.closeAreYouSureForm();
         BulkEditActions.verifyAreYouSureFormAbsents();
-        BulkEditActions.selectSecondAction(actionOptions.setFalse);
-        BulkEditActions.verifySecondActionSelected(actionOptions.setFalse);
+        BulkEditActions.selectAction(actionOptions.setFalse);
+        BulkEditActions.verifyActionSelected(actionOptions.setFalse);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -401,7 +401,7 @@ describe('Bulk-edit', () => {
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InventoryInstances.selectInstance();
           cy.wait(1000);
-          InstanceRecordView.verifyNotMarkAsStaffSuppressed();
+          InstanceRecordView.verifyMarkAsStaffSuppressedWarning(false);
         });
 
         const instanceTitlesWithHolding = [

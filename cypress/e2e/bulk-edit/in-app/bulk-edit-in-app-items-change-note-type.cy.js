@@ -44,10 +44,7 @@ const electronicBookplateActionOptions = [
 ];
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName, true);
-const previewFileName = BulkEditFiles.getPreviewOfProposedChangesFileName(
-  itemBarcodesFileName,
-  true,
-);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName, true);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName, true);
 
 describe('Bulk-edit', () => {
@@ -174,11 +171,11 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
           `${noteText.checkOutNote} (staff only)`,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyGroupOptionsInSelectOptionsItemDropdown();
+        BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('item');
         BulkEditActions.clickOptionsSelection();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType(noteTypes.administrative, noteTypes.action);

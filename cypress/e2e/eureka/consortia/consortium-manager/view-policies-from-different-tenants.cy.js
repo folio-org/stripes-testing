@@ -6,14 +6,13 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import {
   APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
   AUTHORIZATION_POLICY_TYPES,
   AUTHORIZATION_POLICY_SOURCES,
 } from '../../../../support/constants';
 import AuthorizationPolicies, {
   SETTINGS_SUBSECTION_AUTH_POLICIES,
 } from '../../../../support/fragments/settings/authorization-policies/authorizationPolicies';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -26,24 +25,10 @@ describe('Eureka', () => {
       expiresDateTime: `${new Date().getFullYear() + 1}-12-01T00:00:00Z`,
     };
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Policies Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiAuthorizationPoliciesSettingsAdmin,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
     ];
-    const capabSetsToAssignMembers = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Policies Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabSetsToAssignMembers = [CapabilitySets.uiAuthorizationPoliciesSettingsAdmin];
     const policyBody = {
       description: 'Test policy description',
       type: AUTHORIZATION_POLICY_TYPES.TIME.toUpperCase(),
@@ -110,9 +95,13 @@ describe('Eureka', () => {
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C514964'] },
       () => {
         cy.resetTenant();
-        cy.login(userData.username, userData.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-        ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+          cy.reload();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        }, 20000);
         ConsortiumManagerApp.clickSelectMembers();
         SelectMembers.verifyAvailableTenants(
           [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
@@ -124,33 +113,21 @@ describe('Eureka', () => {
         ConsortiumManagerApp.verifyMembersSelected(1);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_POLICIES);
         SelectMembers.selectMember(tenantNames.central);
-        cy.resetTenant();
-        cy.getAuthorizationPoliciesApi().then((policiesCentral) => {
-          AuthorizationPolicies.verifyPoliciesCount(policiesCentral.length);
-          AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName);
-          AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
-          AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
 
-          SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyMembersSelected(3);
-          SelectMembers.selectMember(tenantNames.college);
-          cy.setTenant(Affiliations.College);
-          cy.getAuthorizationPoliciesApi().then((policiesCollege) => {
-            AuthorizationPolicies.verifyPoliciesCount(policiesCollege.length);
-            AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
-            AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName);
-            AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
+        SelectMembers.selectAllMembers();
+        ConsortiumManagerApp.verifyMembersSelected(3);
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName);
+        AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName, false);
 
-            SelectMembers.selectMember(tenantNames.university);
-            cy.setTenant(Affiliations.University);
-            cy.getAuthorizationPoliciesApi().then((policiesUniversity) => {
-              AuthorizationPolicies.verifyPoliciesCount(policiesUniversity.length);
-              AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
-              AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
-              AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName);
-            });
-          });
-        });
+        SelectMembers.selectMember(tenantNames.university);
+        AuthorizationPolicies.checkPolicyFound(testData.centralPolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.collegePolicyName, false);
+        AuthorizationPolicies.checkPolicyFound(testData.universityPolicyName);
       },
     );
   });

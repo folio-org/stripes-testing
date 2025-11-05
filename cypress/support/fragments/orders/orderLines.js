@@ -43,6 +43,7 @@ const addRoutingListButton = Button('Add routing list');
 const routingListSection = Section({ id: 'routing-list' });
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
+const resetButton = Button('Reset all');
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
 const actionsButton = Button('Actions');
@@ -79,7 +80,11 @@ const onlineLocationOption = SelectionOption('Online (E)');
 const quantityPhysicalLocationField = TextField({ name: 'locations[0].quantityPhysical' });
 const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
 const fundDistributionSelect = Button({ id: 'fundDistribution[0].fundId' });
+const fundDistributionExpenseClass = Button({ id: 'fundDistribution[0].expenseClassId' });
 const fundDistributionField = TextField({ name: 'fundDistribution[0].value' });
+const secondFundDistributionSelect = Button({ id: 'fundDistribution[1].fundId' });
+const secondFundDistributionExpenseClass = Button({ id: 'fundDistribution[1].expenseClassId' });
+const secondFundDistributionField = TextField({ name: 'fundDistribution[1].value' });
 const itemDetailsSection = Section({ id: 'ItemDetails' });
 const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
@@ -172,8 +177,8 @@ export default {
   clickOnOrderLines: () => {
     cy.do([orderLineButton.click()]);
   },
-  waitLoading() {
-    cy.wait(6000);
+  waitLoading(ms = 6000) {
+    cy.wait(ms);
     cy.expect([
       Pane({ id: 'order-lines-filters-pane' }).exists(),
       Pane({ id: 'order-lines-results-pane' }).exists(),
@@ -190,6 +195,16 @@ export default {
   resetFilters: () => {
     cy.wait(4000);
     cy.do(filtersPane.find(Button('Reset all')).click());
+  },
+
+  resetFiltersIfActive: () => {
+    cy.do(
+      resetButton.has({ disabled: false }).then((enabled) => {
+        if (enabled) {
+          cy.do([resetButton.click(), cy.expect(resetButton.is({ disabled: true }))]);
+        }
+      }),
+    );
   },
 
   checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
@@ -638,6 +653,7 @@ export default {
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
+    cy.wait(4000);
   },
 
   binderyActivePhysicalPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
@@ -806,7 +822,7 @@ export default {
     submitOrderLine();
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+  rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
     fund,
     expClass,
     unitPrice,
@@ -843,7 +859,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -877,7 +895,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([
       quantityPhysicalLocationField.fillIn(quantity),
@@ -948,7 +968,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityElectronicField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -1035,7 +1057,9 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
@@ -1124,6 +1148,13 @@ export default {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(fundValue),
+    ]);
+  },
+
+  changePercentsValueInFundDistribution(value) {
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
+      fundDistributionField.fillIn(value),
     ]);
   },
 
@@ -1291,6 +1322,25 @@ export default {
     submitOrderLine();
   },
 
+  addSecondFundToPOLWithPersentrageValue(fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      secondFundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      TextField({ name: 'fundDistribution[1].value' }).perform((el) => {
+        const li = el.closest('li');
+        li?.querySelector('[data-test-fund-distr-type-percent="true"]')?.click();
+      }),
+      secondFundDistributionField.fillIn(value),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(6000);
+    submitOrderLine();
+  },
+
   addFundToPOLWithoutSave(indexOfPreviusFund, fund, value) {
     cy.do([
       addFundDistributionButton.click(),
@@ -1313,21 +1363,20 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      cy.wait(2000),
+      fundDistributionExpenseClass.click(),
       SelectionOption(`${firstExpenseClass}`).click(),
       fundDistributionField.fillIn(firstPercentValue),
-      addFundDistributionButton.click(),
-      Button({ id: 'fundDistribution[1].fundId' }).click(),
-      SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
     cy.wait(2000);
     cy.do([
-      Button({ id: 'fundDistribution[1].expenseClassId' }).click(),
+      addFundDistributionButton.click(),
+      secondFundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      cy.wait(2000),
+      secondFundDistributionExpenseClass.click(),
       SelectionOption(`${secondExpenseClass}`).click(),
-      TextField({ name: 'fundDistribution[1].value' }).fillIn(secondPercentValue),
+      secondFundDistributionField.fillIn(secondPercentValue),
     ]);
     cy.wait(2000);
     cy.do([saveAndCloseButton.click()]);
@@ -2127,9 +2176,26 @@ export default {
       .click();
   },
 
-  openPageCurrentEncumbrance: (title) => {
-    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
+  openPageCurrentEncumbrance(fundText) {
+    cy.get('#FundDistribution')
+      .find('a[data-test-text-link="true"]')
+      .contains(fundText)
+      .invoke('removeAttr', 'target')
       .click();
+  },
+
+  checkCurrentEncumbranceIsBlank() {
+    cy.get('#FundDistribution [role="gridcell"]')
+      .eq(5)
+      .then(($cell) => {
+        const noValue = $cell.find('[data-test-no-value="true"]').length > 0;
+        if (noValue) {
+          cy.wrap(noValue).should('be.true');
+        } else {
+          const text = $cell.text().trim().replace(/\s+/g, ' ');
+          expect(text).to.equal('$0.00');
+        }
+      });
   },
 
   openPageConnectedInstance: () => {
@@ -2371,7 +2437,7 @@ export default {
 
   checkErrorToastMessage: (message) => {
     cy.wait(4000);
-    InteractorsTools.checkCalloutErrorMessage(message);
+    InteractorsTools.checkOneOfCalloutsContainsErrorMessage(message);
   },
 
   checkPhysicalQuantityInLocation: (quantity) => {
@@ -2539,6 +2605,7 @@ export default {
 
   openDonorInformationSection() {
     cy.do(Button({ id: 'accordion-toggle-button-donorsInformation' }).click());
+    cy.wait(2000);
   },
 
   checkAddDonorButtomisActive() {
@@ -2573,15 +2640,11 @@ export default {
   },
 
   deleteDonor(donorName) {
-    cy.get('#donorsInformation')
-      .find('div[class^="mclRowFormatterContainer-"]')
-      .each((row) => {
-        cy.wrap(row).then(() => {
-          if (row.text().includes(donorName)) {
-            cy.wrap(row).find('button').click();
-          }
-        });
-      });
+    cy.get('#donorOrganizationIds')
+      .find('[data-row-index]')
+      .contains(donorName)
+      .closest('[data-row-index]')
+      .within(() => cy.get('button[aria-label="Unassign"]').click());
   },
 
   checkEmptyDonorList() {

@@ -67,11 +67,11 @@ describe('Requests', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C380518_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })

@@ -44,9 +44,12 @@ describe('Orders', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.expenseClassesPath);
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.expenseClassesPath,
+        waiter: SettingsFinance.waitExpenseClassesLoading,
+      });
+    }, 20_000);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -54,23 +57,19 @@ describe('Orders', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
           cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
             location = res;
           });
         });
-
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
           invoice.accountingCode = organization.erpCode;
@@ -107,11 +106,12 @@ describe('Orders', () => {
       permissions.uiFinanceViewFundAndBudget.gui,
     ]).then((userProperties) => {
       user = userProperties;
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

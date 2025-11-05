@@ -16,7 +16,7 @@ describe('Inventory', () => {
     const numberOfInventory = 25;
     const callNumbers = [];
     const barcodes = [];
-    [...Array(numberOfInventory)].forEach(() => barcodes.push(`399095${++barcodeId}`));
+    [...Array(numberOfInventory)].forEach(() => barcodes.push(`399095${++barcodeId}-${Date.now()}`));
     [...Array(numberOfInventory)].forEach(() => callNumbers.push(`E 3184 S75 12${++callNumberIncrement}`));
     const testData = {
       userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -38,7 +38,7 @@ describe('Inventory', () => {
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 })
+        cy.getDefaultMaterialType()
           .then((materialTypes) => {
             testData.materialTypeId = materialTypes.id;
             testData.materialType = materialTypes.name;

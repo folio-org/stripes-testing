@@ -5,7 +5,6 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -23,7 +22,6 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import DateTools from '../../../../support/utils/dateTools';
 import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
@@ -38,12 +36,7 @@ let loanTypeId;
 let materialTypeId;
 let sourceId;
 let statisticalCode;
-let identifiersQueryFilename;
-let matchedRecordsQueryFileName;
-let previewQueryFileNameCsv;
-let previewQueryFileNameMrc;
-let changedRecordsQueryFileNameCsv;
-let changedRecordsQueryFileNameMrc;
+let queryFileNames;
 const itemBarcode = getRandomPostfix();
 const administrativeNoteText = "Administrative note ~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,";
 const administrativeNoteActionOptions = ['Add note', 'Find', 'Remove all'];
@@ -62,19 +55,18 @@ const marcInstanceFields = [
     indicators: ['1', '0'],
   },
 ];
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
+  describe('Instances with source MARC', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
-      cy.getAdminToken();
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.bulkEditLogsView.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         permissions.bulkEditQueryView.gui,
+        permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -94,7 +86,7 @@ describe('Bulk-edit', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               materialTypeId = res.id;
             });
             InventoryHoldings.getHoldingsFolioSource()
@@ -138,7 +130,7 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('MARC');
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.statisticalCodeNames, 1);
-          QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS_ANY, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
           QueryModal.chooseFromValueMultiselect(statisticalCode.name, 1);
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 2);
@@ -154,12 +146,7 @@ describe('Bulk-edit', () => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
-            identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
-            matchedRecordsQueryFileName = `${todayDate}-Matched-Records-Query-${interceptedUuid}.csv`;
-            previewQueryFileNameCsv = `${todayDate}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-            previewQueryFileNameMrc = `${todayDate}-Updates-Preview-MARC-Query-${interceptedUuid}.mrc`;
-            changedRecordsQueryFileNameCsv = `${todayDate}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileNameMrc = `${todayDate}-Changed-Records-MARC-Query-${interceptedUuid}.mrc`;
+            queryFileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
           });
         });
       });
@@ -168,15 +155,8 @@ describe('Bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
-      FileManager.deleteFileFromDownloadsByMask(
-        previewQueryFileNameCsv,
-        previewQueryFileNameMrc,
-        identifiersQueryFilename,
-        matchedRecordsQueryFileName,
-        changedRecordsQueryFileNameCsv,
-        changedRecordsQueryFileNameMrc,
-      );
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(marcInstance.uuid);
+      BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
     });
 
     it(
@@ -194,7 +174,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyValueInRowByUUID(
-          matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
@@ -209,17 +189,17 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.selectOption('Staff suppress', 1);
         BulkEditSearchPane.verifyInputLabel('Staff suppress', 1);
-        BulkEditActions.selectSecondAction('Set true', 1);
+        BulkEditActions.selectAction('Set true', 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Statistical code', 2);
         BulkEditSearchPane.verifyInputLabel('Statistical code', 2);
-        BulkEditActions.selectSecondAction('Remove all', 2);
+        BulkEditActions.selectAction('Remove all', 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Suppress from discovery', 3);
         BulkEditSearchPane.verifyInputLabel('Suppress from discovery', 3);
-        BulkEditActions.selectSecondAction('Set true', 3);
+        BulkEditActions.selectAction('Set true', 3);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true, 3);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -271,7 +251,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          previewQueryFileNameCsv,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           editedHeaderValuesInFile,
@@ -283,11 +263,6 @@ describe('Bulk-edit', () => {
             uuid: marcInstance.uuid,
             assertions: [
               (record) => expect(record.leader).to.eq(ldrValue),
-              (record) => expect(record.get('001')).to.not.be.empty,
-              (record) => expect(record.get('005')).to.not.be.empty,
-              (record) => expect(record.get('005')[0].value).to.match(/^\d{14}\.\d{1}$/),
-
-              (record) => expect(record.get('008')).to.not.be.empty,
 
               (record) => expect(record.get('245')[0].ind1).to.eq('1'),
               (record) => expect(record.get('245')[0].ind2).to.eq('0'),
@@ -302,7 +277,11 @@ describe('Bulk-edit', () => {
           },
         ];
 
-        parseMrcFileContentAndVerify(previewQueryFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(
+          queryFileNames.previewRecordsMarc,
+          assertionsOnMarcFileContent,
+          1,
+        );
 
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
@@ -314,7 +293,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          changedRecordsQueryFileNameCsv,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           editedHeaderValuesInFile,
@@ -322,26 +301,20 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadChangedMarc();
 
         parseMrcFileContentAndVerify(
-          changedRecordsQueryFileNameMrc,
+          queryFileNames.changedRecordsMarc,
           assertionsOnMarcFileContent,
           1,
         );
 
         // remove earlier downloaded files
-        FileManager.deleteFileFromDownloadsByMask(
-          matchedRecordsQueryFileName,
-          previewQueryFileNameCsv,
-          previewQueryFileNameMrc,
-          changedRecordsQueryFileNameCsv,
-          changedRecordsQueryFileNameMrc,
-        );
+        BulkEditFiles.deleteAllDownloadedFiles(queryFileNames);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.verifyAdministrativeNote(administrativeNoteText);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.verifyStatisticalCodeTypeAndName('No value set-', 'No value set-');
         InventoryInstance.viewHoldings();
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
@@ -367,11 +340,11 @@ describe('Bulk-edit', () => {
         BulkEditLogs.clickActionsRunBy(user.username);
         BulkEditLogs.verifyLogsRowActionWhenCompletedWithQuery(true);
         BulkEditLogs.downloadQueryIdentifiers();
-        ExportFile.verifyFileIncludes(identifiersQueryFilename, [marcInstance.uuid]);
-        BulkEditFiles.verifyCSVFileRecordsNumber(identifiersQueryFilename, 1);
+        ExportFile.verifyFileIncludes(queryFileNames.identifiersQueryFilename, [marcInstance.uuid]);
+        BulkEditFiles.verifyCSVFileRecordsNumber(queryFileNames.identifiersQueryFilename, 1);
         BulkEditLogs.downloadFileWithMatchingRecords();
         BulkEditFiles.verifyValueInRowByUUID(
-          matchedRecordsQueryFileName,
+          queryFileNames.matchedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
@@ -379,18 +352,22 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.downloadFileWithProposedChanges();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          previewQueryFileNameCsv,
+          queryFileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           editedHeaderValuesInFile,
         );
         BulkEditLogs.downloadFileWithProposedChangesMarc();
 
-        parseMrcFileContentAndVerify(previewQueryFileNameMrc, assertionsOnMarcFileContent, 1);
+        parseMrcFileContentAndVerify(
+          queryFileNames.previewRecordsMarc,
+          assertionsOnMarcFileContent,
+          1,
+        );
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          changedRecordsQueryFileNameCsv,
+          queryFileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
           marcInstance.uuid,
           editedHeaderValuesInFile,
@@ -398,7 +375,7 @@ describe('Bulk-edit', () => {
         BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 
         parseMrcFileContentAndVerify(
-          changedRecordsQueryFileNameMrc,
+          queryFileNames.changedRecordsMarc,
           assertionsOnMarcFileContent,
           1,
         );

@@ -5,25 +5,34 @@ import permissionsList from '../dictionary/permissions';
 import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
-  cy.okapiRequest({
-    path: 'users',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    Cypress.env('users', body.users);
-    return body.users;
-  });
+  return cy
+    .okapiRequest({
+      path: 'users',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      Cypress.env('users', body.users);
+      return body.users;
+    });
 });
 
-Cypress.Commands.add('getUserServicePoints', (userId) => {
-  cy.okapiRequest({
-    path: 'service-points-users',
-    searchParams: {
-      query: `(userId==${userId})`,
-    },
-  }).then(({ body }) => {
-    Cypress.env('userServicePoints', body.servicePointsUsers);
-    return body.servicePointsUsers;
+Cypress.Commands.add('getAdminUserDetails', () => {
+  if (!Cypress.env('adminUserDetails')) {
+    return cy
+      .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+      .then((users) => {
+        Cypress.env('adminUserDetails', users[0]);
+        return users[0];
+      });
+  } else {
+    return Cypress.env('adminUserDetails');
+  }
+});
+
+Cypress.Commands.add('getAdminUserId', () => {
+  return cy.getAdminUserDetails().then((user) => {
+    return user.id;
   });
 });
 
@@ -114,6 +123,9 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
     }
     if (parameters.email) {
       userBody.personal.email = parameters.email;
+    } else {
+      // if a user should have only unique email
+      // userBody.personal.email = `test_${getRandomPostfix()}@test.com`;
     }
   } else {
     userBody = userModel;

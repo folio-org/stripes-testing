@@ -22,6 +22,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
+import { Permissions } from '../../../support/dictionary';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -99,7 +101,7 @@ describe('Finance: Transactions', () => {
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
+              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
             );
             Funds.closeBudgetDetails();
             cy.logout();
@@ -108,7 +110,7 @@ describe('Finance: Transactions', () => {
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
 
-              cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+              cy.getDefaultMaterialType().then((mtype) => {
                 cy.getAcquisitionMethodsApi({
                   query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
                 }).then((params) => {
@@ -206,12 +208,17 @@ describe('Finance: Transactions', () => {
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
       permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.settingsInvoiveApprovalPath,
+          waiter: SettingsInvoices.waitApprovalsLoading,
+        });
+      }, 20_000);
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.invoicesPath);
     });
   });
 
@@ -232,7 +239,7 @@ describe('Finance: Transactions', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.verifyTransactionWithAmountExist('Pending payment', '$126.00');
-      Funds.closeMenu();
+      Funds.closePaneHeader();
       BudgetDetails.checkBudgetDetails({
         summary: [
           { key: 'Initial allocation', value: '$100.00' },

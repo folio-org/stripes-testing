@@ -45,14 +45,6 @@ export default {
     }
   },
 
-  getPreviewOfProposedChangesFileName(fileName, isDateIncluded = false) {
-    if (isDateIncluded) {
-      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
-    } else {
-      return `*-Updates-Preview-CSV-${fileName}`;
-    }
-  },
-
   getErrorsFromCommittingFileName(fileName, isDateIncluded = false) {
     if (isDateIncluded) {
       return `${todayDate}-Committing-changes-Errors-${fileName}`;
@@ -66,6 +58,59 @@ export default {
       return `${todayDate}-Matching-Records-Errors-${fileName}`;
     } else {
       return `*-Matching-Records-Errors-${fileName}`;
+    }
+  },
+
+  getAllDownloadedFileNames(fileName, isDateIncluded = false) {
+    return {
+      matchedRecordsCSV: this.getMatchedRecordsFileName(fileName, isDateIncluded),
+      previewRecordsCSV: this.getPreviewFileName(fileName, isDateIncluded),
+      previewRecordsMarc: this.getPreviewMarcFileName(fileName, isDateIncluded),
+      changedRecordsCSV: this.getChangedRecordsFileName(fileName, isDateIncluded),
+      changedRecordsMarc: this.getChangedRecordsMarcFileName(fileName, isDateIncluded),
+      errorsFromCommitting: this.getErrorsFromCommittingFileName(fileName, isDateIncluded),
+      errorsFromMatching: this.getErrorsFromMatchingFileName(fileName, isDateIncluded),
+    };
+  },
+
+  getAllQueryDownloadedFileNames(bulkEditJobId, isDateIncluded = false) {
+    return {
+      identifiersQueryFilename: `Query-${bulkEditJobId}.csv`,
+      matchedRecordsCSV: isDateIncluded
+        ? `${todayDate}-Matched-Records-Query-${bulkEditJobId}.csv`
+        : `*-Matched-Records-Query-${bulkEditJobId}.csv`,
+      previewRecordsCSV: isDateIncluded
+        ? `${todayDate}-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`
+        : `*-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`,
+      previewRecordsMarc: isDateIncluded
+        ? `${todayDate}-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`
+        : `*-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`,
+      changedRecordsCSV: isDateIncluded
+        ? `${todayDate}-Changed-Records-CSV-Query-${bulkEditJobId}.csv`
+        : `*-Changed-Records-CSV-Query-${bulkEditJobId}.csv`,
+      changedRecordsMarc: isDateIncluded
+        ? `${todayDate}-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`
+        : `*-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`,
+      errorsFromCommitting: isDateIncluded
+        ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
+        : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
+      errorsFromMatching: isDateIncluded
+        ? `${todayDate}-Matching-Records-Errors-Query-${bulkEditJobId}.csv`
+        : `*-Matching-Records-Errors-Query-${bulkEditJobId}.csv`,
+    };
+  },
+
+  deleteAllDownloadedFiles(fileNames) {
+    if (fileNames) {
+      const fileNamesList = Object.values(fileNames);
+
+      fileNamesList.forEach((fileNameMask) => {
+        FileManager.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
+          if (fileName && fileName.length > 0) {
+            cy.task('deleteFile', fileName[0]);
+          }
+        });
+      });
     }
   },
 

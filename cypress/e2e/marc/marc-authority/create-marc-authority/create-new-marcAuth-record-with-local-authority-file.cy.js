@@ -73,6 +73,7 @@ describe('MARC', () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
 
           MarcAuthority.selectSourceFile(localAuthFile.name);
 
@@ -88,8 +89,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1000);
           MarcAuthority.verifyAfterSaveAndClose();

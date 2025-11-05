@@ -97,10 +97,10 @@ describe('TLR: Item renew', () => {
         cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
           testData.loanTypeId = loanTypes[0].id;
         });
-        cy.getMaterialTypes({ query: 'name="book"' }).then((materialTypes) => {
+        cy.getBookMaterialType().then((materialTypes) => {
           testData.materialBookId = materialTypes.id;
         });
-        cy.getMaterialTypes({ query: 'name="dvd"' }).then((materialTypes) => {
+        cy.getDvdMaterialType().then((materialTypes) => {
           testData.materialDvdId = materialTypes.id;
         });
       })
@@ -278,10 +278,13 @@ describe('TLR: Item renew', () => {
     'C360533 TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C360533'] },
     () => {
-      cy.login(userForRenew.username, userForRenew.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userForRenew.username, userForRenew.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
+
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
         instanceHRID,
@@ -312,9 +315,11 @@ describe('TLR: Item renew', () => {
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
     { tags: ['criticalPath', 'vega', 'C360534'] },
     () => {
-      cy.login(userForRenew.username, userForRenew.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userForRenew.username, userForRenew.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
 
       NewRequest.createNewRequest({

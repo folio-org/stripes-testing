@@ -14,7 +14,6 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -195,8 +194,8 @@ describe('Data Import', () => {
         // create action profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
           cy.wait(1500);
         });
 
@@ -232,7 +231,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
-          orderNumber = polNumber.replace('-1', '');
+          orderNumber = polNumber.replace(/-\d+$/, '');
 
           OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, Holding, Item');
           OrderLines.openLinkedInstance();

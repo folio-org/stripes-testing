@@ -1,18 +1,22 @@
 import moment from 'moment';
-import Users from '../../../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import {
+  APPLICATION_NAMES,
+  CAPABILITY_ACTIONS,
+  CAPABILITY_TYPES,
+} from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import ConsortiumManagerApp, {
-  settingsItems,
-} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../../../support/constants';
-import HoldingsSourcesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/holdings/holdingsSourcesConsortiumManager';
-import HoldingsSources from '../../../../../support/fragments/settings/inventory/holdings/holdingsSources';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiumManagerApp, {
+  settingsItems,
+} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import HoldingsSourcesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/holdings/holdingsSourcesConsortiumManager';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import HoldingsSources from '../../../../../support/fragments/settings/inventory/holdings/holdingsSources';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortium manager', () => {
   describe('View settings', () => {
@@ -148,14 +152,14 @@ describe('Consortium manager', () => {
       });
 
       it(
-        'C648469 User with "Consortium manager: Can view existing settings" permission is able to view the list of instance note types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        'C648469 User with "Consortium manager: Can view existing settings" permission is able to view the list of holdings sources of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        { tags: ['criticalPathECS', 'thunderjet', 'C648469'] },
         () => {
           cy.resetTenant();
           cy.login(tempUserC648469.username, tempUserC648469.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
@@ -259,7 +263,7 @@ describe('Consortium manager', () => {
           cy.login(tempUserC648472.username, tempUserC648472.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);

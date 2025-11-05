@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
@@ -12,7 +13,7 @@ describe('Eureka', () => {
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `AT_C430265_UserRole_${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        originalApplications: ['app-acquisitions', 'app-dcb'],
+        originalApplications: ['app-acquisitions', 'app-licenses'],
         newApplication: 'app-platform-minimal',
         originalCapabilities: [
           {
@@ -27,7 +28,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Licenses Admin Action',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -45,21 +46,9 @@ describe('Eureka', () => {
       );
 
       const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings Admin',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Capabilities',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Role-Capability-Sets',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
       before('Create role, user', () => {
@@ -118,9 +107,13 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
           cy.wait(1000);
-          cy.intercept('GET', capabilityCallRegExp).as('capabilities');
-          AuthorizationRoles.clickSaveInModal();
-          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
+          cy.intercept('GET', '/capabilities?*').as('capabilities');
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
+          cy.wait('@capabilities').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilityCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
           cy.wait(3000);
           AuthorizationRoles.verifyAppNamesInCapabilityTables([
             testData.originalApplications[1],

@@ -43,11 +43,11 @@ describe('Title Level Request. Create Item or Title level request', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C1283_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })
@@ -92,10 +92,14 @@ describe('Title Level Request. Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: RequestsSearchResultsPane.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: RequestsSearchResultsPane.waitLoading,
+        });
       });
+
       // create item-level request for user
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);

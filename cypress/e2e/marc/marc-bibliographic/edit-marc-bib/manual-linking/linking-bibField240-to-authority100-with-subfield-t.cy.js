@@ -15,6 +15,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'nameTitle',
           tag100: '100',
           tag010: '010',
           tag240: '240',
@@ -103,6 +104,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
 
             InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
@@ -128,7 +130,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n83130832',
               '',
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
@@ -137,8 +139,7 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
 
-            // Wait for the content to be loaded.
-            cy.wait(6000);
+            InventoryInstance.waitInventoryLoading();
             InventoryInstance.viewSource();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);
@@ -156,7 +157,7 @@ describe('MARC', () => {
               '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 http://id.loc.gov/authorities/names/n83130832',
             );
             QuickMarcEditor.checkLinkButtonExist(testData.tag240);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

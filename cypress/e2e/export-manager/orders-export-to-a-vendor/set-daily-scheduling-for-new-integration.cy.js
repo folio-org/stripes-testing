@@ -10,6 +10,9 @@ import {
 } from '../../../support/fragments/organizations';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import OrganizationDetails from '../../../support/fragments/organizations/organizationDetails';
+import IntegrationViewForm from '../../../support/fragments/organizations/integrations/integrationViewForm';
+import IntegrationEditForm from '../../../support/fragments/organizations/integrations/integrationEditForm';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -75,14 +78,15 @@ describe('Export Manager', () => {
         // Click on the "Name" link for Organization
         Organizations.searchByParameters('Name', testData.organization.name);
         Organizations.checkSearchResults(testData.organization);
-        const OrganizationDetails = Organizations.selectOrganization(testData.organization.name);
+        Organizations.selectOrganization(testData.organization.name);
 
         // Expand "Integration details" accordion, Select integration
-        const IntegrationViewForm = OrganizationDetails.selectIntegration(testData.integrationName);
+        OrganizationDetails.selectIntegration(testData.integrationName);
 
         // Click "Actions" button, Select "Edit" option
-        const IntegrationEditForm = IntegrationViewForm.openIntegrationEditForm();
-        IntegrationEditForm.checkButtonsConditions([
+        IntegrationViewForm.openIntegrationEditForm();
+
+        Organizations.checkButtonsConditions([
           { label: 'Cancel', conditions: { disabled: false } },
           { label: 'Save & close', conditions: { disabled: true } },
         ]);

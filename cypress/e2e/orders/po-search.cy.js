@@ -11,6 +11,7 @@ describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  const today = new Date();
   let orderNumber;
 
   before(() => {
@@ -24,8 +25,14 @@ describe('orders: Test PO search', () => {
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
       orderLine.locations[0].locationId = location.id;
     });
-    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+    cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
+    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
     });
   });
 
@@ -42,8 +49,6 @@ describe('orders: Test PO search', () => {
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         orderNumber = poNumber;
-        const today = new Date();
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         Orders.checkPoSearch(
           Orders.getSearchParamsMap(
             orderNumber,

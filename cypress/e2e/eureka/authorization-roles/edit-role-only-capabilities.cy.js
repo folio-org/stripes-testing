@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -148,9 +149,9 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
       before('Create role, user', () => {
@@ -214,11 +215,19 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
           });
 
-          cy.intercept('GET', capabilitiesCallRegExp).as('capabilities');
-          cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
+          cy.intercept('GET', '/capabilities?*').as('capabilities');
+          cy.intercept('GET', '/capability-sets?*').as('capabilitySets');
           AuthorizationRoles.openForEdit();
-          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
-          cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
+          cy.wait('@capabilities').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitiesCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
+          cy.wait('@capabilitySets').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitySetsCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
           testData.originalCapabilities.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
           });

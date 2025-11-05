@@ -80,7 +80,7 @@ describe('Title level Request', () => {
           instanceData.loanTypeId = loanType.id;
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })
@@ -171,9 +171,11 @@ describe('Title level Request', () => {
         });
       })
       .then(() => {
-        cy.login(users[0].username, users[0].password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(users[0].username, users[0].password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
         });
       });
   });
@@ -211,7 +213,7 @@ describe('Title level Request', () => {
   });
   it(
     'C380488 Verify that user can create TLR: Recall request for instance with item statuses "Awaiting pickup" and "Checked out" (vega)',
-    { tags: ['criticalPath', 'vega', 'C380488'] },
+    { tags: ['criticalPathBroken', 'vega', 'C380488'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
 

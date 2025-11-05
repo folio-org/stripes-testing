@@ -9,7 +9,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -87,8 +86,8 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        servicePointId = servicePoint.id;
 
         NewLocation.createViaApi(
           NewLocation.getDefaultLocation(
@@ -168,8 +167,8 @@ describe('Data Import', () => {
         // create action profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile

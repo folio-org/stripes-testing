@@ -52,11 +52,11 @@ describe('Title Level Request. Request detail', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C350385_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })
@@ -129,9 +129,12 @@ describe('Title Level Request. Request detail', () => {
   });
 
   beforeEach('login', () => {
-    cy.login(userData.username, userData.password, {
-      path: TopMenu.requestsPath,
-      waiter: RequestsSearchResultsPane.waitLoading,
+    cy.waitForAuthRefresh(() => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: RequestsSearchResultsPane.waitLoading,
+      });
+      cy.wait(2000);
     });
   });
 

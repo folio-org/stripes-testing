@@ -1,7 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -40,7 +42,7 @@ const marcInstance = {
   instanceName: `AT_C468191_MarcInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-const reasonForError = 'Bulk edit of instance notes is not supported for MARC Instances.';
+const reasonForError = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
 const marcInstanceFields = [
   {
     tag: '008',
@@ -144,7 +146,7 @@ describe('Bulk-edit', () => {
           folioItem.instanceId,
           marcInstance.instanceId,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.changeNoteType('Administrative note', 'With note');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Reproduction note', 'Administrative note', 1);

@@ -105,7 +105,7 @@ describe('Data Export', () => {
         SelectJobProfile.verifySubtitle();
         SelectJobProfile.verifySearchBox();
         SelectJobProfile.verifySearchButton(true);
-        ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
+        ExportFile.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
@@ -148,7 +148,7 @@ describe('Data Export', () => {
             },
           ];
 
-          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount);
+          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount, false);
         });
       },
     );

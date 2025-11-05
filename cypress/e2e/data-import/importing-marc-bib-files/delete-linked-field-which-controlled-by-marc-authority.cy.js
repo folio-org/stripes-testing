@@ -13,7 +13,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -258,7 +258,7 @@ describe('Data Import', () => {
 
     it(
       'C377005 Delete linked field which is controlled by "MARC Authority" record (when field mapping profile allows updating all subfields) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C377005'] },
+      { tags: ['extendedPathBroken', 'spitfire', 'C377005'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

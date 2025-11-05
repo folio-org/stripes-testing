@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
 import ConsortiumManager, {
@@ -50,7 +51,7 @@ describe('Consortia', () => {
       'C397333 User with "Consortium manager: Can view existing settings" permission and active affiliation in "Central" tenant has access to "Consortium manager" app (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
-        TopMenuNavigation.navigateToApp('Consortium manager');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.verifyMembersSelected();
         ConsortiumManager.verifyPaneIncludesSettings(settingsList.sort());
@@ -66,7 +67,7 @@ describe('Consortia', () => {
 
         cy.logout();
         cy.login(userData.username, userData.password);
-        TopMenuNavigation.navigateToApp('Consortium manager');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager(0);
         ConsortiumManager.verifyMembersSelected(0);
         chooseSettingItem(randomSetting);

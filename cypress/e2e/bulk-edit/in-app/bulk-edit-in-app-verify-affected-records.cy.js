@@ -2,6 +2,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
+  ERROR_MESSAGES,
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -75,7 +76,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         BulkEditSearchPane.verifyResultColumnTitles('Item temporary location');
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const tempLocation = 'Annex';
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'item', 0);
         BulkEditActions.confirmChanges();
@@ -88,7 +89,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabel(0, 1);
         BulkEditSearchPane.verifyErrorByIdentifier(
           item.firstBarcode,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
 

@@ -8,7 +8,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 
-describe('orders: Test PO filters', () => {
+describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
   const today = new Date();
   const renewalDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -18,7 +18,10 @@ describe('orders: Test PO filters', () => {
   let orderNumber;
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+    });
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -29,10 +32,8 @@ describe('orders: Test PO filters', () => {
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
       orderLine.locations[0].locationId = location.id;
     });
-    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+    cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
-      cy.loginAsAdmin();
-      cy.getAdminToken();
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
@@ -40,7 +41,6 @@ describe('orders: Test PO filters', () => {
           orderLine.purchaseOrderId = order.id;
           cy.createOrderLineApi(orderLine);
         });
-        cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.editOrder();

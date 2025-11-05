@@ -6,7 +6,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -19,7 +18,7 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
+import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEditForm';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -99,8 +98,8 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
@@ -126,11 +125,9 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          FileDetails.close();
-          Logs.openFileDetails(firstMarcFileName);
         });
         // check the second instance without Cataloged date
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
@@ -166,11 +163,9 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(DateTools.getFormattedDate({ date: new Date() }));
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          FileDetails.close();
-          Logs.openFileDetails(secondMarcFileName);
         });
         // check the second instance without Cataloged date
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
@@ -206,11 +201,9 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-06-01');
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          FileDetails.close();
-          Logs.openFileDetails(thirdMarcFileName);
         });
         // check the second instance without Cataloged date
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
@@ -246,11 +239,9 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          FileDetails.close();
-          Logs.openFileDetails(forthMarcFileName);
         });
         // check the second instance without Cataloged date
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;

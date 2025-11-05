@@ -69,6 +69,7 @@ describe('MARC', () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(testData.sourceName);
           QuickMarcEditor.checkContentByTag(testData.tag001, '');
           newFields.forEach((newField) => {
@@ -81,8 +82,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(testData.tag001, testData.tag001Value);
           QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
           QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

@@ -61,7 +61,7 @@ describe('Finance: Transactions', () => {
           cy.getLocations({ limit: 1 }).then((res) => {
             location = res;
 
-            cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+            cy.getDefaultMaterialType().then((mtype) => {
               cy.getAcquisitionMethodsApi({
                 query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
               }).then((params) => {
@@ -70,7 +70,7 @@ describe('Finance: Transactions', () => {
                   (responseOrganizations) => {
                     organization.id = responseOrganizations;
                     firstOrder.vendor = organization.id;
-                    OrderLinesLimit.setPOLLimit(3);
+                    OrderLinesLimit.setPOLLimitViaApi(3);
                     const firstOrderLine = {
                       ...BasicOrderLine.defaultOrderLine,
                       cost: {
@@ -168,7 +168,7 @@ describe('Finance: Transactions', () => {
   after(() => {
     cy.getAdminToken();
 
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Users.deleteViaApi(user.userId);
   });
 
@@ -178,6 +178,7 @@ describe('Finance: Transactions', () => {
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();
+      Orders.resetFiltersIfActive();
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       Orders.openOrder();
@@ -187,11 +188,13 @@ describe('Finance: Transactions', () => {
       Funds.viewTransactionsForCurrentBudget();
       Funds.checkAbsentTransaction('Encumbrance');
       TopMenuNavigation.navigateToApp('Orders');
+      Orders.resetFiltersIfActive();
       OrderLines.selectOrderLineByPolNumber(`${firstOrderNumber}-2`);
       OrderLines.openPageCurrentEncumbrance(`${firstFund.name}(${firstFund.code})`);
       Funds.viewTransactionsForCurrentBudget();
       Funds.checkAbsentTransaction('Encumbrance');
       TopMenuNavigation.navigateToApp('Orders');
+      Orders.resetFiltersIfActive();
       OrderLines.selectOrderLineByPolNumber(`${firstOrderNumber}-3`);
       OrderLines.openPageCurrentEncumbrance(`${firstFund.name}(${firstFund.code})`);
       Funds.viewTransactionsForCurrentBudget();

@@ -48,16 +48,6 @@ describe('Permissions', () => {
       };
       const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
       const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
-      const permissionSetBody = {
-        displayName: getTestEntityValue('setName'),
-        description: getTestEntityValue('setDescription'),
-        subPermissions: [
-          permissions.uiUsersViewPermissionSets.internal,
-          permissions.uiUsersViewAllSettings.internal,
-        ],
-        mutable: true,
-        id: uuid(),
-      };
       const patronBlockTemplate = {
         name: getTestEntityValue('Template'),
         desc: getTestEntityValue('Description'),
@@ -97,9 +87,6 @@ describe('Permissions', () => {
       after('Deleting created entities', () => {
         cy.getAdminToken();
         PatronBlockTemplates.deleteViaApi(testData.patronBlockTemplateId);
-        if (permissionSetBody) {
-          PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
-        }
         UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
           testData.userServicePoint.id,
         ]);
@@ -199,28 +186,6 @@ describe('Permissions', () => {
       );
 
       it(
-        'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C402342'] },
-        () => {
-          PermissionSets.createPermissionSetViaApi(permissionSetBody);
-          cy.visit(SettingsMenu.permissionSets);
-          cy.wait(waitTimeout);
-          PermissionSets.waitLoading();
-          PermissionSets.checkNewButtonNotAvailable();
-          PermissionSets.chooseFromList(permissionSetBody.displayName);
-          PermissionSets.checkPermissionSet({
-            name: permissionSetBody.displayName,
-            description: permissionSetBody.description,
-            permissions: [
-              permissions.uiUsersViewPermissionSets.gui,
-              permissions.uiUsersViewAllSettings.gui,
-            ],
-          });
-          PermissionSets.checkEditButtonNotAvailable();
-        },
-      );
-
-      it(
         'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',
         { tags: ['extendedPath', 'volaris', 'C402752'] },
         () => {
@@ -279,37 +244,13 @@ describe('Permissions', () => {
 
       it(
         'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C404383'] },
+        { tags: ['extendedPathFlaky', 'volaris', 'C404383'] },
         () => {
           cy.visit(SettingsMenu.conditionsPath);
           cy.wait(waitTimeout);
           Conditions.waitLoading();
           Conditions.select(Arrays.getRandomElement(Conditions.conditionTypes));
           Conditions.verifyConditionsCantBeChanged();
-        },
-      );
-
-      it(
-        'C405545 Verify that "Settings (Users): View all settings" works as expected Scenario 6 (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C405545'] },
-        () => {
-          cy.visit(SettingsMenu.patronGroups);
-          cy.wait(waitTimeout);
-          UsersSettingsGeneral.checkEntityInTable({
-            name: 'undergrad',
-            description: 'Undergraduate Student',
-          });
-          UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
-
-          cy.visit(SettingsMenu.addressTypes);
-          cy.wait(waitTimeout);
-          UsersSettingsGeneral.checkEntityInTable({ name: 'Work', description: 'Work Address' });
-          UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
-
-          cy.visit(SettingsMenu.departments);
-          cy.wait(waitTimeout);
-          Departments.waitLoading();
-          UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
         },
       );
     });

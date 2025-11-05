@@ -1,15 +1,17 @@
+import NewRequest from '../../support/fragments/requests/newRequest';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import NewRequest from '../../support/fragments/requests/newRequest';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Users', () => {
   let userData;
 
   before('Preconditions', () => {
-    cy.createTempUser().then((userProperties) => {
-      userData = userProperties;
+    cy.getAdminToken().then(() => {
+      cy.createTempUser().then((userProperties) => {
+        userData = userProperties;
+      });
     });
     cy.loginAsAdmin({
       path: TopMenu.usersPath,

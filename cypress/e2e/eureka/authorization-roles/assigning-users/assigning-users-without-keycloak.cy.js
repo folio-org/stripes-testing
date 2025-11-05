@@ -2,6 +2,8 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -15,58 +17,57 @@ describe('Eureka', () => {
           promotePath: '/users-keycloak/auth-users',
         };
 
-        const capabSetsToAssign = [
-          { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
-        ];
+        const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesUsersSettingsManage];
 
-        const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+        const capabsToAssign = [Capabilities.settingsEnabled];
 
         before('Create data', () => {
-          cy.getAdminToken();
-          cy.getUserGroups().then(() => {
-            for (let i = 1; i < 4; i++) {
-              userBodies.push({
-                type: 'staff',
-                active: true,
-                username: `at_c627395_username_${i}_${randomPostfix}`,
-                patronGroup: Cypress.env('userGroups')[i - 1].id,
-                personal: {
-                  lastName: `AT_C627395_LastName_${i}_${randomPostfix}`,
-                  firstName: `AT_C627395_FirstName_${i}_${randomPostfix}`,
-                  email: 'AT_C627395@test.com',
-                  preferredContactTypeId: '002',
-                },
+          cy.getAdminToken().then(() => {
+            cy.getUserGroups().then(() => {
+              for (let i = 1; i < 4; i++) {
+                userBodies.push({
+                  type: 'staff',
+                  active: true,
+                  username: `at_c627395_username_${i}_${randomPostfix}`,
+                  patronGroup: Cypress.env('userGroups')[i - 1].id,
+                  personal: {
+                    lastName: `AT_C627395_LastName_${i}_${randomPostfix}`,
+                    firstName: `AT_C627395_FirstName_${i}_${randomPostfix}`,
+                    email: 'AT_C627395@test.com',
+                    preferredContactTypeId: '002',
+                  },
+                });
+              }
+              testData.userAGroup = Cypress.env('userGroups')[0].group;
+              testData.userBGroup = Cypress.env('userGroups')[1].group;
+              testData.userCGroup = Cypress.env('userGroups')[2].group;
+              cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
+                testData.userAId = userId;
+                userIds.push(userId);
               });
-            }
-            testData.userAGroup = Cypress.env('userGroups')[0].group;
-            testData.userBGroup = Cypress.env('userGroups')[1].group;
-            testData.userCGroup = Cypress.env('userGroups')[2].group;
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
-              testData.userAId = userId;
-              userIds.push(userId);
-            });
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
-              testData.userBId = userId;
-              userIds.push(userId);
-            });
-            Users.createViaApi(userBodies[2]).then((user) => {
-              testData.userCId = user.id;
-              userIds.push(user.id);
-            });
-            cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
-              testData.roleId = role.id;
-            });
-            cy.createTempUser([]).then((createdUserProperties) => {
-              testData.tempUser = createdUserProperties;
-              cy.assignCapabilitiesToExistingUser(
-                testData.tempUser.userId,
-                capabsToAssign,
-                capabSetsToAssign,
-              );
-              if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
-              cy.login(testData.tempUser.username, testData.tempUser.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
+              cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
+                testData.userBId = userId;
+                userIds.push(userId);
+              });
+              Users.createViaApi(userBodies[2]).then((user) => {
+                testData.userCId = user.id;
+                userIds.push(user.id);
+              });
+              cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+                testData.roleId = role.id;
+              });
+              cy.createTempUser([]).then((createdUserProperties) => {
+                testData.tempUser = createdUserProperties;
+                cy.assignCapabilitiesToExistingUser(
+                  testData.tempUser.userId,
+                  capabsToAssign,
+                  capabSetsToAssign,
+                );
+                if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
+                cy.login(testData.tempUser.username, testData.tempUser.password, {
+                  path: TopMenu.settingsAuthorizationRoles,
+                  waiter: AuthorizationRoles.waitContentLoading,
+                });
               });
             });
           });

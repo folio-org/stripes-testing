@@ -1,4 +1,5 @@
 import { Permissions } from '../../support/dictionary';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -6,8 +7,6 @@ import MultipieceCheckIn from '../../support/fragments/checkin/modals/multipiece
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 let testData;
 let userData;
@@ -15,39 +14,38 @@ let materialType;
 const itemProps = [];
 let testItems;
 let itemBarcodes;
+let servicePoint;
 
 describe('Check In', () => {
   before('create inventory instances', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
-        InventoryInstances.getMaterialTypes({ limit: 1 })
-          .then((materialTypeRes) => {
-            materialType = materialTypeRes[0].name;
-            itemProps.push(MultipieceCheckIn.getItemProps(1, false, false, materialType));
-            itemProps.push(MultipieceCheckIn.getItemProps(3, true, false, materialType));
-            itemProps.push(MultipieceCheckIn.getItemProps(2, true, true, materialType));
-            itemProps.push(MultipieceCheckIn.getItemProps(0, false, true, materialType));
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
+        cy.getDefaultMaterialType()
+          .then((mt) => {
+            materialType = mt;
+            itemProps.push(MultipieceCheckIn.getItemProps(1, false, false, materialType.name));
+            itemProps.push(MultipieceCheckIn.getItemProps(3, true, false, materialType.name));
+            itemProps.push(MultipieceCheckIn.getItemProps(2, true, true, materialType.name));
+            itemProps.push(MultipieceCheckIn.getItemProps(0, false, true, materialType.name));
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 4,
                 itemsProperties: itemProps,
               }),
-              servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             };
             testItems = testData.folioInstances;
             itemBarcodes = testItems.map((item) => item.barcodes[0]);
-            ServicePoints.createViaApi(testData.servicePoint);
-            testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-            Locations.createViaApi(testData.defaultLocation).then((location) => {
-              InventoryInstances.createFolioInstancesViaApi({
-                folioInstances: testItems,
-                location,
-              });
+            InventoryInstances.createFolioInstancesViaApi({
+              folioInstances: testItems,
+              location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
             });
           })
           .then(() => {
-            UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+            UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
           });
         cy.login(userData.username, userData.password, {
           path: TopMenu.checkInPath,
@@ -62,20 +60,17 @@ describe('Check In', () => {
     testItems.forEach((instance) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: instance.barcodes[0],
-        servicePointId: testData.servicePoint.id,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     testItems.forEach((item) => {
       InventoryInstances.deleteInstanceViaApi({
         instance: item,
-        servicePoint: testData.servicePoint,
+        servicePoint,
         shouldCheckIn: true,
       });
     });
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(userData.userId);
   });
 

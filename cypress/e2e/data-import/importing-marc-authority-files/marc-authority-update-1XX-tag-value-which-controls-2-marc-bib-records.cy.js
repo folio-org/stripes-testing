@@ -28,7 +28,7 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -200,9 +200,7 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
         });
@@ -249,7 +247,11 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(
+          testData.csvFile,
+          'Default authority',
+          'Authorities',
+        );
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file

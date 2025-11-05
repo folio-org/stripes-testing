@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
@@ -8,7 +9,9 @@ import {
   Modal,
   Callout,
   TextField,
+  Spinner,
   and,
+  or,
   some,
   Pane,
   HTML,
@@ -137,6 +140,7 @@ const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
 const buttonLink = Button({ icon: 'unlink' });
 const deleteFieldsModal = Modal({ id: 'quick-marc-confirm-modal' });
+const slowInternetConnectionModal = Modal({ id: 'quick-marc-validation-modal' });
 const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confirm-modal-cancel' });
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
@@ -145,6 +149,16 @@ const validationCalloutMainText =
   'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
 const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
 const derivePaneHeaderText = /Derive a new .*MARC bib record/;
+const searchButtonIn010Field = Button({ ariaLabel: 'search' });
+const getTag008BoxErrorText = (boxName) => `Fail: Record cannot be saved. Field 008 contains an invalid value in "${boxName}" position.`;
+const tagLengthNumbersOnlyInlineErrorText =
+  'Fail: Tag must contain three characters and can only accept numbers 0-9.';
+const tagLengthInlineErrorText =
+  'Fail: Record cannot be saved. A MARC tag must contain three characters.';
+const invalidTagInlineErrorText = 'Fail: Invalid MARC tag. Please try again.';
+const tag1XXNonRepeatableRequiredCalloutText = 'Field 1XX is non-repeatable and required.';
+const getSubfieldNonRepeatableInlineErrorText = (subfield) => `Fail: Subfield '${subfield}' is non-repeatable.`;
+const paneheaderDateFormat = 'M/D/YYYY h:mm A';
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -408,6 +422,10 @@ const holdingsLocationModal = Modal('Select permanent location');
 const holdingsLocationInstitutionSelect = holdingsLocationModal.find(Select('Institution'));
 const holdingsLocationCampusSelect = holdingsLocationModal.find(Select('Campus'));
 const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library'));
+const holdingsLocationSelect = holdingsLocationModal.find(
+  Button({ name: 'locationId', disabled: false }),
+);
+const holdingsLocationOption = '[data-test-selection-option-segment="true"]';
 const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
@@ -435,6 +453,15 @@ const defaultValid008Values = {
   LitF: '\\',
   Biog: '\\',
 };
+const valid008ValuesInstance = {
+  ...defaultValid008Values,
+  Type: 'a',
+  DtSt: 'm',
+  Conf: '1',
+  Fest: '1',
+  Indx: '1',
+  LitF: 'i',
+};
 const defaultValid008HoldingsValues = {
   AcqEndDate: '\\\\\\\\',
   AcqMethod: '\\',
@@ -450,6 +477,13 @@ const defaultValid008HoldingsValues = {
   'Spec ret': ['\\', '\\', '\\'],
 };
 const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
+const ldrFields = [
+  { label: 'Status', type: 'select', name: 'records[0].content.Status' },
+  { label: 'Ctrl', type: 'select', name: 'records[0].content.Ctrl' },
+  { label: 'ELvl', type: 'input', name: 'records[0].content.ELvl' },
+  { label: 'Desc', type: 'select', name: 'records[0].content.Desc' },
+  { label: 'MultiLvl', type: 'select', name: 'records[0].content.MultiLvl' },
+];
 const authoritySubfieldsDefault = [
   {
     ruleId: '8',
@@ -504,7 +538,14 @@ export default {
   defaultValidLdr,
   defaultValidHoldingsLdr,
   defaultValid008Values,
+  valid008ValuesInstance,
   defaultValid008HoldingsValues,
+  getTag008BoxErrorText,
+  tagLengthNumbersOnlyInlineErrorText,
+  tag1XXNonRepeatableRequiredCalloutText,
+  getSubfieldNonRepeatableInlineErrorText,
+  tagLengthInlineErrorText,
+  invalidTagInlineErrorText,
 
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
@@ -585,7 +626,7 @@ export default {
   } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
-    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    cy.wait('@validateRequest', { timeout: 10_000 }).its('response.statusCode').should('eq', 200);
 
     this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
@@ -605,7 +646,7 @@ export default {
       this.confirmDelete();
     }
 
-    cy.wait('@saveRecordRequest', { timeout: 5_000 })
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },
@@ -617,6 +658,15 @@ export default {
     this.closeAllCallouts();
     cy.expect(saveAndKeepEditingBtn.is({ disabled: false }));
     cy.do(saveAndKeepEditingBtn.click());
+  },
+
+  saveAndCloseAfterFieldDelete() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
+    cy.do(saveAndCloseButton.click());
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    this.closeAllCallouts();
+    cy.wait(1000);
+    cy.do([saveAndCloseButton.click(), continueWithSaveButton.click()]);
   },
 
   pressSaveAndKeepEditing(calloutMsg) {
@@ -738,6 +788,10 @@ export default {
     );
   },
 
+  verifyContentBoxIsFocused(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ focused: true }));
+  },
+
   movetoFourthBoxUsingTab(rowNumber) {
     cy.get(`[name="records[${rowNumber}].tag"]`).tab().tab().tab();
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(fourthBox).has({ focused: true }));
@@ -792,6 +846,7 @@ export default {
 
   confirmUnlinkingField() {
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+    cy.expect(Spinner().absent());
   },
 
   cancelUnlinkingField() {
@@ -809,8 +864,14 @@ export default {
     ]);
   },
 
-  cancelEditConfirmationPresented() {
-    cy.expect(cancelEditConformModel.exists());
+  cancelEditConfirmationPresented(isPresented = true) {
+    if (isPresented) {
+      cy.expect([
+        cancelEditConformModel.exists(),
+        closeWithoutSavingBtn.exists(),
+        cancelEditConfirmBtn.exists(),
+      ]);
+    } else cy.expect(cancelEditConformModel.absent());
   },
 
   confirmEditCancel() {
@@ -870,6 +931,14 @@ export default {
       rootSection.absent(),
       viewMarcSection.exists(),
     ]);
+  },
+
+  simulateSlowNetwork(urlPattern, delayMs = 5000) {
+    cy.intercept('POST', urlPattern, (req) => {
+      req.reply((res) => {
+        return new Promise((resolve) => setTimeout(() => resolve(res), delayMs));
+      });
+    }).as('slowNetworkRequest');
   },
 
   closeEditorPane() {
@@ -966,7 +1035,11 @@ export default {
   },
 
   undoDelete() {
-    cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
+    cy.get('[class^=deletedRowPlaceholder-]').each(($placeholder) => {
+      cy.wrap($placeholder).within(() => {
+        cy.contains('span', 'Undo').click();
+      });
+    });
   },
 
   checkUndoDeleteAbsent() {
@@ -1084,6 +1157,10 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
+  moveFieldDown(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).click());
+  },
+
   moveFieldUpWithEnter(rowNumber) {
     cy.get(`button[aria-labelledby="moving-row-move-up-${rowNumber}-text"]`).blur().type('{enter}');
   },
@@ -1181,6 +1258,7 @@ export default {
         QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
         QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
         QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).absent(),
+        cy.expect(Spinner().absent()),
       ]);
     } else {
       cy.expect([
@@ -1202,6 +1280,7 @@ export default {
         QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
         QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
         QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+        cy.expect(Spinner().absent()),
       ]);
     }
   },
@@ -1441,25 +1520,32 @@ export default {
     );
   },
 
-  selectFieldsDropdownOption(tag, dropdownLabel, option) {
+  selectFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .choose(option),
     );
+    cy.wait(500);
   },
 
-  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+  verifyFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
     );
   },
 
-  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
@@ -1505,6 +1591,76 @@ export default {
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-MultiLvl-text',
       'Multipart resource record level',
+    );
+  },
+
+  verifyMarcAuth008DropdownsHoverTexts() {
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Geo Subd-text',
+      'Direct or indirect geographic subdivision',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Roman-text',
+      'Romanization scheme',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Lang-text',
+      'Language of catalog',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Kind rec-text', 'Kind of record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Cat Rules-text',
+      'Descriptive cataloging rules',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-SH Sys-text',
+      'Subject heading system/thesaurus',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Series-text', 'Type of series');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Numb Series-text',
+      'Numbered or unnumbered series',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Main use-text',
+      'Heading use – main or added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Subj use-text',
+      'Heading use – subject added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Series use-text',
+      'Heading use – series added entry',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Type Subd-text',
+      'Type of subject subdivision',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Govt Ag-text',
+      'Type of government agency',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-RefEval-text',
+      'Reference evaluation',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-RecUpd-text',
+      'Record update in process',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Pers Name-text',
+      'Undifferentiated personal name',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Level Est-text',
+      'Level of establishment',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Mod Rec-text', 'Modified record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Source-text',
+      'Cataloging source',
     );
   },
 
@@ -1567,6 +1723,7 @@ export default {
     cy.expect([
       Pane({ id: 'quick-marc-editor-pane' }).exists(),
       QuickMarcEditorRow({ tagValue: '999' }).exists(),
+      cancelButton.exists(),
     ]);
   },
 
@@ -1660,9 +1817,13 @@ export default {
   },
 
   check008FieldLabels(labels) {
-    labels.forEach((label) => {
-      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
-    });
+    if (Array.isArray(labels)) {
+      labels.forEach((label) => {
+        cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
+      });
+    } else {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(labels) }).exists());
+    }
   },
 
   checkReplacedVoidValuesInTag008Holdings() {
@@ -1690,6 +1851,21 @@ export default {
       (content) => cy.wrap(content).as('tagContent'),
     );
     return cy.get('@tagContent');
+  },
+
+  fillLDRFields(fieldValues) {
+    const actions = [];
+    ldrFields.forEach(({ label, type, name }) => {
+      const value = fieldValues[label];
+
+      if (type === 'select') {
+        actions.push(cy.get(`select[name="${name}"]`).select(value));
+      } else if (type === 'input') {
+        actions.push(cy.get(`input[name="${name}"]`).clear().type(value));
+      }
+    });
+
+    return cy.do(...actions);
   },
 
   deleteTag(rowIndex) {
@@ -1942,13 +2118,15 @@ export default {
   },
 
   checkFieldsCount(expectedCount) {
-    cy.then(() => QuickMarcEditor().rowsCount()).then((FieldsCount) => {
-      cy.expect(FieldsCount).equal(expectedCount);
-    });
+    cy.expect(QuickMarcEditor().has({ rowsCount: expectedCount }));
   },
 
   checkAfterSaveAndCloseDerive() {
     cy.expect([calloutAfterSaveAndCloseNewRecord.exists(), instanceDetailsPane.exists()]);
+  },
+
+  checkAfterSaveAndKeepEditingDerive() {
+    cy.expect([calloutAfterSaveAndCloseNewRecord.exists(), rootSection.exists()]);
   },
 
   verifyAndDismissRecordUpdatedCallout() {
@@ -2219,7 +2397,7 @@ export default {
     cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
-  verifyInvalidLDRValueCallout(positions) {
+  verifyInvalidLDRValueError(positions) {
     let positionsArray = positions;
     if (!Array.isArray(positions)) {
       positionsArray = [positions];
@@ -2240,8 +2418,9 @@ export default {
         return leaderText;
       })
       .join(' ');
-    const callOutText = `Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
-    cy.expect(Callout(callOutText).exists());
+    const errorText = `Fail: Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
+    const errorElement = getRowInteractorByTagName('LDR').find(HTML(including(errorText)));
+    cy.expect(errorElement.exists());
   },
 
   closeCallout(text) {
@@ -2437,14 +2616,40 @@ export default {
     });
   },
 
+  fillInHoldingsLocationForm(locationObject, campusName, locationName) {
+    Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
+      const institutionName = institution.name;
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+      cy.do(holdingsLocationInstitutionSelect.choose(institutionName));
+      // wait until values applied in dropdowns
+      cy.wait(3000);
+      if (campusName) {
+        cy.do(holdingsLocationCampusSelect.choose(campusName));
+        cy.wait(3000);
+        cy.expect(holdingsLocationSelect.exists());
+      }
+
+      if (locationName) {
+        cy.do(holdingsLocationSelect.click());
+        cy.wait(1000);
+        cy.get(holdingsLocationOption).contains(locationName).click();
+        cy.wait(1000);
+      }
+      cy.do(holdingsLocationSaveButton.click());
+      cy.wait(1000);
+      cy.do(holdingsLocationSaveButton.click());
+      cy.expect(holdingsLocationModal.absent());
+    });
+  },
+
   checkOnlyBackslashesIn008Boxes() {
-    cy.get('input[value="008"]')
+    cy.get('input[name^="records"][name$=".tag"][value="008"]')
       .parents('[data-testid="quick-marc-editorid"]')
-      .find('div[data-testid="bytes-field-col"]')
-      .find('input')
-      .then((fields) => {
-        const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
-        expect(fieldValues.join('')).to.match(/^\\+$/);
+      .find('[data-testid="bytes-field-col"] select')
+      .then((selects) => {
+        const values = Array.from(selects, (el) => el.value);
+        expect(values.join('')).to.match(/^\\+$/);
       });
   },
 
@@ -2845,19 +3050,25 @@ export default {
     });
   },
 
-  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true) {
+  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true, indicatorsShown = true) {
     cy.expect([
       getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
       getRowInteractorByRowNumber(rowNumber)
         .find(TextArea({ ariaLabel: 'Subfield' }))
         .has({ disabled: isDisabled }),
-      getRowInteractorByRowNumber(rowNumber)
-        .find(TextField('Indicator', { name: including('.indicators[0]') }))
-        .has({ disabled: isDisabled }),
-      getRowInteractorByRowNumber(rowNumber)
-        .find(TextField('Indicator', { name: including('.indicators[1]') }))
-        .has({ disabled: isDisabled }),
     ]);
+    if (indicatorsShown) {
+      cy.expect([
+        getRowInteractorByRowNumber(rowNumber)
+          .find(TextField('Indicator', { name: including('.indicators[0]') }))
+          .has({ disabled: isDisabled }),
+        getRowInteractorByRowNumber(rowNumber)
+          .find(TextField('Indicator', { name: including('.indicators[1]') }))
+          .has({ disabled: isDisabled }),
+      ]);
+    } else {
+      cy.expect([getRowInteractorByRowNumber(rowNumber).find(TextField('Indicator')).absent()]);
+    }
   },
 
   selectOptionsIn008FieldRelfDropdowns(...options) {
@@ -2921,6 +3132,16 @@ export default {
     cy.expect(Modal().absent());
   },
 
+  verifySlowInternetConnectionModal() {
+    cy.expect(slowInternetConnectionModal.exists());
+    cy.expect(Spinner().exists());
+  },
+
+  discardChangesWithEscapeKey(index) {
+    this.moveCursorToTagBox(index);
+    cy.get(`[data-row="record-row[${index}]"]`).type('{esc}');
+  },
+
   verifyValidationCallout(warningCount, failCount = 0) {
     const matchers = [including(validationCalloutMainText)];
     if (warningCount) {
@@ -2951,5 +3172,243 @@ export default {
 
   checkDerivePaneheader() {
     this.checkPaneheaderContains(derivePaneHeaderText);
+  },
+
+  fillInTextBoxInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(TextField({ label: boxLabel })).fillIn(value));
+    cy.wait(500);
+  },
+
+  verifyTextBoxValueInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ value }));
+  },
+
+  verifyDropdownsShownInField(rowIndex, isShown = true) {
+    if (isShown) cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).exists());
+    else cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).absent());
+  },
+
+  checkSearchButtonShownIn010Field({ checkHoverText = false } = {}) {
+    cy.expect(getRowInteractorByTagName('010').find(searchButtonIn010Field).exists());
+    if (checkHoverText) {
+      cy.do(getRowInteractorByTagName('010').find(searchButtonIn010Field).hoverMouse());
+      cy.expect(Tooltip().has({ text: 'Search for records by 010 value(s)' }));
+    }
+  },
+
+  checkAddButtonShownInField(tag, isShown = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(addFieldButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  clickSearchButtonIn010Field() {
+    cy.do(
+      getRowInteractorByTagName('010')
+        .find(searchButtonIn010Field)
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
+    cy.url().should('include', 'advancedSearch');
+  },
+
+  verifyFieldDropdownFocused(tag, dropdownLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow.find(Select({ label: including(dropdownLabel) })).has({ focused: isFocused }),
+    );
+  },
+
+  verifyIndicatorBoxIsFocused(tag, indicatorIndex, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.expect(targetRow.find(indicator).has({ focused: true }));
+  },
+
+  focusOnFieldsDropdown(tag, dropdownLabel, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(
+      targetRow.find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) })).focus(),
+    );
+    cy.wait(500);
+  },
+
+  close() {
+    cy.do(QuickMarcEditor().find(PaneHeader()).find(closeButton).click());
+  },
+
+  checkSomeDropdownsMarkedAsInvalid(tag, someInvalid = true) {
+    const invalidDropdown = getRowInteractorByTagName(tag).find(Select({ valid: false }));
+    if (someInvalid) cy.expect(invalidDropdown.exists());
+    else cy.expect(invalidDropdown.absent());
+  },
+
+  checkUnlinkButtonShown(tag, isShown = true, rowIndex = null) {
+    const targetButton =
+      rowIndex === null
+        ? getRowInteractorByTagName(tag).find(unlinkIconButton)
+        : getRowInteractorByRowNumber(rowIndex).find(unlinkIconButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  /**
+    A method for linking MARC bibliographic and authority records via API.
+    `bibFieldIndexes` to be used in case of multiple bib fields with the same tag
+  */
+  linkMarcRecordsViaApi({
+    bibId,
+    authorityIds,
+    bibFieldTags,
+    authorityFieldTags,
+    finalBibFieldContents,
+    bibFieldIndexes = null,
+  } = {}) {
+    let relatedRecordVersion;
+    const linkingRuleIds = [];
+    const authorityNaturalIds = [];
+    const sourceFileIds = [];
+    const sourceFileUrls = [];
+
+    cy.then(() => {
+      cy.getAllRulesViaApi().then((rules) => {
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          linkingRuleIds.push(
+            rules
+              .filter((rule) => rule.bibField === bibFieldTag)
+              .find((rule) => rule.authorityField === authorityFieldTags[index]).id,
+          );
+        });
+      });
+      cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
+        relatedRecordVersion = `${auditData.totalRecords}`;
+      });
+      authorityIds.forEach((authorityId) => {
+        cy.okapiRequest({
+          path: 'search/authorities',
+          searchParams: { query: `id=="${authorityId}"` },
+          isDefaultSearchParamsRequired: false,
+        }).then((res) => {
+          authorityNaturalIds.push(res.body.authorities[0].naturalId);
+          const sourceFileId = res.body.authorities[0].sourceFileId;
+          sourceFileIds.push(sourceFileId);
+
+          if (sourceFileId && sourceFileId !== 'NULL') {
+            cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
+              sourceFileUrls.push(sourceFileData.baseUrl);
+            });
+          } else sourceFileUrls.push('');
+        });
+      });
+    }).then(() => {
+      cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
+        const updatedMarcData = { ...marcData };
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          const targetFieldIndex =
+            bibFieldIndexes !== null
+              ? bibFieldIndexes[index] - 1
+              : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
+          updatedMarcData.fields[targetFieldIndex].content =
+            `${finalBibFieldContents[index]} $0 ${sourceFileUrls[index]}${authorityNaturalIds[index]} $9 ${authorityIds[index]}`;
+          updatedMarcData.fields[targetFieldIndex].linkDetails = {
+            authorityId: authorityIds[index],
+            authorityNaturalId: authorityNaturalIds[index],
+            linkingRuleId: linkingRuleIds[index],
+            status: 'NEW',
+          };
+        });
+        updatedMarcData.relatedRecordVersion = relatedRecordVersion;
+
+        cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
+        cy.recurse(
+          () => cy.getMarcRecordDataViaAPI(bibId),
+          (marcBibData) => {
+            bibFieldTags.forEach((bibFieldTag, index) => {
+              const targetFieldIndex =
+                bibFieldIndexes !== null
+                  ? bibFieldIndexes[index] - 1
+                  : marcBibData.fields.findIndex((field) => field.tag === bibFieldTag);
+              expect(marcBibData.fields[targetFieldIndex].linkDetails?.authorityId).to.equal(
+                authorityIds[index],
+              );
+            });
+          },
+          {
+            limit: 20,
+            timeout: 40000,
+            delay: 1000,
+          },
+        );
+      });
+    });
+  },
+
+  verifyValuesInLdrNonEditableBoxes({
+    positions0to4BoxValues,
+    positions9to16BoxValues,
+    positions20to23BoxValues,
+  } = {}) {
+    const positions0to4Box = TextField({ name: 'records[0].content.Record length' });
+    const positions9to16Box = TextField({ name: 'records[0].content.9-16 positions' });
+    const positions20to23Box = TextField({ name: 'records[0].content.20-23 positions' });
+    if (positions0to4BoxValues) cy.expect(positions0to4Box.has({ value: positions0to4BoxValues, disabled: true }));
+    if (positions9to16BoxValues) cy.expect(positions9to16Box.has({ value: positions9to16BoxValues, disabled: true }));
+    if (positions20to23BoxValues) cy.expect(positions20to23Box.has({ value: positions20to23BoxValues, disabled: true }));
+  },
+
+  checkMarcBibHeader({ instanceTitle, status }, userName) {
+    const dateMatchers = [];
+    for (let i = -2; i <= 2; i++) {
+      dateMatchers.push(
+        including(`Last updated: ${moment.utc().add(i, 'minutes').format(paneheaderDateFormat)}`),
+      );
+    }
+    const targetPane = Pane(matching(new RegExp(`Edit .*MARC record - ${instanceTitle}`)));
+    cy.expect(targetPane.exists());
+    cy.expect(
+      targetPane.has({
+        subtitle: and(
+          including('Status:'),
+          including(status),
+          including('Last updated:'),
+          including(`Source: ${userName}`),
+        ),
+      }),
+    );
+    cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
+  },
+
+  verifyBoxIsFocusedInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.expect(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .has({ focused: true }),
+    );
+  },
+
+  verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ focused: isFocused }));
   },
 };

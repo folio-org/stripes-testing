@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import UserEdit from '../../../support/fragments/users/userEdit';
 
-describe('fse-checkin - UI', () => {
+describe('fse-checkin - UI (data manipulation)', () => {
   let servicePointId;
   let userData = {};
 
@@ -15,8 +15,8 @@ describe('fse-checkin - UI', () => {
     cy.allure().logCommandSteps(false);
     cy.getAdminToken().then(() => {
       // create new user and assign a service point
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        servicePointId = servicePoints[0].id;
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        servicePointId = servicePoint.id;
       });
       cy.createTempUser([permissions.checkinAll.gui], 'FSE AQA autotest').then((userProperties) => {
         userData = userProperties;
@@ -43,7 +43,7 @@ describe('fse-checkin - UI', () => {
 
   it(
     `TC195282 - verify that checkin module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'checkin', 'nonProd'] },
+    { tags: ['fse', 'ui', 'checkin', 'fse-user-journey', 'nonProd'] },
     () => {
       Checkin.waitLoading();
     },

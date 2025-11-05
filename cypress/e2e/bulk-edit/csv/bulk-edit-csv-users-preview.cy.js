@@ -57,7 +57,7 @@ describe(
 
       it(
         'C357066 Verify populating preview records changed (Local approach) (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C357066'] },
+        { tags: ['extendedPathFlaky', 'firebird', 'C357066'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -73,7 +73,7 @@ describe(
             user.firstName,
             newFirstName,
           );
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
           BulkEditActions.cancel();
           BulkEditSearchPane.verifyErrorLabel(1);
@@ -81,7 +81,7 @@ describe(
           BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
           BulkEditActions.openActions();
-          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditActions.clickNext();

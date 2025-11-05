@@ -27,6 +27,7 @@ const sharedAccResetButton = sharedAccordion.find(Button({ className: including(
 
 const SharedAccordion = {
   open() {
+    cy.intercept('GET', 'search/call-numbers/facets*').as('getCallNumbersFacets');
     cy.get('#callNumbersShared')
       .find('[class^=content-region]')
       .invoke('attr', 'class')
@@ -35,6 +36,13 @@ const SharedAccordion = {
           cy.do(sharedAccordion.clickHeader());
         }
       });
+    return cy.wait('@getCallNumbersFacets').then((response) => {
+      const sharedValues = response.response.body?.facets['instances.shared']?.values;
+      return {
+        shared: sharedValues.find((item) => item.id === 'true')?.totalRecords || 0,
+        local: sharedValues.find((item) => item.id === 'false')?.totalRecords || 0,
+      };
+    });
   },
 
   byShared(condititon) {
@@ -212,6 +220,15 @@ export default {
         delay: 5000,
         timeout: 70000,
       },
+    );
+  },
+
+  checkValuePresentForRow(callNumber, columnIndex, value) {
+    cy.do(
+      MultiColumnListCell(callNumber).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(MultiColumnListCell(value, { row: rowNumber, columnIndex }).exists());
+      }),
     );
   },
 };

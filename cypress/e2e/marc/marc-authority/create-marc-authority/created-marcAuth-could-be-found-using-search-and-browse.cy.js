@@ -83,6 +83,7 @@ describe('MARC', () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(localAuthFile.name);
           newFields.forEach((newField) => {
             MarcAuthority.addNewFieldAfterExistingByTag(
@@ -92,8 +93,6 @@ describe('MARC', () => {
             );
           });
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

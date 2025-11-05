@@ -97,7 +97,7 @@ describe('Bulk-edit', () => {
           'Check in note',
           'Provenance note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.changeNoteType('Action note', 'Provenance', 0);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Check in note', 'Check out note', 1);
@@ -132,7 +132,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'Yes\nNo');
+        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'YesNo');
         ItemRecordView.checkItemNote(`${notes.actionOne}${notes.actionTwo}`, 'YesNo', 'Provenance');
       },
     );

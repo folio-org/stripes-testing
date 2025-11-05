@@ -3,7 +3,7 @@ import SettingsInventory from '../../../support/fragments/settings/inventory/set
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import Settings from '../../../support/fragments/settings/settingsPane';
 
-describe('fse-copycat - UI for productions tenants', () => {
+describe('fse-copycat - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

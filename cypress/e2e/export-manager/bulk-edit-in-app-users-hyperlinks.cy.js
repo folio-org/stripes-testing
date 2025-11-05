@@ -15,7 +15,8 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 
-describe('Export Manager', () => {
+// Obsolete from Trillium (MODEXPW-598)
+describe.skip('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser(
       [
@@ -43,14 +44,14 @@ describe('Export Manager', () => {
 
   it(
     'C365103 Verify hyperlink on the "JobID" column -- Users in app approach (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C365103'] },
+    { tags: [] },
     () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.openStartBulkEditForm();
       BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();

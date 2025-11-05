@@ -85,7 +85,7 @@ describe('Finance: Ledgers', () => {
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
           defaultFund,
           'Electronic',
           '10',
@@ -101,7 +101,7 @@ describe('Finance: Ledgers', () => {
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
           defaultFund,
           'Print',
           '10',
@@ -138,7 +138,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353211 Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings: No fiscal year, Each class status (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

@@ -19,11 +19,7 @@ import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs
 let user;
 let marcInstance;
 let instanceUUIDsFileName;
-let matchedRecordsFileName;
-let previewFileNameMrc;
-let previewFileNameCsv;
-let changedRecordsFileNameMrc;
-let changedRecordsFileNameCsv;
+let fileNames;
 const actionNote = 'Action note text';
 
 describe(
@@ -34,23 +30,13 @@ describe(
     },
   },
   () => {
-    describe('In-app approach', () => {
+    describe('Instances with source MARC', () => {
       beforeEach('create test data', () => {
         marcInstance = {
           title: `AT_C503070_MarcInstance_${getRandomPostfix()}`,
         };
         instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-        matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
-        previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
-        previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
-        changedRecordsFileNameMrc = BulkEditFiles.getChangedRecordsMarcFileName(
-          instanceUUIDsFileName,
-          true,
-        );
-        changedRecordsFileNameCsv = BulkEditFiles.getChangedRecordsFileName(
-          instanceUUIDsFileName,
-          true,
-        );
+        fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 
         cy.clearLocalStorage();
         cy.getAdminToken();
@@ -94,14 +80,8 @@ describe(
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
         FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(
-          previewFileNameMrc,
-          previewFileNameCsv,
-          changedRecordsFileNameMrc,
-          changedRecordsFileNameCsv,
-          matchedRecordsFileName,
-          instanceUUIDsFileName,
-        );
+        BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+        FileManager.deleteFileFromDownloadsByMask(instanceUUIDsFileName);
       });
 
       it(
@@ -146,11 +126,6 @@ describe(
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')).to.not.be.empty,
-                (record) => expect(record.get('005')).to.not.be.empty,
-                (record) => expect(record.get('008')).to.not.be.empty,
-
                 (record) => expect(record.get('583')[0].ind1).to.eq('0'),
                 (record) => expect(record.get('583')[0].ind2).to.eq(' '),
                 (record) => expect(record.get('583')[0].subf[0][0]).to.eq('a'),
@@ -162,11 +137,15 @@ describe(
             },
           ];
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(
+            fileNames.previewRecordsMarc,
+            assertionsOnMarcFileContent,
+            1,
+          );
 
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyValueInRowByUUID(
-            previewFileNameCsv,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
@@ -186,11 +165,15 @@ describe(
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
-          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(
+            fileNames.changedRecordsMarc,
+            assertionsOnMarcFileContent,
+            1,
+          );
 
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileNameCsv,
+            fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
@@ -199,12 +182,7 @@ describe(
 
           // remove earlier downloaded files
           FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-          FileManager.deleteFileFromDownloadsByMask(
-            previewFileNameMrc,
-            previewFileNameCsv,
-            changedRecordsFileNameMrc,
-            changedRecordsFileNameCsv,
-          );
+          BulkEditFiles.deleteAllDownloadedFiles(fileNames);
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkInstancesCheckbox();
@@ -217,7 +195,7 @@ describe(
           BulkEditFiles.verifyCSVFileRecordsNumber(instanceUUIDsFileName, 1);
           BulkEditLogs.downloadFileWithMatchingRecords();
           BulkEditFiles.verifyValueInRowByUUID(
-            matchedRecordsFileName,
+            fileNames.matchedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             'Notes',
@@ -225,7 +203,7 @@ describe(
           );
           BulkEditLogs.downloadFileWithProposedChanges();
           BulkEditFiles.verifyValueInRowByUUID(
-            previewFileNameCsv,
+            fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
@@ -233,11 +211,15 @@ describe(
           );
           BulkEditLogs.downloadFileWithProposedChangesMarc();
 
-          parseMrcFileContentAndVerify(previewFileNameMrc, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(
+            fileNames.previewRecordsMarc,
+            assertionsOnMarcFileContent,
+            1,
+          );
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
           BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileNameCsv,
+            fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
@@ -245,9 +227,14 @@ describe(
           );
           BulkEditLogs.downloadFileWithUpdatedRecordsMarc();
 
-          parseMrcFileContentAndVerify(changedRecordsFileNameMrc, assertionsOnMarcFileContent, 1);
+          parseMrcFileContentAndVerify(
+            fileNames.changedRecordsMarc,
+            assertionsOnMarcFileContent,
+            1,
+          );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

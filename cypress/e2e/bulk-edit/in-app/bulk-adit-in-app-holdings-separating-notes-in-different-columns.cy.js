@@ -43,13 +43,11 @@ const initialValueSets = [
   ],
 ];
 const editedValueSets = [
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, ''],
+  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, 'null (staff only) | null'],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, ''],
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
-const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
+const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 
 function verifyFileContent(fileName, headerValuePairs) {
   headerValuePairs.forEach((pair) => {
@@ -65,6 +63,7 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -139,11 +138,7 @@ describe('Bulk-edit', () => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(
-        matchedRecordsFileName,
-        previewFileName,
-        changedRecordsFileName,
-      );
+      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
     it(
@@ -170,14 +165,14 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
-        verifyFileContent(matchedRecordsFileName, initialValueSets);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        verifyFileContent(fileNames.matchedRecordsCSV, initialValueSets);
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE);
         cy.wait(1000);
-        BulkEditActions.selectSecondAction(actionsToSelect.find);
+        BulkEditActions.selectAction(actionsToSelect.find);
         BulkEditActions.fillInFirstTextArea(notesText.copyNote);
         BulkEditActions.selectSecondAction(actionsToSelect.remove);
         BulkEditActions.verifyActionSelected(actionsToSelect.find);
@@ -187,8 +182,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 1);
-        BulkEditActions.selectSecondAction(actionsToSelect.removeAll, 1);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.removeAll, 1);
+        BulkEditActions.selectAction(actionsToSelect.removeAll, 1);
+        BulkEditActions.verifyActionSelected(actionsToSelect.removeAll, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
@@ -202,7 +197,7 @@ describe('Bulk-edit', () => {
         });
 
         BulkEditActions.downloadPreview();
-        verifyFileContent(previewFileName, editedValueSets);
+        verifyFileContent(fileNames.previewRecordsCSV, editedValueSets);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner();
@@ -217,7 +212,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        verifyFileContent(changedRecordsFileName, editedValueSets);
+        verifyFileContent(fileNames.changedRecordsCSV, editedValueSets);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();

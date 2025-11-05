@@ -12,10 +12,11 @@ import {
   including,
   matching,
 } from '../../../../interactors';
-import OrderStates from './orderStates';
+import { DEFAULT_WAIT_TIME } from '../../constants';
+import InteractorsTools from '../../utils/interactorsTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
-import InteractorsTools from '../../utils/interactorsTools';
+import OrderStates from './orderStates';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
 const itemDetailsSection = orderLineEditFormRoot.find(Section({ id: 'itemDetails' }));
@@ -75,7 +76,8 @@ const disabledButtons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(orderLineEditFormRoot.exists());
   },
   checkButtonsConditions(fields = []) {
@@ -319,6 +321,9 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  clickConfirmButton() {
+    cy.do(Button('Confirm').click());
   },
   verifyOrderLineEditFormClosed() {
     cy.expect(orderLineEditFormRoot.absent());

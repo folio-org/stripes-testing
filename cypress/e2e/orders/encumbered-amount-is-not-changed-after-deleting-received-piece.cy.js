@@ -129,7 +129,7 @@ describe('Orders', () => {
 
   it(
     'C375110 Encumbered amount is not changed after deleting received piece when related approved invoice exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -138,7 +138,7 @@ describe('Orders', () => {
       Receiving.selectPieceInReceived(barcode);
       Receiving.openDropDownInEditPieceModal();
       Receiving.deleteItemPiece();
-      Receiving.selectInstanceInReceive(`${orderNumber}-1`);
+      Receiving.selectPOLineInReceive(`${orderNumber}-1`);
       OrderLines.openPageCurrentEncumbrance('$0.00');
       Funds.varifyDetailsInTransaction(
         firstFiscalYear.code,

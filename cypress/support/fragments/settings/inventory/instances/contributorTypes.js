@@ -1,11 +1,14 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
 } from '../../../../../../interactors';
+
+const rootPane = Pane('Contributor types');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -28,9 +31,24 @@ export default {
     method: 'DELETE',
     path: `contributor-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
+  getViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'contributor-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.contributorTypes;
+    }),
+  waitLoading() {
+    ['Name', 'Code', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
   verifyConsortiumContributorTypesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -51,7 +69,7 @@ export default {
   },
 
   verifyLocalContributorTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -86,6 +104,7 @@ export default {
     ]);
   },
   choose() {
-    cy.do([NavListItem('Contributor types').click(), Pane('Contributor types').exists()]);
+    cy.do(NavListItem('Contributor types').click());
+    this.waitLoading();
   },
 };

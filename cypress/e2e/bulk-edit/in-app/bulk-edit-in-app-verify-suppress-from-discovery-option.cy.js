@@ -21,8 +21,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
-const previewOfProposedChangesFileName =
-  BulkEditFiles.getPreviewOfProposedChangesFileName(instanceHRIDFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -93,7 +92,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
 
         // Click on "Actions" menu => Select the "Start bulk edit" element
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         // Click on "Select option" dropdown => Select "Suppress from discovery" option
         // Select "Set false" option and check checkbox displayed followed with the label "Apply to items records"

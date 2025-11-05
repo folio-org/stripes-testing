@@ -5,6 +5,7 @@ import {
   Checkbox,
   DropdownMenu,
   Form,
+  Icon,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
@@ -25,7 +26,12 @@ import {
   not,
   or,
 } from '../../../../interactors';
-import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
+import {
+  BROWSE_CALL_NUMBER_OPTIONS,
+  BROWSE_CLASSIFICATION_OPTIONS,
+  INVENTORY_COLUMN_HEADERS,
+  INSTANCE_STATUS_TERM_NAMES,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
@@ -81,7 +87,7 @@ const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-but
 const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
-const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
+const instancesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-find-records') });
 const getListHeader = (name) => inventorySearchResultsPane.find(MultiColumnListHeader(name));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
@@ -98,6 +104,7 @@ const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }))
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
+const clearIcon = Button({ icon: 'times-circle-solid' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -171,7 +178,7 @@ const checkInstanceDetails = () => {
   });
   // when creating mapping profile we choose instance status term as "Batch Loaded"
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
-  const expectedStatusTerm = 'Batch Loaded';
+  const expectedStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
   const expectedStatusCode = 'batch';
 
   cy.do(
@@ -457,6 +464,7 @@ export default {
   saveCQLQuery() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveCQLQuery.click());
+    cy.wait(5000);
   },
 
   exportInstanceAsMarc() {
@@ -587,8 +595,8 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body: { instances } }) => {
-        return instances;
+      .then((resp) => {
+        return resp.body;
       });
   },
 
@@ -633,7 +641,7 @@ export default {
     cy.do(searchButton.click());
   },
 
-  clickMarcAuthIcon() {
+  clickMarcAuthIconByTitle(title) {
     cy.window().then((win) => {
       cy.stub(win, 'open')
         .callsFake((url) => {
@@ -642,7 +650,10 @@ export default {
         .as('windowOpen');
     });
 
-    cy.get("[data-link='authority-app']").eq(0).click();
+    cy.contains('a[data-test-text-link="true"]', title)
+      .closest('div[role="gridcell"]')
+      .find('[data-link="authority-app"]')
+      .click();
   },
 
   checkContributorRequest() {
@@ -702,11 +713,24 @@ export default {
   },
 
   searchTag(tag) {
-    cy.wait(500);
-    cy.do([
-      tagsAccordionButton.click(),
-      MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
-    ]);
+    // If Tags filter is expanded, directly fill in the tag
+    // If Tags filter is collapsed, open it first then fill in the tag
+    cy.get('body').then(($body) => {
+      const tagsSection = $body.find('[data-test-accordion-section][id*="Tags"]');
+      if (tagsSection.length > 0) {
+        const contentWrap = tagsSection.find('[class^="content-wrap"]');
+        const isExpanded = contentWrap.length > 0 && contentWrap.hasClass('expanded');
+
+        if (isExpanded) {
+          cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag));
+        } else {
+          cy.do([
+            tagsAccordionButton.click(),
+            MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
+          ]);
+        }
+      }
+    });
   },
 
   filterByTag(tag) {
@@ -715,6 +739,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
     cy.wait(500);
+    cy.expect(MultiSelectOption(including(tag)).exists());
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
   },
@@ -725,6 +750,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'holdingsTags-multiselect' }).toggle());
     cy.wait(500);
+    cy.expect(MultiSelectOption(including(tag)).exists());
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
   },
@@ -767,6 +793,8 @@ export default {
   resetAllAndVerifyNoResultsAppear() {
     cy.do(resetAllButton.click());
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+    // Wait until focus appears in the search field to avoid closing open dropdowns.
+    cy.wait(1000);
   },
 
   closeInstanceDetailPane() {
@@ -796,8 +824,23 @@ export default {
     cy.wait(1200);
   },
 
+  closeTagsPane() {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(1000);
+    cy.expect(tagsPane.absent());
+  },
+
   openTagsField() {
     cy.do(tagsButton.click());
+  },
+
+  checkTagsCounter(count) {
+    cy.expect(tagsButton.find(HTML(`${count}`)).exists());
   },
 
   verifyInstanceDetailsView() {
@@ -1078,8 +1121,9 @@ export default {
     cy.expect(keywordInput.has({ value: '' }));
   },
 
-  verifyAccordionExistance(accordionName) {
-    cy.expect(Accordion(accordionName).exists());
+  verifyAccordionExistance(accordionName, isShown = true) {
+    if (isShown) cy.expect(Accordion(accordionName).exists());
+    else cy.expect(Accordion(accordionName).absent());
   },
 
   verifyAccordionByNameExpanded(accordionName, status = true) {
@@ -1142,11 +1186,9 @@ export default {
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
-    cy.do([
-      multiSelect.open(),
-      cy.wait(1000),
-      multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]),
-    ]);
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]));
   },
 
   checkSearchButtonEnabled() {
@@ -1219,8 +1261,7 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
-    cy.intercept('GET', '/search/instances?*').as('getInstances');
+    cy.intercept('GET', /\/search\/(instances|call-numbers)(\/facets)?\?.*/).as('getData');
     cy.do(
       Button({
         ariaLabel: or(
@@ -1229,7 +1270,18 @@ export default {
         ),
       }).click(),
     );
-    cy.wait(['@getInstances', '@getFacets']);
+    cy.wait('@getData');
+  },
+
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
   },
 
   checkSharedInstancesInResultList() {
@@ -1423,5 +1475,88 @@ export default {
     cy.do(accordion.find(MultiSelect()).open());
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());
+  },
+
+  getAllValuesFromColumn(columnIndex) {
+    return cy
+      .wait(3000)
+      .get('[class^="mclRow-"]')
+      .then(($rows) => {
+        const cellValues = [];
+        $rows.each((_, row) => {
+          const cell = row.querySelectorAll('[class^="mclCell-"]')[columnIndex];
+          if (cell) {
+            const cellText = cell.textContent.replace('would be here', '').trim();
+            cellValues.push(cellText);
+          }
+        });
+        return cellValues;
+      });
+  },
+
+  checkAllValuesInColumnSorted(columnIndex) {
+    this.getAllValuesFromColumn(columnIndex).then((cellValues) => {
+      cy.expect(cellValues).to.deep.equal(cellValues.sort());
+    });
+  },
+
+  clearBrowseInputField() {
+    cy.do(browseSearchInputField.focus());
+    cy.do(browseSearchInputField.find(clearIcon).click());
+    this.checkBrowseSearchInputFieldContent('');
+  },
+
+  verifyBrowseFacetsNotDisplayed() {
+    cy.expect(searchAndFilterSection.find(Accordion()).absent());
+  },
+
+  clearSearchInputField() {
+    cy.do(inventorySearchAndFilter.focus());
+    cy.do(inventorySearchAndFilter.find(clearIcon).click());
+    this.checkSearchQueryText('');
+  },
+
+  validateSearchTableColumnsShown(
+    columnHeaders = Object.values(INVENTORY_COLUMN_HEADERS),
+    isShown = true,
+  ) {
+    const headers = Array.isArray(columnHeaders) ? columnHeaders : [columnHeaders];
+    headers.forEach((header) => {
+      if (isShown) cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+      else cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).absent());
+    });
+  },
+
+  verifyShowColumnsCheckboxesChecked(
+    columnNames = Object.values(INVENTORY_COLUMN_HEADERS).slice(1),
+    isChecked = true,
+  ) {
+    const names = Array.isArray(columnNames) ? columnNames : [columnNames];
+    names.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).has({ checked: isChecked }));
+    });
+  },
+
+  verifyShowColumnsMenu() {
+    cy.expect(DropdownMenu().find(HTML('Show columns')).exists());
+    Object.values(INVENTORY_COLUMN_HEADERS)
+      .slice(1)
+      .forEach((columnName) => {
+        cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
+      });
+  },
+
+  toggleShowColumnCheckbox(columnName, isChecked = true) {
+    cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    cy.wait(200);
+    this.verifyShowColumnsCheckboxesChecked(columnName, isChecked);
+  },
+
+  verifyWarningIconForSearchResult: (cellContent, hasWarningItem = true) => {
+    const targetCell = MultiColumnListCell({ content: cellContent });
+    if (hasWarningItem) cy.expect(targetCell.find(Icon({ warning: true })).exists());
+    else {
+      cy.expect([targetCell.exists(), targetCell.find(Icon({ warning: true })).absent()]);
+    }
   },
 };

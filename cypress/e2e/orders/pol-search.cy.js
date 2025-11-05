@@ -7,6 +7,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('orders: Test Po line search', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -31,7 +32,7 @@ describe('orders: Test Po line search', () => {
       createInventory: 'Instance, Holding, Item',
       materialType: '',
       materialSupplier: '',
-      volumes: ['test vol. 1'],
+      volumes: [`test_vol_${getRandomPostfix()}`],
     },
     vendorDetail: {
       instructions: `autotest instructions_${getRandomPostfix()}`,
@@ -55,18 +56,21 @@ describe('orders: Test Po line search', () => {
   let orderLineNumber;
   const searchers = [
     { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
-    { nameOfSearch: 'Contributor', valueOfLine: orderLine.contributors[0].contributor },
-    { nameOfSearch: 'Requester', valueOfLine: orderLine.requester },
+    {
+      nameOfSearch: 'Contributor',
+      valueOfLine: orderLine.contributors[0].contributor.split('.')[0],
+    },
+    { nameOfSearch: 'Requester', valueOfLine: orderLine.requester.split('.')[0] },
     { nameOfSearch: 'Title or package name', valueOfLine: orderLine.titleOrPackage },
-    { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher },
+    { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher.split('.')[0] },
     { nameOfSearch: 'Vendor account', valueOfLine: orderLine.vendorDetail.vendorAccount },
     {
       nameOfSearch: 'Vendor reference number',
       valueOfLine: orderLine.vendorDetail.referenceNumbers[0].refNumber,
     },
-    { nameOfSearch: 'Donor', valueOfLine: orderLine.donor },
-    { nameOfSearch: 'Selector', valueOfLine: orderLine.selector },
-    { nameOfSearch: 'Volumes', valueOfLine: orderLine.physical.volumes },
+    { nameOfSearch: 'Donor (Deprecated)', valueOfLine: orderLine.donor.split('.')[0] },
+    { nameOfSearch: 'Selector', valueOfLine: orderLine.selector.split('.')[0] },
+    { nameOfSearch: 'Volumes', valueOfLine: orderLine.physical.volumes[0].split('.')[0] },
     { nameOfSearch: 'Product ID', valueOfLine: orderLine.details.productIds[0].productId },
     { nameOfSearch: 'Product ID ISBN', valueOfLine: orderLine.details.productIds[0].productId },
   ];
@@ -82,11 +86,9 @@ describe('orders: Test Po line search', () => {
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
       orderLine.locations[0].locationId = location.id;
     });
-    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+    cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.loginAsAdmin();
-    cy.getAdminToken();
     cy.createOrderApi(order).then(() => {
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
         orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
@@ -94,8 +96,12 @@ describe('orders: Test Po line search', () => {
         cy.createOrderLineApi(orderLine).then((response) => {
           orderLineNumber = response.body.poLineNumber;
         });
-        cy.visit(TopMenu.ordersPath);
-        Orders.selectOrderLines();
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.orderLinesPath,
+            waiter: OrderLines.waitLoading,
+          });
+        });
       });
     });
   });
@@ -107,7 +113,7 @@ describe('orders: Test Po line search', () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches', { tags: ['smoke'] }, () => {
+    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke'] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

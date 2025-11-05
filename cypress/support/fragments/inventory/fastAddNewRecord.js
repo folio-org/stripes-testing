@@ -11,19 +11,24 @@ import {
   SelectionList,
   TextField,
 } from '../../../../interactors';
+import { LOCATION_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 
 const fastAddNewRecordFormDetails = {
   instanceStatusCodeValue: 'uncat',
   resourceTitle: `Monograph${getRandomPostfix()}`,
   resourceType: 'text',
-  permanentLocationOption: 'Online (E) ',
-  permanentLocationValue: 'Online',
+  permanentLocationOption: `${LOCATION_NAMES.MAIN_LIBRARY} `,
+  permanentLocationValue: LOCATION_NAMES.MAIN_LIBRARY_UI,
   itemBarcode: `${getRandomPostfix()}Barcode`,
   materialType: 'text',
   permanentLoanType: 'Course reserves',
   note: 'note for monograph',
 };
+
+const fastAddPane = Pane('New fast add record');
+const cancelButton = fastAddPane.find(Button('Cancel'));
+const closeIcon = fastAddPane.find(PaneHeader()).find(Button({ icon: 'times' }));
 
 const fillFastAddNewRecordForm = ({
   resourceTitle,
@@ -107,6 +112,16 @@ const closeHoldingsRecordView = () => {
   );
 };
 
+const clickCancel = () => {
+  cy.do(cancelButton.click());
+  cy.expect(fastAddPane.absent());
+};
+
+const closePane = () => {
+  cy.do(closeIcon.click());
+  cy.expect(fastAddPane.absent());
+};
+
 export default {
   fastAddNewRecordFormDetails,
   fillFastAddNewRecordForm,
@@ -117,4 +132,6 @@ export default {
   viewHoldings,
   verifyPermanentLocation,
   closeHoldingsRecordView,
+  closePane,
+  clickCancel,
 };

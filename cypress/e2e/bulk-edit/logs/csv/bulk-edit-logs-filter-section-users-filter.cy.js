@@ -84,7 +84,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.waitFileUploading();
 
             BulkEditActions.openActions();
-            BulkEditActions.openInAppStartBulkEditFrom();
+            BulkEditActions.openStartBulkEditForm();
             BulkEditActions.fillPatronGroup('staff (Staff Member)');
             BulkEditActions.confirmChanges();
             BulkEditActions.commitChanges();
@@ -129,6 +129,7 @@ describe('Bulk-edit', () => {
           BulkEditLogs.selectUserFromDropdown(users[1].username);
           BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
           BulkEditLogs.resetAllBtnIsDisabled(false);
+          cy.wait(3000);
           BulkEditLogs.verifyCellsValues(
             8,
             `${users[1].username}, ${users[1].preferredFirstName} ${Users.defaultUser.personal.middleName}`,
@@ -139,6 +140,7 @@ describe('Bulk-edit', () => {
           BulkEditLogs.selectUserFromDropdown(users[2].username);
           BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
           BulkEditLogs.resetAllBtnIsDisabled(false);
+          cy.wait(3000);
           BulkEditLogs.verifyCellsValues(
             8,
             `${users[2].username}, ${users[2].preferredFirstName} ${Users.defaultUser.personal.middleName}`,
@@ -153,6 +155,7 @@ describe('Bulk-edit', () => {
           BulkEditLogs.selectUserFromDropdown(users[1].username);
           BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
           BulkEditLogs.resetAllBtnIsDisabled(false);
+          cy.wait(3000);
           BulkEditLogs.verifyCellsValues(
             8,
             `${users[1].username}, ${users[1].preferredFirstName} ${Users.defaultUser.personal.middleName}`,

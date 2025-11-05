@@ -14,7 +14,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Orders', () => {
+describe('Orders', { retries: { runMode: 1 } }, () => {
   const testData = {
     organization: {},
     servicePoint: {},
@@ -143,7 +143,7 @@ describe('Orders', () => {
         OrderLines.editPOLInOrder();
 
         // Change "Receipt status" to "Receipt not required" in "PO line details" accordion
-        OrderLines.fillPOLineDetails({ receiptStatus: 'Receipt not required' });
+        OrderLines.fillPOLineDetails({ receiptStatus: 'Partially received' });
 
         // Click "Save & close" button
         OrderLines.saveOrderLine();

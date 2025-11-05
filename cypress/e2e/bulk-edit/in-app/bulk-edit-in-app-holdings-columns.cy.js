@@ -80,7 +80,7 @@ describe('Bulk-edit', () => {
           item.instanceName,
         );
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.clearTemporaryLocation('holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

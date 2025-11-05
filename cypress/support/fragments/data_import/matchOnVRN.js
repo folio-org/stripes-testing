@@ -23,6 +23,7 @@ import {
   ITEM_STATUS_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   RECORD_STATUSES,
+  INSTANCE_STATUS_TERM_NAMES,
 } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
@@ -191,7 +192,7 @@ function creatMappingProfilesForInstance(name) {
         nameField.fillIn(name),
         incomingRecordTypeSelect.choose('MARC Bibliographic'),
         catalogedDateField.fillIn('###TODAY###'),
-        instanceStatusTermField.fillIn('"Batch Loaded"'),
+        instanceStatusTermField.fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
       ]);
       saveProfile();
       closeViewMode(name);
@@ -369,7 +370,7 @@ function verifyHoldingsUpdated() {
 function verifyItemUpdated(itemBarcode) {
   cy.do(
     Section({ id: 'pane-instancedetails' })
-      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );

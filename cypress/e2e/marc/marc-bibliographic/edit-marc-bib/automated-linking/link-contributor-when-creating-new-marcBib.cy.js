@@ -37,12 +37,14 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '100',
-            content: 'test123',
+            content: 'test123 $t test',
+            browseSearchOption: 'personalNameTitle',
           },
           {
             rowIndex: 6,
             tag: '700',
             content: '',
+            browseSearchOption: 'personalNameTitle',
           },
         ];
 
@@ -117,6 +119,7 @@ describe('MARC', () => {
 
             newFields.forEach((newField) => {
               QuickMarcEditor.clickLinkIconInTagField(newField.rowIndex);
+              MarcAuthorities.checkSearchOption(newField.browseSearchOption);
               MarcAuthorities.searchByParameter(
                 fieldsToUpdate.searchOptions.personalName,
                 fieldsToUpdate.marcValue,
@@ -124,20 +127,29 @@ describe('MARC', () => {
               MarcAuthorities.selectTitle(fieldsToUpdate.marcValue);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(newField.rowIndex);
-              QuickMarcEditor.verifyTagFieldAfterLinking(
-                newField.rowIndex,
-                newField.tag,
-                '\\',
-                '\\',
-                '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
-                '',
-                '$0 3052044',
-                '',
-              );
             });
+            QuickMarcEditor.verifyTagFieldAfterLinking(
+              5,
+              '100',
+              '\\',
+              '\\',
+              '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
+              '$t test',
+              '$0 3052044',
+              '',
+            );
+            QuickMarcEditor.verifyTagFieldAfterLinking(
+              6,
+              '700',
+              '\\',
+              '\\',
+              '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
+              '',
+              '$0 3052044',
+              '',
+            );
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
             InventoryInstance.getId().then((id) => {
@@ -153,7 +165,7 @@ describe('MARC', () => {
               '\\',
               '\\',
               '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
-              '',
+              '$t test',
               '$0 3052044',
               '',
             );
@@ -171,7 +183,7 @@ describe('MARC', () => {
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',
+              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $t test $0 3052044 $9',
             );
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t700\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',

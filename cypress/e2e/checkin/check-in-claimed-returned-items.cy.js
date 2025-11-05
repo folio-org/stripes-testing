@@ -1,13 +1,12 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -26,9 +25,8 @@ describe('Check in', () => {
   const patronGroup = {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
-  const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-  };
+  const testData = {};
+  let servicePoint;
   const itemsData = {
     itemsWithSeparateInstance: [
       { title: `InstanceForFoundByLibrary ${getRandomPostfix()}` },
@@ -43,9 +41,9 @@ describe('Check in', () => {
 
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.servicePointS);
-        testData.defaultLocation = Location.getDefaultLocation(testData.servicePointS.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -53,11 +51,11 @@ describe('Check in', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C10974_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
           testData.materialType = materialTypes.name;
         });
@@ -72,7 +70,7 @@ describe('Check in', () => {
             holdings: [
               {
                 holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: testData.defaultLocation.id,
+                permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
               },
             ],
             items: [
@@ -106,18 +104,14 @@ describe('Check in', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(
-          testData.servicePointS.id,
-          userData.userId,
-          testData.servicePointS.id,
-        );
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
 
         cy.get('@items').each((item) => {
           Checkout.checkoutItemViaApi({
             id: uuid(),
             itemBarcode: item.barcode,
             loanDate: moment.utc().format(),
-            servicePointId: testData.servicePointS.id,
+            servicePointId: servicePoint.id,
             userBarcode: userData.barcode,
           });
         });
@@ -135,8 +129,6 @@ describe('Check in', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id]);
-    ServicePoints.deleteViaApi(testData.servicePointS.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
@@ -144,12 +136,6 @@ describe('Check in', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
@@ -169,6 +155,7 @@ describe('Check in', () => {
       CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
       ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
       ClaimedReturned.chooseItemReturnedByLibrary();
+
       CheckInActions.openLoanDetails(userData.username);
       UsersCard.getApi(userData.userId).then((user) => {
         Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
@@ -187,6 +174,7 @@ describe('Check in', () => {
       CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
       ClaimedReturned.checkModalMessage(itemReturnedByPatron);
       ClaimedReturned.chooseItemReturnedByPatron();
+
       CheckInActions.openLoanDetails(userData.username);
       UsersCard.getApi(userData.userId).then((user) => {
         Loans.getApi(userData.userId).then(([returnedByPatron]) => {

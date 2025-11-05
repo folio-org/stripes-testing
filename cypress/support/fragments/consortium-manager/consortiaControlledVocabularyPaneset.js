@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
@@ -32,12 +33,17 @@ export default {
     cy.expect(newButton.is({ disabled: status }));
   },
 
-  verifyEditModeIsActive() {
+  verifyNewButtonShown(isShown = true) {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
+  },
+
+  verifyEditModeIsActive(isSaveActive = true) {
     this.verifyNewButtonDisabled();
     cy.expect([
-      MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(TextField()).exists(),
+      MultiColumnList().find(TextField()).exists(),
       cancelButton.is({ disabled: false }),
-      saveButton.is({ disabled: false }),
+      saveButton.is({ disabled: !isSaveActive }),
     ]);
   },
 
@@ -85,7 +91,8 @@ export default {
 
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: including(record[0]), isContainer: true
+      content: including(record[0]),
+      isContainer: true,
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
@@ -116,7 +123,8 @@ export default {
   // use for searching identifiers array
   verifyRecordInTheListForMultipleRecords(identifiers, record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: and(including(identifiers[0]), including(identifiers[1])), isContainer: true
+      content: and(including(identifiers[0]), including(identifiers[1])),
+      isContainer: true,
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
@@ -198,5 +206,14 @@ export default {
 
   verifyRecordNotInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
+  },
+
+  verifyShareCheckboxState({ isEnabled = true, isChecked = false } = {}) {
+    cy.expect([memberLibrariesShare.is({ disabled: !isEnabled, checked: isChecked })]);
+  },
+
+  clearTextField(placeholder) {
+    cy.do(TextField({ placeholder }).clear());
+    cy.expect(TextField({ placeholder }).has({ value: '' }));
   },
 };

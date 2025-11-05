@@ -1,3 +1,4 @@
+import { matching } from '@interactors/html';
 import {
   TextArea,
   Select,
@@ -10,9 +11,11 @@ import {
   calloutTypes,
   KeyValue,
   including,
+  Modal,
 } from '../../../interactors';
 
 const deleteButton = Button({ ariaLabel: 'remove fields for ' });
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 function checkdisabledDeleteButtons(fieldset, buttonsCount, deleteInFieldsetButton) {
   for (let i = 0; i < buttonsCount; i++) {
@@ -107,13 +110,50 @@ export default {
   checkCalloutContainsMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ textContent: including(text) }).is({ type: calloutType }));
   },
+  checkCalloutDuplicatedMessage: (integrationName, calloutType = 'success') => {
+    const cleanName = integrationName.replace(/^Integration\s+/i, '');
+    const re = new RegExp(
+      `(?:Integration\\s+)?${escapeRegExp(cleanName)}(?:\\s*\\([^)]*\\))?\\s+was\\s+successfully\\s+duplicated`,
+      'i',
+    );
+    cy.expect(Callout({ textContent: matching(re) }).is({ type: calloutType }));
+  },
   closeCalloutMessage: () => cy.do(
     Callout()
       .find(Button({ icon: 'times' }))
       .click(),
   ),
+  closeAllVisibleCallouts: () => {
+    cy.document().then((doc) => {
+      const callouts = doc.querySelectorAll('[class^=calloutBase-]');
+      if (!callouts.length) return;
+
+      for (let i = 0; i < callouts.length; i++) {
+        cy.do(
+          Callout({ id: callouts[i].id })
+            .find(Button({ icon: 'times' }))
+            .click(),
+        );
+      }
+    });
+  },
   checkCalloutErrorMessage: (text, calloutType = calloutTypes.error) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+  },
+  checkOneOfCalloutsContainsErrorMessage: (text) => {
+    cy.get('[class^=calloutBase-]').then(($els) => {
+      const matchingId = [...$els].find(
+        (el) => el.className.includes('error') &&
+          el.querySelector('[class^=message-]')?.textContent.includes(text),
+      )?.id;
+      if (matchingId) {
+        cy.expect(
+          Callout({ id: matchingId, type: calloutTypes.error }).has({
+            textContent: including(text),
+          }),
+        );
+      }
+    });
   },
   dismissCallout: (text) => {
     cy.do(Callout({ textContent: text }).dismiss());
@@ -136,5 +176,12 @@ export default {
   checkCalloutExists(message, type = null) {
     if (type) cy.expect(Callout({ textContent: message, type }).exists());
     else cy.expect(Callout({ textContent: message }).exists());
+  },
+  checkNoErrorCallouts: () => {
+    cy.wait(1000);
+    cy.get('[class^=calloutBase-][class*="error"]').should('not.exist');
+  },
+  checkModalMessage(title, message) {
+    cy.expect(Modal(including(title)).has({ message: including(message) }));
   },
 };

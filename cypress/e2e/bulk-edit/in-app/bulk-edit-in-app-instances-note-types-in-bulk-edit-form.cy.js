@@ -110,7 +110,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
           instance.title,
         );
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
@@ -157,10 +157,10 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionExistsInSelectOptionDropdown(noteType);
         BulkEditActions.clickFilteredOption(noteType);
         BulkEditActions.verifyOptionSelected(noteType);
-        BulkEditActions.selectSecondAction(actionToSelect);
-        BulkEditActions.fillInSecondTextArea(noteText);
-        BulkEditActions.verifyValueInSecondTextArea(noteText);
-        BulkEditActions.verifySecondActionSelected(actionToSelect);
+        BulkEditActions.selectAction(actionToSelect);
+        BulkEditActions.fillInFirstTextArea(noteText);
+        BulkEditActions.verifyValueInFirstTextArea(noteText);
+        BulkEditActions.verifyActionSelected(actionToSelect);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);

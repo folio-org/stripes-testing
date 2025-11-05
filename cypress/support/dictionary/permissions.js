@@ -42,6 +42,23 @@ export default {
   },
   bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
+  bulkEditSettingsCreate: {
+    internal: 'ui-bulk-edit.settings.create',
+    gui: 'Settings (Bulk edit): Can view, add, update profiles',
+  },
+  bulkEditSettingsView: {
+    internal: 'ui-bulk-edit.settings.view',
+    gui: 'Settings (Bulk edit): Can view only',
+  },
+  bulkEditSettingsDelete: {
+    internal: 'ui-bulk-edit.settings.delete',
+    gui: 'Settings (Bulk edit): Can delete profiles',
+  },
+  bulkEditSettingsLockEdit: {
+    internal: 'ui-bulk-edit.settings.lock.edit',
+    gui: 'Settings (Bulk edit): Can lock and unlock profiles',
+  },
+
   // eHoldings
   uieHoldingsRecordsEdit: {
     internal: 'ui-eholdings.records.edit',
@@ -225,6 +242,10 @@ export default {
     internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
+  uiInventoryMarcItemInProcessDefault: {
+    internal: 'ui-inventory.items.mark-in-process.execute',
+    gui: 'Inventory: Mark items in process',
+  },
   uiInventoryMarcItemIntellectual: {
     internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
@@ -325,6 +346,23 @@ export default {
     internal: 'ui-inventory.settings.displaySettings',
     gui: 'Settings (Inventory): Can view and edit general settings',
   },
+  // TODO: move to capability when it will be implemented
+  inventoryCreateAndDownloadInTransitItemsReport: {
+    internal: 'ui-inventory.items.in-transit-report.create',
+    gui: 'Inventory: Create and download In transit items report',
+  },
+  inventoryStorageBatchCreateUpdateItems: {
+    internal: 'inventory-storage.items.batch.post',
+    gui: 'inventory storage - create or update a number of items',
+  },
+  inventoryStorageBatchUpdateItemsPatch: {
+    internal: 'inventory-storage.items.collection.patch',
+    gui: 'inventory storage - update items collection',
+  },
+  inventoryFastAddCreate: {
+    internal: 'ui-plugin-create-inventory-records.create',
+    gui: 'Fast add: Create',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -379,6 +417,85 @@ export default {
     internal: 'inventory-storage.authorities.all',
     gui: 'inventory storage module - all authorities permissions',
   },
+
+  // Specification Storage
+  specificationStorageGetSpecificationFields: {
+    internal: 'specification-storage.specification.fields.collection.get',
+    gui: 'Specification Storage - Get specification field definition collection',
+  },
+  specificationStorageCreateSpecificationField: {
+    internal: 'specification-storage.specification.fields.item.post',
+    gui: 'Specification Storage - Create field definition for specification',
+  },
+  specificationStorageUpdateSpecificationField: {
+    internal: 'specification-storage.fields.item.put',
+    gui: 'Specification Storage - Update field definition',
+  },
+  specificationStorageDeleteSpecificationField: {
+    internal: 'specification-storage.fields.item.delete',
+    gui: 'Specification Storage - Delete specification field definition',
+  },
+  specificationStorageGetSpecificationFieldIndicators: {
+    internal: 'specification-storage.field.indicators.collection.get',
+    gui: 'Specification Storage - Get field indicators definition collection',
+  },
+  specificationStorageCreateSpecificationFieldIndicator: {
+    internal: 'specification-storage.field.indicators.item.post',
+    gui: 'Specification Storage - Create indicator definition for field',
+  },
+  specificationStorageUpdateSpecificationFieldIndicator: {
+    internal: 'specification-storage.indicators.item.put',
+    gui: 'Specification Storage - Update indicator definition',
+  },
+  specificationStorageGetSpecificationIndicatorCodes: {
+    internal: 'specification-storage.indicator.indicator-codes.collection.get',
+    gui: 'Specification Storage - Get indicator code definition collection',
+  },
+  specificationStorageCreateSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator.indicator-codes.item.post',
+    gui: 'Specification Storage - Create code definition for indicator',
+  },
+  specificationStorageUpdateSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator-codes.item.put',
+    gui: 'Specification Storage - Update indicator code definition',
+  },
+  specificationStorageDeleteSpecificationIndicatorCode: {
+    internal: 'specification-storage.indicator-codes.item.delete',
+    gui: 'Specification Storage - Delete indicator code definition',
+  },
+  specificationStorageGetSpecificationFieldSubfields: {
+    internal: 'specification-storage.field.subfields.collection.get',
+    gui: 'Specification Storage - Get field subfields definition collection',
+  },
+  specificationStorageCreateSpecificationFieldSubfield: {
+    internal: 'specification-storage.field.subfields.item.post',
+    gui: 'Specification Storage - Create subfield definition for field',
+  },
+  specificationStorageUpdateSpecificationSubfield: {
+    internal: 'specification-storage.subfields.item.put',
+    gui: 'Specification Storage - Update subfield definition',
+  },
+  specificationStorageSpecificationRulesItemPatch: {
+    internal: 'specification-storage.specification.rules.item.patch',
+    gui: 'Specification Storage - Toggle rule for specification',
+  },
+  specificationStorageSpecificationRulesCollectionGet: {
+    internal: 'specification-storage.specification.rules.collection.get',
+    gui: 'Specification Storage - Get specification rules collection',
+  },
+  specificationStorageSpecificationItemGet: {
+    internal: 'specification-storage.specifications.item.get',
+    gui: 'Specification Storage - Get specification',
+  },
+  specificationStorageSpecificationCollectionGet: {
+    internal: 'specification-storage.specifications.collection.get',
+    gui: 'Specification Storage - Get specification collection',
+  },
+  rtacGetBatchHoldingsCollection: {
+    internal: 'rtac.batch.post',
+    gui: 'RTAC - get batch holding collection',
+  },
+
   // Circulation log
   circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
@@ -413,6 +530,14 @@ export default {
   uiCirculationViewCreateEditDeleteFixedDueDateSchedules: {
     internal: 'ui-circulation.settings.fixed-due-date-schedules',
     gui: 'Settings (Circulation): Can create, edit and remove fixed due date schedules',
+  },
+  uiCirculationViewLoanHistory: {
+    internal: 'ui-circulation.settings.loan-history',
+    gui: 'Settings (Circulation): Can view loan history',
+  },
+  uiCirculationEditLoanHistory: {
+    internal: 'ui-circulation.settings.edit-loan-history',
+    gui: 'Settings (Circulation): Can edit loan history',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
@@ -627,6 +752,12 @@ export default {
     internal: 'ui-data-export.edit',
     gui: 'Data export: Can upload files, export, download files and view logs',
   },
+  // TODO: move to capability when it will be implemented
+  consortiaCentralAll: {
+    internal: 'consortia.data-import.central-record-update.all',
+    gui: 'All Data Import shared record update permissions',
+  },
+
   // Loans
   loansAll: {
     internal: 'ui-users.loans.all',
@@ -703,6 +834,10 @@ export default {
   invoiceSettingsBatchGroupViewEdit: {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
+  },
+  invoiceSettingsBatchGroupView: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.view',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view',
   },
   uiInvoicesCancelInvoices: {
     internal: 'ui-invoice.invoice.cancel.execute',
@@ -911,6 +1046,14 @@ export default {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
   },
+  uiFinanceFundUpdateLogsView: {
+    internal: 'ui-finance.fund-update-logs.view',
+    gui: 'Finance: View batch allocation logs',
+  },
+  uiFinanceFundUpdateLogsDelete: {
+    internal: 'ui-finance.fund-update-logs.delete',
+    gui: 'Finance: Delete batch allocation logs',
+  },
   // Organizations
   uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
     internal: 'ui-organizations.privileged-contacts.edit',
@@ -1064,6 +1207,10 @@ export default {
     internal: 'ui-inventory.settings.statistical-codes',
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
+  uiSettingsStatisticalCodeTypesCreateEditDelete: {
+    internal: 'ui-inventory.settings.statistical-code-types',
+    gui: 'Settings (Inventory): Create, edit, delete statistical code types',
+  },
   uiSettingsHRIDHandlingCreateEditDelete: {
     internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
@@ -1071,6 +1218,10 @@ export default {
   uiSettingsCallNumberBrowseView: {
     internal: 'ui-inventory.settings.call-number-browse',
     gui: 'Settings (Inventory): Configure call number browse',
+  },
+  uiSettingsCallNumberTypesCreateEditDelete: {
+    internal: 'ui-inventory.settings.call-number-types',
+    gui: 'Settings (Inventory): Create, edit, delete call number types',
   },
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
@@ -1091,6 +1242,10 @@ export default {
   uiSettingsViewAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.view',
     gui: 'Settings (MARC authority): View authority files',
+  },
+  uiSettingsInventoryViewList: {
+    internal: 'ui-inventory.settings.list.view',
+    gui: 'Settings (Inventory): View list of settings pages',
   },
   // Added the below permissions for custom label creation
 

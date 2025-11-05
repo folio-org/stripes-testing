@@ -16,6 +16,7 @@ export default HTML.extend('search field')
     selectedFilter: (el) => el.querySelector('select').value,
     placeholder: (el) => el.querySelector('input, textarea').placeholder,
     disabled: (el) => el.querySelector('select').disabled,
+    selectedFilterText: (el) => el.querySelector('select option:checked').textContent,
   })
   .actions({
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),

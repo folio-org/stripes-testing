@@ -10,7 +10,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -105,9 +104,9 @@ describe('Data Import', () => {
         testData.user = userProperties;
 
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(testData.identifire.value).then(
-          (instances) => {
-            if (instances.length !== 0) {
-              instances.forEach(({ id }) => {
+          (response) => {
+            if (response.totalRecords !== 0) {
+              response.instances.forEach(({ id }) => {
                 InstanceRecordView.markAsDeletedViaApi(id);
                 InventoryInstance.deleteInstanceViaApi(id);
               });
@@ -162,7 +161,7 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.chooseInstanceStatusTerm('Cataloged (folio: cat)');
+        InstanceRecordEdit.chooseInstanceStatusTerm('Cataloged');
         InstanceRecordEdit.saveAndClose();
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.CATALOGED);
@@ -177,8 +176,8 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfiles[0].matchProfile);

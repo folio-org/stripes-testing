@@ -3,11 +3,13 @@ import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import topMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import { getTestEntityValue } from '../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -52,11 +54,11 @@ describe('Permissions', () => {
       });
 
       after('Deleting created entities', () => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.tagsGeneralPath,
-          waiter: TagsGeneral.waitLoading,
-        });
+        // Enable tags settings again to not break other tests in other threads
+        topMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         TagsGeneral.changeEnableTagsStatus('enable');
+
+        cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
         PatronGroups.deleteViaApi(patronGroup.id);
       });
@@ -65,18 +67,17 @@ describe('Permissions', () => {
         'C396357 Verify that new permission to view all the Tags settings is added (volaris)',
         { tags: ['criticalPath', 'volaris', 'C396357', 'eurekaPhase1'] },
         () => {
-          TagsGeneral.changeEnableTagsStatus('disable');
-          cy.visit(TopMenu.usersPath);
+          TagsGeneral.changeEnableTagsStatus('enable');
+          topMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.waitLoading();
           UsersSearchPane.searchByUsername(userData.username);
           UsersSearchPane.waitLoading();
-          UserEdit.addPermissions([permissions.uiUserCanEnableDisableTags.gui]);
-          UserEdit.saveAndClose();
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.tagsGeneralPath,
-            waiter: TagsGeneral.waitLoading,
-          });
-          TagsGeneral.checkEnableTagsNotAvailable();
+          UsersCard.verifyTagsIconIsPresent();
+          UsersCard.openTagsPane();
+          topMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          TagsGeneral.changeEnableTagsStatus('disable');
+          topMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+          UsersCard.verifyTagsIconIsAbsent();
         },
       );
     });

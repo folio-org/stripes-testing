@@ -18,8 +18,6 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -29,11 +27,12 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import {
   ActionProfiles as SettingsActionProfiles,
+  SettingsDataImport,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
-  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -386,8 +385,8 @@ describe('Data Import', () => {
 
           // download .csv file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.intercept('/inventory/instances/*').as('getId');
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.wait('@getId', getLongDelay()).then((req) => {
             InventorySearchAndFilter.saveUUIDs();
             // need to create a new file with instance UUID because tests are runing in multiple threads
@@ -431,8 +430,8 @@ describe('Data Import', () => {
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create Match profile

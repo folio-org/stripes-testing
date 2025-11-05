@@ -32,6 +32,7 @@ const servicePointField = MultiSelect({
 export default {
   // TODO: will rework to interactor when we get section id
   clickApplyMainFilter() {
+    cy.wait(5000);
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
   waitLoading() {
@@ -51,6 +52,7 @@ export default {
   },
 
   searchByItemBarcode(barcode) {
+    cy.wait(2000);
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     this.clickApplyMainFilter();
     cy.wait(3000);
@@ -120,6 +122,11 @@ export default {
     });
     // Need to avoid robotic clicks
     cy.wait(1000);
+    cy.expect(
+      Accordion({ id: accordion })
+        .find(Checkbox({ disabled: true }))
+        .absent(),
+    );
     cy.do(Checkbox(checkboxOption).click());
   },
 
@@ -268,16 +275,22 @@ export default {
   },
 
   checkActionButtonAfterFiltering(name, barcode) {
-    SearchResults.chooseActionByRow(0, 'Loan details');
-    LoansPage.waitLoading();
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+    this.findResultRowIndexByContent(barcode).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'Loan details');
+      LoansPage.waitLoading();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
 
-    SearchResults.chooseActionByRow(0, 'User details');
-    Users.verifyFirstNameOnUserDetailsPane(name);
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+      this.findResultRowIndexByContent(barcode).then((rowIndexForUser) => {
+        SearchResults.chooseActionByRow(rowIndexForUser, 'User details');
+        Users.verifyFirstNameOnUserDetailsPane(name);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
 
-    SearchResults.clickOnCell(barcode, 0);
-    ItemRecordView.waitLoading();
+        this.findResultRowIndexByContent(barcode).then((rowIndexForCell) => {
+          SearchResults.clickOnCell(barcode, +rowIndexForCell);
+          ItemRecordView.waitLoading();
+        });
+      });
+    });
   },
 
   checkUserData(columnName, content, rowNumber) {

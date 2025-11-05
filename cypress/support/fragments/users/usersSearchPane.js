@@ -57,8 +57,18 @@ export default {
     waitClick();
   },
 
+  searchByBarcode(barcode) {
+    cy.do([
+      Select({ id: 'input-user-search-qindex' }).choose('Barcode'),
+      TextField({ id: 'input-user-search' }).fillIn(barcode),
+      Button({ id: 'submit-user-search' }).click(),
+    ]);
+    waitClick();
+  },
+
   selectUserFromList: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+    cy.wait(1000);
   },
 
   openUser(userName) {
@@ -102,6 +112,13 @@ export default {
       Pane({ id: 'users-search-results-pane' })
         .find(MultiColumnListRow(including(text), { isContainer: false }))
         .find(Link())
+        .click(),
+    );
+  },
+  closeUserDetailsPane: () => {
+    cy.get(
+      Pane({ id: 'pane-userdetails' })
+        .find(Button({ ariaLabel: 'Close ' }))
         .click(),
     );
   },

@@ -9,7 +9,6 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -115,8 +114,8 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
         // create action profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
         // create job profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
@@ -136,7 +135,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
-          orderNumber = polNumber.replace('-1', '');
+          orderNumber = polNumber.replace(/-\d+$/, '');
         });
         productIdentifiers.forEach((id) => {
           OrderLines.verifyProductIdentifier(id.identifier, id.productIdType, id.rowIndex);

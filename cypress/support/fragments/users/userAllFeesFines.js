@@ -115,6 +115,14 @@ export default {
   waiveSelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Waive'));
   },
+  waiveFeeFineByRowIndex: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .choose('Waive'),
+    );
+  },
   refundSelectedFeeFines: () => cy.do(Dropdown('Actions').choose('Refund')),
   cancelSelectedFeeFines: (rowIndex) => {
     cy.do(

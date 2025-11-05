@@ -68,12 +68,14 @@ describe('Fees&Fines', () => {
                       path: TopMenu.usersPath,
                       waiter: UsersSearchPane.waitLoading,
                     });
-                    UsersSearchPane.searchByUsername(testData.userProperties.username);
+                    cy.waitForAuthRefresh(() => {
+                      UsersSearchPane.searchByUsername(testData.userProperties.username);
+                    });
                   });
                 });
               });
 
-              cy.getMaterialTypes({ query: 'name="book"' }).then((res) => {
+              cy.getBookMaterialType().then((res) => {
                 testData.materialTypeId = res.id;
               });
               cy.getLocations({ limit: 1 }).then((res) => {
@@ -126,7 +128,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)',
-      { tags: ['smoke', 'feeFine', 'vega', 'C455'] },
+      { tags: ['smokeBroken', 'feeFine', 'vega', 'C455'] },
       () => {
         const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
         const itemInfo = [testData.instanceTitle + ' (book)', testData.barcode];
@@ -172,7 +174,6 @@ describe('Fees&Fines', () => {
         Checkout.waitLoading();
         cy.checkOutItem(testData.userProperties.barcode, testData.barcode);
         cy.verifyItemCheckOut();
-
 
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
         // Close fee/fine page

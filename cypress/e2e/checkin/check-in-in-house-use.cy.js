@@ -4,7 +4,6 @@ import SwitchServicePoint from '../../support/fragments/settings/tenant/serviceP
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -15,6 +14,8 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -22,36 +23,33 @@ import Users from '../../support/fragments/users/users';
 describe('Check in', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
-    servicePointX: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    servicePointY: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   let itemAData;
   let itemBData;
+  let servicePointX;
+  let servicePointY;
 
   before('Create test data', () => {
-    cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePointX);
-    ServicePoints.createViaApi(testData.servicePointY);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.servicePointX.id,
-    }).location;
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
+    cy.getAdminToken().then(() => {
+      ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+        servicePointX = sp1;
+      });
+      ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+        servicePointY = sp2;
+      });
       InventoryInstances.createFolioInstancesViaApi({
         folioInstances: testData.folioInstances,
-        location,
+        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
       });
     });
     itemAData = testData.folioInstances[0].items[0];
     itemBData = testData.folioInstances[1].items[0];
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       testData.user = userProperties;
-      UserEdit.addServicePointsViaApi(
-        [testData.servicePointX.id, testData.servicePointY.id],
-        testData.user.userId,
-      );
+      UserEdit.addServicePointsViaApi([servicePointX.id, servicePointY.id], testData.user.userId);
       Checkout.checkoutItemViaApi({
         itemBarcode: itemAData.barcode,
-        servicePointId: testData.servicePointX.id,
+        servicePointId: servicePointX.id,
         userBarcode: testData.user.barcode,
       });
       Requests.createNewRequestViaApi({
@@ -60,7 +58,7 @@ describe('Check in', () => {
         instanceId: testData.folioInstances[1].instanceId,
         item: { barcode: itemBData.barcode },
         itemId: itemBData.id,
-        pickupServicePointId: testData.servicePointX.id,
+        pickupServicePointId: servicePointX.id,
         requestDate: new Date(),
         requestExpirationDate: new Date(new Date().getTime() + 86400000),
         requestLevel: REQUEST_LEVELS.ITEM,
@@ -70,9 +68,12 @@ describe('Check in', () => {
         testData.requestsId = request.body.id;
         itemBData.servicePoint = request.body.pickupServicePoint.name;
       });
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.checkInPath,
-        waiter: CheckInActions.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.checkInPath,
+          waiter: CheckInActions.waitLoading,
+        });
       });
     });
   });
@@ -82,18 +83,11 @@ describe('Check in', () => {
     testData.folioInstances.forEach((instance) => {
       InventoryInstances.deleteInstanceViaApi({
         instance,
-        servicePoint: testData.servicePointX,
+        servicePoint: servicePointX,
         shouldCheckIn: true,
       });
     });
-    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
-      testData.servicePointX.id,
-      testData.servicePointY.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.servicePointX.id);
-    ServicePoints.deleteViaApi(testData.servicePointY.id);
     Requests.deleteRequestViaApi(testData.requestsId);
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -107,21 +101,21 @@ describe('Check in', () => {
       // Check in succeeds. In-house use column is not populated
       CheckInPane.checkInHouseUseIcon(false);
       // #2 Switch user's service point to service point Y. Check in item A.
-      SwitchServicePoint.switchServicePoint(testData.servicePointY.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointY.name);
+      SwitchServicePoint.switchServicePoint(servicePointY.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointY.name);
       CheckInActions.checkInItemGui(itemAData.barcode);
       InTransit.verifyModalTitle();
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       CheckInPane.checkResultsInTheRow([
-        `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${testData.servicePointX.name}`,
+        `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${servicePointX.name}`,
         itemAData.barcode,
       ]);
       // Check in succeeds. In-house use column is not populated
       CheckInPane.checkInHouseUseIcon(false);
       // #3 Switch user's service point to service point X. Check in item A.
-      SwitchServicePoint.switchServicePoint(testData.servicePointX.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointX.name);
+      SwitchServicePoint.switchServicePoint(servicePointX.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointX.name);
       CheckInActions.checkInItemGui(itemAData.barcode);
       CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
       // Check in succeeds. In-house use column is not populated

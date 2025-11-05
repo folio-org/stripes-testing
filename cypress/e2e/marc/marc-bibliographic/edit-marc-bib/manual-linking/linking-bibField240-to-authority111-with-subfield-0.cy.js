@@ -21,10 +21,7 @@ describe('MARC', () => {
           tag240: '240',
           tag240content:
             '$a C380746 Conf on Security & Cooperation in Europe $c H. Finland $0 n88380746',
-          filterStateTag111: [
-            'advancedSearch',
-            'keyword exactPhrase C380746 Conf on Security & Cooperation in Europe or identifiers.value exactPhrase n88380746',
-          ],
+          filterStateTag111: ['advancedSearch', 'identifiers.value exactPhrase n88380746'],
           markedValue: 'C380746 Conference on Security and Cooperation in Europe',
           authority010FieldValue: 'n  88380746',
           authority111FieldValue: 'C380746 Conference on Security and Cooperation in Europe',
@@ -133,8 +130,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth111);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.verifyAlternativeTitle(
@@ -148,7 +143,6 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240AfterUninkingToAuth111);
             QuickMarcEditor.verifyIconsAfterUnlinking(11);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
             // need to wait until the instance will be updated

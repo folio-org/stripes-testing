@@ -40,7 +40,18 @@ Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => 
     },
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
+    Cypress.env('authoritySourceFiles', body.authoritySourceFiles);
     return cy.wrap(body.authoritySourceFiles[0]);
+  });
+});
+
+Cypress.Commands.add('getAuthoritySourceFileDataByIdViaAPI', (authorityFileId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `authority-source-files/${authorityFileId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
   });
 });
 

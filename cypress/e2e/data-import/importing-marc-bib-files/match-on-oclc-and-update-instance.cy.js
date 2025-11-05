@@ -9,7 +9,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -114,15 +113,13 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
-        (instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        },
-      );
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then((response) => {
+        if (response.totalRecords !== 0) {
+          response.instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -188,11 +185,11 @@ describe('Data Import', () => {
 
         // create action profile for creating instance
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(
+        SettingsActionProfiles.create(
           collectionOfMappingAndActionProfiles[0].actionProfile,
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
-        ActionProfiles.checkActionProfilePresented(
+        SettingsActionProfiles.checkActionProfilePresented(
           collectionOfMappingAndActionProfiles[0].actionProfile.name,
         );
 
@@ -260,11 +257,11 @@ describe('Data Import', () => {
 
           // create action profile for updating instance
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-          ActionProfiles.create(
+          SettingsActionProfiles.create(
             collectionOfMappingAndActionProfiles[1].actionProfile,
             collectionOfMappingAndActionProfiles[1].mappingProfile.name,
           );
-          ActionProfiles.checkActionProfilePresented(
+          SettingsActionProfiles.checkActionProfilePresented(
             collectionOfMappingAndActionProfiles[1].actionProfile.name,
           );
 
@@ -307,7 +304,7 @@ describe('Data Import', () => {
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
           InstanceRecordView.verifyInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           InstanceRecordView.verifyStatisticalCode(itemsForUpdateInstance.statisticalCodeUI);
           InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);

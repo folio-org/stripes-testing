@@ -42,7 +42,7 @@ describe('Bulk-edit', () => {
       { tags: ['extendedPath', 'firebird', 'C360949'] },
       () => {
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
 
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');

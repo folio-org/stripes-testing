@@ -18,6 +18,7 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -29,6 +30,7 @@ describe('Invoices', () => {
     allocated: 101,
   };
   const isApprovePayEnabled = true;
+  const isApprovePayDisabled = false;
   const testData = {
     acqUnit: AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true }),
     user: {},
@@ -39,20 +41,13 @@ describe('Invoices', () => {
       paymentMethod: 'Cash',
     },
   };
-  const setApprovePayValue = (isEnabled = false) => {
-    cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(isEnabled);
-    });
-  };
   const order = NewOrder.getDefaultOrder({ vendorId: organization.id });
 
   before('Create test data and login', () => {
     cy.getAdminToken();
     AcquisitionUnits.createAcquisitionUnitViaApi(testData.acqUnit).then(() => {
-      cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((user) => {
-        testData.adminId = user[0].id;
-
-        AcquisitionUnits.assignUserViaApi(user[0].id, testData.acqUnit.id).then((id) => {
+      cy.getAdminUserDetails().then((user) => {
+        AcquisitionUnits.assignUserViaApi(user.id, testData.acqUnit.id).then((id) => {
           testData.membershipAdminId = id;
         });
       });
@@ -105,18 +100,23 @@ describe('Invoices', () => {
       Permissions.uiOrdersView.gui,
       Permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
       Permissions.uiSettingsAcquisitionUnitsManageAcqUnitUserAssignments.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
       AcquisitionUnits.assignUserViaApi(userProperties.userId, testData.acqUnit.id);
 
-      cy.login(userProperties.username, userProperties.password);
-      setApprovePayValue(isApprovePayEnabled);
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
+      });
+      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
     });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
+    Approvals.setApprovePayValue(isApprovePayDisabled);
     AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
     Users.deleteViaApi(testData.user.userId);
@@ -124,7 +124,7 @@ describe('Invoices', () => {
 
   it(
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

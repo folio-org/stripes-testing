@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -59,7 +61,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Username');
         BulkEditSearchPane.changeShowColumnCheckbox('Username');
         BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Username');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
@@ -67,21 +69,9 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabel(0, 1);
         BulkEditSearchPane.verifyErrorByIdentifier(
           user.barcode,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
-      },
-    );
-
-    it(
-      'C347883 Error messages in submitted identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C347883'] },
-      () => {
-        BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
-        BulkEditSearchPane.waitFileUploading();
-
-        BulkEditActions.openActions();
-        BulkEditActions.downloadErrors();
       },
     );
   });

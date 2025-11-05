@@ -80,6 +80,7 @@ describe('MARC', () => {
     before('Creating user', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
+      InventoryInstances.deleteFullInstancesByTitleViaApi('C369084*');
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*C369084');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -122,9 +123,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
         });
@@ -146,7 +145,7 @@ describe('MARC', () => {
 
     it(
       'C369084 Delete authorized "MARC Authority" record that has two linked field in different "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C369084'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C369084'] },
       () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
@@ -215,8 +214,7 @@ describe('MARC', () => {
         );
         QuickMarcEditor.pressCancel();
 
-        // Wait for the content to be loaded.
-        cy.wait(4000);
+        InventoryInstance.waitInventoryLoading();
         InventoryInstance.viewSource();
         InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
       },

@@ -8,7 +8,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import InventoryInteractionsDefaults from '../../../support/fragments/settings/orders/inventoryInteractionsDefaults';
+import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -35,17 +35,17 @@ describe('Orders', () => {
   let instance;
 
   before(() => {
-    cy.getAdminToken();
-    InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
-      query: '(module==ORDERS and configName==disableInstanceMatching)',
-    }).then((body) => {
-      if (body.configs.length !== 0) {
-        const id = body.configs[0].id;
-        InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-          id,
-          module: 'ORDERS',
-          configName: 'disableInstanceMatching',
-          value: '{"isInstanceMatchingDisabled":false}',
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    }, 20_000);
+    InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
+      if (settings?.length !== 0) {
+        InventoryInteractions.setInstanceMatchingSetting({
+          ...settings[0],
+          value: JSON.stringify({ isInstanceMatchingDisabled: false }),
         });
       }
     });
@@ -59,11 +59,6 @@ describe('Orders', () => {
       organization.id = responseOrganizations;
     });
     firstOrder.vendor = organization.name;
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
-    cy.getAdminToken();
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -82,10 +77,12 @@ describe('Orders', () => {
       permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
@@ -94,7 +91,6 @@ describe('Orders', () => {
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
-    cy.getAdminToken();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();

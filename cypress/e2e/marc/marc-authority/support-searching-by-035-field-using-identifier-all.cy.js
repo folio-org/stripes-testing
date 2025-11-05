@@ -86,9 +86,11 @@ describe('MARC', () => {
           });
         })
         .then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
     });

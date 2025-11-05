@@ -11,6 +11,8 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 const testData = {
   new100fieldRecordForFirstFile: getRandomPostfix(),
   new100fieldRecordForSecondFile: getRandomPostfix(),
+  field008Updated: { 'Geo Subd': 'b', RecUpd: 'a', 'Mod Rec': 's', Source: 'c' },
+  second008Field008Updated: { RefEval: 'a', RecUpd: 'a', 'Pers Name': 'b', 'Level Est': 'a' },
 };
 const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
 const fileName = 'marcFileForC387474.mrc';
@@ -31,11 +33,13 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+            cy.reload();
+          }, 20_000);
         });
       });
 
@@ -58,10 +62,8 @@ describe('MARC', () => {
           Logs.clickOnHotLink(0, 6, RECORD_STATUSES.CREATED);
           MarcAuthority.edit();
           QuickMarcEditor.check008BoxesCount(19);
-          QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'b');
+          MarcAuthority.select008DropdownsIfOptionsExist(testData.field008Updated);
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForFirstFile);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           TopMenu.openDataImportApp();
@@ -70,10 +72,8 @@ describe('MARC', () => {
           Logs.clickOnHotLink(1, 6, RECORD_STATUSES.CREATED);
           MarcAuthority.edit();
           QuickMarcEditor.check008BoxesCount(19);
-          QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'a');
+          MarcAuthority.select008DropdownsIfOptionsExist(testData.second008Field008Updated);
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForSecondFile);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },

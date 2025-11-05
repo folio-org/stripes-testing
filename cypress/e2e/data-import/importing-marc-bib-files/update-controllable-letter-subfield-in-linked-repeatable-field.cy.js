@@ -10,7 +10,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -164,7 +164,6 @@ describe('Data Import', () => {
           cy.loginAsAdmin();
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          cy.reload();
           InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
@@ -179,9 +178,7 @@ describe('Data Import', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 
@@ -190,7 +187,6 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
           InventoryInstances.waitContentLoading();
         }, 20_000);
       });

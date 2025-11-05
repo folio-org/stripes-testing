@@ -20,6 +20,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     const successCalloutMessage = '1 item has been successfully moved.';
+    const successHoldingCalloutMessage = '1 holding has been successfully moved.';
     const OCLCAuthentication = '100481406/PAOLF';
     let userId;
     let firstHolding = '';
@@ -53,7 +54,7 @@ describe('MARC', () => {
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
+            cy.getDefaultMaterialType();
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 2 });
             InventoryHoldings.getHoldingSources({ limit: 2 }).then((holdingsSources) => {
@@ -100,9 +101,11 @@ describe('MARC', () => {
               ],
             });
             cy.wait(5000);
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
       });
@@ -143,8 +146,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C345404'] },
+      'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (folijet)',
+      { tags: ['smoke', 'folijet', 'C345404'] },
       () => {
         cy.wait(5000);
         InventoryActions.import();
@@ -158,6 +161,7 @@ describe('MARC', () => {
             InventoryInstance.waitLoading();
             InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
             InventoryInstancesMovement.closeInLeftForm();
+            InteractorsTools.checkCalloutMessage(successHoldingCalloutMessage);
             InventorySearchAndFilter.searchByParameter('Instance HRID', initialInstanceHrId);
             InventoryInstances.waitLoading();
             InventoryInstances.selectInstance();

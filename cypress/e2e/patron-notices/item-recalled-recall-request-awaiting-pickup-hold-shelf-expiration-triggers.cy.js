@@ -192,7 +192,7 @@ describe('Patron notices', () => {
           }).then((loanType) => {
             testData.loanTypeId = loanType.id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          cy.getDefaultMaterialType().then((materialTypes) => {
             testData.materialTypeId = materialTypes.id;
           });
         })
@@ -327,7 +327,7 @@ describe('Patron notices', () => {
 
     it(
       'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C347867'] },
+      { tags: ['criticalPathFlaky', 'volaris', 'C347867'] },
       () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
@@ -356,9 +356,10 @@ describe('Patron notices', () => {
         );
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
+        cy.wait(2000);
 
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();

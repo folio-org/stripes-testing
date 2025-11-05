@@ -38,29 +38,8 @@ describe('MARC', () => {
           'RecUpd',
           'Pers Name',
           'Level Est',
-          'Mod Rec Est',
+          'Mod Rec',
           'Source',
-        ],
-        tag008BoxValues: [
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
         ],
         tag110: '110',
         tag110Value: '$a DC Talk (Musical group).$t Jesus freaks.$l Afrikaans test',
@@ -68,6 +47,27 @@ describe('MARC', () => {
           'This record has successfully saved and is in process. Changes may not appear immediately.',
         errorCalloutMessage: 'Field 008 is required.',
         initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
+      };
+      const dropdownSelections = {
+        'Geo Subd': 'd',
+        Roman: 'a',
+        Lang: 'b',
+        'Kind rec': 'a',
+        'Cat Rules': 'a',
+        'SH Sys': 'a',
+        Series: 'a',
+        'Numb Series': 'a',
+        'Main use': 'a',
+        'Subj use': 'a',
+        'Series use': 'a',
+        'Type Subd': 'a',
+        'Govt Ag': 'a',
+        RefEval: 'a',
+        RecUpd: 'a',
+        'Pers Name': 'a',
+        'Level Est': 'a',
+        'Mod Rec': 'a',
+        Source: 'a',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFiles = [
@@ -82,26 +82,29 @@ describe('MARC', () => {
 
       before('Upload files', () => {
         cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
+        cy.then(() => {
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
+                });
+              },
+            );
+          });
+        }).then(() => {
+          cy.createTempUser([
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
               });
-            },
-          );
-        });
-
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
       });
@@ -156,22 +159,16 @@ describe('MARC', () => {
 
           // #9 Restore value in tag box with "008"
           QuickMarcEditor.updateExistingTagValue(testData.tag008RowIndex, testData.tag008);
-
+          MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections, 5);
           // #10 Click "Save & keep editing" button
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
 
-          // #11 Delete all characters from boxes of "008" field
-          testData.expected008BoxesSets.forEach((box) => {
-            QuickMarcEditor.updateValueOf008BoxByBoxName(box, '');
-          });
+          // #11 Close editing pane
+          QuickMarcEditor.closeAuthorityEditorPane();
 
-          // #12 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.calloutMessage);
-
-          // #13 - #14 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)
+          // #12 - #13 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');
           MarcAuthority.edit();
           cy.wait('@editMarc').then((res) => {

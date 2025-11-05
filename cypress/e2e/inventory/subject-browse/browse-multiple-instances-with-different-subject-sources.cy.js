@@ -15,10 +15,9 @@ describe('Inventory', () => {
     const testData = {
       user: {},
       subject: {
-        indexRow: 0,
+        indexRow: 1,
         name: 'Short stories',
-        firstSource: 'Library of Congress Subject Headings',
-        secondSource: "Library of Congress Children's and Young Adults' Subject Headings",
+        source: 'Library of Congress Subject Headings',
         type: 'Topical term',
       },
     };
@@ -73,14 +72,16 @@ describe('Inventory', () => {
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
-        BrowseSubjects.searchBrowseSubjects('Short stories');
+        cy.reload();
+        BrowseSubjects.searchBrowseSubjects(testData.subject.name);
+        cy.wait(3000);
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
         BrowseSubjects.openInstance(testData.subject);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstanceSubject({
           indexRow: testData.subject.indexRow,
           subjectHeadings: testData.subject.name,
-          subjectSource: testData.subject.secondSource,
+          subjectSource: testData.subject.source,
           subjectType: testData.subject.type,
         });
       },

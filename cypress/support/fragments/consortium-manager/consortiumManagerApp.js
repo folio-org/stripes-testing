@@ -23,8 +23,14 @@ const memberDropdownButton = Button({ id: 'consortium-member-select' });
 const memberDropdownList = SelectionList({ id: 'sl-container-consortium-member-select' });
 
 export const messages = {
-  created: (name, members) => `${name} was successfully created for ${members} libraries.`,
-  updated: (name, members) => `${name} was successfully updated for ${members} libraries.`,
+  created: (name, members) => {
+    const libraryWord = members.includes(',') ? 'libraries' : 'library';
+    return `${name} was successfully created for ${members} ${libraryWord}.`;
+  },
+  updated: (name, members) => {
+    const libraryWord = members.includes(',') ? 'libraries' : 'library';
+    return `${name} was successfully updated for ${members} ${libraryWord}.`;
+  },
   deleted: (settingName, entityName) => `The ${settingName} ${entityName} was successfully deleted`,
   noPermission: (members) => `You do not have permissions at one or more members: ${members}`,
   pleaseFillIn: 'Please fill this in to continue',
@@ -71,8 +77,17 @@ export default {
     );
   },
 
+  verifySelectedMember(member) {
+    cy.expect(memberDropdownButton.has({ singleValue: member }));
+  },
+
   verifySelectMembersButton(isEnabled = true) {
     cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
+  },
+
+  verifyButtonsState(isEnabled = true) {
+    cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
+    cy.expect(Button('+ New').absent());
   },
 
   verifyPaneIncludesSettings(settingsList) {
@@ -231,5 +246,14 @@ export default {
     cy.expect(memberDropdownList.has({ optionList: memberNamesArray.sort() }));
     cy.do(memberDropdownButton.click());
     cy.expect(SelectionOption().absent());
+  },
+
+  selectTenantFromDropdown: (memberName) => {
+    cy.do([memberDropdownButton.click(), SelectionOption(memberName).click()]);
+  },
+
+  checkOptionInOpenedPane: (paneName, optionName, isShown = true) => {
+    if (isShown) cy.expect(Pane(paneName).find(NavListItem(optionName)).exists());
+    else cy.expect(Pane(paneName).find(NavListItem(optionName)).absent());
   },
 };

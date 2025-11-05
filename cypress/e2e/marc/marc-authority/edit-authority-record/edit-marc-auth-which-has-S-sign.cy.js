@@ -17,10 +17,19 @@ describe('MARC', () => {
         searchText: 'C451558 A$AP rocky',
         tag100: '100',
         tag370: '370',
+        tag500: '500',
+        tag510: '510',
+        tag511: '511',
         field100Content: '$a C451558 A{dollar}AP Rocky $c (Rapper), $d 1988-',
         newContentFor370Field: '$a Harlem, New York, N.Y. $c U.S. A{dollar}AP Rocky',
+        contentFor500Field: '$A upper case first code test',
+        contentFor510Field: '$a upper case $B not First $C Code $d TEST',
+        contentFor511Field: '$B A$AP $cp',
         updated100FieldValue: '$a C451558 A$AP Rocky $c (Rapper), $d 1988-',
         updated370FieldValue: '$a Harlem, New York, N.Y. $c U.S. A$AP Rocky ',
+        updated500FieldValue: '$a upper case first code test',
+        updated510FieldValue: '$a upper case $b not First $c Code $d TEST',
+        updated511FieldValue: '$b A $a P $c p',
         editMarcHeader: /Edit .*MARC authority record/,
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -30,6 +39,7 @@ describe('MARC', () => {
 
       before('Creating data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C451558*');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -71,6 +81,27 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.field100Content, 7);
           QuickMarcEditor.updateExistingFieldContent(8, testData.newContentFor370Field);
           QuickMarcEditor.checkContent(testData.newContentFor370Field, 8);
+          QuickMarcEditor.addEmptyFields(13);
+          QuickMarcEditor.addEmptyFields(14);
+          QuickMarcEditor.addEmptyFields(15);
+          QuickMarcEditor.addValuesToExistingField(
+            13,
+            testData.tag500,
+            testData.contentFor500Field,
+            '1',
+          );
+          QuickMarcEditor.addValuesToExistingField(
+            14,
+            testData.tag510,
+            testData.contentFor510Field,
+            '1',
+          );
+          QuickMarcEditor.addValuesToExistingField(
+            15,
+            testData.tag511,
+            testData.contentFor511Field,
+            '1',
+          );
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
           MarcAuthority.clickSaveAndCloseButton();
@@ -80,6 +111,12 @@ describe('MARC', () => {
           MarcAuthority.contains(testData.updated100FieldValue);
           MarcAuthority.contains(testData.tag370);
           MarcAuthority.contains(testData.updated370FieldValue);
+          MarcAuthority.contains(testData.tag500);
+          MarcAuthority.contains(testData.updated500FieldValue);
+          MarcAuthority.contains(testData.tag510);
+          MarcAuthority.contains(testData.updated510FieldValue);
+          MarcAuthority.contains(testData.tag511);
+          MarcAuthority.contains(testData.updated510FieldValue);
         },
       );
     });

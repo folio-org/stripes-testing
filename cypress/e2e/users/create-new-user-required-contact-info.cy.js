@@ -3,6 +3,7 @@ import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
+import UsersCard from '../../support/fragments/users/usersCard';
 
 describe('Users', () => {
   const createUserData = () => ({
@@ -48,7 +49,8 @@ describe('Users', () => {
       Users.createViaUi(userWithSameName).then((id) => {
         userWithSameName.id = id;
       });
-      UsersSearchPane.waitLoading();
+      UsersCard.waitLoading();
+      UsersCard.close();
       Users.createViaUiIncomplete(userWithSameBarcode);
       cy.wait(10000);
       InteractorsTools.checkTextFieldError('Barcode', 'This barcode has already been taken');

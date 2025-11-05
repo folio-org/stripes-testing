@@ -3,7 +3,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.postEdgeErm().then((response) => {
@@ -14,7 +14,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete', 'fast-check'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
       // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
@@ -50,7 +50,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgeOai().then((response) => {
@@ -61,7 +61,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete'] },
+    { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgePatron().then((response) => {
@@ -173,6 +173,11 @@ describe('fse-edge', () => {
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
       cy.getHoldings().then((holdings) => {
+        // If no holdings returned from '/holdings-storage/holdings', then skip edge-rtac test
+        if (!holdings || !holdings[0]) {
+          cy.log('No holdings returned. Skipping edge-rtac test.');
+          return;
+        }
         cy.log(holdings[0]);
         // If instance uuid is returned from '/holdings-storage/holdings', then call edge-rtac api with it,
         // else skip edge-rtac
@@ -180,7 +185,48 @@ describe('fse-edge', () => {
           cy.getEdgeRtac(holdings[0].instanceId).then((response) => {
             cy.expect(response.status).to.eq(200);
           });
+        } else {
+          cy.log('No instanceId in holdings. Skipping edge-rtac test.');
         }
+      });
+    },
+  );
+
+  it(
+    `TC195958 - edge-dematic EMS integration verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-dematic', 'app-edge-complete'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.getAllRemoteStorageConfigurations().then((remoteConfigurations) => {
+        // filter response by provider name - dematic like
+        const dematicEmsid = remoteConfigurations.body.configurations.filter((config) => config.providerName.toLowerCase().includes('dematic'));
+
+        if (dematicEmsid.length === 0) {
+          cy.log(
+            'No external storage configuration with Dematic type found. Skipping edge-dematic test.',
+          );
+          return;
+        }
+
+        cy.getEdgeDematicAsrItems(dematicEmsid[0].id).then((itemsResponse) => {
+          cy.expect(itemsResponse.status).to.eq(200);
+          // Verify the Content-Type response header
+          cy.expect(itemsResponse.headers['content-type']).to.include('xml');
+          // Verify the response body contains valid XML
+          const responseBody = itemsResponse.body;
+          // Ensure response body include asrRequests XML declaration
+          expect(responseBody).to.include('<asrItems');
+        });
+        cy.getEdgeDematicAsrRequests(dematicEmsid[0].id).then((requestsResponse) => {
+          cy.expect(requestsResponse.status).to.eq(200);
+          // Verify the Content-Type response header
+          cy.expect(requestsResponse.headers['content-type']).to.include('xml');
+          // Verify the response body contains valid XML
+          const responseAsrRequestsBody = requestsResponse.body;
+          // Ensure response body include asrRequests XML declaration
+          expect(responseAsrRequestsBody).to.include('<asrRequests');
+        });
       });
     },
   );

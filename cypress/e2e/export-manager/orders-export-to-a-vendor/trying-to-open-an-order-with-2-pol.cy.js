@@ -99,7 +99,7 @@ describe('Export Manager', () => {
         organization.accounts[1].accountNo,
         'Purchase',
       );
-      OrderLinesLimit.setPOLLimit(2);
+      OrderLinesLimit.setPOLLimitViaApi(2);
 
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
@@ -136,14 +136,19 @@ describe('Export Manager', () => {
         permissions.exportManagerDownloadAndResendFiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
+        });
       });
     });
 
     after(() => {
       cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
@@ -158,8 +163,6 @@ describe('Export Manager', () => {
       'C350410 Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
       { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
-        TopMenuNavigation.navigateToApp('Orders');
-        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

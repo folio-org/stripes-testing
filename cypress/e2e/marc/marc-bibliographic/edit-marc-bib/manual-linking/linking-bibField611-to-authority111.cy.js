@@ -132,7 +132,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase V.Council 1960 ValueT or identifiers.value exactPhrase fst01405122',
+              'keyword exactPhrase V.Council 1960 San Pietro ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
@@ -146,21 +146,21 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase V.Council ValueT or identifiers.value exactPhrase fst01405122',
+              'keyword exactPhrase V.Council San Pietro ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
 
             QuickMarcEditor.updateExistingField(
               testData.tag611,
-              '$2 fast $0 http://id.worldcat.org/fast/fst01405122 $1 http://viaf.org/viaf/133636573/ $c San Pietro $t ValueT',
+              '$a V.Council $2 fast $0 http://id.worldcat.org/fast/fst01405122 $1 http://viaf.org/viaf/133636573/ $d 1960 $c San Pietro $t ValueT',
             );
             InventoryInstance.verifyAndClickLinkIcon(testData.tag611);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase ValueT or identifiers.value exactPhrase fst01405122',
+              'keyword exactPhrase V.Council 1960 San Pietro ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
 
@@ -176,8 +176,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag611, bib611FieldValues[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib611AfterLinkingToAuth111);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -189,8 +187,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(`${testData.linkedIconText}\n\t611`);
@@ -198,8 +194,6 @@ describe('MARC', () => {
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
@@ -211,8 +205,6 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib611AfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib611FieldValues[0]);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

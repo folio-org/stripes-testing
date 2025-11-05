@@ -92,22 +92,24 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.verifyMatchedResults(item.firstBarcode);
         BulkEditSearchPane.verifyPaneRecordsCount('1 item');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         // Select "Temporary item location" from "Options" dropdown and "Replace with" option from "Select option" dropdown;
         const newLocation1 = 'Online';
         BulkEditActions.selectOption('Temporary item location');
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.locationLookupExists();
         BulkEditActions.selectLocation(newLocation1);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         // Click on the "Plus" icon
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.isDisabledRowIcons(false);
         // Select "Item status" from "Options" dropdown and select item status in "Select item status" dropdown
         const newLocation2 = 'Online';
         BulkEditActions.selectOption('Permanent item location', 1);
-        BulkEditActions.selectSecondAction('Replace with', 1);
+        BulkEditActions.selectAction('Replace with', 1);
         BulkEditActions.selectLocation(newLocation2, 1);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.locationLookupExists();
         BulkEditActions.clickLocationLookup(1);
         BulkEditActions.verifyLocationLookupModal();

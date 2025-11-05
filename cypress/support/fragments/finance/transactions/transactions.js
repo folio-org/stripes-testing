@@ -6,13 +6,15 @@ import {
   Section,
   including,
 } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import TransactionDetails from './transactionDetails';
 
 const transactionResultsPane = Section({ id: 'transaction-results-pane' });
 const transactionResultsList = MultiColumnList({ id: 'transactions-list' });
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(transactionResultsPane.exists());
   },
   checkTransactionsList({ records = [], present = true } = {}) {

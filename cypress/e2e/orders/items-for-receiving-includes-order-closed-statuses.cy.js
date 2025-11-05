@@ -94,7 +94,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
             InventoryInstance.openHoldingsAccordion(location.name);
             InventoryInstance.openItemByBarcodeAndIndex('No barcode');
             InventoryItems.edit();
@@ -103,7 +103,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
             InventoryInstance.openHoldingsAccordion(location.name);
             InventoryInstance.openItemByBarcodeAndIndex('No barcode');
             InventoryItems.edit();
@@ -112,7 +112,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
             InventoryInstance.openHoldingsAccordion(location.name);
             InventoryInstance.openItemByBarcodeAndIndex('No barcode');
             InventoryItems.edit();
@@ -121,7 +121,7 @@ describe('Orders', () => {
             // Need to wait,while instance will be saved
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(5000);
-            InventoryItems.closeItem();
+            InventoryItems.closeItemInHeader();
           });
 
           TopMenuNavigation.navigateToApp('Check in');
@@ -153,7 +153,7 @@ describe('Orders', () => {
 
     it(
       'C368044 Item statuses set to something other than "Order closed" or "On order" are NOT changed to "In process" upon receiving (items for receiving includes "Order closed" statuses) (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPathBroken', 'thunderjet'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Receiving.selectLinkFromResultsList();

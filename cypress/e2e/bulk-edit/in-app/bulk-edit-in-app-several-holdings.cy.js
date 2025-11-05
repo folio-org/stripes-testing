@@ -1,7 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -23,7 +25,7 @@ const item2 = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const errorMessage = 'No change in value required';
+const errorMessage = ERROR_MESSAGES.NO_CHANGE_REQUIRED;
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -97,7 +99,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(item.locationName, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

@@ -98,21 +98,21 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
         );
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(optionsToSelect.staffSuppress);
-        BulkEditActions.selectSecondAction(actionsToSelect.setTrue);
+        BulkEditActions.selectAction(actionsToSelect.setTrue);
         BulkEditActions.verifyOptionSelected(optionsToSelect.staffSuppress);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue);
+        BulkEditActions.verifyActionSelected(actionsToSelect.setTrue);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(optionsToSelect.suppressFromDiscovery, 1);
-        BulkEditActions.selectSecondAction(actionsToSelect.setTrue, 1);
+        BulkEditActions.selectAction(actionsToSelect.setTrue, 1);
         BulkEditActions.verifyOptionSelected(optionsToSelect.suppressFromDiscovery, 1);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue, 1);
+        BulkEditActions.verifyActionSelected(actionsToSelect.setTrue, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.deleteRow(1);
         BulkEditActions.verifyRowWithOptionAbsent(optionsToSelect.suppressFromDiscovery);
@@ -155,7 +155,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByTitle(instance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMarkedAsStaffSuppressed();
+        InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();
       },
     );
   });

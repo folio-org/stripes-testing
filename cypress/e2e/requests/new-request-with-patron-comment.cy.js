@@ -1,9 +1,9 @@
+import { LOCATION_IDS } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -14,9 +14,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 describe('Requests', () => {
   const folioInstances = InventoryInstances.generateFolioInstances();
   const user = {};
-  const testData = {
-    servicePoint: ServicePoints.getDefaultServicePoint(),
-  };
+  const testData = {};
   const patronGroup = {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
@@ -30,20 +28,14 @@ describe('Requests', () => {
         });
       })
       .then(() => {
-        cy.getLocations({ limit: 1 }).then((res) => {
-          testData.locationId = res.id;
+        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          testData.servicePoint = servicePoint;
+          testData.locationId = LOCATION_IDS.MAIN_LIBRARY;
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances,
+            location: { id: testData.locationId },
+          });
         });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances,
-          location: { id: testData.locationId },
-        });
-      })
-      .then(() => {
-        ServicePoints.createViaApi(testData.servicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
       });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
@@ -66,19 +58,11 @@ describe('Requests', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: folioInstances[0],
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
     Users.deleteViaApi(requestUserData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });

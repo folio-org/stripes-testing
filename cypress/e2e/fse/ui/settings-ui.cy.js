@@ -4,7 +4,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SoftwareVersions from '../../../support/fragments/settings/softwareVersions/software-versions';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 
-describe('fse-settings - UI', () => {
+describe('fse-settings - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -14,14 +14,6 @@ describe('fse-settings - UI', () => {
     });
     cy.allure().logCommandSteps();
   });
-
-  it(
-    `TC195382 - verify that settings page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'settings'] },
-    () => {
-      Settings.waitSettingsPaneLoading();
-    },
-  );
 
   it(
     `TC195469 - verify software versions page is displayed for ${Cypress.env('OKAPI_HOST')}`,

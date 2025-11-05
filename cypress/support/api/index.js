@@ -43,3 +43,7 @@ import './locate';
 import './sso';
 import './reporting';
 import './version-history';
+import './mediated-requests';
+import './circulation-bff';
+import './linkedDataEditor';
+import './oa';

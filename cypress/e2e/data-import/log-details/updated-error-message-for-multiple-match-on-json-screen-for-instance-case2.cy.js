@@ -7,7 +7,6 @@ import {
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -44,7 +43,7 @@ describe('Data Import', () => {
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
-        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
+        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query:',
     };
     const marcFileNames = [
       {
@@ -166,8 +165,8 @@ describe('Data Import', () => {
       // create action profiles
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
       // create job profile

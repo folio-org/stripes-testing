@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -123,11 +125,11 @@ describe('Bulk-edit', () => {
             `${unsuppressedFolioItem.instanceId},false,false,`,
             `${marcInstanceIds[1]},false,false,`,
           ]);
-          BulkEditActions.openStartBulkEditInstanceForm();
+          BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
           BulkEditActions.selectOption('Staff suppress');
           BulkEditSearchPane.verifyInputLabel('Staff suppress');
-          BulkEditActions.selectSecondAction('Set true');
+          BulkEditActions.selectAction('Set true');
           BulkEditActions.verifyCheckboxAbsent();
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
@@ -155,7 +157,7 @@ describe('Bulk-edit', () => {
           [folioItem.instanceId, marcInstanceIds[0]].forEach((instanceId) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               instanceId,
-              'No change in value required',
+              ERROR_MESSAGES.NO_CHANGE_REQUIRED,
               'Warning',
             );
           });

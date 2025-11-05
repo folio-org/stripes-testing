@@ -91,20 +91,20 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         ]);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
         BulkEditActions.selectOption(optionToSelect);
         let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectSecondAction('Clear field');
+        BulkEditActions.selectAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow(optionToSelect);
         BulkEditActions.deleteRow(1);
         BulkEditActions.selectOption(optionToSelect);
-        BulkEditActions.selectSecondAction('Find (full field search)');
+        BulkEditActions.selectAction('Find (full field search)');
         BulkEditActions.verifyActionSelected('Find (full field search)');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);

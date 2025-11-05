@@ -100,10 +100,7 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            });
+            InventoryInstances.waitContentLoading();
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
@@ -130,7 +127,7 @@ describe('MARC', () => {
               `${newFields.boxSixth}`,
               `${newFields.boxSeventh}`,
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -149,6 +146,7 @@ describe('MARC', () => {
               });
               InventoryInstances.searchByTitle(createdAuthorityIDs[1]);
               InventoryInstances.selectInstance();
+              InventoryInstance.waitInventoryLoading();
               InventoryInstance.editMarcBibliographicRecord();
               QuickMarcEditor.verifyTagFieldAfterLinking(
                 newFields.rowIndex,

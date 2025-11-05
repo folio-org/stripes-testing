@@ -6,7 +6,7 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
@@ -89,7 +89,7 @@ describe('Data Import', () => {
       {
         matchProfile: {
           profileName: `C385653 Instance Status Batch Loaded.${getRandomPostfix()}`,
-          incomingStaticValue: 'Batch Loaded',
+          incomingStaticValue: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
           incomingStaticRecordValue: 'Text',
           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           existingRecordOption: 'instance.statusId',

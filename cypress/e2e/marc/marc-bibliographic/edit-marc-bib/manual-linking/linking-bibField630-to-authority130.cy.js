@@ -17,9 +17,10 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'uniformTitle',
           tag630: '630',
           authorityMarkedValue: 'C375069 Marvel comics',
-          subjectValue: 'C375069 Marvel comics ComiCon',
+          subjectValue: 'C375069 Marvel comics ComiCon--Periodicals.--United States',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Subject',
         };
@@ -46,14 +47,14 @@ describe('MARC', () => {
           testData.tag630,
           '0',
           '7',
-          '$a C375069 Marvel comics. $2 fast $0 (OCoLC)fst01373594 $v Periodicals. $z United States $w 830',
+          '$a C375069 Marvel comics. $2 fast $v Periodicals. $z United States $w 830',
         ];
         const bib630UnlinkedFieldValues = [
           22,
           testData.tag630,
           '0',
           '7',
-          '$a C375069 Marvel comics $t ComiCon $w 830 $0 80026955 $2 fast',
+          '$a C375069 Marvel comics $t ComiCon $v Periodicals. $z United States $w 830 $0 80026955 $2 fast',
         ];
         const bib630LinkedFieldValues = [
           22,
@@ -61,7 +62,7 @@ describe('MARC', () => {
           '0',
           '7',
           '$a C375069 Marvel comics $t ComiCon',
-          '$w 830',
+          '$v Periodicals. $z United States $w 830',
           '$0 80026955',
           '$2 fast',
         ];
@@ -117,15 +118,15 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib630InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag630);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag630);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib630LinkedFieldValues);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               2,
@@ -138,16 +139,14 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
+
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
+
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
@@ -159,9 +158,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib630UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib630UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();
             InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();

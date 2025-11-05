@@ -11,6 +11,7 @@ import {
   PaneContent,
   HTML,
   including,
+  and,
   or,
   MultiColumnListCell,
   MultiColumnListHeader,
@@ -298,10 +299,15 @@ export default {
     });
   },
 
-  waitForContributorToAppear(contributorName, isPresent = true, isLinked = false) {
+  waitForContributorToAppear(contributorName, isPresent = true, isLinked = false, quantity) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
         return item.authorityId && item.authorityId !== '';
+      });
+    };
+    const hasNotLinkedItem = (items) => {
+      return items.some((item) => {
+        return !item.authorityId || item.authorityId === '';
       });
     };
     return cy.recurse(
@@ -320,11 +326,16 @@ export default {
         const foundContributors = response.body.items.filter((item) => {
           return item.name === contributorName;
         });
+        const quantityCondition = foundContributors.length === quantity;
         if (isPresent) {
           if (isLinked) {
-            return hasLinkedItem(foundContributors);
+            return quantity
+              ? quantityCondition && hasLinkedItem(foundContributors)
+              : hasLinkedItem(foundContributors);
           } else {
-            return foundContributors.length > 0 && !hasLinkedItem(foundContributors);
+            return quantity
+              ? quantityCondition && hasNotLinkedItem(foundContributors)
+              : hasNotLinkedItem(foundContributors);
           }
         } else {
           return foundContributors.length === 0;
@@ -442,6 +453,21 @@ export default {
       MultiColumnListCell({ row: rowNumber, columnIndex: 0 }).has({
         innerHTML: including(value),
       }),
+    );
+  },
+
+  openRecordWithValues(contributorValue, otherColumnValues) {
+    const contentMatchers = [including(contributorValue)];
+    const additionalValues = Array.isArray(otherColumnValues)
+      ? otherColumnValues
+      : [otherColumnValues];
+    additionalValues.forEach((value) => {
+      contentMatchers.push(including(value));
+    });
+    cy.do(
+      MultiColumnListRow({ content: and(...contentMatchers), isContainer: false })
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .hrefClick(),
     );
   },
 };

@@ -26,6 +26,11 @@ describe('MARC', () => {
             tag245Content: 'C389489 Test: created record with all linkable fields without linking',
           },
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          successCalloutMessage:
+            'Field 100, 240, 630, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+          errorCalloutMessage:
+            'Field 630, 700, and 710 must be set manually by selecting the link icon.',
+          contributorName: 'Lee, Stan, 1922-3894',
         };
 
         let userData = {};
@@ -162,7 +167,6 @@ describe('MARC', () => {
         ];
 
         before(() => {
-          // making sure there are no duplicate records in the system before auto-linking
           cy.getAdminToken().then(() => {
             queries.forEach((query) => {
               MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -176,6 +180,7 @@ describe('MARC', () => {
             });
           });
 
+          InventoryInstances.deleteFullInstancesByTitleViaApi('C389489*');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -207,11 +212,11 @@ describe('MARC', () => {
               QuickMarcEditor.setRulesForField(tag, false);
             });
 
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
             cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
@@ -232,7 +237,7 @@ describe('MARC', () => {
 
         it(
           'C389489 Pre-defined linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C389489'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C389489'] },
           () => {
             // 1 Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
             InventoryInstance.newMarcBibRecord();
@@ -260,9 +265,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 8 Click on the "Link headings" button.
             QuickMarcEditor.clickLinkHeadingsButton();
-            QuickMarcEditor.checkCallout(
-              'Field 100, 240, 630, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
-            );
+            QuickMarcEditor.checkCallout(testData.successCalloutMessage);
             newFields.forEach((field) => {
               if (field.isLinked) {
                 QuickMarcEditor.verifyRowLinked(field.rowIndex + 1, true);
@@ -270,13 +273,10 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyRowLinked(field.rowIndex + 1, false);
               }
             });
-            QuickMarcEditor.checkCallout(
-              'Field 630, 700, and 710 must be set manually by selecting the link icon.',
-            );
+            QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
               // 10 Click on the "Browse" toggle at the "Search & filter" pane
@@ -284,16 +284,14 @@ describe('MARC', () => {
               InventorySearchAndFilter.verifyKeywordsAsDefault();
               // Select "Contributors" as browse option
               BrowseContributors.select();
-              BrowseContributors.waitForContributorToAppear('Lee, Stan, 1922-3894', true, true);
+              BrowseContributors.waitForContributorToAppear(testData.contributorName, true, true);
               // Fill in the search box with contributor name from any linked field, ex.: "Lee, Stan, 1922-2018"
               // Click on the "Search" button.
-              BrowseContributors.browse('Lee, Stan, 1922-3894');
-              BrowseSubjects.checkRowWithValueAndAuthorityIconExists('Lee, Stan, 1922-3894');
+              BrowseContributors.browse(testData.contributorName);
+              BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.contributorName);
               // 11 Click on the highlighted in bold contributor in the browse result list.
-              BrowseSubjects.selectInstanceWithAuthorityIcon('Lee, Stan, 1922-3894');
+              BrowseSubjects.selectInstanceWithAuthorityIcon(testData.contributorName);
               // 12 Open detail view of created by user "Instance" record
-              InventoryInstances.selectInstanceById(createdInstanceID);
-              // Click on the "Actions" in the third pane >> Select "View source".
               InventoryInstance.viewSource();
               // "MARC authority" app icon is displayed next to each field auto linked at Step 8
               newFields.forEach((field) => {

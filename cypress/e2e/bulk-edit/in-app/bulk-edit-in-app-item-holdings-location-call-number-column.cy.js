@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
             cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.SELECTED}"` }).then((res) => {
               instance.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               instance.materialTypeId = res.id;
             });
             InventoryInstances.getCallNumberTypes({
@@ -193,7 +193,7 @@ describe('Bulk-edit', () => {
 
         const newPermanentLoanType = 'Reading room';
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPermanentLoanType(newPermanentLoanType);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, instance.defaultLocation.name);

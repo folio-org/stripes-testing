@@ -14,7 +14,6 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -169,10 +168,10 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
-        if (instances.length !== 0) {
-          instances.forEach(({ id }) => {
-            InstanceRecordView.markAsDeletedViaApi(id);
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((response) => {
+        if (response.totalRecords !== 0) {
+          response.instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
           });
         }
       });
@@ -196,6 +195,21 @@ describe('Data Import', () => {
       FileManager.deleteFileFromDownloadsByMask(testData.exportedFile);
       FileManager.deleteFile(`cypress/fixtures/${testData.exportedFile}`);
       cy.getAdminToken().then(() => {
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"id"=="${id}"`,
+              }).then((instance) => {
+                cy.deleteItemViaApi(instance.items[0].id);
+                cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            });
+          }
+        });
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
@@ -208,22 +222,6 @@ describe('Data Import', () => {
           );
         });
         Users.deleteViaApi(testData.userId);
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.instanceHRID}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        });
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
-          if (instances.length !== 0) {
-            instances.forEach(({ id }) => {
-              InstanceRecordView.markAsDeletedViaApi(id);
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
       });
     });
 
@@ -346,8 +344,8 @@ describe('Data Import', () => {
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

@@ -3,6 +3,7 @@ import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsPane from '../../../../support/fragments/settings/settingsPane';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Login', () => {
@@ -16,7 +17,7 @@ describe('Eureka', () => {
         ),
       };
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+      const capabsToAssign = [Capabilities.settingsEnabled];
 
       before('Create users, data', () => {
         cy.clearCookies({ domain: null });
@@ -69,7 +70,6 @@ describe('Eureka', () => {
           });
           cy.intercept('GET', testData.appCallRegexpCollege).as('appCallCollege');
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           SettingsPane.waitLoading();
           cy.wait('@appCallCollege').then(({ response }) => {
             const retrievedAppIds = response.body.applicationDescriptors.map(

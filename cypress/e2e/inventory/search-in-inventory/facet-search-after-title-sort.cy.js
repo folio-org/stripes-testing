@@ -63,7 +63,7 @@ describe('Inventory', () => {
             instances[0].loanTypeId = res[0].id;
             instances[0].loanTypeName = res[0].name;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             instances[0].materialTypeId = res.id;
           });
           const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();

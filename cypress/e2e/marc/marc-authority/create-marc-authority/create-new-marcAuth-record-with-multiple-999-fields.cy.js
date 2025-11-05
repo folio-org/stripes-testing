@@ -85,6 +85,7 @@ describe('MARC', () => {
 
           // 2 Click on "Select authority file" dropdown and select any option
           MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.setValid008DropdownValues();
           MarcAuthority.selectSourceFile(localAuthFile.name);
           QuickMarcEditor.checkPaneheaderContains(headerText);
 
@@ -113,8 +114,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAllBoxesInARowAreDisabled(newField999.rowIndex);
 
           // 6 Click on the "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

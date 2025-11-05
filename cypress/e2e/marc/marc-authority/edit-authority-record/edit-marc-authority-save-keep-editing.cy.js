@@ -106,11 +106,10 @@ describe('MARC', () => {
 
       beforeEach('Visit MARC Authorities', () => {
         cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password);
-          cy.visit(TopMenu.marcAuthorities);
-          MarcAuthorities.waitLoading();
-          cy.reload();
-          MarcAuthorities.waitLoading();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         }, 20_000);
       });
 
@@ -124,7 +123,7 @@ describe('MARC', () => {
 
       it(
         'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C360092'] },
+        { tags: ['extendedPathBroken', 'spitfire', 'C360092'] },
         () => {
           MarcAuthorities.searchBy(
             testData.authorityC360092.searchOption,
@@ -147,9 +146,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save edits and verify view updated
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -161,9 +159,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save added field and verify view updated
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -177,10 +174,9 @@ describe('MARC', () => {
 
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.closeAllCallouts();
 
           // // Confirm deletion and verify view updated
           QuickMarcEditor.checkFieldAbsense();
@@ -193,8 +189,6 @@ describe('MARC', () => {
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
-          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
 
@@ -204,9 +198,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save field reordering and verify view updated
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -222,8 +215,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save and close edit view
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.editedFieldsC360092[0].content);
@@ -248,8 +239,6 @@ describe('MARC', () => {
             testData.editedFieldC360093.tag,
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
@@ -269,8 +258,6 @@ describe('MARC', () => {
             testData.editedFieldC360093.tag,
             `${subfieldPrefix}${testData.editedFieldC360093.secondContent}`,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.secondContent}`,

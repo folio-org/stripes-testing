@@ -125,7 +125,10 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C436814*');
+            const titles = ['C436830*', 'C436821*', 'C436829*', 'C436814*'];
+            titles.forEach((title) => {
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+            });
             newMarcAuthoritySources.forEach((source) => {
               cy.createAuthoritySourceFileUsingAPI(
                 source.prefix,
@@ -156,11 +159,14 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -198,8 +204,6 @@ describe('MARC', () => {
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 

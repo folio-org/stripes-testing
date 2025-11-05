@@ -224,7 +224,7 @@ describe('MARC', () => {
 
         it(
           'C388642 All linkable fields are NOT linked after clicking on the "Link headings" button when derive "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C388642'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C388642'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
@@ -257,6 +257,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.verifySaveAndCloseButtonDisabled();
+            cy.wait(1000);
             linkingTagAndValues.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(
                 field.rowIndex,
@@ -274,8 +275,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
-            cy.wait(3000);
-
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.viewSource();
             linkingTagAndValues.forEach((field) => {
               InventoryViewSource.contains(`${marcAuthIcon}\n\t${field.tag}`);

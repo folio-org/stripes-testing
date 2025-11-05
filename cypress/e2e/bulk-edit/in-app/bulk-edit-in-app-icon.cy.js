@@ -48,7 +48,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyPanesBeforeImport();
@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

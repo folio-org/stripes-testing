@@ -13,6 +13,7 @@ import {
   Select,
   Pane,
   Link,
+  PaneHeader,
 } from '../../../../interactors';
 import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -23,6 +24,7 @@ const resultSection = Section({ id: 'search-results' });
 const searchResultsList = resultSection.find(List({ testId: 'scroll-view-list' }));
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
+const createNewPackageButton = Button('New');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
@@ -54,9 +56,13 @@ export default {
     return packageName;
   },
 
+  createNewPackage() {
+    cy.do(createNewPackageButton.click());
+  },
+
   deletePackage: () => {
     cy.do([
-      actionButton.click(),
+      PaneHeader().find(actionButton).click(),
       deletePackageButton.click(),
       confirmModal.find(Button('Yes, delete')).click(),
     ]);
@@ -81,18 +87,21 @@ export default {
       const prefix = 'data-test-eholdings-package-list-item';
       const sortedPackages = (links?.length ? [...links] : [])
         .map((link) => {
-          const countTotalTitles = link.querySelector(`[${prefix}-num-titles="true"]`).innerText;
-          const countSelected = link.querySelector(
+          const totalTitlesEl = link.querySelector(`[${prefix}-num-titles="true"]`);
+          const nameEl = link.querySelector(`[${prefix}-name="true"]`);
+          const selectedEl = link.querySelector(
             '[data-test-eholdings-provider-list-item-num-packages-selected="true"]',
-          ).innerText;
-
+          );
+          const countTotalTitles = totalTitlesEl.innerText || '0';
+          const countSelected = selectedEl ? selectedEl.innerText : '0';
           return {
-            id: link.getAttribute('href').replace('/eholdings/packages/', ''),
-            name: link.querySelector(`[${prefix}-name="true"]`).innerText,
+            id: link.getAttribute('href')?.replace('/eholdings/packages/', '') || '',
+            name: nameEl.innerText,
             countTotalTitles: parseFloat(countTotalTitles.replace(/,/g, '')),
             countSelected: parseFloat(countSelected.replace(/,/g, '')),
           };
         })
+        .filter((item) => item && item.id && item.name)
         .filter((item) => item.countTotalTitles >= minTitlesCount)
         .sort((a, b) => a.countTotalTitles - b.countTotalTitles);
 
@@ -142,6 +151,10 @@ export default {
       cy.wrap([...new Set(initialPackageNames)][0]).as('customePackageName');
     });
     return cy.get('@customePackageName');
+  },
+
+  verifyContentType: (contentType) => {
+    cy.expect(KeyValue('Content type').has({ value: contentType }));
   },
 
   getNotCustomSelectedPackageIdViaApi: () => {
@@ -349,6 +362,10 @@ export default {
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());
+  },
+
+  verifyPackageNotInSearchResults: (packageName) => {
+    cy.expect(resultSection.find(Link({ text: including(packageName) })).absent());
   },
 
   verifyCustomCoverageDates(startDate, endDate) {

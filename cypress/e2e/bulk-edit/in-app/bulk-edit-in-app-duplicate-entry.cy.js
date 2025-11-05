@@ -3,6 +3,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
+  ERROR_MESSAGES,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -82,7 +83,11 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(0, 1);
-        BulkEditSearchPane.verifyErrorByIdentifier(user.barcode, 'Duplicate entry', 'Warning');
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          user.barcode,
+          ERROR_MESSAGES.DUPLICATE_ENTRY,
+          'Warning',
+        );
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
@@ -91,7 +96,11 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(0, 1);
-        BulkEditSearchPane.verifyReasonForError(item.itemBarcode, 'Duplicate entry', 'Warning');
+        BulkEditSearchPane.verifyReasonForError(
+          item.itemBarcode,
+          ERROR_MESSAGES.DUPLICATE_ENTRY,
+          'Warning',
+        );
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
       },
     );
@@ -108,15 +117,16 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
         BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 1, 2);
-        BulkEditSearchPane.verifyReasonForError('Duplicate entry');
+        BulkEditSearchPane.verifyErrorLabel(1, 1);
+        BulkEditSearchPane.clickShowWarningsCheckbox();
+        BulkEditSearchPane.verifyReasonForError(ERROR_MESSAGES.DUPLICATE_ENTRY);
         BulkEditSearchPane.verifyReasonForError('No match found');
         BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
           user.barcode,
           invalidBarcode,
-          'Duplicate entry',
+          ERROR_MESSAGES.DUPLICATE_ENTRY,
           'No match found',
         ]);
       },

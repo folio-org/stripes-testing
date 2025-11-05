@@ -9,8 +9,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
 import { getNewItem } from '../../support/fragments/inventory/item';
 
 describe('Check In - Actions ', () => {
@@ -26,25 +25,24 @@ describe('Check In - Actions ', () => {
     items: [getNewItem(), getNewItem(), getNewItem(), getNewItem()],
     instanceTitle: `AT_C398022_Instance_${getRandomPostfix()}`,
   };
-  let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  let servicePoint;
   let sessionId;
   before('Create New Item, New User and Check out item', () => {
     cy.getAdminToken()
       .then(() => {
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           itemData.instanceTypeId = instanceTypes[0].id;
         });
         cy.getHoldingTypes({ limit: 1 }).then((res) => {
           itemData.holdingTypeId = res[0].id;
         });
-        ServicePoints.createViaApi(servicePoint);
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
-        Location.createViaApi(defaultLocation);
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           itemData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        cy.getDefaultMaterialType().then((res) => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
@@ -58,7 +56,7 @@ describe('Check In - Actions ', () => {
           holdings: [
             {
               holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: defaultLocation.id,
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
             },
           ],
           items: [
@@ -149,17 +147,8 @@ describe('Check In - Actions ', () => {
   after('Delete New Service point, Item and User', () => {
     cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.items[0].barcode);
-    UserEdit.changeServicePointPreferenceViaApi(userData[0].userId, [servicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userData[1].userId, [servicePoint.id]);
     Users.deleteViaApi(userData[0].userId);
     Users.deleteViaApi(userData[1].userId);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      defaultLocation.institutionId,
-      defaultLocation.campusId,
-      defaultLocation.libraryId,
-      defaultLocation.id,
-    );
-    ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it(

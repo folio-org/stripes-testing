@@ -37,6 +37,7 @@ describe('Orders', () => {
     let orderSuffixId;
 
     before(() => {
+      cy.clearLocalStorage(); // Clear local storage to avoid issues with filters in test
       cy.getAdminToken();
       SettingsOrders.createPrefixViaApi(order.poNumberPrefix).then((prefixId) => {
         orderPrefixId = prefixId;
@@ -118,6 +119,7 @@ describe('Orders', () => {
       'C196749 Export orders based on orders search (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
+        Orders.waitLoading();
         Orders.selectOpenStatusFilter();
         Orders.waitOrdersListLoading();
         Orders.exportResultsToCsv();

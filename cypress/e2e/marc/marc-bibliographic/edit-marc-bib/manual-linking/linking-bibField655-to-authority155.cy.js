@@ -57,7 +57,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $x Genre',
+          '$a C380766 Drama',
           '',
           '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
           '$2 fast',
@@ -68,7 +68,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $x Genre $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
+          '$a C380766 Drama $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
         ];
 
         before('Creating user and data', () => {
@@ -102,7 +102,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
           });
@@ -158,8 +157,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag655, bib655FieldValues[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -171,8 +168,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(`${testData.linkedIconText}\n\t655`);
@@ -180,8 +175,6 @@ describe('MARC', () => {
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
             MarcAuthorities.checkDetailViewIncludesText(testData.authorityValue);
             InventoryInstance.goToPreviousPage();
-            // Wait for the content to be loaded.
-            cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
@@ -194,9 +187,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib655AfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib655FieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();
             InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();

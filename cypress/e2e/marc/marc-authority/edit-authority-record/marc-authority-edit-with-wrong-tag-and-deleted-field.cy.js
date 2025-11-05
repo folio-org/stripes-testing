@@ -19,7 +19,8 @@ describe('MARC', () => {
         searchInput:
           'C375167 Beethoveen, Ludwig van, 1770-1827. 14 variations sur un thème original',
         searchOption: 'Keyword',
-        calloutMessage: 'Record cannot be saved. A MARC tag must contain three characters.',
+        calloutMessage:
+          'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.',
       };
 
       const marcFiles = [
@@ -34,6 +35,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375167*');
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -52,11 +54,14 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
       });
 
@@ -71,7 +76,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C375167'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchInput);
-
+          MarcAuthorities.selectFirstRecord();
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag040NewValue);
           QuickMarcEditor.checkButtonsEnabled();
@@ -79,10 +84,16 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(testData.tag380RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.tag380);
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(
+            5,
+            'Tag must contain three characters and can only accept numbers 0-9.',
+          );
+          QuickMarcEditor.closeAllCallouts();
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
         },

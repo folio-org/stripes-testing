@@ -8,7 +8,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { DateTools } from '../../support/utils';
 import AppPaths from '../../support/fragments/app-paths';
@@ -16,31 +16,29 @@ import AppPaths from '../../support/fragments/app-paths';
 describe('Check in backdate', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   let userData;
   let itemBarcode;
+  let servicePoint;
 
   before('Create test data', () => {
-    cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.servicePoint.id,
-    }).location;
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
+    cy.getAdminToken().then(() => {
+      ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+        servicePoint = sp;
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+        });
       });
     });
     itemBarcode = testData.folioInstances[0].barcodes[0];
     cy.createTempUser([Permissions.checkinAll.gui, Permissions.loansView.gui]).then(
       (userProperties) => {
         userData = userProperties;
-        UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
         Checkout.checkoutItemViaApi({
           itemBarcode: testData.folioInstances[0].barcodes[0],
-          servicePointId: testData.servicePoint.id,
+          servicePointId: servicePoint.id,
           userBarcode: userData.barcode,
         });
         cy.login(userData.username, userData.password, {
@@ -55,17 +53,14 @@ describe('Check in backdate', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
-      servicePointId: testData.servicePoint.id,
+      servicePointId: servicePoint.id,
       checkInDate: new Date().toISOString(),
     });
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(userData.userId);
   });
 
@@ -92,6 +87,7 @@ describe('Check in backdate', () => {
       CheckInActions.checkInItemGui(itemBarcode);
       // Time returned is time entered
       CheckInActions.checkTimeReturned(0, itemEditedReturnTime);
+
       // Under Actions click on loan details
       CheckInActions.openLoanDetails(userData.username);
       // Return date/time are the values entered at check in

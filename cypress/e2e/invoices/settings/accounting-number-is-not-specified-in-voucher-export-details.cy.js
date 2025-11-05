@@ -49,7 +49,7 @@ describe('Invoices', () => {
             reEncumber: true,
           };
 
-          OrderLinesLimit.setPOLLimit(orderLinesCount);
+          OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
           Orders.createOrderViaApi(testData.order)
             .then((order) => {
               testData.order = order;
@@ -108,6 +108,7 @@ describe('Invoices', () => {
         Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
         Permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
         Permissions.uiInvoicesVoucherExport.gui,
+        Permissions.invoiceSettingsBatchGroupViewEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -120,7 +121,7 @@ describe('Invoices', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFileFromDownloadsByMask(testData.fileMask);
@@ -128,7 +129,7 @@ describe('Invoices', () => {
 
     it(
       'C397985 Organization "Account number" is NOT specified in voucher export details when using default Accounting code (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPathFlaky', 'thunderjet'] },
       () => {
         // Search invoice in the table
         Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

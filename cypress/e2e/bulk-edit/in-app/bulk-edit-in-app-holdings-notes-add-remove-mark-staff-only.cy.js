@@ -160,7 +160,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE,
           notes.binding,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
@@ -171,20 +171,20 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ACTION_NOTE, 0);
         cy.wait(1000);
         BulkEditActions.verifyTheActionOptions(actionNoteActionOptions);
-        BulkEditActions.selectSecondAction(actionsToSelect.removeMarkAsStaffOnly);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.removeMarkAsStaffOnly);
+        BulkEditActions.selectAction(actionsToSelect.removeMarkAsStaffOnly);
+        BulkEditActions.verifyActionSelected(actionsToSelect.removeMarkAsStaffOnly);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 1);
-        BulkEditActions.selectSecondAction(actionsToSelect.addNote, 1);
-        BulkEditActions.fillInSecondTextArea(notes.additionalElectronicBookplate, 1);
+        BulkEditActions.selectAction(actionsToSelect.addNote, 1);
+        BulkEditActions.fillInFirstTextArea(notes.additionalElectronicBookplate, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING, 2);
-        BulkEditActions.selectSecondAction(actionsToSelect.markAsStaffOnly, 2);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.markAsStaffOnly, 2);
+        BulkEditActions.selectAction(actionsToSelect.markAsStaffOnly, 2);
+        BulkEditActions.verifyActionSelected(actionsToSelect.markAsStaffOnly, 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);

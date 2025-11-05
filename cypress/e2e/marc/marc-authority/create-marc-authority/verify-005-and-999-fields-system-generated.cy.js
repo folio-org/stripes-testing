@@ -78,6 +78,7 @@ describe('MARC', () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
+          MarcAuthority.setValid008DropdownValues();
 
           // 2 Click on "Select authority file" dropdown and select any option
           MarcAuthority.selectSourceFile(localAuthFile.name);
@@ -101,8 +102,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 
           // 4 Click on the "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

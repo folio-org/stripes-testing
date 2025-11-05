@@ -6,16 +6,17 @@ import {
   Callout,
   KeyValue,
   Link,
+  MessageBanner,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
-  MessageBanner,
   Pane,
   Section,
   Tooltip,
   matching,
 } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
@@ -23,7 +24,6 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
-import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -54,6 +54,11 @@ const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const versionHistoryButton = Button({ icon: 'clock' });
+const contributorAccordion = Accordion('Contributor');
+const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
+const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
+const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -62,7 +67,9 @@ const verifyIndexTitle = (value) => {
   cy.expect(KeyValue('Index title').has({ value }));
 };
 
-const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: including(sourceValue) }));
+const verifyInstanceSource = (sourceValue) => {
+  cy.expect(sourceKeyValue.has({ value: including(sourceValue) }));
+};
 
 const verifyInstanceStatusCode = (value) => {
   cy.expect(KeyValue('Instance status code').has({ value }));
@@ -80,32 +87,6 @@ const verifyInstanceStatusTerm = (value) => {
   cy.expect(instanceStatusTermKeyValue.has({ value }));
 };
 
-const verifyMarkAsSuppressed = () => {
-  cy.expect(
-    rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).exists(),
-  );
-};
-
-const verifyMarkAsSuppressedFromDiscovery = () => {
-  cy.expect(
-    rootSection
-      .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
-      .exists(),
-  );
-};
-
-const verifyMarkAsSuppressedFromDiscoveryAndSuppressed = () => {
-  cy.expect(
-    rootSection
-      .find(
-        HTML(
-          including('Warning: Instance is marked suppressed from discovery and staff suppressed'),
-        ),
-      )
-      .exists(),
-  );
-};
-
 const verifyGeneralNoteContent = (content) => {
   cy.expect(instanceDetailsNotesSection.find(HTML(including(content))).exists());
 };
@@ -121,24 +102,36 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1500);
+  cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
 
-const verifyAdministrativeNote = (value) => {
-  cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+const verifyAdministrativeNote = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+  } else {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).absent());
+  }
 };
 
 const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
-const verifyStatisticalCode = (value) => {
-  cy.expect(
-    MultiColumnList({ id: 'list-statistical-codes' })
-      .find(MultiColumnListCell({ content: value }))
-      .exists(),
-  );
+const verifyStatisticalCode = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .exists(),
+    );
+  } else {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .absent(),
+    );
+  }
 };
 
 const verifyStatisticalCodeTypeAndName = (type, name) => {
@@ -205,6 +198,9 @@ const getMultiColumnListCellsValues = (cell) => {
     })
     .then(() => cells);
 };
+const clickActionsButton = () => {
+  cy.do(rootSection.find(actionsButton).click());
+};
 
 export const actionsMenuOptions = {
   addMarcHoldingsRecord: 'Add MARC holdings record',
@@ -218,10 +214,12 @@ export const actionsMenuOptions = {
   newRequest: 'New request',
   setRecordForDeletion: 'Set record for deletion',
   newMarcBibRecord: 'New MARC bibliographic record',
+  exportInstanceMarc: 'Export instance (MARC)',
 };
 
 export default {
   waitLoading,
+  clickActionsButton,
   getMultiColumnListCellsValues,
   verifyResourceTitle,
   verifyIndexTitle,
@@ -229,9 +227,6 @@ export default {
   verifyResourceType,
   verifyCatalogedDate,
   verifyInstanceStatusTerm,
-  verifyMarkAsSuppressed,
-  verifyMarkAsSuppressedFromDiscovery,
-  verifyMarkAsSuppressedFromDiscoveryAndSuppressed,
   verifyGeneralNoteContent,
   verifySrsMarcRecord,
   verifyImportedFieldExists,
@@ -291,8 +286,8 @@ export default {
 
   verifyQuantityOfItemsRelatedtoHoldings(holdingToBeOpened, quantityOfItems) {
     cy.do(
-      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).perform((el) => {
-        const items = el.querySelectorAll('div[class^="mclRow-"]').length;
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).perform((elem) => {
+        const items = elem.querySelectorAll('div[class^="mclRow-"]').length;
         expect(quantityOfItems).to.eq(items);
       }),
     );
@@ -360,9 +355,9 @@ export default {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
   },
 
-  openHoldingView: () => {
+  openHoldingView: (actionsShown = true) => {
     cy.do(Button('View holdings').click());
-    cy.expect(actionsButton.exists());
+    if (actionsShown) cy.expect(actionsButton.exists());
   },
 
   openHoldingItem({ name, barcode, shouldOpen = true }) {
@@ -374,11 +369,22 @@ export default {
 
     cy.do(
       holdingsSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: barcode }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: barcode }))
         .find(Button(including(barcode)))
         .click(),
     );
 
+    ItemRecordView.waitLoading();
+  },
+
+  openItemByHyperlink(barcode) {
+    cy.wait(2000);
+    cy.do(
+      rootSection
+        .find(MultiColumnListCell({ column: 'Item: barcode', content: barcode }))
+        .find(Link({ href: including('/inventory/view/') }))
+        .click(),
+    );
     ItemRecordView.waitLoading();
   },
 
@@ -418,8 +424,8 @@ export default {
     let order;
     return cy
       .do(
-        MultiColumnListHeader({ content: title }).perform((el) => {
-          order = el.attributes.getNamedItem('aria-sort').value;
+        MultiColumnListHeader({ content: title }).perform((elem) => {
+          order = elem.attributes.getNamedItem('aria-sort').value;
         }),
       )
       .then(() => order);
@@ -446,14 +452,67 @@ export default {
     cy.expect(KeyValue('Edition').has({ value }));
   },
 
-  verifyNotMarkAsStaffSuppressed() {
+  verifyPublicationFrequency(value) {
+    cy.expect(KeyValue('Publication frequency').has({ value }));
+  },
+
+  verifyPublicationRange(value) {
+    cy.expect(KeyValue('Publication range').has({ value }));
+  },
+
+  verifyMarkAsStaffSuppressedWarning(isDisplayed = true) {
     cy.wait(1000);
+    const element = rootSection.find(
+      HTML(including('Warning: Instance is marked staff suppressed')),
+    );
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
+  },
+
+  verifyMarkAsSuppressedFromDiscoveryWarning() {
     cy.expect(
-      rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).absent(),
+      rootSection
+        .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
+        .exists(),
     );
   },
 
-  verifyMarkedAsStaffSuppressed() {
+  verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning() {
+    cy.expect(
+      rootSection
+        .find(
+          HTML(
+            including('Warning: Instance is marked suppressed from discovery and staff suppressed'),
+          ),
+        )
+        .exists(),
+    );
+  },
+
+  verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning: () => {
+    cy.expect(
+      MessageBanner().has({
+        textContent:
+          'Warning: Instance is set for deletion, suppressed from discovery, and staff suppressed',
+      }),
+    );
+  },
+
+  verifyWarningMessage: () => {
+    cy.expect(
+      HTML(
+        including(
+          'You do not currently have permission to access details of shared instances. Contact your FOLIO administrator for more information.',
+        ),
+      ).exists(),
+    );
+  },
+
+  verifyInstanceIsMarkedAsStaffSuppressed() {
     cy.expect(
       rootSection
         .find(adminDataAccordion)
@@ -462,55 +521,44 @@ export default {
     );
   },
 
-  verifyNotMarkAssuppressFromDiscavery() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Suppressed from discovery')))
-        .absent(),
-    );
+  verifyInstanceIsMarkedAsSuppressedFromDiscovery(isDisplayed = true) {
+    const element = rootSection
+      .find(adminDataAccordion)
+      .find(HTML(including('Suppressed from discovery')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
-  verifyMarkedAsPreviouslyHeld() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Previously held')))
-        .exists(),
-    );
+  verifyInstanceIsSetForDeletion(isDisplayed = true) {
+    const element = rootSection.find(adminDataAccordion).find(HTML(including('Set for deletion')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
-  verifyNotMarkAsPreviouslyHeld() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Previously held')))
-        .absent(),
-    );
+  verifyInstanceIsMarkedAsPreviouslyHeld(isDisplayed = true) {
+    const element = rootSection.find(adminDataAccordion).find(HTML(including('Previously held')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
   verifyClassification(classType, classification) {
-    cy.expect(
-      classificationAccordion
-        .find(listClassifications)
-        .find(MultiColumnListCell({ columnIndex: 0, content: classType }))
-        .exists(),
-    );
-    cy.expect(
-      classificationAccordion
-        .find(listClassifications)
-        .find(MultiColumnListCell({ columnIndex: 1, content: classification }))
-        .exists(),
-    );
-  },
+    const list = classificationAccordion.find(listClassifications);
 
-  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
-    cy.expect(
-      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .find(HTML(including(itemBarcode)))
-        .exists(),
-    );
+    cy.expect(list.find(MultiColumnListCell({ columnIndex: 0, content: classType })).exists());
+
+    cy.expect(list.find(MultiColumnListCell({ columnIndex: 1, content: classification })).exists());
   },
 
   verifyModeOfIssuance(value) {
@@ -536,7 +584,7 @@ export default {
 
   verifyContributorWithMarcAppLink: (indexRow, indexColumn, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnList({ id: 'list-contributors' }))
         .find(MultiColumnListRow({ index: indexRow }))
         .find(MultiColumnListCell({ columnIndex: indexColumn }))
@@ -546,7 +594,7 @@ export default {
 
   verifyContributorNameWithMarcAppIcon: (indexRow, indexColumn, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnListRow({ index: indexRow }))
         .find(
           MultiColumnListCell({
@@ -560,14 +608,41 @@ export default {
 
   verifyContributorNameWithoutMarcAppIcon: (row, value) => {
     cy.expect(
-      Accordion('Contributor')
+      contributorAccordion
         .find(MultiColumnListCell({ row, content: including(value) }))
         .has({ content: not(including('Linked to MARC authority')) }),
     );
   },
 
+  expandContributorAccordion() {
+    cy.do(contributorAccordion.clickHeader());
+  },
+
+  verifyContributorAccordionIsEmpty() {
+    this.expandContributorAccordion();
+
+    const columns = ['Name type', 'Name', 'Type', 'Free text', 'Primary'];
+
+    columns.forEach((column) => {
+      cy.expect(
+        contributorAccordion
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ column, content: 'No value set-' }))
+          .exists(),
+      );
+    });
+  },
+
   verifyInstanceAdministrativeNote: (note) => {
     cy.expect(instanceAdministrativeNote.find(HTML(including(note))).exists());
+  },
+
+  verifyInstaneceAdministrativeNoteByRow: (note, rowIndex = 0) => {
+    cy.expect(
+      instanceAdministrativeNote
+        .find(MultiColumnListCell({ row: rowIndex, content: including(note) }))
+        .exists(),
+    );
   },
 
   scroll: () => {
@@ -575,20 +650,29 @@ export default {
   },
 
   edit: () => {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.do(Button('Edit instance').click());
     InstanceRecordEdit.waitLoading();
   },
 
   moveHoldingsItemsToAnotherInstance: () => {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.do(Button('Move holdings/items to another instance').click());
     SelectInstanceModal.verifyModalExists();
   },
 
   addHoldings: () => {
-    cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
+    cy.do(addHoldingsButton.click());
     InventoryNewHoldings.waitLoading();
+  },
+
+  addConsortiaHoldings: (memberTenantName) => {
+    cy.wait(2000);
+    cy.intercept('locations?*').as('getHoldingsPage');
+    cy.do(Accordion(memberTenantName).find(addHoldingsButton).click());
+    cy.wait('@getHoldingsPage', { timeout: 5_000 }).then(() => {
+      InventoryNewHoldings.waitLoading();
+    });
   },
 
   clickAddItemByHoldingName({ holdingName } = {}) {
@@ -609,15 +693,6 @@ export default {
 
   setRecordForDeletion: () => {
     cy.do(Button(actionsMenuOptions.setRecordForDeletion).click());
-  },
-
-  verifyInstanceIsSetForDeletion: () => {
-    cy.expect(
-      MessageBanner().has({
-        textContent:
-          'Warning: Instance is set for deletion, suppressed from discovery, and staff suppressed',
-      }),
-    );
   },
 
   markAsDeletedViaApi: (id) => {
@@ -661,11 +736,15 @@ export default {
     cy.wait(6000);
   },
 
-  verifyIsItemCreated: (itemBarcode) => {
+  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
     cy.expect(
-      rootSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
-        .find(Button(including(itemBarcode)))
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .find(
+          MultiColumnListCell({
+            column: 'Item: barcode',
+            content: itemBarcode,
+          }),
+        )
         .exists(),
     );
   },
@@ -679,7 +758,7 @@ export default {
   },
 
   verifyEditInstanceButtonIsEnabled() {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
   },
 
@@ -690,7 +769,7 @@ export default {
   },
 
   validateOptionInActionsMenu(optionName, shouldExist = true) {
-    cy.do(rootSection.find(actionsButton).click());
+    clickActionsButton();
     if (shouldExist) {
       cy.expect(Button(optionName).exists());
     } else {
@@ -698,7 +777,7 @@ export default {
     }
   },
 
-  validateHoldingsAbsent(holdingsLocation) {
+  verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 
@@ -724,12 +803,23 @@ export default {
     });
   },
 
-  verifyInstanceSubject: (subjectSource) => {
+  verifyInstanceSubject: (subjectSource, isLinkedToMarcAuthority = false) => {
+    if (isLinkedToMarcAuthority) {
+      cy.expect(
+        subjectList
+          .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+          .find(MultiColumnListCell({ column: 'Subject headings' }))
+          .has({ content: `Linked to MARC authority${subjectSource.subjectHeadings}` }),
+      );
+    } else {
+      cy.expect(
+        subjectList
+          .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+          .find(MultiColumnListCell({ column: 'Subject headings' }))
+          .has({ content: subjectSource.subjectHeadings }),
+      );
+    }
     cy.expect([
-      subjectList
-        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
-        .find(MultiColumnListCell({ column: 'Subject headings' }))
-        .has({ content: subjectSource.subjectHeadings }),
       subjectList
         .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject source' }))
@@ -743,6 +833,10 @@ export default {
 
   verifyInstanceSubjectAbsent: () => {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
+  },
+
+  verifyItemsListIsEmpty() {
+    cy.expect(HTML(including('The list contains no items')).exists());
   },
 
   checkNotesByType(
@@ -794,20 +888,29 @@ export default {
 
   verifyRecentLastUpdatedDateAndTime() {
     const currentDate = new Date();
-    const datePlusOneMinute = new Date(currentDate.getTime() + 60 * 1000);
-    const updatedDate = DateTools.getFormattedEndDateWithTimUTC(currentDate, true);
-    const nextMinuteDate = DateTools.getFormattedEndDateWithTimUTC(datePlusOneMinute, true);
+
+    // Generate three time points: one minute before, current, one minute after
+    const timePoints = [];
+    for (let i = -1; i <= 1; i++) {
+      const timePoint = new Date(currentDate.getTime() + i * 60 * 1000);
+      timePoints.push(DateTools.getFormattedEndDateWithTimUTC(timePoint, true));
+    }
 
     cy.expect(
       Accordion('Administrative data')
         .find(
           HTML(
-            or(
-              including(`Record last updated: ${updatedDate}`),
-              including(`Record last updated: ${nextMinuteDate}`),
-            ),
+            or(...timePoints.map((timePoint) => including(`Record last updated: ${timePoint}`))),
           ),
         )
+        .exists(),
+    );
+  },
+
+  verifyLastUpdatedDateAndTime(updatedDate) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
         .exists(),
     );
   },
@@ -816,10 +919,17 @@ export default {
     cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
   },
 
-  verifyConsortiaHoldingsAccordion(isOpen = false) {
+  verifyConsortialHoldingsAccordion(isOpen = false) {
     cy.expect([
       Section({ id: including('consortialHoldings') }).exists(),
       consortiaHoldingsAccordion.has({ open: isOpen }),
+    ]);
+  },
+
+  verifyConsortiaHoldingsAccordion(instanceId, isOpen = false) {
+    cy.expect([
+      Section({ id: `consortialHoldings.${instanceId}` }).exists(),
+      Accordion({ id: `consortialHoldings.${instanceId}` }).has({ open: isOpen }),
     ]);
   },
 
@@ -838,5 +948,79 @@ export default {
 
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
+  },
+
+  moveItemsWithinAnInstance() {
+    clickActionsButton();
+    cy.wait(500);
+    cy.do(Button({ id: 'move-instance-items' }).click());
+  },
+
+  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
+    if (isEnubled) {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+          .find(Button({ id: including('clickable-move-holdings-') }))
+          .has({ disabled: true }),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+          .find(Button({ id: including('clickable-move-holdings-') }))
+          .has({ disabled: false }),
+      );
+    }
+  },
+  // clickable-move-holdings-38e72617-9faa-47d3-a791-1baeca7d0d86
+
+  verifyInstanceFormat(category, term, code, source) {
+    let matchingString = category;
+    if (!term) matchingString += 'No value set-';
+    else matchingString += `  ${term}`;
+    if (code) matchingString += code;
+    if (source) matchingString += source;
+    cy.expect(formatsList.find(MultiColumnListRow(including(matchingString))).exists());
+  },
+
+  verifyAddHoldingsButtonIsAbsent() {
+    cy.expect(addHoldingsButton.absent());
+  },
+
+  verifyAddItemButtonVisibility({ holdingName, shouldBePresent = true } = {}) {
+    const holdingSection = rootSection.find(Accordion(including(holdingName)));
+
+    if (shouldBePresent) {
+      cy.expect(holdingSection.find(addItemButton).exists());
+    } else {
+      cy.expect(holdingSection.find(addItemButton).absent());
+    }
+  },
+
+  verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        classificationAccordion
+          .find(listClassifications)
+          .find(MultiColumnListCell({ columnIndex: 1, content: classificationNumber }))
+          .find(clipboardIcon)
+          .click(),
+      );
+      cy.expect(Callout(clipboardCopyCalloutText(classificationNumber)).exists());
+    }).then(() => {
+      cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
+    });
+  },
+
+  verifyAlternativeTitle(indexRow, value, isLinkedToMarcAuthority = false) {
+    const alternativeTitleCell = titleDataAccordion
+      .find(MultiColumnList({ id: 'list-alternative-titles' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell({ column: 'Alternative title' }));
+
+    if (isLinkedToMarcAuthority) {
+      cy.expect(alternativeTitleCell.has({ content: `Linked to MARC authority${value}` }));
+    } else {
+      cy.expect(alternativeTitleCell.has({ content: value }));
+    }
   },
 };

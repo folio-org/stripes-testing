@@ -73,17 +73,61 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
     method: 'DELETE',
   });
 });
-// TODO: update tests where cypress env is still used
-// TODO: move to the related fragment
+
+Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'material-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      Cypress.env('materialTypes', response.body.mtypes);
+      return response.body.mtypes;
+    });
+});
+
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {
-  cy.okapiRequest({
-    path: 'material-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  }).then((response) => {
-    Cypress.env('materialTypes', response.body.mtypes);
-    return response.body.mtypes[0];
+  return cy.getAllMaterialTypes(searchParams).then((materialTypes) => {
+    return materialTypes.length ? materialTypes[0] : null;
   });
+});
+
+Cypress.Commands.add('getBookMaterialType', () => {
+  if (!Cypress.env('BOOK_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="book"' }).then((materialType) => {
+      Cypress.env('BOOK_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('BOOK_MATERIAL_TYPE');
+  }
+});
+
+Cypress.Commands.add('getTextMaterialType', () => {
+  if (!Cypress.env('TEXT_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="text"' }).then((materialType) => {
+      Cypress.env('TEXT_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('TEXT_MATERIAL_TYPE');
+  }
+});
+
+Cypress.Commands.add('getDvdMaterialType', () => {
+  if (!Cypress.env('DVD_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialType) => {
+      Cypress.env('DVD_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('DVD_MATERIAL_TYPE');
+  }
+});
+
+Cypress.Commands.add('getDefaultMaterialType', () => {
+  return cy.getBookMaterialType();
 });
 
 // TODO: update tests where cypress env is still used
@@ -149,11 +193,12 @@ Cypress.Commands.add('createModesOfIssuans', (specialMode) => {
   });
 });
 
-Cypress.Commands.add('deleteModesOfIssuans', (id) => {
+Cypress.Commands.add('deleteModesOfIssuans', (id, ignoreErrors = true) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `modes-of-issuance/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
@@ -269,7 +314,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
 });
 
 // Depricated, use createFolioInstanceViaApi instead
-Cypress.Commands.add('createItem', (item) => {
+Cypress.Commands.add('createItem', (item, ignoreErrors = false) => {
   const { itemId = uuid() } = item;
   delete item.itemId;
   cy.okapiRequest({
@@ -280,6 +325,7 @@ Cypress.Commands.add('createItem', (item) => {
       ...item,
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then((res) => {
     return res;
   });
@@ -402,7 +448,7 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       },
       (response) => response.body.status === 'CREATED',
       {
-        limit: 10,
+        limit: 14,
         timeout: 80000,
         delay: 5000,
       },
@@ -416,7 +462,13 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
 
 Cypress.Commands.add(
   'createSimpleMarcHoldingsViaAPI',
-  (instanceId, instanceHrid, locationCode, actionNote = 'note') => {
+  (
+    instanceId,
+    instanceHrid,
+    locationCode,
+    actionNote = 'note',
+    { tag852firstIndicator = '\\' } = {},
+  ) => {
     cy.okapiRequest({
       path: 'records-editor/records',
       method: 'POST',
@@ -435,7 +487,7 @@ Cypress.Commands.add(
           },
           {
             content: `$b ${locationCode}`,
-            indicators: ['\\', '\\'],
+            indicators: [`${tag852firstIndicator || '\\'}`, '\\'],
             tag: '852',
           },
           {
@@ -681,4 +733,113 @@ Cypress.Commands.add('getSubjectTypesViaApi', (searchParams) => {
       Cypress.env('subjectTypes', body.subjectTypes);
       return body.subjectTypes;
     });
+});
+
+Cypress.Commands.add('getAllModesOfIssuance', (searchParams) => {
+  cy.okapiRequest({
+    path: 'modes-of-issuance',
+    searchParams,
+  }).then(({ body }) => {
+    return body.issuanceModes;
+  });
+});
+
+Cypress.Commands.add('toggleLccnDuplicateCheck', ({ enable = true }) => {
+  cy.okapiRequest({
+    path: 'settings/entries',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    const targetEntry = body.items.find((entry) => entry.key === 'lccn-duplicate-check');
+    if (targetEntry) {
+      return cy.okapiRequest({
+        method: 'PUT',
+        path: `settings/entries/${targetEntry.id}`,
+        isDefaultSearchParamsRequired: false,
+        body: {
+          ...targetEntry,
+          value: { duplicateLccnCheckingEnabled: enable },
+        },
+      });
+    } else {
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'settings/entries',
+        isDefaultSearchParamsRequired: false,
+        body: {
+          id: '497f6eca-6276-4993-bfeb-53cbbbba6f47',
+          scope: 'ui-quick-marc.lccn-duplicate-check.manage',
+          key: 'lccn-duplicate-check',
+          value: { duplicateLccnCheckingEnabled: enable },
+        },
+      });
+    }
+  });
+});
+
+Cypress.Commands.add('batchCreateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsPatchViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'PATCH',
+    path: 'item-storage/items',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('getRtacBatchViaApi', (instanceIds, fullPeriodicals = true) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'rtac-batch',
+    body: {
+      instanceIds: Array.isArray(instanceIds) ? instanceIds : [instanceIds],
+      fullPeriodicals,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getMarcRecordDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `records-editor/records?externalId=${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('updateMarcRecordDataViaAPI', (parsedRecordId, updatedData) => {
+  const body = updatedData;
+  body._actionType = 'edit';
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `records-editor/records/${parsedRecordId}`,
+    isDefaultSearchParamsRequired: false,
+    body,
+  });
+});
+
+Cypress.Commands.add('getInstanceAuditDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `audit-data/inventory/instance/${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
 });

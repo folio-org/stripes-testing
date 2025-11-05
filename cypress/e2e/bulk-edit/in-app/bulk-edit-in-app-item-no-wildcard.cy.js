@@ -110,7 +110,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, itemsToEdit);
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replacePermanentLocation('Online (E)');
         BulkEditActions.confirmChanges();
         [newBarcodes[0], newBarcodes[2], newBarcodes[4]].forEach((barcode) => {

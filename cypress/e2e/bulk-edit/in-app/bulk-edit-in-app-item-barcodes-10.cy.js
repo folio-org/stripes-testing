@@ -77,7 +77,7 @@ describe.skip('bulk-edit', () => {
 
     it(
       'C358976 Verify preview after updating less than 10 records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358976'] },
+      { tags: [] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
@@ -90,7 +90,7 @@ describe.skip('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         const location = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location);
         cy.intercept('preview?limit=10&step=EDIT').as('confirmChanges');
         BulkEditActions.confirmChanges();

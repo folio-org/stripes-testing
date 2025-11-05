@@ -1,9 +1,10 @@
-import { including, matching, or } from '@interactors/html';
+import { HTML, including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
   Checkbox,
   FieldSet,
+  KeyValue,
   Modal,
   Pane,
   PaneHeader,
@@ -52,6 +53,7 @@ const date2Field = TextField({ name: 'dates.date2' });
 const dateTypePlaceholderOption = 'Select date type';
 const dateValueLengthErrorText = 'Date must contain four characters.';
 const saveAndKeepEditing = Button('Save & keep editing');
+const cancelButton = Button('Cancel');
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -76,6 +78,7 @@ export default {
   addNatureOfContent,
   clickAddStatisticalCodeButton,
   chooseStatisticalCode,
+  dateTypePlaceholderOption,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([
@@ -191,6 +194,24 @@ export default {
     cy.do(subjectAccordion.find(Button({ icon: 'trash' })).click());
     cy.wait(1000);
   },
+  addParentInstance: (instanceTitle) => {
+    cy.do([
+      addParentInstanceButton.click(),
+      parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.searchByTitle(instanceTitle);
+    InventoryInstanceModal.selectInstance();
+  },
+  addChildInstance(instanceTitle) {
+    cy.do([
+      addChildInstanceButton.click(),
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.searchByTitle(instanceTitle);
+    InventoryInstanceModal.selectInstance();
+  },
   selectNatureOfContent(value) {
     cy.do(Select('Nature of content term').choose(value));
   },
@@ -200,10 +221,15 @@ export default {
     cy.do([Selection({ id: 'additem_permanentlocation' }).choose(including(locationName))]);
   },
   chooseTemporaryLocation(locationName) {
-    cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
+    cy.do(Button({ id: 'additem_temporarylocation' }).click());
+    cy.do([
+      SelectionList({ id: 'sl-container-additem_temporarylocation' }).select(
+        including(locationName),
+      ),
+    ]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(statusTerm));
+    cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
   saveAndClose() {
     cy.wait(1500);
@@ -224,10 +250,15 @@ export default {
     cy.do(contributorButton.click());
   },
 
-  fillContributorData(indexRow, name, nameType, type) {
+  fillContributorData(indexRow, name, nameType, type, typeFreeText) {
     cy.do(TextArea({ name: `contributors[${indexRow}].name` }).fillIn(name));
     cy.do(Select({ name: `contributors[${indexRow}].contributorNameTypeId` }).choose(nameType));
     cy.do(Select({ name: `contributors[${indexRow}].contributorTypeId` }).choose(type));
+    if (typeFreeText) {
+      cy.do(
+        TextArea({ name: `contributors[${indexRow}].contributorTypeText` }).fillIn(typeFreeText),
+      );
+    }
   },
 
   fillResourceTitle(title) {
@@ -259,23 +290,26 @@ export default {
     cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
     cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
   },
-  verifyDiscoverySuppressCheckbox(isChecked = false) {
-    if (isChecked) {
-      cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: true }));
-    } else cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: false }));
+  clickDiscoverySuppressCheckbox() {
+    cy.do(supressFromDiscoveryCheckbox.click());
   },
-  verifyStaffSuppressCheckbox(isChecked = false) {
+  verifyDiscoverySuppressCheckbox(isChecked = false, isDisabled = false) {
     if (isChecked) {
-      cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: true }));
-    } else cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: false }));
+      cy.expect(supressFromDiscoveryCheckbox.has({ checked: true, disabled: isDisabled }));
+    } else cy.expect(supressFromDiscoveryCheckbox.has({ checked: false, disabled: isDisabled }));
   },
-  markAsStaffSuppress() {
-    cy.do(rootSection.find(Checkbox({ name: 'staffSuppress' })).click());
+  verifyStaffSuppressCheckbox(isChecked = false, isDisabled = false) {
+    if (isChecked) {
+      cy.expect(staffSuppressCheckbox.has({ checked: true, disabled: isDisabled }));
+    } else cy.expect(staffSuppressCheckbox.has({ checked: false, disabled: isDisabled }));
   },
   verifyPreviouslyHeldCheckbox(isChecked = false) {
     if (isChecked) {
-      cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
-    } else cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: false }));
+      cy.expect(previoslyHeldCheckbox.has({ checked: true }));
+    } else cy.expect(previoslyHeldCheckbox.has({ checked: false }));
+  },
+  markAsStaffSuppress() {
+    cy.do(rootSection.find(staffSuppressCheckbox).click());
   },
   editResourceTitle: (newTitle) => {
     cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
@@ -405,6 +439,22 @@ export default {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
     cy.expect(Selection({ value: including(statisticalCode) }).absent());
   },
+  selectParentRelationshipType(type) {
+    cy.do(
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(Select({ name: 'parentInstances[0].instanceRelationshipTypeId' }))
+        .choose(type),
+    );
+  },
+  selectChildRelationshipType(type) {
+    cy.do(
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(Select({ name: 'childInstances[0].instanceRelationshipTypeId' }))
+        .choose(type),
+    );
+  },
   verifyErrorMessageForStatisticalCode: (isPresented = true) => {
     if (isPresented) {
       cy.expect(FieldSet('Statistical code').has({ error: 'Please select to continue' }));
@@ -457,12 +507,21 @@ export default {
     cy.expect(dateTypeSelect.has({ checkedOptionText: dateTypePlaceholderOption }));
   },
 
-  verifyDateFieldsValues: (date1 = '', date2 = '', dateType = dateTypePlaceholderOption) => {
+  verifyDateFieldsValues: (
+    date1 = '',
+    date2 = '',
+    dateType = dateTypePlaceholderOption,
+    enabled = true,
+  ) => {
     cy.expect([
-      date1Field.has({ value: date1 }),
-      date2Field.has({ value: date2 }),
-      dateTypeSelect.has({ checkedOptionText: dateType }),
+      date1Field.has({ disabled: !enabled, value: date1 }),
+      date2Field.has({ disabled: !enabled, value: date2 }),
+      dateTypeSelect.has({ disabled: !enabled, checkedOptionText: dateType }),
     ]);
+  },
+
+  verifyDateTypePlaceholderNotSelectable: () => {
+    cy.get('select[name="dates.dateTypeId"] option:first').should('be.disabled');
   },
 
   verifyDateFieldsValidationErrors: (date1Affected = true, date2Affected = true) => {
@@ -492,5 +551,53 @@ export default {
   clickSetForDeletionCheckbox(isChecked) {
     cy.do(setForDeletionChecbox.click());
     cy.expect(setForDeletionChecbox.has({ checked: isChecked }));
+  },
+
+  verifyParentInstance(title, hrid) {
+    cy.expect([
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Instance HRID'))
+        .has({ value: hrid }),
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Title*Connected'))
+        .has({ value: title }),
+    ]);
+  },
+
+  verifyChildInstance(title, hrid) {
+    cy.expect([
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Instance HRID'))
+        .has({ value: hrid }),
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(KeyValue('Title*Connected'))
+        .has({ value: title }),
+    ]);
+  },
+
+  verifyShareParentLinkingError() {
+    cy.expect(
+      Modal('Saving instance failed')
+        .find(
+          HTML(
+            including(
+              '400: One instance is local and one is shared. To be linked, both instances must be local or shared.',
+            ),
+          ),
+        )
+        .exists(),
+    );
+  },
+
+  checkButtonsEnabled: ({ saveAndClose = true, saveKeepEditing = true, cancel = true } = {}) => {
+    cy.expect([
+      cancelButton.has({ disabled: !cancel }),
+      saveAndKeepEditing.has({ disabled: !saveKeepEditing }),
+      saveAndCloseButton.has({ disabled: !saveAndClose }),
+    ]);
   },
 };

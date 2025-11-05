@@ -102,7 +102,7 @@ describe('Fees&Fines', () => {
           }).then((loanType) => {
             testData.loanTypeId = loanType.id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          cy.getDefaultMaterialType().then((materialTypes) => {
             testData.materialTypeId = materialTypes.id;
           });
         })
@@ -264,8 +264,11 @@ describe('Fees&Fines', () => {
       'C350650 Verify automated patron block "Maximum number of overdue recalls" removed after overdue recalled item returned (vega)',
       { tags: ['criticalPath', 'vega', 'C350650'] },
       () => {
-        cy.visit(SettingsMenu.conditionsPath);
-        Conditions.waitLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.visit(SettingsMenu.conditionsPath);
+          Conditions.waitLoading();
+        });
+
         Conditions.select('Maximum number of overdue recalls');
         Conditions.setConditionState(checkedOutBlockMessage);
         cy.visit(SettingsMenu.limitsPath);

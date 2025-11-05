@@ -1,4 +1,4 @@
-import { Button, Select, TextField } from '../../../../../../interactors';
+import { Button, Select, TextField, including } from '../../../../../../interactors';
 import getRandomPostfix from '../../../../utils/stringTools';
 
 export default {
@@ -12,6 +12,10 @@ export default {
     cy.do(TextField('Discovery display name*').fillIn(`testDisplayName${getRandomPostfix()}`));
   },
   selectRemoteStorage(value = 'RS1') {
+    // the asterisk sometimes doesn't appear immediately, so we use `exists` to wait for it
+    cy.expect(Select('Remote storage*').exists());
+    // Check if the option is not disabled
+    cy.expect(Select('Remote storage*').has({ optionsText: including(value) }));
     cy.do(Select('Remote storage*').choose(value));
   },
   selectServicePoint(value = 'Online') {

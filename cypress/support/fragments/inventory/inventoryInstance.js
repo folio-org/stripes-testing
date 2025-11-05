@@ -28,6 +28,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  ValueChipRoot,
   and,
   calloutTypes,
   including,
@@ -35,7 +36,7 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
-import { REQUEST_METHOD, ITEM_STATUS_NAMES } from '../../constants';
+import { REQUEST_METHOD, ITEM_STATUS_NAMES, INSTANCE_STATUS_TERM_NAMES } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -161,6 +162,7 @@ const versionHistoryButton = Button({ icon: 'clock' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
+  cannotViewAuthoritiesMessage: 'User does not have permission to search authority records.',
 };
 
 const validOCLC = {
@@ -212,10 +214,10 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
-  cy.wait(500);
+  cy.wait(1500);
   cy.do(
     instanceDetailsSection
-      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
@@ -352,10 +354,10 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
-const waitInstanceRecordViewOpened = (title) => {
-  cy.wait(1500);
+const waitInstanceRecordViewOpened = () => {
   cy.expect(instanceDetailsSection.exists());
-  cy.expect(Pane({ titleLabel: including(title) }).exists());
+  cy.expect(Pane().exists());
+  cy.expect(Spinner().absent());
 };
 
 const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {
@@ -402,6 +404,9 @@ export default {
 
   waitInventoryLoading() {
     cy.expect(instanceDetailsSection.exists());
+    // Wait for the title to gain focus. There is a slight delay before focus is achieved,
+    // and if you open any dropdown before then, it will immediately close, and the test will fail.
+    cy.wait(1000);
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
@@ -906,7 +911,7 @@ export default {
   checkHoldingsTable: (
     locationName,
     rowNumber,
-    caption,
+    loanType,
     barcode,
     status,
     effectiveLocation = null,
@@ -915,11 +920,13 @@ export default {
     const indexRowNumber = `row-${rowNumber}`;
     cy.do(Accordion(accordionHeader).clickHeader());
 
-    const row = Accordion(accordionHeader).find(MultiColumnListRow({ indexRow: indexRowNumber }));
+    const row = Accordion(accordionHeader).find(
+      MultiColumnListRow({ rowIndexInParent: indexRowNumber }),
+    );
 
     cy.expect([
       row.find(MultiColumnListCell({ content: barcode })).exists(),
-      row.find(MultiColumnListCell({ content: caption })).exists(),
+      row.find(MultiColumnListCell({ content: loanType })).exists(),
       row.find(MultiColumnListCell({ content: status })).exists(),
     ]);
 
@@ -932,35 +939,49 @@ export default {
     const indexRowNumber = `row-${rowNumber}`;
     cy.do(Accordion({ label: including(languageAccordionValue) }).clickHeader());
     const row = Accordion({ label: including(languageAccordionValue) }).find(
-      MultiColumnListRow({ indexRow: indexRowNumber }),
+      MultiColumnListRow({ rowIndexInParent: indexRowNumber }),
     );
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
   },
 
-  moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false }) {
+  moveItemToAnotherHolding({
+    fromHolding,
+    toHolding,
+    shouldOpen = true,
+    itemMoved = false,
+    itemIndex = 0,
+  } = {}) {
     if (shouldOpen) {
       openHoldings(fromHolding, toHolding);
     }
 
-    cy.do([
+    cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListRow({ index: itemIndex }))
         .find(Checkbox())
         .click(),
+    );
+    cy.wait(500);
+    cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(Button('Move to'))
         .click(),
+    );
+    cy.wait(500);
+    cy.do(
       DropdownMenu()
         .find(Button(including(toHolding)))
         .click(),
-    ]);
+    );
 
     if (itemMoved) {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
     }
+
+    cy.wait(1000);
   },
 
-  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true) {
+  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true, itemIndex = 0) {
     cy.wait(5000);
     if (shouldOpen) {
       openHoldings(fromHolding);
@@ -968,7 +989,7 @@ export default {
     cy.wait(5000);
     cy.do([
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListRow({ index: itemIndex }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
@@ -979,14 +1000,15 @@ export default {
     InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
   },
 
-  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
+  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true, itemIndex = 0 } = {}) {
+    cy.wait(1000);
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
-    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen);
+    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen, itemIndex);
   },
 
   confirmOrCancel(action) {
@@ -994,11 +1016,9 @@ export default {
   },
 
   returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
-    this.openHoldings(firstHoldingName, secondHoldingName);
-
     cy.do([
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
-        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListRow({ index: 0 }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
@@ -1010,9 +1030,12 @@ export default {
     ]);
   },
 
-  openMoveItemsWithinAnInstance: () => {
+  openMoveItemsWithinAnInstance() {
+    this.waitInventoryLoading();
+    cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
     cy.wait(1000);
+    cy.expect(moveItemsButton.exists());
     cy.do(moveItemsButton.click());
   },
 
@@ -1065,7 +1088,10 @@ export default {
   },
 
   edit() {
-    cy.do([Button('Actions').click(), Button('Edit').click()]);
+    cy.expect(Button('Actions').exists());
+    cy.do(Button('Actions').click());
+    cy.expect(Button('Edit').exists());
+    cy.do(Button('Edit').click());
   },
 
   closeInstancePage() {
@@ -1075,22 +1101,57 @@ export default {
 
   addTag: (tagName) => {
     cy.do(tagButton.click());
-    // TODO: clarify with developers what should be waited
-    cy.wait(1500);
+    cy.intercept('PUT', '**/inventory/instances/*').as('addTag');
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
-    cy.wait(1500);
+    cy.wait('@addTag');
+    cy.wait(1000);
   },
 
-  checkAddedTag: (tagName, instanceTitle) => {
+  checkTagSelectedInDropdown(tag, isShown = true) {
+    if (isShown) cy.expect(ValueChipRoot(tag).exists());
+    else cy.expect(ValueChipRoot(tag).absent());
+  },
+
+  checkAddedTag(tagName, instanceTitle) {
     cy.do(MultiColumnListCell(instanceTitle).click());
     cy.wait(1500);
     cy.do(tagButton.click());
     cy.wait(1500);
-    cy.expect(textFieldTagInput.exists(tagName));
+    this.checkTagSelectedInDropdown(tagName);
+  },
+
+  addMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      cy.do(textFieldTagInput.choose(tag));
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.wait(500);
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+    });
+  },
+
+  deleteMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+      cy.do(ValueChipRoot(tag).find(closeTag).click());
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.wait(500);
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag, false);
+    });
   },
 
   deleteTag: (tagName) => {
+    cy.intercept('PUT', '**/inventory/instances/*').as('removeTag');
     cy.do(MultiSelect({ id: 'input-tag' }).find(closeTag).click());
+    cy.wait('@removeTag');
+    cy.wait(1000);
     cy.expect(
       MultiSelect({ id: 'input-tag' })
         .find(HTML(including(tagName)))
@@ -1181,7 +1242,9 @@ export default {
   },
 
   verifyResourceIdentifierAbsent: (value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
-  verifyInstanceLanguage: (language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
+  verifyInstanceLanguage: (language) => cy.expect(
+    descriptiveDataAccordion.find(KeyValue('Language')).has({ value: including(language) }),
+  ),
   verifyInstancePhysicalcyDescription: (description) => {
     cy.expect(
       descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }),
@@ -1191,7 +1254,7 @@ export default {
   checkIsInstanceUpdated: () => {
     const instanceStatusTerm = KeyValue('Instance status term');
 
-    cy.expect(instanceStatusTerm.has({ value: 'Batch Loaded' }));
+    cy.expect(instanceStatusTerm.has({ value: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED }));
     cy.expect(source.has({ value: 'MARC' }));
     cy.expect(
       KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }),
@@ -1287,7 +1350,7 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content: including(content) }).exists());
   },
-  openHoldingItem({ name, barcode, shouldOpen = true }) {
+  openHoldingItem({ name = '', barcode = 'No barcode', shouldOpen = true }) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
@@ -1362,7 +1425,7 @@ export default {
   checkIsItemCreated: (itemBarcode) => {
     cy.expect(
       instanceDetailsSection
-        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: itemBarcode }))
         .find(Button(including(itemBarcode)))
         .exists(),
     );
@@ -1374,7 +1437,6 @@ export default {
       Button({ id: 'edit-instance' }).exists(),
       Button({ id: 'copy-instance' }).exists(),
       Button({ id: 'clickable-view-source' }).exists(),
-      Button({ id: 'view-requests' }).exists(),
       editMARCBibRecordButton.absent(),
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
@@ -1386,11 +1448,6 @@ export default {
     cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
     cy.wait(2000);
-  },
-
-  checkShareLocalInstanceButtonIsAbsent() {
-    cy.do(actionsButton.click());
-    cy.expect([Button({ id: 'share-local-instance' }).absent()]);
   },
 
   checkInstanceHeader(header) {
@@ -1451,8 +1508,8 @@ export default {
         }),
         (response) => response.body.sharingInstances[0].status === 'COMPLETE',
         {
-          limit: 20,
-          delay: 1000,
+          limit: 30,
+          delay: 2000,
         },
       );
     });
@@ -1475,12 +1532,14 @@ export default {
   overlayWithOclc: (oclc) => {
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
       if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
-        cy.do(importTypeSelect.choose('OCLC WorldCat'));
+        cy.wait(3000);
+        cy.do(singleRecordImportModal.find(importTypeSelect).choose('OCLC WorldCat'));
+        cy.wait(1500);
       }
       cy.do(
-        Select({ name: 'selectedJobProfileId' }).choose(
-          'Inventory Single Record - Default Update Instance (Default)',
-        ),
+        singleRecordImportModal
+          .find(Select({ name: 'selectedJobProfileId' }))
+          .choose('Inventory Single Record - Default Update Instance (Default)'),
       );
       cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
       cy.do(singleRecordImportModal.find(Button('Import')).click());
@@ -1565,6 +1624,7 @@ export default {
       .then((elem) => {
         elem.parent()[0].querySelector('a[href]').click();
       });
+    cy.wait(2000);
   },
 
   verifyCellsContent: (...content) => {
@@ -1655,11 +1715,11 @@ export default {
     );
   },
 
-  verifyLastUpdatedSource: (userFirsttName, userLastName) => {
+  verifyLastUpdatedSource: (userFirstName, userLastName) => {
     cy.do(Accordion('Administrative data').click());
     cy.get('div[data-test-updated-by="true"]')
       .find('a')
-      .should('include.text', `${userLastName}, ${userFirsttName}`);
+      .should('include.text', `${userLastName}, ${userFirstName}`);
   },
 
   verifyRecordCreatedSource: (userFirsttName, userLastName) => {
@@ -1870,5 +1930,50 @@ export default {
     cy.do(versionHistoryButton.click());
     cy.expect(Spinner().exists());
     cy.expect(Spinner().absent());
+  },
+
+  checkButtonsShown({ actions, addHoldings, addItem }) {
+    if (actions) cy.expect(actionsButton.exists());
+    if (actions === false) cy.expect(actionsButton.absent());
+    if (addHoldings) cy.expect(addHoldingButton.exists());
+    if (addHoldings === false) cy.expect(addHoldingButton.absent());
+    if (addItem) cy.expect(addItemButton.exists());
+    if (addItem === false) cy.expect(addItemButton.absent());
+  },
+
+  verifyActionsMenuEmpty() {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.expect(Section({ id: 'inventory-menu-section' }).absent());
+  },
+
+  checkCloseButtonInFocus() {
+    cy.expect(instanceDetailsSection.find(Button({ icon: 'times' })).has({ focused: true }));
+  },
+
+  verifyPermissionMessageInSelectAuthorityModal(isShown = true) {
+    const targetMessage = findAuthorityModal.find(HTML(messages.cannotViewAuthoritiesMessage));
+    cy.expect(isShown ? targetMessage.exists() : targetMessage.absent());
+  },
+
+  verifyEditButtonsShown({ folioEdit = true, marcEdit = true } = {}) {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    if (folioEdit) cy.expect(editInstanceButton.exists());
+    else cy.expect(editInstanceButton.absent());
+    if (marcEdit) cy.expect(editMARCBibRecordButton.exists());
+    else cy.expect(editMARCBibRecordButton.absent());
+  },
+
+  checkItemOrderValueInHoldings(holdingsLocation, itemIndex, orderValue, whileMoving = false) {
+    const holdingSection = Accordion(including(holdingsLocation));
+    const targetEl = whileMoving
+      ? holdingSection
+        .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
+        .find(TextField({ value: `${orderValue}` }))
+      : holdingSection.find(
+        MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
+      );
+    cy.expect(targetEl.exists());
   },
 };

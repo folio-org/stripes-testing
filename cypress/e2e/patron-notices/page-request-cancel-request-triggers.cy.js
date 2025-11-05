@@ -95,7 +95,7 @@ describe('Patron notices', () => {
           }).then((loanType) => {
             testData.loanTypeId = loanType.id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          cy.getDefaultMaterialType().then((materialTypes) => {
             testData.materialTypeId = materialTypes.id;
           });
         })
@@ -192,15 +192,15 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
 
-        const dublicate = true;
+        const duplicate = true;
         NewNoticePolicyTemplate.createPatronNoticeTemplate(
           noticeTemplates.cancelRequest,
-          dublicate,
+          duplicate,
         );
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-        cy.wait(5000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();

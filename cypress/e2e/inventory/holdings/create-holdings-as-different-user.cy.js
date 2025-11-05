@@ -66,6 +66,7 @@ describe('Inventory', () => {
         'C1294 Create a Holdings record as another user than the one that created the Instance (folijet)',
         { tags: ['smoke', 'folijet', 'shiftLeft', 'C1294', 'eurekaPhase1'] },
         () => {
+          cy.wait(2000);
           const InventoryNewInstance = InventoryInstances.addNewInventory();
           InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
           InventoryNewInstance.clickSaveAndCloseButton();
@@ -85,7 +86,8 @@ describe('Inventory', () => {
             instanceHRID = initialInstanceHrId;
           });
           InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
-
+          InventoryInstance.waitLoading();
+          cy.wait(5000);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkSource(recordsData.source);
           HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);

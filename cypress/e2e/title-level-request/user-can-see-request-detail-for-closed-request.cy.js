@@ -54,11 +54,11 @@ describe('Request Detail. TLR', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C350556_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })
@@ -183,7 +183,7 @@ describe('Request Detail. TLR', () => {
 
   it(
     'C350556 Check that the user can see "Request Detail" for request after it is Closed (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega', 'C350556'] },
+    { tags: ['extendedPathFlaky', 'vega', 'C350556'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

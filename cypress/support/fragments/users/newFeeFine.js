@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   Modal,
   Option,
   Select,
@@ -8,12 +9,15 @@ import {
   MultiColumnListRow,
   HTML,
   TextField,
+  Dropdown,
+  including,
 } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'new-modal' });
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
 const ownerTypeSelect = rootModal.find(Select({ id: 'ownerId' }));
 const amountTextField = rootModal.find(TextField({ name: 'amount' }));
+const accessDeniedModal = Modal('Access denied');
 
 const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, createdAt, source }) => ({
   accountId: id,
@@ -175,5 +179,65 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
+  },
+
+  verifyAccessDeniedModal: () => {
+    cy.expect(accessDeniedModal.exists());
+    cy.expect(accessDeniedModal.find(HTML(including('You must select a service point'))).exists());
+  },
+
+  closeAccessDeniedModal: () => {
+    cy.do(accessDeniedModal.find(Button('Back')).click());
+    cy.expect(accessDeniedModal.absent());
+  },
+
+  verifyDefaultOwnerSelected: (ownerName) => {
+    cy.expect(ownerTypeSelect.has({ checkedOptionText: ownerName }));
+  },
+
+  switchServicePoint: (spName) => {
+    cy.wait(2000);
+    cy.do([Dropdown({ id: 'profileDropdown' }).open(), Button('Switch service point').click()]);
+    cy.wait(2000);
+    cy.do(Modal('Select service point').find(Button(spName)).click());
+    cy.expect(Modal('Select service point').absent());
+    cy.wait(3000);
+  },
+
+  verifyNoOwnerSelected: () => {
+    cy.expect(ownerTypeSelect.has({ checkedOptionText: 'Select one' }));
+  },
+
+  selectFeeFineType: (feeFineType) => {
+    cy.do(feeFineTypeSelect.choose(feeFineType));
+  },
+
+  verifyNotifyPatronCheckboxChecked: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).exists());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).has({ checked: true }));
+  },
+
+  verifyNotifyPatronCheckboxNotPresent: () => {
+    cy.expect(rootModal.find(HTML(including('Notify patron'))).absent());
+    cy.expect(rootModal.find(Checkbox({ name: 'notify' })).absent());
+  },
+
+  verifyItemDataPopulated: (itemData) => {
+    cy.expect(rootModal.find(HTML(including(itemData.barcode))).exists());
+    cy.expect(rootModal.find(HTML(including(itemData.instanceTitle))).exists());
+  },
+
+  verifyAmountFieldValue: (expectedValue) => {
+    const amountValue =
+      typeof expectedValue === 'number' ? expectedValue.toFixed(2) : expectedValue.toString();
+    cy.expect(amountTextField.has({ value: amountValue }));
+  },
+
+  clickAmountField: () => {
+    cy.do(amountTextField.click());
+  },
+
+  clickInactiveZone: () => {
+    cy.do(rootModal.find(TextField({ name: 'itemBarcode' })).click());
   },
 };

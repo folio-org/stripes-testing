@@ -10,7 +10,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -84,10 +83,12 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-        (instances) => {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
+        (response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
         },
       );
 
@@ -173,8 +174,8 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfileWithLinkingProfiles(
@@ -197,7 +198,7 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.NO_ACTION);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);

@@ -85,7 +85,7 @@ describe('Inventory', () => {
             InventoryInstance.closeFindAuthorityModal();
           });
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
-          InventoryInstance.waitLoading();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
       });
     });
@@ -112,7 +112,7 @@ describe('Inventory', () => {
 
     it(
       'C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C388531'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C388531'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

@@ -171,11 +171,15 @@ describe('Inventory', () => {
               createdRecordIDs.push(instance.instanceId);
             });
           });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstances.waitContentLoading();
+          cy.reload();
+        }, 20_000);
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
@@ -411,11 +415,8 @@ describe('Inventory', () => {
 
     it(
       'C468155 Only one Classification identifier type could be found in the browse result list by "Classification (all)" browse option when only one Classification identifier type is selected in settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468155'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C468155'] },
       () => {
-        BrowseClassifications.waitForClassificationNumberToAppear(
-          testData.localInstnaceClassificationValue,
-        );
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });
@@ -618,6 +619,7 @@ describe('Inventory', () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });
+        cy.wait(2000);
         BrowseClassifications.waitForClassificationNumberToAppear('598.0994');
         testData.marcRecordsTitlesAndClassifications.forEach((marcInstance) => {
           if (marcInstance.classificationValue === '598.0994') {
@@ -707,6 +709,7 @@ describe('Inventory', () => {
     let user;
 
     const search = (query, isNegative = true) => {
+      BrowseClassifications.waitForClassificationNumberToAppear(query, 'lc', !isNegative);
       InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
         testData.classificationOption,
       );
@@ -823,11 +826,6 @@ describe('Inventory', () => {
       'C468157 Only one Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468157'] },
       () => {
-        testData.folioInstances.forEach((folioInstance) => {
-          BrowseClassifications.waitForClassificationNumberToAppear(
-            folioInstance.classificationValue,
-          );
-        });
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });

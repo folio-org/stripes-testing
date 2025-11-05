@@ -70,6 +70,7 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -136,7 +137,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         verifyFileContent(matchedRecordsFileName, initialValueSets);
 
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
@@ -144,25 +145,25 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
-        BulkEditActions.selectSecondAction(actionsToSelect.addNote);
+        BulkEditActions.selectAction(actionsToSelect.addNote);
         cy.wait(500);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
-        BulkEditActions.fillInSecondTextArea(notes.administrative);
+        BulkEditActions.verifyActionSelected(actionsToSelect.addNote);
+        BulkEditActions.fillInFirstTextArea(notes.administrative);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.NOTE, 1);
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(noteActionOptions, 1);
-        BulkEditActions.selectSecondAction(actionsToSelect.addNote, 1);
-        BulkEditActions.fillInSecondTextArea(notes.note, 1);
+        BulkEditActions.selectAction(actionsToSelect.addNote, 1);
+        BulkEditActions.fillInFirstTextArea(notes.note, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING, 2);
         BulkEditActions.verifyTheActionOptions(noteActionOptions, 2);
-        BulkEditActions.selectSecondAction(actionsToSelect.addNote, 2);
-        BulkEditActions.fillInSecondTextArea(notes.binding, 2);
+        BulkEditActions.selectAction(actionsToSelect.addNote, 2);
+        BulkEditActions.fillInFirstTextArea(notes.binding, 2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
@@ -199,6 +200,7 @@ describe('Bulk-edit', () => {
         verifyFileContent(changedRecordsFileName, modifiedValueSets);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();

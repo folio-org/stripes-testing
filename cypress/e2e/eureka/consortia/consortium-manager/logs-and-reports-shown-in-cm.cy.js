@@ -2,25 +2,14 @@ import Users from '../../../../support/fragments/users/users';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const capabSetsToAssign = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
     ];
     let userData;
 

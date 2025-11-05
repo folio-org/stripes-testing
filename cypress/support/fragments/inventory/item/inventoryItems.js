@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { Button, Modal } from '../../../../../interactors';
+import { Button, Modal, Pane } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -35,12 +35,13 @@ export default {
     cy.wait(5000);
   },
 
-  editItemViaApi: (item) => {
+  editItemViaApi: (item, ignoreErrors = false) => {
     return cy.okapiRequest({
       method: 'PUT',
       path: `inventory/items/${item.id}`,
       body: item,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 
@@ -110,6 +111,9 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
     cy.wait(4000);
   },
+  closeItemInHeader() {
+    cy.do(Pane({ id: 'item-view-pane' }).dismiss());
+  },
   getItemViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -127,11 +131,12 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteItemViaApi(itemId) {
+  deleteItemViaApi(itemId, ignoreErrors = true) {
     cy.okapiRequest({
       method: 'DELETE',
       path: `inventory/items/${itemId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   addItemToHoldingViaApi({
@@ -141,7 +146,7 @@ export default {
   }) {
     cy.then(() => {
       cy.getLoanTypes({ limit: 1 });
-      cy.getMaterialTypes({ limit: 1 });
+      cy.getDefaultMaterialType();
     }).then(() => {
       const item = {
         id: uuid(),
@@ -159,5 +164,34 @@ export default {
   },
   verifyNewRequestButtonIsAbsent() {
     cy.expect(newRequestButton.absent());
+  },
+  getItemsInHoldingsViaApi(
+    holdingsRecordId,
+    { limit = 100, sortBy = 'order/number/sort.ascending' } = {},
+  ) {
+    let requestQuery = `(holdingsRecordId==${holdingsRecordId})`;
+    if (sortBy) requestQuery += ` sortby ${sortBy}`;
+    return cy
+      .okapiRequest({
+        path: 'inventory/items-by-holdings-id',
+        searchParams: {
+          limit,
+          query: requestQuery,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.items);
+  },
+  updateItemsOwnershipViaApi(itemIds, newHoldingsId, newTenant) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'inventory/items/update-ownership',
+      body: {
+        toHoldingsRecordId: newHoldingsId,
+        itemIds: Array.isArray(itemIds) ? itemIds : [itemIds],
+        targetTenantId: newTenant,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };

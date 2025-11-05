@@ -37,9 +37,9 @@ describe('Bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-          .then((servicePoints) => {
-            servicePointId = servicePoints[0].id;
+        ServicePoints.getCircDesk1ServicePointViaApi()
+          .then((servicePoint) => {
+            servicePointId = servicePoint.id;
           })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
@@ -105,7 +105,7 @@ describe('Bulk-edit', () => {
 
         const location = 'Online';
         BulkEditActions.openActionsIfNotYet();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, location);
@@ -137,7 +137,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifySpecificItemsMatched(item.holdingHRID);
 
         const newLocation = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);

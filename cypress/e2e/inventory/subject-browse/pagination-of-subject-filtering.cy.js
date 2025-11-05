@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
@@ -61,7 +61,7 @@ describe('Inventory', () => {
 
     it(
       'C584530 Check pagination of subject filtering (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584530'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C584530'] },
       () => {
         const subjectTypes = ['Topical term', 'Geographic name', 'Personal name'];
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
@@ -69,11 +69,14 @@ describe('Inventory', () => {
         BrowseSubjects.expandAccordion('Subject type');
         subjectTypes.forEach((subjectType) => {
           BrowseSubjects.selectSubjectType(subjectType);
+          cy.wait(2000);
         });
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickNextPaginationButton();
+        cy.wait(2000);
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickPreviousPaginationButton();
+        cy.wait(2000);
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
       },
     );

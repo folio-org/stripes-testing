@@ -1,47 +1,46 @@
-import uuid from 'uuid';
+import { Button, Pane, TextField } from '../../../../../interactors';
+import OrderStorageSettings from '../../orders/orderStorageSettings';
 
-const defaultPOLLimitConfig = {
-  module: 'ORDERS',
-  configName: 'poLines-limit',
-  value: '1',
-  id: uuid(),
-};
-const defaultSearchParams = { query: '(module==ORDERS and configName==poLines-limit)' };
+const SETTING_KEY = 'poLines-limit';
 
 export default {
-  getPOLLimit(searchParams) {
-    return cy
-      .okapiRequest({
-        path: 'configurations/entries',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body.configs);
+  getPOLLimit() {
+    return OrderStorageSettings.getSettingsViaApi({ key: SETTING_KEY });
   },
-  createPOLLimit(config) {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'configurations/entries',
-        body: config,
-      })
-      .then(({ body }) => body);
+
+  createPOLLimit({ value }) {
+    const payload = {
+      key: SETTING_KEY,
+      value: String(value),
+    };
+
+    return OrderStorageSettings.createSettingViaApi(payload);
   },
-  updatePOLLimit(config) {
-    return cy.okapiRequest({
-      method: 'PUT',
-      path: `configurations/entries/${config.id}`,
-      body: config,
-      isDefaultSearchParamsRequired: false,
-    });
+
+  updatePOLLimit(setting) {
+    return OrderStorageSettings.updateSettingViaApi(setting);
   },
-  setPOLLimit(limit) {
-    this.getPOLLimit(defaultSearchParams).then((configs) => {
-      if (configs.length) {
-        this.updatePOLLimit({ ...configs[0], value: limit });
+
+  setPOLLimitViaApi(limit) {
+    const value = String(limit);
+    this.getPOLLimit().then((settings) => {
+      if (settings.length) {
+        const current = settings[0];
+        this.updatePOLLimit({ ...current, value });
       } else {
-        this.createPOLLimit({ ...defaultPOLLimitConfig, value: limit });
+        this.createPOLLimit({ value });
       }
     });
+  },
+
+  setPOLLimit(value) {
+    const limit = String(value);
+    cy.do(
+      Pane('Purchase order lines limit')
+        .find(TextField('Set purchase order lines limit'))
+        .fillIn(limit),
+    );
+    cy.do(Button('Save').click());
+    cy.wait(2000);
   },
 };

@@ -10,15 +10,11 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import {
@@ -101,21 +97,6 @@ describe('Data Import', () => {
     };
 
     before('Create test data', () => {
-      cy.getAdminToken();
-      ['GIFTS-ONE-TIME', 'HIST'].forEach((code) => {
-        const budget = {
-          ...Budgets.getDefaultBudget(),
-          allocated: 1000,
-        };
-        FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
-          budget.fiscalYearId = resp.fiscalYears[0].id;
-          Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
-            budget.fundId = body.funds[0].id;
-            Budgets.createViaApi(budget);
-          });
-        });
-      });
-
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -126,8 +107,8 @@ describe('Data Import', () => {
 
       // create action profile
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(actionProfile.name);
+      SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+      SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
@@ -197,7 +178,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace(/-\d/, '');
+            const orderNumber = initialNumber.replace(/-\d+$/, '');
 
             orderNumbers.push(orderNumber);
           });

@@ -77,7 +77,7 @@ describe.skip('bulk-edit', () => {
 
     it(
       'C358977 Verify that 10 records returned in errors preview after updating records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358977'] },
+      { tags: [] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
@@ -89,7 +89,7 @@ describe.skip('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         const location = 'Annex';
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location);
         cy.intercept('preview?limit=10&step=EDIT').as('confirmChanges');
         BulkEditActions.confirmChanges();

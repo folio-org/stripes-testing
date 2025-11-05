@@ -45,11 +45,11 @@ describe('Title Level Request', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C353975_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
       })
@@ -87,10 +87,14 @@ describe('Title Level Request', () => {
         testData.user.userId,
         testData.userServicePoint.id,
       );
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
+
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: testData.instanceId,

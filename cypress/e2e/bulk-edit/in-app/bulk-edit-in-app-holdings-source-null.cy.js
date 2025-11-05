@@ -61,7 +61,7 @@ describe('Bulk-edit', () => {
     // test case is obsolete
     it.skip(
       'C380592 Verify that Holdings without "Source" populated can be updated (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C380592'] },
+      { tags: [] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingHRID);
@@ -79,7 +79,7 @@ describe('Bulk-edit', () => {
         const location = 'Annex';
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Source');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
@@ -10,7 +11,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `AT_C430262_UserRole_${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        originalApplications: ['app-platform-minimal', 'app-dcb'],
+        originalApplications: ['app-platform-minimal', 'app-licenses'],
         newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
@@ -54,7 +55,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Licenses Admin Action',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -121,13 +122,7 @@ describe('Eureka', () => {
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
-      const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.EDIT,
-        },
-      ];
+      const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesSettingsEdit];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
@@ -191,12 +186,20 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
-          cy.intercept('GET', capabilitiesCallRegExp).as('capabilities');
-          cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
           cy.wait(1000);
-          AuthorizationRoles.clickSaveInModal();
-          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
-          cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
+          cy.intercept('GET', '/capabilities?*').as('capabilities');
+          cy.intercept('GET', '/capability-sets?*').as('capabilitySets');
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
+          cy.wait('@capabilities').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitiesCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
+          cy.wait('@capabilitySets').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitySetsCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
           cy.wait(2000);
           AuthorizationRoles.verifyAppNamesInCapabilityTables([
             testData.newApplication,

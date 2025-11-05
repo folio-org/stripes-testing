@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -12,6 +13,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const testData = {
   centralSharedType: {
@@ -133,14 +135,15 @@ describe('Consortium manager', () => {
 
       it(
         'C410885 User with "Consortium manager: Can view existing settings" permission is able to view the list of classification identifier types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410885'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user885.username, testData.user885.password);
           // Without waiter, permissions aren't loading
           cy.wait(10000);
-          TopMenuNavigation.navigateToApp('Consortium manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           ConsortiumManagerApp.waitLoading();
+          cy.wait(4000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
@@ -158,7 +161,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.central,
             ],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
@@ -168,7 +171,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.college,
             ],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -177,8 +180,9 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -202,7 +206,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.college,
             ],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -211,18 +215,18 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            [],
           );
         },
       );
 
       it(
         'C410886 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of classification identifier types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410886'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user886.username, testData.user886.password);
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           cy.wait(4000);
           SelectMembers.selectAllMembers();
@@ -295,11 +299,11 @@ describe('Consortium manager', () => {
 
       it(
         'C410888 User with "Consortium manager: Can share settings to all members" permission is able to view the list of classification identifier types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410888'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user888.username, testData.user888.password);
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           cy.wait(4000);
           SelectMembers.selectAllMembers();
@@ -313,7 +317,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               'All',
             ],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -322,7 +326,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.central,
             ],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
@@ -332,7 +336,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.college,
             ],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -341,8 +345,9 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            [],
           );
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -357,7 +362,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               'All',
             ],
-            ['edit', 'trash'],
+            [],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -366,7 +371,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.central,
             ],
-            ['edit', 'trash'],
+            [],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(

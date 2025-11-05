@@ -26,6 +26,7 @@ describe('Inventory', () => {
     };
 
     const Dropdowns = {
+      HELDBY: 'Held by',
       SHARED: 'Shared',
       YES: 'Yes',
       NO: 'No',
@@ -128,6 +129,7 @@ describe('Inventory', () => {
       'C402334 Use "Shared" facet when Search was executed in "Member" tenant ("Instance" tab) (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C402334'] },
       () => {
+        InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
@@ -193,6 +195,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchResult(testData.importedSharedInstance);
 
         InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
         InventorySearchAndFilter.verifyResultPaneEmpty(true);

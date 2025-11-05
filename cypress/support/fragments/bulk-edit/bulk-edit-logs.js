@@ -63,6 +63,8 @@ const reviewingChangesCheckbox = Checkbox('Reviewing changes');
 const completedCheckbox = Checkbox('Completed');
 const completedWithErrorsCheckbox = Checkbox('Completed with errors');
 const failedCheckbox = Checkbox('Failed');
+const previousPaginationButton = Button('Previous');
+const nextPaginationButton = Button('Next');
 
 export default {
   resetAllBtnIsDisabled(isDisabled) {
@@ -75,6 +77,16 @@ export default {
 
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
+  },
+
+  verifyLogActionsButtonAbsentInARow(jobHrid) {
+    cy.then(() => MultiColumnListCell({ content: jobHrid, column: 'ID' }).row()).then((index) => {
+      cy.expect(
+        MultiColumnListRow({ indexRow: `row-${index}` })
+          .find(logsActionButton)
+          .absent(),
+      );
+    });
   },
 
   verifyCheckboxIsSelected(checkbox, isChecked = false) {
@@ -148,6 +160,17 @@ export default {
       .should('have.length.at.least', 1)
       .each((value) => {
         expect(value).to.eq(status);
+      });
+  },
+
+  verifyRecordTypesValues(
+    expectedRecordTypes = ['Inventory - instances', 'Inventory - instances (MARC)'],
+  ) {
+    cy.wait(2000);
+    BulkEditSearchPane.getMultiColumnListCellsValues(1)
+      .should('have.length.at.least', 1)
+      .each((value) => {
+        expect(expectedRecordTypes).to.include(value);
       });
   },
 
@@ -293,7 +316,11 @@ export default {
   },
 
   verifyUserIsNotInUserList(name) {
-    cy.do([usersSelectionList.find(SelectionOption(including(name))).absent()]);
+    cy.expect(usersSelectionList.find(SelectionOption(including(name))).absent());
+  },
+
+  verifyUserIsInUserList(name) {
+    cy.expect(SelectionOption(including(name)).exists());
   },
 
   verifyEmptyUserDropdown() {
@@ -371,12 +398,38 @@ export default {
     );
   },
 
+  verifyOperationHrid(runByUsername, operationHrid) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content: operationHrid }))
+        .exists(),
+    );
+  },
+
+  verifyEditingColumnValue(runByUsername, content) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content, column: 'Editing' }))
+        .exists(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
         .find(logsActionButton)
         .click(),
     );
+  },
+
+  clickActionsByJobHrid(jobHrid) {
+    cy.then(() => MultiColumnListCell({ content: jobHrid, column: 'ID' }).row()).then((index) => {
+      cy.do(
+        MultiColumnListRow({ indexRow: `row-${index}` })
+          .find(logsActionButton)
+          .click(),
+      );
+    });
   },
 
   verifyActionsRunBy(name) {
@@ -609,5 +662,17 @@ export default {
 
   verifyLogResultsFound() {
     cy.expect(logsResultPane.find(MultiColumnList()).exists());
+  },
+
+  verifyLogsPagination(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      logsResultPane.find(previousPaginationButton).has({ disabled: true }),
+      logsResultPane.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="prevNextPaginationContainer-"]')
+      .eq(0)
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
   },
 };

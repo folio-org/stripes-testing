@@ -2,6 +2,9 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -13,38 +16,37 @@ describe('Eureka', () => {
         updatedRoleDescription: `Description C424003 ${getRandomPostfix()} UPD`,
         capabilities: [
           {
-            table: 'Data',
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Data-Export Mapping-Profiles Collection',
-            action: 'View',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Settings',
+            table: CAPABILITY_TYPES.SETTINGS,
             resource: 'UI-Notes Settings',
-            action: 'Edit',
+            action: CAPABILITY_ACTIONS.EDIT,
           },
           {
-            table: 'Procedural',
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Roles Collection',
-            action: 'Execute',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         expectedCounts: {
           capabilities: {
-            Data: 1,
+            Data: 2,
             Settings: 1,
-            Procedural: 1,
           },
         },
         capabIds: [],
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+      const capabsToAssign = [Capabilities.settingsEnabled];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {

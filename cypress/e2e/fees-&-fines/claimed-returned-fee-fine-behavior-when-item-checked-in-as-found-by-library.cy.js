@@ -125,7 +125,7 @@ describe('Fees&Fines', () => {
           }).then((loanType) => {
             testData.loanTypeId = loanType.id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          cy.getDefaultMaterialType().then((materialTypes) => {
             testData.materialTypeId = materialTypes.id;
             instanceData.materialType = materialTypes.name;
           });
@@ -271,7 +271,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C11041 Verify claimed returned fee/fine behavior when item checked in as "found by library" (vega)',
-      { tags: ['criticalPathFlaky', 'vega', 'C11041'] },
+      { tags: ['criticalPathBroken', 'vega', 'C11041'] },
       () => {
         CheckInActions.checkInItemGui(instanceData.item1Barcode);
         CheckInClaimedReturnedItem.checkModalMessage({

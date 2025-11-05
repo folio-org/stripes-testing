@@ -54,7 +54,7 @@ describe('Inventory', () => {
             testData.loanTypeId = res[0].id;
             testData.loanTypeName = res[0].name;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             testData.materialTypeId = res.id;
           });
           InventoryInstances.getHoldingsNotesTypes({ limit: 1 }).then((res) => {
@@ -198,7 +198,7 @@ describe('Inventory', () => {
           0,
           '',
           'Contains all',
-          'Keyword (title, contributor)',
+          'Keyword (title, contributor, identifier)',
         );
         // #9 In first line in modal:
         // * Fill search input field with part of a "Call number" value from Preconditions (e.g., "CNY118HO11800")

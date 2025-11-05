@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   Button,
   Checkbox,
@@ -24,7 +25,7 @@ import {
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
-import { AUTHORIZATION_ROLES_COLUMNS } from '../../../constants';
+import { AUTHORIZATION_ROLES_COLUMNS, AUTHORIZATION_ROLES_COLUMNS_CM } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
 const newButton = Button(or('+ New', 'New'));
@@ -48,6 +49,7 @@ const selectAppSearchInput = selectApplicationModal.find(
 const selectAppSearchButton = selectApplicationModal.find(
   Button({ id: 'clickable-search-applications' }),
 );
+const selectAppResetAllButton = selectApplicationModal.find(Button({ id: 'clickable-reset-all' }));
 const saveButtonInModal = selectApplicationModal.find(
   Button({ dataTestID: 'submit-applications-modal' }),
 );
@@ -96,8 +98,10 @@ const promoteUsersModalText =
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
-const noAccessErrorText =
-  'Could not load authorization roles. User does not have required permissions.';
+const noAccessErrorText = or(
+  'Could not load authorization roles. User does not have required permissions.',
+  'Could not load users. User does not have required permissions.',
+);
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
@@ -108,7 +112,11 @@ const centrallyManagedKeyValue = KeyValue('Centrally managed');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
+const generalInfoDateFormat = 'M/D/YYYY h:mm A';
+const unselectAppConfirmationModal = Modal({ id: 'unselect-application-confirmation-modal' });
+const okayButton = Button('Okay');
 
+export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
 export default {
@@ -119,8 +127,11 @@ export default {
     cy.expect(rolesPane.exists());
   },
 
-  waitContentLoading: () => {
-    Object.values(AUTHORIZATION_ROLES_COLUMNS).forEach((columnName) => {
+  waitContentLoading: (consortiumManager = false) => {
+    const columnNames = consortiumManager
+      ? AUTHORIZATION_ROLES_COLUMNS_CM
+      : AUTHORIZATION_ROLES_COLUMNS;
+    Object.values(columnNames).forEach((columnName) => {
       cy.expect(rolesPane.find(MultiColumnListHeader(columnName)).exists());
     });
     cy.expect([roleSearchInputField.exists(), roleSearchButton.exists()]);
@@ -154,26 +165,32 @@ export default {
       saveButtonInModal.exists(),
       cancelButtonInModal.exists(),
       selectAppSearchButton.has({ disabled: true }),
+      selectAppResetAllButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
+      selectApplicationModal.find(MultiColumnListRow()).exists(),
     ]);
+    const listSelector = 'div#applications-paneset [class^="mclScrollable"]';
+    cy.get(listSelector).scrollTo('bottom').scrollTo('top');
+    cy.expect(MultiColumnListRow({ index: 0 }).exists());
   },
 
-  verifySelectApplicationModal: () => {
+  verifySelectApplicationModal() {
     cy.expect([
       saveButtonInModal.exists(),
       cancelButtonInModal.exists(),
-      selectAppSearchButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
-      selectApplicationModal
-        .find(MultiColumnListRow({ index: 0, isContainer: false }))
-        .find(Checkbox())
-        .exists(),
+      selecAllAppsCheckbox.exists(),
     ]);
+    this.checkButtonsEnabledInSelectAppModal({ resetAll: false, search: false });
   },
 
-  selectApplicationInModal: (appName, isSelected = true) => {
+  selectApplicationInModal(appName, isSelected = true) {
     const targetCheckbox = selectApplicationModal
-      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
+      .find(
+        MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), {
+          isContainer: false,
+        }),
+      )
       .find(Checkbox());
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
@@ -184,13 +201,16 @@ export default {
     cy.expect(selecAllAppsCheckbox.has({ checked: isSelected }));
   },
 
-  clickSaveInModal: () => {
+  clickSaveInModal({ confirmUnselect = null } = {}) {
     cy.do(saveButtonInModal.click());
+    if (confirmUnselect === true) this.confirmAppUnselection();
+    if (confirmUnselect === false) this.cancelAppUnselection();
     cy.expect(selectApplicationModal.absent());
   },
 
-  searchForAppInModal: (appName) => {
+  searchForAppInModal(appName) {
     cy.do([selectAppSearchInput.fillIn(appName), selectAppSearchButton.click()]);
+    this.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: true });
   },
 
   checkSaveButton: (enabled = true) => {
@@ -437,14 +457,23 @@ export default {
     cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
   },
 
-  confirmDeleteRole: (roleName) => {
+  confirmDeleteRole: (roleName, errorExpected = false) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
-    cy.expect([
-      Callout(successDeleteText).exists(),
-      deleteRoleModal.absent(),
-      Pane(roleName).absent(),
-      rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
-    ]);
+    if (!errorExpected) {
+      cy.expect([
+        Callout(successDeleteText).exists(),
+        deleteRoleModal.absent(),
+        Pane(roleName).absent(),
+        rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
+      ]);
+    } else {
+      cy.wait(2000);
+      cy.expect([
+        deleteRoleModal.exists(),
+        Pane(roleName).exists(),
+        rolesPane.find(HTML(roleName, { className: including('root') })).exists(),
+      ]);
+    }
   },
 
   clickOnUsersAccordion: (checkOpen = true) => {
@@ -496,14 +525,17 @@ export default {
     else cy.expect(userRow.absent());
   },
 
-  verifyAssignedUsersAccordion: (viewOnly = false) => {
+  verifyAssignedUsersAccordion: (viewOnly = false, userLink) => {
     cy.expect([
       usersAccordion.has({ open: true }),
       usersAccordion.find(MultiColumnListHeader('Name')).exists(),
       usersAccordion.find(MultiColumnListHeader('Patron group')).exists(),
     ]);
-    if (viewOnly) cy.expect(usersAccordion.find(assignUsersButton).absent());
-    else cy.expect(usersAccordion.find(assignUsersButton).exists());
+    if (viewOnly) {
+      cy.expect(usersAccordion.find(assignUsersButton).absent());
+    } else cy.expect(usersAccordion.find(assignUsersButton).exists());
+    if (userLink === false) cy.expect(usersAccordion.find(Link()).absent());
+    if (userLink === true) cy.expect(usersAccordion.find(Link()).exists());
   },
 
   verifyAssignedUsersAccordionEmpty: () => {
@@ -581,13 +613,17 @@ export default {
     cy.expect(capabilitiesAccordion.find(MultiColumnListRow()).exists());
   },
 
-  verifyRoleViewPane: (roleName) => {
+  verifyRoleViewPane(roleName, roleDescription) {
     cy.expect([
       Pane(roleName).exists(),
       Pane(roleName).find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
+      roleNameInView.has({ value: roleName }),
+      typeKeyValue.exists(),
     ]);
+    this.verifyGeneralInformationWhenCollapsed('');
+    if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
   },
 
   closeRoleDetailView: (roleName) => {
@@ -600,21 +636,46 @@ export default {
   },
 
   verifyGeneralInformationWhenCollapsed: (updatedDate) => {
+    const momentDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const updatedDatePlus1Minute = momentDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDateMinus1Minute = momentDate.subtract(1, 'minute').format(generalInfoDateFormat);
     cy.expect(
       generalInformationAccordion.has({
-        content: including(`Record last updated: ${updatedDate}`),
+        content: or(
+          including(`Record last updated: ${updatedDate}`),
+          including(`Record last updated: ${updatedDatePlus1Minute}`),
+          including(`Record last updated: ${updatedDateMinus1Minute}`),
+        ),
       }),
     );
   },
 
   verifyGeneralInformationWhenExpanded: (updatedDate, updatedUser, createdDate, createdUser) => {
+    const momentUpdatedDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const momentCreatedDate = moment.utc(createdDate, generalInfoDateFormat);
+    const updatedDatePlus1Minute = momentUpdatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const createdDatePlus1Minute = momentCreatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDateMinus1Minute = momentUpdatedDate
+      .subtract(1, 'minute')
+      .format(generalInfoDateFormat);
+    const createdDateMinus1Minute = momentCreatedDate
+      .subtract(1, 'minute')
+      .format(generalInfoDateFormat);
     cy.do(recordLastUpdatedHeader.click());
     cy.expect([
       generalInformationAccordion.has({
         content: and(
-          including(`Record last updated: ${updatedDate}`),
+          or(
+            including(`Record last updated: ${updatedDate}`),
+            including(`Record last updated: ${updatedDatePlus1Minute}`),
+            including(`Record last updated: ${updatedDateMinus1Minute}`),
+          ),
           including(`Source: ${updatedUser}`),
-          including(`Record created: ${createdDate}`),
+          or(
+            including(`Record created: ${createdDate}`),
+            including(`Record created: ${createdDatePlus1Minute}`),
+            including(`Record created: ${createdDateMinus1Minute}`),
+          ),
           including(`Source: ${createdUser}`),
         ),
       }),
@@ -728,8 +789,8 @@ export default {
   },
 
   checkNoUsernameErrorCallout: () => {
-    InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
-    InteractorsTools.dismissCallout(noUsernameCalloutText);
+    InteractorsTools.checkCalloutErrorMessage(including(noUsernameCalloutText));
+    InteractorsTools.dismissCallout(including(noUsernameCalloutText));
   },
 
   checkNewButtonShown: (isShown = true) => {
@@ -947,5 +1008,60 @@ export default {
 
   verifyRoleType: (roleName, roleType) => {
     cy.expect(Pane(roleName).find(typeKeyValue).has({ value: roleType }));
+  },
+
+  checkApplicationShownInModal: (appName, isShown = true, isSelected = null) => {
+    const targetRow = selectApplicationModal.find(
+      MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }),
+    );
+    const targetCheckbox = targetRow.find(Checkbox());
+    if (isShown) cy.expect(targetCheckbox.exists());
+    else cy.expect(targetRow.absent());
+    if (isSelected !== null) cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  checkButtonsEnabledInSelectAppModal: ({ resetAll = true, search = true } = {}) => {
+    cy.expect([
+      selectAppResetAllButton.has({ disabled: !resetAll }),
+      selectAppSearchButton.has({ disabled: !search }),
+    ]);
+  },
+
+  toggleFilterOptionInSelectAppModal: (optionName, isChecked = true) => {
+    const targetCheckbox = selectApplicationModal.find(Checkbox(optionName));
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: isChecked }));
+  },
+
+  clearFilterInSelectAppModal: () => {
+    cy.do(selectApplicationModal.find(clearFieldButton).click());
+    Object.values(selectAppFilterOptions).forEach((option) => {
+      cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+    });
+  },
+
+  checkClearFilterButtonInSelectAppModal: (isShown = true) => {
+    if (isShown) cy.expect(selectApplicationModal.find(clearFieldButton).exists());
+    else cy.expect(selectApplicationModal.find(clearFieldButton).absent());
+  },
+
+  checkApplicationCountInModal: (count) => {
+    if (count) cy.expect(selectApplicationModal.find(MultiColumnList()).has({ rowCount: count }));
+    else cy.expect(selectApplicationModal.find(MultiColumnListRow()).absent());
+  },
+
+  clickResetAllInSelectAppModal() {
+    cy.do(selectAppResetAllButton.click());
+    this.verifySelectApplicationModal();
+  },
+
+  confirmAppUnselection() {
+    cy.do(unselectAppConfirmationModal.find(okayButton).click());
+    cy.expect(unselectAppConfirmationModal.absent());
+  },
+
+  cancelAppUnselection() {
+    cy.do(unselectAppConfirmationModal.find(cancelButton).click());
+    cy.expect(unselectAppConfirmationModal.absent());
   },
 };

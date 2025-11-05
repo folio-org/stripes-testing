@@ -2,6 +2,7 @@
 import { including, matching } from '@interactors/html';
 import {
   Accordion,
+  AppIcon,
   Button,
   Link,
   MultiColumnList,
@@ -80,8 +81,24 @@ function getRowIndexesBySubjectName(subject) {
     .then(() => rowIndexes);
 }
 
+function getRowIndexesBySubjectAndSource(subject, subjectSource) {
+  const rowIndexes = [];
+  return cy
+    .get('#browse-results-list-browseSubjects')
+    .find('[data-row-index]')
+    .each(($row) => {
+      const subjectText = $row.find('[class*="mclCell-"]:nth-child(1)').first().text().trim();
+      const sourceText = $row.find('[class*="mclCell-"]:nth-child(2)').first().text().trim();
+      if (subjectText === subject && sourceText === subjectSource) {
+        rowIndexes.push($row.attr('data-row-index'));
+      }
+    })
+    .then(() => rowIndexes);
+}
+
 export default {
   getColumnsResults,
+  getRowIndexesBySubjectAndSource,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -180,6 +197,7 @@ export default {
     InventorySearchAndFilter.selectBrowseSubjects();
     this.verifySearchTextFieldEmpty();
     InventorySearchAndFilter.browseSearch(searchString);
+    cy.wait(2000);
   },
 
   checkAuthorityIconAndValueDisplayedForRow(rowIndex, value) {
@@ -411,7 +429,8 @@ export default {
   },
 
   verifyDuplicateSubjectsWithDifferentSources: (subject) => {
-    getRowIndexesBySubjectName(subject.name).then((rowIndexes) => {
+    cy.wait(2000);
+    getRowIndexesBySubjectAndSource(subject.name, subject.source).then((rowIndexes) => {
       rowIndexes.forEach((index) => {
         cy.expect([
           resultTable
@@ -420,12 +439,7 @@ export default {
             .exists(),
           resultTable
             .find(MultiColumnListRow({ indexRow: index }))
-            .find(
-              MultiColumnListCell({
-                columnIndex: 1,
-                content: matching(new RegExp(`^(${subject.firstSource}|${subject.secondSource})$`)),
-              }),
-            )
+            .find(MultiColumnListCell({ columnIndex: 1, content: subject.source }))
             .exists(),
           resultTable
             .find(MultiColumnListRow({ indexRow: index }))
@@ -456,5 +470,24 @@ export default {
         );
       });
     });
+  },
+
+  clickOnAuthorityIcon(value) {
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+    cy.do(
+      MultiColumnListCell({ content: `Linked to MARC authority${value}` })
+        .find(AppIcon({ dataLink: 'authority-app' }))
+        .click(),
+    );
+    cy.get('@windowOpen')
+      .should('have.been.called')
+      .then((stub) => {
+        const openedUrl = stub.args[0][0];
+        expect(openedUrl).to.include('/marc-authorities/authorities/');
+        cy.visit(openedUrl);
+        cy.url().should('include', '/marc-authorities/authorities');
+      });
   },
 };

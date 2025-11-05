@@ -41,14 +41,14 @@ describe('Orders', () => {
     Organizations.createOrganizationViaApi(testData.organization).then(() => {
       testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
 
-      OrderLinesLimit.setPOLLimit(orderLinesCount);
+      OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
       Orders.createOrderViaApi(testData.order).then((order) => {
         testData.order = order;
 
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
           const acquisitionMethod = body.acquisitionMethods[0].id;
 
-          cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+          cy.getBookMaterialType().then((materialType) => {
             const materialTypeId = materialType.id;
 
             [...Array(orderLinesCount).keys()].forEach(() => {
@@ -92,7 +92,7 @@ describe('Orders', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Orders.deleteOrderViaApi(testData.order.id);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);

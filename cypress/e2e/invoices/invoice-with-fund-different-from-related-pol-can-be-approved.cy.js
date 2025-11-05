@@ -15,6 +15,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -65,12 +66,10 @@ describe('Invoices', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-        cy.visit(TopMenu.fundPath);
-        cy.getAdminToken();
+
+        cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(secondFund.name);
           Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -121,12 +120,15 @@ describe('Invoices', () => {
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersView.gui,
+      permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.ordersPath);
     });
   });
 

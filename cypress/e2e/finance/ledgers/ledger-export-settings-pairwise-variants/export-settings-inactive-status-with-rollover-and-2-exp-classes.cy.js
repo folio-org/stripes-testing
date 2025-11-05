@@ -94,7 +94,7 @@ describe('Finance: Ledgers', () => {
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
           defaultFund,
           'Electronic',
           '10',
@@ -110,7 +110,7 @@ describe('Finance: Ledgers', () => {
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
           defaultFund,
           'Print',
           '10',
@@ -136,6 +136,7 @@ describe('Finance: Ledgers', () => {
         'None',
         'Allocation',
       );
+      cy.wait(4000);
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);

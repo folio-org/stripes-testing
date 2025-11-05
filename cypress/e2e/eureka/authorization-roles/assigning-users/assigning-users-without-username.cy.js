@@ -2,6 +2,8 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -16,11 +18,9 @@ describe('Eureka', () => {
           promotePath: '/users-keycloak/auth-users',
         };
 
-        const capabSetsToAssign = [
-          { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
-        ];
+        const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesUsersSettingsManage];
 
-        const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+        const capabsToAssign = [Capabilities.settingsEnabled];
 
         before('Create data', () => {
           cy.getAdminToken();
@@ -68,10 +68,12 @@ describe('Eureka', () => {
                 capabsToAssign,
                 capabSetsToAssign,
               );
-              cy.login(testData.tempUser.username, testData.tempUser.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.tempUser.username, testData.tempUser.password, {
+                  path: TopMenu.settingsAuthorizationRoles,
+                  waiter: AuthorizationRoles.waitContentLoading,
+                });
+              }, 20_000);
             });
           });
         });
@@ -99,10 +101,18 @@ describe('Eureka', () => {
             AuthorizationRoles.selectUserInModal(userBodies[2].username);
             AuthorizationRoles.clickSaveInAssignModal();
             AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId], true);
+            cy.intercept(`${testData.promotePath}/${testData.userBId}`).as('promoteB');
             AuthorizationRoles.clickConfirmInPromoteUsersModal();
+            cy.wait('@promoteB').its('response.statusCode').should('eq', 201);
             AuthorizationRoles.checkNoUsernameErrorCallout();
             AuthorizationRoles.verifyAssignedUsersAccordion();
-            AuthorizationRoles.checkUsersAccordion(1);
+            AuthorizationRoles.checkUsersAccordion(2);
+            AuthorizationRoles.verifyAssignedUser(
+              userBodies[1].personal.lastName,
+              userBodies[1].personal.firstName,
+              true,
+              testData.userCGroupName,
+            );
             AuthorizationRoles.verifyAssignedUser(
               userBodies[2].personal.lastName,
               userBodies[2].personal.firstName,

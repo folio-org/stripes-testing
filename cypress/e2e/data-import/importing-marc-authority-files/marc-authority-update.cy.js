@@ -9,7 +9,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -152,7 +152,9 @@ describe('Data Import', () => {
 
     after(() => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.userProperties.userId);
+      if (testData?.userProperties?.userId) {
+        Users.deleteViaApi(testData.userProperties.userId);
+      }
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -192,7 +194,7 @@ describe('Data Import', () => {
         InventoryInstance.searchResults(testData.authorityTitle);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority('700');
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
@@ -203,7 +205,11 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(
+          testData.csvFile,
+          'Default authority',
+          'Authorities',
+        );
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         DataImport.editMarcFile(

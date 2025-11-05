@@ -4,19 +4,24 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import SoftwareVersions, {
   SETTINGS_SUBSECTION_ABOUT,
 } from '../../../support/fragments/settings/softwareVersions/software-versions';
+import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Login', () => {
     const appIds = [];
     const moduleIds = [];
     const uiModuleIds = [];
-    const expectedMissingModules = [];
+    const expectedMissingModules = [
+      'circulation-bff-requests',
+      'requests-mediated',
+      'requests-mediated-actions',
+    ];
     const isDefaultEnv =
       Cypress.env('OKAPI_HOST').includes('snapshot') ||
       Cypress.env('OKAPI_HOST').includes('cypress');
     let tempUser;
 
-    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+    const capabsToAssign = [Capabilities.settingsEnabled];
 
     before('Create user, get data', () => {
       cy.getAdminToken();

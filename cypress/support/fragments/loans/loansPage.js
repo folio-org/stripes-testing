@@ -11,6 +11,7 @@ import {
   DropdownMenu,
   PaneHeader,
   Link,
+  MultiColumnListHeader,
 } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
@@ -23,6 +24,25 @@ const resolveClaimButton = Dropdown('Resolve claim');
 const LoanDateKeyValue = KeyValue('Loan date');
 const renewButton = Button('Renew');
 const declaredLostButton = Button(DECLARE_LOST_ACTION_NAME);
+const selectColumnsDropdown = Button('Select Columns');
+const effectiveCallNumber = Checkbox({ id: 'Effective call number string' });
+const effectiveCallNumberHeader = MultiColumnListHeader('Effective call number string');
+
+// Function to get all call number values from the table
+function getCallNumberValues() {
+  const callNumbers = [];
+  return cy
+    .get('div[class^="mclRowContainer--"]')
+    .find('[data-row-index]')
+    .each(($row) => {
+      cy.get('[data-test-list-call-numbers="true"]', { withinSubject: $row })
+        .invoke('text')
+        .then((callNumber) => {
+          callNumbers.push(callNumber.trim());
+        });
+    })
+    .then(() => callNumbers);
+}
 
 export default {
   waitLoading: () => {
@@ -72,7 +92,7 @@ export default {
     return cy.expect(claimReturnedButton.exists());
   },
   claimReturnedButtonIsDisabled() {
-    return cy.expect(claimReturnedButton.absent());
+    return cy.expect(Button({ text: 'Claim returned', visible: true }).absent());
   },
   claimResolveButtonIsAbsent() {
     return cy.expect(resolveClaimButton.absent());
@@ -116,7 +136,12 @@ export default {
     cy.expect(KeyValue('Item status', { value: itemStatus }).exists());
   },
   checkClaimReturnedDateTime() {
-    cy.expect(KeyValue('Claimed returned', { value: matching(/\d{1,2}:\d{2}\s\w{2}/gm) }).exists());
+    cy.expect(
+      MultiColumnListRow({
+        indexRow: 'row-0',
+        content: matching(/\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)/),
+      }).exists(),
+    );
   },
   verifyExportFileName(actualName) {
     const expectedFileNameMask = /export\.csv/gm;
@@ -146,5 +171,51 @@ export default {
       cy.do(Link({ href: including(href) }).click());
     }
     cy.expect(PaneHeader(including(expectedPage)).exists());
+  },
+
+  clickSelectColumnsDropdown() {
+    cy.do(selectColumnsDropdown.click());
+    cy.wait(2000);
+  },
+
+  checkEffectiveCallNumber() {
+    cy.do(effectiveCallNumber.click());
+    cy.wait(1000);
+  },
+
+  clickEffectiveCallNumberHeader() {
+    cy.wait(500);
+    cy.do(effectiveCallNumberHeader.click());
+    cy.wait(1000);
+  },
+
+  verifyEffectiveCallNumberColumnVisibility(status) {
+    if (status === 'visible') {
+      cy.expect(effectiveCallNumberHeader.exists());
+    } else if (status === 'hidden') {
+      cy.expect(effectiveCallNumberHeader.absent());
+    }
+  },
+
+  verifyEffectiveCallNumberCheckboxChecked(isChecked = true) {
+    cy.expect(effectiveCallNumber.has({ checked: isChecked }));
+  },
+
+  verifyCallNumbersSorted(isDescending = false) {
+    getCallNumberValues().then((callNumbers) => {
+      if (isDescending) {
+        cy.expect(callNumbers).to.deep.equal(callNumbers.sort().reverse());
+      } else {
+        cy.expect(callNumbers).to.deep.equal(callNumbers.sort());
+      }
+    });
+  },
+
+  verifyCallNumbersAscending() {
+    this.verifyCallNumbersSorted(false);
+  },
+
+  verifyCallNumbersDescending() {
+    this.verifyCallNumbersSorted(true);
   },
 };

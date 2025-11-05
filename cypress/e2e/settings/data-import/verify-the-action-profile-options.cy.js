@@ -1,13 +1,12 @@
 import { ACTION_NAMES_IN_ACTION_PROFILE, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import ActionProfileEdit from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileEdit';
+import ActionProfileView from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsDataImport, {
   SETTINGS_TABS,
@@ -60,7 +59,7 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.openNewActionProfileForm();
+        SettingsActionProfiles.openNewActionProfileForm();
         NewActionProfile.verifyNewActionProfileExists();
 
         ['Instance', 'Holdings', 'Item', 'Order', 'Invoice', 'MARC Authority'].forEach((type) => {
@@ -68,8 +67,8 @@ describe('Data Import', () => {
         });
 
         NewActionProfile.clickClose();
-        ActionProfiles.search(actionProfile.name);
-        ActionProfiles.verifyActionProfileOpened(actionProfile.name);
+        SettingsActionProfiles.search(actionProfile.name);
+        SettingsActionProfiles.verifyActionProfileOpened(actionProfile.name);
         ActionProfileView.edit();
 
         ActionProfileEdit.changeAction(actionCreate);

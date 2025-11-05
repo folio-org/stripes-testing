@@ -34,7 +34,7 @@ describe('Citation: duplicate resource', () => {
     creator: testData.uniqueCreator,
     language: 'spa',
     classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
     isbnIdentifier: testData.uniqueIsbn,
     lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',
@@ -56,6 +56,8 @@ describe('Citation: duplicate resource', () => {
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
+    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
+    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {
@@ -100,9 +102,13 @@ describe('Citation: duplicate resource', () => {
       EditResource.saveAndKeepEditing();
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
+      // check that duplicated work has 'Books' profile - same as original work has
+      EditResource.checkHeadingProfile('Books');
       // add instance
       // click on new instance button since resource was duplicated without instances
       EditResource.openNewInstanceFormViaNewInstanceButton();
+      // check that selection modal is shown with 'Monograhphs' profile selected by default
+      EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();

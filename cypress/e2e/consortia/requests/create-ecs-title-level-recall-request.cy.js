@@ -26,8 +26,8 @@ describe('Consortia Vega', () => {
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.getViaApi().then((servicePoints) => {
-          servicePoint = servicePoints.find((sp) => sp.name === 'Circ Desk 1');
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
         });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
@@ -71,7 +71,7 @@ describe('Consortia Vega', () => {
                         cy.getLoanTypes({ limit: 1 }).then((res) => {
                           testData.loanTypeId = res[0].id;
                         });
-                        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                        cy.getDefaultMaterialType().then((res) => {
                           testData.materialTypeId = res.id;
                         });
                       })

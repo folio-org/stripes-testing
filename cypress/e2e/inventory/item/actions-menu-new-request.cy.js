@@ -1,20 +1,18 @@
 import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -41,7 +39,7 @@ describe('Inventory', () => {
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             testData.loanTypeId = res[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             testData.materialTypeId = res.id;
           });
         })
@@ -158,14 +156,12 @@ describe('Inventory', () => {
         user = userProperties;
         ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
           UserEdit.addServicePointViaApi(servicePoints[0].id, user.userId, servicePoints[0].id);
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(userProperties.username, userProperties.password);
         });
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
-        cy.wait(1000);
       });
     });
 
@@ -201,7 +197,9 @@ describe('Inventory', () => {
           ITEM_STATUS_NAMES.MISSING,
           ITEM_STATUS_NAMES.PAGED,
         ].forEach((itemStatus) => {
-          InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
+          cy.wait(2000);
+          InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
+          cy.wait(2000);
           InventoryInstance.openItemByStatus(itemStatus);
           InventoryItems.openActions();
           InventoryItems.clickNewRequestButton();
@@ -231,7 +229,8 @@ describe('Inventory', () => {
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
-          InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
+          InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
+          cy.wait(2000);
           InventoryInstance.openItemByStatus(itemStatus);
           InventoryItems.openActions();
           InventoryItems.verifyNewRequestButtonIsAbsent();

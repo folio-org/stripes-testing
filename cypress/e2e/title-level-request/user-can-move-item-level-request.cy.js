@@ -46,7 +46,7 @@ describe('Title Level Request', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           instanceData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })
@@ -115,9 +115,11 @@ describe('Title Level Request', () => {
         }).then((request) => {
           testData.requestId = request.body.id;
         });
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
         });
       });
   });

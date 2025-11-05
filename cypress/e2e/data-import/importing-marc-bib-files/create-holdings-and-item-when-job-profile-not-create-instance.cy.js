@@ -13,7 +13,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -142,7 +141,7 @@ describe('Data Import', () => {
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C368009'] },
+      { tags: ['criticalPath', 'folijet', 'C368009'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -164,8 +163,8 @@ describe('Data Import', () => {
         // create action profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create match profile

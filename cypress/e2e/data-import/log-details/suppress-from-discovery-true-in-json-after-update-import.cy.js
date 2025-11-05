@@ -9,7 +9,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -32,7 +31,6 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
@@ -65,7 +63,7 @@ describe('Data Import', () => {
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
-      profileName: `C468186 001-to-001 match ${getRandomPostfix()}`,
+      profileName: `C594483 001-to-001 match ${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
       },
@@ -98,10 +96,7 @@ describe('Data Import', () => {
           marcFileForCreate.instanceId = response[0].instance.id;
         });
 
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -114,9 +109,9 @@ describe('Data Import', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+        InventoryInstance.deleteInstanceViaApi(marcFileForCreate.instanceId);
       });
-      Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(marcFileForCreate.instanceId);
     });
 
     it(
@@ -155,8 +150,8 @@ describe('Data Import', () => {
 
         // create action profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create match profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

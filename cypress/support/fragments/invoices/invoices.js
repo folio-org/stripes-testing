@@ -11,6 +11,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
@@ -652,6 +653,10 @@ export default {
     ]);
   },
 
+  verifyStatus: (status) => {
+    cy.get('#pane-invoiceLineDetails').should('contain', status);
+  },
+
   confirmInvoiceDeletion: () => {
     cy.do(
       Button('Delete', {
@@ -875,6 +880,10 @@ export default {
     ]);
   },
 
+  sortInvoicesBy: (column) => {
+    cy.do(MultiColumnListHeader(column).click());
+  },
+
   searchByNumber: (invoiceNumber) => {
     cy.do([
       SearchField({ id: searchInputId }).selectIndex('Vendor invoice number'),
@@ -897,13 +906,17 @@ export default {
   },
 
   updateCurrency: (currency) => {
-    cy.do([
-      invoiceDetailsPaneHeader.find(actionsButton).click(),
-      Button('Edit').click(),
-      Selection('Currency*').open(),
-      SelectionList().select(currency),
-      saveAndClose.click(),
-    ]);
+    cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+    cy.wait(500);
+    cy.do(Button('Edit').click());
+    cy.wait(1000);
+    cy.get('label[id=sl-label-currency]').scrollIntoView();
+    cy.do(Selection('Currency*').open());
+    cy.wait(500);
+    cy.do(SelectionList().select(currency));
+    cy.wait(500);
+    cy.do(saveAndClose.click());
+    cy.wait(500);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
@@ -1064,6 +1077,7 @@ export default {
   selectInvoice: (invoiceNumber) => {
     cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
+    cy.wait(4000);
   },
 
   selectInvoiceByIndex: (invoiceNumber, indexNumber) => {
@@ -1195,11 +1209,13 @@ export default {
   },
 
   selectStatusFilter: (status) => {
+    cy.wait(500);
     cy.do([
       invoiceFiltersSection
         .find(Section({ id: 'status' }))
         .find(Button({ ariaLabel: 'Status filter list' }))
         .click(),
+      cy.wait(1000),
       Checkbox(status).click(),
     ]);
   },

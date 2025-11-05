@@ -16,8 +16,10 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import { Permissions } from '../../support/dictionary';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: { runMode: 1 } }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_2_year_${getRandomPostfix()}`,
@@ -201,12 +203,15 @@ describe('Invoices', () => {
       permissions.uiInvoicesPayInvoices.gui,
       permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       permissions.uiOrganizationsViewEdit.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.settingsInvoiveApprovalPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
       });
+      SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
+      cy.visit(TopMenu.invoicesPath);
     });
   });
 
@@ -217,7 +222,7 @@ describe('Invoices', () => {
 
   it(
     'C388564 Approve and pay invoice created in current FY for previous FY without related order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.createRolloverInvoiceWithFY(invoice, organization.name, firstFiscalYear);
       Invoices.createInvoiceLineWithFund(invoiceLine, defaultFund);

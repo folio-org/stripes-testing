@@ -1,10 +1,10 @@
 import { HTML, including } from '@interactors/html';
 import {
   Button,
-  Modal,
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiSelect,
   MultiSelectOption,
   RepeatableFieldItem,
@@ -12,9 +12,11 @@ import {
   Selection,
   Spinner,
   TextField,
+  Checkbox,
+  Pane,
 } from '../../../../interactors';
 
-const buildQueryModal = Modal('Build query');
+const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
@@ -23,38 +25,185 @@ const runQueryAndSave = Button('Run query & save');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
-const selectFieldButton = Button(including('Select field'));
+const selectFieldButton = Button({ id: 'field-option-0' });
+const showColumnsButton = Button('Show columns');
 
 const booleanValues = ['AND'];
 
+// Embedded table headers mapping for different table types
+const embeddedTableHeadersMap = {
+  electronicAccess: [
+    'URL relationship',
+    'URI',
+    'Link text',
+    'Material specified',
+    'URL public note',
+  ],
+  notes: ['Note type', 'Note', 'Staff only'],
+  publications: ['Publisher', 'Publisher role', 'Place of publication', 'Publication date'],
+  statements: ['Statement', 'Statement public note', 'Statement staff note'],
+  statementsForSupplements: [
+    'Statement for supplement',
+    'Statement for supplement public note',
+    'Statement for supplement staff note',
+  ],
+  statementsForIndexes: [
+    'Statement for indexes',
+    'Statement for indexes public note',
+    'Statement for indexes staff note',
+  ],
+  receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
+  contributors: [
+    'Contributor name',
+    'Contributor name type',
+    'Contributor type',
+    'Contributor type, free text',
+    'Primary',
+  ],
+  alternativeTitles: ['Alternative title', 'Alternative title type'],
+  subjects: ['Subject headings', 'Subject source', 'Subject type'],
+  identifiers: ['Type', 'Identifier'],
+  classifications: ['Classification identifier type', 'Classification'],
+};
+
+export const embeddedFields = {
+  receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
+  contributors: [
+    'Contributor name',
+    'Contributor name type',
+    'Contributor type',
+    'Contributor type, free text',
+    'Primary',
+  ],
+  alternativeTitles: ['Alternative title', 'Alternative title type'],
+  subjects: ['Subject headings', 'Subject source', 'Subject type'],
+  identifiers: ['Identifier', 'Identifier type'],
+  classifications: ['Classification', 'Classification identifier type'],
+};
+
 export const holdingsFieldValues = {
+  holdingsAdminNotes: 'Holdings — Administrative notes',
   instanceUuid: 'Holdings — Instance UUID',
+  holdingsHrid: 'Holdings — HRID',
+  holdingsUuid: 'Holdings — UUID',
+  formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
-  permanentLocation: 'Permanent location — Name',
+  permanentLocation: 'Holdings permanent location — Name',
+  temporaryLocation: 'Holdings temporary location — Name',
+  notes: 'Holdings — Notes — Note',
+  notesNoteType: 'Holdings — Notes — Note type',
+  notesStaffOnly: 'Holdings — Notes — Staff only',
+  statementsStatement: 'Holdings — Statements — Statement',
+  statementsPublicNote: 'Holdings — Statements — Statement public note',
+  statementsStaffNote: 'Holdings — Statements — Statement staff note',
+  statementsForSupplementsStatement:
+    'Holdings — Statements for supplements — Statement for supplement',
+  statementsForSupplementsPublicNote:
+    'Holdings — Statements for supplements — Statement for supplement public note',
+  statementsForSupplementsStaffNote:
+    'Holdings — Statements for supplements — Statement for supplement staff note',
+  statementsForIndexesStatement: 'Holdings — Statements for indexes — Statement for indexes',
+  statementsForIndexesPublicNote:
+    'Holdings — Statements for indexes — Statement for indexes public note',
+  statementsForIndexesStaffNote:
+    'Holdings — Statements for indexes — Statement for indexes staff note',
+  electronicAccessLinkText: 'Holdings — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
+  electronicAccessURI: 'Holdings — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Holdings — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Holdings — Electronic access — URL relationship',
+  receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
+  receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
+  receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
+  holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
+  holdingsTags: 'Holdings — Tags',
 };
 export const instanceFieldValues = {
+  administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
   staffSuppress: 'Instance — Staff suppress',
+  suppressFromDiscovery: 'Instance — Suppress from discovery',
+  flagForDeletion: 'Instance — Flag for deletion',
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
+  languages: 'Instance — Languages',
+  formatNames: 'Instance — Format names',
+  noteType: 'Instance — Notes — Note type',
+  note: 'Instance — Notes — Note',
+  noteStaffOnly: 'Instance — Notes — Staff only',
+  publicationsPublisher: 'Instance — Publications — Publisher',
+  publicationsRole: 'Instance — Publications — Publisher role',
+  publicationsPlace: 'Instance — Publications — Place of publication',
+  publicationsDate: 'Instance — Publications — Publication date',
+  contributorName: 'Instance — Contributors — Contributor name',
+  contributorNameType: 'Instance — Contributors — Contributor name type',
+  contributorType: 'Instance — Contributors — Contributor type',
+  contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
+  contributorPrimary: 'Instance — Contributors — Primary',
+  publicationRange: 'Instance — Publication range',
+  publicationFrequency: 'Instance — Publication frequency',
+  natureOfContent: 'Instance — Nature of content',
+  editions: 'Instance — Editions',
+  physicalDescriptions: 'Instance — Physical descriptions',
+  alternativeTitlesAlternativeTitle: 'Instance — Alternative titles — Alternative title',
+  alternativeTitlesAlternativeTitleType: 'Instance — Alternative titles — Alternative title type',
+  subjectsSubjectHeadings: 'Instance — Subjects — Subject headings',
+  subjectsSubjectSource: 'Instance — Subjects — Subject source',
+  subjectsSubjectType: 'Instance — Subjects — Subject type',
+  identifiersIdentifier: 'Instance — Identifiers — Identifier',
+  identifiersIdentifierType: 'Instance — Identifiers — Identifier type',
+  classificationsClassification: 'Instance — Classifications — Classification',
+  classificationsClassificationIdentifierType:
+    'Instance — Classifications — Classification identifier type',
+  electronicAccessLinkText: 'Instance — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Instance — Electronic access — Material specified',
+  electronicAccessURI: 'Instance — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Instance — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
+  tags: 'Instance — Tags',
+  series: 'Instance — Series',
 };
 export const itemFieldValues = {
-  instanceId: 'Instances — Instance UUID',
-  instanceTitle: 'Instances — Resource title',
-  itemStatus: 'Items — Status',
-  itemUuid: 'Items — Item UUID',
+  instanceId: 'Instance — Instance UUID',
+  instanceHrid: 'Instance — Instance HRID',
+  instanceTitle: 'Instance — Resource title',
+  itemAccessionNumber: 'Item — Accession number',
+  itemBarcode: 'Item — Barcode',
+  itemCheckOutNotesNote: 'Item — Check out notes — Note',
+  itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
+  itemCheckInNotesNote: 'Item — Check in notes — Note',
+  itemCheckInNotesStaffOnly: 'Item — Check in notes — Staff only',
+  itemStatus: 'Item — Status',
+  itemHrid: 'Item — Item HRID',
+  itemUuid: 'Item — Item UUID',
   holdingsId: 'Holdings — UUID',
-  temporaryLocation: 'Temporary location — Name',
-  itemDiscoverySuppress: 'Items — Suppress from discovery',
+  holdingsHrid: 'Holdings — HRID',
+  temporaryLocation: 'Item temporary location — Name',
+  itemDiscoverySuppress: 'Item — Suppress from discovery',
+  materialTypeName: 'Material type — Name',
+  itemAdministrativeNotes: 'Item — Administrative notes',
+  itemNotesNoteType: 'Item — Notes — Note type',
+  itemNotesNote: 'Item — Notes — Note',
+  itemNotesStaffOnly: 'Item — Notes — Staff only',
+  electronicAccessLinkText: 'Item — Electronic access — Link text',
+  electronicAccessMaterialSpecified: 'Item — Electronic access — Material specified',
+  electronicAccessURI: 'Item — Electronic access — URI',
+  electronicAccessURLPublicNote: 'Item — Electronic access — URL public note',
+  electronicAccessURLRelationship: 'Item — Electronic access — URL relationship',
+  yearCaption: 'Item — Year, caption',
+  itemStatisticalCodeNames: 'Item — Statistical code',
+  itemTags: 'Item — Tags',
+  itemFormerIdentifiers: 'Item — Former identifiers',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
+  externalSystemId: 'User — External system ID',
   firstName: 'User — First name',
   lastName: 'User — Last name',
   patronGroup: 'Patron group — Name',
@@ -62,6 +211,9 @@ export const usersFieldValues = {
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
   userId: 'User — User UUID',
+  userName: 'User — Username',
+  userType: 'User — Type',
+  userEmail: 'User — Email',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -165,7 +317,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
-    cy.do(selectFieldButton.click());
+    this.clickSelectFieldButton();
     cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -175,8 +327,36 @@ export default {
       });
   },
 
+  verifySubsetOfFieldsSortedAlphabetically(expectedAlphabeticalOptions) {
+    this.clickSelectFieldButton();
+    cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
+      .children()
+      .then((optionsText) => {
+        const actualOptionsArray = optionsText.get().map((el) => el.innerText);
+
+        // Find the indices of expected options in the actual array
+        const foundIndices = expectedAlphabeticalOptions.map((option) => {
+          const index = actualOptionsArray.indexOf(option);
+          if (index === -1) {
+            throw new Error(`Expected option "${option}" not found in actual options`);
+          }
+          return index;
+        });
+
+        // Verify that the indices are consecutive (each index should be previous index + 1)
+        for (let i = 1; i < foundIndices.length; i++) {
+          if (foundIndices[i] !== foundIndices[i - 1] + 1) {
+            throw new Error(
+              `Options "${expectedAlphabeticalOptions[i]}" are not consecutive in alphabetical order.`,
+            );
+          }
+        }
+      });
+  },
+
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+    cy.wait(1000);
   },
 
   clickSelectFieldButton() {
@@ -206,11 +386,13 @@ export default {
   },
 
   selectOperator(selection, row = 0) {
+    cy.wait(1000);
     cy.do(
       RepeatableFieldItem({ index: row })
         .find(Select({ dataTestID: including('operator-option') }))
         .choose(selection),
     );
+    cy.wait(1000);
   },
 
   verifyOperatorsList(operators, row = 0) {
@@ -262,6 +444,7 @@ export default {
         .find(Select({ content: including('Select value') }))
         .choose(choice),
     );
+    cy.wait(1000);
   },
 
   fillInValueMultiselect(text, row = 0) {
@@ -274,11 +457,11 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.wait(1000);
   },
 
   removeValueFromMultiselect(text) {
-    cy.contains('[data-test-selection-option-segment="true"]', text)
-      .parent()
+    cy.get(`[id^="${text}-0_multiselect_selected_label"]`)
       .siblings('[icon="times"]')
       .focus()
       .click();
@@ -340,6 +523,7 @@ export default {
   },
 
   clickTestQuery() {
+    cy.wait(1000);
     cy.do(testQueryButton.click());
     cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
     this.runQueryDisabled();
@@ -352,7 +536,7 @@ export default {
   },
 
   verifyPreviewOfRecordsMatched() {
-    cy.expect([MultiColumnList().exists(), Button('Show columns').exists()]);
+    cy.expect([MultiColumnList().exists(), showColumnsButton.exists()]);
     this.testQueryDisabled(false);
     this.cancelDisabled(false);
     this.runQueryDisabled(false);
@@ -433,5 +617,214 @@ export default {
           .exists(),
       );
     });
+  },
+
+  verifyRecordWithIdentifierAbsentInResultTable(identifier, timeout = 2000) {
+    cy.wait(timeout);
+    cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
+  },
+
+  verifyEmbeddedTableInQueryModal(
+    tableType,
+    identifier,
+    expectedData, // Can be a single object or array of objects
+  ) {
+    const headers = embeddedTableHeadersMap[tableType];
+    if (!headers) {
+      throw new Error(
+        `Unknown table type: ${tableType}. Available types: ${Object.keys(embeddedTableHeadersMap).join(', ')}`,
+      );
+    }
+
+    // Normalize input to always be an array
+    const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
+
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
+      // Find the DynamicTable specifically within this row
+      cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+        // Verify table headers
+        cy.get('[class^="DynamicTable-"]')
+          .find('tr')
+          .eq(0)
+          .then((headerRow) => {
+            const headerCells = headerRow.find('th');
+
+            headers.forEach((header, index) => {
+              cy.wrap(headerCells.eq(index)).should('have.text', header);
+            });
+          });
+
+        // Verify each expected row exists by finding a row containing all expected values
+        dataToVerify.forEach((dataObj) => {
+          const expectedValues = this.extractValuesForTableType(tableType, dataObj);
+
+          // Find a table row that contains all expected values for this data object
+          cy.get('[class^="DynamicTable-"]')
+            .find('tbody tr')
+            .should(($rows) => {
+              // Check if any row contains all our expected values
+              const matchingRow = Array.from($rows).find((row) => {
+                const rowText = Cypress.$(row).text().trim();
+                const expectedRowText = expectedValues.join('').trim();
+                return rowText === expectedRowText;
+              });
+
+              if (!matchingRow) {
+                throw new Error(
+                  `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                );
+              }
+            });
+        });
+      });
+    });
+  },
+
+  extractValuesForTableType(tableType, dataObj) {
+    switch (tableType) {
+      case 'electronicAccess':
+        return [
+          dataObj.relationship,
+          dataObj.uri,
+          dataObj.linkText,
+          dataObj.materialsSpecification,
+          dataObj.publicNote,
+        ];
+      case 'notes':
+        return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+      case 'statements':
+      case 'statementsForSupplements':
+      case 'statementsForIndexes':
+        return [dataObj.statement, dataObj.note, dataObj.staffNote];
+      case 'receivingHistory':
+        return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
+      case 'contributors':
+        return [
+          dataObj.name,
+          dataObj.contributorNameType,
+          dataObj.contributorType,
+          dataObj.contributorTypeFreeText,
+          dataObj.primary,
+        ];
+      case 'alternativeTitles':
+        return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
+      case 'subjects':
+        return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
+      case 'publications':
+        return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
+      case 'identifiers':
+        return [dataObj.identifierType, dataObj.identifier];
+      case 'classifications':
+        return [dataObj.classificationIdentifierType, dataObj.classification];
+      default:
+        throw new Error(`Unknown table type: ${tableType}`);
+    }
+  },
+
+  verifyElectronicAccessEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedElectronicAccess, // Can be a single electronic access object or array of objects
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'electronicAccess',
+      instanceIdentifier,
+      expectedElectronicAccess,
+    );
+  },
+
+  verifyNotesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedNotes, // Can be a single note object or array of note objects, ex: { noteType: 'action', note: 'test note', staffOnly: false }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('notes', instanceIdentifier, expectedNotes);
+  },
+
+  verifyStatementsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedStatements, // Can be a single statement object or array of statement objects, ex: { statement: 'test statement', note: 'test note', staffNote: 'test staff note' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('statements', instanceIdentifier, expectedStatements);
+  },
+
+  verifyStatementsForSupplementsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedStatements, // Can be a single statement object or array of statement objects, ex: { statement: 'test statement', note: 'test note', staffNote: 'test staff note' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'statementsForSupplements',
+      instanceIdentifier,
+      expectedStatements,
+    );
+  },
+
+  verifyStatementsForIndexesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedStatements, // Can be a single statement object or array of statement objects, ex: { statement: 'test statement', note: 'test note', staffNote: 'test staff note' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'statementsForIndexes',
+      instanceIdentifier,
+      expectedStatements,
+    );
+  },
+
+  verifyReceivingHistoryEmbeddedTableInQueryModal(instanceIdentifier, expectedReceivingHistory) {
+    this.verifyEmbeddedTableInQueryModal(
+      'receivingHistory',
+      instanceIdentifier,
+      expectedReceivingHistory,
+    );
+  },
+
+  verifyContributorsEmbeddedTableInQueryModal(instanceIdentifier, expectedContributors) {
+    this.verifyEmbeddedTableInQueryModal('contributors', instanceIdentifier, expectedContributors);
+  },
+
+  verifyAlternativeTitlesEmbeddedTableInQueryModal(instanceIdentifier, expectedAlternativeTitles) {
+    this.verifyEmbeddedTableInQueryModal(
+      'alternativeTitles',
+      instanceIdentifier,
+      expectedAlternativeTitles,
+    );
+  },
+
+  verifySubjectsEmbeddedTableInQueryModal(instanceIdentifier, expectedSubjects) {
+    this.verifyEmbeddedTableInQueryModal('subjects', instanceIdentifier, expectedSubjects);
+  },
+
+  verifyPublicationsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedPublications, // Can be a single publication object or array of publication objects, ex: { publisher: 'test publisher', role: 'test role', place: 'test place', dateOfPublication: 'test date' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('publications', instanceIdentifier, expectedPublications);
+  },
+
+  verifyIdentifiersEmbeddedTableInQueryModal(instanceIdentifier, expectedIdentifiers) {
+    this.verifyEmbeddedTableInQueryModal('identifiers', instanceIdentifier, expectedIdentifiers);
+  },
+
+  verifyClassificationsEmbeddedTableInQueryModal(instanceIdentifier, expectedClassifications) {
+    this.verifyEmbeddedTableInQueryModal(
+      'classifications',
+      instanceIdentifier,
+      expectedClassifications,
+    );
+  },
+
+  clickShowColumnsButton() {
+    cy.do(showColumnsButton.click());
+  },
+
+  clickCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).click());
+    cy.wait(2000);
+  },
+
+  verifyColumnDisplayed(columnName) {
+    cy.expect(MultiColumnListHeader(columnName).exists());
+  },
+
+  scrollResultTable(direction) {
+    cy.get('div[class^="mclScrollable"]').scrollTo(direction);
   },
 };

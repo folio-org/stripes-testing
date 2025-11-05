@@ -8,7 +8,10 @@ import {
   including,
   Select,
   not,
+  Accordion,
+  Checkbox,
 } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
 
 const selectInstanceModal = Modal('Select instance');
@@ -21,6 +24,11 @@ const itemToggleButton = Button('Item');
 const resultsList = selectInstanceModal.find(HTML({ id: 'list-plugin-find-records' }));
 const searchOptionSelect = Select('Search field index');
 const defaultSearchOption = including('Keyword (title, contributor, identifier, HRID, UUID');
+const dateCreatedErrorMessage = 'Please enter a valid date';
+const dateRangeErrorMessage = 'Please enter a valid year';
+const sourceAccordion = selectInstanceModal.find(Accordion('Source'));
+const startDateField = TextField({ name: 'startDate' });
+const endDateField = TextField({ name: 'endDate' });
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
@@ -71,7 +79,8 @@ const searchItemsOptions = [
 ];
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(selectInstanceModal.exists());
   },
   verifyModalView() {
@@ -176,4 +185,67 @@ export default {
   },
   switchToHoldings: () => cy.do(holdingsToggleButton.click()),
   switchToItem: () => cy.do(itemToggleButton.click()),
+
+  expandSelectInstanceAccordion(accordion) {
+    cy.do(selectInstanceModal.find(Accordion(accordion)).clickHeader());
+  },
+  fillDateFields(accordionName, fromDate, toDate) {
+    cy.do([
+      selectInstanceModal.find(Accordion(accordionName)).find(startDateField).fillIn(fromDate),
+      selectInstanceModal.find(Accordion(accordionName)).find(endDateField).fillIn(toDate),
+    ]);
+  },
+  verifyDateFieldErrorMessages() {
+    cy.expect(
+      selectInstanceModal
+        .find(Accordion('Date created'))
+        .find(HTML(including(dateCreatedErrorMessage)))
+        .exists(),
+    );
+    cy.expect(
+      selectInstanceModal
+        .find(Accordion('Date updated'))
+        .find(HTML(including(dateCreatedErrorMessage)))
+        .exists(),
+    );
+    cy.expect(
+      selectInstanceModal
+        .find(Accordion('Date range'))
+        .find(HTML(including(dateRangeErrorMessage)))
+        .exists(),
+    );
+  },
+  verifyDateFieldsCleared() {
+    const accordions = ['Date range', 'Date created', 'Date updated'];
+    accordions.forEach((accordionName) => {
+      cy.expect([
+        selectInstanceModal.find(Accordion(accordionName)).find(startDateField).has({ value: '' }),
+        selectInstanceModal.find(Accordion(accordionName)).find(endDateField).has({ value: '' }),
+      ]);
+    });
+  },
+  selectSourceFilter(source) {
+    cy.do([
+      sourceAccordion.clickHeader(),
+      sourceAccordion
+        .find(Checkbox({ id: `clickable-filter-source-${source.toLowerCase()}` }))
+        .click(),
+    ]);
+  },
+  verifySourceFilterApplied() {
+    cy.expect(sourceAccordion.find(Checkbox({ checked: true })).exists());
+  },
+  checkSearchInputCleared() {
+    cy.expect(searchInput.has({ value: '' }));
+  },
+  verifyFiltersOrder(expectedFilters) {
+    expectedFilters.forEach((filterName, index) => {
+      cy.expect(
+        selectInstanceModal
+          .find(Accordion({ index }))
+          .find(HTML(including(filterName)))
+          .exists(),
+      );
+    });
+  },
 };

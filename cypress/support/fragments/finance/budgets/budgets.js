@@ -99,7 +99,6 @@ export default {
       if (expenseClasses.length) {
         this.updateBudgetViaApi({
           ...resp,
-          _version: resp._version + 1,
           statusExpenseClasses: expenseClasses.map(({ id }) => ({
             status: 'Active',
             expenseClassId: id,
@@ -123,5 +122,19 @@ export default {
     Funds.deleteFundViaApi(fundId);
     Ledgers.deleteledgerViaApi(ledgerId);
     FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
+  },
+
+  batchProcessTransactions(batchBody) {
+    return cy
+      .okapiRequest({
+        path: 'finance/transactions/batch-all-or-nothing',
+        body: batchBody,
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: true,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 };

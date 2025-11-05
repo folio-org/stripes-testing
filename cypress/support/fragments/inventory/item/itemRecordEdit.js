@@ -34,6 +34,7 @@ const itemDataFields = {
 
 const loanDataFields = {
   loanType: itemEditForm.find(Select({ id: 'additem_loanTypePerm' })),
+  temporaryLoanType: itemEditForm.find(Select({ id: 'additem_loanTypeTemp' })),
 };
 const addNoteBtn = Accordion('Item notes').find(Button('Add note'));
 
@@ -94,6 +95,7 @@ export default {
         matching(new RegExp(InstanceStates.itemSavedSuccessfully)),
       );
     }
+    cy.wait(2000);
   },
 
   fillItemRecordFields({ barcode, materialType, copyNumber, loanType } = {}) {
@@ -117,12 +119,23 @@ export default {
     cy.do(loanDataFields.loanType.choose(permanentLoanType));
     cy.expect(loanDataFields.loanType.has({ checkedOptionText: permanentLoanType }));
   },
+  addTemporaryLoanType: (temporaryLoanType) => {
+    cy.do(loanDataFields.temporaryLoanType.choose(temporaryLoanType));
+    cy.expect(loanDataFields.temporaryLoanType.has({ checkedOptionText: temporaryLoanType }));
+  },
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
   },
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(SelectionOption(including(temporarylocation))).exists());
+  },
+  clearValueInPermanentLocation() {
+    cy.do([
+      permanentLocationDropdown.click(),
+      SelectionList().filter('Select location'),
+      SelectionList().select(including('Select location')),
+    ]);
   },
   openPermanentLocation() {
     cy.do(permanentLocationDropdown.click());
@@ -131,11 +144,25 @@ export default {
     cy.expect(permanentLocationList.exists());
     cy.expect(permanentLocationList.find(SelectionOption(including(permanentLocation))).exists());
   },
+  clearValueInTemporaryLocation() {
+    cy.do([
+      temporaryLocationDropdown.click(),
+      SelectionList().filter('Select location'),
+      SelectionList().select(including('Select location')),
+    ]);
+  },
   closeCancelEditingModal: () => {
     cy.do(
       Modal({ id: 'cancel-editing-confirmation' })
         .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
+  },
+
+  addEffectiveCallNumber: (numberPrefix, number) => {
+    cy.do([
+      TextArea({ id: 'additem_callnumberprefix' }).fillIn(numberPrefix),
+      TextArea({ id: 'additem_callnumber' }).fillIn(number),
+    ]);
   },
 };

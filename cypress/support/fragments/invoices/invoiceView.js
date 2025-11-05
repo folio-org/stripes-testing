@@ -12,6 +12,7 @@ import {
   PaneHeader,
   Section,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import interactorsTools from '../../utils/interactorsTools';
 import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineDetails from './invoiceLineDetails';
@@ -41,6 +42,10 @@ const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher
 const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
+    cy.expect(invoiceDetailsPane.exists());
+  },
   expandActionsDropdown() {
     cy.wait(4000);
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
@@ -228,6 +233,7 @@ export default {
   },
   clickApproveAndPayInvoice({ isApprovePayEnabled = false } = {}) {
     cy.do([
+      cy.wait(2000),
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button(isApprovePayEnabled ? 'Approve & pay' : 'Approve').click(),
     ]);

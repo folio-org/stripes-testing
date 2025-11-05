@@ -93,7 +93,7 @@ describe('Bulk-edit', () => {
           const suppressFromDiscovery = true;
           const newLocation = 'Main Library';
           BulkEditActions.openActions();
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
           BulkEditActions.checkApplyToItemsRecordsCheckbox();
           BulkEditActions.addNewBulkEditFilterString();

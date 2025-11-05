@@ -59,6 +59,7 @@ const itemAnumberOfPieces = '2';
 const dateField = TextField('Date returned');
 const timeField = TextField('Time returned');
 const checkedInItemsList = MultiColumnList({ id: 'list-items-checked-in' });
+const accessDeniedModal = Modal('Access Denied');
 
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
@@ -191,9 +192,7 @@ export default {
 
   openLoanDetails(username) {
     cy.wait(1000);
-    cy.do(availableActionsButton.click());
-    cy.wait(500);
-    cy.do(loanDetailsButton.click());
+    cy.do([availableActionsButton.click(), loanDetailsButton.click()]);
     cy.wait(1000);
     cy.expect(Pane(including(username)).exists());
     cy.expect(Pane(including('Loan details')).exists());
@@ -356,5 +355,15 @@ export default {
         );
       },
     );
+  },
+
+  verifyAccessDeniedModal: () => {
+    cy.expect(accessDeniedModal.exists());
+    cy.expect(accessDeniedModal.find(HTML(including('You must select a service point'))).exists());
+  },
+
+  closeAccessDeniedModal: () => {
+    cy.do(accessDeniedModal.find(Button('Close')).click());
+    cy.expect(accessDeniedModal.absent());
   },
 };

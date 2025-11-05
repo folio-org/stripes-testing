@@ -8,8 +8,10 @@ import {
   Modal,
   Accordion,
   MultiColumnListCell,
+  Link,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
+import FileManager from '../../utils/fileManager';
 import EHoldingsResourceEdit from './eHoldingsResourceEdit';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import SelectAgreementModal from './modals/selectAgreementModal';
@@ -33,6 +35,17 @@ const openActionsMenu = () => {
 
 const customLabelsAccordion = Accordion('Custom labels');
 const customLabelValue = (label) => customLabelsAccordion.find(KeyValue(label));
+const resourceSettingsAccordion = Accordion('Resource settings');
+const resourceSettingsAccordionButton = Button({
+  id: 'accordion-toggle-button-resourceShowSettings',
+});
+const customCoverageDatesKeyValue = KeyValue('Custom coverage dates');
+const customCoverageStatementKeyValue = KeyValue('Custom coverage statement');
+const customEmbargoPeriodKeyValue = KeyValue('Custom embargo period');
+const showToPatronsKeyValue = KeyValue('Show to patrons');
+const proxyKeyValue = KeyValue('Proxy');
+const proxiedURLKeyValue = KeyValue('Proxied URL');
+const customUrlKeyValue = KeyValue('Custom');
 
 export default {
   waitLoading: () => {
@@ -151,5 +164,151 @@ export default {
   },
   closeHoldingsResourceView() {
     cy.do(closeViewButton.click());
+  },
+
+  verifyNoCustomCoverageDates() {
+    cy.expect(customCoverageDatesKeyValue.absent());
+  },
+
+  verifyCoverageStatement(statement) {
+    cy.expect(customCoverageStatementKeyValue.has({ value: statement }));
+  },
+
+  verifyCustomEmbargoExists() {
+    cy.expect(customEmbargoPeriodKeyValue.exists());
+  },
+
+  verifyCustomEmbargoValue(value, unit) {
+    const formattedUnit = unit.toLowerCase().replace(/s$/, '(s)');
+    cy.expect(customEmbargoPeriodKeyValue.has({ value: including(`${value} ${formattedUnit}`) }));
+  },
+
+  expandResourceSettingsAccordion() {
+    cy.wait(500);
+    cy.then(() => resourceSettingsAccordionButton.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded === 'false') {
+        cy.do(resourceSettingsAccordion.click());
+        cy.wait(1000);
+      }
+    });
+  },
+
+  verifyCustomEmbargoAbsent() {
+    cy.expect(customEmbargoPeriodKeyValue.absent());
+  },
+
+  verifyResourceSettingsAccordion() {
+    this.expandResourceSettingsAccordion();
+    cy.expect(resourceSettingsAccordion.exists());
+    cy.expect(showToPatronsKeyValue.exists());
+    cy.expect(proxyKeyValue.exists());
+  },
+
+  verifyProxy(proxyName) {
+    this.expandResourceSettingsAccordion();
+    if (proxyName) {
+      cy.expect(proxyKeyValue.has({ value: proxyName }));
+    } else {
+      cy.expect(proxyKeyValue.exists());
+    }
+  },
+
+  verifyProxiedURL() {
+    this.expandResourceSettingsAccordion();
+    cy.expect(proxiedURLKeyValue.exists());
+  },
+
+  verifyProxiedURLNotDisplayed() {
+    this.expandResourceSettingsAccordion();
+    cy.expect(proxiedURLKeyValue.absent());
+  },
+
+  verifyProxiedURLLink() {
+    this.expandResourceSettingsAccordion();
+    cy.then(() => proxiedURLKeyValue.value()).then((url) => {
+      const trimmedUrl = url.trim();
+      cy.expect(resourceSettingsAccordion.find(Link({ href: including(trimmedUrl) })).exists());
+    });
+  },
+
+  verifyCustomUrl(customUrl) {
+    cy.expect(customUrlKeyValue.has({ value: including(customUrl) }));
+  },
+
+  verifyResourceInformationAccordionExists() {
+    cy.expect(Accordion('Resource information').exists());
+  },
+
+  verifyResourceInformationFieldsInOrder(fields) {
+    fields.forEach((fieldName) => {
+      cy.expect(KeyValue(fieldName).exists());
+    });
+  },
+
+  verifyAlternateTitlesSeparatedBySemicolon() {
+    cy.then(() => KeyValue('Alternate title(s)').value()).then((value) => {
+      if (value && value.trim() !== '') {
+        const alternateTitles = value.split(';');
+        if (alternateTitles.length > 1) {
+          cy.expect(value).to.include(';');
+        }
+      }
+    });
+  },
+
+  verifyCoverageInExportedCSV(
+    fileName,
+    {
+      managedCoverage = null,
+      customCoverage = null,
+      verifyDateFormat = false,
+      verifyEmbargoFormat = false,
+    } = {},
+  ) {
+    FileManager.readFile(`cypress/fixtures/${fileName}`).then((content) => {
+      expect(content).to.include('Managed Coverage');
+      expect(content).to.include('Custom Coverage');
+
+      const lines = content.split('\n');
+      const titleDataRow = lines[3];
+
+      if (managedCoverage !== null) {
+        if (managedCoverage) {
+          expect(titleDataRow).to.match(/\d{4}\/\d{2}\/\d{2}/);
+        }
+      }
+      if (customCoverage !== null) {
+        if (customCoverage) {
+          expect(titleDataRow).to.include(customCoverage.startDate);
+          expect(titleDataRow).to.include(customCoverage.endDate);
+        }
+      }
+
+      if (verifyDateFormat) {
+        if (content.includes('Present')) {
+          expect(content).to.match(/\d{4}\/\d{2}\/\d{2}\s*-\s*Present/i);
+          expect(content).to.not.include('9999/12/31');
+        }
+
+        if (content.includes('Custom Coverage') && content.includes('-')) {
+          const customCoverageMatch = titleDataRow.match(/,([^,]*Present[^,]*),/i);
+          if (customCoverageMatch) {
+            expect(customCoverageMatch[0]).to.not.include('9999');
+          }
+        }
+      }
+      if (verifyEmbargoFormat) {
+        if (content.includes('Embargo')) {
+          expect(content).to.not.include('null');
+          const embargoPattern = /\d+\s+(Year|Month|Week|Day)/i;
+          if (titleDataRow.match(embargoPattern)) {
+            expect(titleDataRow).to.match(embargoPattern);
+          }
+        }
+      }
+      if (!verifyDateFormat && (managedCoverage || customCoverage)) {
+        expect(content).to.match(/\d{4}\/\d{2}\/\d{2}/);
+      }
+    });
   },
 };

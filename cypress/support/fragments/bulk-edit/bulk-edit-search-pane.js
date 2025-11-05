@@ -26,6 +26,7 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
 const changesAccordion = Accordion(previewOfRecordsChangedFormName);
 const errorsAccordion = Accordion('Errors & warnings');
+const showWarningsCheckbox = Checkbox({ labelText: 'Show warnings' });
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -57,13 +58,27 @@ const electronicAccessTableHeaders = [
   'URL relationship',
   'URI',
   'Link text',
-  'Materials specified',
+  'Material specified',
   'URL public note',
 ];
 const formMap = {
   [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED]: matchedAccordion,
   [BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED]: changesAccordion,
   [BULK_EDIT_FORMS.ARE_YOU_SURE]: areYouSureForm,
+};
+export const subjectsTableHeaders = ['Subject headings', 'Subject source', 'Subject type'];
+export const classificationsTableHeaders = ['Classification identifier type', 'Classification'];
+export const publicationTableHeaders = [
+  'Publisher',
+  'Publisher role',
+  'Place of publication',
+  'Publication date',
+];
+const embeddedTableHeadersMap = {
+  electronicAccess: electronicAccessTableHeaders,
+  subjects: subjectsTableHeaders,
+  classifications: classificationsTableHeaders,
+  publications: publicationTableHeaders,
 };
 export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCESSIBILITY_NOTE,
@@ -79,7 +94,7 @@ export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CITATION_REFERENCES_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.COPY_VERSION_IDENTIFICATION_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CREATION_PRODUCTION_CREDITS_NOTE,
-  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CUMULATIVE_INDEX_FINDING_AIDES_NOTES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CUMULATIVE_INDEX_FINDING_AIDS_NOTES,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATE_TIME_PLACE_EVENT_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
@@ -120,16 +135,13 @@ export const instanceNotesColumnNames = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.TYPE_REPORT_PERIOD_COVERED_NOTE,
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.WITH_NOTE,
 ];
-
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
-
 export const holdingsIdentifiers = [
   'Holdings UUIDs',
   'Holdings HRIDs',
   'Instance HRIDs',
   'Item barcodes',
 ];
-
 export const itemIdentifiers = [
   'Item barcodes',
   'Item UUIDs',
@@ -138,13 +150,23 @@ export const itemIdentifiers = [
   'Item accession numbers',
   'Holdings UUIDs',
 ];
-
 export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
-
 export const ITEM_IDENTIFIERS = {
   ITEM_BARCODES: 'Item barcodes',
 };
-
+export const ERROR_MESSAGES = {
+  EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED:
+    'Bulk edit of instance notes is not supported for MARC Instances.',
+  NO_CHANGE_REQUIRED: 'No change in value required',
+  INCORRECT_TOKEN_NUMBER:
+    'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
+  FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT:
+    'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.',
+  OPTIMISTIC_LOCKING:
+    'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version',
+  DUPLICATE_ENTRY: 'Duplicate entry',
+  SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
+};
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
 };
@@ -278,16 +300,16 @@ export default {
     cy.expect(bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists());
   },
 
-  verifySetCriteriaPaneItems(query = true) {
+  verifySetCriteriaPaneItems(query = true, logs = true) {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-      setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
     ]);
     this.recordTypesAccordionExpanded(true);
     this.dragAndDropAreaExists(true);
     this.isDragAndDropAreaDisabled(true);
     if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
+    if (logs) cy.expect(setCriteriaPane.find(logsToggle).exists());
   },
 
   verifySetCriteriaPaneElements() {
@@ -407,6 +429,7 @@ export default {
 
   openLogsSearch() {
     cy.do(logsToggle.click());
+    cy.wait(2000);
   },
 
   recordTypesAccordionExpanded(expanded = true) {
@@ -572,6 +595,7 @@ export default {
     // it is needed to avoid triggering for previous page list
     cy.wait(3000);
     cy.expect(MultiColumnList().exists());
+    cy.wait(1000);
   },
 
   verifyCsvUploadModal(filename) {
@@ -806,12 +830,39 @@ export default {
     );
   },
 
+  verifyErrorsAccordionIncludesNumberOfIdentifiers(expectedErrorsCount, arrayOfIdentifiers) {
+    cy.then(() => {
+      errorsAccordion
+        .find(MultiColumnList())
+        .rowCount()
+        .then((count) => {
+          expect(count).to.equal(expectedErrorsCount);
+        });
+    });
+    cy.then(() => {
+      for (let i = 0; i < expectedErrorsCount; i++) {
+        errorsAccordion
+          .find(MultiColumnList())
+          .find(MultiColumnListRow({ indexRow: `row-${i}` }))
+          .find(MultiColumnListCell({ column: 'Record identifier' }))
+          .content()
+          .then((identifier) => {
+            expect(arrayOfIdentifiers).to.include(identifier);
+          });
+      }
+    });
+  },
+
   verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
       errorsAccordion
         .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
         .exists(),
     );
+  },
+
+  clickShowWarningsCheckbox() {
+    cy.do(errorsAccordion.find(showWarningsCheckbox).click());
   },
 
   verifyReasonForError(errorText) {
@@ -902,6 +953,7 @@ export default {
   },
 
   verifyCheckedCheckboxesPresentInTheTable() {
+    cy.wait(2000);
     cy.get('[role=columnheader]').then((headers) => {
       headers.each((_index, header) => {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
@@ -1285,7 +1337,10 @@ export default {
   },
 
   dragAndDropAreaExists(exists) {
-    cy.expect(HTML('Drag and drop').has({ visible: exists }));
+    cy.expect([
+      HTML('Drag and drop').has({ visible: exists }),
+      setCriteriaPane.find(HTML('Select a file with record identifiers.')).exists(),
+    ]);
   },
 
   isDragAndDropAreaDisabled(isDisabled) {
@@ -1349,8 +1404,12 @@ export default {
     });
   },
 
+  verifyCheckboxesAbsentInActionsDropdownMenu() {
+    cy.expect(DropdownMenu().find(Checkbox()).absent());
+  },
+
   verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
-    cy.get('[class^="EmbeddedTable-"]')
+    cy.get('[class^="DynamicTable-"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')
@@ -1358,50 +1417,123 @@ export default {
       .should('have.text', expectedText);
   },
 
-  verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier) {
+  verifyEmbeddedTableColumnHeadersInForm(tableType, formType, instanceIdentifier) {
+    const headers = embeddedTableHeadersMap[tableType];
+    if (!headers) {
+      throw new Error(
+        `Unknown table type: ${tableType}. Available types: ${Object.keys(embeddedTableHeadersMap).join(', ')}`,
+      );
+    }
+
     cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
       (rowIndex) => {
-        cy.get('[class^="EmbeddedTable-"]')
-          .eq(rowIndex)
-          .find('tr')
+        cy.get(`[data-row-index="row-${rowIndex}"]`)
           .eq(0)
-          .then((headerRow) => {
-            const headerCells = headerRow.find('th');
+          .within(() => {
+            cy.get('[class^="DynamicTable-"]')
+              .find('tr')
+              .eq(0)
+              .then((headerRow) => {
+                const headerCells = headerRow.find('th');
 
-            electronicAccessTableHeaders.forEach((header, index) => {
-              expect(headerCells.eq(index).text()).to.equal(header);
-            });
+                headers.forEach((header, index) => {
+                  expect(headerCells.eq(index).text()).to.equal(header);
+                });
+              });
           });
       },
     );
   },
 
+  verifyEmbeddedTableInForm(tableType, formType, identifier, expectedValues) {
+    this.verifyEmbeddedTableColumnHeadersInForm(tableType, formType, identifier);
+
+    cy.then(() => formMap[formType].find(MultiColumnListCell(identifier)).row()).then(
+      (rowIndex) => {
+        cy.get(`[data-row-index="row-${rowIndex}"]`)
+          .eq(0)
+          .within(() => {
+            cy.get('[class^="DynamicTable-"]')
+              .find('tbody tr')
+              .should(($rows) => {
+                // Check if any row contains all our expected values
+                const matchingRow = Array.from($rows).find((row) => {
+                  const rowText = Cypress.$(row).text().trim();
+                  const expectedRowText = expectedValues.join('').trim();
+                  return rowText === expectedRowText;
+                });
+
+                if (!matchingRow) {
+                  throw new Error(
+                    `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                  );
+                }
+              });
+          });
+      },
+    );
+  },
+
+  verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier) {
+    this.verifyEmbeddedTableColumnHeadersInForm('electronicAccess', formType, instanceIdentifier);
+  },
+
   verifyElectronicAccessTableInForm(
     formType,
-    instanceIdentifier,
+    identifier,
     relationship,
     uri,
     linkText,
     materialsSpecified,
     publicNote,
-    miniRowIndex = 1,
   ) {
-    this.verifyElectronicAccessColumnHeadersInForm(formType, instanceIdentifier);
-
     const expectedValues = [relationship, uri, linkText, materialsSpecified, publicNote];
+    this.verifyEmbeddedTableInForm('electronicAccess', formType, identifier, expectedValues);
+  },
 
-    cy.then(() => formMap[formType].find(MultiColumnListCell(instanceIdentifier)).row()).then(
-      (rowIndex) => {
-        cy.get('[class^="EmbeddedTable-"]')
-          .eq(rowIndex)
-          .find('tr')
-          .eq(miniRowIndex)
-          .find('td')
-          .each(($cell, index) => {
-            cy.wrap($cell).should('have.text', expectedValues[index]);
-          });
-      },
-    );
+  verifySubjectColumnHeadersInForm(formType, instanceIdentifier) {
+    this.verifyEmbeddedTableColumnHeadersInForm('subjects', formType, instanceIdentifier);
+  },
+
+  verifySubjectTableInForm(
+    formType,
+    instanceIdentifier,
+    subjectHeadingValue,
+    subjectValue,
+    subjectTypeValue,
+  ) {
+    const expectedValues = [subjectHeadingValue, subjectValue, subjectTypeValue];
+    this.verifyEmbeddedTableInForm('subjects', formType, instanceIdentifier, expectedValues);
+  },
+
+  verifyClassificationColumnHeadersInForm(formType, instanceIdentifier) {
+    this.verifyEmbeddedTableColumnHeadersInForm('classifications', formType, instanceIdentifier);
+  },
+
+  verifyClassificationTableInForm(
+    formType,
+    instanceIdentifier,
+    classificationIdentifierTypeValue,
+    classificationValue,
+  ) {
+    const expectedValues = [classificationIdentifierTypeValue, classificationValue];
+    this.verifyEmbeddedTableInForm('classifications', formType, instanceIdentifier, expectedValues);
+  },
+
+  verifyPublicationColumnHeadersInForm(formType, instanceIdentifier) {
+    this.verifyEmbeddedTableColumnHeadersInForm('publications', formType, instanceIdentifier);
+  },
+
+  verifyPublicationTableInForm(
+    formType,
+    instanceIdentifier,
+    publisher,
+    publisherRole,
+    placeOfPublication,
+    publicationDate,
+  ) {
+    const expectedValues = [publisher, publisherRole, placeOfPublication, publicationDate];
+    this.verifyEmbeddedTableInForm('publications', formType, instanceIdentifier, expectedValues);
   },
 
   verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
@@ -1434,28 +1566,13 @@ export default {
       });
   },
 
-  verifyPreviousPaginationButtonDisabled(isDisabled = true) {
-    cy.expect(previousPaginationButton.has({ disabled: isDisabled }));
-  },
-
-  verifyNextPaginationButtonDisabled(isDisabled = true) {
-    cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
-  },
-
-  verifyPreviousPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
-    cy.expect(areYouSureForm.find(previousPaginationButton).has({ disabled: isDisabled }));
-  },
-
-  verifyNextPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
-    cy.expect(areYouSureForm.find(nextPaginationButton).has({ disabled: isDisabled }));
-  },
-
   verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {
     cy.expect([
       matchedAccordion.find(previousPaginationButton).has({ disabled: true }),
       matchedAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
     cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .eq(0)
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);
@@ -1556,6 +1673,26 @@ export default {
   verifyCellWithContentAbsentsInChangesAccordion(...cellContent) {
     cellContent.forEach((content) => {
       cy.expect(changesAccordion.find(MultiColumnListCell(content)).absent());
+    });
+  },
+
+  verifyCellWithContentAbsentsInAreYouSureForm(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(content)).absent());
+    });
+  },
+
+  clickViewLatestVersionInErrorsAccordionByIdentifier(identifier) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.do(
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason' }))
+          .perform((el) => {
+            el.querySelector('a[target="_blank"]').removeAttribute('target');
+            el.querySelector('a').click();
+          }),
+      );
     });
   },
 };

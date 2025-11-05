@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import UserEdit from '../../../support/fragments/users/userEdit';
 
-describe('fse-checkout - UI', () => {
+describe('fse-checkout - UI (data manipulation)', () => {
   let servicePointId;
   let userData = {};
 
@@ -15,8 +15,8 @@ describe('fse-checkout - UI', () => {
     cy.allure().logCommandSteps(false);
     cy.getAdminToken().then(() => {
       // create new user and assign a service point
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        servicePointId = servicePoints[0].id;
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        servicePointId = servicePoint.id;
       });
       cy.createTempUser([permissions.checkoutAll.gui], 'FSE AQA autotest').then(
         (userProperties) => {
@@ -45,7 +45,7 @@ describe('fse-checkout - UI', () => {
 
   it(
     `TC195283 - verify that checkout module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'checkout', 'nonProd'] },
+    { tags: ['fse', 'ui', 'checkout', 'nonProd', 'fse-user-journey'] },
     () => {
       Checkout.waitLoading();
     },

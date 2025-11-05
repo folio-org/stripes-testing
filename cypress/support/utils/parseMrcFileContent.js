@@ -1,19 +1,38 @@
-// eslint-disable-next-line import/no-unresolved
+/* eslint-disable no-unused-expressions */
 import { Marc } from 'marcjs';
 import { Readable } from 'stream';
 
 /**
- * Parses an MRC file, retrieves records by their UUIDs stored in the '999' field,
+ * Returns an array of default assertions for a MARC record.
+ */
+const getDefaultAssertions = () => {
+  return [
+    (record) => expect(record.leader).to.exist,
+    (record) => expect(record.get('001')).to.not.be.empty,
+    (record) => expect(record.get('005')).to.not.be.empty,
+    (record) => expect(record.get('005')[0].value).to.match(/^[0-9]{14}\.[0-9]{1}$/),
+    (record) => expect(record.get('008')).to.not.be.empty,
+  ];
+};
+
+/**
+ * Parses an MRC file, retrieves records by their unique identifiers (UUIDs),
  * and performs assertions on those records.
  *
- * @param {string} fileName - The path to the MRC file.
- *  @param {Array<{ uuid: string, assertions: Array<Function> }>} recordsToVerify -
- * An array of objects where each object contains:
- *   - `uuid` {string}: The unique identifier for the record (stored in the '999' field).
- *   - `assertions` {Array<Function>}: An array of assertion functions to validate the record.
- *     Each function receives the record as its argument and performs specific checks.
+ * The function automatically searches for the UUID across multiple MARC fields by iterating
+ * through all subfields in each record. It matches any subfield value that exists in the
+ * provided recordsToVerify array, making it flexible for different export mapping profiles.
+ *
+ * @param {string} fileName - The path to the MRC file (relative to cypress/downloads/).
+ * @param {Array<{ uuid: string, assertions: Array<Function> }>} recordsToVerify -
+ *   An array of objects where each object contains:
+ *     - `uuid` {string}: The unique identifier for the record. This will be automatically
+ *       located within any MARC field/subfield in the exported record.
+ *     - `assertions` {Array<Function>}: An array of assertion functions to validate the record.
+ *       Each function receives the record as its argument and performs specific checks.
  * @param {number} expectedTotalRecords - The expected total number of records in the file.
- * @param {boolean} [isAuthority=false] - A flag indicating whether the records are authority records.
+ * @param {boolean} [isDefaultAssertionRequired=true] - Whether to run default assertions
+ *   (leader, 001, 005, 008 fields) in addition to custom ones.
  * @returns {Promise<void>} - A promise that resolves when all assertions pass, or rejects with an error.
  */
 
@@ -21,7 +40,7 @@ export default function parseMrcFileContentAndVerify(
   fileName,
   recordsToVerify,
   expectedTotalRecords,
-  isAuthority = false,
+  isDefaultAssertionRequired = true,
 ) {
   return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
     if (!fileContent) {
@@ -42,17 +61,40 @@ export default function parseMrcFileContentAndVerify(
       reader.on('data', (record) => {
         totalRecordsCount++;
 
-        const uuidField = record.get('999');
-        const recordUuid = isAuthority ? uuidField[0].subf[1][1] : uuidField[0].subf[0][1];
+        // Iterate through all fields to find a unique identifier that matches our assertions map
+        let recordIdentifier = null;
 
-        if (uuidAssertionsMap.has(recordUuid)) {
-          const assertions = uuidAssertionsMap.get(recordUuid);
+        for (const field of record.fields) {
+          if (Array.isArray(field) && field.length > 2) {
+            // Check all subfields in the current field
+            for (let i = 2; i < field.length; i += 2) {
+              const subfieldValue = field[i + 1];
+              if (subfieldValue && uuidAssertionsMap.has(subfieldValue)) {
+                recordIdentifier = subfieldValue;
+                break;
+              }
+            }
+            if (recordIdentifier) break;
+          }
+        }
+
+        if (!recordIdentifier) {
+          return;
+        }
+
+        if (uuidAssertionsMap.has(recordIdentifier)) {
+          let assertions = uuidAssertionsMap.get(recordIdentifier);
+          if (isDefaultAssertionRequired) {
+            assertions = [...getDefaultAssertions(), ...assertions];
+          }
           try {
             assertions.forEach((assertion) => assertion(record));
-            uuidAssertionsMap.delete(recordUuid); // Remove the UUID once verified
+            uuidAssertionsMap.delete(recordIdentifier); // Remove the UUID once verified
           } catch (error) {
             reject(
-              new Error(`Assertion failed for record with UUID ${recordUuid}: ${error.message}`),
+              new Error(
+                `Assertion failed for record with identifier ${recordIdentifier}: ${error.message}`,
+              ),
             );
           }
         }

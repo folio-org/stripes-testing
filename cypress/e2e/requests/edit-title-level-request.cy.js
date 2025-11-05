@@ -56,7 +56,7 @@ describe('Title Level Request', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           itemData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        cy.getDefaultMaterialType().then((res) => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
@@ -118,6 +118,12 @@ describe('Title Level Request', () => {
               servicePoint1.id,
             );
           });
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
+        });
       });
   });
 
@@ -141,10 +147,6 @@ describe('Title Level Request', () => {
     'C350559 Check that the user can Edit request (Title level request) (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C350559'] },
     () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();

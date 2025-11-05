@@ -3,13 +3,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `AT_C496128_UserRole_${getRandomPostfix()}`,
-        originalApplications: ['app-platform-minimal', 'app-dcb'],
+        originalApplications: ['app-platform-minimal', 'app-licenses'],
         newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
@@ -67,13 +68,13 @@ describe('Eureka', () => {
         ],
         originalCapabilities: [
           {
-            table: CAPABILITY_TYPES.PROCEDURAL,
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Login Event Collection',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Licenses Admin Action',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -126,9 +127,9 @@ describe('Eureka', () => {
             Procedural: 2,
           },
           capabilities: {
-            Data: 11,
+            Data: 12,
             Settings: 2,
-            Procedural: 5,
+            Procedural: 4,
           },
         },
         absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
@@ -137,21 +138,9 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings Admin',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Capabilities',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Role-Capability-Sets',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
       before('Create role, user', () => {
@@ -182,17 +171,17 @@ describe('Eureka', () => {
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+          });
+        }, 20_000);
       });
 
       after('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
-        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 

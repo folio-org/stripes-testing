@@ -22,13 +22,13 @@ describe('Inventory', () => {
     const localCallNumberTypeName = 'AT_C387477 Local CN type';
     const callNumberTypesSettings = { name: 'Call numbers (all)', callNumberTypes: [] };
     const callNumbers = [
-      { type: 'Library of Congress classification', value: 'Z668.R360 1987' },
-      { type: 'Dewey Decimal classification', value: '304 H981' },
-      { type: 'Superintendent of Documents classification', value: 'T22.19:M54/test-2/2005' },
+      { type: 'Dewey Decimal classification', value: '598.098' },
+      { type: 'Library of Congress classification', value: 'QS 11 .GA1 E53 2003' },
       { type: 'National Library of Medicine classification', value: 'WA 102.5 B5315 2018' },
-      { type: 'Other scheme', value: '364.15 Slater' },
-      { type: localCallNumberTypeName, value: 'MyNr123465' },
-      { type: 'UDC', value: '338.48' },
+      { type: 'Other scheme', value: 'HEU/G74.3C49' },
+      { type: 'Superintendent of Documents classification', value: 'L37.s:Oc1/2/998' },
+      { type: 'UDC', value: 'DD259.4 .B527 1970' },
+      { type: localCallNumberTypeName, value: 'Local.313' },
     ];
 
     before('Create test data', () => {
@@ -54,7 +54,7 @@ describe('Inventory', () => {
             instance.loanTypeId = res[0].id;
             instance.loanTypeName = res[0].name;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          cy.getDefaultMaterialType().then((res) => {
             instance.materialTypeId = res.id;
           });
           InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {

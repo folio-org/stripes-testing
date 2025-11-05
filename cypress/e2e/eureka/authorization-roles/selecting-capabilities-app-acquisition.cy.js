@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -59,16 +60,8 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.CREATE,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings',
-          action: CAPABILITY_ACTIONS.EDIT,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsCreate,
+        CapabilitySets.uiAuthorizationRolesSettingsEdit,
       ];
 
       const resourceNames = [];
@@ -98,6 +91,7 @@ describe('Eureka', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -157,7 +151,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectAllApplicationsInModal();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName, false);
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           AuthorizationRoles.verifyResourceOrAppPresent(testData.applicationName, 0, false);
           AuthorizationRoles.closeRoleEditView();
           AuthorizationRoles.verifyRoleViewPane(testData.roleName);

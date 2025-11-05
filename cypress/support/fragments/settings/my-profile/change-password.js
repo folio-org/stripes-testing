@@ -1,4 +1,4 @@
-import { Pane, Dropdown, Button, TextField, including } from '../../../../../interactors';
+import { Pane, Dropdown, Button, TextField, including, Callout } from '../../../../../interactors';
 
 const myProfile = Dropdown(including('profile'));
 const currentPasswordField = TextField('Current FOLIO password');
@@ -74,5 +74,18 @@ export default {
   saveNewPassword() {
     cy.expect(saveButton.is({ disabled: false }));
     cy.do(saveButton.click());
+    cy.expect(Callout(including('The FOLIO password has been successfully changed for')).exists());
+  },
+
+  fillPasswordFields(currentPassword, newPassword, confirmPassword) {
+    this.typeCurrentPassword(currentPassword);
+    cy.wait(1000);
+    this.typeNewPassword(newPassword);
+    cy.wait(1000);
+    this.typeConfirmPassword(confirmPassword);
+  },
+
+  verifyPasswordSaved() {
+    cy.url().should('not.contain', '/change-password');
   },
 };

@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -116,9 +117,9 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
       before(() => {
@@ -126,17 +127,20 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
+            AuthorizationRoles.waitContentLoading();
+          }, 20_000);
         });
       });
 
       afterEach(() => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
       });
 
       it(

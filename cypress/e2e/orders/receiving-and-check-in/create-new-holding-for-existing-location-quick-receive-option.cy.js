@@ -33,8 +33,8 @@ describe('Orders', () => {
         }).location;
 
         Locations.createViaApi(testData.location).then((location) => {
-          InventoryInstances.getMaterialTypes().then((materialTypes) => {
-            testData.materialType = materialTypes[0];
+          cy.getDefaultMaterialType().then((mt) => {
+            testData.materialType = mt;
           });
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances: testData.folioInstances,
@@ -128,7 +128,7 @@ describe('Orders', () => {
         EditPieceModal.checkFieldsConditions([
           {
             label: 'Order line locations',
-            conditions: { text: including(testData.location.name) },
+            conditions: { value: including(testData.location.name) },
           },
         ]);
 

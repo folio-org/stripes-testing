@@ -1,6 +1,8 @@
 import Permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -137,14 +139,14 @@ describe('Bulk-edit', () => {
           'temporaryLocation',
           true,
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPaneTitleFileName(instanceHRIDFileName);
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.clickSelectedLocation('Select location', newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, newLocation);
@@ -156,7 +158,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
         BulkEditSearchPane.verifyErrorByIdentifier(
           instanceHRID,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
       },

@@ -125,6 +125,12 @@ export default {
     });
   },
 
+  checkCirculationRulesContainTextViaApi(text) {
+    this.getViaApi().then((circulationRules) => {
+      cy.expect(circulationRules.rulesAsText).to.include(text);
+    });
+  },
+
   getViaApi() {
     return cy.getCirculationRules();
   },

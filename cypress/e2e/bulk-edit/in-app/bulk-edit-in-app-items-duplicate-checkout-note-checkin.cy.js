@@ -78,7 +78,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out note', 'Check in note');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         BulkEditActions.verifyItemOptions();
         BulkEditActions.verifyItemCheckInNoteActions();
@@ -114,9 +114,9 @@ describe('Bulk-edit', () => {
         ItemRecordView.waitLoading();
         ItemRecordView.checkCheckInNote(
           `${notes.checkInNote}${notes.checkInNote}${notes.checkOutNote}${notes.checkOutNote}`,
-          'Yes\nNo\nYes\nNo',
+          'YesNoYesNo',
         );
-        ItemRecordView.checkCheckOutNote(`${notes.checkOutNote}${notes.checkOutNote}`, 'Yes\nNo');
+        ItemRecordView.checkCheckOutNote(`${notes.checkOutNote}${notes.checkOutNote}`, 'YesNo');
       },
     );
   });

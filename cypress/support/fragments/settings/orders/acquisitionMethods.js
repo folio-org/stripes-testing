@@ -5,6 +5,7 @@ import {
   MultiColumnListCell,
   Pane,
   TextField,
+  Modal,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -54,7 +55,7 @@ export default {
     cy.expect(MultiColumnListCell(AMName).exists());
   },
 
-  editAcquisitionMethod: (AMName) => {
+  editAcquisitionMethod: (AMName, newAMName) => {
     cy.do(
       MultiColumnListCell({ content: AMName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
@@ -65,12 +66,12 @@ export default {
         );
       }),
     );
-    cy.do([TextField().fillIn(`${AMName}-edited`), acquisitionMethodPane.find(saveButton).click()]);
+    cy.do([TextField().fillIn(`${newAMName}`), acquisitionMethodPane.find(saveButton).click()]);
   },
 
   deleteAcquisitionMethod: (AMName) => {
     cy.do(
-      MultiColumnListCell({ content: `${AMName}-edited` }).perform((element) => {
+      MultiColumnListCell({ content: `${AMName}` }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.do(
           getEditableListRow(rowNumber)
@@ -79,9 +80,17 @@ export default {
         );
       }),
     );
+    const confirmationModal = Modal('Delete acquisition method');
+    cy.expect(
+      confirmationModal.has({ message: `The acquisition method ${AMName} will be deleted.` }),
+    );
     cy.do(Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click());
     InteractorsTools.checkCalloutMessage(
-      `The acquisition method ${AMName}-edited was successfully deleted`,
+      `The acquisition method ${AMName} was successfully deleted`,
     );
+  },
+
+  checkDeletedAcquisitionMethod: (AMName) => {
+    cy.expect(MultiColumnListCell(AMName).absent());
   },
 };

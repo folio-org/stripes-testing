@@ -9,7 +9,6 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -55,9 +54,9 @@ describe('Data Import', () => {
       paymentStatus: 'Pending',
       selector: '981$e',
       rush: '981$h',
-      receivingWorkflow: 'Synchronized',
+      receivingWorkflow: 'Independent',
       accountNumber: '981$g',
-      instructionsToVendor: '981$f',
+      instructionsToVendor: '506$a',
       electronicUnitPrice: '980$b',
       quantityElectronic: '980$g',
       currency: 'USD',
@@ -121,8 +120,8 @@ describe('Data Import', () => {
 
         // create action profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create job profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
@@ -143,7 +142,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          orderNumber = initialNumber.replace('-1', '');
+          orderNumber = initialNumber.replace(/-\d+$/, '');
         });
         OrderLineDetails.checkOrderLineDetails({
           purchaseOrderLineInformation: [{ key: 'Receipt status', value: 'Receipt Not Required' }],

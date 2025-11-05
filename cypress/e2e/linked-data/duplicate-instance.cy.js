@@ -32,7 +32,7 @@ describe('Citation: duplicate resource', () => {
     creator: testData.uniqueCreator,
     language: 'spa',
     classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
     isbnIdentifier: testData.uniqueIsbn,
     lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',
@@ -93,6 +93,8 @@ describe('Citation: duplicate resource', () => {
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // duplicate instance
       EditResource.duplicateResource();
+      // check duplicated instance has 'Monographs' profile same as original instance
+      EditResource.checkHeadingProfile('Monographs');
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
@@ -109,11 +111,13 @@ describe('Citation: duplicate resource', () => {
       // Add holdings
       cy.wait(3000);
       const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
+      cy.wait(2000);
       HoldingsRecordEdit.fillHoldingFields({
         permanentLocation: LOCATION_NAMES.ANNEX,
         callNumber: testData.callNumber,
       });
       HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+      cy.reload(true);
       InventoryInstance.checkHoldingsTableContent({
         name: LOCATION_NAMES.ANNEX_UI,
       });

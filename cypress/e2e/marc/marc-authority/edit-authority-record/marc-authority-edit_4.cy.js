@@ -101,6 +101,7 @@ describe('MARC', () => {
           newFieldsArr.forEach((field) => {
             MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
           });
+          cy.wait(1000);
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
 
           cy.getAdminToken();
@@ -116,7 +117,7 @@ describe('MARC', () => {
               marcFieldProtectionRules.push(response.id);
             });
           });
-
+          MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
           MarcAuthority.checkInfoButton('655', 11);
           MarcAuthority.checkInfoButton('655', 14);

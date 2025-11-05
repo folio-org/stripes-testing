@@ -1,11 +1,14 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
 } from '../../../../../../../interactors';
+
+const rootPane = Pane('Instance status types');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -49,13 +52,19 @@ export default {
     failOnStatusCode: false,
   }),
 
+  waitLoading() {
+    ['Name', 'Code', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
   verifyListOfStatusTypesIsIdenticalToListInInstance(statusesFromInstance) {
     getListOfStatusTypes().then((statusTypes) => {
       cy.expect(statusTypes.join(' ')).to.eq(...statusesFromInstance);
     });
   },
   verifyConsortiumInstanceStatusTypesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -76,7 +85,7 @@ export default {
   },
 
   verifyLocalInstanceStatusTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -110,9 +119,12 @@ export default {
       Button('Delete').click(),
     ]);
   },
+
   choose() {
-    cy.do([NavListItem('Instance status types').click(), Pane('Instance status types').exists()]);
+    cy.do(NavListItem('Instance status types').click());
+    this.waitLoading();
   },
+
   createViaApi: (body) => {
     return cy
       .okapiRequest({

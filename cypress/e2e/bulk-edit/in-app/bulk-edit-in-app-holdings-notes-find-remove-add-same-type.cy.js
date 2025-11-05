@@ -5,14 +5,17 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import { HOLDING_NOTES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  HOLDING_NOTES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../support/constants';
 
 let user;
 const notes = {
@@ -22,7 +25,7 @@ const notes = {
 };
 const item = {
   barcode: getRandomPostfix(),
-  instanceName: `instance-${getRandomPostfix()}`,
+  instanceName: `AT_C422070_FolioInstance${getRandomPostfix()}`,
 };
 const holdingHRIDsFileName = `holdingHRIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingHRIDsFileName);
@@ -92,15 +95,27 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
 
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `,${notes.action},,,${notes.elbook},`,
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+          item.holdingHRID,
+          [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE,
+              value: notes.action,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE,
+              value: notes.elbook,
+            },
+          ],
+        );
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
           'Electronic bookplate note',
           'Note',
         );
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.noteRemove('Action note', notes.action);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Note', notes.note, 1);
@@ -111,19 +126,19 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(previewFileName, [`,${notes.elbook},${notes.note},`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', 'null');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', notes.note);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [`,${notes.elbook},${notes.note},`]);
 
-        TopMenuNavigation.navigateToApp('Inventory');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(item.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.checkHoldingsNote(notes.elbook, 0);
-        HoldingsRecordView.checkHoldingsNote(notes.note, 1);
-        ItemRecordView.verifyTextAbsent('Action note');
+        HoldingsRecordView.checkHoldingsNote('-', 0);
+        HoldingsRecordView.checkHoldingsNote(notes.elbook, 1);
+        HoldingsRecordView.checkHoldingsNote(notes.note, 2);
       },
     );
   });

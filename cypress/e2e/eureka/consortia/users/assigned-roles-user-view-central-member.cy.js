@@ -10,6 +10,8 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -25,14 +27,14 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.rolesUsers,
+        CapabilitySets.uiUsersRolesView,
       ];
 
       const capabsToAssign = [
-        { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-        { type: 'Data', resource: 'Consortia User-Tenants Collection', action: 'View' },
+        Capabilities.settingsEnabled,
+        Capabilities.consortiaUserTenantsCollection,
       ];
 
       before('Create users, roles', () => {
@@ -95,10 +97,14 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.testUser.userId);
-        cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.tempUser.username, testData.tempUser.password, {
+            path: TopMenu.usersPath,
+            waiter: Users.waitLoading,
+          });
+          cy.reload();
+          Users.waitLoading();
+        }, 20_000);
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
 
@@ -122,7 +128,6 @@ describe('Eureka', () => {
         { tags: ['criticalPathECS', 'eureka', 'C514892'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           UsersCard.verifyUserRolesCounter('0');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);

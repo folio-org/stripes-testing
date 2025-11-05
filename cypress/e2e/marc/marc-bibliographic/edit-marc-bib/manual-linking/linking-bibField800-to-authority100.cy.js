@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'personalNameTitle',
           tag800: '800',
           authorityMarkedValue: 'C375084 Robinson, Peter,',
           seriesStatementValue: 'C375084 Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
@@ -46,7 +47,7 @@ describe('MARC', () => {
           testData.tag800,
           '1',
           '\\',
-          '$a C375084 Robinson, P, $d 1950- $t Inspector Banks series ; $v 24. $y 2023 $8 800',
+          '$a C375084 Robinson, P, $d 1950- $v 24. $y 2023 $8 800',
         ];
         const bib800UnlinkedFieldValues = [
           35,
@@ -117,6 +118,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib800InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag800);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
@@ -125,7 +127,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib800LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(
               0,
@@ -159,7 +160,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyIconsAfterUnlinking(bib800UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

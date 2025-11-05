@@ -3,6 +3,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -50,30 +52,12 @@ describe('Eureka', () => {
       };
 
       const capabSetsForTestUser = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'UI-Authorization-Roles Settings Admin',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Capabilities',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'Role-Capability-Sets',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
-      const capabsForTestUser = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-      ];
+      const capabsForTestUser = [Capabilities.settingsEnabled];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
@@ -105,10 +89,14 @@ describe('Eureka', () => {
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+          });
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
+        }, 20_000);
       });
 
       afterEach(() => {
@@ -183,7 +171,6 @@ describe('Eureka', () => {
               });
 
               cy.reload();
-              cy.wait('@/authn/refresh', { timeout: 20000 });
               AuthorizationRoles.verifyRoleViewPane(testData.roleName);
               AuthorizationRoles.openForEdit();
               AuthorizationRoles.selectCapabilityColumn(

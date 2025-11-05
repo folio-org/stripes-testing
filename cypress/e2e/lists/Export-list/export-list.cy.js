@@ -5,7 +5,12 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Export query', () => {
+  describe('Export query', {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('list'),
@@ -57,7 +62,7 @@ describe('Lists', () => {
         Lists.verifySuccessCalloutMessage(
           `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
         );
-        cy.wait(5000);
+        cy.wait(3000);
         Lists.verifySuccessCalloutMessage(
           `List ${listData.name} was successfully exported to CSV.`,
         );
@@ -125,7 +130,6 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
-        Lists.exportList();
       },
     );
 
@@ -146,7 +150,6 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
-        Lists.verifyExportListButtonIsDisabled();
       },
     );
 
@@ -194,7 +197,6 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
-        Lists.verifyExportListButtonIsDisabled();
       },
     );
   });

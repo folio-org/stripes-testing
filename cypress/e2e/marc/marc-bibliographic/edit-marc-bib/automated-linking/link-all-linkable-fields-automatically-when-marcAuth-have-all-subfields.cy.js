@@ -328,10 +328,11 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
         });
@@ -363,9 +364,8 @@ describe('MARC', () => {
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
+            cy.wait(4000);
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });

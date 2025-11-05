@@ -1,4 +1,5 @@
 import { Button, Modal, Select, matching } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import OrderStates from '../orderStates';
 
@@ -11,7 +12,8 @@ const content =
   'You have changed the title information of this purchase order line from (?:\\S+) to (?:\\S+). All related item records will be moved to the new instance. How would you like to address the related Holdings?';
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(changeInstanceModal.exists());
   },
   verifyModalView() {

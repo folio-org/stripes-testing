@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
@@ -9,6 +10,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe(
   'Invoices',
@@ -20,9 +22,9 @@ describe(
   () => {
     let invoice;
     let vendorPrimaryAddress;
-    let invoiceLine;
-    let order;
-    let orderLine;
+    const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
+    const order = { ...NewOrder.defaultOneTimeOrder };
+    const orderLine = { ...basicOrderLine.defaultOrderLine };
     let organization;
     const euroCurrency = 'Euro (EUR)';
     const euroSign = '€';
@@ -30,9 +32,9 @@ describe(
     beforeEach(() => {
       invoice = { ...NewInvoice.defaultUiInvoice };
       vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-      invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
-      order = { ...NewOrder.defaultOneTimeOrder };
-      orderLine = { ...basicOrderLine.defaultOrderLine };
+      invoiceLine.description = `autotest description ${getRandomPostfix()}`;
+      order.id = uuid();
+      orderLine.id = uuid();
       organization = {
         ...NewOrganization.defaultUiOrganizations,
         addresses: [
@@ -69,10 +71,9 @@ describe(
       cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
         orderLine.locations[0].locationId = location.id;
       });
-      cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+      cy.getBookMaterialType().then((materialType) => {
         orderLine.physical.materialType = materialType.id;
       });
-      cy.loginAsAdmin();
       // set up invoice Line object
       invoiceLine.description = orderLine.titleOrPackage;
       invoiceLine.quantity = orderLine.cost.quantityPhysical;
@@ -89,7 +90,7 @@ describe(
       { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-          cy.visit(TopMenu.invoicesPath);
+          cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
           Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
           Invoices.checkInvoiceCurrency(orderLine.cost.currency);
           Invoices.createInvoiceLineFromPol(poNumber);

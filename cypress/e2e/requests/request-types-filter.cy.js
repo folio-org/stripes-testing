@@ -25,7 +25,7 @@ describe('Requests', () => {
     id: uuid(),
   };
 
-  beforeEach(() => {
+  before(() => {
     cy.getAdminToken();
     cy.createLoanType({
       name: `type_${getRandomPostfix()}`,
@@ -55,7 +55,7 @@ describe('Requests', () => {
     });
   });
 
-  afterEach(() => {
+  after(() => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);

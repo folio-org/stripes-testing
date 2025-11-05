@@ -53,7 +53,7 @@ describe('Request queue. TLR', () => {
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           instanceData.loanTypeId = res[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        cy.getDefaultMaterialType().then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;
         });
       })
@@ -130,9 +130,11 @@ describe('Request queue. TLR', () => {
         });
       })
       .then(() => {
-        cy.login(users.mainUser.username, users.mainUser.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(users.mainUser.username, users.mainUser.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
         });
       });
   });

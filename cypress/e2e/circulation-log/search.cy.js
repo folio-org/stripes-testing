@@ -22,6 +22,7 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 let sourceId;
 let servicePointId;
+let servicePointName;
 let firstName;
 
 describe('Circulation log', () => {
@@ -36,7 +37,7 @@ describe('Circulation log', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getLoanTypes({ limit: 1 });
-          cy.getMaterialTypes({ limit: 1 });
+          cy.getDefaultMaterialType({ limit: 1 });
           cy.getLocations({ limit: 1 });
           cy.getHoldingTypes({ limit: 1 });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
@@ -45,6 +46,7 @@ describe('Circulation log', () => {
           cy.getInstanceTypes({ limit: 1 });
           ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
             servicePointId = res[0].id;
+            servicePointName = res[0].name;
           });
           cy.getUsers({
             limit: 1,
@@ -127,7 +129,7 @@ describe('Circulation log', () => {
     'C17010 Filter circulation log by service points (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17010'] },
     () => {
-      SearchPane.searchByServicePoint('Circ Desk 2');
+      SearchPane.searchByServicePoint(servicePointName);
       SearchPane.verifyResultCells();
       SearchPane.resetResults();
     },

@@ -97,45 +97,39 @@ export default {
   },
 
   getDayAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 2,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get2DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 3,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 3);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get3DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 4,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 4);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get4DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 5,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 5);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get5DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 6,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 6);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get7DaysAfterTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 8,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + 8);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
@@ -162,11 +156,9 @@ export default {
   },
 
   getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + days);
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate(),
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() + days + 1);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   getDayTomorrowDateForFiscalYear: () => {
@@ -178,10 +170,13 @@ export default {
   },
 
   getDayTomorrowDateForFiscalYearOnUIEdit: () => {
-    const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate() + 1,
-    )}/${currentDate.getFullYear()}`;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return (
+      `${padWithZero(tomorrow.getMonth() + 1)}/` +
+      `${padWithZero(tomorrow.getDate())}/` +
+      `${tomorrow.getFullYear()}`
+    );
   },
 
   getPreviousDayDateForFiscalYear: () => {
@@ -198,7 +193,7 @@ export default {
     let month = currentDate.getMonth() + 1;
     let year = currentDate.getFullYear();
     if (day <= 0) {
-      const lastMonth = new Date(year, month - 2, 1);
+      const lastMonth = new Date(year, month - 1, 0);
       year = lastMonth.getFullYear();
       month = lastMonth.getMonth() + 1;
       day = lastMonth.getDate() + day;
@@ -207,10 +202,9 @@ export default {
   },
 
   getTwoPreviousDaysDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 2,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() - 2);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   getTwoPreviousDaysDateForFiscalYearOnUIEdit: () => {
@@ -219,19 +213,25 @@ export default {
     let month = currentDate.getMonth() + 1;
     let year = currentDate.getFullYear();
     if (day <= 0) {
-      const lastMonth = new Date(year, month - 2, 1);
+      const lastMonth = new Date(year, month - 1, 0);
       year = lastMonth.getFullYear();
       month = lastMonth.getMonth() + 1;
       day = lastMonth.getDate() + day;
+
+      if (day <= 0) {
+        const prevMonth = new Date(year, month - 2, 0);
+        year = prevMonth.getFullYear();
+        month = prevMonth.getMonth() + 1;
+        day = prevMonth.getDate() + day;
+      }
     }
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
   getThreePreviousDaysDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 3,
-    )}`;
+    const d = new Date();
+    d.setDate(d.getDate() - 3);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
   getThreePreviousDaysDateForFiscalYearOnUIEdit: () => {
@@ -241,10 +241,10 @@ export default {
     let year = currentDate.getFullYear();
 
     if (day <= 3) {
-      const lastMonth = new Date(year, month - 2, 1);
+      const lastMonth = new Date(year, month - 1, 0);
       year = lastMonth.getFullYear();
       month = lastMonth.getMonth() + 1;
-      day = 30;
+      day = lastMonth.getDate() - (3 - day);
     } else {
       day -= 3;
     }
@@ -352,10 +352,10 @@ export default {
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   },
 
-  addDays(days) {
-    const date = new Date();
-    date.setDate(date.getDate() + days);
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  addDays(days, date = new Date()) {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + days);
+    return new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
   },
 
   getFutureWeekDateObj() {
@@ -567,5 +567,22 @@ export default {
     const minutes = String(now.getUTCMinutes()).padStart(2, '0');
 
     return `${year}${month}${day}${hours}${minutes}`;
+  },
+
+  getCurrentDateForOaiPmh(offsetMinutes = 0) {
+    // Format date as YYYY-MM-DDTHH:mm:ssZ
+    const now = new Date(Date.now() + offsetMinutes * 60 * 1000);
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+  },
+
+  getFormattedDateTimeWithSeconds() {
+    return moment.utc().format('M/D/YYYY, h:mm:ss A');
   },
 };

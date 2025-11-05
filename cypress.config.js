@@ -25,11 +25,14 @@ module.exports = defineConfig({
     openMode: 0,
   },
   numTestsKeptInMemory: 1,
+  watchForFileChanges: true,
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
   defaultCommandTimeout: 51000,
   pageLoadTimeout: 60000,
+  requestTimeout: 60000,
+  responseTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
@@ -51,6 +54,7 @@ module.exports = defineConfig({
     eureka: true,
     runAsAdmin: false,
     systemRoleName: 'adminRole',
+    newSettings: false,
   },
   reporterOptions: reportportalOptions,
   e2e: {

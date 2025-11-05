@@ -12,7 +12,7 @@ describe('Requests', () => {
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
   const instanceTitlePrefix = 'test_sort_';
 
-  beforeEach(() => {
+  before(() => {
     cy.getAdminToken().then(() => {
       Object.values(requestTypes).forEach((requestType) => {
         const itemStatus =
@@ -34,7 +34,7 @@ describe('Requests', () => {
     cy.loginAsAdmin();
   });
 
-  afterEach(() => {
+  after(() => {
     instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);

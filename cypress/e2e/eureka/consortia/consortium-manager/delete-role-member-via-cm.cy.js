@@ -4,17 +4,15 @@ import SelectMembers from '../../../../support/fragments/consortium-manager/moda
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import UsersCard from '../../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../../support/fragments/users/usersCard';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -23,40 +21,14 @@ describe('Eureka', () => {
       roleName: `AT_C543745_UserRole_${randomPostfix}`,
     };
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.DELETE,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Consortia-Settings Consortium-Manager',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiAuthorizationRolesUsersSettingsView,
+      CapabilitySets.uiAuthorizationRolesSettingsDelete,
+      CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
     ];
-    const capabsToAssign = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'Settings Enabled',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
+    const capabsToAssign = [Capabilities.settingsEnabled];
     const capabSetsToAssignCollege = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.DELETE,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Users Roles',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
+      CapabilitySets.uiAuthorizationRolesSettingsDelete,
+      CapabilitySets.uiUsersRolesView,
     ];
     let tempUser;
     let userCollege;

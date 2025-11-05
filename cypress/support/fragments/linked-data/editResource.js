@@ -45,6 +45,15 @@ export default {
       .type(value);
   },
 
+  setNoteValue(value, field) {
+    cy.wait(1000);
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div/input`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+  },
+
   clearField(field) {
     cy.wait(1000);
     cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
@@ -157,5 +166,11 @@ export default {
     cy.xpath(
       `//div[text()="${section}"]/../..//input[@class="input edit-section-field-input" and @value="${textValue}"]`,
     ).should('be.visible');
+  },
+
+  checkHeadingProfile(profileName) {
+    cy.xpath(`//strong[@class='heading' and contains(text(), '${profileName}')]`)
+      .scrollIntoView()
+      .should('be.visible');
   },
 };

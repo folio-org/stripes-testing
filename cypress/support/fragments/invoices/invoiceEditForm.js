@@ -12,10 +12,11 @@ import {
   FieldSet,
   including,
 } from '../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../constants';
+import { getLongDelay } from '../../utils/cypressTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceStates from './invoiceStates';
-import { getLongDelay } from '../../utils/cypressTools';
 
 const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
 const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
@@ -57,7 +58,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(invoiceEditFormRoot.exists());
   },
   checkButtonsConditions(fields = []) {
@@ -66,7 +68,10 @@ export default {
     });
   },
   checkFiscalYearIsAbsent() {
-    cy.do(infoFields.fiscalYear.absent());
+    cy.get('#selected-invoice-fiscal-year-item').invoke('text').should('eq', '');
+  },
+  checkIfFiscalYearIsNotExists() {
+    cy.get('#selected-invoice-fiscal-year-item').should('not.exist');
   },
   checkCurrency(currency) {
     cy.expect(Button({ id: 'currency' }).has({ singleValue: currency }));

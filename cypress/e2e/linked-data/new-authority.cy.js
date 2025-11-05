@@ -1,6 +1,9 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../support/utils/stringTools';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import {
   APPLICATION_NAMES,
@@ -19,8 +22,10 @@ import FileManager from '../../support/utils/fileManager';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
 
 describe('Citation: MARC Authority integration', () => {
+  const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
   const testData = {
     // lde related test data
     marcFilePath: 'marcBibFileForC451572.mrc',
@@ -33,9 +38,11 @@ describe('Citation: MARC Authority integration', () => {
     callNumber: '331.2',
     // new authority related test data
     sourceName: 'LC Name Authority file (LCNAF)',
+    authorityHeading: `C633470_MarcAuthority_${getRandomPostfix()}`,
     searchOption: 'Keyword',
     marcValue: `Create a new MARC authority record with FOLIO authority file test ${getRandomPostfix()}`,
     tag001: '001',
+    tag008: '008',
     tag010: '010',
     tag100: '100',
     tag010Value: 'n00776432',
@@ -48,7 +55,7 @@ describe('Citation: MARC Authority integration', () => {
     creator: testData.uniqueCreator,
     language: 'spa',
     classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
     isbnIdentifier: testData.uniqueIsbn,
     lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',
@@ -57,11 +64,15 @@ describe('Citation: MARC Authority integration', () => {
   };
 
   const newFields = [
-    { previousFieldTag: '008', tag: '010', content: '$a n4332123 $z n 1234432333' },
     {
-      previousFieldTag: '010',
-      tag: '100',
-      content: `$a ${testData.marcValue}`,
+      previousFieldTag: testData.tag008,
+      tag: testData.tag010,
+      content: `$a n651478${randomDigits}`,
+    },
+    {
+      previousFieldTag: testData.tag010,
+      tag: testData.tag100,
+      content: `$a ${testData.authorityHeading}`,
     },
   ];
 
@@ -100,6 +111,8 @@ describe('Citation: MARC Authority integration', () => {
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
+    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
+    cy.setPrefferedProfileForUser();
   });
 
   beforeEach(() => {
@@ -116,6 +129,7 @@ describe('Citation: MARC Authority integration', () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();
       QuickMarcEditor.checkPaneheaderContains(testData.headerText);
+      MarcAuthority.setValid008DropdownValues();
       MarcAuthority.checkSourceFileSelectShown();
       MarcAuthority.selectSourceFile(testData.sourceName);
       QuickMarcEditor.checkContentByTag(testData.tag001, '');
@@ -126,17 +140,16 @@ describe('Citation: MARC Authority integration', () => {
           newField.content,
         );
       });
-      QuickMarcEditor.checkContentByTag(testData.tag001, testData.tag001Value);
       QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
       QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.saveAndCloseWithValidationWarnings();
       cy.wait(1500);
-      QuickMarcEditor.pressSaveAndClose();
       MarcAuthority.verifyAfterSaveAndClose();
       QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
       MarcAuthority.getId().then((id) => {
         testData.authorityId = id;
       });
+      cy.wait(2000);
       // search for inventory item (created in precondition via data import) and edit it in LDE
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
@@ -151,9 +164,11 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.switchToSearchTabMarcAuthModal();
       // search by personal name
       EditResource.selectSearchParameterMarcAuthModal(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME);
-      EditResource.searchMarcAuthority(testData.marcValue);
+      EditResource.searchMarcAuthority(testData.authorityHeading);
       EditResource.selectAssignMarcAuthorityButton(1);
       EditResource.saveAndClose();
+      // close uncontrolled authority modal
+      UncontrolledAuthModal.closeIfDisplayed();
       // LDE filters are displayed indicating that edit form was closed
       SearchAndFilter.waitLoading();
       // search created work by title
@@ -164,7 +179,7 @@ describe('Citation: MARC Authority integration', () => {
       LinkedDataEditor.editWork();
       EditResource.waitLoading();
       // check that marc value is displayed on the 'creator of work' section
-      EditResource.checkLabelTextValue('Creator of Work', testData.marcValue);
+      EditResource.checkLabelTextValue('Creator of Work', testData.authorityHeading);
     },
   );
 });

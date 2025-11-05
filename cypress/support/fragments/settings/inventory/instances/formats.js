@@ -1,11 +1,14 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
 } from '../../../../../../interactors';
+
+const rootPane = Pane('Formats');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -16,7 +19,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'POST',
-        path: 'formats',
+        path: 'instance-formats',
         body,
         isDefaultSearchParamsRequired: false,
       })
@@ -26,8 +29,9 @@ export default {
   },
   deleteViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
-    path: `formats/${id}`,
+    path: `instance-formats/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
   getViaApi: (searchParams = { limit: 1 }) => {
     return cy
@@ -40,8 +44,13 @@ export default {
         return body.instanceFormats;
       });
   },
+  waitLoading() {
+    ['Name', 'Code', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
   verifyConsortiumFormatsInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -62,7 +71,7 @@ export default {
   },
 
   verifyLocalFormatsInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -97,6 +106,7 @@ export default {
     ]);
   },
   choose() {
-    cy.do([NavListItem('Formats').click(), Pane('Formats').exists()]);
+    cy.do(NavListItem('Formats').click());
+    this.waitLoading();
   },
 };

@@ -11,6 +11,8 @@ import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { getLongDelay } from '../../support/utils/cypressTools';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 
@@ -54,16 +56,37 @@ describe('Data Export', () => {
       SelectJobProfile.verifyExistingJobProfiles();
       SelectJobProfile.verifySearchBox();
       SelectJobProfile.verifySearchButton(true);
-      ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'instances', 'Instances', '.cql');
+      ExportFileHelper.exportWithDefaultJobProfile(
+        emptyFile,
+        'Default instances',
+        'Instances',
+        '.cql',
+      );
 
-      DataExportLogs.waitLoading();
-      DataExportResults.verifyLastLog(emptyFile, 'Fail');
-      SearchPane.findResultRowIndexByContent(user.username).then((rowIndex) => {
-        DataExportResults.verifyFileNameIsDisabled(Number(rowIndex));
-        DataExportResults.verifyErrorMessage(Number(rowIndex), emptyFile);
+      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+      cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+        const { jobExecutions } = response.body;
+        const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+        const jobId = jobData.hrId;
+        const resultFileName = `${emptyFile.replace('.cql', '')}-${jobData.hrId}.mrc`;
+
+        DataExportResults.verifyFailedExportResultCells(
+          resultFileName,
+          0,
+          jobId,
+          user.username,
+          'Default instances',
+          true,
+        );
+        cy.getUserToken(user.username, user.password);
+
+        SearchPane.findResultRowIndexByContent(user.username).then((rowIndex) => {
+          DataExportResults.verifyFileNameIsDisabled(Number(rowIndex));
+          DataExportResults.verifyErrorMessage(Number(rowIndex), emptyFile);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          DataExportLogs.waitLoading();
+        });
       });
-      TopMenuNavigation.navigateToApp('Data export');
-      DataExportLogs.waitLoading();
     },
   );
 });

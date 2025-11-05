@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
@@ -47,7 +49,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyBulkEditForm();
       },
     );
@@ -61,7 +63,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const newEmailDomain = 'google.com';
         BulkEditActions.replaceEmail('folio.org', newEmailDomain);
         BulkEditActions.confirmChanges();
@@ -84,7 +86,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         const newEmailDomain = 'google.com';
         BulkEditActions.replaceEmail('folio123.org', newEmailDomain);
         BulkEditActions.confirmChanges();
@@ -92,7 +94,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabel(0, 1);
         BulkEditSearchPane.verifyErrorByIdentifier(
           user.barcode,
-          'No change in value required',
+          ERROR_MESSAGES.NO_CHANGE_REQUIRED,
           'Warning',
         );
       },

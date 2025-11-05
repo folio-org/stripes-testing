@@ -98,7 +98,7 @@ describe('Finance: Transactions', () => {
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
+              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
             );
             Funds.closeBudgetDetails();
             cy.logout();
@@ -107,7 +107,7 @@ describe('Finance: Transactions', () => {
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
 
-              cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+              cy.getDefaultMaterialType().then((mtype) => {
                 cy.getAcquisitionMethodsApi({
                   query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
                 }).then((params) => {
@@ -238,7 +238,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C449364 Order can NOT be opened when encumbered amount exceeding remaining allowed encumbrances (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);

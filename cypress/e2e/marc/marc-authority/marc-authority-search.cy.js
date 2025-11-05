@@ -69,6 +69,7 @@ describe('MARC', () => {
 
     before('Creating user, importing record', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C409449*');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -101,7 +102,7 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       Users.deleteViaApi(testData.userPropertiesC409449.userId);
       createdRecordIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
+        MarcAuthority.deleteViaAPI(id, true);
       });
     });
 
@@ -122,10 +123,18 @@ describe('MARC', () => {
       'C409449 Search for "MARC authority" records using "Name-title" search option (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C409449'] },
       () => {
-        cy.login(testData.userPropertiesC409449.username, testData.userPropertiesC409449.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(
+            testData.userPropertiesC409449.username,
+            testData.userPropertiesC409449.password,
+            {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            },
+          );
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
         MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[0]);
         searchResultsDataC409449.forEach((result) => {
           MarcAuthorities.verifyResultsRowContent(result[1], result[0], result[2]);

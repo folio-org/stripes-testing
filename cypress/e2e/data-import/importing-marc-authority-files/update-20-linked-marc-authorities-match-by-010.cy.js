@@ -11,7 +11,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -42,8 +42,7 @@ describe('Data Import', () => {
       searchOption: 'Keyword',
       csvFile: `C624340 exportedCSVFile${getRandomPostfix()}.csv`,
       exportedMarcFile: `C624340 exportedMarcAuthFile${getRandomPostfix()}.mrc`,
-      marcFileForModify: 'marcAuthFileForC624340_preupdated.mrc',
-      modifiedMarcFile: `C624340 editedMarcFile${getRandomPostfix()}.mrc`,
+      modifiedMarcFile: 'marcAuthFileForC624340_preupdated.mrc',
       uploadModifiedMarcFile: `C624340 testMarcAuthFile${getRandomPostfix()}.mrc`,
       updated600Field: [
         46,
@@ -246,36 +245,6 @@ describe('Data Import', () => {
       },
     ];
 
-    function replace999SubfieldsInPreupdatedFile(
-      exportedFileName,
-      preUpdatedFileName,
-      finalFileName,
-    ) {
-      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-        const records = actualContent.split('');
-        records.forEach((record) => {
-          linkingTagAndValues.forEach((linkingTagAndValue, index) => {
-            if (record.includes(linkingTagAndValue.value)) {
-              const lines = record.split('');
-              linkingTagAndValues[index].field999data = lines[lines.length - 2];
-            }
-          });
-        });
-        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-          const content = updatedContent.split('\n');
-          let firstString = content[0].slice();
-          linkingTagAndValues.forEach((linkingTagAndValue) => {
-            firstString = firstString.replace(
-              `ffs00000000-0000-0000-0000-0000000000${linkingTagAndValue.uuidIndex}i00000000-0000-0000-0000-0000000000${linkingTagAndValue.uuidIndex}`,
-              linkingTagAndValue.field999data,
-            );
-          });
-          content[0] = firstString;
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
-      });
-    }
-
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
@@ -347,9 +316,7 @@ describe('Data Import', () => {
           );
           cy.wait(200);
         });
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
         cy.wait(4000);
 
@@ -390,7 +357,6 @@ describe('Data Import', () => {
         if (index) MarcAuthority.deleteViaAPI(id);
       });
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
     });
@@ -412,15 +378,13 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(
+          testData.csvFile,
+          'Default authority',
+          'Authorities',
+        );
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
-        // change exported file
-        replace999SubfieldsInPreupdatedFile(
-          testData.exportedMarcFile,
-          testData.marcFileForModify,
-          testData.modifiedMarcFile,
-        );
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFileAndRetry(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();

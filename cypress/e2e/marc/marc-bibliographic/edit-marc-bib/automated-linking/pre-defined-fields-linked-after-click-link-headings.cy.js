@@ -225,16 +225,16 @@ describe('MARC', () => {
 
         after('Deleting created user and data', () => {
           cy.getAdminToken();
-          Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
+          Users.deleteViaApi(userData.userId);
         });
 
         it(
           'C389486 Pre-defined fields are linked after clicking on the "Link headings" button in edit "MARC bib" when only default fields enabled for autolinking (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C389486'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C389486'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
@@ -267,7 +267,7 @@ describe('MARC', () => {
             cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             // need to wait until message appear
-            cy.wait(2000);
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 700, 710, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
             );
@@ -292,7 +292,6 @@ describe('MARC', () => {
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
             QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-            QuickMarcEditor.closeAllCallouts();
             rowIndexOfLinkedFields.forEach((linkedField) => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkedField);
             });

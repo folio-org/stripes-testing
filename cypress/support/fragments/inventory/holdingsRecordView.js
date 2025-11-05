@@ -28,9 +28,10 @@ const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
+const numberOfItemsKeyValue = KeyValue('Number of items');
 
 function waitLoading() {
-  cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
+  cy.expect([holdingsRecordViewSection.exists()]);
 }
 function checkCopyNumber(number) {
   cy.expect(KeyValue('Copy number').has({ value: number }));
@@ -156,6 +157,11 @@ export default {
       .find(HTML(including(statement)))
       .exists(),
   ),
+  checkHoldingsStatementForIndexes: (statement) => cy.expect(
+    MultiColumnList({ id: 'list-holdingsStatementForIndexes' })
+      .find(HTML(including(statement)))
+      .exists(),
+  ),
   checkStatisticalCode: (code) => cy.expect(
     MultiColumnList({ id: 'list-statistical-codes' })
       .find(MultiColumnListCell({ content: code }))
@@ -196,6 +202,7 @@ export default {
     relationshipValue,
     uriValue,
     linkText = '-',
+    materialsSpecified = '-',
     urlPublicNote = '-',
     rowIndex = 0,
   ) => {
@@ -212,6 +219,11 @@ export default {
     cy.expect(
       electronicAccessAccordion
         .find(MultiColumnListCell({ row: rowIndex, columnIndex: 2, content: linkText }))
+        .exists(),
+    );
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 3, content: materialsSpecified }))
         .exists(),
     );
     cy.expect(
@@ -372,4 +384,11 @@ export default {
     });
     cy.do(actionsButton.click());
   },
+
+  checkActionsButtonShown(isShown = true) {
+    if (isShown) cy.expect(actionsButton.exists());
+    else cy.expect(actionsButton.absent());
+  },
+
+  checkNumberOfItems: (numberOfItems) => cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),
 };

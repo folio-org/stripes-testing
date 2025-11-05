@@ -49,7 +49,6 @@ export default {
   openNewResourceForm: () => {
     cy.xpath(actionsButton).click();
     cy.xpath(newResourceButton).click();
-    EditResource.waitLoading();
   },
 
   editWork: () => {

@@ -14,9 +14,9 @@ describe('Inventory', () => {
       newInstanceTitle:
         'Kerouac, the word and the way : prose artist as spiritual quester / Ben Giamo.',
       expectedFields: [
-        { tag: '020', position: 5, content: '$a 0809323214 (alk. paper)' },
-        { tag: '035', position: 6, content: '$a 11809685' },
-        { tag: '040', position: 7, content: '$a DLC $c DLC $d DLC' },
+        { tag: '020', position: 5, content: '$a 0809323214 $q alk. paper' },
+        { tag: '035', position: 7, content: '$a 11809685' },
+        { tag: '040', position: 8, content: '$a DLC $c DLC $d DLC' },
       ],
     };
     let createdInstaceId;
@@ -52,8 +52,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490903 Generated "035" field displays in ascending fields order in overlaid via single record import "MARC bibliographic" record which doesn\'t have existing "035" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C490903'] },
+      'C490903 Generated "035" field displays in ascending fields order in overlaid via single record import "MARC bibliographic" record which doesn\'t have existing "035" field (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C490903'] },
       () => {
         InventoryInstances.searchByTitle(createdInstaceId);
         InventoryInstance.waitLoading();

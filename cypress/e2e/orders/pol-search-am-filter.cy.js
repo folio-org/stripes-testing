@@ -4,14 +4,11 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import SettingOrdersNavigationMenu from '../../support/fragments/settings/orders/settingOrdersNavigationMenu';
+import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -62,11 +59,7 @@ describe('Export Manager', () => {
             'Purchase',
           );
           InteractorsTools.checkCalloutMessage('Integration was saved');
-          TopMenuNavigation.openAppFromDropdown('Settings');
-          SettingsMenu.selectOrders();
-          SettingOrdersNavigationMenu.selectPurchaseOrderLinesLimit();
-          SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
-          SettingsOrders.setPurchaseOrderLinesLimit(3);
+          OrderLinesLimit.setPOLLimitViaApi(3);
           cy.visit(TopMenu.ordersPath);
           order.orderType = 'Ongoing';
           Orders.createOrder(order, true, false).then((orderId) => {
@@ -82,6 +75,7 @@ describe('Export Manager', () => {
             Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
               orderNumber = response[0].poNumber;
             });
+            cy.wait(4000);
           });
         });
 
@@ -104,11 +98,8 @@ describe('Export Manager', () => {
       });
 
       after(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-        });
-        SettingsOrders.setPurchaseOrderLinesLimit(1);
+        cy.getAdminToken();
+        OrderLinesLimit.setPOLLimitViaApi(1);
         Orders.deleteOrderViaApi(order.id);
         Organizations.deleteOrganizationViaApi(organization.id);
         Users.deleteViaApi(user.userId);
@@ -116,9 +107,10 @@ describe('Export Manager', () => {
 
       it(
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
         () => {
           Orders.selectOrderLines();
+          Orders.resetFiltersIfActive();
           Orders.selectFilterAcquisitionMethod('Purchase');
           Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
           Orders.resetFilters();

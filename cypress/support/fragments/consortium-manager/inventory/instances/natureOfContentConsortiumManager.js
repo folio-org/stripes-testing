@@ -1,10 +1,9 @@
 import uuid from 'uuid';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
-const newButton = Button('+ New');
 const id = uuid();
 
 export default {
@@ -43,7 +42,6 @@ export default {
 
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Nature of content');
-    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

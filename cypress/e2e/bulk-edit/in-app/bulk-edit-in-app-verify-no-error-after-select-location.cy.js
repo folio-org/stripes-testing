@@ -55,12 +55,13 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Permanent item location');
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectAction('Replace with');
         BulkEditActions.selectLocation(newLocation, 0);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         BulkEditActions.clickSelectedLocation(newLocation, 'Select location');
         BulkEditActions.verifyConfirmButtonDisabled(true);

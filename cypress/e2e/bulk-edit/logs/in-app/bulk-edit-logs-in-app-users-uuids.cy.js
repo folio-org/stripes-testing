@@ -21,7 +21,7 @@ const matchedRecordsFileNameInvalidAndValid = BulkEditFiles.getMatchedRecordsFil
 const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
   invalidAndValidUserUUIDsFileName,
 );
-const previewOfProposedChangesFileName = BulkEditFiles.getPreviewOfProposedChangesFileName(
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(
   invalidAndValidUserUUIDsFileName,
 );
 const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
@@ -88,7 +88,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.downloadMatchedResults();
           BulkEditActions.downloadErrors();
 
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditForm();
           BulkEditActions.fillPatronGroup('staff (Staff Member)');
 

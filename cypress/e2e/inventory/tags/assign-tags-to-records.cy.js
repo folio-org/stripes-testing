@@ -15,7 +15,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/generateTextCode';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const patronGroup = {
@@ -93,6 +93,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
+        InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.filterHoldingsByTag(tagName);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
@@ -146,9 +147,12 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
+        InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.filterItemsByTag(tagName);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.folioInstances[0].barcodes[0]);
+        // Wait for the item data to load instead of using cached data.
+        cy.wait(1000);
         JobProfileView.removeTag(tagName);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

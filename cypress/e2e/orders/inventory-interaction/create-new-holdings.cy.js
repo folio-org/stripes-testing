@@ -134,7 +134,7 @@ describe('Orders: Inventory interaction', () => {
       ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
       cy.wait(7000);
-      InventoryItems.closeItem();
+      InventoryItems.closeItemInHeader();
       InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       InventoryItems.edit();
@@ -142,7 +142,7 @@ describe('Orders: Inventory interaction', () => {
       ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
       cy.wait(7000);
-      InventoryItems.closeItem();
+      InventoryItems.closeItemInHeader();
       InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
@@ -150,7 +150,7 @@ describe('Orders: Inventory interaction', () => {
         barcodeForFirstItem,
         ITEM_STATUS_NAMES.ON_ORDER,
       );
-      InventoryItems.closeItem();
+      InventoryItems.closeItemInHeader();
       InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
@@ -158,7 +158,7 @@ describe('Orders: Inventory interaction', () => {
         barcodeForSecondItem,
         ITEM_STATUS_NAMES.ON_ORDER,
       );
-      InventoryItems.closeItem();
+      InventoryItems.closeItemInHeader();
     },
   );
 });

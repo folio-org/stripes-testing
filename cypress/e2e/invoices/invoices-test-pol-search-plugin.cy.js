@@ -52,7 +52,7 @@ describe('Invoices', () => {
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
       orderLine.locations[0].locationId = location.id;
     });
-    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+    cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.getProductIdTypes({ query: 'name=="ISBN"' }).then((productIdType) => {
@@ -61,10 +61,9 @@ describe('Invoices', () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
     });
-    cy.loginAsAdmin({
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    }, 20_000);
   });
 
   afterEach(() => {

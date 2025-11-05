@@ -223,6 +223,27 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   PHYSICAL_RESOURCE: 'Physical Resource',
 };
 
+export const ORDER_SYSTEM_CLOSING_REASONS = {
+  CANCELLED: 'Cancelled',
+  CEASED: 'Ceased',
+  COMPLETE: 'Complete',
+  TRANSFERRED_TO_ANOTHER_PUBLISHER: 'Transferred to another publisher',
+  MERGED_WITH_ANOTHER_TITLE: 'Merged with another title',
+  SPLIT_INTO_OTHER_TITLES: 'Split into other titles',
+  LACK_OF_FUNDS: 'Lack of funds',
+  LACK_OF_USE: 'Lack of use',
+  DUPLICATION: 'Duplication',
+  UNRESPONSIVE_VENDOR: 'Unresponsive vendor',
+  LICENSING_TERMS: 'Licensing terms (unacceptable)',
+  LOW_QUALITY: 'Low quality',
+  UNPREFERRED_FORMAT: 'Unpreferred format',
+  ERROR: 'Error',
+  TITLE_WONT_BE_PUBLISHED_THIS_YEAR: "Title won't be published this year",
+  TITLE_WONT_BE_PUBLISHED: "Title won't be published",
+  TITLE_OUT_OF_PRINT: 'Title is out of print',
+  TITLE_RECEIVED_AS_GIFT: 'Title received as a gift',
+};
+
 export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
   PURCHASE: 'Purchase',
@@ -261,6 +282,18 @@ export const ACQUISITION_METHOD_NAMES = {
   TECHNICAL: 'Technical',
 };
 
+export const INSTITUTION_NAMES = {
+  KOBENHAVNS_UNIVERSITET: 'Københavns Universitet',
+};
+
+export const CAMPUS_NAMES = {
+  CITY_CAMPUS: 'City Campus',
+};
+
+export const LIBRARY_NAMES = {
+  DATALOGISK_INSTITUT: 'Datalogisk Institut',
+};
+
 export const LOCATION_NAMES = {
   ANNEX: 'Annex (KU/CC/DI/A)',
   ANNEX_UI: 'Annex',
@@ -270,6 +303,9 @@ export const LOCATION_NAMES = {
   MAIN_LIBRARY_UI: 'Main Library',
   POPULAR_READING_COLLECTION: 'Popular Reading Collection (KU/CC/DI/P)',
   POPULAR_READING_COLLECTION_UI: 'Popular Reading Collection',
+  SECOND_FLOOR: 'Second Floor (KU/CC/DI/2)',
+  SECOND_FLOOR_UI: 'Second Floor',
+  DCB_UI: 'DCB',
 };
 
 export const LOCATION_IDS = {
@@ -296,6 +332,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   DEWAY_DECIMAL: 'Dewey Decimal classification',
   SUDOC: 'Superintendent of Documents classification',
   UDC: 'UDC',
+  MOYS: 'MOYS',
   LOCAL: 'Local',
 };
 
@@ -317,6 +354,11 @@ export const INSTANCE_SOURCE_NAMES = {
   MARC: 'MARC',
   FOLIO: 'FOLIO',
   LDE: 'LINKED_DATA',
+};
+
+export const HOLDINGS_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO',
 };
 
 export const PROFILE_TYPE_NAMES = {
@@ -355,6 +397,7 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+  PHYSICAL: 'Physical',
 };
 
 export const NOTE_TYPES = {
@@ -444,7 +487,7 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   LC_SUBJECT_HEADINGS: 'LC Subject Headings (LCSH)',
   LC_CHILDREN_SUBJECT_HEADINGS: "LC Children's Subject Headings",
   LC_GENRE_FORM_TERMS: 'LC Genre/Form Terms (LCGFT)',
-  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCFGT)',
+  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCDGT)',
   LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC:
     'LC Medium of Performance Thesaurus for Music (LCMPT)',
   FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY: 'Faceted Application of Subject Terminology (FAST)',
@@ -453,6 +496,21 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   RARE_BOOKS_AND_MANUSCRIPTS_SECTION: 'Rare Books and Manuscripts Section (RBMS)',
   ART_AND_ARCHITECTURE_THESAURUS: 'Art & architecture thesaurus (AAT)',
   GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
+};
+
+export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
+  AUTHORITY_SOURCE: 'Authority source',
+  REFERENCES: 'References',
+  THESAURUS: 'Thesaurus',
+  TYPE_OF_HEADING: 'Type of heading',
+  DATE_CREATED: 'Date created',
+  DATE_UPDATED: 'Date updated',
+};
+
+export const AUTHORITY_TYPES = {
+  AUTHORIZED: 'Authorized',
+  REFERENCE: 'Reference',
+  AUTH_REF: 'Auth/Ref',
 };
 
 export const ACTION_NAMES_IN_ACTION_PROFILE = {
@@ -770,6 +828,195 @@ export const INVENTORY_008_FIELD_S_L_DROPDOWN = {
   2: '2 - Integrated entry',
 };
 
+export const AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
+  GEOSUBD: 'Geo Subd',
+  ROMAN: 'Roman',
+  LANG: 'Lang',
+  KINDREC: 'Kind rec',
+  CATRULES: 'CatRules',
+  SHSYS: 'SH Sys',
+  SERIES: 'Series',
+  NUMBSERIES: 'Numb Series',
+  MAINUSE: 'Main use',
+  SUBJUSE: 'Subj use',
+  SERIESUSE: 'Series use',
+  SUBDTYPE: 'Subd type',
+  GOVTAG: 'Govt Ag',
+  REFEVAL: 'RefEval',
+  RECUPD: 'RecUpd',
+  PERSNAME: 'Pers Name',
+  LEVELEST: 'Level Est',
+  MODREC: 'Mod Rec',
+  SOURCE: 'Source',
+};
+
+export const AUTHORITY_008_FIELD_GEOSUBD_DROPDOWN = {
+  SL: '\\ - Not subdivided geographically',
+  D: 'd - Subdivided geographically-direct',
+  I: 'i - Subdivided geographically-indirect',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_ROMAN_DROPDOWN = {
+  A: 'a - International standard',
+  B: 'b - National standard',
+  C: 'c - National library association standard',
+  D: 'd - National library or bibliographic agency standard',
+  E: 'e - Local standard',
+  F: 'f - Standard of unknown origin',
+  G: 'g - Conventional romanization or conventional form of name in language of cataloging agency',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_LANG_DROPDOWN = {
+  SL: '\\ - No information provided',
+  B: 'b - English and French',
+  E: 'e - English only',
+  F: 'f - French only',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_KINDREC_DROPDOWN = {
+  A: 'a - Established heading',
+  B: 'b - Untraced reference',
+  C: 'c - Traced reference',
+  D: 'd - Subdivision',
+  E: 'e - Node label',
+  F: 'f - Established heading and subdivision',
+  G: 'g - Reference and subdivision',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_CATRULES_DROPDOWN = {
+  A: 'a - Earlier rules',
+  B: 'b - AACR 1',
+  C: 'c - AACR 2',
+  D: 'd - AACR 2 compatible heading',
+  Z: 'z - Other',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SHSYS_DROPDOWN = {
+  A: 'a - Library of Congress Subject Headings',
+  B: "b - Library of Congress Children's and Young Adults' Subject Headings",
+  C: 'c - Medical Subject Headings',
+  D: 'd - National Agricultural Library subject authority file',
+  K: 'k - Canadian Subject Headings',
+  N: 'n - Not applicable',
+  R: 'r - Art and Architecture Thesaurus',
+  S: 's - Sears List of Subject Heading',
+  V: 'v - Répertoire de vedettes-matière',
+  Z: 'z - Other',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SERIES_DROPDOWN = {
+  A: 'a - Monographic series',
+  B: 'b - Multipart item',
+  C: 'c - Series-like phrase',
+  N: 'n - Not applicable',
+  Z: 'z - Other',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_NUMBSERIES_DROPDOWN = {
+  A: 'a - Numbered',
+  B: 'b - Unnumbered',
+  C: 'c - Numbering varies',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_MAINUSE_DROPDOWN = {
+  A: 'a - Appropriate',
+  B: 'b - Not appropriate',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SUBJUSE_DROPDOWN = {
+  A: 'a - Appropriate',
+  B: 'b - Not appropriate',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SERIESUSE_DROPDOWN = {
+  A: 'a - Appropriate',
+  B: 'b - Not appropriate',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SUBDTYPE_DROPDOWN = {
+  A: 'a - Topical',
+  B: 'b - Form',
+  C: 'c - Chronological',
+  D: 'd - Geographic',
+  E: 'e - Language',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_GOVTAG_DROPDOWN = {
+  SL: '\\ - Not a government agency',
+  A: 'a - Autonomous or semi-autonomous component',
+  C: 'c - Multilocal',
+  F: 'f - Federal/national',
+  I: 'i - International intergovernmental',
+  L: 'l - Local',
+  M: 'm - Multistate',
+  O: 'o - Government agency-type undetermined',
+  S: 's - State, provincial, territorial, dependent, etc.',
+  U: 'u - Unknown if heading is government agency',
+  Z: 'z - Other',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_REFEVAL_DROPDOWN = {
+  A: 'a - Tracings are consistent with the heading',
+  B: 'b - Tracings are not necessarily consistent with the heading',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_RECUPD_DROPDOWN = {
+  A: 'a - Record can be used',
+  B: 'b - Record is being updated',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_PERSNAME_DROPDOWN = {
+  A: 'a - Differentiated personal name',
+  B: 'b - Undifferentiated personal name',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_LEVELEST_DROPDOWN = {
+  A: 'a - Fully established',
+  B: 'b - Memorandum',
+  C: 'c - Provisional',
+  D: 'd - Preliminary',
+  N: 'n - Not applicable',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_MODREC_DROPDOWN = {
+  SL: '\\ - Not modified',
+  S: 's - Shortened',
+  X: 'x - Missing characters',
+  NO: '| - No attempt to code',
+};
+
+export const AUTHORITY_008_FIELD_SOURCE_DROPDOWN = {
+  SL: '\\ - National bibliographic agency',
+  S: 'c - Cooperative cataloging program',
+  D: 'd - Other',
+  U: 'u - Unknown',
+  NO: '| - No attempt to code',
+};
+
 export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
@@ -807,6 +1054,11 @@ export const electronicAccessRelationshipId = {
 export const ELECTRONIC_ACCESS_RELATIONSHIP_NAME = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
+  NO_INFORMATION_PROVIDED: 'No information provided',
+  RELATED_RESOURCE: 'Related resource',
+  NO_DISPLAY_CONSTANT_GENERATED: 'No display constant generated',
+  COMPONENT_PART_OF_RESOURCE: 'Component part(s) of resource',
+  VERSION_OF_COMPONENT_PART_OF_RESOURCE: 'Version of component part(s) of resource',
 };
 
 export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
@@ -853,6 +1105,115 @@ export const MATERIAL_TYPE_IDS = {
   DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
 };
 
+export const EHOLDINGS_PACKAGE_HEADERS = [
+  'Provider Level Token',
+  'Provider Name',
+  'Provider Id',
+  'Package Level Token',
+  'Package Name',
+  'Package Id',
+  'Package Type',
+  'Package Content Type',
+  'Package Holdings Status',
+  'Package Custom Coverage',
+  'Package Show To Patrons',
+  'Package Automatically Select',
+  'Package Proxy',
+  'Package Access Status Type',
+  'Package Tags',
+  'Package Agreements',
+  'Package Note',
+];
+
+export const EHOLDINGS_TITLE_HEADERS = [
+  'Title Name',
+  'Alternate Titles',
+  'Title Id',
+  'Publication Type',
+  'Title Type',
+  'Title Holdings Status',
+  'Title Show To Patrons',
+  'Managed Coverage',
+  'Managed Embargo',
+  'Custom Coverage',
+  'Custom Embargo',
+  'Coverage Statement',
+  'Title Proxy',
+  'Url',
+  'Title Access Status Type',
+  'Title Tags',
+  'Contributors',
+  'Edition',
+  'Publisher',
+  'ISSN Print',
+  'ISSN Online',
+  'ISBN Print',
+  'ISBN Online',
+  'Subjects',
+  'Peer Reviewed',
+  'Description',
+  'Custom Value 1',
+  'Custom Value 2',
+  'Custom Value 3',
+  'Custom Value 4',
+  'Custom Value 5',
+  'Title Agreements',
+  'Title Note',
+];
+
+export const EHOLDINGS_EXPORT_FIELDS = {
+  PACKAGE: [
+    'Access Status Type',
+    'Agreements',
+    'Automatically Select titles',
+    'Custom Coverage',
+    'Holdings status',
+    'Notes',
+    'Package Content Type',
+    'Package Id',
+    'Package Level Token',
+    'Package Name',
+    'Package Type',
+    'Provider Id',
+    'Provider Level Token',
+    'Provider Name',
+    'Proxy',
+    'Show To Patrons',
+    'Tags',
+  ],
+  TITLE: [
+    'Access status type',
+    'Agreements',
+    'Alternate title(s)',
+    'Contributors',
+    'Coverage statement',
+    'Custom coverage dates',
+    'Custom Embargo',
+    'Custom label',
+    'Description',
+    'Edition',
+    'Holdings Status',
+    'ISBN_Online',
+    'ISBN_Print',
+    'ISSN_Online',
+    'ISSN_Print',
+    'Managed coverage dates',
+    'Managed Embargo',
+    'Notes',
+    'Peer reviewed',
+    'Proxy',
+    'Publication Type',
+    'Publisher',
+    'Show to patron',
+    'Subjects',
+    'Tags',
+    'Title ID',
+    'Title name',
+    'Title Type',
+    'URL',
+  ],
+};
+
 export const CLASSIFICATION_IDENTIFIER_TYPES = {
   ADDITIONAL_DEWEY: '74c08086-81a4-4466-93d8-d117ce8646db',
   CANADIAN_CLASSIFICATION: 'ad615f6e-e28c-4343-b4a0-457397c5be3e',
@@ -867,6 +1228,7 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
 };
 
 export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
+export const DEFAULT_LOCALE_OBJECT = { locale: 'en-US', timezone: 'UTC', currency: 'USD' };
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
@@ -916,6 +1278,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     SOURCE: 'Source',
     RESOURCE_TITLE: 'Resource title',
     PREVIOUSLY_HELD: 'Previously held',
+    SET_FOR_DELETION: 'Set for deletion',
     CATALOGED_DATE: 'Cataloged date',
     INSTANCE_STATUS_TERM: 'Instance status term',
     MODE_OF_ISSUANCE: 'Mode of issuance',
@@ -946,7 +1309,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CITATION_REFERENCES_NOTE: 'Citation / References note',
     COPY_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
     CREATION_PRODUCTION_CREDITS_NOTE: 'Creation / Production Credits note',
-    CUMULATIVE_INDEX_FINDING_AIDES_NOTES: 'Cumulative Index / Finding Aides notes',
+    CUMULATIVE_INDEX_FINDING_AIDS_NOTES: 'Cumulative Index / Finding Aids notes',
     DATA_QUALITY_NOTE: 'Data quality note',
     DATE_TIME_PLACE_EVENT_NOTE: 'Date / time and place of an event note',
     DISSERTATION_NOTE: 'Dissertation note',
@@ -1011,6 +1374,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ITEM_HRID: 'Item HRID',
+    STATISTICAL_CODES: 'Statistical codes',
   },
   USERS: {
     USERNAME: 'Username',
@@ -1053,9 +1417,46 @@ export const HOLDING_NOTE_TYPES = {
 };
 
 export const ITEM_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  BINDING: 'Binding',
   CHECK_IN_NOTE: 'Check in note',
   CHECK_OUT_NOTE: 'Check out note',
+  COPY_NOTE: 'Copy note',
+  NOTE: 'Note',
+};
+
+export const INSTANCE_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  AWARDS_NOTE: 'Awards note',
+  BIBLIOGRAPHY_NOTE: 'Bibliography note',
+  COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  DATA_QUALITY_NOTE: 'Data quality note',
+  REPRODUCTION_NOTE: 'Reproduction note',
+  LOCAL_NOTES: 'Local notes',
+  WITH_NOTE: 'With note',
+};
+
+export const BULK_EDIT_ACTIONS = {
+  ADD: 'Add',
+  ADD_NOTE: 'Add note',
+  ADDITIONAL_SUBFIELD: 'Additional subfield',
+  APPEND: 'Append',
+  CLEAR_FIELD: 'Clear field',
+  CHANGE_NOTE_TYPE: 'Change note type',
+  DUPLICATE_TO: 'Duplicate to',
+  FIND: 'Find',
+  FIND_FULL_FIELD_SEARCH: 'Find (full field search)',
+  REPLACE_WITH: 'Replace with',
+  REMOVE: 'Remove',
+  REMOVE_ALL: 'Remove all',
+  REMOVE_MARK_AS_STAFF_ONLY: 'Remove mark as staff only',
+  REMOVE_FIELD: 'Remove field',
+  REMOVE_SUBFIELD: 'Remove subfield',
+  SET_TRUE: 'Set true',
+  SET_FALSE: 'Set false',
+  MARK_AS_STAFF_ONLY: 'Mark as staff only',
 };
 
 export const AUTHORITY_FILE_SOURCES = {
@@ -1085,9 +1486,11 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   RELEVANCE: 'Relevance',
 };
 export const STAFF_SLIP_NAMES = {
+  DUE_DATE_RECEIPT: 'Due date receipt',
   HOLD: 'Hold',
   PICK_SLIP: 'Pick slip',
   REQUEST_DELIVERY: 'Request delivery',
+  SEARCH_SLIP_HOLD_REQUESTS: 'Search slip (Hold requests)',
   TRANSIT: 'Transit',
 };
 
@@ -1113,6 +1516,14 @@ export const INSTANCE_DATE_TYPES = {
 export const AUTHORIZATION_ROLES_COLUMNS = {
   NAME: 'Name',
   DESCRIPTION: 'Description',
+  UPDATED: 'Updated',
+  UPDATED_BY: 'Updated by',
+};
+
+export const AUTHORIZATION_ROLES_COLUMNS_CM = {
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  TYPE: 'Type',
   UPDATED: 'Updated',
   UPDATED_BY: 'Updated by',
 };
@@ -1160,4 +1571,186 @@ export const BULK_EDIT_FORMS = {
   PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
   ARE_YOU_SURE: 'Are you sure',
   PREVIEW_OF_RECORDS_CHANGED: 'Preview of records changed',
+};
+
+export const INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES = {
+  TYPE: 'Type',
+  COMP: 'Comp',
+  AUDN: 'Audn',
+  FORM: 'Form',
+  FILE: 'File',
+  GPUB: 'GPub',
+  PROJ: 'Proj',
+};
+
+export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
+  TYPE: 'Type',
+  SMD: 'SMD',
+  COLOR: 'Color',
+  MPPF: 'MPPF',
+  SOMOS: 'SoMoS',
+  MFS: 'MfS',
+  DIMENTIONS: 'Dimensions',
+  CoPC: 'CoPC',
+  PRODEL: 'ProdEl',
+  PNASPECT: 'P/N aspect',
+  GENERATION: 'Generation',
+  BOF: 'BoF',
+  RCOC: 'RCoC',
+  KOCSOP: 'KoCSop',
+  DETST: 'DetSt',
+  COMPL: 'Compl',
+  FID: 'FID',
+  IBD: 'IBD',
+  COBRWR: 'CoBrWr',
+  BMF: 'BMF',
+  RRRRR: 'RRR/RR',
+  DATATYPE: 'Data type',
+};
+
+export const INVENTORY_006_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Language material',
+  C: 'c - Notated music',
+  D: 'd - Manuscript notated music',
+  E: 'e - Cartographic material',
+  F: 'f - Manuscript cartographic material',
+  G: 'g - Projected medium',
+  I: 'i - Nonmusical sound recording',
+  J: 'j - Musical sound recording',
+  K: 'k - Two-dimensional nonprojectable  graphic',
+  M: 'm - Computer file',
+  O: 'o - Kit',
+  P: 'p - Mixed materials',
+  R: 'r - Three-dimensional artifact or naturally occurring object',
+  S: 's - Serial/Integrating resource',
+  T: 't - Manuscript language material',
+};
+
+export const INVENTORY_007_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Map',
+  C: 'c - Electronic resource',
+  D: 'd - Globe',
+  F: 'f - Tactile material',
+  G: 'g - Projected graphic',
+  H: 'h - Microform',
+  K: 'k - Nonprojected graphic',
+  M: 'm - Motion picture',
+  O: 'o - Kit',
+  Q: 'q - Notated music',
+  R: 'r - Remote-sensing image',
+  S: 's - Sound recording',
+  T: 't - Text',
+  V: 'v - Videorecording',
+  Z: 'z - Unspecified',
+};
+
+export const STANDARD_FIELDS = [
+  '010',
+  '100',
+  '110',
+  '130',
+  '148',
+  '150',
+  '151',
+  '155',
+  '260',
+  '336',
+  '370',
+  '377',
+  '400',
+  '410',
+  '411',
+  '430',
+  '448',
+  '450',
+  '451',
+  '455',
+  '500',
+  '510',
+  '511',
+  '530',
+  '548',
+  '550',
+  '551',
+  '555',
+  '580',
+  '581',
+  '582',
+  '585',
+  '586',
+  '600',
+  '610',
+  '611',
+  '630',
+  '648',
+  '650',
+  '651',
+  '653',
+  '654',
+  '655',
+  '656',
+  '657',
+  '658',
+  '662',
+  '667',
+  '670',
+  '675',
+  '678',
+  '680',
+  '681',
+  '682',
+  '683',
+  '684',
+  '688',
+  '700',
+  '710',
+  '711',
+  '730',
+  '748',
+  '750',
+  '751',
+  '755',
+  '780',
+  '785',
+  '786',
+  '787',
+  '788',
+  '800',
+  '810',
+  '811',
+  '830',
+  '848',
+  '850',
+  '851',
+  '855',
+  '856',
+  '880',
+  '881',
+  '883',
+  '884',
+  '885',
+  '886',
+  '887',
+  '888',
+  '890',
+  '898',
+  '899',
+];
+
+export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
+
+export const DEFAULT_WAIT_TIME = 4000;
+
+export const API_PATH = {
+  INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
+  ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
+
+export const INVENTORY_COLUMN_HEADERS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  PUBLISHERS: 'Publishers',
+  DATE: 'Date',
+  RELATION: 'Relation',
+  INSTANCE_HRID: 'Instance HRID',
 };

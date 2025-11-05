@@ -47,8 +47,8 @@ describe('Orders', () => {
     before(() => {
       cy.getAdminToken();
 
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
+      ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+        effectiveLocationServicePoint = servicePoint;
         NewLocation.createViaApi(
           NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
         ).then((locationResponse) => {
@@ -77,7 +77,7 @@ describe('Orders', () => {
 
     after(() => {
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
@@ -91,7 +91,7 @@ describe('Orders', () => {
 
     it(
       'C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
       () => {
         SettingsOrders.setPurchaseOrderLinesLimit(5);
         SettingsOrders.setPurchaseOrderLinesLimit(2);

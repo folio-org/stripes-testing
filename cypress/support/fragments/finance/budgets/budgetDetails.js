@@ -8,9 +8,10 @@ import {
   Section,
   including,
 } from '../../../../../interactors';
-import { TRANSFER_ACTIONS } from '../transfer/constants';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 import FinanceDetails from '../financeDetails';
 import AddTransferModal from '../modals/addTransferModal';
+import { TRANSFER_ACTIONS } from '../transfer/constants';
 import Transactions from '../transactions/transactions';
 
 const budgetPane = Section({ id: 'pane-budget' });
@@ -22,10 +23,12 @@ const informationSection = budgetPane.find(Section({ id: 'information' }));
 const expenseClassSection = budgetPane.find(Section({ id: 'expense-classes' }));
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(budgetPane.exists());
   },
   checkBudgetDetails({ summary = [], information = [], balance = {}, expenseClass } = {}) {
+    cy.wait(4000);
     summary.forEach(({ key, value }) => {
       cy.expect(
         summarySection

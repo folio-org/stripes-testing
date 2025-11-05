@@ -9,7 +9,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -135,8 +134,8 @@ describe('Data Import', () => {
 
         // create Action profile for export and link it to Field mapping profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
-        ActionProfiles.checkActionProfilePresented(actionProfileForExport.name);
+        SettingsActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfileForExport.name);
 
         // create job profile for export
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
@@ -167,8 +166,9 @@ describe('Data Import', () => {
 
           // download .csv file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           cy.intercept('/inventory/instances/*').as('getId');
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InventorySearchAndFilter.selectSearchResultItem();
           cy.wait('@getId', getLongDelay()).then((req) => {
             InstanceRecordView.verifyInstancePaneExists();
             InventorySearchAndFilter.saveUUIDs();
@@ -210,8 +210,8 @@ describe('Data Import', () => {
 
           // create Action profile and link it to Field mapping profile
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(actionProfile.name);
+          SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
           // create Job profile
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
@@ -238,6 +238,7 @@ describe('Data Import', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InventorySearchAndFilter.selectSearchResultItem();
           InstanceRecordView.verifyInstancePaneExists();
           // ensure the fields created in Field mapping profile exists in inventory
           InventorySearchAndFilter.checkInstanceDetails();

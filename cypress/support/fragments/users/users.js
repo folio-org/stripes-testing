@@ -13,6 +13,7 @@ import {
   MultiColumnListCell,
   Pane,
   PaneHeader,
+  Link,
   Section,
   Select,
   Spinner,
@@ -92,16 +93,21 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => cy
-    .okapiRequest({
-      method: 'DELETE',
-      path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    })
-    .then(({ status }) => {
-      return status;
-    }),
+  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => {
+    if (!userId) {
+      return cy.wrap(null);
+    }
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then(({ status }) => {
+        return status;
+      });
+  },
 
   getUsers: (searchParams) => {
     return cy
@@ -113,6 +119,16 @@ export default {
       .then(({ body }) => {
         return body.users;
       });
+  },
+
+  getUser: ({ id, failOnStatusCode = false }) => {
+    if (!id) return null;
+
+    return cy.okapiRequest({
+      path: `users/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode, // don't fail test if user is not found
+    });
   },
 
   getAutomatedPatronBlocksApi(userId) {
@@ -219,10 +235,30 @@ export default {
     );
   },
 
+  waitForUserDeletion({
+    id,
+    maxIterations = 20,
+    delay = 2000,
+    timeout = maxIterations * delay + 10000, // 40s polling + 10s buffer for API response overhead
+  }) {
+    recurse(
+      () => this.getUser({ id }),
+      ({ status }) => status === 404,
+      {
+        limit: maxIterations,
+        timeout,
+        delay,
+      },
+    );
+  },
+
   createViaUi: (userData) => {
     return cy
       .do([
-        Dropdown('Actions').find(Button()).click(),
+        Section({ id: 'users-search-results-pane' })
+          .find(Dropdown('Actions'))
+          .find(Button())
+          .click(),
         Button({ id: 'clickable-newuser' }).click(),
         TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
         TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
@@ -421,5 +457,47 @@ export default {
       Dropdown('Actions').find(Button()).click(),
       Button({ id: 'clickable-newuser' }).click(),
     ]);
+    cy.wait(500);
+  },
+
+  verifyAddressOnUserDetailsPane(address) {
+    cy.wait(2000);
+    cy.contains('[class^=accordion]', 'Contact information')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Contact information').clickHeader());
+        }
+      });
+    cy.expect(userDetailsPane.find(KeyValue('Address Type')).has({ value: address }));
+  },
+
+  verifyCountryOnUserDetailsPane(country) {
+    cy.contains('[class^=accordion]', 'Contact information')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Contact information').clickHeader());
+        }
+      });
+    cy.expect(userDetailsPane.find(KeyValue('Country')).has({ value: country }));
+  },
+
+  expandLoansAccordion() {
+    cy.contains('[class^=accordion]', 'Loans')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Loans').clickHeader());
+        }
+      });
+  },
+
+  clickOpenLoansLink() {
+    cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
+  },
+
+  clickClosedLoansLink() {
+    cy.do(Link({ id: 'clickable-viewclosedloans' }).click());
   },
 };

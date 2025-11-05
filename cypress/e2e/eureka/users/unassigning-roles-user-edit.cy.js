@@ -8,6 +8,8 @@ import AuthorizationRoles, {
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -18,9 +20,9 @@ describe('Eureka', () => {
       roleDName: `AT_C627439_UserRole_D_${getRandomPostfix()}`,
     };
 
-    const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
+    const capabSetsToAssign = [CapabilitySets.uiUsersRolesManage];
 
-    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+    const capabsToAssign = [Capabilities.settingsEnabled];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
@@ -91,8 +93,6 @@ describe('Eureka', () => {
         cy.login(testData.tempUser.username, testData.tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        cy.reload();
-        Users.waitLoading();
       }, 20_000);
       UsersSearchPane.searchByUsername(testData.userA.username);
       cy.wait(2000);
@@ -138,10 +138,6 @@ describe('Eureka', () => {
         UserEdit.saveAndClose();
         UserEdit.checkUserEditPaneOpened(false);
         UsersCard.waitLoading();
-        UsersCard.close();
-        UsersSearchPane.resetAllFilters();
-        UsersSearchPane.searchByKeywords(testData.userA.username);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('2');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);

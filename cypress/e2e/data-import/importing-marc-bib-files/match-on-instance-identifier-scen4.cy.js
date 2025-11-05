@@ -10,7 +10,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -98,9 +97,9 @@ describe('Data Import', () => {
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-          (instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
+          (response) => {
+            if (response.totalRecords !== 0) {
+              response.instances.forEach(({ id }) => {
                 InventoryInstance.deleteInstanceViaApi(id);
               });
             }
@@ -134,10 +133,12 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-          (instances) => {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
+          (response) => {
+            if (response.totalRecords !== 0) {
+              response.instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
           },
         );
       });
@@ -218,8 +219,8 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfileWithLinkingProfiles(

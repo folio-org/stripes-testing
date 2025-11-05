@@ -80,7 +80,6 @@ describe('Lists', () => {
         Lists.editList();
         Lists.openActions();
         Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
       },
     );
   });

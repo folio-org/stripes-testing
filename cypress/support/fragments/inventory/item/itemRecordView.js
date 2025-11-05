@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -7,8 +7,10 @@ import {
   Link,
   MultiColumnList,
   MultiColumnListCell,
+  MultiSelect,
   Pane,
   PaneHeader,
+  Spinner,
   TextField,
 } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
@@ -26,6 +28,9 @@ const itemNotesAccordion = Accordion('Item notes');
 const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
+const tagsAccordion = Accordion('Tags');
+const hridKeyValue = KeyValue('Item HRID');
+const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -54,7 +59,11 @@ const verifyItemStatusInPane = (itemStatus) => {
 };
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
-  cy.do(Button({ icon: 'times' }).click());
+  cy.do(
+    PaneHeader()
+      .find(Button({ icon: 'times' }))
+      .click(),
+  );
   cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
@@ -64,7 +73,7 @@ const findRowAndClickLink = (enumerationValue) => {
       cy.get('a').click();
     });
 };
-const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
+const getAssignedHRID = () => cy.then(() => hridKeyValue.value());
 const clickUpdateOwnership = () => {
   cy.do([actionsButton.click(), Button('Update ownership').click()]);
 };
@@ -205,8 +214,10 @@ export default {
     cy.expect(HTML(including(text)).absent());
   },
 
-  verifyMaterialType: (type) => {
-    cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
+  verifyMaterialType: (type, orLogic = false) => {
+    let matcher = including(type);
+    if (orLogic) matcher = or(...type.map((el) => including(el)));
+    cy.expect(itemDataAccordion.find(HTML(matcher)).exists());
   },
 
   checkItemNote: (note, staffValue = 'Yes', value = 'Note') => {
@@ -271,14 +282,37 @@ export default {
       cy.expect(section.find(KeyValue(label)).has(conditions));
     });
   },
+
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
-    cy.expect(HTML(staffValue).exists());
+    cy.contains('[class^="kvLabel-"]', 'Check in note')
+      .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
+      .filter((index, el) => {
+        return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
+      })
+      .first()
+      .within(() => {
+        cy.contains('[class^="kvLabel-"]', 'Staff only')
+          .parent()
+          .find('[data-test-kv-value]')
+          .should('contain.text', staffValue);
+      });
   },
 
   checkCheckOutNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check out note')).has({ value: note }));
-    cy.expect(HTML(staffValue).exists());
+    cy.contains('div', 'Check out note')
+      .parentsUntil('[aria-labelledby="accordion-toggle-button-acc06"]')
+      .filter((index, el) => {
+        return Array.from(el.classList).some((cls) => cls.startsWith('row-'));
+      })
+      .first()
+      .within(() => {
+        cy.contains('[class^="kvLabel-"]', 'Staff only')
+          .parent()
+          .find('[data-test-kv-value]')
+          .should('contain.text', staffValue);
+      });
   },
 
   checkElectronicBookplateNote: (note) => {
@@ -375,6 +409,7 @@ export default {
   ),
 
   verifyLoanAndAvailabilitySection(data) {
+    this.expandAll();
     verifyPermanentLoanType(
       data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
     );
@@ -405,8 +440,16 @@ export default {
           KeyValue('Due date', { value: data.dueDate === '-' ? 'No value set-' : data.dueDate }),
         )
         .exists(),
-      loanAccordion.find(KeyValue('Staff only', { value: data.staffOnly })).exists(),
-      loanAccordion.find(KeyValue('Note', { value: data.note })).exists(),
+      loanAccordion
+        .find(
+          KeyValue('Staff only', {
+            value: data.staffOnly === '-' ? 'No value set-' : data.staffOnly,
+          }),
+        )
+        .exists(),
+      loanAccordion
+        .find(KeyValue('Note', { value: data.note === '-' ? 'No value set-' : data.note }))
+        .exists(),
     ]);
   },
 
@@ -554,6 +597,41 @@ export default {
       }
     });
     cy.do(actionsButton.click());
+    cy.wait(1500);
+  },
+
+  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(KeyValue('Effective call number').has({ value: effectiveCallNumber })),
+
+  closeItemEditForm() {
+    cy.do(Button({ icon: 'times' }).click());
+    cy.wait(1000);
+  },
+
+  expandAll() {
+    cy.do(Button('Expand all').click());
+    cy.wait(1000);
+  },
+
+  toggleTagsAccordion(isOpened = true) {
+    cy.do(tagsAccordion.clickHeader());
+    cy.expect(tagsAccordion.is({ open: isOpened }));
+  },
+
+  checkTagsCounter(count) {
+    cy.expect(tagsAccordion.has({ counter: `${count}` }));
+  },
+
+  verifyHrid: (hrid) => cy.expect(hridKeyValue.has({ value: hrid })),
+
+  verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),
+
+  verifyRequestsCount: (count) => {
+    cy.expect(loanAccordion.find(KeyValue('Requests', { value: count.toString() })).exists());
+  },
+
+  addTag: (tagName) => {
+    cy.expect(tagsAccordion.find(Spinner()).absent());
+    cy.do(tagsAccordion.find(textFieldTagInput).choose(tagName));
     cy.wait(1500);
   },
 };

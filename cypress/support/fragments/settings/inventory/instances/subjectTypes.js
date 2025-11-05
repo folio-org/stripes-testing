@@ -1,14 +1,29 @@
 import { including } from '@interactors/html';
-import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import {
+  Button,
+  EditableListRow,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  Pane,
+} from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
-export const reasonsActions = {
-  edit: 'edit',
-  trash: 'trash',
+const rootPane = Pane('Subject types');
+
+const COLUMN_INDEX = {
+  NAME: 0,
+  SOURCE: 1,
+  LAST_UPDATED: 2,
+  ACTIONS: 3,
 };
 
-export const folioSubjectTypes = [
+export const ACTION_BUTTONS = {
+  EDIT: 'edit',
+  TRASH: 'trash',
+};
+
+export const FOLIO_SUBJECT_TYPES = [
   'Personal name',
   'Corporate name',
   'Meeting name',
@@ -27,6 +42,12 @@ export const folioSubjectTypes = [
   'Type of entity unspecified',
 ];
 
+function getRowIndex(element) {
+  return Number(
+    element.closest('[data-row-index]').getAttribute('data-row-index').replace('row-', ''),
+  );
+}
+
 export default {
   createViaApi(body) {
     return cy
@@ -36,9 +57,7 @@ export default {
         body,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ response }) => {
-        return response;
-      });
+      .then(({ response }) => response);
   },
 
   deleteViaApi(id) {
@@ -46,50 +65,64 @@ export default {
       method: REQUEST_METHOD.DELETE,
       path: `subject-types/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
-  verifySourceTypeAbsent(name) {
-    cy.get('#editList-subjecttypes, #editList-subject-types') // Selects either if present
-      .should('exist') // Ensures at least one exists before proceeding
+  getSubjectTypesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'subject-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.subjectTypes;
+      });
+  },
+
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifySubjectTypeAbsent(name) {
+    cy.get('#editList-subjecttypes, #editList-subject-types')
+      .should('exist')
       .as('subjectTypesList');
 
     cy.get('@subjectTypesList')
-      .find('[class*="mclCell-"]:nth-child(1)')
+      .find(`[class*="mclCell-"]:nth-child(${COLUMN_INDEX.NAME + 1})`)
       .each(($cell) => {
         cy.wrap($cell).invoke('text').should('not.eq', name);
       });
   },
 
-  verifyCreatedSubjectType({ name: subjectSourceName, user, actions = [] }) {
-    const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifySubjectTypeExists({ name, source, user, actions = [] }) {
+    const today = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+    const rowSelector = MultiColumnListCell({ content: name });
 
     cy.do(
-      MultiColumnListCell({ content: subjectSourceName }).perform((element) => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const rowIndex = Number(rowNumber.slice(4));
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
 
         cy.expect([
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: subjectSourceName }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 1 }))
-            .has({ content: 'local' }),
-          EditableListRow({ index: rowIndex })
-            .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: including(`${date} by ${user.lastName},`) }),
+          row.find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.NAME })).has({ content: name }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.SOURCE }))
+            .has({ content: source }),
+          row
+            .find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.LAST_UPDATED }))
+            .has({ content: including(`${today} by ${user}`) }),
         ]);
-        Object.values(reasonsActions).forEach((action) => {
-          const buttonSelector = EditableListRow({ index: rowIndex })
-            .find(actionsCell)
-            .find(Button({ icon: action }));
-          if (actions.includes(action)) {
-            cy.expect(buttonSelector.exists());
-          } else {
-            cy.expect(buttonSelector.absent());
-          }
+
+        const actionsCell = row.find(MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS }));
+        Object.values(ACTION_BUTTONS).forEach((action) => {
+          const actionButton = actionsCell.find(Button({ icon: action }));
+          cy.expect(actions.includes(action) ? actionButton.exists() : actionButton.absent());
         });
       }),
     );

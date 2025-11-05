@@ -15,41 +15,46 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Reading Room Access', () => {
   const testData = {
+    servicePoint: ServicePoints.getDefaultServicePoint(),
+    servicePointId: '',
     readingRoomId: uuid(),
     readingRoomName: `Autotest_Reading_Room${getRandomPostfix()}`,
     isPublic: false,
   };
 
   before('Create test data', () => {
-    cy.getAdminToken();
-    ServicePoints.createViaApi(ServicePoints.getDefaultServicePoint()).then((servicePoint) => {
-      testData.servicePoint = servicePoint.body;
+    cy.getAdminToken().then(() => {
+      ServicePoints.createViaApi(testData.servicePoint).then((response) => {
+        testData.servicePointId = response.body.id;
 
-      SettingsReadingRoom.createReadingRoomViaApi(
-        testData.servicePoint.id,
-        testData.servicePoint.name,
+        SettingsReadingRoom.createReadingRoomViaApi(
+          testData.servicePointId,
+          testData.servicePoint.name,
+          testData.readingRoomId,
+          testData.isPublic,
+          testData.readingRoomName,
+        );
+      });
+    });
+
+    cy.createTempUser([
+      Permissions.uiSettingsTenantReadingRoomAll.gui,
+      Permissions.uiCanViewReadingRoomAccess.gui,
+      Permissions.uiCanViewEditReadingRoomAccess.gui,
+      Permissions.uiSettingsTenantReadingRoom.gui,
+    ]).then((userProperties) => {
+      testData.user = userProperties;
+
+      ReadingRoom.allowAccessForUser(
         testData.readingRoomId,
-        testData.isPublic,
         testData.readingRoomName,
+        testData.servicePointId,
+        testData.user.userId,
       );
 
-      cy.createTempUser([
-        Permissions.uiSettingsTenantReadingRoomAll.gui,
-        Permissions.uiCanViewEditReadingRoomAccess.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-
-        ReadingRoom.allowAccessForUser(
-          testData.readingRoomId,
-          testData.readingRoomName,
-          testData.servicePointId,
-          testData.user.userId,
-        );
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
       });
     });
   });
@@ -57,7 +62,7 @@ describe('Reading Room Access', () => {
   after('Deleting created entities', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    ServicePoints.deleteViaApi(testData.servicePointId);
     SettingsReadingRoom.deleteReadingRoomViaApi(testData.readingRoomId);
   });
 

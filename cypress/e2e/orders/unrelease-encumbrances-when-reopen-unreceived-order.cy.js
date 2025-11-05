@@ -1,27 +1,30 @@
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  INVOICE_STATUSES,
+  ORDER_STATUSES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import BudgetDetails from '../../support/fragments/finance/budgets/budgetDetails';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import Helper from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import FundDetails from '../../support/fragments/finance/funds/fundDetails';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Transactions from '../../support/fragments/finance/transactions/transactions';
 import Invoices from '../../support/fragments/invoices/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  INVOICE_STATUSES,
-  ORDER_STATUSES,
-} from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -166,16 +169,24 @@ describe('Orders', () => {
     'C358539 Unrelease encumbrances when reopen unreceived ongoing order with related paid invoice (Release encumbrance =true) (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      /* Orders app */
       Orders.searchByParameter('PO number', orderNumber);
+      Orders.waitLoading();
       Orders.selectFromResultsList(orderNumber);
+      OrderDetails.waitLoading();
       OrderDetails.reOpenOrder({ orderNumber });
       cy.visit(TopMenu.fundPath);
+
+      /* Finance app */
       Helper.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      Funds.openTransactions();
+      FundDetails.waitLoading();
+      Funds.selectBudgetDetails(); // Fund details -> Budget details
+      BudgetDetails.waitLoading();
+      Funds.openTransactions(); // Budget details -> Transactions
+      Transactions.waitLoading();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.checkStatusInTransactionDetails('Released'); // Note: Before Trillium - "Unreleased"
     },
   );
 });

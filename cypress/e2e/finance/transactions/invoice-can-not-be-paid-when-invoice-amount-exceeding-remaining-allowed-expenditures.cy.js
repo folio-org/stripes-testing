@@ -21,6 +21,7 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
+import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -64,7 +65,6 @@ describe('Finance: Transactions', () => {
     allowableExpenditure: 110,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const isApprovePayEnabled = true;
   const isApprovePayDisabled = false;
   let firstInvoice;
   let secondInvoice;
@@ -101,13 +101,13 @@ describe('Finance: Transactions', () => {
             Funds.selectBudgetDetails();
             Funds.transfer(secondFund, firstFund);
             InteractorsTools.checkCalloutMessage(
-              `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
+              `$10.00 was successfully transferred to the budget ${secondBudget.name}.`,
             );
             Funds.closeBudgetDetails();
             cy.getLocations({ limit: 1 }).then((res) => {
               location = res;
 
-              cy.getMaterialTypes({ limit: 1 }).then((mtype) => {
+              cy.getDefaultMaterialType().then((mtype) => {
                 cy.getAcquisitionMethodsApi({
                   query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
                 }).then((params) => {
@@ -222,13 +222,14 @@ describe('Finance: Transactions', () => {
                           subTotal: 87,
                         }).then((thirdInvoiceResponse) => {
                           thirdInvoice = thirdInvoiceResponse;
-                          Approvals.setApprovePayValue(isApprovePayEnabled);
                         });
                       });
                     },
                   );
                 });
               });
+              cy.visit(TopMenu.settingsInvoiveApprovalPath);
+              SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
             });
           });
         });
@@ -242,10 +243,12 @@ describe('Finance: Transactions', () => {
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
+      }, 20_000);
     });
   });
 

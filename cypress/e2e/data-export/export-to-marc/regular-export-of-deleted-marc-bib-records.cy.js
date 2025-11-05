@@ -27,130 +27,178 @@ import DateTools from '../../../support/utils/dateTools';
 let user;
 let exportedFileName;
 const numberOfInstances = 3;
-const marcInstances = [...Array(numberOfInstances)].map(() => ({
-  title: `AT_C494361_MarcInstance_${getRandomPostfix()}`,
-}));
-const fileName = `AT_C494361_TestFile${getRandomPostfix()}.csv`;
+let marcInstances;
+let fileName;
 
-describe('Data Export', () => {
-  describe('Export to MARC', () => {
-    beforeEach('create test data', () => {
-      cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySetRecordsForDeletion.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+describe(
+  'Data Export',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    describe('Export to MARC', () => {
+      beforeEach('create test data', () => {
+        marcInstances = [...Array(numberOfInstances)].map(() => {
+          const title = `AT_C494361_MarcInstance_${getRandomPostfix()}`;
+          return {
+            title,
+            marcBibFields: [
+              {
+                tag: '008',
+                content: {
+                  Type: '\\',
+                  BLvl: '\\',
+                  DtSt: '\\',
+                  Date1: '\\\\\\\\',
+                  Date2: '\\\\\\\\',
+                  Ctry: '\\\\\\',
+                  Lang: 'eng',
+                  MRec: '\\',
+                  Srce: '\\',
+                  Ills: ['\\', '\\', '\\', '\\'],
+                  Audn: '\\',
+                  Form: '\\',
+                  Cont: ['\\', '\\', '\\', '\\'],
+                  GPub: '\\',
+                  Conf: '\\',
+                  Fest: '\\',
+                  Indx: '\\',
+                  LitF: '\\',
+                  Biog: '\\',
+                },
+              },
+              {
+                tag: '245',
+                content: `$a ${title}`,
+                indicators: ['1', '0'],
+              },
+            ],
+          };
+        });
+        fileName = `AT_C494361_TestFile${getRandomPostfix()}.csv`;
 
-        marcInstances.forEach((instance) => {
-          cy.createSimpleMarcBibViaAPI(instance.title).then((instanceId) => {
-            instance.uuid = instanceId;
+        cy.createTempUser([
+          permissions.inventoryAll.gui,
+          permissions.uiInventorySetRecordsForDeletion.gui,
+          permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
 
-            FileManager.appendFile(`cypress/fixtures/${fileName}`, `${instance.uuid}\n`);
+          marcInstances.forEach((instance) => {
+            cy.createMarcBibliographicViaAPI(
+              QuickMarcEditor.defaultValidLdr,
+              instance.marcBibFields,
+            ).then((instanceId) => {
+              instance.uuid = instanceId;
+
+              FileManager.appendFile(`cypress/fixtures/${fileName}`, `${instance.uuid}\n`);
+            });
+          });
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
         });
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+      });
+
+      afterEach('delete test data', () => {
+        marcInstances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
-      });
-    });
 
-    after('delete test data', () => {
-      marcInstances.forEach((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.uuid);
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${fileName}`);
+        FileManager.deleteFileFromDownloadsByMask(exportedFileName);
       });
 
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${fileName}`);
-      FileManager.deleteFileFromDownloadsByMask(exportedFileName);
-    });
+      it(
+        'C494361 Regular export of deleted MARC bib records (firebird)',
+        { tags: ['smoke', 'firebird', 'C494361'] },
+        () => {
+          InventorySearchAndFilter.searchInstanceByTitle(marcInstances[0].title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.verifyEditInstanceButtonIsEnabled();
+          InstanceRecordView.setRecordForDeletion();
+          SetRecordForDeletionModal.waitLoading();
+          SetRecordForDeletionModal.verifyModalView(marcInstances[0].title);
+          SetRecordForDeletionModal.clickConfirm();
+          InstanceRecordView.verifyInstanceIsSetForDeletion();
 
-    it(
-      'C494361 Regular export of deleted MARC bib records (firebird)',
-      { tags: ['smoke', 'firebird', 'C494361'] },
-      () => {
-        InventorySearchAndFilter.searchInstanceByTitle(marcInstances[0].title);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InstanceRecordView.verifyEditInstanceButtonIsEnabled();
-        InstanceRecordView.setRecordForDeletion();
-        SetRecordForDeletionModal.waitLoading();
-        SetRecordForDeletionModal.verifyModalView(marcInstances[0].title);
-        SetRecordForDeletionModal.clickConfirm();
-        InstanceRecordView.verifyInstanceIsSetForDeletion();
+          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
+          const currentTimestampUpToMinutesOneMinuteAfter =
+            DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
 
-        const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
-        const currentTimestampUpToMinutesOneMinuteAfter =
-          DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
-
-        InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.searchInstanceByTitle(marcInstances[1].title);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InstanceRecordView.editMarcBibliographicRecord();
-        QuickMarcEditor.updateLDR06And07Positions();
-        QuickMarcEditor.selectFieldsDropdownOption(
-          'LDR',
-          AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
-          AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.D,
-        );
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
-        InstanceRecordView.verifyInstanceIsSetForDeletion();
-        InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.searchInstanceByTitle(marcInstances[2].title);
-        InstanceRecordView.edit();
-        InstanceRecordEdit.clickSetForDeletionCheckbox(true);
-        InstanceRecordEdit.saveAndClose();
-        InstanceRecordView.verifyInstanceIsSetForDeletion();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        DataExportLogs.waitLoading();
-        ExportFileHelper.uploadFile(fileName);
-        ExportFileHelper.exportWithDefaultJobProfile(fileName);
-
-        cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-        cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
-          const { jobExecutions } = response.body;
-          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
-          const jobId = jobData.hrId;
-          const recordsCount = numberOfInstances;
-          exportedFileName = `${fileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
-
-          DataExportResults.verifySuccessExportResultCells(
-            exportedFileName,
-            recordsCount,
-            jobId,
-            user.username,
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.searchInstanceByTitle(marcInstances[1].title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.editMarcBibliographicRecord();
+          QuickMarcEditor.updateLDR06And07Positions();
+          QuickMarcEditor.selectFieldsDropdownOption(
+            'LDR',
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.D,
           );
-          DataExportLogs.clickButtonWithText(exportedFileName);
+          QuickMarcEditor.pressSaveAndClose();
+          InstanceRecordView.verifyInstanceIsSetForDeletion();
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.searchInstanceByTitle(marcInstances[2].title);
+          InstanceRecordView.edit();
+          InstanceRecordEdit.clickSetForDeletionCheckbox(true);
+          InstanceRecordEdit.saveAndClose();
+          InstanceRecordView.verifyInstanceIsSetForDeletion();
 
-          const commonAssertions = (instance) => [
-            (record) => expect(record.leader[5]).to.equal('d'),
-            (record) => expect(record.get('001')).to.not.be.empty,
-            (record) => {
-              expect(
-                record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-              ).to.be.true;
-            },
-            (record) => expect(record.get('008')).to.not.be.empty,
-            (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
-            (record) => expect(record.get('245')[0].subf[0][1]).to.eq(instance.title),
-            (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-            (record) => expect(record.get('999')[0].subf[0][1]).to.eq(instance.uuid),
-            (record) => expect(record.get('999')[0].subf[1][0]).to.eq('s'),
-            (record) => expect(record.get('999')[0].subf[1][1]).to.be.a('string'),
-          ];
-          const recordsToVerify = marcInstances.map((instance) => ({
-            uuid: instance.uuid,
-            assertions: commonAssertions(instance),
-          }));
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          DataExportLogs.waitLoading();
+          ExportFileHelper.uploadFile(fileName);
+          ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
-          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount);
-        });
-      },
-    );
-  });
-});
+          cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+          cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+            const { jobExecutions } = response.body;
+            const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+            const jobId = jobData.hrId;
+            const recordsCount = numberOfInstances;
+            exportedFileName = `${fileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
+
+            DataExportResults.verifySuccessExportResultCells(
+              exportedFileName,
+              recordsCount,
+              jobId,
+              user.username,
+            );
+            DataExportLogs.clickButtonWithText(exportedFileName);
+
+            const commonAssertions = (instance) => [
+              (record) => expect(record.leader[5]).to.equal('d'),
+              (record) => {
+                expect(
+                  record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
+                    record
+                      .get('005')[0]
+                      .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
+                ).to.be.true;
+              },
+              (record) => expect(record.get('245')[0].subf[0][0]).to.eq('a'),
+              (record) => expect(record.get('245')[0].subf[0][1]).to.eq(instance.title),
+              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+              (record) => expect(record.get('999')[0].subf[0][1]).to.eq(instance.uuid),
+              (record) => expect(record.get('999')[0].subf[1][0]).to.eq('s'),
+              (record) => expect(record.get('999')[0].subf[1][1]).to.be.a('string'),
+            ];
+            const recordsToVerify = marcInstances.map((instance) => ({
+              uuid: instance.uuid,
+              assertions: commonAssertions(instance),
+            }));
+
+            parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount);
+          });
+        },
+      );
+    });
+  },
+);

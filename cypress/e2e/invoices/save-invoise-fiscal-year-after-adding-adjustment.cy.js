@@ -14,7 +14,6 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -53,10 +52,10 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForThirdFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   const adjustmentDescription = `test_description${getRandomPostfix()}`;
   const barcode = FinanceHelp.getRandomBarcode();
@@ -68,7 +67,12 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    cy.waitForAuthRefresh(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+      });
+    }, 20_000);
 
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -80,9 +84,6 @@ describe('Invoices', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.loginAsAdmin();
-          TopMenuNavigation.openAppFromDropdown('Finance');
-          Ledgers.clickOnFundTab();
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -104,8 +105,8 @@ describe('Invoices', () => {
           });
         });
         defaultOrder.vendor = organization.name;
-        TopMenuNavigation.openAppFromDropdown('Orders');
-        Orders.selectOrdersPane();
+        cy.visit(TopMenu.ordersPath);
+        Orders.resetFiltersIfActive();
         Orders.createApprovedOrderForRollover(defaultOrder, true, true).then(
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
@@ -138,8 +139,7 @@ describe('Invoices', () => {
           thirdFiscalYear.id = thirdFiscalYearResponse.id;
         });
 
-        TopMenuNavigation.openAppFromDropdown('Finance');
-        Funds.clickOnLedgerTab();
+        cy.visit(TopMenu.ledgerPath);
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -151,8 +151,7 @@ describe('Invoices', () => {
       });
     });
 
-    TopMenuNavigation.openAppFromDropdown('Finance');
-    Ledgers.clickOnFiscalYearTab();
+    cy.visit(TopMenu.fiscalYearPath);
     FinanceHelp.searchByName(firstFiscalYear.name);
     FiscalYears.selectFY(firstFiscalYear.name);
     FiscalYears.editFiscalYearDetails();
@@ -180,8 +179,12 @@ describe('Invoices', () => {
       Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password);
-      TopMenuNavigation.navigateToApp('Invoices');
+      cy.waitForAuthRefresh(() => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
+      }, 20_000);
     });
   });
 
@@ -231,7 +234,7 @@ describe('Invoices', () => {
         `${defaultFund.name} (${defaultFund.code})`,
       );
 
-      TopMenuNavigation.navigateToApp('Finance');
+      cy.visit(TopMenu.financePath);
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
@@ -257,7 +260,7 @@ describe('Invoices', () => {
         periodEndForThirdFY,
       );
 
-      TopMenuNavigation.navigateToApp('Invoices');
+      cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();

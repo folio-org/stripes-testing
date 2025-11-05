@@ -8,12 +8,11 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -58,8 +57,7 @@ describe('Orders', () => {
         location = res;
       });
     });
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.setPurchaseOrderLinesLimit(2);
+    OrderLinesLimit.setPOLLimitViaApi(2);
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
@@ -75,9 +73,8 @@ describe('Orders', () => {
   });
 
   afterEach(() => {
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
+    cy.getAdminToken();
+    OrderLinesLimit.setPOLLimitViaApi(1);
     Users.deleteViaApi(user.userId);
   });
 

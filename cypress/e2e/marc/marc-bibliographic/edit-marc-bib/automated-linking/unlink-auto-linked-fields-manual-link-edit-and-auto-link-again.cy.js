@@ -190,8 +190,6 @@ describe('MARC', () => {
               'Field 240 and 711 has been linked to MARC authority record(s).',
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);

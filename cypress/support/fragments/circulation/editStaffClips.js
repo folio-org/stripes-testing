@@ -1,6 +1,7 @@
 import { including } from '@interactors/html';
 import {
   Button,
+  Callout,
   Checkbox,
   Heading,
   KeyValue,
@@ -134,8 +135,9 @@ export default {
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
       addTokenButton.click(),
-      saveButton.click(),
+      cy.wait(2000),
     ]);
+    cy.get('button[id="footer-save-entity"]').click();
     cy.wait(1000);
   },
   fillTemplateContent(content) {
@@ -154,6 +156,7 @@ export default {
     cy.wait(1000);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
     cy.do(Button('Close').click());
+    cy.wait(1000);
   },
   checkPreview: (staffSlipType, displayText) => {
     cy.do(Button('Preview').click());
@@ -173,8 +176,11 @@ export default {
     cy.do(saveButton.click());
   },
   saveAndClose: () => {
-    cy.do(saveButton.click());
+    cy.get('button[id="footer-save-entity"]').click();
+    cy.wait(1000);
     cy.expect(staffSlipPaneContent.absent());
+    cy.expect(Callout().exists());
+    cy.do(Callout().dismiss());
   },
   checkAfterUpdate(staffSlipType) {
     InteractorsTools.checkCalloutMessage(

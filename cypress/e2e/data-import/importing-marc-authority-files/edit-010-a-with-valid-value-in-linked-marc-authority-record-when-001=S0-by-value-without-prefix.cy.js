@@ -27,7 +27,7 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -54,7 +54,7 @@ describe('Data Import', () => {
         '0',
         '0',
         '$a C374184 Marvel comics',
-        '',
+        '$v Catalogs.',
         '$0 http://id.loc.gov/authorities/names/n80026980',
         '',
       ],
@@ -195,9 +195,7 @@ describe('Data Import', () => {
           linkingTagAndValue.tag,
           linkingTagAndValue.rowIndex,
         );
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.waitForAuthRefresh(() => {
@@ -245,7 +243,11 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
+        ExportFile.exportWithDefaultJobProfile(
+          testData.csvFile,
+          'Default authority',
+          'Authorities',
+        );
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file

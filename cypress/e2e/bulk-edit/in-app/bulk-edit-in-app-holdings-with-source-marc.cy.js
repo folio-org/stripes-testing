@@ -61,7 +61,7 @@ describe('Bulk-edit', () => {
             cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
               location = res;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getDefaultMaterialType().then((res) => {
               materialTypeId = res.id;
             });
             cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
@@ -205,13 +205,13 @@ describe('Bulk-edit', () => {
           );
         });
 
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption('Suppress from discovery');
-        BulkEditActions.selectSecondAction(actionsToSelect.setTrue);
-        BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue);
+        BulkEditActions.selectAction(actionsToSelect.setTrue);
+        BulkEditActions.verifyActionSelected(actionsToSelect.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -278,12 +278,12 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceFolio.hrid);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyInstanceTitle(instanceFolio.instanceTitle);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
 
         InventorySearchAndFilter.searchInstanceByHRID(instanceMarc.hrid);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyInstanceTitle(instanceMarc.instanceTitle);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
         cy.wait(1000);
@@ -293,7 +293,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceMarcWithItem.hrid);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyInstanceTitle(instanceMarcWithItem.instanceTitle);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryWarning();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
         cy.wait(1000);

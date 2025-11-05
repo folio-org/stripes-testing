@@ -93,7 +93,7 @@ describe('Orders', () => {
           testData.orderLine.titleOrPackage,
         );
         ReceivingDetails.checkButtonsConditions([
-          { label: 'Edit', conditions: { disabled: false } },
+          { label: 'Actions', conditions: { disabled: false } },
           { label: 'Collapse all', conditions: { disabled: false } },
         ]);
         ReceivingDetails.checkReceivingDetails({

@@ -9,6 +9,8 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import EditResource from '../../support/fragments/linked-data/editResource';
+import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
 
 describe('Citation: check navigation', () => {
   const testData = {
@@ -24,7 +26,7 @@ describe('Citation: check navigation', () => {
     creator: testData.uniqueCreator,
     language: 'spa',
     classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
     isbnIdentifier: testData.uniqueIsbn,
     lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',
@@ -80,6 +82,10 @@ describe('Citation: check navigation', () => {
       LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
       // open new resource form
       LinkedDataEditor.openNewResourceForm();
+      // check that modal is displayed
+      WorkProfileModal.waitLoading();
+      WorkProfileModal.selectDefaultOption();
+      EditResource.waitLoading();
       // navigate back to the main module
       TopMenuNavigation.openAppFromDropdown('Linked Data Editor - beta');
       LinkedDataEditor.waitLoading();

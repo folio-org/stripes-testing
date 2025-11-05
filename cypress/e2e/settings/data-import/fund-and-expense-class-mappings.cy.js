@@ -9,7 +9,6 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -22,13 +21,12 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
+import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEditForm';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -121,10 +119,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+        SettingsFieldMappingProfiles.waitLoading();
       });
     });
 
@@ -147,8 +145,8 @@ describe('Data Import', () => {
 
         // create action profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create job profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
@@ -170,7 +168,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
 
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
@@ -181,6 +179,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );
@@ -217,9 +216,10 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           cy.wait(1000);
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );
@@ -256,7 +256,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           cy.wait(1000);
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();
@@ -266,6 +266,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );
@@ -302,7 +303,7 @@ describe('Data Import', () => {
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           cy.wait(1000);
-          const orderNumber = initialNumber.replace('-1', '');
+          const orderNumber = initialNumber.replace(/-\d+$/, '');
 
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
@@ -313,6 +314,7 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
             (orderId) => {
+              cy.getAdminToken();
               Orders.deleteOrderViaApi(orderId[0].id);
             },
           );

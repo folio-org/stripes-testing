@@ -19,7 +19,7 @@ import {
   Spinner,
   TextArea,
   TextField,
-  ValueChipRoot
+  ValueChipRoot,
 } from '../../../../interactors';
 import {
   FULFILMENT_PREFERENCES,
@@ -143,7 +143,7 @@ function createRequestApi(
       cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
         instanceRecordData.permanentLoanTypeId = loanTypes[0].id;
       });
-      cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
+      cy.getDefaultMaterialType().then((materialType) => {
         instanceRecordData.materialTypeId = materialType.id;
       });
       cy.getLocations({ limit: 1 }).then((location) => {
@@ -276,22 +276,23 @@ export default {
   selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
-  selectFirstRequest: (title) => cy.do(
+  selectFirstRequest(title) {
+    cy.do(
+      requestsPane
+        .find(MultiColumnListCell({ row: 0, content: title }))
+        .find(Link(including(title)))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+
+  selectRequest: (title, rowIndex) => cy.do(
     requestsPane
-      .find(MultiColumnListCell({ row: 0, content: title }))
+      .find(MultiColumnListCell({ row: rowIndex, content: title }))
       .find(Link(including(title)))
       .click(),
   ),
-  selectRequest: (title, rowIndex) => cy.do(
-    requestsPane
-      .find(
-        MultiColumnListCell({
-          row: rowIndex,
-          content: title,
-        }),
-      )
-      .click(),
-  ),
+
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })
@@ -663,6 +664,7 @@ export default {
         .find(Link())
         .click(),
     );
+    cy.wait(1000);
   },
 
   verifyRequestIsPresent(itemData) {

@@ -9,10 +9,12 @@ import {
   TextField,
   including,
   matching,
+  KeyValue,
 } from '../../../../interactors';
-import OrderStates from './orderStates';
-import SearchHelper from '../finance/financeHelper';
+import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import SearchHelper from '../finance/financeHelper';
+import OrderStates from './orderStates';
 
 const orderEditFormRoot = Section({ id: 'pane-poForm' });
 
@@ -28,7 +30,7 @@ const addPoLineButton = orderEditFormRoot.find(Button('Add POL'));
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
   poNumberSuffix: orderInfoSection.find(Select({ name: 'poNumberSuffix' })),
-  poNumber: orderInfoSection.find(TextField('PO number')),
+  poNumber: orderInfoSection.find(KeyValue('PO number')),
   vendor: orderInfoSection.find(TextField({ name: 'vendor', disabled: true })),
   orderType: orderInfoSection.find(Select({ name: 'orderType' })),
   acquisitionUnit: orderInfoSection.find(MultiSelect({ id: 'order-acq-units' })),
@@ -55,7 +57,8 @@ const buttons = {
 };
 
 export default {
-  waitLoading() {
+  waitLoading(ms = DEFAULT_WAIT_TIME) {
+    cy.wait(ms);
     cy.expect(orderEditFormRoot.exists());
   },
   checkButtonsConditions(fields = []) {
@@ -84,7 +87,7 @@ export default {
     cy.expect([
       infoSectionFields.poNumberPrefix.has({ required: false }),
       infoSectionFields.poNumberSuffix.has({ required: false }),
-      infoSectionFields.poNumber.exists(),
+      cy.get('[data-test-po-number="true"]').should('exist'),
       infoSectionFields.vendor.has({ required: true }),
       infoSectionFields.orderType.has({ required: true }),
       infoSectionFields.acquisitionUnit.exists(),

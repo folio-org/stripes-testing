@@ -604,8 +604,8 @@ describe('MARC', () => {
               default:
                 break;
             }
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            QuickMarcEditor.checkAfterSaveAndClose();
+            cy.wait(1000);
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.checkInstanceTitle(title);
             InventoryInstance.getId().then((id) => {
               createdInstanceIDs.push(id);
@@ -639,7 +639,7 @@ describe('MARC', () => {
             testData.tags.tag245,
             testData.fieldContents.tag245ValueWithAllSubfields,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.fieldContents.instanceTitleWithSubfields);
           InventoryInstance.editMarcBibliographicRecord();
@@ -680,8 +680,6 @@ describe('MARC', () => {
             cy.wait(1000);
             QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
             set.tag008Fields();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
             InventoryInstance.waitInstanceRecordViewOpened(title);

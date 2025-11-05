@@ -97,13 +97,13 @@ describe('Bulk-edit', () => {
           marcInstance.instanceId,
           folioInstance.instanceId,
         ]);
-        BulkEditActions.openStartBulkEditInstanceForm();
+        BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         const possibleActions = ['Staff suppress', 'Suppress from discovery'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectOption('Staff suppress');
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
-        BulkEditActions.selectSecondAction('Set true');
+        BulkEditActions.selectAction('Set true');
         BulkEditActions.verifyCheckboxAbsent();
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();

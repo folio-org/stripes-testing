@@ -31,7 +31,7 @@ describe('Orders', () => {
 
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
-        OrderLinesLimit.setPOLLimit(orderLinesCount);
+        OrderLinesLimit.setPOLLimitViaApi(orderLinesCount);
 
         Organizations.createOrganizationViaApi(testData.organization).then(() => {
           cy.getAcquisitionMethodsApi({
@@ -101,7 +101,7 @@ describe('Orders', () => {
       cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Orders.deleteOrderViaApi(testData.order.id);
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       testData.integrations.forEach(({ id }) => Integrations.deleteIntegrationViaApi(id));
       Users.deleteViaApi(testData.user.userId);
     });

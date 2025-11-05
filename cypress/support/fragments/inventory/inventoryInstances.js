@@ -7,6 +7,7 @@ import {
   MultiSelectMenu,
   AdvancedSearchRow,
   Button,
+  Callout,
   Checkbox,
   Modal,
   MultiColumnList,
@@ -24,6 +25,7 @@ import {
   TextField,
   TextInput,
   or,
+  and,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import Arrays from '../../utils/arrays';
@@ -36,6 +38,7 @@ import InventoryInstance from './inventoryInstance';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
 import QuickMarcEditor from '../quickMarcEditor';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -179,11 +182,11 @@ const searchItemsOptionsValues = [
   'advancedSearch',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
-advSearchInstancesOptions[0] = 'Keyword (title, contributor)';
+advSearchInstancesOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
-advSearchHoldingsOptions[0] = 'Keyword (title, contributor)';
+advSearchHoldingsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
-advSearchItemsOptions[0] = 'Keyword (title, contributor)';
+advSearchItemsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 17);
@@ -379,6 +382,31 @@ export default {
   exportInstanceMarc() {
     cy.do([actionsButton.click(), exportInstanceMarcButton.click()]);
   },
+
+  exportInstanceMarcButtonAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect(exportInstanceMarcButton.absent());
+  },
+
+  selectInTransitItemsReportCsvOption() {
+    cy.do(Button({ id: 'dropdown-clickable-get-report' }).click());
+  },
+
+  verifyToastNotificationAfterExportInstanceMarc(recordHrid) {
+    const currentDate = DateTools.getFormattedDate({ date: new Date() });
+
+    cy.expect(
+      Callout({
+        textContent: and(
+          including(`The export is complete. The downloaded QuickInstanceExport${currentDate}`),
+          including(
+            `.csv contains selected record's UUID. To retrieve the quick-export-${recordHrid}.mrc file, please go to the Data export app.`,
+          ),
+        ),
+      }).exists(),
+    );
+  },
+
   resetAllFilters: () => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
@@ -394,19 +422,16 @@ export default {
     }
   },
   searchByTag: (tagName) => {
-    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
-    // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
+    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     cy.wait('@getTags');
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tagName));
-    // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.expect(MultiSelectOption(including(tagName)).exists());
     cy.do(
       MultiSelectMenu()
         .find(MultiSelectOption(including(tagName)))
         .click(),
     );
-    cy.wait(2000);
   },
 
   searchAndVerify(value) {
@@ -437,7 +462,7 @@ export default {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
+        cy.getDefaultMaterialType();
         cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
@@ -527,7 +552,7 @@ export default {
     cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
+        cy.getDefaultMaterialType();
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="MARC")' }).then(
@@ -613,8 +638,8 @@ export default {
   deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
       (instance) => {
-        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
+        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
@@ -623,11 +648,11 @@ export default {
   deleteFullInstancesByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: `search/instances?query=title=="${instanceTitle}"`,
+        path: `search/instances?query=title="${instanceTitle}"`,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
-        instances.forEach((instance) => {
+        instances?.forEach((instance) => {
           cy.okapiRequest({
             path: `holdings-storage/holdings?query=instanceId==${instance.id}`,
             isDefaultSearchParamsRequired: false,
@@ -667,18 +692,20 @@ export default {
       })
       .then((response) => response.body.items)
       .then((items) => {
-        items.forEach((item) => {
-          return cy
-            .okapiRequest({
-              path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
-              isDefaultSearchParamsRequired: false,
-            })
-            .then(({ body: { instances } }) => {
-              instances.forEach((instance) => {
-                this.deleteFullInstancesByTitleViaApi(instance.title);
+        items
+          .filter((item) => item.fullCallNumber === value)
+          .forEach((item) => {
+            return cy
+              .okapiRequest({
+                path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
+                isDefaultSearchParamsRequired: false,
+              })
+              .then(({ body: { instances } }) => {
+                instances.forEach((instance) => {
+                  this.deleteFullInstancesByTitleViaApi(instance.title);
+                });
               });
-            });
-        });
+          });
       });
   },
 
@@ -819,8 +846,8 @@ export default {
         this.getLoanTypes().then((loanTypes) => {
           types.loanTypeId = loanTypes[0].id;
         });
-        this.getMaterialTypes().then((materialTypes) => {
-          types.materialTypeId = materialTypes[0].id;
+        cy.getDefaultMaterialType().then((mt) => {
+          types.materialTypeId = mt.id;
         });
       })
       .then(() => {
@@ -884,8 +911,8 @@ export default {
         this.getLoanTypes().then((loanTypes) => {
           types.loanTypeId = loanTypes[0].id;
         });
-        this.getMaterialTypes().then((materialTypes) => {
-          types.materialTypeId = materialTypes[0].id;
+        cy.getDefaultMaterialType().then((materialType) => {
+          types.materialTypeId = materialType.id;
         });
       })
       .then(() => {
@@ -967,7 +994,8 @@ export default {
                     holdingsRecordId: item.holdingsRecordId || holdingWithIds.id,
                   };
                   itemIds.push(itemWithIds.id);
-                  InventoryItems.createItemViaApi(itemWithIds).then(() => {
+                  InventoryItems.createItemViaApi(itemWithIds).then((createdItem) => {
+                    itemWithIds.hrid = createdItem.hrid;
                     instanceData.items.push(itemWithIds);
                   });
                 }),
@@ -1095,7 +1123,7 @@ export default {
   deleteInstanceByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: {
           limit: 100,
           query: `title="${instanceTitle}"`,
@@ -1106,9 +1134,11 @@ export default {
         return res.body.instances;
       })
       .then((instances) => {
-        instances.forEach((instance) => {
-          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        if (instances && instances.length) {
+          instances.forEach((instance) => {
+            if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
+        }
       });
   },
 
@@ -1639,5 +1669,19 @@ export default {
     } else {
       cy.expect(Button(optionName).absent());
     }
+  },
+
+  toggleMarcBibLccnValidationRule({ enable = true }) {
+    cy.getSpecificationIds({ family: 'MARC' }).then((specs) => {
+      const marcBibSpecId = specs.find((spec) => spec.profile === 'bibliographic').id;
+      cy.getSpecificationRules(marcBibSpecId).then(({ body }) => {
+        const lccnRuleId = body.rules.find(
+          (rule) => rule.name === 'Invalid LCCN Subfield Value',
+        ).id;
+        cy.updateSpecificationRule(marcBibSpecId, lccnRuleId, {
+          enabled: enable,
+        });
+      });
+    });
   },
 };

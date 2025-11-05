@@ -1,12 +1,11 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import ActionProfileEdit from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileEdit';
+import ActionProfileView from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileView';
+import ConfirmRemoval from '../../../support/fragments/settings/dataImport/actionProfiles/modals/confirmRemoval';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
@@ -53,14 +52,14 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         ActionProfileView.verifyLinkedFieldMappingProfile(mappingProfile.name);
         ActionProfileView.openFieldMappingProfileView();
         FieldMappingProfileView.verifyLinkedActionProfile(actionProfile.name);
         FieldMappingProfileView.openAssociatedActionProfile();
-        ActionProfiles.verifyActionProfileOpened();
+        SettingsActionProfiles.verifyActionProfileOpened();
 
         ActionProfileView.edit();
         ActionProfileEdit.unlinkFieldMappingProfile();

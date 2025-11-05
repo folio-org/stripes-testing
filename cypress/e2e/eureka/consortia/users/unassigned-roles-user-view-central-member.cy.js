@@ -10,6 +10,8 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Capabilities from '../../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -23,14 +25,14 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.rolesUsers,
+        CapabilitySets.uiUsersRolesView,
       ];
 
       const capabsToAssign = [
-        { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-        { type: 'Data', resource: 'Consortia User-Tenants Collection', action: 'View' },
+        Capabilities.settingsEnabled,
+        Capabilities.consortiaUserTenantsCollection,
       ];
 
       before('Create users, roles', () => {
@@ -106,10 +108,14 @@ describe('Eureka', () => {
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.testUser.userId, [testData.roleM2AId]);
         else cy.addRolesToNewUserApi(testData.testUser.userId, [testData.roleM2AId]);
         cy.resetTenant();
-        cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.tempUser.username, testData.tempUser.password, {
+            path: TopMenu.usersPath,
+            waiter: Users.waitLoading,
+          });
+          cy.reload();
+          Users.waitLoading();
+        }, 20_000);
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
 
@@ -131,7 +137,6 @@ describe('Eureka', () => {
         { tags: ['criticalPathECS', 'eureka', 'C514899'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
           UsersCard.verifyUserRolesCounter('1');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
@@ -148,6 +153,10 @@ describe('Eureka', () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.centralRoleNameA);
           AuthorizationRoles.clickOnRoleName(testData.centralRoleNameA, false);
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
           AuthorizationRoles.clickAssignUsersButton();
           AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
           AuthorizationRoles.clickSaveInAssignModal();
@@ -175,6 +184,10 @@ describe('Eureka', () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.collegeRoleNameA);
           AuthorizationRoles.clickOnRoleName(testData.collegeRoleNameA, false);
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
           AuthorizationRoles.clickAssignUsersButton();
           AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
           AuthorizationRoles.clickSaveInAssignModal();
@@ -202,6 +215,10 @@ describe('Eureka', () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.universityRoleNameA);
           AuthorizationRoles.clickOnRoleName(testData.universityRoleNameA, false);
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
           AuthorizationRoles.clickAssignUsersButton();
           AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
           AuthorizationRoles.clickSaveInAssignModal();

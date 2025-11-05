@@ -16,7 +16,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -54,6 +53,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -194,7 +194,7 @@ describe('Data Import', () => {
                   vendorId = organization.id;
                 },
               );
-              cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+              cy.getBookMaterialType().then((materialType) => {
                 materialTypeId = materialType.id;
               });
               cy.getAcquisitionMethodsApi({
@@ -285,16 +285,24 @@ describe('Data Import', () => {
 
     const openOrder = (number) => {
       Orders.clearSearchField();
+      cy.intercept('/organizations/organizations*').as('getOrganizations');
       Orders.searchByParameter('PO number', number);
-      Orders.selectFromResultsList(number);
+      cy.wait('@getOrganizations', getLongDelay()).then(() => {
+        Orders.selectFromResultsList(number);
+      });
       OrderDetails.openOrder();
     };
 
     const checkReceivedPiece = (number, title) => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.waitLoading();
+      Orders.resetFiltersIfActive();
       Orders.clearSearchField();
+      cy.wait(1500);
       Orders.searchByParameter('PO number', number);
+      cy.wait(5000);
       Orders.selectFromResultsList(number);
+      OrderDetails.waitLoading();
       OrderDetails.openPolDetails(title);
       OrderLines.openReceiving();
       Receiving.checkIsPiecesCreated(title);
@@ -395,8 +403,8 @@ describe('Data Import', () => {
         });
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfProfiles.forEach((profile) => {
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
           cy.wait(3000);
         });
 

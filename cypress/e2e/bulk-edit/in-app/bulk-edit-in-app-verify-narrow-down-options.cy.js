@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
 
     it.skip(
       'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C356778'] },
+      { tags: [] },
       () => {
         // TODO: improve how the options are checked
         const options = [
@@ -84,13 +84,13 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         // Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditForm();
         BulkEditActions.isDisabledRowIcons(true);
         //  Click "Select option" dropdown in "Options" column under "Bulk edits" accordion
         BulkEditActions.verifyItemOptions();
 
         BulkEditActions.verifyItemAdminstrativeNoteActions(0);
-        BulkEditActions.selectSecondAction('Remove all', 0);
+        BulkEditActions.selectAction('Remove all', 0);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         cy.wait(1000);
         function performBulkEditOptionActions(option) {
@@ -100,7 +100,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.isDisabledRowIcons(false);
             // Click "Select option" dropdown on the added row
             BulkEditActions.verifyTheOptionsAfterSelectedOption(option[i], i);
-            BulkEditActions.selectSecondAction('Mark as staff only', i);
+            BulkEditActions.selectAction('Mark as staff only', i);
             BulkEditActions.verifyConfirmButtonDisabled(false);
           }
           removeItem(options);

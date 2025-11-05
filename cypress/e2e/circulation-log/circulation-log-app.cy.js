@@ -3,30 +3,27 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 
 describe('Circulation log', () => {
   let userData;
+  let servicePoint;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.servicePoint.id,
-    }).location;
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
+    ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+      servicePoint = sp;
+    });
+    InventoryInstances.createFolioInstancesViaApi({
+      folioInstances: testData.folioInstances,
+      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
     });
     cy.createTempUser([
       permissions.uiUserEdit.gui,
@@ -34,12 +31,12 @@ describe('Circulation log', () => {
     ])
       .then((userProperties) => {
         userData = userProperties;
-        UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
       })
       .then(() => {
         Checkout.checkoutItemViaApi({
           itemBarcode: testData.folioInstances[0].barcodes[0],
-          servicePointId: testData.servicePoint.id,
+          servicePointId: servicePoint.id,
           userBarcode: userData.barcode,
         });
         cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
@@ -49,18 +46,15 @@ describe('Circulation log', () => {
   after('Delete test data', () => {
     CheckInActions.checkinItemViaApi({
       itemBarcode: testData.folioInstances[0].barcodes[0],
-      servicePointId: testData.servicePoint.id,
+      servicePointId: servicePoint.id,
       checkInDate: new Date().toISOString(),
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     Users.deleteViaApi(userData.userId);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
+      servicePoint,
       shouldCheckIn: true,
     });
-    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(

@@ -1,21 +1,22 @@
 import moment from 'moment';
 import { calloutTypes } from '../../../../../../interactors';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import Permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
-import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
-import InstanceNoteTypes from '../../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import InstanceNoteTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/instanceNoteTypesConsortiumManager';
+import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import InstanceNoteTypes from '../../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
+import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -31,6 +32,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
+                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 Permissions.crudInstanceNoteTypes.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
@@ -90,9 +92,9 @@ describe('Consortia', () => {
 
         it(
           'C410933 Instance note type can be shared to all tenants in "Consortium manager" app regardless permission and affiliation  (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C410933'] },
           () => {
-            TopMenuNavigation.navigateToApp('Consortium manager');
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);

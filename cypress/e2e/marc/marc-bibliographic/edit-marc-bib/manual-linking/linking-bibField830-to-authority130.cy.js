@@ -17,6 +17,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
         const testData = {
+          browseSearchOption: 'uniformTitle',
           tag830: '830',
           authorityMarkedValue: 'C375088 Cambridge tracts in mathematics and mathematical physics',
           seriesValue:
@@ -118,6 +119,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib830InitialFieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag830);
+            MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
@@ -126,7 +128,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib830LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(
               0,
@@ -160,7 +161,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyIconsAfterUnlinking(bib830UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

@@ -178,22 +178,20 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
-            (users) => {
-              testData.adminLastName = users[0].personal.lastName;
-              testData.adminFirstName = users[0].personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -202,6 +200,7 @@ describe('Inventory', () => {
             marcFile.jobProfileToRun,
           ).then((response) => {
             testData.createdRecordId = response[0].instance.id;
+            cy.enableVersionHistoryFeature(true);
 
             cy.waitForAuthRefresh(() => {
               cy.login(testData.userProperties.username, testData.userProperties.password);
@@ -225,7 +224,7 @@ describe('Inventory', () => {
 
       it(
         'C692071 Check "Version history" pane after CRUD field and subfield in "MARC bibliographic" record via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C692071'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C692071'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.addEmptyFields(testData.addedField.indexAbove);

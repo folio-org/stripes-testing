@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import ExportManager from '../../../support/fragments/exportManager/exportManagerSearchPane';
 
-describe('fse-export-manager - UI', () => {
+describe('fse-export-manager - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

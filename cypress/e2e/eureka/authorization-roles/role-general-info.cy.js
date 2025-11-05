@@ -3,6 +3,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import DateTools from '../../../support/utils/dateTools';
+import Capabilities from '../../../support/dictionary/capabilities';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -13,12 +15,12 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        CapabilitySets.uiAuthorizationRolesSettingsAdmin,
+        CapabilitySets.capabilities,
+        CapabilitySets.roleCapabilitySets,
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+      const capabsToAssign = [Capabilities.settingsEnabled];
 
       before(() => {
         cy.getAdminToken();
@@ -40,11 +42,12 @@ describe('Eureka', () => {
               capabSetsToAssign,
             );
             if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, []);
-
-            cy.login(testData.userA.username, testData.userA.password, {
-              path: TopMenu.settingsAuthorizationRoles,
-              waiter: AuthorizationRoles.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userA.username, testData.userA.password, {
+                path: TopMenu.settingsAuthorizationRoles,
+                waiter: AuthorizationRoles.waitContentLoading,
+              });
+            }, 20_000);
           });
         });
       });
@@ -80,10 +83,12 @@ describe('Eureka', () => {
               `${testData.userA.lastName}, ${testData.userA.firstName}`,
             );
             cy.logout();
-            cy.login(testData.userB.username, testData.userB.password, {
-              path: TopMenu.settingsAuthorizationRoles,
-              waiter: AuthorizationRoles.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userB.username, testData.userB.password, {
+                path: TopMenu.settingsAuthorizationRoles,
+                waiter: AuthorizationRoles.waitContentLoading,
+              });
+            }, 20_000);
             AuthorizationRoles.waitLoading();
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);

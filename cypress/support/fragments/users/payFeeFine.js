@@ -11,10 +11,16 @@ import {
 const rootModal = Modal({ id: 'payment-modal' });
 const confirmationModal = Modal(including('Confirm fee/fine'));
 const amountTextfield = rootModal.find(TextField({ id: 'amount' }));
+const submitButton = rootModal.find(Button({ id: 'submit-button' }));
+const confirmButton = confirmationModal.find(Button('Confirm'));
+const warningModal = Modal({ id: 'warning-modal' });
 
 export default {
   waitLoading: () => {
     cy.expect(rootModal.exists());
+  },
+  waitWarningLoading: () => {
+    cy.expect(warningModal.exists());
   },
   checkAmount: (amount) => cy.expect(amountTextfield.has({ value: amount.toFixed(2) })),
   setPaymentMethod: ({ name: paymentMethodName }) => {
@@ -25,22 +31,12 @@ export default {
     cy.do(rootModal.find(TextArea({ name: 'comment' })).fillIn(comment));
   },
   submitAndConfirm: () => {
-    cy.wait(1000);
-    cy.do(rootModal.find(Button({ id: 'submit-button' })).click());
-    cy.wait(1000);
-    cy.expect(confirmationModal.exists());
-    cy.do(
-      confirmationModal
-        .find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') }))
-        .click(),
-    );
+    cy.do([submitButton.click(), confirmButton.click()]);
     cy.wait(1000);
   },
   checkPartialPayConfirmation: () => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
   setAmount(amount) {
-    cy.wait(500);
-    cy.do(amountTextfield.fillIn(amount.toString()));
-    cy.wait(500);
+    cy.get('input[name="amount"]').clear().wait(500).type(amount.toString());
   },
   back: () => cy.do(
     confirmationModal
@@ -60,5 +56,26 @@ export default {
   }),
   verifySaveIsDisabled: () => {
     cy.expect(rootModal.find(Button({ id: 'submit-button' })).is({ disabled: true }));
+  },
+
+  verifyContinueIsDisabled: () => {
+    cy.expect(warningModal.find(Button('Continue')).is({ disabled: true }));
+  },
+
+  verifyDeselectToContinueText: () => {
+    cy.expect(warningModal.find(HTML(including('Deselect to continue'))).exists());
+  },
+
+  deselectFeeFine() {
+    cy.get('span[class*="alertDetails"]')
+      .contains('Deselect to continue')
+      .parent()
+      .prev('div')
+      .find('input[type="checkbox"]')
+      .click();
+  },
+
+  clickContinue: () => {
+    cy.do(warningModal.find(Button('Continue')).click());
   },
 };

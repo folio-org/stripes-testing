@@ -152,9 +152,9 @@ const selectOrganizationByName = (organizationName) => {
   cy.do([
     organizationModal.find(searchField).fillIn(organizationName),
     organizationModal.find(searchButton).click(),
-    organizationModal.find(HTML(including('1 record found'))).exists(),
-    MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
+  cy.expect(MultiColumnListCell(organizationName).exists());
+  cy.do(MultiColumnListCell({ content: organizationName }).click());
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
@@ -275,8 +275,8 @@ const addVendor = (profile) => {
     organizationModal.find(searchField).fillIn(profile.vendor),
     organizationModal.find(searchButton).click(),
   ]);
-  cy.expect(organizationModal.find(HTML(including('1 record found'))).exists());
-  cy.do(MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }));
+  cy.expect(MultiColumnListCell(profile.vendor).exists());
+  cy.do(MultiColumnListCell({ content: profile.vendor }).click());
 };
 
 const addMaterialSupplier = (profile) => {
@@ -285,9 +285,9 @@ const addMaterialSupplier = (profile) => {
       physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.materialSupplier),
       organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.materialSupplier).click({ row: 0, columnIndex: 0 }),
     ]);
+    cy.expect(MultiColumnListCell(profile.materialSupplier).exists());
+    cy.do(MultiColumnListCell({ content: profile.materialSupplier }).click());
   }
 };
 
@@ -297,9 +297,9 @@ const addAccessProvider = (profile) => {
       Accordion('E-resources details').find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.accessProvider),
       organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.accessProvider).click({ row: 0, columnIndex: 0 }),
     ]);
+    cy.expect(MultiColumnListCell(profile.accessProvider).exists());
+    cy.do(MultiColumnListCell({ content: profile.accessProvider }).click());
   }
 };
 
@@ -1633,6 +1633,12 @@ export default {
     cy.get('#po-line-details')
       .find('label:contains("Payment status") + div button[aria-haspopup]')
       .click();
+  },
+
+  verifyFolioRecordTypeOptions: (options) => {
+    options.forEach((option) => {
+      cy.expect(recordTypeselect.has({ allOptionsText: including(option) }));
+    });
   },
 
   selectPaymentStatusFromDropdown: (name) => {

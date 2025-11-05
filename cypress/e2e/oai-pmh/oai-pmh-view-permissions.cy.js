@@ -2,8 +2,8 @@ import permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import { Behavior, General, OaiPmh, Technical } from '../../support/fragments/oai-pmh';
-import { SECTIONS } from '../../support/fragments/oai-pmh/oaipmhPane';
+import { Behavior, General, OaiPmh, Technical } from '../../support/fragments/settings/oai-pmh';
+import { SECTIONS } from '../../support/fragments/settings/oai-pmh/oaipmhPane';
 
 let user;
 

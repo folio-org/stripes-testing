@@ -40,7 +40,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
     creator: testData.uniqueCreator,
     language: 'spa',
     classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
     isbnIdentifier: testData.uniqueIsbn,
     lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',
@@ -62,6 +62,8 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
+    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
+    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {
@@ -132,7 +134,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
       // check college holdings
-      InstanceRecordView.verifyConsortiaHoldingsAccordion();
+      InstanceRecordView.verifyConsortialHoldingsAccordion();
       InstanceRecordView.expandConsortiaHoldings();
       InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
     },

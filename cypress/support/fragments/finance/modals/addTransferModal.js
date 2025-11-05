@@ -1,3 +1,4 @@
+import { HTML } from '@interactors/html';
 import {
   Button,
   ConfirmationModal,
@@ -18,8 +19,8 @@ import States from '../states';
 
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const fundSelection = addTransferModal.find(Selection('Fund'));
-const fromSelection = addTransferModal.find(Selection('From'));
-const toSelection = addTransferModal.find(Selection('To'));
+const fromSelection = addTransferModal.find(Selection({ name: 'fromFundId' }));
+const toSelection = addTransferModal.find(Selection({ name: 'toFundId' }));
 const amountTextField = addTransferModal.find(TextField({ name: 'amount' }));
 const tagsMultiSelect = addTransferModal.find(MultiSelect({ label: 'Tags' }));
 const descriptionTextArea = addTransferModal.find(TextArea({ name: 'description' }));
@@ -45,10 +46,18 @@ export default {
   },
   fillTransferDetails({ fromFund, toFund, amount, tag, description } = {}) {
     if (fromFund) {
-      this.selectDropDownValue('From', fromFund);
+      cy.do([
+        Selection({ name: 'fromFundId' }).open(),
+        SelectionList().filter(fromFund),
+        SelectionList().select(including(fromFund)),
+      ]);
     }
     if (toFund) {
-      this.selectDropDownValue('To', toFund);
+      cy.do([
+        Selection({ name: 'toFundId' }).open(),
+        SelectionList().filter(toFund),
+        SelectionList().select(including(toFund)),
+      ]);
     }
     if (amount) {
       cy.do(amountTextField.fillIn(amount));
@@ -100,5 +109,9 @@ export default {
         matching(new RegExp(States.amountAllocatedSuccessfully)),
       );
     }
+  },
+
+  expectError: (message) => {
+    cy.expect(HTML({ className: including('feedbackError') }).has({ text: including(message) }));
   },
 };

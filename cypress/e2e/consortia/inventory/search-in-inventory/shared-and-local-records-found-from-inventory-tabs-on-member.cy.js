@@ -24,6 +24,9 @@ describe('Inventory', () => {
     const localM2FOLIOInstance = {
       title: `${titlePrefix} Local FOLIO Member 2`,
     };
+    const Dropdowns = {
+      HELDBY: 'Held by',
+    };
 
     const sharedMarcTitle = 'C410715-MSEARCH-588 Shared MARC';
     const localM1MarcTitle = 'C410715-MSEARCH-588 Local MARC';
@@ -55,6 +58,7 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
@@ -62,6 +66,7 @@ describe('Inventory', () => {
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
           cy.setTenant(Affiliations.University);
+          InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
           cy.assignPermissionsToExistingUser(users.userProperties.userId, [
             Permissions.uiInventoryViewInstances.gui,
           ]);
@@ -82,6 +87,7 @@ describe('Inventory', () => {
           });
 
           cy.setTenant(Affiliations.College);
+          InventoryInstances.deleteInstanceByTitleViaApi(titlePrefix);
           InventoryInstance.createInstanceViaApi({
             instanceTitle: localM2FOLIOInstance.title,
           }).then((instanceDataLocal) => {
@@ -141,6 +147,7 @@ describe('Inventory', () => {
       'C410715 "Shared" and "Local" (for current tenant) records will be found from "Instance/Holdings/Item" tabs of "inventory" app on Member tenant (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C410715'] },
       () => {
+        InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventoryInstances.searchByTitle(titlePrefix);
         InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstance.title);
         InventorySearchAndFilter.verifySearchResult(localM1FOLIOInstance.title);
@@ -151,6 +158,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToHoldings();
         InventoryInstances.waitContentLoading();
+        InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventorySearchAndFilter.checkSearchQueryText('');
         InventoryInstances.searchByTitle(titlePrefix);
         InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstance.title);
@@ -162,6 +170,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToItem();
         InventoryInstances.waitContentLoading();
+        InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventorySearchAndFilter.checkSearchQueryText('');
         InventoryInstances.searchByTitle(titlePrefix);
         InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstance.title);

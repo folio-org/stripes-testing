@@ -193,7 +193,7 @@ describe('Patron notices', () => {
             }).then((loanType) => {
               testData.loanTypeId = loanType.id;
             });
-            cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+            cy.getBookMaterialType().then((materialType) => {
               testData.materialTypeId = materialType.id;
             });
           })
@@ -323,10 +323,10 @@ describe('Patron notices', () => {
             NewNoticePolicyTemplate.checkAfterSaving(template);
           });
 
-          cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
-          cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-          cy.wait('@/authn/refresh', { timeout: 20000 });
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          NewNoticePolicy.openTabCirculationPatronNoticePolicies();
           NewNoticePolicy.waitLoading();
+          cy.wait(2000);
 
           NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
           NewNoticePolicy.checkPolicyName(noticePolicy);

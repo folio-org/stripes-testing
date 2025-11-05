@@ -31,6 +31,7 @@ import {
   including,
   not,
   or,
+  and,
   matching,
   MultiColumnListHeader,
 } from '../../../../interactors';
@@ -39,6 +40,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -72,9 +74,8 @@ const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
   Section({ menuSectionLabel: 'Show columns' }),
 );
 const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
-const saveCqlButton = authorityActionsDropDownMenu.find(
-  Button({ id: 'dropdown-clickable-export-cql' }),
-);
+const saveCqlButton = authorityActionsDropDownMenu.find(Button('Save authorities CQL query'));
+const saveUuidsButton = authorityActionsDropDownMenu.find(Button('Save authorities UUIDs'));
 const actionsShowColumnsOptions = [
   'Authorized/Reference',
   'Type of heading',
@@ -113,7 +114,7 @@ const authoritySourceOptions = [
   'LC Subject Headings (LCSH)',
   "LC Children's Subject Headings",
   'LC Genre/Form Terms (LCGFT)',
-  'LC Demographic Group Terms (LCFGT)',
+  'LC Demographic Group Terms (LCDGT)',
   'LC Medium of Performance Thesaurus for Music (LCMPT)',
   'Faceted Application of Subject Terminology (FAST)',
   'Medical Subject Headings (MeSH)',
@@ -127,26 +128,26 @@ const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
 const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
-const default008FieldValues = {
-  'Cat Rules': '\\',
-  'Geo Subd': '\\',
-  'Govt Ag': '\\',
-  'Kind rec': '\\',
+const valid008FieldValues = {
+  'Cat Rules': 'c',
+  'Geo Subd': 'n',
+  'Govt Ag': '|',
+  'Kind rec': 'a',
   Lang: '\\',
-  'Level Est': '\\',
-  'Main use': '\\',
-  'Mod Rec Est': '\\',
-  'Numb Series': '\\',
-  'Pers Name': '\\',
-  RecUpd: '\\',
-  RefEval: '\\',
-  Roman: '\\',
-  'SH Sys': '\\',
-  Series: '\\',
-  'Series use': '\\',
+  'Level Est': 'a',
+  'Main use': 'a',
+  'Mod Rec': '\\',
+  'Numb Series': 'n',
+  'Pers Name': 'a',
+  RecUpd: 'a',
+  RefEval: 'a',
+  Roman: '|',
+  'SH Sys': 'a',
+  Series: 'n',
+  'Series use': 'a',
   Source: '\\',
-  'Subj use': '\\',
-  'Type Subd': '\\',
+  'Subj use': 'a',
+  'Type Subd': 'n',
   Undef_18: '\\\\\\\\\\\\\\\\\\\\',
   Undef_30: '\\',
   Undef_34: '\\\\\\\\',
@@ -159,8 +160,13 @@ const resultsListColumns = [
   'Authority source',
   'Number of titles',
 ];
+const clearFieldIcon = Button({ icon: 'times-circle-solid' });
+const searchToggleButton = Button({ id: 'segment-navigation-search' });
+const browseToggleButton = Button({ id: 'segment-navigation-browse' });
 
 export default {
+  valid008FieldValues,
+
   waitLoading() {
     cy.expect(resultsPaneHeader.exists());
   },
@@ -251,6 +257,18 @@ export default {
     // valid name example: 2023-03-26_09-51-07_7642_auth_headings_updates.csv
     const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
     expect(actualName).to.match(fileNameMask);
+  },
+
+  verifyAuthorityFileName(actualName) {
+    // valid name example: QuickInstanceExport2021-12-24T14_05_53+03_00.csv
+    const expectedFileNameMask =
+      /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
+    expect(actualName).to.match(expectedFileNameMask);
+
+    const actualDate = DateTools.parseDateFromFilename(
+      FileManager.getFileNameFromFilePath(actualName),
+    );
+    DateTools.verifyDate(actualDate);
   },
 
   verifyContentOfExportFile(actual, ...expectedArray) {
@@ -389,6 +407,12 @@ export default {
     cy.expect([
       authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
       authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
+    ]);
+  },
+
+  checkRowsCountExistance: (expectedRowsCount) => {
+    cy.expect([
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
     ]);
   },
 
@@ -645,7 +669,9 @@ export default {
       MultiSelect({ label: including('Authority source') }),
     );
     cy.wait(1000);
+    cy.intercept('search/authorities/facets?*').as('getFacets');
     cy.do(multiSelect.select(including(option)));
+    cy.wait('@getFacets');
     cy.wait(1000);
   },
 
@@ -739,6 +765,41 @@ export default {
     cy.do(buttonExportSelected.click());
   },
 
+  verifyExportSelectedRecordsButtonAbsent() {
+    cy.expect(buttonExportSelected.absent());
+  },
+
+  verifyToastNotificationAfterExportAuthority() {
+    const currentDate = DateTools.getFormattedDate({ date: new Date() });
+
+    cy.expect(
+      Callout({
+        textContent: and(
+          including(`QuickAuthorityExport${currentDate}`),
+          including(
+            "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
+          ),
+        ),
+      }).exists(),
+    );
+  },
+
+  getExportedCSVFileNameFromCallout() {
+    const fileNamePattern = /QuickAuthorityExport\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}/;
+
+    return Callout({
+      textContent: including('QuickAuthorityExport'),
+    }).perform((element) => {
+      const text = element.textContent || '';
+      const fileNameMatch = text.match(fileNamePattern);
+
+      if (!fileNameMatch) {
+        throw new Error('File name not found in callout message.');
+      }
+      return fileNameMatch[0].replace(/:/g, '_');
+    });
+  },
+
   checkRowsContent(contents) {
     contents.forEach((content, rowIndex) => {
       cy.expect(MultiColumnListCell({ row: rowIndex, content }).exists());
@@ -772,7 +833,7 @@ export default {
 
   clickAdvancedSearchButton() {
     cy.do(buttonAdvancedSearch.click());
-    cy.expect(modalAdvancedSearch.exists());
+    cy.expect([modalAdvancedSearch.exists()]);
   },
 
   fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
@@ -782,16 +843,34 @@ export default {
     if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
   },
 
+  focusOnAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(TextArea()).focus());
+  },
+
+  verifyClearIconInAdvancedSearchField(rowIndex, shouldExist = true) {
+    const targetIcon = AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon);
+    if (shouldExist) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  clickClearIconInAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon).click());
+  },
+
   clickSearchButton() {
     cy.do(buttonSearchInAdvancedModal.click());
   },
 
   checkSearchInput(value) {
-    cy.expect(searchInput.has({ value }));
+    cy.expect(searchInput.has({ value: including(value) }));
   },
 
   clickResetAllButtonInAdvSearchModal() {
     cy.do(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).click());
+  },
+
+  checkResetAllButtonInAdvSearchModalEnabled(enabled = true) {
+    cy.expect(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).has({ disabled: !enabled }));
   },
 
   checkAdvancedSearchModalAbsence() {
@@ -820,6 +899,7 @@ export default {
         .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
       modalAdvancedSearch.find(buttonResetAllInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonClose).exists(),
     ]);
     if (boolean) {
       cy.expect([
@@ -891,7 +971,7 @@ export default {
         .find(MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')))
         .exists(),
       sourceFileAccordion
-        .find(MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')))
+        .find(MultiSelectOption(including('LC Demographic Group Terms (LCDGT)')))
         .exists(),
       sourceFileAccordion
         .find(MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')))
@@ -926,7 +1006,7 @@ export default {
       MultiSelectOption(including('LC Subject Headings (LCSH)')).exists(),
       MultiSelectOption(including("LC Children's Subject Headings")).exists(),
       MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')).exists(),
-      MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')).exists(),
+      MultiSelectOption(including('LC Demographic Group Terms (LCDGT)')).exists(),
       MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')).exists(),
       MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)')).exists(),
       MultiSelectOption(including('Medical Subject Headings (MeSH)')).exists(),
@@ -1126,7 +1206,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((res) => {
-        return res.body.authorities;
+        return res.body.authorities || [];
       });
   },
 
@@ -1616,8 +1696,9 @@ export default {
     });
   },
 
-  checkButtonNewExistsInActionDropdown() {
-    cy.expect(buttonNew.exists());
+  checkButtonNewExistsInActionDropdown(buttonShown = true) {
+    if (buttonShown) cy.expect(buttonNew.exists());
+    else cy.expect(buttonNew.absent());
   },
 
   checkAuthorityActionsDropDownExpanded() {
@@ -1629,10 +1710,11 @@ export default {
     authorityFileHridStartsWith,
     fields,
     LDR = defaultLDR,
+    tag008Values = valid008FieldValues,
   ) {
     return cy.createMarcAuthorityViaAPI(LDR, [
       { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: default008FieldValues, indicators: ['\\', '\\'] },
+      { tag: '008', content: tag008Values },
       ...fields,
     ]);
   },
@@ -1648,17 +1730,19 @@ export default {
 
   deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
-      records.forEach((record) => {
-        if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id, true);
-        }
-      });
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          if (record.authRefType === authRefType) {
+            this.deleteViaAPI(record.id, true);
+          }
+        });
+      }
     });
   },
 
   createMarcAuthorityRecordViaApiByReadingFromMrkFile(
     mrkFileName,
-    field008Values = default008FieldValues,
+    field008Values = valid008FieldValues,
   ) {
     return new Promise((resolve) => {
       FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {
@@ -1694,8 +1778,9 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
-  verifyActionsMenu(saveCqlEnabled = false, sortOption = sortOptions[0]) {
+  verifyActionsMenu(saveUuidsEnabled = false, saveCqlEnabled = false, sortOption = sortOptions[0]) {
     cy.expect([
+      saveUuidsButton.is({ disabled: !saveUuidsEnabled }),
       saveCqlButton.is({ disabled: !saveCqlEnabled }),
       actionsMenuSortBySection.find(sortBySelect).has({ checkedOptionText: sortOption }),
       sortBySelect.has({ content: sortOptions.join('') }),
@@ -1714,5 +1799,79 @@ export default {
       if (index < 3) rootSection.find(MultiColumnListHeader(column)).is({ sortable: true });
       else rootSection.find(MultiColumnListHeader(column)).is({ sortable: false });
     });
+  },
+
+  toggleAuthorityLccnValidationRule({ enable = true }) {
+    cy.getSpecificationIds({ family: 'MARC' }).then((specs) => {
+      // Find the specification with profile 'authority'
+      const authoritySpecId = specs.find((spec) => spec.profile === 'authority').id;
+      cy.getSpecificationRules(authoritySpecId).then(({ body }) => {
+        const lccnRuleId = body.rules.find(
+          (rule) => rule.name === 'Invalid LCCN Subfield Value',
+        ).id;
+        cy.updateSpecificationRule(authoritySpecId, lccnRuleId, {
+          enabled: enable,
+        });
+      });
+    });
+  },
+
+  checkSearchQuery(searchQuery) {
+    cy.expect(SearchField({ id: 'textarea-authorities-search', value: searchQuery }).exists());
+  },
+
+  verifyMultiselectFilterOptionsCount(accordionName, expectedCount) {
+    cy.expect(Accordion(accordionName).find(MultiSelect()).has({ optionsCount: expectedCount }));
+  },
+
+  verifyMultiselectFilterOptionExists(accordionName, optionName) {
+    const optionRegExp = new RegExp(
+      `${optionName.replace(/[\\(\\)]/g, (match) => `\\${match}`)}\\(\\d+\\)`,
+    );
+    cy.expect(
+      Accordion(accordionName)
+        .find(MultiSelectOption(matching(optionRegExp), { visible: or(true, false) }))
+        .exists(),
+    );
+  },
+
+  verifyRecordFound(heading, isFound = true) {
+    const targetCell = searchResults.find(
+      MultiColumnListCell({ columnIndex: 2, content: heading }),
+    );
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  verifySearchTabIsOpened() {
+    cy.do(
+      searchToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  verifyBrowseTabIsOpened() {
+    cy.do(
+      browseToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  clickNextPaginationButtonIfEnabled() {
+    return cy
+      .then(() => {
+        return Button({
+          id: 'authority-result-list-next-paging-button',
+          disabled: or(true, false),
+        }).disabled();
+      })
+      .then((isDisabled) => {
+        if (!isDisabled) {
+          cy.do(nextButton.click());
+        }
+        return cy.wrap(!isDisabled);
+      });
   },
 };
