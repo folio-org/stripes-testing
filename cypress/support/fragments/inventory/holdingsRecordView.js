@@ -23,7 +23,7 @@ const editButton = Button({ id: 'edit-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
-const deleteConfirmationModal = Modal({ id: 'delete-confirmation-modal' });
+const deleteConfirmationModal = Modal('Confirm deletion of holdings record');
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
@@ -84,9 +84,11 @@ export default {
     cy.do(viewSourceButton.click());
     InventoryViewSource.waitHoldingLoading();
   },
-  tryToDelete: () => {
+  tryToDelete: ({ deleteButtonShown = true } = {}) => {
     cy.do([actionsButton.click(), deleteButton.click()]);
     cy.expect(deleteConfirmationModal.exists());
+    if (!deleteButtonShown) cy.expect(deleteConfirmationModal.find(Button('Delete')).absent());
+    else cy.expect(deleteConfirmationModal.find(Button('Delete')).exists());
     cy.do(deleteConfirmationModal.find(Button('Cancel')).click());
     cy.expect(deleteConfirmationModal.absent());
   },
