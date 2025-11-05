@@ -54,6 +54,10 @@ describe('MARC', () => {
         },
       ];
 
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
+
       const createdRecordIDs = [];
 
       before('Create users, data', () => {
@@ -118,6 +122,7 @@ describe('MARC', () => {
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
               InventoryInstances.waitContentLoading();
+              InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -131,8 +136,6 @@ describe('MARC', () => {
                 linkingTagAndValues.tag,
                 linkingTagAndValues.rowIndex,
               );
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -162,11 +165,10 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -181,6 +183,7 @@ describe('MARC', () => {
             linkingTagAndValues.seventhBox,
           );
           QuickMarcEditor.closeEditorPane();
+          cy.checkInstanceLinkStatus(createdRecordIDs[0], Affiliations.University);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
           InventoryInstances.waitContentLoading();

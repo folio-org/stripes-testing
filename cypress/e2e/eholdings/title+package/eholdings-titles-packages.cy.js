@@ -15,7 +15,6 @@ describe('eHoldings', () => {
       publicationType: 'Journal',
       titleC9240: 'Wiley Rutledge',
       label1Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ${getRandomPostfix()}`,
-      label2Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ${getRandomPostfix()}`,
     };
 
     before('Creating users and getting info about title', () => {
@@ -34,10 +33,6 @@ describe('eHoldings', () => {
         'filter[type]': testData.publicationType.toLowerCase(),
       }).then((res) => {
         testData.titleProps = res[0];
-      });
-      cy.getEHoldingsCustomLabelsViaAPI().then((labels) => {
-        testData.label1 = labels[0].attributes.displayLabel;
-        testData.label2 = labels[1].attributes.displayLabel;
       });
     });
 
@@ -78,12 +73,14 @@ describe('eHoldings', () => {
         EHoldingsTitlesSearch.bySelectionStatus('Selected');
         EHoldingsTitlesSearch.openTitle(testData.titleC9240);
         EHoldingsTitle.openResource();
+        cy.intercept('eholdings/custom-labels').as('getCustomLabels');
         EHoldingsResourceView.goToEdit();
-        EHoldingsResourceEdit.fillCustomLabelValue(testData.label1, testData.label1Value);
-        EHoldingsResourceEdit.fillCustomLabelValue(testData.label2, testData.label2Value);
-        EHoldingsResourceEdit.saveAndClose();
-        EHoldingsResourceView.verifyCustomLabelValue(testData.label1, testData.label1Value);
-        EHoldingsResourceView.verifyCustomLabelValue(testData.label2, testData.label2Value);
+        cy.wait('@getCustomLabels').then(({ response }) => {
+          const labelName = response.body.data[0].attributes.displayLabel;
+          EHoldingsResourceEdit.fillCustomLabelValue(labelName, testData.label1Value);
+          EHoldingsResourceEdit.saveAndClose();
+          EHoldingsResourceView.verifyCustomLabelValue(labelName, testData.label1Value);
+        });
       },
     );
   });

@@ -30,7 +30,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
-  describe('Request notice triggers', { retries: { runMode: 1 } }, () => {
+  describe('Request notice triggers', () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       adminSourceRecord: {},
