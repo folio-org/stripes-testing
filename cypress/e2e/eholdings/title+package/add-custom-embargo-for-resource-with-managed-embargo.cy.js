@@ -13,6 +13,8 @@ describe('eHoldings', () => {
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      EHoldingsResourceEdit.removeCustomEmbargoViaAPI(testData.resourceId);
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
