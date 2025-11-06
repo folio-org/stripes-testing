@@ -173,7 +173,7 @@ export default {
 
   fillSearchInput(value) {
     cy.do(rootSection.find(searchInput).fillIn(value));
-    cy.expect(searchInput.has({ value }));
+    this.checkSearchQuery(value);
   },
 
   clickSearchButton() {
@@ -204,5 +204,9 @@ export default {
 
   selectSearchOption: (parameter) => {
     cy.do(SearchField({ id: 'textarea-authorities-search' }).selectIndex(parameter));
+  },
+
+  checkSearchQuery(value) {
+    cy.expect(searchInput.has({ value }));
   },
 };
