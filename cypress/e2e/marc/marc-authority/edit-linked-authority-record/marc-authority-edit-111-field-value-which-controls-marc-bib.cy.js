@@ -107,8 +107,6 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -126,8 +124,8 @@ describe('MARC', () => {
         Users.deleteViaApi(testData.user.userId);
         Users.deleteViaApi(testData.preconditionUserId);
         testData.createdRecordIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
-          // else InventoryInstance.deleteInstanceViaApi(id);
+          if (index) MarcAuthority.deleteViaAPI(id, true);
+          else InventoryInstance.deleteInstanceViaApi(id);
         });
       });
 

@@ -83,8 +83,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
@@ -105,8 +103,6 @@ describe('MARC', () => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked700Field);
               QuickMarcEditor.closeCallout();
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(3_000);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           })
@@ -126,8 +122,6 @@ describe('MARC', () => {
                   path: TopMenu.marcAuthorities,
                   waiter: MarcAuthorities.waitLoading,
                 });
-                cy.reload();
-                MarcAuthorities.waitLoading();
               }, 20_000);
             });
           });
@@ -160,9 +154,7 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(testData.tag010RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.new010tagValue);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3_000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.calloutMessageError);
           QuickMarcEditor.closeAllCallouts();
           cy.wait(1500);
@@ -198,8 +190,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkFourthBoxEditable(testData.tag700RowIndex, true);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessageSuccessfulSaving);
           InventoryInstance.waitInventoryLoading();
 
@@ -217,10 +207,7 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(testData.tag010);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.constinueWithSaveAndCheck();
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           MarcAuthorities.waitLoading();
           MarcAuthorities.verifyViewPaneContentAbsent(testData.tag010);
         },
