@@ -730,9 +730,9 @@ export default {
     ]);
   },
 
-  collapseAllInConsortialHoldingsAccordion() {
+  collapseAllInConsortialHoldingsAccordion(instanceId) {
     cy.do([
-      Section({ id: including('consortialHoldings') })
+      Section({ id: `consortialHoldings.${instanceId}` })
         .find(Button('Collapse all'))
         .click(),
     ]);

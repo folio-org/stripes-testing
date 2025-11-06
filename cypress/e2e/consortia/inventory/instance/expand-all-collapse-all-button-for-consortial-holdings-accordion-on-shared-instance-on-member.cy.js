@@ -26,7 +26,7 @@ describe('Inventory', () => {
         cy.getConsortiaId().then((consortiaId) => {
           testData.consortiaId = consortiaId;
 
-          cy.setTenant(Affiliations.College);
+          cy.setTenant(Affiliations.University);
           InventoryInstance.createInstanceViaApi()
             .then(({ instanceData }) => {
               testData.instanceId = instanceData.instanceId;
@@ -52,7 +52,7 @@ describe('Inventory', () => {
               InventoryInstance.shareInstanceViaApi(
                 testData.instanceId,
                 testData.consortiaId,
-                Affiliations.College,
+                Affiliations.University,
                 Affiliations.Consortia,
               );
             });
@@ -62,8 +62,14 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+          cy.resetTenant();
+
           cy.login(testData.user.username, testData.user.password);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
         });
@@ -72,7 +78,7 @@ describe('Inventory', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.setTenant(Affiliations.College);
+        cy.setTenant(Affiliations.University);
         InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingId);
         cy.resetTenant();
         cy.getAdminToken();
@@ -81,8 +87,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C436939 (CONSORTIA) Check Expand All/Collapse all button for Consortial holdings accordion on shared Instance on Central Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C436939'] },
+        'C436942 (CONSORTIA) Check Expand All/Collapse all button for Consortial holdings accordion on Shared Instance on Member Tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C436942'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
@@ -90,7 +96,7 @@ describe('Inventory', () => {
           InstanceRecordView.expandAllInConsortialHoldingsAccordion(testData.instanceId);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, true);
           InstanceRecordView.verifySubHoldingsAccordion(
-            Affiliations.College,
+            Affiliations.University,
             testData.holdingId,
             true,
           );
