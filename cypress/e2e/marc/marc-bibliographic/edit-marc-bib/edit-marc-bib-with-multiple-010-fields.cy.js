@@ -97,8 +97,6 @@ describe('MARC', () => {
 
           // #9 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           // #10 Click on the "Actions" >> "View source".
           InventoryInstance.viewSource();
@@ -140,8 +138,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
           // # 7 Click "Save & keep editing" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
         },

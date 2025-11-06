@@ -50,7 +50,7 @@ describe('eHoldings', () => {
         EHoldingsPackage.verifyButtonsDisabled();
         EHoldingsNewCustomPackage.fillInRequiredProperties(testData.customPackageName);
         EHoldingsPackage.verifyButtonsEnabled();
-        EHoldingsNewCustomPackage.closeEditingWindow();
+        EHoldingsPackage.closeEditingWindow();
 
         EHoldingsPackage.verifyUnsavedChangesModalExists();
         EHoldingsPackage.clickKeepEditing();

@@ -114,8 +114,6 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag100);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             createdInstanceRecordId = id;

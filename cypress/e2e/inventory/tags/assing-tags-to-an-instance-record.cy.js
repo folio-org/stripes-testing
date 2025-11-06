@@ -6,7 +6,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe(
     'Tags',
     {

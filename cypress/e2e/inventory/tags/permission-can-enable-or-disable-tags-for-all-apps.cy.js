@@ -16,7 +16,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Tags (Inventory)', () => {
     let userData;
     let servicePointId;

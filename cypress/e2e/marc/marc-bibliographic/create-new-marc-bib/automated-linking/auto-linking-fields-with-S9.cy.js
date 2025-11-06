@@ -175,7 +175,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(newFields[2].contentWithout$9, 7);
             QuickMarcEditor.checkContent(newFields[3].contentWithout$9, 8);
             QuickMarcEditor.checkContent(testData.fieldContents.tag245Content, 4);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               testData.createdInstanceID = id;
