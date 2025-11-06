@@ -90,8 +90,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -110,9 +108,7 @@ describe('MARC', () => {
             testData.tag655,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3_000);
+          QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -127,8 +123,6 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-              cy.reload();
-              MarcAuthorities.waitLoading();
             }, 20_000);
           });
         });

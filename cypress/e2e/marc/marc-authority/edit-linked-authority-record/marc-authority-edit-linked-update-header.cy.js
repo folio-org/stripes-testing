@@ -94,17 +94,14 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-            MarcAuthorities.waitLoading();
-          }, 20_000);
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
       });
 
@@ -134,7 +131,7 @@ describe('MARC', () => {
             testData.tag010,
             `$a ${testData.updated010FieldValue}`,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
 
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
           MarcAuthorities.checkResultList([testData.updated155FieldValue]);

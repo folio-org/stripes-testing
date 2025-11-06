@@ -102,8 +102,6 @@ describe('MARC', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -121,8 +119,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
           }, 20_000);
         });
       });
@@ -154,8 +150,6 @@ describe('MARC', () => {
             tag010.inputContent.field010_1,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_1, tag010.rowIndex);
 
@@ -164,8 +158,6 @@ describe('MARC', () => {
             tag010.inputContent.field010_2,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_2, tag010.rowIndex);
 
@@ -175,16 +167,12 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_3, tag010.rowIndex);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_3, tag010.rowIndex);
           cy.wait(3000);
 
           QuickMarcEditor.updateExistingFieldContent(4, tag010.inputContent.field010_4);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_1, tag010.rowIndex);
 
@@ -194,8 +182,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
 
