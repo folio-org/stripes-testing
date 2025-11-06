@@ -1,4 +1,4 @@
-import { including } from '@interactors/html';
+import { including, matching } from '@interactors/html';
 import {
   Pane,
   NavListItem,
@@ -43,6 +43,7 @@ export default {
       searchField.exists(),
       searchButton.has({ disabled: true }),
       jobProfilesPane.has({ subtitle: including('job profiles') }),
+      HTML('End of list').exists(),
     ]);
   },
 
@@ -111,12 +112,30 @@ export default {
   verifyDefaultProfiles() {
     this.scrollDownIfListOfResultsIsLong();
 
-    cy.expect([
-      MultiColumnListRow(including('Default authority export job profile')).exists(),
-      MultiColumnListRow(including('Default holdings export job profile')).exists(),
-      MultiColumnListRow(including('Default instances export job profile')).exists(),
-      MultiColumnListRow(including('Deleted authority export job profile')).exists(),
-    ]);
+    const defaultProfiles = [
+      'Default authority export job profile',
+      'Default holdings export job profile',
+      'Default instances export job profile',
+      'Deleted authority export job profile',
+    ];
+    const datePattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+
+    defaultProfiles.forEach((profileName) => {
+      const targetRow = MultiColumnListRow(including(profileName), { isContainer: false });
+
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell({ column: 'Updated by', content: 'System Process' }))
+          .exists(),
+      );
+      cy.expect(
+        targetRow
+          .find(
+            MultiColumnListCell({ column: 'Updated', content: matching(new RegExp(datePattern)) }),
+          )
+          .exists(),
+      );
+    });
   },
 
   waitLoading() {
@@ -134,5 +153,16 @@ export default {
 
   verifyNewButtonEnabled() {
     cy.expect(newButton.has({ disabled: false }));
+  },
+
+  verifyJobProfilesCount() {
+    cy.get('#search-results-list').then((elem) => {
+      const rowCount = parseInt(elem.attr('aria-rowcount'), 10);
+      const expectedCount = rowCount - 1;
+      cy.get('#paneHeaderpane-results-subtitle').should(
+        'have.text',
+        `${expectedCount} job profiles`,
+      );
+    });
   },
 };

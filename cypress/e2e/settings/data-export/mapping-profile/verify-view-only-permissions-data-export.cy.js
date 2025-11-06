@@ -1,14 +1,14 @@
-import permissions from '../../../support/dictionary/permissions';
-import { APPLICATION_NAMES } from '../../../support/constants';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
-import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
+import permissions from '../../../../support/dictionary/permissions';
+import { APPLICATION_NAMES } from '../../../../support/constants';
+import ExportJobProfiles from '../../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import SingleJobProfile from '../../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
+import ExportFieldMappingProfiles from '../../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import SingleFieldMappingProfilePane from '../../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
+import SettingsDataExport from '../../../../support/fragments/data-export/settingsDataExport';
+import SettingsPane from '../../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
 
 let user;
 const jobProfileName = 'Default instances export job profile';

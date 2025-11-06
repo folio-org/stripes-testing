@@ -100,6 +100,10 @@ export default {
     );
   },
 
+  closeModal() {
+    cy.do(Modal().find(closeButton).click());
+  },
+
   verifyProfileInTable(name, description, userObject) {
     const targetProfileRow = Modal()
       .find(profilesList)
