@@ -36,6 +36,7 @@ describe('Finance › Fiscal Year Rollover', () => {
     approved: true,
   };
   let location;
+  let orderPOL;
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const todayDate = DateTools.getCurrentDate();
   const fileNameDate = DateTools.getCurrentDateForFileNaming();
@@ -55,6 +56,7 @@ describe('Finance › Fiscal Year Rollover', () => {
           fundA.ledgerId = ledgerResponse.id;
           Funds.createViaApi(fundA).then((fundResponse) => {
             fundA.id = fundResponse.fund.id;
+            fundA.code = fundResponse.fund.code;
             budget.fundId = fundResponse.fund.id;
             Budgets.createViaApi(budget);
 
@@ -99,7 +101,9 @@ describe('Finance › Fiscal Year Rollover', () => {
                         order.id = orderResponse.id;
                         orderLine.purchaseOrderId = orderResponse.id;
 
-                        OrderLines.createOrderLineViaApi(orderLine);
+                        OrderLines.createOrderLineViaApi(orderLine).then((response) => {
+                          orderPOL = response;
+                        });
                         Orders.updateOrderViaApi({
                           ...orderResponse,
                           workflowStatus: ORDER_STATUSES.OPEN,
@@ -130,44 +134,64 @@ describe('Finance › Fiscal Year Rollover', () => {
   });
 
   after('Clean up', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(user.userId);
+    });
   });
 
   it(
     'C399078 All fields in rollover error .csv file have correct values (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C399078'] },
     () => {
+      const fieldsToCheck = {
+        errorType: 'Order',
+        failedAction: 'Create encumbrance',
+        errorMessage: 'Insufficient funds',
+        amount: '10',
+        fundId: fundA.id,
+        fundCode: fundA.code,
+        orderId: order.id,
+        orderLineNumber: orderPOL.poLineNumber,
+        orderLineId: orderPOL.id,
+      };
+
       Ledgers.searchByName(ledger.name);
       Ledgers.selectLedger(ledger.name);
       Ledgers.rollover();
-      Ledgers.fillInTestRolloverForOneTimeOrdersWithoutAllocation(
+      Ledgers.fillInCommonRolloverInfoWithoutAllocation(
         fiscalYear2.code,
         'None',
         'Allocation',
-      );
-      Ledgers.rolloverLogs();
-      Ledgers.exportRolloverError(todayDate);
-      Ledgers.checkDownloadedErrorFile(
-        `${fileNameDate}-error.csv`,
-        'Order',
-        'Create encumbrance',
-        '10',
-        fundA.id,
-      );
-      Ledgers.deleteDownloadedFile(`${fileNameDate}-error.csv`);
-      Ledgers.closeOpenedPage();
-      Ledgers.rollover();
-      Ledgers.fillInCommonRolloverInfoWithoutAllocation(fiscalYear2.code, 'None', 'Allocation');
-      Ledgers.clickRolloverErrorsCsv(ledger.name, fiscalYear2.code);
-      Ledgers.checkDownloadedErrorFile(
-        `${ledger.name}-rollover-errors-${fiscalYear2.code}.csv`,
-        'Order',
-        'Create encumbrance',
-        '10',
-        fundA.id,
-      );
-      Ledgers.deleteDownloadedFile(`${ledger.name}-rollover-errors-${fiscalYear2.code}.csv`);
+        true,
+        true, // isTestRollover
+      ).then((ledgerRolloverId) => {
+        Ledgers.rolloverLogs();
+        Ledgers.exportRolloverError(todayDate);
+
+        Ledgers.checkDownloadedErrorFile({
+          ...fieldsToCheck,
+          ledgerRolloverId,
+          fileName: `${fileNameDate}-error.csv`,
+        });
+        Ledgers.deleteDownloadedFile(`${fileNameDate}-error.csv`);
+        Ledgers.closeOpenedPage();
+        Ledgers.rollover();
+        Ledgers.fillInCommonRolloverInfoWithoutAllocation(
+          fiscalYear2.code,
+          'None',
+          'Allocation',
+          true,
+          false, // isTestRollover
+        ).then((secondLedgerRolloverId) => {
+          Ledgers.clickRolloverErrorsCsv(ledger.name, fiscalYear2.code);
+          Ledgers.checkDownloadedErrorFile({
+            ...fieldsToCheck,
+            ledgerRolloverId: secondLedgerRolloverId,
+            fileName: `${ledger.name}-rollover-errors-${fiscalYear2.code}.csv`,
+          });
+          Ledgers.deleteDownloadedFile(`${ledger.name}-rollover-errors-${fiscalYear2.code}.csv`);
+        });
+      });
     },
   );
 });
