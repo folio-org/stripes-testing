@@ -203,7 +203,6 @@ describe('Data Import', () => {
         });
         QuickMarcEditor.pressSaveAndClose();
         cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         // download .csv file
