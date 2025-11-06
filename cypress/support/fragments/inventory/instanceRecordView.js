@@ -722,6 +722,22 @@ export default {
     cy.expect(consortiaHoldingsAccordion.has({ open: true }));
   },
 
+  expandAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Expand all'))
+        .click(),
+    ]);
+  },
+
+  collapseAllInConsortialHoldingsAccordion() {
+    cy.do([
+      Section({ id: including('consortialHoldings') })
+        .find(Button('Collapse all'))
+        .click(),
+    ]);
+  },
+
   expandMemberSubHoldings(memberTenantName) {
     cy.wait(4000);
     cy.do(Accordion(memberTenantName).focus());
@@ -943,6 +959,13 @@ export default {
     cy.expect([
       consortiaHoldingsAccordion.has({ open: isOpen }),
       Accordion({ id: including(memberId) }).exists(),
+    ]);
+  },
+
+  verifySubHoldingsAccordion(memberId, holdingId, isOpen = true) {
+    cy.wait(1000);
+    cy.expect([
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).has({ open: isOpen }),
     ]);
   },
 
