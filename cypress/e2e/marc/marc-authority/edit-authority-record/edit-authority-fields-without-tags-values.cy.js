@@ -232,7 +232,7 @@ describe('MARC', () => {
             );
           });
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           QuickMarcEditor.waitLoading();
 
