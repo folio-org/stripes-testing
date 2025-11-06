@@ -106,7 +106,7 @@ describe('MARC', () => {
             );
           });
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkInstanceTitle(testData.title);
 

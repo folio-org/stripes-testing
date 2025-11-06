@@ -86,6 +86,10 @@ describe('Data Import', () => {
       };
       const jobProfileName = `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
+
       before('Create test data', () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(
@@ -177,6 +181,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -223,6 +228,7 @@ describe('Data Import', () => {
             users.userAProperties.lastName,
           );
 
+          cy.resetTenant();
           cy.login(users.userBProperties.username, users.userBProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -251,6 +257,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventorySearchAndFilter.verifyPanesExist();
           cy.reload();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           cy.wait(5000);
           InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
