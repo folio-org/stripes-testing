@@ -27,7 +27,7 @@ export default {
     }
   },
   save: () => {
-    cy.wait(500);
+    cy.wait(1000);
     cy.do(Button('Save as file extension & Close').click());
   },
 

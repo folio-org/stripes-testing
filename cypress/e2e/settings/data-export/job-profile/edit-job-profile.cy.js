@@ -1,14 +1,14 @@
-import permissions from '../../../support/dictionary/permissions';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
-import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
-import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
-import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
+import permissions from '../../../../support/dictionary/permissions';
+import ExportJobProfiles from '../../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportNewJobProfile from '../../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
+import SingleJobProfile from '../../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
+import DeleteFieldMappingProfile from '../../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
+import ExportNewFieldMappingProfile from '../../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import SettingsPane from '../../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 let user;
 let fieldMappingProfileId;

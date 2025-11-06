@@ -1,10 +1,10 @@
-import { EXPORT_TRANSFORMATION_NAMES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { EXPORT_TRANSFORMATION_NAMES } from '../../../../support/constants';
+import permissions from '../../../../support/dictionary/permissions';
+import ExportFieldMappingProfiles from '../../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import SettingsPane from '../../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let user;
 

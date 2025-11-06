@@ -81,7 +81,7 @@ describe('Bulk-edit', () => {
           user = userProperties;
 
           // Get alternative title types
-          cy.getAlternativeTitlesTypes().then((types) => {
+          cy.getAlternativeTitlesTypes({ limit: 100 }).then((types) => {
             alternativeTitleTypes = types;
 
             // Get required IDs for instances

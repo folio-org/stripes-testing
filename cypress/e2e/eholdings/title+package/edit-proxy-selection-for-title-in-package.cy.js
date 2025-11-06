@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { EHoldingsResourceView, EHoldingsResourceEdit } from '../../../support/fragments/eholdings';
+import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -18,6 +19,8 @@ describe('eHoldings', () => {
         Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        EHoldingsTitle.removeTitleFromPackageViaApi(testData.resourcePath.split('/')[2]);
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + testData.resourcePath,

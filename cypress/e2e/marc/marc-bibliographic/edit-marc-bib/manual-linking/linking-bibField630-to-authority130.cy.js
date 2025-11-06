@@ -157,7 +157,7 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib630UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib630UnlinkedFieldValues[0]);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();
             InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();

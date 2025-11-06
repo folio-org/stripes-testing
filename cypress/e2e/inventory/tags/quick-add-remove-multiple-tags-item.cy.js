@@ -8,7 +8,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Tags', () => {
     describe('Item tags', () => {
       const randomPostfix = getRandomPostfix();

@@ -85,8 +85,6 @@ describe('MARC', () => {
 
           // #8 Click on the "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           cy.url().then((url) => createdRecordIDs.push(url.split('/')[5]));
 

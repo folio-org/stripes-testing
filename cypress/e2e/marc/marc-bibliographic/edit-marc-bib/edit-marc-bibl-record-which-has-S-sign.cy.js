@@ -110,7 +110,7 @@ describe('MARC', () => {
           QuickMarcEditor.addValuesToExistingField(20, '711', testData.field7XXThree);
 
           // 5 Click on the "Save & keep editing" button
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkContentByTag('100', '$a A{dollar}AP Rocky $c (Rapper), $d 1988-');
           QuickMarcEditor.checkContentByTag(
             '245',

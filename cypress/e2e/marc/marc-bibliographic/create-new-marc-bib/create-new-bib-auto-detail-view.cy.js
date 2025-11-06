@@ -85,7 +85,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
 
           // Step 4: Click on "Save & close" button
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           // Verify success toast notification and detail view of created record opens

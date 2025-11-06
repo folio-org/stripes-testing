@@ -211,7 +211,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 4: Verify Select action dropdown shows "Additional subfield"
-        BulkEditActions.verifyTheActionOptionsEqual(['Additional subfield']);
+        BulkEditActions.verifyTheSecondActionOptionsEqual(['Additional subfield']);
 
         // Step 5: Select "Additional subfield" option
         BulkEditActions.selectSecondActionForMarcInstance('Additional subfield');

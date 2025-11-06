@@ -184,7 +184,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedField630Data));
             QuickMarcEditor.closeAllCallouts();
 
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.viewSource();

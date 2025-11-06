@@ -109,6 +109,10 @@ describe('Data Import', () => {
       };
       const jobProfileName = `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
+
       before('Create test data', () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(
@@ -198,6 +202,7 @@ describe('Data Import', () => {
         { tags: ['extendedPathECS', 'folijet', 'C405532'] },
         () => {
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(testData.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -266,6 +271,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.verifyPanesExist();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
