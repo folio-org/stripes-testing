@@ -108,8 +108,6 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(3000);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });

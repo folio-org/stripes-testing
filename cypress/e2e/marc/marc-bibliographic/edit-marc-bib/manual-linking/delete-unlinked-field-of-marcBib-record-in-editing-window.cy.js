@@ -111,8 +111,6 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -147,8 +145,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonsEnabled();
             QuickMarcEditor.deleteField(linkingTagAndValue.rowIndex);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
             InventoryInstance.verifyContributorAbsent(testData.contributorName);

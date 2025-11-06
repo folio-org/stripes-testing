@@ -102,6 +102,7 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.title);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
 
           // Navigate to MARC Authority and edit the authority record
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
