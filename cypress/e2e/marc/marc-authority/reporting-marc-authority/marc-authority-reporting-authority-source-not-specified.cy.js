@@ -101,7 +101,7 @@ describe('MARC', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.searchResults(testData.title);
           InventoryInstance.clickLinkButton();
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
 
           // Navigate to MARC Authority and edit the authority record
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
@@ -111,8 +111,6 @@ describe('MARC', () => {
           // Waiter needed for the whole page to be loaded.
           cy.wait(2000);
           QuickMarcEditor.updateExistingField('130', `$a ${testData.updatedTitle}`);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
 

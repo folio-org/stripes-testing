@@ -98,6 +98,7 @@ describe('MARC', () => {
           newFieldsArr.forEach((field, index) => {
             MarcAuthority.addNewField(10 + index, field[0], field[3], field[1], field[2]);
           });
+          cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
 
           cy.getAdminToken();

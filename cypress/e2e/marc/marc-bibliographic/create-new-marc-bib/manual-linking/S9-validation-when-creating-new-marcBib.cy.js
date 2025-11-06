@@ -122,7 +122,6 @@ describe('MARC', () => {
             );
             QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               5,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -134,7 +133,6 @@ describe('MARC', () => {
             );
             QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               5,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -149,7 +147,6 @@ describe('MARC', () => {
             cy.wait(500);
             QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               6,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -161,7 +158,6 @@ describe('MARC', () => {
             cy.wait(500);
             QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               6,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -177,7 +173,6 @@ describe('MARC', () => {
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);

@@ -68,8 +68,6 @@ describe('MARC', () => {
           MarcAuthorities.check010FieldAbsence();
           MarcAuthority.addNewField(4, '010', '$a 123123');
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           cy.wait(4000);
           QuickMarcEditor.updateExistingField('010', '$a n90635366');
@@ -78,7 +76,8 @@ describe('MARC', () => {
           cy.wait(4000);
           QuickMarcEditor.deleteFieldAndCheck(5, '010');
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
+          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+          QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },
       );
