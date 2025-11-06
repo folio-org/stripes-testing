@@ -40,12 +40,15 @@ export default {
       cancelButton.has({ disabled: false }),
     ]);
   },
+
   clickNameTextfield() {
     cy.do(nameTextfield.find(TextInput()).click());
   },
+
   clickDescriptionTextarea() {
     cy.do(descriptionTextarea.click());
   },
+
   verifyNameValidationError() {
     cy.expect([
       nameTextfield.find(TextFieldIcon({ id: 'icon-job-profile-name-validation-error' })).exists(),
@@ -53,36 +56,53 @@ export default {
       HTML('Please enter a value').exists(),
     ]);
   },
+
   verifyNameValidationErrorGone() {
     cy.expect(HTML('Please enter a value').absent());
   },
+
   fillinNameTextfield(content) {
     cy.do(nameTextfield.fillIn(content));
   },
+
   verifySaveAndCloseButtonEnabled() {
     cy.do(saveAndCloseButton.has({ disabled: false }));
   },
+
   clickSelectMappingProfileDropdown() {
     cy.do(selectMappingProfileDropdown.focus());
   },
+
   verifySelectMappingProfileValidationError() {
     cy.expect([
       selectMappingProfileDropdown.has({ valid: false }),
       HTML('Please enter a value').exists(),
     ]);
   },
+
   selectMappingProfileFromDropdown(mappingProfileName) {
     cy.do(selectMappingProfileDropdown.choose(mappingProfileName));
   },
+
   verifySelectMappingProfileValidationErrorGone() {
     cy.expect([
       selectMappingProfileDropdown.has({ valid: true }),
       HTML('Please enter a value').absent(),
     ]);
   },
+
   fillinDescription(descriptionText) {
     cy.do(descriptionTextarea.fillIn(descriptionText));
   },
+
+  verifyMappingProfilesOrderedAlphabetically() {
+    cy.then(() => selectMappingProfileDropdown.optionsText()).then((options) => {
+      const sortedOptions = [...options].sort((a, b) => a.localeCompare(b));
+
+      cy.expect(options).to.deep.equal(sortedOptions);
+    });
+  },
+
   createNewJobProfileViaApi: (name, mappingProfileId) => {
     return cy
       .okapiRequest({
