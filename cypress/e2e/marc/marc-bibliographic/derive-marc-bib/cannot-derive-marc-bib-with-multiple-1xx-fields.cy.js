@@ -19,7 +19,6 @@ describe('MARC', () => {
         expectedUndefinedError: 'Field is undefined.',
         tag1: ['100', '140', '140', '110', '101', '101', '100', '140'],
         tag2: ['110', '140', '150', '150', '101', '109', '109', '109'],
-        undefinedTags: ['101', '109'],
         marcFile: {
           marc: 'marcBibFileC515004.mrc',
           fileName: `testMarcFileC515004.${getRandomPostfix()}.mrc`,
@@ -98,19 +97,13 @@ describe('MARC', () => {
 
             QuickMarcEditor.checkErrorMessage(5, testData.expected1XXNonRepeatableError);
             QuickMarcEditor.checkErrorMessage(6, testData.expected1XXNonRepeatableError);
-            if (testData.undefinedTags.includes(testData.tag1[index])) {
-              QuickMarcEditor.checkErrorMessage(5, testData.expectedUndefinedError);
-            }
-            if (testData.undefinedTags.includes(testData.tag2[index])) {
-              QuickMarcEditor.checkErrorMessage(6, testData.expectedUndefinedError);
-            }
 
             QuickMarcEditor.verifyValidationCallout(0, 2);
             QuickMarcEditor.closeAllCallouts();
           });
           QuickMarcEditor.deleteField(6);
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
         },
       );

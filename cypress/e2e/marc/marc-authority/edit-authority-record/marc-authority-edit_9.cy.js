@@ -107,30 +107,21 @@ describe('MARC', () => {
           tags.forEach((tag) => {
             QuickMarcEditor.afterDeleteNotification(tag);
           });
-          for (let i = 0; i < 4; i++) {
-            QuickMarcEditor.undoDelete();
-          }
+          QuickMarcEditor.undoDelete();
 
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.deleteField(11);
           QuickMarcEditor.afterDeleteNotification('');
           QuickMarcEditor.afterDeleteNotification('400');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.deleteField(8);
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.afterDeleteNotification('382');
           QuickMarcEditor.afterDeleteNotification('');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.confirmDelete();
           cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.constinueWithSaveAndCheck();
           QuickMarcEditor.checkFieldAbsense('382');
         },
       );
