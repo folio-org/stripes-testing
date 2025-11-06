@@ -44,6 +44,27 @@ export default {
     cy.expect([actions.absent(), newButton.absent()]);
   },
 
+  clickNewButton() {
+    cy.do(newButton.click());
+  },
+
+  clicksaveButton() {
+    cy.do(saveButton.click());
+  },
+
+  fillTypeName(name) {
+    if (!name) {
+      return cy.get('[name="items[0].name"]').clear().blur();
+    }
+    return cy.get('[name="items[0].name"]').clear().type(name).blur();
+  },
+
+  checkErrorMessage() {
+    cy.get('#editList-fundTypes [class*="feedbackError"]')
+      .should('be.visible')
+      .and('contain.text', 'Please fill this in to continue');
+  },
+
   fillRequiredFields: (expenseClasses) => {
     cy.do([
       TextField({ placeholder: 'name' }).fillIn(expenseClasses.name),

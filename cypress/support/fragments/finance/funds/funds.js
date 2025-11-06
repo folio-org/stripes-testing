@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { Heading, HTML, including } from '@interactors/html';
 import uuid from 'uuid';
 import {
   Accordion,
@@ -30,6 +30,7 @@ import FinanceHelp from '../financeHelper';
 import FiscalYears from '../fiscalYears/fiscalYears';
 import FundDetails from './fundDetails';
 import FundEditForm from './fundEditForm';
+import Headline from '../../../../../interactors/headline';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -288,6 +289,10 @@ export default {
     cy.do(codeField.has({ error: 'This Fund code is already in use.' }));
   },
 
+  checkAmountInputError: (errorMessage) => {
+    cy.do(amountTextField.has({ error: errorMessage }));
+  },
+
   checkCreatedFund: (fundName) => {
     cy.xpath(createdFundNameXpath).should('be.visible').and('have.text', fundName);
   },
@@ -340,6 +345,15 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
+  },
+
+  checkEmptyBudgetSection() {
+    cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent());
+    cy.expect(
+      Section({ id: 'plannedBudget' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
   },
 
   addBudget: (allocatedQuantity) => {
@@ -434,6 +448,10 @@ export default {
       transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
     );
+  },
+
+  assertHasTagWithInteractors(tag) {
+    cy.expect(KeyValue('Tags').has({ value: including(tag) }));
   },
 
   checkStatusInTransactionDetails: (status) => {
@@ -531,15 +549,48 @@ export default {
     cy.do(Accordion('Type').find(Checkbox(option)).click());
   },
 
-  increaseAllocation: () => {
+  increaseAllocation: (ammount = '50') => {
     cy.do([
       actionsButton.click(),
       Button('Increase allocation').click(),
-      amountTextField.fillIn('50'),
+      amountTextField.fillIn(ammount),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do(addTransferModal.find(confirmButton).click());
+  },
+
+  decreaseAllocation: (ammount = '50') => {
+    cy.do([
+      actionsButton.click(),
+      Button('Decrease allocation').click(),
+      amountTextField.fillIn(ammount),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(addTransferModal.find(confirmButton).click());
+  },
+
+  openIncreaseAllocationModal: () => {
+    cy.do([actionsButton.click(), Button('Increase allocation').click()]);
+  },
+
+  checkIncreaseAllocationModal() {
+    cy.do(Heading('Increase allocation').exists());
+    cy.expect(Button('Cancel').is({ disabled: false }));
+    cy.expect(Button('Confirm').is({ disabled: true }));
+  },
+
+  cancelIncreaseAllocationModal: () => {
+    cy.do(addTransferModal.find(cancelButton).click());
+  },
+
+  openDecreaseAllocationModal: () => {
+    cy.do([actionsButton.click(), Button('Decrease allocation').click()]);
+  },
+
+  cancelDecreaseAllocationModal: () => {
+    cy.do(addTransferModal.find(cancelButton).click());
   },
 
   transfer(toFund, fromFund) {
@@ -559,10 +610,10 @@ export default {
     ]);
     cy.wait(4000);
   },
-  moveAllocation({ fromFund, toFund, amount }) {
+  moveAllocation({ fromFund, toFund, amount, isDisabledConfirm = false }) {
     cy.do([actionsButton.click(), moveAllocationButton.click()]);
     cy.wait(4000);
-    this.fillAllocationFields({ toFund, fromFund, amount });
+    this.fillAllocationFields({ toFund, fromFund, amount, isDisabledConfirm });
   },
 
   openMoveAllocationModal() {
@@ -571,7 +622,7 @@ export default {
   closeTransferModal() {
     cy.do(addTransferModal.find(cancelButton).click());
   },
-  fillAllocationFields({ toFund, fromFund, amount }) {
+  fillAllocationFields({ toFund, fromFund, amount, isDisabledConfirm = false }) {
     if (toFund) {
       cy.do([
         addTransferModal.find(Button({ name: 'toFundId' })).click(),
@@ -585,11 +636,15 @@ export default {
         SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       ]);
     }
-    cy.do([
-      addTransferModal.find(amountTextField).fillIn(amount),
-      addTransferModal.find(confirmButton).click(),
-    ]);
+
+    cy.do(addTransferModal.find(amountTextField).fillIn(amount));
+    if (!isDisabledConfirm) {
+      cy.do(addTransferModal.find(confirmButton).click());
+    } else {
+      cy.expect(addTransferModal.find(confirmButton).is({ disabled: true }));
+    }
   },
+
   fillInAllAllocationFields(toFund, fromFund, amount) {
     cy.wait(4000);
     cy.do([
@@ -902,7 +957,6 @@ export default {
       cy.loginAsAdmin({
         path: TopMenu.fundPath,
         waiter: this.waitLoading,
-        authRefresh: true,
       });
       this.createFund(fund);
       this.checkCreatedFund(fund.name);
@@ -959,6 +1013,10 @@ export default {
     cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
   },
 
+  checkFundStatus(status) {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
   closeBudgetDetails() {
     cy.do(budgetPane.find(Button({ icon: 'times' })).click());
     cy.expect(fundDetailsPane.visible());
@@ -996,6 +1054,21 @@ export default {
   editBudget: () => {
     cy.wait(4000);
     cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  editFund: () => {
+    cy.wait(4000);
+    cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  selectFundType: (typeName) => {
+    cy.do(Selection({ name: 'fund.fundTypeId' }).open());
+    cy.expect(SelectionList().find(SelectionOption(typeName)).exists());
+    cy.do(SelectionList().find(SelectionOption(typeName)).click());
+  },
+
+  verifyFundType: (expectedType) => {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Type')).has({ value: expectedType }));
   },
 
   removeLocation(locationName) {
@@ -1286,5 +1359,29 @@ export default {
 
   clickOnLedgerTab: () => {
     cy.do(fundsFiltersSection.find(Button('Ledger')).click());
+  },
+
+  checkNegativeAvailableAmountModal: (budgetName) => {
+    cy.do(Modal('Negative available amount').exists());
+
+    cy.expect(
+      Modal('Negative available amount').has({
+        message: including(
+          `Completing this transfer will result in ${budgetName} having a negative available amount. Are you sure you would like to complete this transaction?`,
+        ),
+      }),
+    );
+
+    cy.expect(Modal('Negative available amount').find(Button('Cancel')).has({ disabled: false }));
+    cy.expect(Modal('Negative available amount').find(Button('Confirm')).has({ disabled: false }));
+  },
+
+  clickConfirmInNegativeAvailableAmountModal() {
+    cy.do(Modal('Negative available amount').find(confirmButton).click());
+  },
+
+  assertAllocationToolsSubmenuAbsent() {
+    cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
+    cy.expect(Headline('Allocation tools').absent());
   },
 };
