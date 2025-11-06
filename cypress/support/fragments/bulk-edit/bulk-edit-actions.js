@@ -85,6 +85,7 @@ const bulkPageSelections = {
 export default {
   openStartBulkEditLocalForm() {
     cy.do(startBulkEditLocalButton.click());
+    cy.wait(2000);
   },
 
   openStartBulkEditFolioInstanceForm() {
@@ -888,18 +889,15 @@ export default {
   verifyTheActionOptions(expectedOptions, rowIndex = 0) {
     cy.then(() => {
       cy.wait(1000);
-      cy.do(
-        bulkEditsAccordions
-          .find(RepeatableFieldItem({ index: rowIndex }))
-          .find(Select('Actions select'))
-          .allOptionsText()
-          .then((actualOptions) => {
-            const actualEnabledOptions = actualOptions.filter(
-              (actualOption) => !actualOption.includes('disabled'),
-            );
-            expect(actualEnabledOptions).to.deep.equal(expectedOptions);
-          }),
+      return bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select('Actions select'))
+        .allOptionsText();
+    }).then((actualOptions) => {
+      const actualEnabledOptions = actualOptions.filter(
+        (actualOption) => !actualOption.includes('disabled'),
       );
+      expect(actualEnabledOptions).to.deep.equal(expectedOptions);
     });
   },
 
@@ -2409,18 +2407,36 @@ export default {
       ? bulkEditsMarcInstancesAccordion
       : bulkEditsAccordions;
 
-    cy.do(
-      targetAccordion
+    cy.then(() => {
+      return targetAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select(including('Actions select')))
-        .allOptionsText()
-        .then((actualOptions) => {
-          const actualEnabledOptions = actualOptions.filter(
-            (actualOption) => !actualOption.includes('disabled'),
-          );
-          expect(actualEnabledOptions).to.deep.equal(expectedOptions);
-        }),
-    );
+        .allOptionsText();
+    }).then((actualOptions) => {
+      const actualEnabledOptions = actualOptions.filter(
+        (actualOption) => !actualOption.includes('disabled'),
+      );
+      expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+    });
+  },
+
+  verifyTheSecondActionOptionsEqual(
+    expectedOptions,
+    isMarcInstancesAccordion = true,
+    rowIndex = 0,
+  ) {
+    const targetAccordion = isMarcInstancesAccordion
+      ? bulkEditsMarcInstancesAccordion
+      : bulkEditsAccordions;
+
+    cy.then(() => {
+      return targetAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select({ label: including('Actions select'), dataActionIndex: '1' }))
+        .optionsText();
+    }).then((actualOptions) => {
+      expect(actualOptions).to.deep.equal(expectedOptions);
+    });
   },
 
   verifyAdditionalSubfieldRowInitialState(rowIndex = 0) {
