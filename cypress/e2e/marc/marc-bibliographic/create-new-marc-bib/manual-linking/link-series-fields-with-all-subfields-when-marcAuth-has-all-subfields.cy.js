@@ -244,7 +244,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldData[3]));
 
             // Step 17: Click on the "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceId = id;
