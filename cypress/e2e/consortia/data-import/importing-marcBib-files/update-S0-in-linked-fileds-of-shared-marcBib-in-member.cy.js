@@ -277,6 +277,7 @@ describe('Data Import', () => {
         'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
         () => {
+          cy.setTenant(Affiliations.College);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           // download .csv file
