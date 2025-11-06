@@ -2,56 +2,37 @@ import { Permissions } from '../../../support/dictionary';
 import ExpenseClasses from '../../../support/fragments/settings/finance/expenseClasses';
 import FundTypes from '../../../support/fragments/settings/finance/fundTypes';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Fund type view', () => {
-  let userData;
-  let servicePointId;
-  const patronGroup = {
-    name: getTestEntityValue('groupPermissions'),
-  };
+  let user;
   const newFundTypes = { ...FundTypes.getDefaultFundTypes() };
   const newExpenseClass = { ...ExpenseClasses.getDefaultExpenseClass() };
 
   before('Preconditions', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-        servicePointId = servicePoint.id;
-      });
-      PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
-        patronGroup.id = patronGroupResponse;
-      });
-      ExpenseClasses.createExpenseClassViaApi(newExpenseClass);
-      FundTypes.createFundTypesViaApi(newFundTypes);
-      cy.getAdminSourceRecord().then((adminSourceRecord) => {
-        newExpenseClass.source = adminSourceRecord;
-      });
+    cy.getAdminToken();
+    ExpenseClasses.createExpenseClassViaApi(newExpenseClass);
+    FundTypes.createFundTypesViaApi(newFundTypes);
+    cy.getAdminSourceRecord().then((adminSourceRecord) => {
+      newExpenseClass.source = adminSourceRecord;
+    });
 
-      cy.createTempUser([Permissions.uiSettingsFinanceView.gui], patronGroup.name).then(
-        (userProperties) => {
-          userData = userProperties;
-          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.fundTypesPath,
-            waiter: SettingsFinance.waitFundTypesLoading,
-          });
-        },
-      );
+    cy.createTempUser([Permissions.uiSettingsFinanceView.gui]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: SettingsMenu.fundTypesPath,
+        waiter: SettingsFinance.waitFundTypesLoading,
+      });
     });
   });
 
   after('Deleting created entities', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(userData.userId);
-    PatronGroups.deleteViaApi(patronGroup.id);
-    ExpenseClasses.deleteExpenseClassViaApi(newExpenseClass.id);
-    FundTypes.deleteFundTypesViaApi(newFundTypes.id);
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(user.userId);
+      ExpenseClasses.deleteExpenseClassViaApi(newExpenseClass.id);
+      FundTypes.deleteFundTypesViaApi(newFundTypes.id);
+    });
   });
 
   it(
