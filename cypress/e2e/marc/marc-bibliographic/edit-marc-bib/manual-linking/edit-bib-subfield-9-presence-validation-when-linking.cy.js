@@ -189,7 +189,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.fillLinkedFieldBox(testData.fieldIndexes.tag110, 5, newValues.fifthBox);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             testData.fieldIndexes.tag110,
             testData.messages.failInvalidSubfield,
@@ -204,7 +204,7 @@ describe('MARC', () => {
           QuickMarcEditor.fillLinkedFieldBox(testData.fieldIndexes.tag110, 5, '');
           QuickMarcEditor.fillLinkedFieldBox(testData.fieldIndexes.tag110, 7, newValues.seventhBox);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             testData.fieldIndexes.tag110,
             testData.messages.failInvalidSubfield,

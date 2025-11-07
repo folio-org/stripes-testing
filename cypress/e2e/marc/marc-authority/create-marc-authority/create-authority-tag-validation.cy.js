@@ -93,8 +93,8 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.checkButtonsEnabled();
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.verifyValidationCallout(1, 1);
+            QuickMarcEditor.pressSaveAndCloseButton();
+            QuickMarcEditor.verifyValidationCallout(0, 1);
             QuickMarcEditor.closeAllCallouts();
             QuickMarcEditor.checkErrorMessage(
               testData.newFieldIndex,

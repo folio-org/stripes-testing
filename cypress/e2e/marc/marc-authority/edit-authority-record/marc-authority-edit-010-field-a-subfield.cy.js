@@ -123,7 +123,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010Subfields);
 
           // #7 Click "Save & close" and verify error persists
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010Subfields);
         },
       );

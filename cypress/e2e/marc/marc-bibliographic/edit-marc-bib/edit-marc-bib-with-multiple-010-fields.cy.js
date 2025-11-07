@@ -87,7 +87,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
 
           // #7 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // #8 Change tag value of second "010" field to "011".
@@ -127,7 +127,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent('766384', 5);
 
           // # 4 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // # 5 Click "Save & keep editng" button

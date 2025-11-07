@@ -89,7 +89,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });
@@ -144,8 +144,8 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(testData.user.userId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
-          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
+          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1], true);
+          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2], true);
         });
 
         it(

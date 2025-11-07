@@ -171,7 +171,8 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(existingFieldsUpdated[3].tag);
           QuickMarcEditor.afterDeleteNotification(existingFields[4].tag);
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
+          QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
           InventoryInstance.viewSource();

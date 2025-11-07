@@ -210,7 +210,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
             // Step 3: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag700,
               testData.messages.failInvalidSubfield,
@@ -250,7 +250,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
             // Step 9: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag700,
               testData.messages.failInvalidSubfield,
@@ -277,7 +277,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
             // Step 12: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag100,
               testData.messages.failInvalidSubfield,
@@ -300,7 +300,7 @@ describe('MARC', () => {
             );
 
             // Step 15: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag100,
               testData.messages.failInvalidSubfield,

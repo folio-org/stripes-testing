@@ -103,7 +103,7 @@ describe('MARC', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.searchResults(testData.title);
           InventoryInstance.clickLinkButton();
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
         });
       });
 
@@ -130,8 +130,6 @@ describe('MARC', () => {
           cy.wait(2000);
 
           QuickMarcEditor.updateExistingField('155', `$a ${testData.updatedTitle}`);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
 

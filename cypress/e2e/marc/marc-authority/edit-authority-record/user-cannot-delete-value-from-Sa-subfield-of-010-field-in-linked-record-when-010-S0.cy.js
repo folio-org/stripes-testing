@@ -152,7 +152,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkDeleteButtonNotExist(4);
           QuickMarcEditor.updateExistingField(testData.tag010, testData.subfieldPrefix);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.closeAllCallouts();
 

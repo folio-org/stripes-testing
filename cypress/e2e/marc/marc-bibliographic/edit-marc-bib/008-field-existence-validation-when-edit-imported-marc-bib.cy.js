@@ -107,8 +107,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -134,7 +132,7 @@ describe('MARC', () => {
             testData.tag245content,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
@@ -161,7 +159,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.deleteValuesIn008Boxes();
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndCloseButton();
           cy.intercept(`/inventory/instances/${testData.createdRecordIDs[0]}`).as('recordUpdated');
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait('@recordUpdated').then(() => {

@@ -138,11 +138,10 @@ describe('MARC', () => {
           'Item',
           MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
         );
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(6, testData.errors.tagCharacterLength);
         QuickMarcEditor.verifyValidationCallout(0, 1);
         QuickMarcEditor.updateExistingTagValue(testData.tag014.rowIndex, testData.tag014.tag);
-        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.clickSaveAndCloseThenCheck(1);
         QuickMarcEditor.clickRestoreDeletedField();
         QuickMarcEditor.checkDeleteModalClosed();

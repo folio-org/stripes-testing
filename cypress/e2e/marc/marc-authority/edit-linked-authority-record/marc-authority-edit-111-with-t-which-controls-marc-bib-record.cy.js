@@ -145,7 +145,7 @@ describe('MARC', () => {
           let previousTagValue = testData.tag111;
           testData.newTagValuesSaveAndClose.forEach((newTagValue) => {
             QuickMarcEditor.updateExistingTagName(previousTagValue, newTagValue);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
             previousTagValue = newTagValue;
           });
@@ -158,7 +158,7 @@ describe('MARC', () => {
           });
 
           QuickMarcEditor.updateExistingTagName(previousTagValue, testData.tag129);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag129, testData.tag111);

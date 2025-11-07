@@ -72,7 +72,7 @@ describe('MARC', () => {
           QuickMarcEditor.getExistingLocation(),
         );
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         QuickMarcEditor.checkErrorMessage(6, testData.errorMessage);
       },

@@ -105,8 +105,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -132,7 +130,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('245', testData.tag245Value);
           QuickMarcEditor.checkFieldAbsense(testData.tag008);
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.addNewField(testData.tag008, '', testData.tag008RowIndex);

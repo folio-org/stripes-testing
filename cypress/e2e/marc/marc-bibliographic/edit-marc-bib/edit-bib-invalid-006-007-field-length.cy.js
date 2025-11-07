@@ -199,7 +199,7 @@ describe('MARC', () => {
             edit.editBoxes.forEach((box) => {
               QuickMarcEditor.fillInTextBoxInField(box.field, box.box, box.value);
             });
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             edit.field006Errors.forEach((error) => {
               QuickMarcEditor.checkErrorMessage(4, error);
             });
