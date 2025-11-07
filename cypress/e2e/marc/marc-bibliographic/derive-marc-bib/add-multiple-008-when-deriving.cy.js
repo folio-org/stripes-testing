@@ -66,7 +66,7 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.addNewField(testData.tag008, '', 4);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         },
       );
