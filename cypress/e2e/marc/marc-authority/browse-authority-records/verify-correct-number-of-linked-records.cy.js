@@ -162,8 +162,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             instanceIDs.forEach((instanceRecord, index) => {
               InventoryInstances.searchByTitle(instanceRecord);
@@ -186,8 +184,7 @@ describe('MARC', () => {
                 QuickMarcEditor.closeCallout();
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(4000);
-              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveAndClose();
             });
             cy.wait(1000);
           });
@@ -206,8 +203,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
           }, 20_000);
           MarcAuthorities.switchToBrowse();
         });

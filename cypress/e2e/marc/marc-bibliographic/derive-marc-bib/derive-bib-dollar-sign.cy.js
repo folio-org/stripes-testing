@@ -143,7 +143,7 @@ describe('MARC', () => {
             newFieldValues.field711.value,
           );
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditingDerive();
           QuickMarcEditor.waitLoading();
 
