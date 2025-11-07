@@ -10,7 +10,7 @@ describe('SMTP api fast check', () => {
     `TCxxxx - Get SMTP status by status for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'api', 'smtp-enabled'] },
     () => {
-      cy.getSMTPStatus().then((response) => {
+      cy.getSmtpStatus().then((response) => {
         cy.expect(response.status).to.eq(200);
         const smtpHost = response.body.smtpConfigurations[0].host;
         cy.log('SMTP Host:', smtpHost);
