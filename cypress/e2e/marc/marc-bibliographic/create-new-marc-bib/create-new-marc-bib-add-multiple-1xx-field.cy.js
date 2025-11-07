@@ -64,7 +64,7 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.addValuesToExistingField(4, '100', testData.field1XXOne, '1');
           QuickMarcEditor.addValuesToExistingField(5, '100', testData.field1XXTwo, '1');
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessage(5, testData.expectedErrorMessage);
           QuickMarcEditor.checkErrorMessage(6, testData.expectedErrorMessage);
@@ -75,7 +75,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingTagValue(5, firstTag);
             QuickMarcEditor.updateExistingTagValue(6, secondTag);
 
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
 
             QuickMarcEditor.checkErrorMessage(5, testData.expectedErrorMessage);
             QuickMarcEditor.checkErrorMessage(6, testData.expectedErrorMessage);
