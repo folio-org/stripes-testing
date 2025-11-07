@@ -265,7 +265,16 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
-  fillInCommonRolloverInfoWithoutAllocation(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+  fillInCommonRolloverInfoWithoutAllocation(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+    returnId = false,
+    isTestRollover = false,
+  ) {
+    if (returnId) {
+      cy.intercept('POST', '/finance/ledger-rollovers').as('createRollover');
+    }
     cy.wait(4000);
     cy.do(fiscalYearSelect.click());
     cy.wait(4000);
@@ -277,10 +286,32 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
-    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+
+    if (isTestRollover) {
+      cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
+      cy.wait(6000);
+    } else {
+      cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+      cy.wait(4000);
+    }
+
     this.continueRollover();
-    cy.do([rolloverConfirmButton.click()]);
+
+    if (isTestRollover) {
+      cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+    } else {
+      cy.do([rolloverConfirmButton.click()]);
+    }
+
+    if (returnId) {
+      return cy.wait('@createRollover').then((interception) => {
+        const rolloverId = interception.response.body.id;
+        cy.log(`Ledger Rollover ID: ${rolloverId}`);
+        // Wait for rollover to complete processing
+        return cy.wait(4000).then(() => rolloverId);
+      });
+    }
+    return cy.wrap(undefined);
   },
 
   fillInCommonRolloverInfoWithoutCheckboxOngoingEncumbrances(
@@ -793,7 +824,19 @@ export default {
     });
   },
 
-  checkDownloadedErrorFile(fileName, errorType, failedAction, amount, fundID) {
+  checkDownloadedErrorFile({
+    fileName,
+    ledgerRolloverId,
+    errorType,
+    failedAction,
+    errorMessage,
+    amount,
+    fundId,
+    fundCode,
+    orderId,
+    orderLineNumber,
+    orderLineId,
+  }) {
     cy.wait(3000);
     cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
       const [headerLine, dataLine] = fileContent.trim().split(/\r?\n/);
@@ -817,10 +860,20 @@ export default {
       expect(header).to.deep.equal(EXPECTED_HEADER);
 
       const row = this.parseCsvLine(dataLine).map((s) => s.replace(/^"|"$/g, ''));
+      expect(row[0]).to.equal(ledgerRolloverId);
       expect(row[1]).to.equal(errorType);
       expect(row[2]).to.equal(failedAction);
+      expect(row[3]).to.equal(errorMessage);
       expect(row[4]).to.equal(amount);
-      expect(row[5]).to.equal(fundID);
+      expect(row[5]).to.equal(fundId);
+      if (fundCode) {
+        expect(row[6]).to.equal(fundCode);
+      }
+      expect(row[7]).to.equal(orderId);
+      if (orderLineNumber) {
+        expect(row[8]).to.equal(orderLineNumber);
+      }
+      expect(row[9]).to.equal(orderLineId);
     });
   },
 
@@ -1085,7 +1138,11 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    returnId = false,
   ) {
+    if (returnId) {
+      cy.intercept('POST', '/finance/ledger-rollovers').as('createRollover');
+    }
     cy.wait(4000);
     cy.do(fiscalYearSelect.click());
     cy.wait(4000);
@@ -1102,28 +1159,15 @@ export default {
     cy.wait(6000);
     this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
-  },
-
-  fillInTestRolloverForOneTimeOrdersWithoutAllocation(
-    fiscalYear,
-    rolloverBudgetValue,
-    rolloverValueAs,
-  ) {
-    cy.wait(4000);
-    cy.do(fiscalYearSelect.click());
-    cy.wait(4000);
-    // Need to wait,while date of fiscal year will be loaded
-    cy.do([
-      fiscalYearSelect.choose(fiscalYear),
-      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
-      addAvailableToSelect.choose(rolloverValueAs),
-      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
-    ]);
-    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
-    cy.wait(6000);
-    this.continueRollover();
-    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+    if (returnId) {
+      return cy.wait('@createRollover').then((interception) => {
+        const rolloverId = interception.response.body.id;
+        cy.log(`Ledger Rollover ID: ${rolloverId}`);
+        // Wait for rollover to complete processing
+        return cy.wait(4000).then(() => rolloverId);
+      });
+    }
+    return cy.wrap(undefined);
   },
 
   fillInRolloverForOneTimeOrdersWithAllocationAndWithoutCloseBudgets(
@@ -1154,7 +1198,11 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    returnId = false,
   ) {
+    if (returnId) {
+      cy.intercept('POST', '/finance/ledger-rollovers').as('createRollover');
+    }
     cy.wait(4000);
     cy.do(fiscalYearSelect.click());
     cy.wait(4000);
@@ -1172,6 +1220,15 @@ export default {
     cy.wait(6000);
     this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+    if (returnId) {
+      return cy.wait('@createRollover').then((interception) => {
+        const rolloverId = interception.response.body.id;
+        cy.log(`Ledger Rollover ID: ${rolloverId}`);
+        // Wait for rollover to complete processing
+        return cy.wait(4000).then(() => rolloverId);
+      });
+    }
+    return cy.wrap(undefined);
   },
 
   fillInTestRolloverAndVarifyErrorForOneTimeOrdersWithAllocation(

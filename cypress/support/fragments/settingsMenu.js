@@ -135,4 +135,9 @@ export default {
   selectOrders() {
     cy.do(NavListItem('Orders').click());
   },
+
+  verifyConsortiumManagerOptionAbsent() {
+    cy.expect(NavListItem('Acquisition units').exists());
+    cy.expect(NavListItem('Consortium manager').absent());
+  },
 };
