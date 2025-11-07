@@ -1754,3 +1754,14 @@ export const INVENTORY_COLUMN_HEADERS = {
   RELATION: 'Relation',
   INSTANCE_HRID: 'Instance HRID',
 };
+
+export const AUTHORITY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'MARC authority app Search',
+  SHORTCUTS: 'Keyboard shortcuts',
+  DOCUMENTATION: 'MARC authority documentation',
+};
+
+export const INVENTORY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'Inventory app search',
+  SHORTCUTS: 'Keyboard shortcuts',
+};
