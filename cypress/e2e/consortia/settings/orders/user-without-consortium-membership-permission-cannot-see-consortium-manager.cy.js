@@ -18,7 +18,6 @@ describe('Consortia', () => {
         Permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
         Permissions.uiSettingsFinanceViewEditCreateDeleter.gui,
         Permissions.invoiceSettingsAll.gui,
-        Permissions.bulkEditSettingsCreate.gui,
         Permissions.uiTenantSettingsSettingsLocation.gui,
         Permissions.calendarEditCalendars.gui,
       ]).then((userProperties) => {
