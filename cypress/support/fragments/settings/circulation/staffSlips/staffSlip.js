@@ -105,6 +105,7 @@ export default {
     });
   },
   checkUnknownUserInMetadata() {
+    cy.wait(500);
     this.findPane().then((pane) => {
       cy.expect(
         pane.find(Button(matching(/^Record last updated: \d{1,2}\/\d{1,2}\/\d{2,4}/))).exists(),
