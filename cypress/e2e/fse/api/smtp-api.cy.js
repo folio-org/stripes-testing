@@ -1,4 +1,4 @@
-describe('SMTP api fast check', () => {
+describe('fse-smtp', () => {
   beforeEach(() => {
     // hide sensitive data from the allure report
     cy.allure().logCommandSteps(false);
@@ -7,7 +7,7 @@ describe('SMTP api fast check', () => {
   });
 
   it(
-    `TCxxxx - Get SMTP status by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196238 - Get SMTP status by status for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'api', 'smtp-enabled'] },
     () => {
       cy.getSmtpStatus().then((response) => {
