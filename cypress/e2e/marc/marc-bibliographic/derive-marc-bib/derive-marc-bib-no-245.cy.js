@@ -60,14 +60,14 @@ describe('MARC', () => {
           QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Value1);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyNo245TagCallout();
           QuickMarcEditor.verifyValidationCallout(0, 1);
           QuickMarcEditor.closeAllCallouts();
 
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Value2);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyNo245TagCallout();
           QuickMarcEditor.verifyValidationCallout(0, 1);
         },
