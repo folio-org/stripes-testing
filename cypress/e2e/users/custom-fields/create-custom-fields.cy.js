@@ -49,6 +49,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        cy.get('[data-test-record-edit-custom-field]').last().scrollIntoView();
         UserEdit.verifyTextFieldPresented(fieldData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 

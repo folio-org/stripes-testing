@@ -128,7 +128,7 @@ describe('MARC', () => {
             false,
           );
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.tag008FinalSourceValue);
         },

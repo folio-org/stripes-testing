@@ -127,7 +127,7 @@ describe('MARC', () => {
               `${newFields.boxSixth}`,
               `${newFields.boxSeventh}`,
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,

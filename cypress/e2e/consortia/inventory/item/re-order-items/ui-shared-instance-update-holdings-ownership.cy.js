@@ -185,7 +185,7 @@ describe('Inventory', () => {
             );
 
             InstanceRecordView.waitLoading();
-            InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+            InstanceRecordView.verifyConsortiaHoldingsAccordion(instanceId, false);
             InstanceRecordView.expandConsortiaHoldings();
             InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
             InstanceRecordView.expandMemberSubHoldings(tenantNames.university);

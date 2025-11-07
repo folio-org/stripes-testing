@@ -17,22 +17,34 @@ const duplicateButton = Button('Duplicate');
 const nameTextfield = TextField('Name*');
 const cancelButton = Button('Cancel');
 const deleteButton = Button('Delete');
+const selectMappingProfileDropdown = Select('Mapping profile*');
+const descriptionField = TextArea('Description');
 
 export default {
   waitLoading(name) {
     cy.expect(PaneHeader(name).exists());
   },
+
   verifyElements() {
     cy.expect([
       actionsButton.has({ disabled: false }),
       Button({ ariaLabel: 'Cancel' }).has({ disabled: false }),
     ]);
   },
+
   verifyProfileDetailsEditable() {
     cy.expect([
       TextField('Name*').exists(),
-      Select('Mapping profile*').exists(),
-      TextArea('Description').exists(),
+      selectMappingProfileDropdown.exists(),
+      descriptionField.exists(),
+    ]);
+  },
+
+  verifyProfileFieldsValues(name, mappingProfile, description) {
+    cy.expect([
+      nameTextfield.has({ value: name }),
+      selectMappingProfileDropdown.has({ checkedOptionText: mappingProfile }),
+      descriptionField.has({ value: description }),
     ]);
   },
 
@@ -68,5 +80,13 @@ export default {
     cy.do([actionsButton.click(), deleteButton.click(), Modal().find(deleteButton).click()]);
     InteractorsTools.checkCalloutMessage(`Job profile ${name} has been successfully deleted`);
     cy.expect(MultiColumnListCell(name).absent());
+  },
+
+  verifyActionsButtonAbsent() {
+    cy.expect(actionsButton.absent());
+  },
+
+  clickXButton() {
+    cy.do(Button({ icon: 'times' }).click());
   },
 };

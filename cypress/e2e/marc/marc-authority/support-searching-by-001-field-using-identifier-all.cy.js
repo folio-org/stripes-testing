@@ -14,10 +14,10 @@ const testData = {
     KEYWORD: 'Keyword',
   },
   authRows: {
-    peterJackson: 'Jackson, Peter, 1950-2022 Inspector Banks series ;',
-    warsawCouncil: 'Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
+    peterJackson: 'C380586 Jackson, Peter, 1950-2022 Inspector Banks series ;',
+    warsawCouncil: 'C380586 Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
     delawareSymposium:
-      'Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
+      'C380586 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
   },
   authorizedTypes: {
     AUTHORIZED: 'Authorized',
@@ -42,7 +42,7 @@ const testData = {
       numberOfRecords: 1,
     },
   ],
-  identifierQueries: ['01233282023710', '012332820237*', '*93648'],
+  identifierQueries: ['38058601233282023710', '380586012332820237*', '*93648380586'],
 };
 
 describe('MARC', () => {
@@ -53,18 +53,7 @@ describe('MARC', () => {
         .then((userProperties) => {
           testData.user = userProperties;
 
-          testData.identifierQueries.forEach((query) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `(keyword all "${query}" or identifiers.value=="${query}" or naturalId="${query}")`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id, true);
-                });
-              }
-            });
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380586');
         })
         .then(() => {
           testData.marcFiles.forEach((marcFile) => {
@@ -104,7 +93,7 @@ describe('MARC', () => {
       { tags: ['extendedPath', 'spitfire', 'C380586'] },
       () => {
         MarcAuthorities.checkSearchOptions();
-        MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '01233282023710');
+        MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '38058601233282023710');
         cy.ifConsortia(true, () => {
           MarcAuthorities.clickAccordionByName('Shared');
           MarcAuthorities.actionsSelectCheckbox('No');
@@ -116,9 +105,9 @@ describe('MARC', () => {
         );
 
         MarcAuthorities.selectFirstRecord();
-        MarcAuthorities.checkFieldAndContentExistence('001', '01233282023710');
+        MarcAuthorities.checkFieldAndContentExistence('001', '38058601233282023710');
 
-        MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '012332820237*');
+        MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '380586012332820237*');
         MarcAuthorities.checkRowsCount(2);
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,
@@ -129,21 +118,21 @@ describe('MARC', () => {
           testData.authRows.warsawCouncil,
         );
 
-        MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '*93648');
+        MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '*93648380586');
         MarcAuthorities.checkRowsCount(1);
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,
           testData.authRows.delawareSymposium,
         );
 
-        MarcAuthorities.searchBy(testData.searchOptions.KEYWORD, '01233282023710');
+        MarcAuthorities.searchBy(testData.searchOptions.KEYWORD, '38058601233282023710');
         MarcAuthorities.checkRowsCount(1);
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,
           testData.authRows.peterJackson,
         );
 
-        MarcAuthorities.searchBy(testData.searchOptions.KEYWORD, '012332820237*');
+        MarcAuthorities.searchBy(testData.searchOptions.KEYWORD, '380586012332820237*');
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,
           testData.authRows.peterJackson,
@@ -153,7 +142,7 @@ describe('MARC', () => {
           testData.authRows.warsawCouncil,
         );
 
-        MarcAuthorities.searchBy(testData.searchOptions.KEYWORD, '*93648');
+        MarcAuthorities.searchBy(testData.searchOptions.KEYWORD, '*93648380586');
         MarcAuthorities.checkAfterSearch(
           testData.authorizedTypes.AUTHORIZED,
           testData.authRows.delawareSymposium,

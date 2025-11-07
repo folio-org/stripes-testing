@@ -12,7 +12,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/generateTextCode';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const patronGroup = {

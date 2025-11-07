@@ -247,7 +247,7 @@ describe('MARC', () => {
           });
 
           // Step 10: Click "Save & keep editing" button
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           QuickMarcEditor.waitLoading();
 

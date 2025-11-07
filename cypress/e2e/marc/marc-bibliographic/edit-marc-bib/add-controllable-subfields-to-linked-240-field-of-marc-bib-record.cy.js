@@ -66,8 +66,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventorySearchAndFilter.selectSearchOptions(
               testData.searchOption,
@@ -84,16 +82,14 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.marcAuthTitle);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(1000); // need to wait until save is done
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });

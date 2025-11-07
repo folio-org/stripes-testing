@@ -115,8 +115,6 @@ describe('MARC', () => {
 
           // 6 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
           MarcAuthorities.verifyViewPaneContentExists();

@@ -62,31 +62,36 @@ describe('Inventory', () => {
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
           testData.searchQueries.forEach((query) => {
-            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.identifierAllOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
           testData.searchQueries.forEach((query) => {
-            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.isbnOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
           testData.searchQueries.forEach((query) => {
-            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
+          InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
+
+          // if clicked too fast, previous search may be executed for Holdings
+          cy.wait(1000);
 
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
@@ -98,7 +103,10 @@ describe('Inventory', () => {
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
+          InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
+
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
           InventorySearchAndFilter.verifyResultPaneEmpty();
@@ -109,6 +117,7 @@ describe('Inventory', () => {
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
         },
       );

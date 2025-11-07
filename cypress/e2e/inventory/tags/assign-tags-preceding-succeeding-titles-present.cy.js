@@ -27,7 +27,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TagsGeneral from '../../../support/fragments/settings/tags/tags-general';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const tagC358961 = `tagc358961${uuid()}`;

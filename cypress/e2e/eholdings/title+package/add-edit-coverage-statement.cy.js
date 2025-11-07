@@ -1,11 +1,11 @@
 import { Permissions } from '../../../support/dictionary';
 import {
   EHoldingsPackages,
-  EHoldingsNewCustomTitle,
   EHoldingsResourceEdit,
   EHoldingsResourceView,
   EHoldingsSearch,
   EHoldingsTitle,
+  EHoldingsTitles,
   EHoldingsTitlesSearch,
 } from '../../../support/fragments/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -36,30 +36,17 @@ describe('eHoldings', () => {
               contentType: 'E-Book',
             },
           },
-        })
-          .then(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.eholdingsPath,
-              waiter: EHoldingsTitlesSearch.waitLoading,
-            });
-
-            EHoldingsSearch.switchToTitles();
-            EHoldingsNewCustomTitle.createNewTitle();
-            EHoldingsNewCustomTitle.waitLoading();
-            EHoldingsNewCustomTitle.fillInRequiredProperties(
-              testData.packageName,
-              testData.titleName,
-            );
-            EHoldingsNewCustomTitle.saveAndClose();
-            cy.wait(2000);
-            EHoldingsNewCustomTitle.checkCreationOfNewCustomTitle();
-          })
-          .then(() => {
+        }).then((packageData) => {
+          EHoldingsTitles.createEHoldingTitleVIaApi({
+            packageId: packageData.data.id,
+            titleName: testData.titleName,
+          }).then(() => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.eholdingsPath,
               waiter: EHoldingsTitlesSearch.waitLoading,
             });
           });
+        });
       });
     });
 

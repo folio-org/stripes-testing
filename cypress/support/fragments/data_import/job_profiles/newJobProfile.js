@@ -129,6 +129,7 @@ export default {
         .find(Button())
         .click(),
     );
+    cy.wait(500);
     cy.do(matchButton.click());
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');

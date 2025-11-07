@@ -73,7 +73,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagValue(6, testData.tag999);
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.waitLoading();
 

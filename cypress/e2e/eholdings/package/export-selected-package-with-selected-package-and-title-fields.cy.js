@@ -110,7 +110,8 @@ describe('eHoldings', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.searchByEHoldings();
           ExportManagerSearchPane.verifyResult(jobId);
-          ExportManagerSearchPane.exportJob(jobId);
+          ExportManagerSearchPane.verifyResult(jobId);
+          ExportManagerSearchPane.exportJobRecursively({ jobId });
           ExportFile.downloadCSVFile(testData.fileName, testData.fileMask);
 
           FileManager.verifyFile(

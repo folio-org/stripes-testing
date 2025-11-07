@@ -77,6 +77,10 @@ export default {
     );
   },
 
+  verifySelectedMember(member) {
+    cy.expect(memberDropdownButton.has({ singleValue: member }));
+  },
+
   verifySelectMembersButton(isEnabled = true) {
     cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
   },
@@ -242,6 +246,10 @@ export default {
     cy.expect(memberDropdownList.has({ optionList: memberNamesArray.sort() }));
     cy.do(memberDropdownButton.click());
     cy.expect(SelectionOption().absent());
+  },
+
+  selectTenantFromDropdown: (memberName) => {
+    cy.do([memberDropdownButton.click(), SelectionOption(memberName).click()]);
   },
 
   checkOptionInOpenedPane: (paneName, optionName, isShown = true) => {
