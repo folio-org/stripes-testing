@@ -1,11 +1,6 @@
-import {
-  APPLICATION_NAMES,
-  HOLDINGS_SOURCE_NAMES,
-  LOCATION_NAMES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -18,7 +13,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     describe('Consortia', () => {
       const testData = {
-        instanceTitle: `C436939 folio instance-${getRandomPostfix()}`,
+        instanceTitle: `AT_C436939_FolioInstance${getRandomPostfix()}`,
       };
 
       before('Create test data', () => {
@@ -27,35 +22,16 @@ describe('Inventory', () => {
           testData.consortiaId = consortiaId;
 
           cy.setTenant(Affiliations.College);
-          InventoryInstance.createInstanceViaApi()
-            .then(({ instanceData }) => {
-              testData.instanceId = instanceData.instanceId;
+          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+            testData.instanceId = instanceData.instanceId;
 
-              cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-                testData.collegeLocation = res;
-
-                InventoryHoldings.getHoldingSources({
-                  limit: 1,
-                  query: `(name=="${HOLDINGS_SOURCE_NAMES.FOLIO}")`,
-                }).then((holdingSources) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: testData.instanceId,
-                    permanentLocationId: testData.collegeLocation.id,
-                    sourceId: holdingSources[0].id,
-                  }).then((holding) => {
-                    testData.holdingId = holding.id;
-                  });
-                });
-              });
-            })
-            .then(() => {
-              InventoryInstance.shareInstanceViaApi(
-                testData.instanceId,
-                testData.consortiaId,
-                Affiliations.College,
-                Affiliations.Consortia,
-              );
-            });
+            InventoryInstance.shareInstanceViaApi(
+              testData.instanceId,
+              testData.consortiaId,
+              Affiliations.College,
+              Affiliations.Consortia,
+            );
+          });
         });
         cy.resetTenant();
 
@@ -72,10 +48,6 @@ describe('Inventory', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.setTenant(Affiliations.College);
-        InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingId);
-        cy.resetTenant();
-        cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       });
@@ -88,12 +60,8 @@ describe('Inventory', () => {
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
           InstanceRecordView.expandAllInConsortialHoldingsAccordion(testData.instanceId);
+          InstanceRecordView.verifyHoldingsListIsEmpty(testData.instanceId);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, true);
-          InstanceRecordView.verifySubHoldingsAccordion(
-            Affiliations.College,
-            testData.holdingId,
-            true,
-          );
           InstanceRecordView.collapseAllInConsortialHoldingsAccordion(testData.instanceId);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
         },
