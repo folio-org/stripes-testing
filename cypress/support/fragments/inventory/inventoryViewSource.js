@@ -199,7 +199,7 @@ export default {
     cy.do([actionsButton.click(), exportButton.click()]);
   },
 
-  getContentFromRow(rowIndex = 5) {
+  getContentFromRow(rowIndex) {
     return cy.then(() => rootSection.find(TableRow({ index: rowIndex })).innerText());
   },
 };
