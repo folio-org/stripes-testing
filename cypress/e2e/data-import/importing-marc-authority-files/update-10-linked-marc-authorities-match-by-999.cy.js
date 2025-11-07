@@ -215,8 +215,6 @@ describe('Data Import', () => {
             cy.wait(200);
           });
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait(4000);
         });
@@ -234,13 +232,10 @@ describe('Data Import', () => {
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
           MarcAuthorities.waitLoading();
           MarcAuthorities.verifyDisabledSearchButton();
         });
