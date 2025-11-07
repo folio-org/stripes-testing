@@ -851,6 +851,14 @@ export default {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
   },
 
+  verifyHoldingsListIsEmpty(instanceId) {
+    cy.expect(
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
   verifyItemsListIsEmpty() {
     cy.expect(HTML(including('The list contains no items')).exists());
   },
