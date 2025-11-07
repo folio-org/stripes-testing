@@ -33,7 +33,6 @@ describe('MARC', () => {
         basicSearch: `MARC authority - AT_C442844_BasicSearch_${randomPostfix} - Search - FOLIO`,
         basicSearch2: `MARC authority - AT_C442844_MarcAuthority_${randomPostfix} - Search - FOLIO`,
         basicSearch3: `MARC authority - AT_C442844_MarcAuthority_${randomPostfix}_B - Search - FOLIO`,
-        querySearch: `MARC authority - title="AT_C442844_QuerySearch_${randomPostfix}" - Search - FOLIO`,
         advancedSearch: `MARC authority - keyword containsAll AT_C442844_AdvSearch_${randomPostfix} - Search - FOLIO`,
         advancedSearch2: `MARC authority - keyword containsAll AT_C442844_BasicSearch_${randomPostfix} - Search - FOLIO`,
       },
