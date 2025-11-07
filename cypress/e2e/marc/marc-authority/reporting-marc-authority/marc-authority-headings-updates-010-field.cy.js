@@ -31,7 +31,7 @@ describe('MARC', () => {
         updatedTag100Value:
           '$a C375225 Beethoven, Ludwig the Greatest, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
         title:
-          'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+          'C375225 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       };
       const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
