@@ -72,9 +72,7 @@ describe('MARC', () => {
               const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
                 QuickMarcEditor.getFreeTags()[1],
               );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.deleteConfirmationPresented();
-              QuickMarcEditor.confirmDelete();
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.contains(expectedInSourceRow);
@@ -115,9 +113,7 @@ describe('MARC', () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.deleteConfirmationPresented();
-              QuickMarcEditor.confirmDelete();
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.notContains(deletedTag);
