@@ -11,6 +11,7 @@ describe('SMTP api fast check', () => {
     { tags: ['sanity', 'api', 'smtp-enabled'] },
     () => {
       cy.getSMTPStatus().then((response) => {
+        cy.expect(response.status).to.eq(200);
         const smtpHost = response.body.smtpConfigurations[0].host;
         cy.log('SMTP Host:', smtpHost);
         cy.expect(smtpHost).to.not.contain('disabled');
