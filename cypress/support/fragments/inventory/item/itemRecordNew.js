@@ -45,7 +45,7 @@ const noteFieldSet = itemNotesSection.find(FieldSet('Note type*'));
 const checkInCheckOutFieldSet = loanAndAvailabilitySection.find(FieldSet('Note type*'));
 const electronicAccessFieldSet = electronicAccessSection.find(FieldSet('Electronic access'));
 const itemEditForm = HTML({ className: including('itemForm-') });
-const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
+const statisticalCodeSelectionList = SelectionList({ id: including('sl-container-selection-:r') });
 
 function addBarcode(barcode) {
   cy.do(
@@ -208,9 +208,9 @@ export default {
 
   verifyStatisticalCodeDropdown() {
     cy.expect(statisticalCodeSelectionList.has({ placeholder: 'Filter options list' }));
-    cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
+    cy.then(() => statisticalCodeSelectionList.optionCount().then((count) => {
       expect(count).to.greaterThan(0);
-    });
+    }));
   },
 
   filterStatisticalCodeByName(name) {

@@ -50,6 +50,7 @@ describe('Data Import', () => {
         DataImport.confirmDeleteImportJob();
         Logs.checkJobStatus(firstMarcFileName, 'Stopped by user');
         Logs.openFileDetails(firstMarcFileName);
+        FileDetails.verifyLogDetailsPageIsOpened(firstMarcFileName);
         FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, secondMarcFileName);

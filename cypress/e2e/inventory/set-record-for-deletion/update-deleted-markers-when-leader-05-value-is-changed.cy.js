@@ -76,7 +76,7 @@ describe('Inventory', () => {
           AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
         );
         cy.wait(1000);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         InstanceRecordView.waitLoading();
         cy.wait(2000);
         InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
