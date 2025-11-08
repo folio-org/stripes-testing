@@ -87,8 +87,7 @@ Cypress.Commands.add('waitForPrimaryAffiliationSetup', (consortiaId, targetUserI
       });
     },
     (response) => {
-      expect(response.body).to.have.property('userTenants');
-      expect(response.body.userTenants.filter((el) => el.isPrimary === true)).to.have.lengthOf(1);
+      return response.body.userTenants?.some((el) => el.isPrimary === true) ?? false;
     },
     {
       limit: 20,
