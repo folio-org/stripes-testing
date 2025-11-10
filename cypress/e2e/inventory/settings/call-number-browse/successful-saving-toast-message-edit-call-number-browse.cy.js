@@ -73,7 +73,7 @@ describe('Inventory', () => {
 
       it(
         'C627459 Successful saving toast message is displayed after editing and saving "Call number browse" option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C627459'] },
+        { tags: ['extendedPathFlaky', 'nonParallel', 'spitfire', 'C627459'] },
         () => {
           // Step 1: Click on the "Edit" (pencil) icon next to any Call number browse option
           CallNumberBrowseSettings.validateCallNumberBrowseRowInTable(

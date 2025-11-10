@@ -170,43 +170,50 @@ describe('Invoices', () => {
 
   [
     {
+      name: 'Status',
       filterActions: () => {
         Invoices.selectStatusFilter('Approved');
       },
     },
     {
+      name: 'Vendor name',
       filterActions: () => {
         Invoices.selectVendorFilter(organization);
       },
     },
     {
+      name: 'Invoice date',
       filterActions: () => {
         Invoices.selectInvoiceDateFilter(todayDate, todayDate);
       },
     },
     {
+      name: 'Approval date',
       filterActions: () => {
         Invoices.selectApprovalDateFilter(todayDate, todayDate);
       },
     },
     {
+      name: 'Fund code',
       filterActions: () => {
         Invoices.selectFundCodeFilter(firstFund.code);
       },
     },
     {
+      name: 'Batch group',
       filterActions: () => {
         Invoices.selectButchGroupFilter('FOLIO');
       },
     },
     {
+      name: 'Fiscal year',
       filterActions: () => {
         Invoices.selectFiscalYearFilter(firstFiscalYear.code);
       },
     },
   ].forEach((filter) => {
     it(
-      'C6724 Test the invoice filters (thunderjet)',
+      `C6724 Test the invoice filters: ${filter.name} (thunderjet)`,
       { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         filter.filterActions();
