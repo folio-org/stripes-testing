@@ -79,7 +79,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(6, testData.tag852);
           QuickMarcEditor.updateExistingFieldContent(6, `$b ${secondLocationCode}`);
           // Attempt to save
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           // Assert inline error and toast
           QuickMarcEditor.checkErrorMessageForField(5, multiple852ErrorText);
           QuickMarcEditor.checkErrorMessageForField(6, multiple852ErrorText);
