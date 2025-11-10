@@ -183,4 +183,8 @@ export default {
     if (isPresent) cy.expect(Pane(secondPaneName).find(Link(tabName)).exists());
     else cy.expect(Pane(secondPaneName).find(Link(tabName)).absent());
   },
+
+  checkPaneIsOpened: (paneName) => {
+    cy.expect(Pane(paneName).exists());
+  },
 };
