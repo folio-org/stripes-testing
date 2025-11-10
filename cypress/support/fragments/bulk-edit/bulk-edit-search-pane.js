@@ -169,6 +169,8 @@ export const ERROR_MESSAGES = {
   MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
   INVALID_MARC_RECORD:
     'Underlying MARC record contains invalid data and the record cannot be updated.',
+  MULTIPLE_SRS_RECORDS_ASSOCIATED:
+    'Multiple SRS records are associated with the instance. The following SRS have been identified:',
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
