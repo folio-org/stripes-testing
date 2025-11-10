@@ -226,7 +226,7 @@ describe('Data Import', () => {
         });
 
         // Click on the "Save & close" button
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         MarcAuthority.verifyAfterSaveAndClose();
         QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
         MarcAuthorities.verifyViewPaneContentExists();

@@ -94,7 +94,7 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.checkButtonsEnabled();
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(0, 1);
             QuickMarcEditor.closeAllCallouts();
             QuickMarcEditor.checkErrorMessage(

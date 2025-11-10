@@ -119,7 +119,7 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$9 test',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
             QuickMarcEditor.checkErrorMessage(
               5,
@@ -130,7 +130,7 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
             QuickMarcEditor.checkErrorMessage(
               5,
@@ -144,7 +144,7 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingFieldContent(6, '$9 test');
             cy.wait(500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
             QuickMarcEditor.checkErrorMessage(
               6,
@@ -155,7 +155,7 @@ describe('MARC', () => {
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             cy.wait(500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
             QuickMarcEditor.checkErrorMessage(
               6,
