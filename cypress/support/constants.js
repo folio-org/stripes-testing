@@ -1754,3 +1754,22 @@ export const INVENTORY_COLUMN_HEADERS = {
   RELATION: 'Relation',
   INSTANCE_HRID: 'Instance HRID',
 };
+
+export const AUTHORITY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'MARC authority app Search',
+  SHORTCUTS: 'Keyboard shortcuts',
+  DOCUMENTATION: 'MARC authority documentation',
+};
+
+export const INVENTORY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'Inventory app search',
+  SHORTCUTS: 'Keyboard shortcuts',
+};
+
+export const EHOLDINGS_KB_SETTINGS_TABS = {
+  ROOT_PROXY: 'Root proxy',
+  CUSTOM_LABELS: 'Custom labels',
+  ACCESS_STATUS_TYPES: 'Access status types',
+  ASSIGNED_USERS: 'Assigned users',
+  USAGE_CONSOLIDATION: 'Usage consolidation',
+};

@@ -137,7 +137,7 @@ describe('Inventory', () => {
         cy.wait(1000);
         QuickMarcEditor.addValuesToExistingField(6, '785', '$t succeeding $x 1234-1234', '0', '0');
         cy.wait(1000);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.openTagsField();
@@ -164,7 +164,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.deleteFieldByTagAndCheck('780');
         QuickMarcEditor.deleteFieldByTagAndCheck('785');
-        QuickMarcEditor.saveAndCloseAfterFieldDelete();
+        QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
         QuickMarcEditor.checkAfterSaveAndClose();
       },
     );

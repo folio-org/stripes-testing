@@ -49,12 +49,10 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.lastName = user.personal.lastName;
-              testData.firstName = user.personal.firstName;
-            },
-          );
+          cy.getAdminUserDetails().then((user) => {
+            testData.lastName = user.personal.lastName;
+            testData.firstName = user.personal.firstName;
+          });
 
           cy.then(() => {
             cy.getAdminToken();
@@ -76,7 +74,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
             QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             MarcAuthority.verifyCreatedRecordSuccess();
             MarcAuthority.contains(testData.authorityHeading);
 

@@ -70,7 +70,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag400, testData.ta400UpdatedContent);
           QuickMarcEditor.checkContentByTag(testData.tag400, testData.ta400UpdatedContent);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(0, 1);
           QuickMarcEditor.checkErrorMessage(
             testData.tag010Index,
