@@ -3358,13 +3358,14 @@ export default {
         cy.recurse(
           () => cy.getMarcRecordDataViaAPI(bibId),
           (marcBibData) => {
-            bibFieldTags.forEach((bibFieldTag, index) => {
+            return bibFieldTags.every((bibFieldTag, index) => {
               const targetFieldIndex =
                 bibFieldIndexes !== null
                   ? bibFieldIndexes[index] - 1
                   : marcBibData.fields.findIndex((field) => field.tag === bibFieldTag);
-              expect(marcBibData.fields[targetFieldIndex].linkDetails?.authorityId).to.equal(
-                authorityIds[index],
+              return (
+                marcBibData.fields[targetFieldIndex].linkDetails?.authorityId ===
+                authorityIds[index]
               );
             });
           },
