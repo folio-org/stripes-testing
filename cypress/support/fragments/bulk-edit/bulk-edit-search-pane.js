@@ -167,6 +167,8 @@ export const ERROR_MESSAGES = {
   DUPLICATE_ENTRY: 'Duplicate entry',
   SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
   MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
+  INVALID_MARC_RECORD:
+    'Underlying MARC record contains invalid data and the record cannot be updated.',
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
