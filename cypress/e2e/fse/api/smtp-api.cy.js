@@ -15,7 +15,11 @@ describe('fse-smtp', () => {
         const smtpHost = response.body.smtpConfigurations[0].host;
         cy.log('SMTP Host:', smtpHost);
         // host should not be empty or contain 'disabled'
-        cy.expect([smtpHost.to.not.be.empty, smtpHost.to.not.contain('disabled')]);
+        if (smtpHost) {
+          cy.expect(smtpHost).to.not.contain('disabled');
+        } else {
+          throw new Error('SMTP host is empty');
+        }
       });
     },
   );
