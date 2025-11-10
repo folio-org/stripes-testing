@@ -72,7 +72,7 @@ describe('MARC', () => {
           MarcAuthority.setValid008DropdownValues();
 
           // 3 Click on the "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(errorNotification);
           QuickMarcEditor.checkPaneheaderContains(headerText);
         },

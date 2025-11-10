@@ -53,8 +53,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -81,12 +79,10 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyConfirmModal();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();

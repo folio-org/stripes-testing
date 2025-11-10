@@ -65,7 +65,7 @@ describe('MARC', () => {
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(0, testData.error06and07Filed);
 
           QuickMarcEditor.selectFieldsDropdownOption(
@@ -87,7 +87,7 @@ describe('MARC', () => {
             );
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(0, testData.error07Filed);
         },
       );
@@ -102,7 +102,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tags.tag245, testData.tags.tag246);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout('Field 245 is required.');
 
           QuickMarcEditor.updateExistingTagName(testData.tags.tag246, testData.tags.tag245);
@@ -117,7 +117,7 @@ describe('MARC', () => {
             `$a ${testData.fieldContents.tag245Content}`,
           );
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultipleTags);
           InventoryInstance.verifyNewQuickMarcEditorPaneExists();
         },
