@@ -1460,4 +1460,8 @@ export default {
   verifyUserWillReactivateMessage() {
     cy.expect(HTML(including('User will reactivate after saving')).exists());
   },
+
+  scrollToTheLastCustomField() {
+    cy.get('[data-test-record-edit-custom-field]').last().scrollIntoView();
+  },
 };
