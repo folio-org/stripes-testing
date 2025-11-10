@@ -14,7 +14,8 @@ describe('fse-smtp', () => {
         cy.expect(response.status).to.eq(200);
         const smtpHost = response.body.smtpConfigurations[0].host;
         cy.log('SMTP Host:', smtpHost);
-        cy.expect(smtpHost).to.not.contain('disabled');
+        // host should not be empty or contain 'disabled'
+        cy.expect([smtpHost.to.not.be.empty, smtpHost.to.not.contain('disabled')]);
       });
     },
   );
