@@ -25,9 +25,13 @@ describe('eHoldings', () => {
       Permissions.uiSettingsEHoldingsUsageConsolidationView.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
+        SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
+        SettingsPane.checkPaneIsOpened(APPLICATION_NAMES.EHOLDINGS);
       });
     });
   });
@@ -41,8 +45,6 @@ describe('eHoldings', () => {
     'C423384 Verify that "Settings>>eHoldings" HTML page title follows "<<App name>> settings - <<selected page name>> - FOLIO" format (spitfire)',
     { tags: ['extendedPath', 'spitfire', 'C423384'] },
     () => {
-      SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
-      SettingsPane.checkPaneIsOpened(APPLICATION_NAMES.EHOLDINGS);
       Credentials.checkKnowledgeBaseExists(kbName);
 
       Credentials.openCredentialsPane(kbName);

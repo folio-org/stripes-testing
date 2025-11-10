@@ -36,9 +36,12 @@ describe('eHoldings', () => {
       cy.createTempUser([Permissions.uiSettingsEHoldingsViewAccessStatusTypes.gui]).then(
         (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsPath,
-            waiter: SettingsPane.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.settingsPath,
+              waiter: SettingsPane.waitLoading,
+            });
+            SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
           });
         },
       );
@@ -57,7 +60,6 @@ describe('eHoldings', () => {
     'C350958 View access status types (spitfire)',
     { tags: ['extendedPath', 'spitfire', 'C350958'] },
     () => {
-      SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
       AccessStatusTypes.openTab();
       AccessStatusTypes.checkTableHeaders(false);
 

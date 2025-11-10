@@ -39,9 +39,12 @@ describe('eHoldings', () => {
       cy.createTempUser([Permissions.uiSettingsEHoldingsAccessStatusTypesAll.gui]).then(
         (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsPath,
-            waiter: SettingsPane.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.settingsPath,
+              waiter: SettingsPane.waitLoading,
+            });
+            SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
           });
         },
       );
@@ -60,7 +63,6 @@ describe('eHoldings', () => {
     'C590793 Delete access status types (spitfire)',
     { tags: ['extendedPath', 'spitfire', 'C590793'] },
     () => {
-      SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
       AccessStatusTypes.openTab();
       AccessStatusTypes.checkTableHeaders();
 
