@@ -1,9 +1,10 @@
 import Permissions from '../../../support/dictionary/permissions';
 import { Adjustments } from '../../../support/fragments/settings/invoices';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Invoices from '../../../support/fragments/invoices/invoices';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Invoices', () => {
   describe('Settings (Invoices)', () => {
@@ -47,7 +48,7 @@ describe('Invoices', () => {
         Adjustments.selectAdjustment(adjustment.description);
         Adjustments.checkAdjustmentDetails(adjustment);
         Adjustments.checkActionsMenu();
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.clickNewInvoiceButton();
         Invoices.checkPresetAdjustment(adjustment);
         Invoices.deleteAdjustment(adjustment);
