@@ -59,9 +59,9 @@ export default {
   },
 
   checkPresentedColumns: () => presentedColumns.forEach((columnName) => cy.expect(rootSection.find(MultiColumnListHeader(columnName)).exists())),
-  // TODO: add checing of ""Type of heading" accordion button."
+
   checkFiltersInitialState: () => {
-    cy.expect(mainFilter.has({ selectedFilter: defaultMainFilterValue.htmlValue }));
+    cy.expect(searchInput.has({ selectedFilterText: defaultMainFilterValue.visibleValue.option }));
     cy.expect(searchButton.has({ disabled: true }));
     cy.expect(
       rootPaneAuthoritiesFilters
@@ -69,6 +69,7 @@ export default {
         .has({ disabled: true }),
     );
     cy.expect(rootPaneAuthoritiesFilters.find(Accordion('References')).exists());
+    cy.expect(rootPaneAuthoritiesFilters.find(Accordion('Type of heading')).exists());
   },
 
   selectOptionAndQueryAndCheck: (searchOption, value) => {

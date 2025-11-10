@@ -18,6 +18,7 @@ const editIconButton = Button({ icon: 'edit' });
 const fundTypesListItem = NavListItem('Fund types');
 const ExpenseClassesListItem = NavListItem('Expense classes');
 const ExportCodeListItem = NavListItem('Export fund and expense class codes');
+const ExchangeRateSourceListItem = NavListItem('Exchange rate sources');
 const actions = Button('Actions');
 const newButton = Button('+ New');
 function getEditableListRow(rowNumber) {
@@ -37,6 +38,7 @@ export default {
       fundTypesListItem.exists(),
       ExpenseClassesListItem.exists(),
       ExportCodeListItem.absent(),
+      ExchangeRateSourceListItem.absent(),
     ]);
   },
 

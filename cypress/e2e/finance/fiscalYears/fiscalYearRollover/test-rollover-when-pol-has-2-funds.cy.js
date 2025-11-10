@@ -62,6 +62,7 @@ describe('Fiscal Year Rollover', () => {
   const fileNameDate = DateTools.getCurrentDateForFileNaming();
   let user;
   let location;
+  let thirdOrderLineId;
 
   before(() => {
     cy.getAdminToken();
@@ -156,6 +157,7 @@ describe('Fiscal Year Rollover', () => {
       Orders.checkCreatedOrder(thirdOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+      cy.intercept('POST', '/orders/order-lines').as('createThirdOrderLine');
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWith2Funds(
         firstFund,
         '10',
@@ -165,6 +167,10 @@ describe('Fiscal Year Rollover', () => {
         '40',
         location.name,
       );
+      cy.wait('@createThirdOrderLine').then((interception) => {
+        thirdOrderLineId = interception.response.body.id;
+        cy.log(`Third Order Line ID: ${thirdOrderLineId}`);
+      });
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
@@ -198,40 +204,46 @@ describe('Fiscal Year Rollover', () => {
         secondFiscalYear.code,
         'None',
         'Allocation',
-      );
-      Ledgers.rolloverLogs();
-      Ledgers.exportRolloverError(todayDate);
-      Ledgers.checkDownloadedErrorFile(
-        `${fileNameDate}-error.csv`,
-        'Order',
-        'Create encumbrance',
-        '30',
-        firstFund.id,
-      );
-      Ledgers.deleteDownloadedFile(`${fileNameDate}-error.csv`);
-      Ledgers.exportRollover(todayDate);
-      Ledgers.checkDownloadedFileWithAllTansactions(
-        `${fileNameDate}-result.csv`,
-        firstFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '40',
-        '0',
-        '0',
-        '40',
-        '0',
-        '0',
-        '100',
-        '60',
-      );
-      Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
+        true,
+      ).then((ledgerRolloverId) => {
+        Ledgers.rolloverLogs();
+        Ledgers.exportRolloverError(todayDate);
+        Ledgers.checkDownloadedErrorFile({
+          fileName: `${fileNameDate}-error.csv`,
+          ledgerRolloverId,
+          errorType: 'Order',
+          failedAction: 'Create encumbrance',
+          errorMessage: `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${secondLedger.name} (id=${secondLedger.id})`,
+          amount: '30',
+          fundId: firstFund.id,
+          orderId: thirdOrder.id,
+          orderLineId: thirdOrderLineId,
+        });
+        Ledgers.deleteDownloadedFile(`${fileNameDate}-error.csv`);
+        Ledgers.exportRollover(todayDate);
+        Ledgers.checkDownloadedFileWithAllTansactions(
+          `${fileNameDate}-result.csv`,
+          firstFund,
+          secondFiscalYear,
+          '100',
+          '100',
+          '100',
+          '0',
+          '0',
+          '100',
+          '0',
+          '100',
+          '40',
+          '0',
+          '0',
+          '40',
+          '0',
+          '0',
+          '100',
+          '60',
+        );
+        Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
+      });
       Ledgers.closeOpenedPage();
       FinanceHelp.searchByName(secondLedger.name);
       Ledgers.selectLedger(secondLedger.name);
@@ -240,40 +252,46 @@ describe('Fiscal Year Rollover', () => {
         secondFiscalYear.code,
         'None',
         'Allocation',
-      );
-      Ledgers.rolloverLogs();
-      Ledgers.exportRolloverError(todayDate);
-      Ledgers.checkDownloadedErrorFile(
-        `${fileNameDate}-error.csv`,
-        'Order',
-        'Create encumbrance',
-        '20',
-        secondFund.id,
-      );
-      Ledgers.deleteDownloadedFile(`${fileNameDate}-error.csv`);
-      Ledgers.exportRollover(todayDate);
-      Ledgers.checkDownloadedFileWithAllTansactions(
-        `${fileNameDate}-result.csv`,
-        secondFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '35',
-        '0',
-        '0',
-        '35',
-        '0',
-        '0',
-        '100',
-        '65',
-      );
-      Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
+        true,
+      ).then((ledgerRolloverId) => {
+        Ledgers.rolloverLogs();
+        Ledgers.exportRolloverError(todayDate);
+        Ledgers.checkDownloadedErrorFile({
+          fileName: `${fileNameDate}-error.csv`,
+          ledgerRolloverId,
+          errorType: 'Order',
+          failedAction: 'Create encumbrance',
+          errorMessage: `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${firstLedger.name} (id=${firstLedger.id})`,
+          amount: '20',
+          fundId: secondFund.id,
+          orderId: thirdOrder.id,
+          orderLineId: thirdOrderLineId,
+        });
+        Ledgers.deleteDownloadedFile(`${fileNameDate}-error.csv`);
+        Ledgers.exportRollover(todayDate);
+        Ledgers.checkDownloadedFileWithAllTansactions(
+          `${fileNameDate}-result.csv`,
+          secondFund,
+          secondFiscalYear,
+          '100',
+          '100',
+          '100',
+          '0',
+          '0',
+          '100',
+          '0',
+          '100',
+          '35',
+          '0',
+          '0',
+          '35',
+          '0',
+          '0',
+          '100',
+          '65',
+        );
+        Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
+      });
     },
   );
 });

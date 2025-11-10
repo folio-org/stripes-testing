@@ -31,7 +31,7 @@ describe('MARC', () => {
         updatedTag100Value:
           '$a C375225 Beethoven, Ludwig the Greatest, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
         title:
-          'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+          'C375225 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       };
       const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
@@ -108,8 +108,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdAuthorityID[0]);
             InventoryInstances.selectInstance();
@@ -122,7 +120,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
           });
 
@@ -131,8 +129,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
           }, 20_000);
         });
       });
@@ -154,8 +150,6 @@ describe('MARC', () => {
           QuickMarcEditor.waitLoading();
 
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 

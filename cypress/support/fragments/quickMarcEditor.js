@@ -616,8 +616,26 @@ export default {
     ]);
   },
 
-  pressSaveAndClose() {
+  pressSaveAndCloseButton() {
     cy.do(saveAndCloseButton.click());
+  },
+
+  pressSaveAndClose({ acceptLinkedBibModal = false, acceptDeleteModal = false } = {}) {
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
+    cy.do(saveAndCloseButton.click());
+    if (acceptLinkedBibModal) {
+      cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+      cy.do(saveButton.click());
+    }
+    if (acceptDeleteModal) {
+      this.deleteConfirmationPresented();
+      this.confirmDelete();
+    }
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
   },
 
   saveAndCloseWithValidationWarnings({
@@ -3334,13 +3352,14 @@ export default {
         cy.recurse(
           () => cy.getMarcRecordDataViaAPI(bibId),
           (marcBibData) => {
-            bibFieldTags.forEach((bibFieldTag, index) => {
+            return bibFieldTags.every((bibFieldTag, index) => {
               const targetFieldIndex =
                 bibFieldIndexes !== null
                   ? bibFieldIndexes[index] - 1
                   : marcBibData.fields.findIndex((field) => field.tag === bibFieldTag);
-              expect(marcBibData.fields[targetFieldIndex].linkDetails?.authorityId).to.equal(
-                authorityIds[index],
+              return (
+                marcBibData.fields[targetFieldIndex].linkDetails?.authorityId ===
+                authorityIds[index]
               );
             });
           },

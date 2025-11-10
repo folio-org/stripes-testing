@@ -89,7 +89,7 @@ describe('MARC', () => {
 
         QuickMarcEditor.updateExistingTagValue(5, testData.tag008);
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(4, testData.inlineError);
         QuickMarcEditor.checkErrorMessage(5, testData.inlineError);
       },
