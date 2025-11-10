@@ -1285,7 +1285,7 @@ export default {
         .find(Button({ ariaLabel: 'Fiscal year filter list' }))
         .click(),
       fiscalYearFilterSection.find(Button({ id: 'fiscalYearId-selection' })).click(),
-      fiscalYearFilterSection.find(SelectionOption(fiscalYear)).click(),
+      SelectionList().select(fiscalYear),
     ]);
   },
 
@@ -1296,7 +1296,7 @@ export default {
         .find(Button({ ariaLabel: 'Batch group filter list' }))
         .click(),
       batchGroupFilterSection.find(Button({ id: 'batchGroupId-selection' })).click(),
-      batchGroupFilterSection.find(SelectionOption(batchGroup)).click(),
+      SelectionList().select(batchGroup),
     ]);
   },
 
