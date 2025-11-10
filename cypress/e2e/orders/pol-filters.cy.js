@@ -105,23 +105,37 @@ describe('orders: Test Po line filters', () => {
   });
 
   [
-    { filterActions: Orders.selectFilterMainLibraryLocationsPOL },
-    { filterActions: Orders.selectFilterFundCodeUSHISTPOL },
-    { filterActions: Orders.selectFilterOrderFormatPhysicalResourcePOL },
     {
+      name: 'Location',
+      filterActions: Orders.selectFilterMainLibraryLocationsPOL,
+    },
+    {
+      name: 'Fund code',
+      filterActions: Orders.selectFilterFundCodeUSHISTPOL,
+    },
+    {
+      name: 'Order format',
+      filterActions: Orders.selectFilterOrderFormatPhysicalResourcePOL,
+    },
+    {
+      name: 'Vendor',
       filterActions: () => {
         Orders.selectFilterVendorPOL(invoice);
       },
     },
     {
+      name: 'Subscription from',
       filterActions: () => {
         Orders.selectFilterSubscriptionFromPOL(subcriptionDate);
       },
     },
-    { filterActions: Orders.selectFilterNoInRushPOL },
+    {
+      name: 'Rush',
+      filterActions: Orders.selectFilterNoInRushPOL,
+    },
   ].forEach((filter) => {
     it(
-      'C6720 Test the POL filters [except tags] (thunderjet)',
+      `C6720 Test the POL filters [except tags]: ${filter.name} (thunderjet)`,
       { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO line number', orderLineNumber);
