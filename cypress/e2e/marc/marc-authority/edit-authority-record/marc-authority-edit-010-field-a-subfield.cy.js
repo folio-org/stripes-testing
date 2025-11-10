@@ -75,8 +75,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
@@ -88,8 +86,8 @@ describe('MARC', () => {
             MarcAuthorities.chooseTypeOfHeading('Genre');
             InventoryInstance.searchResults(testData.linkingValue);
             MarcAuthorities.clickLinkButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(1000);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -127,7 +125,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010Subfields);
 
           // #7 Click "Save & close" and verify error persists
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010Subfields);
         },
       );

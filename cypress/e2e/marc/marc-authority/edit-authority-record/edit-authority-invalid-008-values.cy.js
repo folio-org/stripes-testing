@@ -97,7 +97,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField(testData.tag100, `$a ${updatedHeading}`);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             testData.tag008Index,
             QuickMarcEditor.getTag008BoxErrorText(AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES.ROMAN),

@@ -73,7 +73,7 @@ describe('OAI-PMH', () => {
                     electronicAccessData.indicator1,
                     electronicAccessData.indicator2,
                   );
-                  QuickMarcEditor.saveAndCloseWithValidationWarnings();
+                  QuickMarcEditor.pressSaveAndClose();
                   QuickMarcEditor.checkAfterSaveAndClose();
 
                   cy.login(user.username, user.password, {

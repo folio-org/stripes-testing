@@ -211,7 +211,7 @@ describe('Data Export', () => {
       updatedExpectedMarcFields[index245] = ['245', '10', 'a', marcInstance.title];
 
       // Step 9: Click "Save & close" button
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
+      QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
       // Step 10: Go to "Data export" app

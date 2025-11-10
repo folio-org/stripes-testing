@@ -71,7 +71,7 @@ describe('MARC', () => {
           testData.tagValues.forEach((tagValue) => {
             QuickMarcEditor.updateExistingTagValue(testData.tag245RowIndex, tagValue);
             QuickMarcEditor.verifyTagValue(testData.tag245RowIndex, tagValue);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(testData.tag245RowIndex, testData.calloutTagMessage);
             QuickMarcEditor.closeAllCallouts();
           });

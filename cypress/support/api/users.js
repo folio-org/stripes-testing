@@ -161,25 +161,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
       cy.setUserPassword(userProperties);
       if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
         cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-          if (Cypress.env('ecsEnabled')) {
-            cy.recurse(
-              () => {
-                return cy.okapiRequest({
-                  path: `users-keycloak/users/${userProperties.userId}`,
-                  isDefaultSearchParamsRequired: false,
-                });
-              },
-              (response) => expect(response.body.id).to.eq(userProperties.userId),
-              {
-                limit: 10,
-                timeout: 40000,
-                delay: 1000,
-              },
-            ).then(() => {
-              cy.wait(10000);
-              cy.updateRolesForUserApi(userProperties.userId, [roleId]);
-            });
-          } else cy.updateRolesForUserApi(userProperties.userId, [roleId]);
+          cy.updateRolesForUserApi(userProperties.userId, [roleId]);
         });
       } else if (Cypress.env('eureka')) {
         let capabilitiesIds;
@@ -277,25 +259,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
   if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
     cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-      if (Cypress.env('ecsEnabled')) {
-        cy.recurse(
-          () => {
-            return cy.okapiRequest({
-              path: `users-keycloak/users/${userId}`,
-              isDefaultSearchParamsRequired: false,
-            });
-          },
-          (response) => expect(response.body.id).to.eq(userId),
-          {
-            limit: 10,
-            timeout: 40000,
-            delay: 1000,
-          },
-        ).then(() => {
-          cy.wait(10000);
-          cy.updateRolesForUserApi(userId, [roleId]);
-        });
-      } else cy.updateRolesForUserApi(userId, [roleId]);
+      cy.updateRolesForUserApi(userId, [roleId]);
     });
   } else if (Cypress.env('eureka')) {
     let capabilitiesIds;

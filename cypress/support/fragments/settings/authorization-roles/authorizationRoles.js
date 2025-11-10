@@ -114,7 +114,7 @@ const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
 const unselectAppConfirmationModal = Modal({ id: 'unselect-application-confirmation-modal' });
-const okayButton = Button('Okay');
+const continueButton = Button('Continue');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -1056,7 +1056,7 @@ export default {
   },
 
   confirmAppUnselection() {
-    cy.do(unselectAppConfirmationModal.find(okayButton).click());
+    cy.do(unselectAppConfirmationModal.find(continueButton).click());
     cy.expect(unselectAppConfirmationModal.absent());
   },
 

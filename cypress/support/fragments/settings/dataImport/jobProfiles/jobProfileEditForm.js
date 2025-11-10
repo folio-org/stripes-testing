@@ -2,7 +2,6 @@ import {
   Accordion,
   Button,
   ConfirmationModal,
-  DropdownMenu,
   Form,
   HTML,
   Section,
@@ -75,7 +74,7 @@ export default {
   fillOverviewProfileFields({ action, name }) {
     cy.do([
       addActionProfileButton.click(),
-      overviewSection.find(DropdownMenu()).find(Button(action)).click(),
+      Section({ id: 'menu-actions-type-selector-menu-linker-root' }).find(Button(action)).click(),
     ]);
     SelectActionProfile.searchProfile(name);
     SelectActionProfile.selectProfile(name);

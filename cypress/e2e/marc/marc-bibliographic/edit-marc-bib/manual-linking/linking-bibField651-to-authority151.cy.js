@@ -98,8 +98,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -108,7 +106,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(testData.userProperties.userId);
           createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
             else InventoryInstance.deleteInstanceViaApi(id);
           });
         });

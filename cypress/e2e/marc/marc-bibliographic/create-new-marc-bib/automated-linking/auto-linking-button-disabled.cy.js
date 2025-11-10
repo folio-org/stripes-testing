@@ -162,7 +162,7 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
             });
