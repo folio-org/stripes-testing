@@ -56,8 +56,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -89,7 +87,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('', testData.tag005Content);
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag005);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         },
