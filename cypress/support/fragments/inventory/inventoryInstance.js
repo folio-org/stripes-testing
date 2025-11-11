@@ -937,20 +937,14 @@ export default {
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
   },
 
-  moveItemToAnotherHolding({
-    fromHolding,
-    toHolding,
-    shouldOpen = true,
-    itemMoved = false,
-    itemIndex = 0,
-  } = {}) {
+  moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false } = {}) {
     if (shouldOpen) {
       openHoldings(fromHolding, toHolding);
     }
 
     cy.do([
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ index: itemIndex }))
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })

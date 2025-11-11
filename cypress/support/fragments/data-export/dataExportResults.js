@@ -47,7 +47,7 @@ export default {
         () => {
           const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
             Cypress.env('users')[0].personal.lastName
-          }`;
+          }`.trim();
           cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),

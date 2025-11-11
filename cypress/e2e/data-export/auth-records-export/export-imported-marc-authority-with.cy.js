@@ -148,7 +148,6 @@ describe('Data Export', () => {
           assertionsOnMarcFileContent,
           recordsCount,
           false,
-          true,
         );
       });
     },
