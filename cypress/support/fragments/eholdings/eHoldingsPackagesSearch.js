@@ -14,6 +14,8 @@ const contentTypeAccordion = Accordion({ id: 'filter-packages-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-packages-selected' });
 const tagsAccordion = Accordion({ id: 'accordionTagFilter' });
 const byTagCheckbox = Checkbox('Search by tags only');
+const accessStatusTypesAccordion = Accordion('Access status types');
+const byAccessStatusTypesCheckbox = Checkbox('Search by access status types only');
 
 export default {
   byContentType: (type) => {
@@ -49,5 +51,19 @@ export default {
   },
   resetTagFilter: () => {
     cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+  },
+
+  openAccessStatusTypesDropdown() {
+    cy.do(accessStatusTypesAccordion.clickHeader());
+    // for unclear reasons, clicking the checkbox twice is required to set it to checked state
+    cy.do(accessStatusTypesAccordion.find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(accessStatusTypesAccordion.find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(accessStatusTypesAccordion.find(MultiSelect()).open());
+  },
+
+  checkAccessStatusTypeOptionAvailable: (accessStatusType, isShown = true) => {
+    const targetOption = accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType));
+    if (isShown) cy.expect(targetOption.exists());
+    else cy.expect(targetOption.absent());
   },
 };

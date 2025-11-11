@@ -1375,6 +1375,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ITEM_HRID: 'Item HRID',
     STATISTICAL_CODES: 'Statistical codes',
+    MATERIAL_TYPE: 'Material type',
   },
   USERS: {
     USERNAME: 'Username',
@@ -1764,4 +1765,12 @@ export const AUTHORITY_APP_CONTEXT_DROPDOWN_OPTIONS = {
 export const INVENTORY_APP_CONTEXT_DROPDOWN_OPTIONS = {
   SEARCH: 'Inventory app search',
   SHORTCUTS: 'Keyboard shortcuts',
+};
+
+export const EHOLDINGS_KB_SETTINGS_TABS = {
+  ROOT_PROXY: 'Root proxy',
+  CUSTOM_LABELS: 'Custom labels',
+  ACCESS_STATUS_TYPES: 'Access status types',
+  ASSIGNED_USERS: 'Assigned users',
+  USAGE_CONSOLIDATION: 'Usage consolidation',
 };
