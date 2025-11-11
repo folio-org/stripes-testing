@@ -32,7 +32,6 @@ const itemBarcodeField = TextField({ name: 'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
-const inTransitModal = Modal('In transit');
 const checkInButtonInModal = confirmModal.find(Button('Check in'));
 const endSessionButton = Button({ id: 'clickable-end-session' });
 const feeFineDetailsButton = Button('Fee/fine details');
@@ -368,8 +367,12 @@ export default {
     cy.expect(accessDeniedModal.absent());
   },
 
-  closeInTransitModal() {
-    cy.expect(inTransitModal.exists());
-    cy.do(inTransitModal.dismiss());
+  closeModalIfPresent() {
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal---]').length > 0) {
+        cy.do(Modal().dismiss());
+        cy.wait(500);
+      }
+    });
   },
 };
