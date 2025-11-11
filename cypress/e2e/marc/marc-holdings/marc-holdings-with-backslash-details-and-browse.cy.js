@@ -99,10 +99,6 @@ describe('MARC', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.createdUserProperties.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-      // recordIDs.forEach((id, index) => {
-      //   if (index) cy.deleteHoldingRecordViaApi(id);
-      // });
-      // InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
       FileManager.deleteFile(`cypress/fixtures/${testData.editedHoldingsFileName}`);
     });
 
