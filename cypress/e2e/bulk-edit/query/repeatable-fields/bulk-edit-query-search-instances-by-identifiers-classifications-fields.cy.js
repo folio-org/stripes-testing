@@ -133,7 +133,7 @@ describe('Bulk-edit', () => {
             let completedCount = 0;
 
             const processIdentifierType = (typeName) => {
-              InventoryInstances.getIdentifierTypes({ query: `name="${typeName}"` }).then(
+              InventoryInstances.getIdentifierTypes({ query: `name=="${typeName}"` }).then(
                 (typeData) => {
                   identifierTypes[typeName] = typeData.id;
                   completedCount++;

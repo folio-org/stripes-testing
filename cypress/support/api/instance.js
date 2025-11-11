@@ -102,3 +102,36 @@ Cypress.Commands.add('checkInstanceLinkStatus', (createdRecordIDs, tenant) => {
     expect(response.body.links[0]).to.not.have.property('errorCause', 'Invalid JSON object: null');
   });
 });
+
+Cypress.Commands.add('getSrsRecordsByInstanceId', (instanceId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `source-storage/records/${instanceId}/formatted`,
+    searchParams: {
+      idType: 'INSTANCE',
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('createSrsRecord', (srsRecord) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.POST,
+    path: 'source-storage/records',
+    body: srsRecord,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('deleteSrsRecord', (srsRecordId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `source-storage/records/${srsRecordId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  });
+});
