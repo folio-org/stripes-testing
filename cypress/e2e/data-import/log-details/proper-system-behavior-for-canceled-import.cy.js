@@ -48,6 +48,7 @@ describe('Data Import', () => {
         DataImport.cancelDeleteImportJob();
         DataImport.deleteImportJob(firstMarcFileName);
         DataImport.confirmDeleteImportJob();
+        cy.wait(2000);
         Logs.checkJobStatus(firstMarcFileName, 'Stopped by user');
         Logs.openFileDetails(firstMarcFileName);
         FileDetails.verifyLogDetailsPageIsOpened(firstMarcFileName);

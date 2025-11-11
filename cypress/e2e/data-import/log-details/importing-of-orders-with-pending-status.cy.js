@@ -136,16 +136,15 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumbers[0]}"` }).then(
-          (orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          },
-        );
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumbers[2]}"` }).then(
-          (orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          },
-        );
+        orderNumbers.forEach((orderNumber) => {
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              if (orderId.totalRecords > 0) {
+                Orders.deleteOrderViaApi(orderId[0].id);
+              }
+            },
+          );
+        });
       });
     });
 

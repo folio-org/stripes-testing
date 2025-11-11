@@ -61,7 +61,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileNames[0]);
-        cy.wait(180000);
+        cy.wait(30000);
         Logs.openFileDetails(fileNames[0]);
         FileDetails.verifyHeader(fileNames[0], numberOfRecords[0]);
         FileDetails.paginateThroughAllPages(1);
