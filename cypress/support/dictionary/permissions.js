@@ -363,6 +363,10 @@ export default {
     internal: 'ui-plugin-create-inventory-records.create',
     gui: 'Fast add: Create',
   },
+  inventoryStorageHoldingsBatchUpdate: {
+    internal: 'inventory-storage.holdings.batch.post',
+    gui: 'inventory storage - create or update a number of holdings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
