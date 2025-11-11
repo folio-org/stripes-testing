@@ -6,7 +6,9 @@ export default {
     cy.wait(1000);
   },
   chooseStaffClip(name) {
+    cy.intercept('GET', '/users?query=id*', { statusCode: 200 }).as('getUser');
     cy.do(NavListItem(name).click());
+    cy.wait('@getUser');
     cy.expect(Pane(name).exists());
   },
 };

@@ -108,7 +108,7 @@ describe('MARC', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-      MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+      MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
     });
 
     it(

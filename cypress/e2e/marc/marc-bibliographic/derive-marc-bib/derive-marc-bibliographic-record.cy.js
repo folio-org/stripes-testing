@@ -46,8 +46,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -70,7 +68,7 @@ describe('MARC', () => {
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.addNewField('010', '$a   766384', 6);
           QuickMarcEditor.addNewField('010', '$a   5689434', 7);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessage);
           QuickMarcEditor.deleteTag(8);
           QuickMarcEditor.pressSaveAndClose();

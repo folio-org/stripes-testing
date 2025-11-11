@@ -95,7 +95,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(content, index);
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             testData.fieldsContent[0].index,
             testData.expectedErrorMessage,
@@ -107,7 +107,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagValue(testData.fieldsContent[1].index, testData.tag110);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           testData.fieldsContent.forEach(({ index }) => {
             QuickMarcEditor.checkErrorMessage(index, testData.expectedErrorMessage);
           });

@@ -46,6 +46,10 @@ describe('Banking Information', () => {
       'C422089 Account type name unique validation when create and edit account name (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
+        // Verify banking information settings enabled: other settings might deactivate it
+        SettingsOrganizations.selectBankingInformation();
+        SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
         SettingsOrganizations.selectAccountTypes();
         SettingsOrganizations.checkBankingAccountTypesTableContent(existingAccountType.name);
         SettingsOrganizations.clickNewButton();
@@ -91,6 +95,10 @@ describe('Banking Information', () => {
     });
 
     it('C422088 Delete account type (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+      // Verify banking information settings enabled: other settings might deactivate it
+      SettingsOrganizations.selectBankingInformation();
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
       SettingsOrganizations.selectAccountTypes();
       SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
       SettingsOrganizations.checkNewAccountTypeButtonExists();
@@ -130,6 +138,10 @@ describe('Banking Information', () => {
     });
 
     it('C422087 Edit account type (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+      // Verify banking information settings enabled: other settings might deactivate it
+      SettingsOrganizations.selectBankingInformation();
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
       SettingsOrganizations.selectAccountTypes();
       SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
       SettingsOrganizations.checkNewAccountTypeButtonExists();
@@ -243,6 +255,10 @@ describe('Banking Information', () => {
       'C590820: User cannot delete bank account types that is in use by one or more organizations (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
+        // Verify banking information settings enabled: other settings might deactivate it
+        SettingsOrganizations.selectBankingInformation();
+        SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
         SettingsOrganizations.selectAccountTypes();
         SettingsOrganizations.checkNewAccountTypeButtonExists();
         SettingsOrganizations.tryToDeleteAccountTypeWhenItUnable(existingAccountType);

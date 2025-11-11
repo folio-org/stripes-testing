@@ -86,8 +86,6 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.logout();
         });
@@ -107,14 +105,10 @@ describe('MARC', () => {
         'C369080 Export and Import "MARC Bibliographic" record with linked fields (which have $9 with UUID) (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C369080'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
 
           InventoryInstances.searchByTitle(testData.createdInstanceIDs[0]);
           InventoryInstances.selectInstanceCheckboxByIndex(0);
