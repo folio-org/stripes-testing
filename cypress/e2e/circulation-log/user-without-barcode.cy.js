@@ -85,6 +85,7 @@ describe('Circulation log', () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)
       CheckInActions.checkInItem(itemBarcode);
+      CheckInActions.closeInTransitModal();
       // The item is Checked in
       // Navigate to the "Circulation log" app
 
