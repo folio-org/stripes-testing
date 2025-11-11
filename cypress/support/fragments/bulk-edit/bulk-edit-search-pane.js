@@ -164,6 +164,12 @@ export const ERROR_MESSAGES = {
   OPTIMISTIC_LOCKING:
     'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version',
   DUPLICATE_ENTRY: 'Duplicate entry',
+  SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
+  MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
+  INVALID_MARC_RECORD:
+    'Underlying MARC record contains invalid data and the record cannot be updated.',
+  MULTIPLE_SRS_RECORDS_ASSOCIATED:
+    'Multiple SRS records are associated with the instance. The following SRS have been identified:',
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
@@ -1653,6 +1659,12 @@ export default {
       });
     }
     checkResponse();
+  },
+
+  verifyCellWithContentAbsentsInMatchedAccordion(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(matchedAccordion.find(MultiColumnListCell(content)).absent());
+    });
   },
 
   verifyCellWithContentAbsentsInChangesAccordion(...cellContent) {
