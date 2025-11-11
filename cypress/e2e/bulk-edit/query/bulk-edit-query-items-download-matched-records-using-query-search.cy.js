@@ -14,7 +14,7 @@ import { BULK_EDIT_TABLE_COLUMN_HEADERS, ITEM_STATUS_NAMES } from '../../../supp
 import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user;
-const numberOfIterations = 3;
+const numberOfIterations = 4;
 const folioInstanceTitle = `AT_C356812_FolioInstance_${getRandomPostfix()}`;
 const item = {
   barcode: `AT_C356812_${getRandomPostfix()}`,
