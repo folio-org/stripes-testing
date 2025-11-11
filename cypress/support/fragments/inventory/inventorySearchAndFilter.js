@@ -926,6 +926,10 @@ export default {
     cy.do([browseSearchInputField.fillIn(searchValue)]);
   },
 
+  fillInSearchQuery(searchValue) {
+    cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
+  },
+
   browseSearch(searchValue) {
     cy.do([browseSearchInputField.fillIn(searchValue), searchButton.click()]);
   },
@@ -1242,6 +1246,10 @@ export default {
     cy.expect(browseSearchInputField.has({ focused: isFocused }));
   },
 
+  checkSearchInputFieldInFocus(isFocused) {
+    cy.expect(keywordInput.has({ focused: isFocused }));
+  },
+
   checkBrowseInventoryResultPaneInFocus(isFocused) {
     cy.expect(
       PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).has({ focused: isFocused }),
@@ -1543,6 +1551,15 @@ export default {
     cy.do(inventorySearchAndFilter.focus());
     cy.do(inventorySearchAndFilter.find(clearIcon).click());
     this.checkSearchQueryText('');
+  },
+
+  checkClearIconShownInSearchField(isShown = true) {
+    if (isShown) cy.expect(inventorySearchAndFilter.find(clearIcon).exists());
+    else cy.expect(inventorySearchAndFilter.find(clearIcon).absent());
+  },
+
+  focusOnSearchField() {
+    cy.do(inventorySearchAndFilter.focus());
   },
 
   validateSearchTableColumnsShown(
