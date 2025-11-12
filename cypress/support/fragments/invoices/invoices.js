@@ -1463,4 +1463,11 @@ export default {
     cy.wait(2000);
     cy.do(Button({ id: 'adjustments-add-button' }).click());
   },
+
+  createInvoiceLineNewBlankLine() {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      newBlankLineButton.click(),
+    ]);
+  },
 };
