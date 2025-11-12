@@ -431,6 +431,14 @@ export default {
     cy.get('[class^="col-sm-4"][class*="headerCell"]').contains('Value');
   },
 
+  verifyOptionsInValueSelect(expectedOptions, row = 0) {
+    cy.expect([
+      RepeatableFieldItem({ index: row })
+        .find(Select('input-value-0'))
+        .has({ optionsText: expectedOptions }),
+    ]);
+  },
+
   pickDate(date, row = 0) {
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [placeholder="MM/DD/YYYY"]`).should(
       'exist',
@@ -643,6 +651,10 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
   },
 
+  verifyResultsTableAbsent() {
+    cy.expect(buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' })).absent());
+  },
+
   verifyEmbeddedTableInQueryModal(
     tableType,
     identifier,
@@ -849,5 +861,10 @@ export default {
 
   verifyRecordTypeLabel(recordType) {
     cy.expect(HTML(`Record type: ${recordType}`).exists());
+  },
+
+  verifyHeadlineQueryWouldReturnAbsent() {
+    cy.get('[class^="col-xs-10"]').should('not.exist');
+    cy.expect(HTML(including('Query would return')).absent());
   },
 };
