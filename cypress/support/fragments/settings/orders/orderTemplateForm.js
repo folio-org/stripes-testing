@@ -22,8 +22,6 @@ const orderTemplatePoTagsSection = orderTemplateForm.find(Section({ id: 'poTags'
 const orderTemplatePoSummarySection = orderTemplateForm.find(Section({ id: 'poSummary' }));
 const orderTemplateItemDetailsSection = orderTemplateForm.find(Section({ id: 'itemDetails' }));
 const orderTemplateLineDetailsSection = orderTemplateForm.find(Section({ id: 'lineDetails' }));
-const orderTemplateDonorSection = orderTemplateForm.find(Section({ id: 'donorsInformation' }));
-const orderTemplatePOLOngoingSection = orderTemplateForm.find(Section({ id: 'polOngoingOrder' }));
 const orderTemplateVendorDetailsSection = orderTemplateForm.find(
   Section({ id: 'accordion-vendor' }),
 );
@@ -62,7 +60,6 @@ const defaultSections = {
   orderTemplatePoSummarySection,
   orderTemplateItemDetailsSection,
   orderTemplateLineDetailsSection,
-  orderTemplateDonorSection,
   orderTemplateVendorDetailsSection,
   orderTemplateCostDetailsSection,
   orderTemplateFundDetailsSection,
@@ -72,7 +69,6 @@ const defaultSections = {
 
 const ongoingSections = {
   orderTemplateOngoingSection,
-  orderTemplatePOLOngoingSection,
 };
 
 export default {
@@ -93,7 +89,7 @@ export default {
     });
 
     Object.values(ongoingSections).forEach((section) => {
-      cy.expect(section.absent());
+      cy.expect(section.exists());
     });
   },
 
