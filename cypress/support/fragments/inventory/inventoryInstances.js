@@ -197,6 +197,7 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
 const exportInstanceMarcButton = Button({ id: 'dropdown-clickable-export-marc' });
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
+const clearFieldIcon = Button({ icon: 'times-circle-solid' });
 
 const defaultField008Values = {
   Alph: '\\',
@@ -1399,6 +1400,20 @@ export default {
     }
   },
 
+  focusOnAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(TextArea()).focus());
+  },
+
+  verifyClearIconInAdvancedSearchField(rowIndex, shouldExist = true) {
+    const targetIcon = AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon);
+    if (shouldExist) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  clickClearIconInAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon).click());
+  },
+
   clickSearchBtnInAdvSearchModal() {
     cy.do(buttonSearchInAdvSearchModal.click());
   },
@@ -1406,6 +1421,11 @@ export default {
   clickCancelBtnInAdvSearchModal() {
     cy.do(buttonCancelInAdvSearchModal.click());
   },
+
+  checkResetAllButtonInAdvSearchModalEnabled(enabled = true) {
+    cy.expect(buttonResetAllInAdvSearchModal.has({ disabled: !enabled }));
+  },
+
   closeAdvSearchModalUsingESC() {
     cy.get('#advanced-search-modal').type('{esc}');
   },

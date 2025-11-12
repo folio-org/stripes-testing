@@ -870,3 +870,12 @@ Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
     });
   });
 });
+
+Cypress.Commands.add('batchUpdateHoldingsViaApi', (holdingsRecords) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'holdings-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { holdingsRecords },
+  });
+});
