@@ -52,10 +52,9 @@ const poLineDetailsSectionFields = {
   acquisitionMethod: orderTemplateLineDetailsSection.find(Selection('Acquisition method')),
 };
 
-const sections = {
+const defaultSections = {
   orderTemplateInfoSection,
   orderTemplatePoInfoSection,
-  orderTemplateOngoingSection,
   orderTemplatePoNotesSection,
   orderTemplatePoTagsSection,
   orderTemplatePoSummarySection,
@@ -66,6 +65,10 @@ const sections = {
   orderTemplateFundDetailsSection,
   orderTemplateLocationDetailsSection,
   orderTemplatePoLineTagsSection,
+};
+
+const ongoingSections = {
+  orderTemplateOngoingSection,
 };
 
 export default {
@@ -81,10 +84,15 @@ export default {
       infoSectionFields.hideAll.has({ checked: false }),
     ]);
 
-    Object.values(sections).forEach((section) => {
+    Object.values(defaultSections).forEach((section) => {
+      cy.expect(section.exists());
+    });
+
+    Object.values(ongoingSections).forEach((section) => {
       cy.expect(section.exists());
     });
   },
+
   fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
     if (templateInformation) {
       this.fillInfoSectionFields(templateInformation);

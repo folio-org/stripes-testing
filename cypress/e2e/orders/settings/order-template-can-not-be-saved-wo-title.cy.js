@@ -30,8 +30,8 @@ describe('Orders', () => {
     });
 
     it(
-      'C353609 Order template can not be saved, empty field is highlighted, and corresponding accordion is expanded when required field is not filled (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      'C916262 Order template can not be saved, empty field is highlighted, and corresponding accordion is expanded when required field is not filled (thunderjet) (TaaS)',
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C916262'] },
       () => {
         // Click "New" button
         const OrderTemplateForm = OrderTemplate.clickNewOrderTemplateButton();
