@@ -15,6 +15,7 @@ import SettingsDataExport from '../settingsDataExport';
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
 const searchField = TextField('Search Job profiles');
+const searchButton = Button('Search');
 const openNewJobProfileForm = () => {
   cy.do(newButton.click());
 };
@@ -38,6 +39,11 @@ export default {
     ['Name', 'Updated', 'Updated by'].forEach((title) => {
       cy.expect(jobProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
+    cy.expect([
+      searchField.exists(),
+      searchButton.has({ disabled: true }),
+      jobProfilesPane.has({ subtitle: including('job profiles') }),
+    ]);
   },
 
   scrollDownIfListOfResultsIsLong() {
@@ -118,5 +124,13 @@ export default {
 
   searchJobProfile(text) {
     cy.do(searchField.fillIn(text));
+  },
+
+  verifyNewButtonAbsent() {
+    cy.expect(newButton.absent());
+  },
+
+  verifyNewButtonEnabled() {
+    cy.expect(newButton.has({ disabled: false }));
   },
 };
