@@ -722,6 +722,22 @@ export default {
     cy.expect(consortiaHoldingsAccordion.has({ open: true }));
   },
 
+  expandAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Expand all'))
+        .click(),
+    ]);
+  },
+
+  collapseAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Collapse all'))
+        .click(),
+    ]);
+  },
+
   expandMemberSubHoldings(memberTenantName) {
     cy.wait(4000);
     cy.do(Accordion(memberTenantName).focus());
@@ -835,6 +851,14 @@ export default {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
   },
 
+  verifyHoldingsListIsEmpty(instanceId) {
+    cy.expect(
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
   verifyItemsListIsEmpty() {
     cy.expect(HTML(including('The list contains no items')).exists());
   },
@@ -943,6 +967,13 @@ export default {
     cy.expect([
       consortiaHoldingsAccordion.has({ open: isOpen }),
       Accordion({ id: including(memberId) }).exists(),
+    ]);
+  },
+
+  verifySubHoldingsAccordion(memberId, holdingId, isOpen = true) {
+    cy.wait(1000);
+    cy.expect([
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).has({ open: isOpen }),
     ]);
   },
 
