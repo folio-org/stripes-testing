@@ -366,4 +366,13 @@ export default {
     cy.do(accessDeniedModal.find(Button('Close')).click());
     cy.expect(accessDeniedModal.absent());
   },
+
+  closeModalIfPresent() {
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal---]').length > 0) {
+        cy.do(Modal().dismiss());
+        cy.wait(500);
+      }
+    });
+  },
 };

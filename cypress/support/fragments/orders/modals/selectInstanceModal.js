@@ -29,6 +29,7 @@ const dateRangeErrorMessage = 'Please enter a valid year';
 const sourceAccordion = selectInstanceModal.find(Accordion('Source'));
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
+const clearIcon = Button({ icon: 'times-circle-solid' });
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
@@ -151,11 +152,15 @@ export default {
   checkDefaultSearchOptionSelected() {
     cy.expect(searchOptionSelect.has({ checkedOptionText: defaultSearchOption }));
   },
+  checkSearchOptionSelected(searchOption) {
+    cy.expect(searchOptionSelect.has({ checkedOptionText: searchOption }));
+  },
   checkSearchInputFieldValue(query) {
     cy.expect(searchInput.has({ value: query }));
   },
-  checkResultsListEmpty() {
-    cy.expect(resultsList.absent());
+  checkResultsListEmpty(isEmpty = true) {
+    if (isEmpty) cy.expect(resultsList.absent());
+    else cy.expect(resultsList.exists());
   },
   checkNoRecordsFound(headingReference) {
     cy.expect(
@@ -247,5 +252,26 @@ export default {
           .exists(),
       );
     });
+  },
+  fillInSearchQuery(searchValue) {
+    cy.do([searchInput.fillIn(searchValue)]);
+  },
+  focusOnSearchField() {
+    cy.do(searchInput.focus());
+  },
+  clearSearchInputField() {
+    cy.do(searchInput.focus());
+    cy.do(searchInput.find(clearIcon).click());
+    this.checkSearchInputFieldValue('');
+  },
+  checkClearIconShownInSearchField(isShown = true) {
+    if (isShown) cy.expect(searchInput.find(clearIcon).exists());
+    else cy.expect(searchInput.find(clearIcon).absent());
+  },
+  checkSearchInputFieldInFocus(isFocused) {
+    cy.expect(searchInput.has({ focused: isFocused }));
+  },
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
   },
 };
