@@ -169,11 +169,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkLinkButtonExistByRowIndex(45);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.verifyInstanceSubject(
-              0,
-              0,
-              `${testData.linkedIconText}${testData.subjectValue}`,
-            );
+            InventoryInstance.verifyInstanceSubject(0, 0, testData.subjectValue);
             InventoryInstance.checkMarcAppIconAbsent(0);
             InventoryInstance.viewSource();
             InventoryViewSource.notContains(testData.linkedIconText);
