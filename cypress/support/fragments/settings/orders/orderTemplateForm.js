@@ -22,6 +22,8 @@ const orderTemplatePoTagsSection = orderTemplateForm.find(Section({ id: 'poTags'
 const orderTemplatePoSummarySection = orderTemplateForm.find(Section({ id: 'poSummary' }));
 const orderTemplateItemDetailsSection = orderTemplateForm.find(Section({ id: 'itemDetails' }));
 const orderTemplateLineDetailsSection = orderTemplateForm.find(Section({ id: 'lineDetails' }));
+const orderTemplateDonorSection = orderTemplateForm.find(Section({ id: 'donorsInformation' }));
+const orderTemplatePOLOngoingSection = orderTemplateForm.find(Section({ id: 'polOngoingOrder' }));
 const orderTemplateVendorDetailsSection = orderTemplateForm.find(
   Section({ id: 'accordion-vendor' }),
 );
@@ -52,20 +54,25 @@ const poLineDetailsSectionFields = {
   acquisitionMethod: orderTemplateLineDetailsSection.find(Selection('Acquisition method')),
 };
 
-const sections = {
+const defaultSections = {
   orderTemplateInfoSection,
   orderTemplatePoInfoSection,
-  orderTemplateOngoingSection,
   orderTemplatePoNotesSection,
   orderTemplatePoTagsSection,
   orderTemplatePoSummarySection,
   orderTemplateItemDetailsSection,
   orderTemplateLineDetailsSection,
+  orderTemplateDonorSection,
   orderTemplateVendorDetailsSection,
   orderTemplateCostDetailsSection,
   orderTemplateFundDetailsSection,
   orderTemplateLocationDetailsSection,
   orderTemplatePoLineTagsSection,
+};
+
+const ongoingSections = {
+  orderTemplateOngoingSection,
+  orderTemplatePOLOngoingSection,
 };
 
 export default {
@@ -81,10 +88,15 @@ export default {
       infoSectionFields.hideAll.has({ checked: false }),
     ]);
 
-    Object.values(sections).forEach((section) => {
+    Object.values(defaultSections).forEach((section) => {
       cy.expect(section.exists());
     });
+
+    Object.values(ongoingSections).forEach((section) => {
+      cy.expect(section.absent());
+    });
   },
+
   fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
     if (templateInformation) {
       this.fillInfoSectionFields(templateInformation);
