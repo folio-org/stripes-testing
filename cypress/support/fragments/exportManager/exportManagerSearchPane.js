@@ -1,5 +1,6 @@
 import { HTML, including } from '@interactors/html';
 import {
+  and,
   Pane,
   Button,
   TextField,
@@ -132,6 +133,12 @@ export default {
   verifyResultAndClick(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
     cy.do(MultiColumnListRow({ index: 0 }).click());
+  },
+
+  openJobDetailView(jobId) {
+    cy.then(() => exportJobsList.find(MultiColumnListCell(jobId)).row()).then((rowIndex) => {
+      cy.do(exportJobsList.find(MultiColumnListRow({ index: rowIndex })).click());
+    });
   },
 
   getElementByTextAndVerify(content, amount, index) {
@@ -388,13 +395,15 @@ export default {
   },
 
   verifyJobDataInResults(expectedValuesArray) {
-    expectedValuesArray.forEach((expectedValue) => {
-      cy.expect(
-        exportJobsList
-          .find(MultiColumnListRow({ index: 0 }))
-          .has({ content: including(expectedValue) }),
-      );
-    });
+    cy.expect(
+      exportJobsList
+        .find(
+          MultiColumnListRow({
+            content: and(...expectedValuesArray.map((value) => including(value))),
+          }),
+        )
+        .exists(),
+    );
   },
 
   verifyJobDataInDetailView(expectedValuesObject) {
