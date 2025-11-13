@@ -5,10 +5,14 @@ export default {
     cy.expect(Heading('Staff slips').exists());
     cy.wait(1000);
   },
-  chooseStaffClip(name) {
-    cy.intercept('GET', '/users?query=id*', { statusCode: 200 }).as('getUser');
+  chooseStaffClip(name, { interceptUsers = false } = {}) {
+    if (interceptUsers) {
+      cy.intercept('GET', '/users?query=id*', { statusCode: 200 }).as('getUser');
+    }
     cy.do(NavListItem(name).click());
-    cy.wait('@getUser');
+    if (interceptUsers) {
+      cy.wait('@getUser');
+    }
     cy.expect(Pane(name).exists());
   },
 };

@@ -217,7 +217,7 @@ describe('MARC', () => {
             ExportManagerSearchPane.searchByAuthorityControl();
             cy.wait(2000);
             ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);
-            ExportManagerSearchPane.verifyResultAndClick(jobID);
+            ExportManagerSearchPane.openJobDetailView(jobID);
             ExportManagerSearchPane.verifyJobDataInDetailView(expectedJobDetails);
             ExportManagerSearchPane.downloadLastCreatedJob(item.response.body.name);
           });

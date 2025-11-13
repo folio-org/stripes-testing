@@ -135,10 +135,10 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();
 
-          cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          cy.wait(2000);
 
           MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedFirstUpdateData);
         },
