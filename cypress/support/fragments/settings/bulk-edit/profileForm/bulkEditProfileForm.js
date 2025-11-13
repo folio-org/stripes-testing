@@ -72,6 +72,10 @@ export default {
     cy.do(lockProfileCheckbox.click());
   },
 
+  clickCloseFormButton() {
+    cy.do(closeFormButton.click());
+  },
+
   verifyLockProfileCheckboxChecked(isChecked, isDisabled = false) {
     cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
   },
@@ -260,19 +264,26 @@ export default {
     cy.do(getTargetRow(rowIndex).find(Checkbox('Staff only')).click());
   },
 
-  verifyOptionExistsInSelectOptionDropdown(option, rowIndex = 0, isExists = true) {
+  clickOptionsSelection(rowIndex = 0) {
+    cy.wait(1000);
+    cy.do(
+      bulkEditsAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(optionsDropdown)
+        .open(),
+    );
+    cy.wait(1000);
+  },
+
+  verifyOptionExistsInSelectOptionDropdown(option, isExists = true) {
     cy.then(() => {
-      getTargetRow(rowIndex)
-        .find(bulkEditsAccordion)
-        .find(SelectionList({ placeholder: 'Filter options list' }))
-        .optionList()
-        .then((list) => {
-          if (isExists) {
-            expect(list).to.include(option);
-          } else {
-            expect(list).to.not.include(option);
-          }
-        });
+      return SelectionList({ placeholder: 'Filter options list' }).optionList();
+    }).then((list) => {
+      if (isExists) {
+        expect(list).to.include(option);
+      } else {
+        expect(list).to.not.include(option);
+      }
     });
   },
 

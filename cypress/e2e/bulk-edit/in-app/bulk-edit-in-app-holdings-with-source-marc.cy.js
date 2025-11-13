@@ -64,7 +64,7 @@ describe('Bulk-edit', () => {
             cy.getDefaultMaterialType().then((res) => {
               materialTypeId = res.id;
             });
-            cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
+            cy.getLoanTypes({ query: `name=="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
               loanTypeId = res[0].id;
             });
 

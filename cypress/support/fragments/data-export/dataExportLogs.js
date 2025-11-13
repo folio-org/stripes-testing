@@ -4,7 +4,9 @@ import {
   Button,
   Pane,
   Modal,
+  HTML,
   including,
+  matching,
 } from '../../../../interactors';
 
 const jobsPane = Pane('Jobs');
@@ -37,6 +39,16 @@ export default {
     cy.do(MultiColumnListCell({ content: including(fileName) }).click());
   },
 
+  verifyRecordsFoundSubtitleExists() {
+    cy.expect(logsPane.has({ subtitle: matching(/\d+ records? found/) }));
+  },
+
+  verifyFoundRecordsCount(count) {
+    const recordText = count === 1 ? 'record' : 'records';
+
+    cy.expect(logsPane.has({ subtitle: including(`${count} ${recordText} found`) }));
+  },
+
   saveMarcFileForImport: () => {
     cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button()).click());
   },
@@ -59,6 +71,8 @@ export default {
 
   verifyDragAndDropAreaExists() {
     cy.get('[data-testid="fileUploader-input"]').should('exist');
+    cy.expect(jobsPane.find(HTML('Drag and drop')).exists());
+    cy.expect(jobsPane.find(HTML('Select a file with records IDs or CQL queries')).exists());
   },
 
   verifyUploadFileButtonDisabled(isDisabled = true) {
