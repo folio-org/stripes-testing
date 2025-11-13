@@ -185,7 +185,7 @@ describe('MARC', () => {
             ExportManagerSearchPane.waitLoading();
             ExportManagerSearchPane.searchByAuthorityControl();
             ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);
-            ExportManagerSearchPane.verifyResultAndClick(jobID);
+            ExportManagerSearchPane.openJobDetailView(jobID);
             ExportManagerSearchPane.verifyJobDataInDetailView(expectedJobDetails);
             ExportManagerSearchPane.downloadLastCreatedJob(item.response.body.name);
           });
