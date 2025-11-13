@@ -810,7 +810,12 @@ export default {
 
   clickOptionsSelection(rowIndex = 0) {
     cy.wait(1000);
-    cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+    cy.do(
+      bulkEditsAccordions
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(bulkPageSelections.valueType)
+        .open(),
+    );
     cy.wait(1000);
   },
 
@@ -1457,16 +1462,13 @@ export default {
 
   verifyOptionExistsInSelectOptionDropdown(option, isExists = true) {
     cy.then(() => {
-      bulkEditsAccordions
-        .find(SelectionList({ placeholder: 'Filter options list' }))
-        .optionList()
-        .then((list) => {
-          if (isExists) {
-            expect(list).to.include(option);
-          } else {
-            expect(list).to.not.include(option);
-          }
-        });
+      return SelectionList({ placeholder: 'Filter options list' }).optionList();
+    }).then((list) => {
+      if (isExists) {
+        expect(list).to.include(option);
+      } else {
+        expect(list).to.not.include(option);
+      }
     });
   },
 

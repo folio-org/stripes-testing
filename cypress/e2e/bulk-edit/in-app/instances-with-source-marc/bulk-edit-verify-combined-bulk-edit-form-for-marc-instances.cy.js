@@ -135,8 +135,10 @@ describe(
           BulkEditActions.verifyRowIcons();
 
           // Step 8: Verify administrative data options available
+          BulkEditActions.clickOptionsSelection();
+
           [
-            'Administrartive note',
+            'Administrative note',
             'Staff suppress',
             'Statistical code',
             'Suppress from discovery',
