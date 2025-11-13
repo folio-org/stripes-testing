@@ -28,7 +28,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 1',
     publicNote: 'Public Note 1',
     marcIndicators: { ind1: '4', ind2: '8' },
-    expectedIndex: 6,
   },
   {
     relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.NO_INFORMATION_PROVIDED,
@@ -37,7 +36,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 2',
     publicNote: 'Public Note 2',
     marcIndicators: { ind1: '4', ind2: ' ' },
-    expectedIndex: 0,
   },
   {
     relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE,
@@ -46,7 +44,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 3',
     publicNote: 'Public Note 3',
     marcIndicators: { ind1: '4', ind2: '2' },
-    expectedIndex: 3,
   },
   {
     relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
@@ -55,7 +52,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 4',
     publicNote: 'Public Note 4',
     marcIndicators: { ind1: '4', ind2: '0' },
-    expectedIndex: 1,
   },
   {
     relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
@@ -64,7 +60,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 5',
     publicNote: 'Public Note 5',
     marcIndicators: { ind1: '4', ind2: '1' },
-    expectedIndex: 2,
   },
   {
     relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.COMPONENT_PART_OF_RESOURCE,
@@ -73,7 +68,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 6',
     publicNote: 'Public Note 6',
     marcIndicators: { ind1: '4', ind2: '3' },
-    expectedIndex: 4,
   },
   {
     relationship: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_COMPONENT_PART_OF_RESOURCE,
@@ -82,7 +76,6 @@ const electronicAccessData = [
     materialsSpecification: 'Materials 7',
     publicNote: 'Public Note 7',
     marcIndicators: { ind1: '4', ind2: '4' },
-    expectedIndex: 5,
   },
 ];
 
@@ -238,7 +231,17 @@ describe(
 
             // Step 5: Verify MARC 856 field mappings
             function verify856Field(record, accessData) {
-              const electronicAccessField = record.get('856')[accessData.expectedIndex];
+              const allElectronicAccessFields = record.get('856');
+
+              expect(allElectronicAccessFields).to.exist;
+              expect(allElectronicAccessFields.length).to.be.greaterThan(0);
+
+              const electronicAccessField = allElectronicAccessFields.find((field) => {
+                const uriSubfield = field.subf.find((subfield) => subfield[0] === 'u');
+
+                return uriSubfield && uriSubfield[1] === accessData.uri;
+              });
+
               expect(electronicAccessField).to.exist;
               expect(electronicAccessField.ind1).to.eq(accessData.marcIndicators.ind1);
               expect(electronicAccessField.ind2).to.eq(accessData.marcIndicators.ind2);

@@ -50,6 +50,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyPaneRecordsCount('0 user');
         BulkEditSearchPane.verifyErrorLabel(11);
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
+        BulkEditSearchPane.verifySpinnerAbsent();
 
         BulkEditSearchPane.actionsIsShown();
         BulkEditActions.verifyNoNewBulkEditButton();

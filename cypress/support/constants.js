@@ -73,6 +73,7 @@ export const ITEM_STATUS_NAMES = {
   IN_PROCESS: 'In process',
   AVAILABLE: 'Available',
   MISSING: 'Missing',
+  LONG_MISSING: 'Long missing',
   IN_TRANSIT: 'In transit',
   PAGED: 'Paged',
   AWAITING_PICKUP: 'Awaiting pickup',

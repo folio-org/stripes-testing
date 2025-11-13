@@ -224,6 +224,42 @@ export default {
     }
   },
 
+  verifyPlusButtonAbsentInRow(isAbsent = true, rowIndex = 0) {
+    if (isAbsent) {
+      cy.expect(
+        bulkEditsAccordions
+          .find(RepeatableFieldItem({ index: rowIndex }))
+          .find(plusBtn)
+          .absent(),
+      );
+    } else {
+      cy.expect(
+        bulkEditsAccordions
+          .find(RepeatableFieldItem({ index: rowIndex }))
+          .find(plusBtn)
+          .exists(),
+      );
+    }
+  },
+
+  verifyDeleteButtonExistsInRow(isExists = true, rowIndex = 0) {
+    if (isExists) {
+      cy.expect(
+        bulkEditsAccordions
+          .find(RepeatableFieldItem({ index: rowIndex }))
+          .find(Button({ icon: 'trash', disabled: false }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        bulkEditsAccordions
+          .find(RepeatableFieldItem({ index: rowIndex }))
+          .find(deleteBtn)
+          .absent(),
+      );
+    }
+  },
+
   verifyOptionsDropdown(isExist = true) {
     if (isExist) {
       cy.expect(bulkPageSelections.valueType.exists());
