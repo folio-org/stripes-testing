@@ -173,15 +173,15 @@ export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceTitle: 'Instance — Resource title',
-  itemAccessionNumber: 'Item — Accession number',
-  itemBarcode: 'Item — Barcode',
+  itemAccessionNumber: 'Items — Accession number',
+  itemBarcode: 'Items — Barcode',
   itemCheckOutNotesNote: 'Item — Check out notes — Note',
   itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
   itemCheckInNotesNote: 'Item — Check in notes — Note',
   itemCheckInNotesStaffOnly: 'Item — Check in notes — Staff only',
-  itemStatus: 'Item — Status',
-  itemHrid: 'Item — Item HRID',
-  itemUuid: 'Item — Item UUID',
+  itemStatus: 'Items — Status',
+  itemHrid: 'Items — Item HRID',
+  itemUuid: 'Items — Item UUID',
   holdingsId: 'Holdings — UUID',
   holdingsHrid: 'Holdings — HRID',
   temporaryLocation: 'Temporary location — Name',
@@ -280,9 +280,11 @@ export default {
   exists() {
     cy.expect(buildQueryModal.exists());
   },
+
   absent() {
     cy.expect(buildQueryModal.absent());
   },
+
   verify(firstline = true) {
     this.exists();
     this.testQueryDisabled();
@@ -290,6 +292,14 @@ export default {
     this.runQueryDisabled();
     this.xButttonDisabled(false);
     this.verifyModalContent(firstline);
+  },
+
+  verifyBuildQueryInFullScreenMode() {
+    cy.get('[class^="LayerRoot"]')
+      .should('have.css', 'top', '0px')
+      .and('have.css', 'left', '0px')
+      .and('have.css', 'width', '1920px')
+      .and('have.css', 'height', '1024px');
   },
 
   verifyModalContent(firstline) {
@@ -406,6 +416,15 @@ export default {
 
   verifyQueryAreaContent(content) {
     cy.get('[class^="queryArea"]').should('have.text', content);
+  },
+
+  verifyQueryTextboxReadOnly() {
+    cy.get('[class^="queryArea"]').should('exist');
+    cy.get('[class^="queryArea"] input').should('not.exist');
+  },
+
+  verifyQueryTextboxResizable() {
+    cy.get('[class^="queryArea"]').should('have.css', 'resize', 'vertical');
   },
 
   verifyValueColumn() {
@@ -829,5 +848,9 @@ export default {
 
   scrollResultTable(direction) {
     cy.get('div[class^="mclScrollable"]').scrollTo(direction);
+  },
+
+  verifyRecordTypeLabel(recordType) {
+    cy.expect(HTML(`Record type: ${recordType}`).exists());
   },
 };
