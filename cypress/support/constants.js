@@ -1774,3 +1774,5 @@ export const EHOLDINGS_KB_SETTINGS_TABS = {
   ASSIGNED_USERS: 'Assigned users',
   USAGE_CONSOLIDATION: 'Usage consolidation',
 };
+
+export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';

@@ -115,6 +115,16 @@ const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
 const unselectAppConfirmationModal = Modal({ id: 'unselect-application-confirmation-modal' });
 const continueButton = Button('Continue');
+const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
+  const appText = Array.isArray(appNames)
+    ? appNames.map((appName) => `${appName}-\\d\\..+`).join(', ')
+    : `${appNames}-\\d\\..+`;
+  const capabCountText = capabilitiesCount === undefined ? '\\d+' : capabilitiesCount;
+  const setCountText = setsCount === undefined ? '\\d+' : setsCount;
+  return new RegExp(
+    `By unselecting ${appText}, ${capabCountText} capabilit(ies|y) and ${setCountText} capability sets* will also be unselected\\. Are you sure you'd like to proceed\\?`,
+  );
+};
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -201,11 +211,26 @@ export default {
     cy.expect(selecAllAppsCheckbox.has({ checked: isSelected }));
   },
 
-  clickSaveInModal({ confirmUnselect = null } = {}) {
+  clickSaveInModal({ confirmUnselect = null, checkModalClosed = true } = {}) {
     cy.do(saveButtonInModal.click());
     if (confirmUnselect === true) this.confirmAppUnselection();
     if (confirmUnselect === false) this.cancelAppUnselection();
-    cy.expect(selectApplicationModal.absent());
+    if (checkModalClosed) cy.expect(selectApplicationModal.absent());
+  },
+
+  clickSaveInModalAndCheckUnselectModal(appNames, capabiliesCount, setsCount) {
+    this.clickSaveInModal({ checkModalClosed: false });
+    this.verifyUnselectModal(appNames, capabiliesCount, setsCount);
+  },
+
+  verifyUnselectModal(appNames, capabiliesCount, setsCount) {
+    cy.expect([
+      unselectAppConfirmationModal.has({
+        message: matching(unselectModalContentRegExp(appNames, capabiliesCount, setsCount)),
+      }),
+      unselectAppConfirmationModal.find(continueButton).exists(),
+      unselectAppConfirmationModal.find(cancelButton).exists(),
+    ]);
   },
 
   searchForAppInModal(appName) {
@@ -680,6 +705,24 @@ export default {
         ),
       }),
     ]);
+  },
+
+  checkUserInGeneralInformation(updateUser, createUser) {
+    cy.do(recordLastUpdatedHeader.click());
+    if (updateUser) {
+      cy.expect(
+        generalInformationAccordion.has({
+          content: including(`Source: ${updateUser} Record created`),
+        }),
+      );
+    }
+    if (createUser) {
+      cy.expect(
+        generalInformationAccordion.has({
+          content: including(`Source: ${createUser} Name`),
+        }),
+      );
+    }
   },
 
   checkCapabilitySpinnersShown() {
