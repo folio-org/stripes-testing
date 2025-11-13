@@ -43,6 +43,7 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'spitfire', 'C710369'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
+        // TO DO: check reset button disabled after STCOM-1468 is done
         InventoryInstances.checkResetAllButtonInAdvSearchModalEnabled();
 
         InventoryInstances.fillAdvSearchRow(
@@ -223,6 +224,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchOptionAndQuery(testData.regularSearchOption, '');
 
         InventoryInstances.clickAdvSearchButton();
+        // TO DO: check reset button disabled after STCOM-1468 is done
         InventoryInstances.checkResetAllButtonInAdvSearchModalEnabled();
         InventoryInstances.checkAdvSearchModalValues(
           0,

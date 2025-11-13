@@ -39,9 +39,12 @@ const elements = {
   selectedOptionsRemoveBtn: 'ul[class*=multiSelectValueList] button[aria-label="times"]',
   typesPopoverIcon: MultiColumnListHeader(tableHeaderTexts[1]).find(IconButton('info')),
 
-  getTargetRowByName(callNumberName) {
+  getTargetRowByName(callNumberBrowseName) {
     return this.callNumberBrowsePane.find(
-      MultiColumnListRow({ innerHTML: including(callNumberName), isContainer: true }),
+      MultiColumnListRow({
+        innerHTML: including(`>${callNumberBrowseName}</div>`),
+        isContainer: true,
+      }),
     );
   },
   callNumberTypesDropdown: MultiSelect({
@@ -205,12 +208,14 @@ const API = {
         (config) => config.id === callNumbersIds[name],
       )[0].shelvingAlgorithm;
       CallNumberTypes.getCallNumberTypesViaAPI().then((types) => {
-        const typeIds = types
-          .filter((type) => callNumberTypes.includes(type.name))
-          .map((type) => type.id);
+        const typeIdsToAssign = [];
+        callNumberTypes.forEach((typeName) => {
+          const type = types.find((t) => t.name === typeName);
+          if (type) typeIdsToAssign.push(type.id);
+        });
         return this.updateCallNumberBrowse({
           callNumberBrowseId: callNumbersIds[name],
-          callNumberTypes: typeIds,
+          callNumberTypes: typeIdsToAssign,
           shelvingAlgorithm,
         });
       });
