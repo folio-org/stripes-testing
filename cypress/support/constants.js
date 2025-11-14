@@ -1425,6 +1425,9 @@ export const ITEM_NOTE_TYPES = {
   CHECK_IN_NOTE: 'Check in note',
   CHECK_OUT_NOTE: 'Check out note',
   COPY_NOTE: 'Copy note',
+  ELECTRONIC_BOOKPLATE: 'Electronic bookplate',
+  PROVENANCE: 'Provenance',
+  REPRODUCTION: 'Reproduction',
   NOTE: 'Note',
 };
 
