@@ -48,6 +48,7 @@ describe('Data Import', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.dataImportPath,
               waiter: DataImport.waitLoading,
+              authRefresh: true,
             });
           });
         });

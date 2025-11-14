@@ -64,4 +64,8 @@ export default {
   verifyDateRangeValues: (startDate, endDate) => {
     cy.expect([startDateField.has({ value: startDate }), endDateField.has({ value: endDate })]);
   },
+
+  checkPackageUpdatedCallout() {
+    cy.expect(HTML(including('Package saved.')).exists());
+  },
 };

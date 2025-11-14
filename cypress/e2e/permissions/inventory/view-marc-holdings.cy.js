@@ -52,6 +52,7 @@ describe('Permissions', () => {
           cy.login(tempUser.username, tempUser.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -69,7 +70,7 @@ describe('Permissions', () => {
       () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);
-        InventoryInstance.waitLoading();
+        InventoryInstance.waitInventoryLoading();
 
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkSource(HOLDINGS_SOURCE_NAMES.MARC);
