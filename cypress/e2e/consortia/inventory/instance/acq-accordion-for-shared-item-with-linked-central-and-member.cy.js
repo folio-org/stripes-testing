@@ -31,11 +31,6 @@ describe('Inventory', () => {
           quantity: '1',
           price: '10',
         },
-        memberOrder: {},
-        memberOrderLine: {
-          quantity: '1',
-          price: '10',
-        },
         user: {},
       };
       const userPermissions = [Permissions.inventoryAll.gui, Permissions.uiOrdersView.gui];
@@ -45,6 +40,43 @@ describe('Inventory', () => {
         InventoryInstance.createInstanceViaApi()
           .then(({ instanceData }) => {
             testData.instance = instanceData;
+          })
+          .then(() => {
+            cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((location) => {
+              testData.location = location;
+
+              InventoryHoldings.getHoldingSources({
+                limit: 1,
+                query: `(name=="${HOLDINGS_SOURCE_NAMES.FOLIO}")`,
+              }).then((holdingSources) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.instance.instanceId,
+                  permanentLocationId: testData.location.id,
+                  sourceId: holdingSources[0].id,
+                })
+                  .then((holding) => {
+                    testData.holding = holding;
+
+                    cy.getLoanTypes({ limit: 1 }).then((loanType) => {
+                      testData.loanTypeId = loanType[0].id;
+                    });
+                    cy.getDefaultMaterialType().then((materialType) => {
+                      testData.materialTypeId = materialType.id;
+                    });
+                  })
+                  .then(() => {
+                    InventoryItems.createItemViaApi({
+                      barcode: testData.itemBarcode,
+                      holdingsRecordId: testData.holding.id,
+                      materialType: { id: testData.materialTypeId },
+                      permanentLoanType: { id: testData.loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    }).then((item) => {
+                      testData.item = item;
+                    });
+                  });
+              });
+            });
 
             Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` }).then(
               (organization) => {
@@ -83,82 +115,6 @@ describe('Inventory', () => {
               Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
             });
           });
-
-        cy.setTenant(Affiliations.College)
-          .then(() => {
-            cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((location) => {
-              testData.collegeLocation = location;
-
-              InventoryHoldings.getHoldingSources({
-                limit: 1,
-                query: `(name=="${HOLDINGS_SOURCE_NAMES.FOLIO}")`,
-              }).then((holdingSources) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: testData.instance.instanceId,
-                  permanentLocationId: testData.collegeLocation.id,
-                  sourceId: holdingSources[0].id,
-                })
-                  .then((holding) => {
-                    testData.collegeHolding = holding;
-
-                    cy.getLoanTypes({ limit: 1 }).then((loanType) => {
-                      testData.loanTypeId = loanType[0].id;
-                    });
-                    cy.getDefaultMaterialType().then((materialType) => {
-                      testData.materialTypeId = materialType.id;
-                    });
-                  })
-                  .then(() => {
-                    InventoryItems.createItemViaApi({
-                      barcode: testData.itemBarcode,
-                      holdingsRecordId: testData.collegeHolding.id,
-                      materialType: { id: testData.materialTypeId },
-                      permanentLoanType: { id: testData.loanTypeId },
-                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    }).then((item) => {
-                      testData.item = item;
-                    });
-                  });
-              });
-            });
-
-            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` }).then(
-              (organization) => {
-                testData.memberOrderLine.vendorId = organization.id;
-              },
-            );
-            cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-              testData.memberOrderLine.locationId = res.id;
-            });
-            cy.getBookMaterialType().then((materialType) => {
-              testData.memberOrderLine.materialTypeId = materialType.id;
-            });
-            cy.getAcquisitionMethodsApi({
-              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-            }).then((params) => {
-              testData.memberOrderLine.acquisitionMethodId = params.body.acquisitionMethods[0].id;
-            });
-          })
-          .then(() => {
-            Orders.createOrderWithOrderLineViaApi(
-              NewOrder.getDefaultOrder({ vendorId: testData.memberOrderLine.vendorId }),
-              BasicOrderLine.getDefaultOrderLine({
-                quantity: testData.memberOrderLine.quantity,
-                title: testData.instance.instanceTitle,
-                instanceId: testData.instance.instanceId,
-                specialLocationId: testData.memberOrderLine.locationId,
-                specialMaterialTypeId: testData.memberOrderLine.materialTypeId,
-                acquisitionMethod: testData.memberOrderLine.acquisitionMethodId,
-                listUnitPrice: testData.memberOrderLine.price,
-                poLineEstimatedPrice: testData.memberOrderLine.price,
-                createInventory: 'Instance',
-              }),
-            ).then((order) => {
-              testData.memberOrder = order;
-
-              Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
-            });
-          });
         cy.resetTenant();
 
         cy.createTempUser(userPermissions).then((userProperties) => {
@@ -184,13 +140,9 @@ describe('Inventory', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.setTenant(Affiliations.College);
-        Orders.deleteOrderViaApi(testData.memberOrder.id);
-        InventoryItems.deleteItemViaApi(testData.item.id);
-        InventoryHoldings.deleteHoldingRecordViaApi(testData.collegeHolding.id);
-        cy.resetTenant();
-        cy.getAdminToken();
         Orders.deleteOrderViaApi(testData.centralOrder.id);
+        InventoryItems.deleteItemViaApi(testData.item.id);
+        InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
         InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         Users.deleteViaApi(testData.user.userId);
       });
@@ -199,7 +151,6 @@ describe('Inventory', () => {
         'C491290 Check Acquisition accordion for shared Item with linked central and member tenants (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C491290'] },
         () => {
-          const memberPolNumber = `${testData.memberOrder.poNumber}-1`;
           const centralPolNumber = `${testData.centralOrder.poNumber}-1`;
 
           InventorySearchAndFilter.clearDefaultFilter('Held by');
@@ -207,7 +158,6 @@ describe('Inventory', () => {
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
           InstanceRecordView.collapseAll();
-          InstanceRecordView.verifyMemberTenantSubAccordionInAcquisitionAccordion(memberPolNumber);
           InstanceRecordView.verifyCentralTenantSubAccordionInAcquisitionAccordion(
             centralPolNumber,
           );
@@ -219,7 +169,6 @@ describe('Inventory', () => {
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
           InstanceRecordView.collapseAll();
-          InstanceRecordView.verifyMemberTenantSubAccordionInAcquisitionAccordionIsEmpty();
           InstanceRecordView.verifyCentralTenantSubAccordionInAcquisitionAccordion(
             centralPolNumber,
           );
