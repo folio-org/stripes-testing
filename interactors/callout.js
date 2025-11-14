@@ -15,7 +15,6 @@ export default HTML.extend('callout')
     id: (el) => el.id,
     textContent: (el) => el.querySelector('[class^=message-]').textContent,
     type: (el) => ['success', 'info', 'error', 'warning'].filter((t) => el.className.includes(t))[0],
-    count: (el) => [...el.querySelectorAll('[data-test-callout-element]')].length,
   })
   .actions({
     dismiss: ({ find }) => find(IconButton('times')).click(),
