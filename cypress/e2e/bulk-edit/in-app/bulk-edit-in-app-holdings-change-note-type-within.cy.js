@@ -99,7 +99,6 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('holding');
-        BulkEditActions.clickOptionsSelection();
         BulkEditActions.selectOption('Action note');
         BulkEditActions.verifyOptionSelected('Action note');
         BulkEditActions.verifyTheActionOptionsEqual(

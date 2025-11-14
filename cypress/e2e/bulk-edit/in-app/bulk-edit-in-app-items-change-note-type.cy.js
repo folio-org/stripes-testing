@@ -176,7 +176,6 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('item');
-        BulkEditActions.clickOptionsSelection();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType(noteTypes.administrative, noteTypes.action);
         BulkEditActions.verifyNoteTypeAbsentInNoteItemTypeDropdown(noteTypes.administrative);
