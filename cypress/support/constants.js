@@ -1363,6 +1363,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CHECK_IN_NOTE: 'Check in note',
     CHECK_OUT_NOTE: 'Check out note',
     ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    ELECTRONIC_ACCESS: 'Electronic access',
     ITEM_UUID: 'Item UUID',
     PROVENANCE_NOTE: 'Provenance note',
     MEMBER: 'Member',
@@ -1377,6 +1378,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_HRID: 'Item HRID',
     STATISTICAL_CODES: 'Statistical codes',
     MATERIAL_TYPE: 'Material type',
+    EFFECTIVE_CALL_NUMBER: 'Effective call number',
   },
   USERS: {
     USERNAME: 'Username',
