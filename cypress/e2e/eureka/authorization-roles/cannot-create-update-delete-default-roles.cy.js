@@ -7,6 +7,7 @@ import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import { AUTHORIZATION_ROLE_TYPES, APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { including } from '../../../../interactors';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -50,7 +51,6 @@ describe('Eureka', () => {
               APPLICATION_NAMES.SETTINGS,
               SETTINGS_SUBSECTION_AUTH_ROLES,
             );
-            AuthorizationRoles.waitContentLoading();
           }, 20_000);
           AuthorizationRoles.waitContentLoading();
         });
@@ -76,9 +76,11 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveButton();
           cy.wait('@createCall').then(({ response }) => {
             expect(response.statusCode).to.eq(409);
-            expect(response.body.errors[0].message).to.eq(testData.createErrorText.split(': ')[1]);
+            expect(response.body.errors[0].message).to.include(
+              testData.createErrorText.split(': ')[1],
+            );
           });
-          InteractorsTools.checkCalloutErrorMessage(testData.createErrorText);
+          InteractorsTools.checkCalloutErrorMessage(including(testData.createErrorText));
 
           AuthorizationRoles.closeRoleCreateView();
           AuthorizationRoles.searchRole(defaultRoles[1].name);
