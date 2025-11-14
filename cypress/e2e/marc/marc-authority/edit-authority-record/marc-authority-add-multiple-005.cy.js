@@ -58,19 +58,30 @@ describe('MARC', () => {
           MarcAuthorities.select(createdAuthorityId);
           MarcAuthority.edit();
 
-          // Step 2: Add a new field (row) below the current one
+          // Step 2-3: Add a new field (row) below the current one
           QuickMarcEditor.addEmptyFields(4);
           QuickMarcEditor.updateExistingFieldContent(5);
           QuickMarcEditor.updateTagNameToLockedTag(5, tag005);
 
-          // Step 3: The new row should be disabled (read-only)
+          // Step 4: The new row should be disabled (read-only)
           QuickMarcEditor.verifyTagValue(5, tag005);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
 
-          // Step 4: Try to save and check for error messages
+          // Step 5: Try to save and check for error messages
           QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, nonRepeatableErrorText);
           QuickMarcEditor.verifyValidationCallout(0, 1);
+
+          // Step 6: Remove both "005" fields
+          QuickMarcEditor.deleteTag(2);
+          QuickMarcEditor.deleteTag(5);
+          QuickMarcEditor.checkFieldAbsense(tag005);
+
+          // Step 7: Click on the "Save & keep editing" button >> Confirm save in appeared modal
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.confirmDeletingFields();
+          QuickMarcEditor.verifyTagValue(5, tag005);
+          QuickMarcEditor.checkFourthBoxEditable(5, false);
         },
       );
     });

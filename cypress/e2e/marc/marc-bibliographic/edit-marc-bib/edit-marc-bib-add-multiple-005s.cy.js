@@ -90,6 +90,15 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
+
+          QuickMarcEditor.deleteTag(2);
+          QuickMarcEditor.deleteTag(5);
+          QuickMarcEditor.checkFieldAbsense(testData.tag005);
+
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.confirmDeletingFields();
+          QuickMarcEditor.verifyTagValue(20, testData.tag005);
+          QuickMarcEditor.checkFourthBoxEditable(20, false);
         },
       );
     });

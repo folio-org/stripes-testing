@@ -222,6 +222,8 @@ describe('MARC', () => {
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
         QuickMarcEditor.checkReadOnlyHoldingsTags();
+        QuickMarcEditor.check005TagIsEditable();
+        QuickMarcEditor.checkFourthBoxEditable(2, false);
         QuickMarcEditor.verifyHoldingsDefault008BoxesValues(testData.default008BoxesValues);
         QuickMarcEditor.verifyTagValue(5, testData.tag852);
         QuickMarcEditor.verifyTagValue(6, testData.tag999);

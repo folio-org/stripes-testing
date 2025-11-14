@@ -46,6 +46,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           // Verify certain fields pre-populated with default values
           QuickMarcEditor.checkDefaultContent();
+          QuickMarcEditor.check005TagIsEditable();
+          QuickMarcEditor.checkFourthBoxEditable(2, false);
           // Close the pane with title "Create a new MARC bib record" by clicking on "x" icon in the upper left corner.
           QuickMarcEditor.closeUsingCrossButton();
           InventoryInstances.waitContentLoading();
