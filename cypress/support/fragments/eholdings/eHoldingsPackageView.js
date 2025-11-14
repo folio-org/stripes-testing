@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   HTML,
   Pane,
   Section,
@@ -16,6 +17,7 @@ import {
   TextField,
   FieldSet,
   PaneHeader,
+  DropdownMenu,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
 import EHoldingsResourceView from './eHoldingsResourceView';
@@ -62,6 +64,8 @@ const notesSection = Section({ id: 'packageShowNotes' });
 const titlesSection = Section({ id: 'packageShowTitles' });
 const agreementsAccordion = Accordion('Agreements');
 const deleteAgreementModal = Modal('Delete agreement line');
+const accessStatusTypeKeyValue = KeyValue('Access status type');
+const byAccessStatusTypesCheckbox = Checkbox('Search by access status types only');
 
 export default {
   getCalloutMessageText,
@@ -373,8 +377,13 @@ export default {
   edit() {
     cy.expect(KeyValue('Package type').exists());
     cy.expect(KeyValue('Total titles').exists());
-    cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
     cy.wait(3000);
+    cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
+    cy.expect([
+      TextField('Name*').exists(),
+      Button('Save & close').has({ disabled: true }),
+      Button('Cancel').has({ disabled: true }),
+    ]);
   },
 
   verifyDeleteAgreementIconExists(agreementName) {
@@ -453,5 +462,44 @@ export default {
   verifyFirstPageTitlesDisplayed() {
     cy.wait(500);
     cy.expect([titlesSection.exists(), Button('Previous').has({ disabled: true })]);
+  },
+
+  verifyAccessStatusType(accessStatusTypeName) {
+    cy.expect(accessStatusTypeKeyValue.has({ value: accessStatusTypeName }));
+  },
+
+  clickActionsButtonInTitlesSection(dropdownMenuOpened = true) {
+    cy.do(titlesSection.find(actionsButton).click());
+    if (dropdownMenuOpened) cy.expect(DropdownMenu().exists());
+    else cy.expect(DropdownMenu().absent());
+  },
+
+  openAccessStatusTypesDropdown() {
+    cy.do(DropdownMenu().find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(DropdownMenu().find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(DropdownMenu().find(MultiSelect()).open());
+  },
+
+  selectAccessStatusType(accessStatusType) {
+    cy.do(DropdownMenu().find(MultiSelectOption(accessStatusType)).click());
+  },
+
+  filterTitlesByAccessStatusTypes(accessStatusTypeNames) {
+    const typeNames = Array.isArray(accessStatusTypeNames)
+      ? accessStatusTypeNames
+      : [accessStatusTypeNames];
+    this.clickActionsButtonInTitlesSection();
+    this.openAccessStatusTypesDropdown();
+    typeNames.forEach((typeName) => {
+      this.selectAccessStatusType(typeName);
+    });
+  },
+
+  verifyFilteredTitlesCount(expectedCount) {
+    cy.expect(
+      titlesSection
+        .find(KeyValue('Records found'))
+        .has({ value: expectedCount.toLocaleString('en-US') }),
+    );
   },
 };
