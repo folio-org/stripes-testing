@@ -9,6 +9,9 @@ import {
   Accordion,
   Image,
   MultiColumnList,
+  Selection,
+  SelectionList,
+  MultiColumnListCell,
 } from '../../../../interactors';
 
 const viewAllLogsButton = Button('View all');
@@ -29,6 +32,9 @@ const logsTable = MultiColumnList();
 const errorsInExportYesOptionId = 'clickable-filter-status-fail';
 const errorsInExportNoOptionId = 'clickable-filter-status-completed';
 const errorsInExportCrossButton = Button({ icon: 'times-circle-solid' });
+const jobProfileSelection = Selection({ singleValue: 'Choose job profile' });
+const jobProfileSelectionList = SelectionList({ placeholder: 'Filter options list' });
+const jobProfileClearButton = Button({ icon: 'times-circle-solid' });
 
 export default {
   openAllJobLogs() {
@@ -59,8 +65,8 @@ export default {
     cy.expect(searchAndFilterPane.find(HTML({ text: 'Reset all' })).exists());
   },
 
-  verifyResetAllIsDisabled() {
-    cy.expect(resetAllButton.has({ disabled: true }));
+  verifyResetAllIsDisabled(isDisabled = true) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
 
   verifyErrorsInExportAccordion() {
@@ -91,8 +97,8 @@ export default {
     cy.expect(jobProfileAccordion.exists());
   },
 
-  verifyJobProfileIsCollapsed() {
-    cy.expect(jobProfileAccordion.has({ open: false }));
+  verifyJobProfileIsCollapsed(isCollapsed = true) {
+    cy.expect(jobProfileAccordion.has({ open: !isCollapsed }));
   },
 
   verifyUserAccordionIsCollapsed() {
@@ -172,7 +178,9 @@ export default {
   },
 
   resetAll() {
+    cy.wait(2000);
     cy.do(resetAllButton.click());
+    cy.wait(1000);
   },
 
   verifyPaginatorExists() {
@@ -180,5 +188,70 @@ export default {
       cy.get('button[data-testid="prev-page-button"]').should('exist');
       cy.get('button[data-testid="next-page-button"]').should('exist');
     });
+  },
+
+  expandJobProfileAccordion() {
+    cy.do(jobProfileAccordion.clickHeader());
+  },
+
+  verifyJobProfileDropdownExists() {
+    cy.expect(jobProfileAccordion.find(jobProfileSelection).exists());
+  },
+
+  clickJobProfileDropdown() {
+    cy.do(jobProfileAccordion.find(Selection()).open());
+    cy.wait(1000);
+  },
+
+  verifyJobProfileInDropdown(profileName) {
+    cy.then(() => jobProfileSelectionList.optionList()).then((options) => {
+      cy.expect(options).to.include(profileName);
+    });
+  },
+
+  verifyNumberOfFilteredJobProfiles(expectedCount) {
+    cy.then(() => jobProfileSelectionList.optionList()).then((options) => {
+      cy.expect(options.length).to.equal(expectedCount);
+    });
+  },
+
+  filterJobProfileByName(profileName) {
+    cy.get('input[placeholder="Filter options list"]').first().clear().type(profileName);
+    cy.wait(2000);
+  },
+
+  verifyJobProfileHighlightedInOptionsList(profileName) {
+    cy.expect(SelectionList().has({ highlighted: profileName }));
+  },
+
+  selectJobProfile(profileName) {
+    cy.wait(1000);
+    cy.do(SelectionList().select(profileName));
+  },
+
+  verifyResetAllButtonEnabled() {
+    cy.expect(resetAllButton.has({ disabled: false }));
+  },
+
+  verifyLogsFilteredByJobProfile(profileName) {
+    cy.expect(
+      logsTable.find(MultiColumnListCell({ column: 'Job profile', content: profileName })).exists(),
+    );
+  },
+
+  clickClearJobProfileFilter() {
+    cy.do(jobProfileAccordion.find(jobProfileClearButton).click());
+  },
+
+  verifyClearFilterButtonExists(isExist = true) {
+    if (isExist) {
+      cy.expect(jobProfileAccordion.find(jobProfileClearButton).exists());
+    } else {
+      cy.expect(jobProfileAccordion.find(jobProfileClearButton).absent());
+    }
+  },
+
+  verifyJobProfileNotInList() {
+    cy.expect(jobProfileSelectionList.find(HTML('-List is empty-')).exists());
   },
 };

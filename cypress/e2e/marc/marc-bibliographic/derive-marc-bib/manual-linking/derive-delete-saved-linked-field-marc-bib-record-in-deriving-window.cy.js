@@ -89,7 +89,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });
@@ -128,8 +128,6 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -144,8 +142,8 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(testData.user.userId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
-          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
+          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1], true);
+          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2], true);
         });
 
         it(
@@ -159,8 +157,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700AfterLinkingToAuth100);
             QuickMarcEditor.deleteField(75);
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();

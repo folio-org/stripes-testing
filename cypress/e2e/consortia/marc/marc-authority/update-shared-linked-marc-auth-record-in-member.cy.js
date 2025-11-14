@@ -11,6 +11,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -101,6 +102,10 @@ describe('MARC', () => {
         seventhBox: '',
       };
 
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
+
       before('Create users, data', () => {
         cy.getAdminToken();
         MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -176,6 +181,7 @@ describe('MARC', () => {
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
+              InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
               tenants.linkingInstances.forEach((instance) => {
                 InventoryInstances.searchByTitle(instance);
                 InventoryInstances.selectInstanceByTitle(instance);
@@ -191,8 +197,6 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
@@ -235,11 +239,10 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           instancesToCheckInM1.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);
@@ -256,6 +259,9 @@ describe('MARC', () => {
             );
             QuickMarcEditor.closeEditorPane();
           });
+          cy.checkInstanceLinkStatus(createdRecordIDs[4], Affiliations.University);
+          cy.checkInstanceLinkStatus(createdRecordIDs[0], Affiliations.University);
+          cy.checkInstanceLinkStatus(createdRecordIDs[0], Affiliations.Consortia);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
           InventoryInstances.waitContentLoading();
@@ -279,6 +285,7 @@ describe('MARC', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           instancesToCheckInM2.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);

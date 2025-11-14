@@ -1,7 +1,7 @@
 import { Permissions } from '../../support/dictionary';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -14,12 +14,21 @@ describe('Check in', () => {
   let materialType;
   let testData;
   let ITEM_BARCODE;
+  let servicePointA;
+  let servicePointB;
 
   before('Create test data', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
 
-      cy.getAdminToken();
+      cy.getAdminToken().then(() => {
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+          servicePointA = sp1;
+        });
+        ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+          servicePointB = sp2;
+        });
+      });
       cy.getDefaultMaterialType()
         .then((mt) => {
           materialType = mt;
@@ -28,30 +37,20 @@ describe('Check in', () => {
             folioInstances: InventoryInstances.generateFolioInstances({
               itemsProperties: { materialType: { id: materialType.id } },
             }),
-            servicePointA: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-            servicePointB: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             requestsId: '',
           };
-          ServicePoints.createViaApi(testData.servicePointA);
-          ServicePoints.createViaApi(testData.servicePointB);
           ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
 
-          testData.defaultLocation = Locations.getDefaultLocation({
-            servicePointId: testData.servicePointB.id,
-            secondaryServicePointId: testData.servicePointA.id,
-          }).location;
-          Locations.createViaApi(testData.defaultLocation).then((location) => {
-            InventoryInstances.createFolioInstancesViaApi({
-              folioInstances: testData.folioInstances,
-              location,
-            });
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
           });
         })
         .then(() => {
           UserEdit.addServicePointsViaApi(
-            [testData.servicePointA.id, testData.servicePointB.id],
+            [servicePointA.id, servicePointB.id],
             userData.userId,
-            testData.servicePointA.id,
+            servicePointA.id,
           );
           cy.login(userData.username, userData.password);
         });
@@ -62,22 +61,15 @@ describe('Check in', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
-      servicePointId: testData.servicePointB.id,
+      servicePointId: servicePointB.id,
       checkInDate: new Date().toISOString(),
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
-      testData.servicePointA.id,
-      testData.servicePointB.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.servicePointA.id);
-    ServicePoints.deleteViaApi(testData.servicePointB.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
-      servicePoint: testData.servicePointA,
+      servicePoint: servicePointA,
       shouldCheckIn: true,
     });
     Users.deleteViaApi(userData.userId);
-    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(
@@ -86,7 +78,7 @@ describe('Check in', () => {
     () => {
       // In FOLIO UI, set user's service point to service point A.
       // Service point displays in upper right corner of screen with service point A display name.
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointA.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointA.name);
       // Check in Item X
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
@@ -98,9 +90,9 @@ describe('Check in', () => {
         `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
       ]);
       // In  FOLIO UI, change logged in user's service point to service point B
-      SwitchServicePoint.switchServicePoint(testData.servicePointB.name);
+      SwitchServicePoint.switchServicePoint(servicePointB.name);
       // Service point displays in upper right corner of screen with service point B display name.
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointB.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointB.name);
       // Check in Item X again
       CheckInActions.checkInItemGui(ITEM_BARCODE);
       // Item is checked in. Check In app displays time returned, item title (item material type), barcode, Item status is Available

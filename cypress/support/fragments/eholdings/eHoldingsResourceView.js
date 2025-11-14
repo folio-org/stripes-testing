@@ -11,6 +11,7 @@ import {
   Link,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
+import FileManager from '../../utils/fileManager';
 import EHoldingsResourceEdit from './eHoldingsResourceEdit';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import SelectAgreementModal from './modals/selectAgreementModal';
@@ -251,6 +252,62 @@ export default {
         if (alternateTitles.length > 1) {
           cy.expect(value).to.include(';');
         }
+      }
+    });
+  },
+
+  verifyCoverageInExportedCSV(
+    fileName,
+    {
+      managedCoverage = null,
+      customCoverage = null,
+      verifyDateFormat = false,
+      verifyEmbargoFormat = false,
+    } = {},
+  ) {
+    FileManager.readFile(`cypress/fixtures/${fileName}`).then((content) => {
+      expect(content).to.include('Managed Coverage');
+      expect(content).to.include('Custom Coverage');
+
+      const lines = content.split('\n');
+      const titleDataRow = lines[3];
+
+      if (managedCoverage !== null) {
+        if (managedCoverage) {
+          expect(titleDataRow).to.match(/\d{4}\/\d{2}\/\d{2}/);
+        }
+      }
+      if (customCoverage !== null) {
+        if (customCoverage) {
+          expect(titleDataRow).to.include(customCoverage.startDate);
+          expect(titleDataRow).to.include(customCoverage.endDate);
+        }
+      }
+
+      if (verifyDateFormat) {
+        if (content.includes('Present')) {
+          expect(content).to.match(/\d{4}\/\d{2}\/\d{2}\s*-\s*Present/i);
+          expect(content).to.not.include('9999/12/31');
+        }
+
+        if (content.includes('Custom Coverage') && content.includes('-')) {
+          const customCoverageMatch = titleDataRow.match(/,([^,]*Present[^,]*),/i);
+          if (customCoverageMatch) {
+            expect(customCoverageMatch[0]).to.not.include('9999');
+          }
+        }
+      }
+      if (verifyEmbargoFormat) {
+        if (content.includes('Embargo')) {
+          expect(content).to.not.include('null');
+          const embargoPattern = /\d+\s+(Year|Month|Week|Day)/i;
+          if (titleDataRow.match(embargoPattern)) {
+            expect(titleDataRow).to.match(embargoPattern);
+          }
+        }
+      }
+      if (!verifyDateFormat && (managedCoverage || customCoverage)) {
+        expect(content).to.match(/\d{4}\/\d{2}\/\d{2}/);
       }
     });
   },

@@ -93,6 +93,8 @@ export default {
   ordersLoanTypePath: 'settings/orders/loan-type',
   ordersRoutingAddressPath: 'settings/orders/routing-address',
   ordersListConfigurationPath: 'settings/orders/list-configuration',
+  ordersClosingPurchaseOrderReasonsPath: 'settings/orders/closing-reasons',
+  ordersTemplateCategoriesPath: 'settings/orders/order-template-categories',
   // Users
   patronGroups: 'settings/users/groups',
   addressTypes: 'settings/users/addresstypes',
@@ -132,5 +134,10 @@ export default {
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());
+  },
+
+  verifyConsortiumManagerOptionAbsent() {
+    cy.expect(NavListItem('Acquisition units').exists());
+    cy.expect(NavListItem('Consortium manager').absent());
   },
 };

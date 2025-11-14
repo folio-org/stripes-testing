@@ -66,22 +66,20 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -123,7 +121,7 @@ describe('MARC', () => {
           QuickMarcEditor.selectFieldsDropdownOption(...textUpdate);
           QuickMarcEditor.verifyDropdownOptionChecked(...textUpdate);
           cy.wait(3000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeading);
 

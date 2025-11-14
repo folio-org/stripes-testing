@@ -377,6 +377,17 @@ export default {
     ItemRecordView.waitLoading();
   },
 
+  openItemByHyperlink(barcode) {
+    cy.wait(2000);
+    cy.do(
+      rootSection
+        .find(MultiColumnListCell({ column: 'Item: barcode', content: barcode }))
+        .find(Link({ href: including('/inventory/view/') }))
+        .click(),
+    );
+    ItemRecordView.waitLoading();
+  },
+
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
 
   duplicate: () => {
@@ -655,6 +666,15 @@ export default {
     InventoryNewHoldings.waitLoading();
   },
 
+  addConsortiaHoldings: (memberTenantName) => {
+    cy.wait(2000);
+    cy.intercept('locations?*').as('getHoldingsPage');
+    cy.do(Accordion(memberTenantName).find(addHoldingsButton).click());
+    cy.wait('@getHoldingsPage', { timeout: 5_000 }).then(() => {
+      InventoryNewHoldings.waitLoading();
+    });
+  },
+
   clickAddItemByHoldingName({ holdingName } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).click());
@@ -700,6 +720,22 @@ export default {
     cy.do(consortiaHoldingsAccordion.clickHeader());
     cy.wait(2000);
     cy.expect(consortiaHoldingsAccordion.has({ open: true }));
+  },
+
+  expandAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Expand all'))
+        .click(),
+    ]);
+  },
+
+  collapseAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Collapse all'))
+        .click(),
+    ]);
   },
 
   expandMemberSubHoldings(memberTenantName) {
@@ -815,6 +851,14 @@ export default {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
   },
 
+  verifyHoldingsListIsEmpty(instanceId) {
+    cy.expect(
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
   verifyItemsListIsEmpty() {
     cy.expect(HTML(including('The list contains no items')).exists());
   },
@@ -899,10 +943,17 @@ export default {
     cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
   },
 
-  verifyConsortiaHoldingsAccordion(isOpen = false) {
+  verifyConsortialHoldingsAccordion(isOpen = false) {
     cy.expect([
       Section({ id: including('consortialHoldings') }).exists(),
       consortiaHoldingsAccordion.has({ open: isOpen }),
+    ]);
+  },
+
+  verifyConsortiaHoldingsAccordion(instanceId, isOpen = false) {
+    cy.expect([
+      Section({ id: `consortialHoldings.${instanceId}` }).exists(),
+      Accordion({ id: `consortialHoldings.${instanceId}` }).has({ open: isOpen }),
     ]);
   },
 
@@ -916,6 +967,13 @@ export default {
     cy.expect([
       consortiaHoldingsAccordion.has({ open: isOpen }),
       Accordion({ id: including(memberId) }).exists(),
+    ]);
+  },
+
+  verifySubHoldingsAccordion(memberId, holdingId, isOpen = true) {
+    cy.wait(1000);
+    cy.expect([
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).has({ open: isOpen }),
     ]);
   },
 

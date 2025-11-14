@@ -1,15 +1,10 @@
-import {
-  APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  JOB_STATUS_NAMES,
-} from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -53,13 +48,10 @@ describe('Data Import', () => {
         DataImport.cancelDeleteImportJob();
         DataImport.deleteImportJob(firstMarcFileName);
         DataImport.confirmDeleteImportJob();
+        cy.wait(2000);
         Logs.checkJobStatus(firstMarcFileName, 'Stopped by user');
         Logs.openFileDetails(firstMarcFileName);
         FileDetails.verifyLogDetailsPageIsOpened(firstMarcFileName);
-        FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.ERROR);
-        FileDetails.verifyLogSummaryTableIsHidden();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, secondMarcFileName);

@@ -179,8 +179,16 @@ export default {
     cy.do(NavListItem(settingsTab).click());
   },
 
+  verifyChooseSettingsIsDisplayed() {
+    cy.expect(HTML({ text: 'Choose settings' }).exists());
+  },
+
   checkTabPresentInSecondPane: (secondPaneName, tabName, isPresent = true) => {
     if (isPresent) cy.expect(Pane(secondPaneName).find(Link(tabName)).exists());
     else cy.expect(Pane(secondPaneName).find(Link(tabName)).absent());
+  },
+
+  checkPaneIsOpened: (paneName) => {
+    cy.expect(Pane(paneName).exists());
   },
 };

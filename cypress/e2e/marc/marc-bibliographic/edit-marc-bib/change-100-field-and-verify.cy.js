@@ -67,7 +67,7 @@ describe('MARC', () => {
 
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingTagValue(16, testData.tag);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitInventoryLoading();
 
           InventoryInstance.verifyContributor(0, 0, 'Corporate name');

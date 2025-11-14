@@ -105,7 +105,7 @@ describe('MARC', () => {
 
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.updateExistingFieldContent(14, testData.valueForUpdate);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         InventoryInstance.checkPresentedText(testData.valueAfterUpdate);
       },

@@ -244,7 +244,7 @@ describe('MARC', () => {
           });
 
           MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.contains(testData.editedDropdownOptions);
         },
       );
@@ -264,8 +264,6 @@ describe('MARC', () => {
             QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedFieldTags[index]);
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             MarcAuthority.changeField('130', testData.editedFieldValues[index]);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             MarcAuthority.clickSaveAndCloseButton();
             MarcAuthority.continueWithSaveAndCheck();
           });

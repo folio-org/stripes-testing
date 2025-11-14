@@ -1,12 +1,20 @@
 import uuid from 'uuid';
 
-import { Button, DropdownMenu, NavListItem, Pane, PaneContent } from '../../../../../interactors';
+import {
+  Button,
+  DropdownMenu,
+  NavListItem,
+  Pane,
+  PaneContent,
+  Modal,
+} from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import OrderTemplateForm from './orderTemplateForm';
 
 const actionsButton = Button('Actions');
+const deleteModal = Modal('Delete template');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -45,14 +53,21 @@ export default {
     cy.expect(Pane('Order templates').exists());
   },
 
-  deleteTemplate(templateName) {
-    cy.do([
-      NavListItem(templateName).click(),
-      actionsButton.click(),
-      Button('Delete').click(),
-      Button({ id: 'clickable-delete-order-template-modal-confirm' }).click(),
-    ]);
-    InteractorsTools.checkCalloutMessage('The template was deleted');
+  deleteTemplate(templateName, action = 'Confirm') {
+    cy.do([actionsButton.click(), Button('Delete').click()]);
+    cy.expect(
+      deleteModal.has({
+        message: 'Are you sure you want to delete the template?',
+      }),
+    );
+    cy.do(deleteModal.find(Button(action)).click());
+    if (action === 'Confirm') {
+      InteractorsTools.checkCalloutMessage('The template was deleted');
+      cy.expect(NavListItem(templateName).absent());
+    } else if (action === 'Cancel') {
+      cy.expect(deleteModal.absent());
+      cy.expect(Pane({ id: 'order-settings-order-template-view' }).exists());
+    }
   },
 
   selectTemplate(templateName) {
@@ -75,22 +90,16 @@ export default {
 
     OrderTemplateForm.clickSaveButton();
   },
-  getDefaultOrderTemplate({
-    checkinItems = false,
-    orderType = 'One-time',
-    renewalNote = `autotest_renewal_note_${getRandomPostfix()}`,
-  } = {}) {
+  getDefaultOrderTemplate({ isPackage = false, currency = 'USD', additionalProperties = {} }) {
     return {
-      checkinItems,
       cost: {
-        currency: 'USD',
+        currency,
       },
       id: uuid(),
-      isPackage: false,
-      orderType,
-      renewalNote,
+      isPackage,
       templateCode: getRandomPostfix(),
       templateName: `autotest_template_name_${getRandomPostfix()}`,
+      ...additionalProperties,
     };
   },
   createOrderTemplateViaApi(orderTemplate) {

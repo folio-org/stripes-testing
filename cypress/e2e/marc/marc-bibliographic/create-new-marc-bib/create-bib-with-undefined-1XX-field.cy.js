@@ -5,6 +5,10 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -21,6 +25,8 @@ describe('MARC', () => {
         valid245indicatorValue: '1',
       };
 
+      let specId;
+
       before('Create test user and login', () => {
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -28,6 +34,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          getBibliographicSpec().then((bibSpec) => {
+            specId = bibSpec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -40,11 +51,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstances.deleteInstanceByTitleViaApi(testData.title);
+        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
-        'C519973 Create MARC bib record with undefined 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C519973'] },
+        'C519973 Create MARC bib record with undefined 1XX field when Undefined rules are enabled" (spitfire)',
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519973'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

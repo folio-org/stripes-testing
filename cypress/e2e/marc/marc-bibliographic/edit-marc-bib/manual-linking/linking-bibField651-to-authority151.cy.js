@@ -98,8 +98,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -108,7 +106,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(testData.userProperties.userId);
           createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
             else InventoryInstance.deleteInstanceViaApi(id);
           });
         });
@@ -129,7 +127,7 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag651);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib651LinkedFieldValues);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               2,
@@ -158,7 +156,7 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib651UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib651UnlinkedFieldValues[0]);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

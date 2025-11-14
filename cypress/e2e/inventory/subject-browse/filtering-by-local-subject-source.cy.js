@@ -1,10 +1,11 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import SubjectSources from '../../../support/fragments/settings/inventory/instances/subjectSources';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -55,12 +56,10 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventorySearchAndFilter.verifySearchAndFilterPane();
-          InventorySearchAndFilter.switchToBrowseTab();
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          cy.wait(5000);
         });
       });
 
@@ -75,10 +74,13 @@ describe('Inventory', () => {
         'C584507 Check filtering by local Subject Source (folijet)',
         { tags: ['criticalPath', 'folijet', 'C584507'] },
         () => {
+          InventorySearchAndFilter.verifySearchAndFilterPane();
+          InventorySearchAndFilter.switchToBrowseTab();
           BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
           cy.wait(2000);
           BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
-          BrowseSubjects.expandAccordion('Subject source');
+          cy.wait(2000);
+          BrowseSubjects.expandAccordion(testData.columnName);
           BrowseSubjects.selectSubjectSource(testData.subjectSource.name);
           BrowseSubjects.verifySearchResult(testData.subjectSource.name, testData.columnName);
         },

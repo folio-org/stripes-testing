@@ -6,7 +6,7 @@ import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
-  describe(CAPABILITY_TYPES.SETTINGS, () => {
+  describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `AT_C430265_UserRole_${getRandomPostfix()}`,

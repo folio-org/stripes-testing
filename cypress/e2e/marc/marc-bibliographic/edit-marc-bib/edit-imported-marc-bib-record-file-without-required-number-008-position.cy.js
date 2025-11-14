@@ -93,8 +93,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.updateExistingFieldContent(7);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           TopMenuNavigation.navigateToApp('Data import');
@@ -126,8 +124,6 @@ describe('MARC', () => {
             INVENTORY_008_FIELD_S_L_DROPDOWN[2],
           );
           QuickMarcEditor.updateExistingFieldContent(7);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         },

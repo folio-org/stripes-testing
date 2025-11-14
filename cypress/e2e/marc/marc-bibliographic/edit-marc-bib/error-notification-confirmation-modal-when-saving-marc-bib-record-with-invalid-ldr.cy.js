@@ -69,9 +69,7 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();

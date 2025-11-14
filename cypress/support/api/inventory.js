@@ -843,3 +843,48 @@ Cypress.Commands.add('getInstanceAuditDataViaAPI', (recordId) => {
     return body;
   });
 });
+
+Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
+  cy.okapiRequest({
+    path: 'records-editor/records',
+    method: 'POST',
+    isDefaultSearchParamsRequired: false,
+    body: {
+      _actionType: 'create',
+      externalId: instanceId,
+      fields,
+      leader: QuickMarcEditor.defaultValidHoldingsLdr,
+      marcFormat: 'HOLDINGS',
+      suppressDiscovery: false,
+    },
+  }).then(({ body }) => {
+    recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => response.body.status === 'CREATED',
+      {
+        limit: 10,
+        timeout: 80000,
+        delay: 5000,
+      },
+    ).then((response) => {
+      cy.wrap(response.body.externalId).as('createdMarcHoldingId');
+
+      return cy.get('@createdMarcHoldingId');
+    });
+  });
+});
+
+Cypress.Commands.add('batchUpdateHoldingsViaApi', (holdingsRecords) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'holdings-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { holdingsRecords },
+  });
+});

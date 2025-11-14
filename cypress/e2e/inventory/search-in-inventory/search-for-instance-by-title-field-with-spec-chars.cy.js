@@ -19,6 +19,7 @@ const testData = {
     'Harry Potter&the-cursed child: Parts one/ two',
     'the cursed child : Harry Potter',
   ],
+  titleSearchQuery: 'Harry Potter the cursed child Parts one, two\\',
   searchResults: [
     'Harry Potter and the cursed child Parts one, two',
     'Harry Potter & the cursed child; Parts one, two',
@@ -29,6 +30,7 @@ const testData = {
     'Harry Potter the cursed child Parts one two',
     'Harry Potter&the cursed child: Parts one/ two',
   ],
+  titleSearchOption: 'Title (all)',
   marcFile: {
     marc: 'marcBibC368027.mrc',
     fileName: `testMarcFileC368027.${randomFourDigitNumber()}.mrc`,
@@ -73,7 +75,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C368027 Search for "Instance" by "Title" field with special characters using "Keyword" search option (spitfire) (TaaS)',
+      'C368027 Search for "Instance" by "Title" field with special characters using "Keyword" and "Title (all) search options (spitfire) (TaaS)',
       { tags: ['criticalPathFlaky', 'spitfire', 'C368027', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
@@ -110,6 +112,15 @@ describe('Inventory', () => {
         InventoryInstances.resetAllFilters();
         InventoryInstances.searchByTitle('Harry Potter - the cursed child Parts one, two', false);
         InventorySearchAndFilter.verifyNoRecordsFound();
+
+        InventoryInstances.searchInstancesWithOption(
+          testData.titleSearchOption,
+          testData.titleSearchQuery,
+        );
+        InventorySearchAndFilter.checkRowsCount(8);
+        testData.searchResults.forEach((result) => {
+          InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
+        });
       },
     );
   });

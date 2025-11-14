@@ -49,6 +49,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyTextFieldPresented(fieldData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -71,6 +72,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyAreaFieldPresented(fieldData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -93,6 +95,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyCheckboxPresented(checkboxData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -119,6 +122,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyRadioButtonPresented(radioButtonData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -145,6 +149,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifySingleSelectPresented(singleSelectData);
         UserEdit.selectSingleSelectValue(singleSelectData);
         UserEdit.saveAndClose();

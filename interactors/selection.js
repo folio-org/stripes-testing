@@ -22,6 +22,7 @@ export const SelectionList = HTML.extend('selection list')
     optionCount: (el) => [...el.querySelectorAll('li')].length,
     optionList: (el) => [...el.querySelectorAll('li')].map(({ textContent }) => textContent),
     placeholder: (el) => el.querySelector('input').placeholder,
+    highlighted: (el) => el.querySelector('span[data-test-highlighter=true]').textContent,
   })
   .actions({
     filter: ({ find }, value) => find(TextField()).perform((el) => {
@@ -76,7 +77,11 @@ export default HTML.extend('selection')
       return perform(() => SelectionList().filter(value));
     },
     choose: async ({ perform }, value) => {
-      await perform((el) => el.scrollIntoView());
+      await perform((el) => {
+        if (typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView();
+        }
+      });
 
       const optionsList = document.querySelector('[class^=selectionListRoot]');
       if (!(optionsList && isVisible(optionsList))) {

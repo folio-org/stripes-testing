@@ -363,6 +363,10 @@ export default {
     internal: 'ui-plugin-create-inventory-records.create',
     gui: 'Fast add: Create',
   },
+  inventoryStorageHoldingsBatchUpdate: {
+    internal: 'inventory-storage.holdings.batch.post',
+    gui: 'inventory storage - create or update a number of holdings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -835,6 +839,10 @@ export default {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
+  invoiceSettingsBatchGroupView: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.view',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view',
+  },
   uiInvoicesCancelInvoices: {
     internal: 'ui-invoice.invoice.cancel.execute',
     gui: 'Invoice: Cancel invoices',
@@ -1249,6 +1257,10 @@ export default {
     internal: 'ui-eholdings.settings.access-types.view',
     gui: 'Settings (eholdings): Can view access status types',
   },
+  uiSettingsEHoldingsAccessStatusTypesAll: {
+    internal: 'ui-eholdings.settings.access-types.all',
+    gui: 'Settings (eholdings): Can create, edit, view, and delete access status types',
+  },
   uiSettingsEHoldingsViewCustomLabel: {
     internal: 'ui-eholdings.settings.custom-labels.view',
     gui: 'Settings (eholdings): Can view custom labels',
@@ -1260,6 +1272,18 @@ export default {
   uiSettingsEHoldingsViewSettings: {
     internal: 'ui-eholdings.settings.enabled',
     gui: 'Settings (eHoldings): View settings',
+  },
+  uiSettingsEHoldingsAssignUsers: {
+    internal: 'ui-eholdings.settings.assignedUser.edit',
+    gui: 'Settings (eHoldings): Can assign/unassign a user from a KB',
+  },
+  uiSettingsEHoldingsRootProxyEdit: {
+    internal: 'ui-eholdings.settings.root-proxy.edit',
+    gui: 'Settings (eHoldings): configure root proxy setting',
+  },
+  uiSettingsEHoldingsUsageConsolidationView: {
+    internal: 'ui-eholdings.settings.usage-consolidation.view',
+    gui: 'Settings (eholdings): View Usage Consolidation API credentials',
   },
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',

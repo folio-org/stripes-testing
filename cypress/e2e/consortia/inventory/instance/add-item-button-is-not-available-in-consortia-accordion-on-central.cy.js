@@ -41,7 +41,7 @@ describe('Inventory', () => {
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 testData.shadowItem.loanTypeId = res[0].id;
               });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+              cy.getBookMaterialType().then((res) => {
                 testData.shadowItem.materialTypeId = res.id;
               });
             })
@@ -109,7 +109,10 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(
+            testData.testInstanceIds.instanceId,
+            false,
+          );
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.college);

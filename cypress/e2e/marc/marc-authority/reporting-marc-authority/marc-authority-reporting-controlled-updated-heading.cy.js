@@ -92,7 +92,7 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 17);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
           });
@@ -135,12 +135,10 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();
 
-          cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          cy.wait(2000);
 
           MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedFirstUpdateData);
         },

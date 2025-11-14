@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -6,7 +6,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -53,12 +53,10 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventorySearchAndFilter.verifySearchAndFilterPane();
-        InventorySearchAndFilter.switchToBrowseTab();
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        cy.wait(8000);
       });
     });
 
@@ -72,10 +70,12 @@ describe('Inventory', () => {
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
-        cy.reload();
+        InventorySearchAndFilter.verifySearchAndFilterPane();
+        InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
         cy.wait(3000);
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
+        cy.wait(2000);
         BrowseSubjects.openInstance(testData.subject);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstanceSubject({

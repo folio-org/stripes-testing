@@ -194,4 +194,12 @@ export default {
       rootSection.find(TableRow({ index: expectedCount })).absent(),
     ]);
   },
+
+  exportInstanceMarc() {
+    cy.do([actionsButton.click(), exportButton.click()]);
+  },
+
+  getContentFromRow(rowIndex) {
+    return cy.then(() => rootSection.find(TableRow({ index: rowIndex })).innerText());
+  },
 };

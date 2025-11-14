@@ -199,22 +199,20 @@ describe('MARC', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.adminLastName = user.personal.lastName;
-              testData.adminFirstName = user.personal.firstName;
+          cy.getAdminUserDetails().then((user) => {
+            testData.adminLastName = user.personal.lastName;
+            testData.adminFirstName = user.personal.firstName;
 
-              versionHistoryCardsData.forEach((cardData, index) => {
-                if (index === versionHistoryCardsData.length - 1) {
-                  cardData.firstName = testData.adminFirstName;
-                  cardData.lastName = testData.adminLastName;
-                } else {
-                  cardData.firstName = userProperties.firstName;
-                  cardData.lastName = userProperties.lastName;
-                }
-              });
-            },
-          );
+            versionHistoryCardsData.forEach((cardData, index) => {
+              if (index === versionHistoryCardsData.length - 1) {
+                cardData.firstName = testData.adminFirstName;
+                cardData.lastName = testData.adminLastName;
+              } else {
+                cardData.firstName = userProperties.firstName;
+                cardData.lastName = userProperties.lastName;
+              }
+            });
+          });
 
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
@@ -260,7 +258,7 @@ describe('MARC', () => {
             testData.addedField.content[1],
           );
           withWaitForEditor(() => {
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
           });
 
@@ -279,14 +277,14 @@ describe('MARC', () => {
             1,
           );
           withWaitForEditor(() => {
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
           });
 
           QuickMarcEditor.deleteField(testData.deletedField.index);
           QuickMarcEditor.afterDeleteNotification(testData.deletedField.tag);
           withWaitForEditor(() => {
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
           });
@@ -315,7 +313,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.combinedUpdate.deletedField.tag);
           cy.wait(3000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeadingFinal);
 

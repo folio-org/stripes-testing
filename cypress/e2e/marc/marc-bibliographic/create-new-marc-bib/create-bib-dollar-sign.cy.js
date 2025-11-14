@@ -105,7 +105,7 @@ describe('MARC', () => {
           QuickMarcEditor.addValuesToExistingField(9, '711', testData.fields.field711);
 
           // Step 5: Click "Save & keep editing" button
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           QuickMarcEditor.waitLoading();
 

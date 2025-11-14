@@ -40,7 +40,7 @@ describe('Inventory', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;
             });
-            cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            cy.getBookMaterialType().then((res) => {
               testData.materialTypeId = res.id;
             });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
@@ -103,7 +103,7 @@ describe('Inventory', () => {
                         .then((holding) => {
                           testData.collegeHolding = holding;
 
-                          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                          cy.getBookMaterialType().then((res) => {
                             testData.collegeMaterialTypeId = res.id;
                           });
                           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -144,7 +144,7 @@ describe('Inventory', () => {
                         .then((holding) => {
                           testData.universityHolding = holding;
 
-                          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                          cy.getBookMaterialType().then((res) => {
                             testData.universityMaterialTypeId = res.id;
                           });
                           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -207,7 +207,7 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceTitle, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);

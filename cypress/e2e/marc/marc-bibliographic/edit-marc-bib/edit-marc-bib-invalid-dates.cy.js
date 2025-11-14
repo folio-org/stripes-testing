@@ -74,14 +74,10 @@ describe('MARC', () => {
           user = createdUserProperties;
           cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
             createdRecordIDs.push(instanceId);
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
       });
@@ -121,7 +117,7 @@ describe('MARC', () => {
             fillDateFields(dateData.date1, dateData.date2);
             if (dateData.errors.length) {
               if (dateData.close) {
-                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.pressSaveAndCloseButton();
               } else {
                 QuickMarcEditor.clickSaveAndKeepEditingButton();
               }

@@ -280,9 +280,11 @@ export default {
   exists() {
     cy.expect(buildQueryModal.exists());
   },
+
   absent() {
     cy.expect(buildQueryModal.absent());
   },
+
   verify(firstline = true) {
     this.exists();
     this.testQueryDisabled();
@@ -290,6 +292,14 @@ export default {
     this.runQueryDisabled();
     this.xButttonDisabled(false);
     this.verifyModalContent(firstline);
+  },
+
+  verifyBuildQueryInFullScreenMode() {
+    cy.get('[class^="LayerRoot"]')
+      .should('have.css', 'top', '0px')
+      .and('have.css', 'left', '0px')
+      .and('have.css', 'width', '1920px')
+      .and('have.css', 'height', '1024px');
   },
 
   verifyModalContent(firstline) {
@@ -408,8 +418,25 @@ export default {
     cy.get('[class^="queryArea"]').should('have.text', content);
   },
 
+  verifyQueryTextboxReadOnly() {
+    cy.get('[class^="queryArea"]').should('exist');
+    cy.get('[class^="queryArea"] input').should('not.exist');
+  },
+
+  verifyQueryTextboxResizable() {
+    cy.get('[class^="queryArea"]').should('have.css', 'resize', 'vertical');
+  },
+
   verifyValueColumn() {
     cy.get('[class^="col-sm-4"][class*="headerCell"]').contains('Value');
+  },
+
+  verifyOptionsInValueSelect(expectedOptions, row = 0) {
+    cy.expect([
+      RepeatableFieldItem({ index: row })
+        .find(Select('input-value-0'))
+        .has({ optionsText: expectedOptions }),
+    ]);
   },
 
   pickDate(date, row = 0) {
@@ -624,6 +651,10 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
   },
 
+  verifyResultsTableAbsent() {
+    cy.expect(buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' })).absent());
+  },
+
   verifyEmbeddedTableInQueryModal(
     tableType,
     identifier,
@@ -826,5 +857,14 @@ export default {
 
   scrollResultTable(direction) {
     cy.get('div[class^="mclScrollable"]').scrollTo(direction);
+  },
+
+  verifyRecordTypeLabel(recordType) {
+    cy.expect(HTML(`Record type: ${recordType}`).exists());
+  },
+
+  verifyHeadlineQueryWouldReturnAbsent() {
+    cy.get('[class^="col-xs-10"]').should('not.exist');
+    cy.expect(HTML(including('Query would return')).absent());
   },
 };

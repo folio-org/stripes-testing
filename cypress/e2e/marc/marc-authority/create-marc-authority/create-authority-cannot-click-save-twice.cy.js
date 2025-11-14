@@ -77,8 +77,8 @@ describe('MARC', () => {
             '\\',
           );
 
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeading);

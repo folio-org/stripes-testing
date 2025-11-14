@@ -275,6 +275,38 @@ export default {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
 
+  verifyContentOfHeadingsUpdateReportParsed(
+    actual,
+    rowIndex = 1,
+    originalHeading,
+    newHeading,
+    identifier,
+    expectedLinkedCount,
+  ) {
+    const clean = actual.trim();
+    const lines = clean.split(/\r?\n/);
+    const parseCsvLine = (line) => {
+      const regex = /("([^"]|"")*"|[^,]*)/g;
+      return line
+        .match(regex)
+        .filter((cell) => cell.length > 0 && cell !== ',')
+        .map((cell) => cell.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+    };
+
+    const headers = parseCsvLine(lines[0]);
+    const values = parseCsvLine(lines[rowIndex]);
+
+    const record = {};
+    headers.forEach((header, i) => {
+      record[header] = values[i] ?? '';
+    });
+    expect(record['Original heading']).to.include(originalHeading);
+    expect(record['New heading']).to.include(newHeading);
+    // eslint-disable-next-line dot-notation
+    expect(record['Identifier']).to.include(identifier);
+    expect(record['Number of bibliographic records linked']).to.eq(expectedLinkedCount);
+  },
+
   select: (specialInternalId) => cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
 
   selectFirst: (title) => cy.do(MultiColumnListRow({ index: 0 }).find(Button(title)).click()),

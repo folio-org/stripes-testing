@@ -73,6 +73,7 @@ export const ITEM_STATUS_NAMES = {
   IN_PROCESS: 'In process',
   AVAILABLE: 'Available',
   MISSING: 'Missing',
+  LONG_MISSING: 'Long missing',
   IN_TRANSIT: 'In transit',
   PAGED: 'Paged',
   AWAITING_PICKUP: 'Awaiting pickup',
@@ -1375,6 +1376,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ITEM_HRID: 'Item HRID',
     STATISTICAL_CODES: 'Statistical codes',
+    MATERIAL_TYPE: 'Material type',
   },
   USERS: {
     USERNAME: 'Username',
@@ -1754,3 +1756,24 @@ export const INVENTORY_COLUMN_HEADERS = {
   RELATION: 'Relation',
   INSTANCE_HRID: 'Instance HRID',
 };
+
+export const AUTHORITY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'MARC authority app Search',
+  SHORTCUTS: 'Keyboard shortcuts',
+  DOCUMENTATION: 'MARC authority documentation',
+};
+
+export const INVENTORY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'Inventory app search',
+  SHORTCUTS: 'Keyboard shortcuts',
+};
+
+export const EHOLDINGS_KB_SETTINGS_TABS = {
+  ROOT_PROXY: 'Root proxy',
+  CUSTOM_LABELS: 'Custom labels',
+  ACCESS_STATUS_TYPES: 'Access status types',
+  ASSIGNED_USERS: 'Assigned users',
+  USAGE_CONSOLIDATION: 'Usage consolidation',
+};
+
+export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';

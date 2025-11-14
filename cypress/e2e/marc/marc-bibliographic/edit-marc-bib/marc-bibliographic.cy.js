@@ -49,10 +49,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              });
               InventoryInstances.searchByTitle(testData.instanceID);
             });
         });
@@ -76,7 +72,7 @@ describe('MARC', () => {
               const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
                 QuickMarcEditor.getFreeTags()[1],
               );
-              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.contains(expectedInSourceRow);
@@ -95,7 +91,7 @@ describe('MARC', () => {
             QuickMarcEditor.addRow();
             QuickMarcEditor.checkInitialContent();
             const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
             // Wait for the content to be loaded.
             cy.wait(4000);
@@ -116,10 +112,8 @@ describe('MARC', () => {
           () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
-            cy.reload();
-            QuickMarcEditor.waitLoading();
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.notContains(deletedTag);
@@ -166,7 +160,7 @@ describe('MARC', () => {
               testRecord.content,
               testRecord.tag,
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(expectedInSourceRow);
@@ -186,8 +180,6 @@ describe('MARC', () => {
 
               QuickMarcEditor.deletePenaltField().then((deletedTag) => {
                 const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(1500);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.deleteConfirmationPresented();
                 QuickMarcEditor.confirmDelete();
