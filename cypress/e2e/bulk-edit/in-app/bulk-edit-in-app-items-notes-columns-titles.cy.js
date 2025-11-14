@@ -288,34 +288,30 @@ describe('Bulk-edit', () => {
 
         const notesToCheck = [
           {
-            rowIndex: 0,
             staffOnly: 'No',
             noteType: ITEM_NOTE_TYPES.BINDING,
             noteText: notes.binding,
           },
           {
-            rowIndex: 1,
             staffOnly: 'No',
             noteType: ITEM_NOTE_TYPES.ELECTRONIC_BOOKPLATE,
             noteText: notes.electronicBookplate,
           },
           {
-            rowIndex: 2,
             staffOnly: 'No',
             noteType: ITEM_NOTE_TYPES.PROVENANCE,
             noteText: notes.provenance,
           },
           {
-            rowIndex: 3,
             staffOnly: 'No',
             noteType: ITEM_NOTE_TYPES.REPRODUCTION,
             noteText: notes.reproduction,
           },
         ];
 
-        notesToCheck.forEach((note) => {
+        notesToCheck.forEach((note, index) => {
           ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-            note.rowIndex,
+            index,
             note.staffOnly,
             note.noteType,
             note.noteText,
