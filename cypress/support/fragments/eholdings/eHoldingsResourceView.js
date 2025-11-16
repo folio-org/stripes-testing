@@ -46,6 +46,7 @@ const showToPatronsKeyValue = KeyValue('Show to patrons');
 const proxyKeyValue = KeyValue('Proxy');
 const proxiedURLKeyValue = KeyValue('Proxied URL');
 const customUrlKeyValue = KeyValue('Custom');
+const accessStatusTypeKeyValue = KeyValue('Access status type');
 
 export default {
   waitLoading: () => {
@@ -310,5 +311,9 @@ export default {
         expect(content).to.match(/\d{4}\/\d{2}\/\d{2}/);
       }
     });
+  },
+
+  verifyAccessStatusType(accessStatusTypeName) {
+    cy.expect(accessStatusTypeKeyValue.has({ value: accessStatusTypeName }));
   },
 };

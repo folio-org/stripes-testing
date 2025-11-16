@@ -179,4 +179,30 @@ export default {
         });
       });
   },
+
+  updateResourceAttributesViaApi(resourceId, updatedAttributes = {}) {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/resources/${resourceId}`,
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      const updatedBody = { ...response.body };
+      updatedBody.data.attributes = {
+        ...updatedBody.data.attributes,
+        ...updatedAttributes,
+      };
+      delete updatedBody.data.relationships;
+      delete updatedBody.included;
+      delete updatedBody.data.included;
+      delete updatedBody.jsonapi;
+
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `eholdings/resources/${resourceId}`,
+        body: updatedBody,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/vnd.api+json',
+      });
+    });
+  },
 };

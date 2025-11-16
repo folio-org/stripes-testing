@@ -63,6 +63,7 @@ const unsavedChangesText = Modal().find(
 const keepEditingButton = Modal().find(Button('Keep editing'));
 const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
 const closeIconButton = Button({ icon: 'times' });
+const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
 
 export default {
   waitLoading: (specialPackage) => {
@@ -373,8 +374,14 @@ export default {
     cy.expect(closeIconButton.exists());
     cy.do(closeIconButton.click());
   },
+
   openTitle: (titleName) => {
     cy.expect(titlesSection.exists());
     cy.do(titlesSection.find(Button(titleName)).click());
+  },
+
+  selectAccessStatusType: (accessStatusTypeName) => {
+    cy.do(accessStatusTypeDropdown.choose(accessStatusTypeName));
+    cy.expect(accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeName }));
   },
 };
