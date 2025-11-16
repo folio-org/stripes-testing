@@ -565,17 +565,27 @@ export default {
     );
   },
 
-  checkElectronicAccess: (relationshipValue, uriValue) => {
-    cy.expect(
-      electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
-        .exists(),
-    );
-    cy.expect(
-      electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
-        .exists(),
-    );
+  checkElectronicAccess: (
+    relationshipValue,
+    uriValue,
+    linkText,
+    materialsSpecified,
+    urlPublicNote,
+    row = 0,
+  ) => {
+    const columnMap = new Map([
+      ['URL relationship', relationshipValue],
+      ['URI', uriValue],
+      ['Link text', linkText],
+      ['Materials specified', materialsSpecified],
+      ['URL public note', urlPublicNote],
+    ]);
+
+    columnMap.forEach((content, column) => {
+      cy.expect(
+        electronicAccessAccordion.find(MultiColumnListCell({ row, column, content })).exists(),
+      );
+    });
   },
 
   verifyLastUpdatedDate(date, userName) {
