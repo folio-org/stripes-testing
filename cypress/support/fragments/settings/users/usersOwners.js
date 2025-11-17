@@ -99,7 +99,7 @@ export default {
   fillOwner,
   saveOwner(name) {
     SettingsPane.clickSaveBtn();
-    cy.expect(cy.expect(tableWithOwners.find(MultiColumnListCell(name)).exists()));
+    cy.expect(tableWithOwners.find(MultiColumnListCell(name)).exists());
   },
 
   clickSaveBtn() {
