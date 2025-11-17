@@ -1398,6 +1398,11 @@ export default {
     cy.do(searchColumnNameTextfield.clear());
   },
 
+  verifySearchColumnNameTextFieldInFocus() {
+    cy.get('[placeholder="Search column name"]').click();
+    cy.expect(searchColumnNameTextfield.has({ focused: true }));
+  },
+
   searchColumnNameTextfieldAbsent() {
     cy.expect([searchColumnNameTextfield.absent(), DropdownMenu().find(Checkbox()).absent()]);
   },
