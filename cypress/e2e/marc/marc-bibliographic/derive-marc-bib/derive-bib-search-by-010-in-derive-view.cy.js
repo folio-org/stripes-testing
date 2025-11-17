@@ -176,6 +176,9 @@ describe('MARC', () => {
         () => {
           function goToDeriveBib(field010Content) {
             InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);
+            InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
+              testData.keywordSearchOption,
+            );
             InventoryInstances.searchByTitle(testInstanceId);
             InventoryInstances.selectInstanceById(testInstanceId);
             InventoryInstance.waitLoading();

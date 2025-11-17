@@ -143,7 +143,7 @@ describe('Data Export', () => {
                 (record) => {
                   const field852 = record.fields.find((f) => f[0] === '852');
 
-                  expect(field852).to.deep.eq(['852', '  ', 'b', 'E']);
+                  expect(field852).to.deep.eq(['852', '  ', 'b', location.code]);
                 },
                 (record) => {
                   const field999 = record.get('999')[0];
@@ -240,7 +240,7 @@ describe('Data Export', () => {
                 (record) => {
                   const field852 = record.fields.find((f) => f[0] === '852');
 
-                  expect(field852).to.deep.eq(['852', '  ', 'b', 'E']);
+                  expect(field852).to.deep.eq(['852', '  ', 'b', location.code]);
                 },
                 (record) => {
                   const field999 = record.get('999')[0];

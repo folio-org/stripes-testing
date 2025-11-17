@@ -140,4 +140,13 @@ export default {
     // wait for changes to be applied
     cy.wait(1000);
   },
+
+  checkSelectionOptions(selectionName, expectedOptions) {
+    cy.do([Selection(selectionName).open()]);
+    cy.expect([SelectionList().has({ optionList: expectedOptions })]);
+  },
+
+  selectSelectionOption(optionName) {
+    cy.do([SelectionList().select(optionName)]);
+  },
 };

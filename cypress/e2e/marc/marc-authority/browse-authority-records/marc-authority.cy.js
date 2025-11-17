@@ -194,6 +194,8 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
+          QuickMarcEditor.check005TagIsEditable();
+          QuickMarcEditor.checkFourthBoxEditable(2, false);
           QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
             '00853',
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
@@ -206,7 +208,7 @@ describe('MARC', () => {
           MarcAuthority.check008Field('e');
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             9,
             'Tag must contain three characters and can only accept numbers 0-9.',

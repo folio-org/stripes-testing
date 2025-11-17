@@ -64,11 +64,11 @@ describe('MARC', () => {
           InventoryInstance.verifyResourceIdentifier('ISBN', testData.initialISBN, 2);
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingFieldContent(8, `$z ${testData.invalidISBN}`);
+          QuickMarcEditor.updateExistingFieldContent(7, `$z ${testData.invalidISBN}`);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitInventoryLoading();
 
-          InventoryInstance.verifyResourceIdentifier('ISBN', testData.invalidISBN, 0);
+          InventoryInstance.verifyResourceIdentifier('Invalid ISBN', testData.invalidISBN, 0);
         },
       );
     });
