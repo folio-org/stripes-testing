@@ -1234,6 +1234,7 @@ export default {
         }
       });
     });
+    cy.wait(500);
   },
 
   verifyCheckboxInActionsDropdownMenuChecked(name, isChecked = true) {
