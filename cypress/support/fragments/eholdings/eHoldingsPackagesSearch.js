@@ -79,7 +79,7 @@ export default {
   },
 
   selectAccessStatusType(accessStatusType) {
-    cy.do(accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType)).click());
+    cy.do(accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType)).clickSegment());
   },
 
   verifyResultsCount(expectedCount) {
