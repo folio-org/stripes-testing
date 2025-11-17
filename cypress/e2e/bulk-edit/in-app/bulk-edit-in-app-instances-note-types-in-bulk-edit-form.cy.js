@@ -114,7 +114,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifySelectOptionsInstanceSortedAlphabetically();
+        BulkEditActions.verifySelectOptionsSortedAlphabetically(true);
 
         const optionsOutsideInstanceNoteGroup = [
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
