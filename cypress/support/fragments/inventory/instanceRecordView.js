@@ -103,7 +103,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1000);
+  cy.wait(500);
   cy.do(viewSourceButton.click());
 };
 
@@ -976,7 +976,6 @@ export default {
 
   moveItemsWithinAnInstance() {
     clickActionsButton();
-    cy.wait(500);
     cy.do(Button({ id: 'move-instance-items' }).click());
   },
 
@@ -995,7 +994,6 @@ export default {
       );
     }
   },
-  // clickable-move-holdings-38e72617-9faa-47d3-a791-1baeca7d0d86
 
   verifyInstanceFormat(category, term, code, source) {
     let matchingString = category;
