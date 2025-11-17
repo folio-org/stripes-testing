@@ -44,21 +44,21 @@ describe('Eureka', () => {
     });
 
     // Uncomment for saving missing permissions in case of failure
-    after(() => {
-      cy.writeFile(
-        './missing-permissions.json',
-        JSON.stringify(
-          expectedSystemRoles
-            .filter((role) => role.missingPermissions.length)
-            .map((role) => ({
-              moduleName: role.moduleName,
-              missingPermissions: role.missingPermissions,
-            })),
-          null,
-          2,
-        ),
-      );
-    });
+    // after(() => {
+    //   cy.writeFile(
+    //     './missing-permissions.json',
+    //     JSON.stringify(
+    //       expectedSystemRoles
+    //         .filter((role) => role.missingPermissions.length)
+    //         .map((role) => ({
+    //           moduleName: role.moduleName,
+    //           missingPermissions: role.missingPermissions,
+    //         })),
+    //       null,
+    //       2,
+    //     ),
+    //   );
+    // });
 
     it(
       'C784506 Default roles for system users created and assigned (eureka)',
@@ -82,17 +82,17 @@ describe('Eureka', () => {
             const expectedPermissionNames = expectedSystemRole.permissionNames.filter(
               (permission) => allExistingCapabilities.find((capab) => capab.permission === permission),
             );
-            // expect(
-            //   expectedPermissionNames.every((expectedPermName) => assignedPermissionNames.includes(expectedPermName)),
-            // ).to.eq(true);
+            expect(
+              expectedPermissionNames.every((expectedPermName) => assignedPermissionNames.includes(expectedPermName)),
+            ).to.eq(true);
 
             // Uncomment for retrieving missing permissions in case of failure
-            expectedSystemRole.missingPermissions = [];
-            expectedPermissionNames.forEach((permission) => {
-              if (!assignedPermissionNames.includes(permission)) {
-                expectedSystemRole.missingPermissions.push(permission);
-              }
-            });
+            // expectedSystemRole.missingPermissions = [];
+            // expectedPermissionNames.forEach((permission) => {
+            //   if (!assignedPermissionNames.includes(permission)) {
+            //     expectedSystemRole.missingPermissions.push(permission);
+            //   }
+            // });
 
             cy.getUsers({ query: `username=="${expectedSystemRole.moduleName}"` }).then((users) => {
               cy.getAuthorizationRolesForUserApi(users[0].id).then((userRolesResponse) => {
