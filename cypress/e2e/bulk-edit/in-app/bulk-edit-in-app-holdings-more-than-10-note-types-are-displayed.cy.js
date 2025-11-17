@@ -133,7 +133,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifySelectOptionsHoldingSortedAlphabetically();
+        BulkEditActions.verifySelectOptionsSortedAlphabetically();
         BulkEditActions.clickOptionsSelection();
         BulkEditActions.selectOption(createdNoteTypes[0]);
         BulkEditActions.verifyOptionSelected(createdNoteTypes[0]);
