@@ -1945,6 +1945,7 @@ export default {
           });
         });
     });
+    this.clickOptionsSelection();
   },
 
   verifySelectLocationDisabled(rowIndex = 0, isDisabled = true) {
