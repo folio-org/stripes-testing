@@ -14,10 +14,13 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         createErrorText: 'Role could not be created: Failed to create keycloak role',
+        updateErrorText:
+          'Role could not be updated: Default role cannot be created, updated or deleted via roles API',
+        deleteErrorText:
+          'Role could not be deleted: Default role cannot be created, updated or deleted via roles API',
       };
 
       const defaultRoles = [];
-      const defaultSystemRoles = [];
 
       const capabSetsToAssign = [
         CapabilitySets.uiAuthorizationRolesSettingsCreate,
@@ -34,9 +37,6 @@ describe('Eureka', () => {
           query: `type=${AUTHORIZATION_ROLE_TYPES.DEFAULT.toUpperCase()}`,
         }).then((roles) => {
           defaultRoles.push(...roles);
-          defaultSystemRoles.push(
-            ...defaultRoles.filter((role) => role.name.includes('default-system-role')),
-          );
         });
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
@@ -68,10 +68,14 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(defaultRoles[0].name);
           AuthorizationRoles.clickOnRoleName(defaultRoles[0].name);
           AuthorizationRoles.verifyRoleType(defaultRoles[0].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
-          AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
+          AuthorizationRoles.clickDeleteRole();
+          AuthorizationRoles.confirmDeleteRole(defaultRoles[0].name, true);
+          InteractorsTools.checkCalloutErrorMessage(including(testData.deleteErrorText));
+          InteractorsTools.closeAllVisibleCallouts();
+          AuthorizationRoles.cancelDeleteRole(defaultRoles[0].name);
 
           AuthorizationRoles.clickNewButton();
-          AuthorizationRoles.fillRoleNameDescription(defaultSystemRoles[0].name);
+          AuthorizationRoles.fillRoleNameDescription(defaultRoles[0].name);
           cy.intercept('POST', '/roles').as('createCall');
           AuthorizationRoles.clickSaveButton();
           cy.wait('@createCall').then(({ response }) => {
@@ -81,20 +85,23 @@ describe('Eureka', () => {
             );
           });
           InteractorsTools.checkCalloutErrorMessage(including(testData.createErrorText));
-
+          InteractorsTools.closeAllVisibleCallouts();
           AuthorizationRoles.closeRoleCreateView();
-          AuthorizationRoles.searchRole(defaultRoles[1].name);
-          AuthorizationRoles.clickOnRoleName(defaultRoles[1].name);
-          AuthorizationRoles.verifyRoleType(defaultRoles[1].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
-          AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
 
-          AuthorizationRoles.searchRole(defaultSystemRoles[1].name);
-          AuthorizationRoles.clickOnRoleName(defaultSystemRoles[1].name);
-          AuthorizationRoles.verifyRoleType(
-            defaultSystemRoles[1].name,
-            AUTHORIZATION_ROLE_TYPES.DEFAULT,
-          );
-          AuthorizationRoles.checkActionsOptionsAvailable(false, true, false);
+          AuthorizationRoles.searchRole(defaultRoles[2].name);
+          AuthorizationRoles.clickOnRoleName(defaultRoles[2].name);
+          AuthorizationRoles.verifyRoleType(defaultRoles[2].name, AUTHORIZATION_ROLE_TYPES.DEFAULT);
+          AuthorizationRoles.openForEdit();
+          AuthorizationRoles.fillRoleNameDescription(`${defaultRoles[2].name}_edited`);
+          cy.intercept('PUT', '/roles/*').as('updateCall');
+          AuthorizationRoles.clickSaveButton();
+          cy.wait('@updateCall').then(({ response }) => {
+            expect(response.statusCode).to.eq(400);
+            expect(response.body.errors[0].message).to.include(
+              testData.updateErrorText.split(': ')[1],
+            );
+          });
+          InteractorsTools.checkCalloutErrorMessage(including(testData.updateErrorText));
         },
       );
     });
