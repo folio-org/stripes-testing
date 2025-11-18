@@ -6,6 +6,8 @@ import {
   EditableListRow,
   MultiColumnListCell,
   Modal,
+  PaneHeader,
+  Select,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
@@ -31,6 +33,9 @@ export default {
   },
   waitFundTypesLoading: () => {
     cy.expect(MultiColumnListHeader({ id: 'list-column-name' }).exists());
+  },
+  waitExportFundAndExpenseClassCodesLoading: () => {
+    cy.expect(PaneHeader('Export fund and expense class codes').exists());
   },
 
   verifyItemInFinancePanel() {
@@ -182,6 +187,63 @@ export default {
       }),
     );
     cy.do(Modal('Cannot delete fund type').find(Button('Okay')).click());
+  },
+
+  checkButtonState: (buttonName, isDisabled) => {
+    cy.expect(Button(buttonName).has({ disabled: isDisabled }));
+  },
+
+  selectFiscalYear: (fiscalYear) => {
+    cy.do([Select().choose(fiscalYear)]);
+  },
+
+  clickExportButton: () => {
+    cy.do(Button('Export').click());
+  },
+
+  parseCsvLine(line) {
+    const out = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (ch === ',' && !inQuotes) {
+        out.push(cur);
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out.map((s) => s
+      .replace(/^"|"$/g, '')
+      .replace(/""/g, '"')
+      .replace(/^\uFEFF/, ''));
+  },
+
+  checkExportedFundAndExpenseClassFile(fileName, expectedRows) {
+    cy.wait(3000);
+    cy.readFile(`cypress/downloads/${fileName}`).then((content) => {
+      const lines = content.trim().split(/\r?\n/);
+
+      const header = this.parseCsvLine(lines[0]);
+      expect(header).to.deep.equal(['Fund code', 'Fund and active expense class codes']);
+
+      const fileRows = lines
+        .slice(1)
+        .map((line) => this.parseCsvLine(line))
+        .sort((a, b) => a[0].localeCompare(b[0]));
+
+      const sortedExpectedRows = [...expectedRows].sort((a, b) => a[0].localeCompare(b[0]));
+      expect(fileRows).to.deep.equal(sortedExpectedRows);
+    });
   },
 
   deleteViaApi: (id) => {
