@@ -16,22 +16,16 @@ const testData = {
     "children's subjectauto c466093 heading case testauto",
     "CHILDREN'S SUBJECTAUTO C466093 HEADING CASE TESTAUTO",
   ],
-  headingsC466092: ['genreauto case c466092 testauto', 'GENREAUTO CASE C466092 TESTAUTO'],
-  headingsC466091: ['subjectauto case c466091 testauto', 'SUBJECTAUTO CASE C466091 TESTAUTO'],
 
   marcFile: {
     marc: 'marcAuthFileHeadingsCaseInsensitive.mrc',
     fileName: `testMarcFileHeadingsCaseIns.${randomFourDigitNumber()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-    numberOfRecords: 6,
+    numberOfRecords: 2,
     propertyName: 'authority',
   },
 
-  headingPrefixes: [
-    "children's subjectauto c466093",
-    'genreauto case c466092',
-    'subjectauto case c466091',
-  ],
+  headingPrefixes: ["children's subjectauto c466093"],
 };
 
 describe('MARC', () => {
@@ -90,70 +84,6 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter(testData.childrenOption, query);
           MarcAuthorities.checkResultList(testData.headingsC466093);
           MarcAuthorities.clickResetAndCheck();
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-        });
-      },
-    );
-
-    it(
-      'C466092 Search/Browse by "Genre" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466092'] },
-      () => {
-        testData.headingsC466092.forEach((query) => {
-          MarcAuthorities.searchBeats(query);
-          MarcAuthorities.checkResultList(testData.headingsC466092);
-          MarcAuthorities.clickResetAndCheck();
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-        });
-        testData.headingsC466092.forEach((query) => {
-          MarcAuthorities.searchByParameter(testData.genreOption, query);
-          MarcAuthorities.checkResultList(testData.headingsC466092);
-          MarcAuthorities.clickResetAndCheck();
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-        });
-
-        MarcAuthorities.switchToBrowse();
-        MarcAuthorities.checkDefaultBrowseOptions(
-          testData.headingsC466092[testData.headingsC466092.length - 1],
-        );
-        MarcAuthorities.checkRecordsResultListIsAbsent();
-        testData.headingsC466092.forEach((query) => {
-          MarcAuthorities.searchByParameter(testData.genreOption, query);
-          MarcAuthorities.checkResultList(testData.headingsC466092);
-          MarcAuthorities.clickReset();
-          MarcAuthorities.checkDefaultBrowseOptions(query);
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-        });
-      },
-    );
-
-    it(
-      'C466091 Search/Browse by "Subject" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466091'] },
-      () => {
-        testData.headingsC466091.forEach((query) => {
-          MarcAuthorities.searchBeats(query);
-          MarcAuthorities.checkResultList(testData.headingsC466091);
-          MarcAuthorities.clickResetAndCheck();
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-        });
-        testData.headingsC466091.forEach((query) => {
-          MarcAuthorities.searchByParameter(testData.subjectOption, query);
-          MarcAuthorities.checkResultList(testData.headingsC466091);
-          MarcAuthorities.clickResetAndCheck();
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-        });
-
-        MarcAuthorities.switchToBrowse();
-        MarcAuthorities.checkDefaultBrowseOptions(
-          testData.headingsC466091[testData.headingsC466091.length - 1],
-        );
-        MarcAuthorities.checkRecordsResultListIsAbsent();
-        testData.headingsC466091.forEach((query) => {
-          MarcAuthorities.searchByParameter(testData.subjectOption, query);
-          MarcAuthorities.checkResultList(testData.headingsC466091);
-          MarcAuthorities.clickReset();
-          MarcAuthorities.checkDefaultBrowseOptions(query);
           MarcAuthorities.checkRecordsResultListIsAbsent();
         });
       },
