@@ -101,7 +101,7 @@ describe('MARC', () => {
 
     testData.forEach((test) => {
       it(
-        `${test.id} Search/Browse by "${test.searchOption}" field is case-insensitive (spitfire)`,
+        `C466086 C466087 C466088 C466089 C466090 C466091 C466092 Search/Browse by "${test.searchOption}" field is case-insensitive (spitfire)`,
         { tags: ['criticalPath', 'spitfire', test.id] },
         () => {
           // execute search by "Keyword" option
