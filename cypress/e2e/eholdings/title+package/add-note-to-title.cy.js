@@ -52,6 +52,7 @@ describe('eHoldings', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
         EHoldingSearch.switchToTitles();
       });
@@ -64,7 +65,7 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C157915 itle Record - Add a note (spitfire)',
+      'C157915 Title Record - Add a note (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C157915'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customTitleName);

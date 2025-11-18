@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 
 describe('Permissions', () => {
   describe('Permissions --> Users', () => {
-    const resetLinkPart = `${Cypress.config('baseUrl')}/reset-password`;
+    const resetLinkPart = '/reset-password';
     const originalPermissions = [Permissions.inventoryAll.gui];
     const updatedPermissions = [
       Permissions.uiUsersView.gui,
@@ -44,6 +44,7 @@ describe('Permissions', () => {
         cy.login(testUser.username, testUser.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
         UsersSearchPane.searchByUsername(testUser.username);
         UsersSearchPane.selectUserFromList(testUser.username);
