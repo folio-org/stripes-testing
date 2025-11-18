@@ -39,10 +39,30 @@ const items = {
   },
 };
 
+const scenarios = [
+  {
+    itemKey: 'available',
+    initialStatus: ITEM_STATUS_NAMES.AVAILABLE,
+    targetStatus: ITEM_STATUS_NAMES.IN_PROCESS,
+    shouldSucceed: true,
+  },
+  {
+    itemKey: 'checkedOut',
+    initialStatus: ITEM_STATUS_NAMES.CHECKED_OUT,
+    targetStatus: ITEM_STATUS_NAMES.IN_PROCESS,
+    shouldSucceed: false,
+  },
+  {
+    itemKey: 'inProcess',
+    initialStatus: ITEM_STATUS_NAMES.IN_PROCESS,
+    targetStatus: ITEM_STATUS_NAMES.WITHDRAWN,
+    shouldSucceed: true,
+  },
+];
+
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
@@ -119,266 +139,118 @@ describe('Bulk-edit', () => {
       'C594355 Verify update of Item records from "In Process" status to "Withdrawn" status (firebird)',
       { tags: ['criticalPath', 'firebird', 'C594355'] },
       () => {
-        const availableFileNames = BulkEditFiles.getAllDownloadedFileNames(
-          items.available.fileName,
-          true,
-        );
+        scenarios.forEach((scenario) => {
+          const item = items[scenario.itemKey];
+          const fileNames = BulkEditFiles.getAllDownloadedFileNames(item.fileName, true);
 
-        // ========== SCENARIO 1: Available → In Process (Success) ==========
-        // Steps 1-3: Select "Inventory - items" and upload CSV file with Available item
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
-        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
-        BulkEditSearchPane.uploadFile(items.available.fileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(items.available.barcode);
-        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
+          // Select "Inventory - items" and upload CSV file
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+          BulkEditSearchPane.clickToBulkEditMainButton();
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
+            'Items',
+            ITEM_IDENTIFIERS.ITEM_BARCODES,
+          );
+          BulkEditSearchPane.uploadFile(item.fileName);
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditSearchPane.verifyMatchedResults(item.barcode);
+          BulkEditSearchPane.verifyPaneRecordsCount('1 item');
 
-        // Step 4: Download matched records (CSV)
-        BulkEditActions.downloadMatchedResults();
-        BulkEditFiles.verifyValueInRowByUUID(
-          availableFileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.available.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.AVAILABLE,
-        );
+          // Download matched records (CSV)
+          BulkEditActions.downloadMatchedResults();
+          BulkEditFiles.verifyValueInRowByUUID(
+            fileNames.matchedRecordsCSV,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+            item.barcode,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+            scenario.initialStatus,
+          );
 
-        // Step 5: Click "Actions" menu => Select "Start bulk edit"
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.verifyBulkEditsAccordionExists();
-        BulkEditActions.verifyRowIcons();
-        BulkEditActions.verifyCancelButtonDisabled(false);
-        BulkEditActions.verifyConfirmButtonDisabled(true);
+          // Click "Actions" menu => Select "Start bulk edit"
+          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyRowIcons();
+          BulkEditActions.verifyCancelButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
 
-        // Step 6-7: Select "Item status" and "In Process" status
-        BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
+          // Select "Item status" and target status
+          BulkEditActions.replaceItemStatus(scenario.targetStatus);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        // Step 8: Click "Confirm changes" button
-        BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          items.available.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
+          // Click "Confirm changes" button
+          BulkEditActions.confirmChanges();
+          BulkEditActions.verifyAreYouSureForm(1);
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+            item.barcode,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+            scenario.targetStatus,
+          );
 
-        // Step 9: Download preview in CSV format
-        BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyValueInRowByUUID(
-          availableFileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.available.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
+          // Download preview in CSV format
+          BulkEditActions.downloadPreview();
+          BulkEditFiles.verifyValueInRowByUUID(
+            fileNames.previewRecordsCSV,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+            item.barcode,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+            scenario.targetStatus,
+          );
 
-        // Step 10: Commit changes - successful update
-        BulkEditActions.commitChanges();
-        BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-          items.available.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
+          // Commit changes
+          BulkEditActions.commitChanges();
 
-        // Step 11: Download changed records (CSV)
-        BulkEditActions.openActions();
-        BulkEditActions.downloadChangedCSV();
-        BulkEditFiles.verifyValueInRowByUUID(
-          availableFileNames.changedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.available.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
+          if (scenario.shouldSucceed) {
+            // Verify successful update
+            BulkEditActions.verifySuccessBanner(1);
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+              item.barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+              scenario.targetStatus,
+            );
 
-        // Step 12: Verify changes applied in Inventory
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', items.available.barcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
+            // Download changed records (CSV)
+            BulkEditActions.openActions();
+            BulkEditActions.downloadChangedCSV();
+            BulkEditFiles.verifyValueInRowByUUID(
+              fileNames.changedRecordsCSV,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              item.barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+              scenario.targetStatus,
+            );
+          } else {
+            // Verify error scenario
+            BulkEditSearchPane.verifyPaneRecordsChangedCount('0 item');
+            BulkEditActions.verifySuccessBanner(0);
+            BulkEditSearchPane.verifyErrorLabel(1);
 
-        // Clean up downloaded files
-        BulkEditFiles.deleteAllDownloadedFiles(availableFileNames);
+            // Check error table - status transition not allowed
+            BulkEditSearchPane.verifyErrorByIdentifier(
+              item.barcode,
+              ERROR_MESSAGES.getInvalidStatusValueMessage(scenario.targetStatus),
+            );
 
-        // ========== SCENARIO 2: Checked out → In Process (Error) ==========
-        const checkedOutFileNames = BulkEditFiles.getAllDownloadedFileNames(
-          items.checkedOut.fileName,
-          true,
-        );
+            // Download errors CSV
+            BulkEditActions.openActions();
+            BulkEditActions.downloadErrors();
+            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+              `ERROR,${item.barcode},${ERROR_MESSAGES.getInvalidStatusValueMessage(scenario.targetStatus)}`,
+            ]);
+          }
 
-        // Steps 13-15: Navigate to Bulk edit and upload CSV file with Checked out item
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-        BulkEditSearchPane.clickToBulkEditMainButton();
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
-          'Items',
-          ITEM_IDENTIFIERS.ITEM_BARCODES,
-        );
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
-        BulkEditSearchPane.uploadFile(items.checkedOut.fileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(items.checkedOut.barcode);
-        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
+          // Navigate to Inventory and verify item status
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+          ItemRecordView.waitLoading();
+          ItemRecordView.verifyItemStatus(
+            scenario.shouldSucceed ? scenario.targetStatus : scenario.initialStatus,
+          );
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
 
-        // Step 16: Download matched records (CSV)
-        BulkEditActions.downloadMatchedResults();
-        BulkEditFiles.verifyValueInRowByUUID(
-          checkedOutFileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.checkedOut.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.CHECKED_OUT,
-        );
-
-        // Step 17: Click "Actions" menu => Select "Start bulk edit"
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.verifyBulkEditsAccordionExists();
-        BulkEditActions.verifyRowIcons();
-
-        // Step 18-19: Select "Item status" and "In Process" status
-        BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
-
-        // Step 20: Click "Confirm changes" button
-        BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          items.checkedOut.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
-
-        // Step 21: Download preview in CSV format
-        BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyValueInRowByUUID(
-          checkedOutFileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.checkedOut.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
-
-        // Step 22: Commit changes - should get error
-        BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyPaneRecordsChangedCount('0 item');
-        BulkEditActions.verifySuccessBanner(0);
-        BulkEditSearchPane.verifyErrorLabel(1);
-
-        // Step 23: Check error table - status transition not allowed
-        BulkEditSearchPane.verifyErrorByIdentifier(
-          items.checkedOut.barcode,
-          ERROR_MESSAGES.getInvalidStatusValueMessage(ITEM_STATUS_NAMES.IN_PROCESS),
-        );
-
-        // Step 24: Download errors CSV
-        BulkEditActions.openActions();
-        BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(checkedOutFileNames.errorsFromCommitting, [
-          `ERROR,${items.checkedOut.barcode},${ERROR_MESSAGES.getInvalidStatusValueMessage(ITEM_STATUS_NAMES.IN_PROCESS)}`,
-        ]);
-
-        // Step 25: Verify changes have NOT been applied in Inventory
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        ItemRecordView.closeDetailView();
-        InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.searchByParameter('Barcode', items.checkedOut.barcode);
-        ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
-
-        // Clean up downloaded files
-        BulkEditFiles.deleteAllDownloadedFiles(checkedOutFileNames);
-
-        // ========== SCENARIO 3: In Process → Withdrawn (Success) ==========
-        const inProcessFileNames = BulkEditFiles.getAllDownloadedFileNames(
-          items.inProcess.fileName,
-          true,
-        );
-
-        // Steps 26-28: Navigate to Bulk edit and upload CSV file with In Process item
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-        BulkEditSearchPane.clickToBulkEditMainButton();
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
-          'Items',
-          ITEM_IDENTIFIERS.ITEM_BARCODES,
-        );
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
-        BulkEditSearchPane.uploadFile(items.inProcess.fileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(items.inProcess.barcode);
-        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
-
-        // Step 29: Download matched records (CSV)
-        BulkEditActions.downloadMatchedResults();
-        BulkEditFiles.verifyValueInRowByUUID(
-          inProcessFileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.inProcess.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
-
-        // Step 30: Click "Actions" menu => Select "Start bulk edit"
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.verifyBulkEditsAccordionExists();
-        BulkEditActions.verifyRowIcons();
-
-        // Step 31-32: Select "Item status" and "Withdrawn" status
-        BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.WITHDRAWN);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
-
-        // Step 33: Click "Confirm changes" button
-        BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          items.inProcess.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.WITHDRAWN,
-        );
-
-        // Step 34: Download preview in CSV format
-        BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyValueInRowByUUID(
-          inProcessFileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.inProcess.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.WITHDRAWN,
-        );
-
-        // Step 35: Commit changes - successful update
-        BulkEditActions.commitChanges();
-        BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-          items.inProcess.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.WITHDRAWN,
-        );
-
-        // Step 36: Download changed records (CSV)
-        BulkEditActions.openActions();
-        BulkEditActions.downloadChangedCSV();
-        BulkEditFiles.verifyValueInRowByUUID(
-          inProcessFileNames.changedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          items.inProcess.barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          ITEM_STATUS_NAMES.WITHDRAWN,
-        );
-
-        // Step 37: Verify changes applied in Inventory
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        ItemRecordView.closeDetailView();
-        InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.searchByParameter('Barcode', items.inProcess.barcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.WITHDRAWN);
-
-        // Clean up downloaded files
-        BulkEditFiles.deleteAllDownloadedFiles(inProcessFileNames);
+          // Clean up downloaded files
+          BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+        });
       },
     );
   });
