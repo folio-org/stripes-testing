@@ -24,6 +24,7 @@ export const NavListItem = HTML.extend('Nav List Item')
       const img = el.querySelector('img');
       return img ? img.getAttribute('alt') : '';
     },
+    opensNewTab: (el) => el.getAttribute('target') === '_blank',
   });
 
 export const NavItemList = HTML.extend('Nav Item List')
