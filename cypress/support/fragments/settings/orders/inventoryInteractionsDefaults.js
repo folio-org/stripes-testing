@@ -19,4 +19,13 @@ export default {
         return response.body;
       });
   },
+  createApprovalSettingViaApi(setting) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'configurations/entries',
+        body: setting,
+      })
+      .then(({ body }) => body);
+  },
 };
