@@ -64,7 +64,7 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C157915 itle Record - Add a note (spitfire)',
+      'C157915 Title Record - Add a note (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C157915'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customTitleName);
