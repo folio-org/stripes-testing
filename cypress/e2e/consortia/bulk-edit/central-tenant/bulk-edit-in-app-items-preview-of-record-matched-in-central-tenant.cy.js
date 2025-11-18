@@ -215,284 +215,282 @@ const deleteItemsAndHoldingsForTenant = (affiliation, itemIdsArray, holdingId) =
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
     describe('Consortia', () => {
-      describe('Preview of record matched', () => {
-        const testData = {
-          roleName: `AT_C477538_UserRole_${getRandomPostfix()}`,
-          roleIds: {},
-        };
+      const testData = {
+        roleName: `AT_C477538_UserRole_${getRandomPostfix()}`,
+        roleIds: {},
+      };
 
-        before('create test data', () => {
-          cy.clearLocalStorage();
-          cy.getAdminToken();
+      before('create test data', () => {
+        cy.clearLocalStorage();
+        cy.getAdminToken();
 
-          cy.createTempUser([]).then((userProperties) => {
-            user = userProperties;
+        cy.createTempUser([]).then((userProperties) => {
+          user = userProperties;
 
-            // Assign affiliations to user
-            [Affiliations.College, Affiliations.University].forEach((affiliation) => {
-              cy.assignAffiliationToUser(affiliation, user.userId);
-            });
-
-            // Create and assign roles for each affiliation
-            cy.wrap([Affiliations.Consortia, Affiliations.College, Affiliations.University]).each(
-              (affiliation) => {
-                createRoleWithCapabilitiesForAffiliation(affiliation, testData);
-              },
-            );
-
-            cy.resetTenant();
-
-            // Get instance, location, loan and source
-            cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-              instanceTypeId = instanceTypeData[0].id;
-            });
-            cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-              locationId = res.id;
-            });
-            cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
-              loanTypeId = res[0].id;
-            });
-            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-              sourceId = folioSource.id;
-            });
-
-            // Create shared folio instance
-            cy.resetTenant()
-              .then(() => InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId,
-                  title: folioInstance.title,
-                },
-              }))
-              .then((createdInstanceData) => {
-                folioInstance.uuid = createdInstanceData.instanceId;
-              })
-              .then(() => {
-                // Create holdings and items in College tenant
-                cy.setTenant(Affiliations.College);
-                cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                  materialTypeId = res.id;
-                });
-              })
-              .then(() => InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: folioInstance.uuid,
-                permanentLocationId: locationId,
-                sourceId,
-              }))
-              .then((holding) => {
-                folioInstance.holdingIdCollege = holding.id;
-                // Track holding ID to ensure uniqueness across tenants
-                folioInstance.allHoldingIds.push({
-                  id: holding.id,
-                  tenant: Affiliations.College,
-                });
-                cy.wait(1000);
-              })
-              .then(() => createItemsForTenant({
-                firstBarcodePrefix: 'col_',
-                secondBarcodePrefix: 'uni_',
-                barcodesArray: folioInstance.barcodesCollege,
-                itemIdsArray: folioInstance.itemIdsCollege,
-                hridsArray: folioInstance.hridsCollege,
-                holdingId: folioInstance.holdingIdCollege,
-              }))
-              .then(() => {
-                // Create holdings and items in University tenant
-                cy.setTenant(Affiliations.University);
-                cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                  materialTypeId = res.id;
-                });
-              })
-              .then(() => InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: folioInstance.uuid,
-                permanentLocationId: locationId,
-                sourceId,
-              }))
-              .then((holding) => {
-                folioInstance.holdingIdUniversity = holding.id;
-                // Track holding ID to ensure uniqueness across tenants
-                folioInstance.allHoldingIds.push({
-                  id: holding.id,
-                  tenant: Affiliations.University,
-                });
-                cy.wait(1000);
-              })
-              .then(() => {
-                // Verify that all holdings IDs are unique across tenants
-                const holdingIds = folioInstance.allHoldingIds.map((h) => h.id);
-                const uniqueHoldingIds = new Set(holdingIds);
-                expect(uniqueHoldingIds.size).to.equal(
-                  holdingIds.length,
-                  'All holdings IDs should be unique across tenants',
-                );
-                // Verify College and University holdings are different
-                expect(folioInstance.holdingIdCollege).to.not.equal(
-                  folioInstance.holdingIdUniversity,
-                  'College and University holdings must be different',
-                );
-              })
-              .then(() => createItemsForTenant({
-                firstBarcodePrefix: 'UNI_ITEM_',
-                secondBarcodePrefix: 'UNI_ITEM_',
-                barcodesArray: folioInstance.barcodesUniversity,
-                itemIdsArray: folioInstance.itemIdsUniversity,
-                hridsArray: folioInstance.hridsUniversity,
-                holdingId: folioInstance.holdingIdUniversity,
-              }))
-              .then(() => {
-                // Create CSV files with identifiers
-                createIdentifierFiles();
-              })
-              .then(() => {
-                cy.resetTenant();
-                cy.login(user.username, user.password, {
-                  path: TopMenu.bulkEditPath,
-                  waiter: BulkEditSearchPane.waitLoading,
-                });
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              });
+          // Assign affiliations to user
+          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
+            cy.assignAffiliationToUser(affiliation, user.userId);
           });
-        });
 
-        after('delete test data', () => {
-          cy.resetTenant();
-          cy.getAdminToken();
-
-          // Delete created roles from each affiliation
-          [Affiliations.Consortia, Affiliations.College, Affiliations.University].forEach(
+          // Create and assign roles for each affiliation
+          cy.wrap([Affiliations.Consortia, Affiliations.College, Affiliations.University]).each(
             (affiliation) => {
-              cy.setTenant(affiliation);
-              const id = testData.roleIds[affiliation];
-
-              if (id) {
-                cy.deleteAuthorizationRoleApi(id);
-              }
+              createRoleWithCapabilitiesForAffiliation(affiliation, testData);
             },
           );
 
-          // Delete items/holdings in College tenant
-          deleteItemsAndHoldingsForTenant(
-            Affiliations.College,
-            folioInstance.itemIdsCollege,
-            folioInstance.holdingIdCollege,
-          );
-
-          // Delete items/holdings in University tenant
-          deleteItemsAndHoldingsForTenant(
-            Affiliations.University,
-            folioInstance.itemIdsUniversity,
-            folioInstance.holdingIdUniversity,
-          );
-
-          // Delete instance in central tenant
           cy.resetTenant();
-          cy.getAdminToken();
-          InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
 
-          // Clean up user and files
-          Users.deleteViaApi(user.userId);
-          FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-          FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
-          FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
-          FileManager.deleteFileFromDownloadsByMask(
-            matchedRecordsFileBarcode,
-            matchedRecordsFileUUID,
-            matchedRecordsFileHRID,
-            errorFileUUID,
-          );
+          // Get instance, location, loan and source
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+            instanceTypeId = instanceTypeData[0].id;
+          });
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
+            locationId = res.id;
+          });
+          cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
+            loanTypeId = res[0].id;
+          });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            sourceId = folioSource.id;
+          });
+
+          // Create shared folio instance
+          cy.resetTenant()
+            .then(() => InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId,
+                title: folioInstance.title,
+              },
+            }))
+            .then((createdInstanceData) => {
+              folioInstance.uuid = createdInstanceData.instanceId;
+            })
+            .then(() => {
+              // Create holdings and items in College tenant
+              cy.setTenant(Affiliations.College);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
+            })
+            .then(() => InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: folioInstance.uuid,
+              permanentLocationId: locationId,
+              sourceId,
+            }))
+            .then((holding) => {
+              folioInstance.holdingIdCollege = holding.id;
+              // Track holding ID to ensure uniqueness across tenants
+              folioInstance.allHoldingIds.push({
+                id: holding.id,
+                tenant: Affiliations.College,
+              });
+              cy.wait(1000);
+            })
+            .then(() => createItemsForTenant({
+              firstBarcodePrefix: 'col_',
+              secondBarcodePrefix: 'uni_',
+              barcodesArray: folioInstance.barcodesCollege,
+              itemIdsArray: folioInstance.itemIdsCollege,
+              hridsArray: folioInstance.hridsCollege,
+              holdingId: folioInstance.holdingIdCollege,
+            }))
+            .then(() => {
+              // Create holdings and items in University tenant
+              cy.setTenant(Affiliations.University);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
+            })
+            .then(() => InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: folioInstance.uuid,
+              permanentLocationId: locationId,
+              sourceId,
+            }))
+            .then((holding) => {
+              folioInstance.holdingIdUniversity = holding.id;
+              // Track holding ID to ensure uniqueness across tenants
+              folioInstance.allHoldingIds.push({
+                id: holding.id,
+                tenant: Affiliations.University,
+              });
+              cy.wait(1000);
+            })
+            .then(() => {
+              // Verify that all holdings IDs are unique across tenants
+              const holdingIds = folioInstance.allHoldingIds.map((h) => h.id);
+              const uniqueHoldingIds = new Set(holdingIds);
+              expect(uniqueHoldingIds.size).to.equal(
+                holdingIds.length,
+                'All holdings IDs should be unique across tenants',
+              );
+              // Verify College and University holdings are different
+              expect(folioInstance.holdingIdCollege).to.not.equal(
+                folioInstance.holdingIdUniversity,
+                'College and University holdings must be different',
+              );
+            })
+            .then(() => createItemsForTenant({
+              firstBarcodePrefix: 'UNI_ITEM_',
+              secondBarcodePrefix: 'UNI_ITEM_',
+              barcodesArray: folioInstance.barcodesUniversity,
+              itemIdsArray: folioInstance.itemIdsUniversity,
+              hridsArray: folioInstance.hridsUniversity,
+              holdingId: folioInstance.holdingIdUniversity,
+            }))
+            .then(() => {
+              // Create CSV files with identifiers
+              createIdentifierFiles();
+            })
+            .then(() => {
+              cy.resetTenant();
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            });
         });
+      });
 
-        it(
-          'C477538 Verify "Preview of record matched" when uploading valid Items identifiers in Central tenant (consortia)',
-          { tags: ['smokeECS', 'firebird', 'C477538'] },
-          () => {
-            // Upload and verify Item barcodes
-            BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');
-            BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-            BulkEditSearchPane.verifyPaneTitleFileName(itemBarcodesFileName);
-            BulkEditSearchPane.verifyPaneRecordsCount('4 item');
-            BulkEditSearchPane.verifyFileNameHeadLine(itemBarcodesFileName);
-            BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
+      after('delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
 
-            // Verify matched records from both tenants
-            folioInstance.barcodesCollege.forEach((barcode) => {
-              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                barcode,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-                barcode,
-              );
-            });
+        // Delete created roles from each affiliation
+        [Affiliations.Consortia, Affiliations.College, Affiliations.University].forEach(
+          (affiliation) => {
+            cy.setTenant(affiliation);
+            const id = testData.roleIds[affiliation];
 
-            folioInstance.barcodesUniversity.forEach((barcode) => {
-              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                barcode,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-                barcode,
-              );
-            });
-
-            // Download matched records - downloadMatchedResults handles opening Actions menu
-            BulkEditActions.downloadMatchedResults();
-            BulkEditFiles.verifyMatchedResultFileContent(
-              matchedRecordsFileBarcode,
-              folioInstance.barcodesCollege.concat(folioInstance.barcodesUniversity),
-              'barcode',
-            );
-
-            // Upload and verify Item UUIDs
-            uploadAndVerifyMatchedResults({
-              recordIdentifier: 'Item UUIDs',
-              fileName: itemUUIDsFileName,
-              expectedCountLabel: '4 item',
-              matchedFileName: matchedRecordsFileUUID,
-              expectedValues: folioInstance.itemIdsCollege.concat(folioInstance.itemIdsUniversity),
-              valueType: 'uuid',
-            });
-
-            // Upload and verify Item HRIDs
-            uploadAndVerifyMatchedResults({
-              recordIdentifier: 'Item HRIDs',
-              fileName: itemHRIDsFileName,
-              expectedCountLabel: '4 item',
-              matchedFileName: matchedRecordsFileHRID,
-              expectedValues: folioInstance.hridsCollege.concat(folioInstance.hridsUniversity),
-              valueType: 'hrid',
-            });
-
-            // Remove College affiliation from existing user and verify errors when uploading Item UUIDs
-            cy.logout();
-            cy.getAdminToken();
-            cy.removeAffiliationFromUser(Affiliations.College, user.userId);
-            cy.resetTenant();
-
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
-
-            BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
-            BulkEditSearchPane.uploadFile(itemUUIDsFileName);
-            verifyErrorsForCollegeItems(errorNoAffiliationTemplate);
-
-            // Return College affiliation and remove Roles from it to verify permissions errors
-            cy.logout();
-            cy.getAdminToken();
-            cy.assignAffiliationToUser(Affiliations.College, user.userId);
-            cy.setTenant(Affiliations.College);
-            cy.deleteRolesForUserApi(user.userId);
-            cy.resetTenant();
-
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
-
-            BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
-            BulkEditSearchPane.uploadFile(itemUUIDsFileName);
-            verifyErrorsForCollegeItems(errorNoPermissionTemplate);
+            if (id) {
+              cy.deleteAuthorizationRoleApi(id);
+            }
           },
         );
+
+        // Delete items/holdings in College tenant
+        deleteItemsAndHoldingsForTenant(
+          Affiliations.College,
+          folioInstance.itemIdsCollege,
+          folioInstance.holdingIdCollege,
+        );
+
+        // Delete items/holdings in University tenant
+        deleteItemsAndHoldingsForTenant(
+          Affiliations.University,
+          folioInstance.itemIdsUniversity,
+          folioInstance.holdingIdUniversity,
+        );
+
+        // Delete instance in central tenant
+        cy.resetTenant();
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
+
+        // Clean up user and files
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
+        FileManager.deleteFileFromDownloadsByMask(
+          matchedRecordsFileBarcode,
+          matchedRecordsFileUUID,
+          matchedRecordsFileHRID,
+          errorFileUUID,
+        );
       });
+
+      it(
+        'C477538 Verify "Preview of record matched" when uploading valid Items identifiers in Central tenant (consortia)',
+        { tags: ['smokeECS', 'firebird', 'C477538'] },
+        () => {
+          // Upload and verify Item barcodes
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');
+          BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+          BulkEditSearchPane.verifyPaneTitleFileName(itemBarcodesFileName);
+          BulkEditSearchPane.verifyPaneRecordsCount('4 item');
+          BulkEditSearchPane.verifyFileNameHeadLine(itemBarcodesFileName);
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
+
+          // Verify matched records from both tenants
+          folioInstance.barcodesCollege.forEach((barcode) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              barcode,
+            );
+          });
+
+          folioInstance.barcodesUniversity.forEach((barcode) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              barcode,
+            );
+          });
+
+          // Download matched records - downloadMatchedResults handles opening Actions menu
+          BulkEditActions.downloadMatchedResults();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            matchedRecordsFileBarcode,
+            folioInstance.barcodesCollege.concat(folioInstance.barcodesUniversity),
+            'barcode',
+          );
+
+          // Upload and verify Item UUIDs
+          uploadAndVerifyMatchedResults({
+            recordIdentifier: 'Item UUIDs',
+            fileName: itemUUIDsFileName,
+            expectedCountLabel: '4 item',
+            matchedFileName: matchedRecordsFileUUID,
+            expectedValues: folioInstance.itemIdsCollege.concat(folioInstance.itemIdsUniversity),
+            valueType: 'uuid',
+          });
+
+          // Upload and verify Item HRIDs
+          uploadAndVerifyMatchedResults({
+            recordIdentifier: 'Item HRIDs',
+            fileName: itemHRIDsFileName,
+            expectedCountLabel: '4 item',
+            matchedFileName: matchedRecordsFileHRID,
+            expectedValues: folioInstance.hridsCollege.concat(folioInstance.hridsUniversity),
+            valueType: 'hrid',
+          });
+
+          // Remove College affiliation from existing user and verify errors when uploading Item UUIDs
+          cy.logout();
+          cy.getAdminToken();
+          cy.removeAffiliationFromUser(Affiliations.College, user.userId);
+          cy.resetTenant();
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
+          BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+          verifyErrorsForCollegeItems(errorNoAffiliationTemplate);
+
+          // Return College affiliation and remove Roles from it to verify permissions errors
+          cy.logout();
+          cy.getAdminToken();
+          cy.assignAffiliationToUser(Affiliations.College, user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.deleteRolesForUserApi(user.userId);
+          cy.resetTenant();
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
+          BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+          verifyErrorsForCollegeItems(errorNoPermissionTemplate);
+        },
+      );
     });
   });
 });
