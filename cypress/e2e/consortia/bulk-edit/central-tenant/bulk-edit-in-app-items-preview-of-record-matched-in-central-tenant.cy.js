@@ -47,7 +47,7 @@ const capabSetsToAssign = [
 
 // Test data objects for instances
 const folioInstance = {
-  title: `C477538 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C477538_FolioInstance_${getRandomPostfix()}`,
   barcodesCollege: [],
   barcodesUniversity: [],
   itemIdsCollege: [],
@@ -56,8 +56,6 @@ const folioInstance = {
   hridsUniversity: [],
   holdingIdCollege: null,
   holdingIdUniversity: null,
-  // Track holdings IDs to ensure uniqueness across tenants
-  allHoldingIds: [],
 };
 
 // File names for different identifier types
@@ -278,15 +276,6 @@ describe('Bulk-edit', () => {
               permanentLocationId: locationId,
               sourceId,
             }))
-            .then((holding) => {
-              folioInstance.holdingIdCollege = holding.id;
-              // Track holding ID to ensure uniqueness across tenants
-              folioInstance.allHoldingIds.push({
-                id: holding.id,
-                tenant: Affiliations.College,
-              });
-              cy.wait(1000);
-            })
             .then(() => createItemsForTenant({
               firstBarcodePrefix: 'col_',
               secondBarcodePrefix: 'uni_',
@@ -307,23 +296,7 @@ describe('Bulk-edit', () => {
               permanentLocationId: locationId,
               sourceId,
             }))
-            .then((holding) => {
-              folioInstance.holdingIdUniversity = holding.id;
-              // Track holding ID to ensure uniqueness across tenants
-              folioInstance.allHoldingIds.push({
-                id: holding.id,
-                tenant: Affiliations.University,
-              });
-              cy.wait(1000);
-            })
             .then(() => {
-              // Verify that all holdings IDs are unique across tenants
-              const holdingIds = folioInstance.allHoldingIds.map((h) => h.id);
-              const uniqueHoldingIds = new Set(holdingIds);
-              expect(uniqueHoldingIds.size).to.equal(
-                holdingIds.length,
-                'All holdings IDs should be unique across tenants',
-              );
               // Verify College and University holdings are different
               expect(folioInstance.holdingIdCollege).to.not.equal(
                 folioInstance.holdingIdUniversity,
@@ -469,8 +442,8 @@ describe('Bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
 
-          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
-          BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item HRIDs');
+          BulkEditSearchPane.uploadFile(itemHRIDsFileName);
           verifyErrorsForCollegeItems(errorNoAffiliationTemplate);
 
           // Return College affiliation and remove Roles from it to verify permissions errors
