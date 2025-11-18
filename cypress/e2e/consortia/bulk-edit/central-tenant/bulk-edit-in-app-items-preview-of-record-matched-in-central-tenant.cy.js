@@ -385,6 +385,7 @@ describe('Bulk-edit', () => {
           matchedRecordsFileUUID,
           matchedRecordsFileHRID,
           errorFileHRID,
+          errorFileUUID,
         );
       });
 
