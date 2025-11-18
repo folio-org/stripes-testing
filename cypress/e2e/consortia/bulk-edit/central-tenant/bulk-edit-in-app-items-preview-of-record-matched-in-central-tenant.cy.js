@@ -73,11 +73,12 @@ const matchedRecordsFileHRID = BulkEditFiles.getMatchedRecordsFileName(itemHRIDs
 
 // Error file names
 const errorFileHRID = BulkEditFiles.getErrorsFromMatchingFileName(itemHRIDsFileName, true);
+const errorFileUUID = BulkEditFiles.getErrorsFromMatchingFileName(itemUUIDsFileName, true);
 
 // Error message templates
-const errorNoAffiliationTemplate = (itemId) => `User ${user.username} does not have required affiliation to view the item record - hrid=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoAffiliationTemplate = (key) => (itemId) => `User ${user.username} does not have required affiliation to view the item record - ${key}=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
 
-const errorNoPermissionTemplate = (itemId) => `User ${user.username} does not have required permission to view the item record - hrid=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoPermissionTemplate = (key) => (itemId) => `User ${user.username} does not have required permission to view the item record - ${key}=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
 
 const createRoleWithCapabilitiesForAffiliation = (affiliation, testData) => {
   cy.setTenant(affiliation);
@@ -188,17 +189,23 @@ const uploadAndVerifyMatchedResults = ({
   BulkEditFiles.verifyMatchedResultFileContent(matchedFileName, expectedValues, valueType);
 };
 
-const verifyErrorsForCollegeItems = (errorTemplate) => {
-  BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item HRIDs');
-  BulkEditSearchPane.uploadFile(itemHRIDsFileName);
-  BulkEditSearchPane.verifyPaneTitleFileName(itemHRIDsFileName);
+const verifyErrorsForCollegeItems = ({
+  errorTemplate,
+  identifier,
+  identifiersFile,
+  errorsFile,
+  identifierKey,
+}) => {
+  BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', identifier);
+  BulkEditSearchPane.uploadFile(identifiersFile);
+  BulkEditSearchPane.verifyPaneTitleFileName(identifiersFile);
   BulkEditSearchPane.verifyPaneRecordsCount('2 item');
   BulkEditSearchPane.verifyErrorLabel(2);
   BulkEditActions.openActions();
   BulkEditActions.downloadErrors();
-  ExportFile.verifyFileIncludes(errorFileHRID, [
-    `ERROR,${folioInstance.hridsCollege[0]},${errorTemplate(folioInstance.hridsCollege[0])}`,
-    `ERROR,${folioInstance.hridsCollege[1]},${errorTemplate(folioInstance.hridsCollege[1])}`,
+  ExportFile.verifyFileIncludes(errorsFile, [
+    `ERROR,${folioInstance[identifierKey][0]},${errorTemplate(folioInstance[identifierKey][0])}`,
+    `ERROR,${folioInstance[identifierKey][1]},${errorTemplate(folioInstance[identifierKey][1])}`,
   ]);
 };
 
@@ -382,8 +389,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477538 Verify "Preview of record matched" when uploading valid Items identifiers in Central tenant (consortia)',
-        { tags: ['smokeECS', 'firebird', 'C477538'] },
+        'C477538 Verify "Preview of record matched" when uploading valid Items identifiers in Central tenant (consortia) (firebird)',
+        { tags: ['criticalPathECS', 'firebird', 'C477538'] },
         () => {
           // Upload and verify Item barcodes
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');
@@ -435,9 +442,21 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.changeShowColumnCheckbox(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
           );
-          BulkEditSearchPane.verifyResultColumnTitles(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
-          );
+
+          folioInstance.hridsCollege.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              hrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+              tenantNames.college,
+            );
+          });
+          folioInstance.hridsUniversity.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              hrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+              tenantNames.university,
+            );
+          });
 
           [...folioInstance.hridsCollege, ...folioInstance.hridsUniversity].forEach((hrid) => {
             BulkEditSearchPane.verifyResultsUnderColumns(
@@ -467,7 +486,13 @@ describe('Bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
 
-          verifyErrorsForCollegeItems(errorNoAffiliationTemplate);
+          verifyErrorsForCollegeItems({
+            errorTemplate: errorNoAffiliationTemplate('id'),
+            identifier: 'Item UUIDs',
+            identifiersFile: itemUUIDsFileName,
+            errorsFile: errorFileUUID,
+            identifierKey: 'itemIdsCollege',
+          });
 
           // Return College affiliation and remove Roles from it to verify permissions errors
           cy.logout();
@@ -482,7 +507,13 @@ describe('Bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
 
-          verifyErrorsForCollegeItems(errorNoPermissionTemplate);
+          verifyErrorsForCollegeItems({
+            errorTemplate: errorNoPermissionTemplate('hrid'),
+            identifier: 'Item HRIDs',
+            identifiersFile: itemHRIDsFileName,
+            errorsFile: errorFileHRID,
+            identifierKey: 'hridsCollege',
+          });
         },
       );
     });
