@@ -38,7 +38,7 @@ describe('Data Import', () => {
       isDonor: true,
       isVendor: false,
     });
-    const donorNames = [organization.name, 'Amazon.com'];
+    const donorNames = ['Amazon.com', organization.name];
     const mappingProfile = {
       name: `C554639 Import order with donor field ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
