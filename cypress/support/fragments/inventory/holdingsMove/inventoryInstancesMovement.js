@@ -3,6 +3,7 @@ import {
   Button,
   DropdownMenu,
   Modal,
+  MultiColumnListCell,
   HTML,
   Section,
   including,
@@ -55,5 +56,13 @@ export default {
         .find(Badge())
         .has({ text: itemCount }),
     );
+  },
+
+  verifyItemBarcodeInHoldings(barcode, holdingsLocation, isExist = true) {
+    const targetCell = Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).find(
+      MultiColumnListCell({ content: barcode }),
+    );
+    if (isExist) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
   },
 };
