@@ -10,4 +10,8 @@ export default {
   setOrderApprovalsSetting(setting) {
     return OrderStorageSettings.updateSettingViaApi(setting);
   },
+
+  createApprovalsSetting(setting) {
+    return OrderStorageSettings.createSettingViaApi(setting);
+  },
 };

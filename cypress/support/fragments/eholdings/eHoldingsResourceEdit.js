@@ -33,6 +33,8 @@ const addCustomEmbargoPeriodButton = Button('Add custom embargo period');
 const removeCustomEmbargoButton = Button({ icon: 'trash', ariaLabel: 'Clear embargo period' });
 const proxiedURLKeyValue = KeyValue('Proxied URL');
 const customUrlField = TextField('Custom URL');
+const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
+const accessStatusTypeDefaultOptionText = 'Select an access status type';
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -178,5 +180,43 @@ export default {
           isDefaultSearchParamsRequired: false,
         });
       });
+  },
+
+  updateResourceAttributesViaApi(resourceId, updatedAttributes = {}) {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/resources/${resourceId}`,
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      const updatedBody = { ...response.body };
+      updatedBody.data.attributes = {
+        ...updatedBody.data.attributes,
+        ...updatedAttributes,
+      };
+      delete updatedBody.data.relationships;
+      delete updatedBody.included;
+      delete updatedBody.data.included;
+      delete updatedBody.jsonapi;
+
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `eholdings/resources/${resourceId}`,
+        body: updatedBody,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/vnd.api+json',
+      });
+    });
+  },
+
+  selectAccessStatusType: (accessStatusTypeName) => {
+    cy.do(accessStatusTypeDropdown.choose(accessStatusTypeName));
+    cy.expect(accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeName }));
+  },
+
+  removeAccessStatusType: () => {
+    cy.do(accessStatusTypeDropdown.choose(accessStatusTypeDefaultOptionText));
+    cy.expect(
+      accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeDefaultOptionText }),
+    );
   },
 };

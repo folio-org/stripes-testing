@@ -582,6 +582,17 @@ export default {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
   },
 
+  getCurrentDateTimeForFundsExpenseClasses() {
+    // Format date as fund-codes-export-FY2024-YYYY-MM-DD-HH_mm
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours() % 12 || 12).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}-${hours}_${minutes}`;
+  },
+
   getFormattedDateTimeWithSeconds() {
     return moment.utc().format('M/D/YYYY, h:mm:ss A');
   },

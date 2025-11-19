@@ -23,9 +23,9 @@ describe('MARC', () => {
     describe('Reporting MARC authority', () => {
       const testData = {
         authorityTitle: 'C916257 Coates, Ta-Nehisi',
-        tag100: '100',
+        tag1XX: '100',
         instanceTitle: 'C916257 Instance (from Local to Shared)',
-        updated100FieldValue: 'C916257 Coates, Ta-Nehisi UPDATED',
+        updated1XXFieldValue: 'C916257 Coates, Ta-Nehisi UPDATED',
         authoritySearchOption: 'Keyword',
         instanceSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         originalHeading: 'C916257 Coates, Ta-Nehisi',
@@ -35,15 +35,10 @@ describe('MARC', () => {
       };
 
       const linkingTagAndValues = {
-        authorityHeading: 'C407654 Lentz Local M1',
         rowIndex: 32,
         tag: '100',
-        secondBox: '1',
-        thirdBox: '\\',
         content: '$a C916257 Coates, Ta-Nehisi, $e author. $0 n1106202514',
-        eSubfield: '$e author.',
         zeroSubfield: '$0 http://id.loc.gov/authorities/names/n1106202514',
-        seventhBox: '',
       };
 
       const users = {};
@@ -171,8 +166,8 @@ describe('MARC', () => {
 
           // 3.Update 1XX field of opened MARC authority record
           MarcAuthority.edit();
-          QuickMarcEditor.updateExistingField(testData.tag100, testData.updated100FieldValue);
-          QuickMarcEditor.checkContent(testData.updated100FieldValue, 9);
+          QuickMarcEditor.updateExistingField(testData.tag1XX, testData.updated1XXFieldValue);
+          QuickMarcEditor.checkContent(testData.updated1XXFieldValue, 9);
           QuickMarcEditor.pressSaveAndClose();
 
           // 4. Trigger “MARC authority headings updates” report generation
@@ -201,6 +196,7 @@ describe('MARC', () => {
             fileNameMask,
             MarcAuthorities.verifyContentOfHeadingsUpdateReportParsed,
             [
+              1,
               testData.originalHeading,
               testData.newHeading,
               testData.identifier,

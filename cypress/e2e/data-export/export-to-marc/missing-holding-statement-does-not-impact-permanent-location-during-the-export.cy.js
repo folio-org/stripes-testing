@@ -134,7 +134,10 @@ describe('Data Export', () => {
         SelectJobProfile.verifySearchButton(true);
 
         // Step 2: Run job profile linked to mapping profile
-        ExportFileHelper.exportWithCreatedJobProfile(csvFileName, jobProfileName);
+        ExportFileHelper.exportWithDefaultJobProfile(
+          csvFileName,
+          `AT_C345416_JobProfile_${randomPostfix}`,
+        );
 
         // Step 3: Wait for completion and verify log row
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');

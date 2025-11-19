@@ -277,6 +277,7 @@ export default {
 
   verifyContentOfHeadingsUpdateReportParsed(
     actual,
+    rowIndex = 1,
     originalHeading,
     newHeading,
     identifier,
@@ -293,7 +294,7 @@ export default {
     };
 
     const headers = parseCsvLine(lines[0]);
-    const values = parseCsvLine(lines[1]);
+    const values = parseCsvLine(lines[rowIndex]);
 
     const record = {};
     headers.forEach((header, i) => {

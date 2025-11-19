@@ -16,6 +16,7 @@ import {
   Image,
   MultiColumnListRow,
   Headline,
+  Spinner,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
@@ -171,6 +172,7 @@ export const ERROR_MESSAGES = {
     'Underlying MARC record contains invalid data and the record cannot be updated.',
   MULTIPLE_SRS_RECORDS_ASSOCIATED:
     'Multiple SRS records are associated with the instance. The following SRS have been identified:',
+  getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
@@ -1133,6 +1135,70 @@ export default {
     ]);
   },
 
+  verifyItemActionShowColumns() {
+    const checkedByDefault = [
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_EFFECTIVE_LOCATION,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.EFFECTIVE_CALL_NUMBER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.TEMPORARY_LOAN_TYPE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+    ];
+    const uncheckedByDefault = [
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.INSTANCE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.HOLDINGS,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACCESSION_NUMBER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_IDENTIFIER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.FORMER_IDENTIFIER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATISTICAL_CODES,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NUMBER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SHELVING_ORDER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_LEVEL_CALL_NUMBER_TYPE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_LEVEL_CALL_NUMBER_PREFIX,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_LEVEL_CALL_NUMBER,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_LEVEL_CALL_NUMBER_SUFFIX,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NUMBER_OF_PIECES,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.DESCRIPTION_OF_PIECES,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ENUMERATION,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHRONOLOGY,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.VOLUME,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.YEAR_CAPTION,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NUMBER_OF_MISSING_PIECES,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MISSING_PIECES,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MISSING_PIECES_DATE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_DAMAGED_STATUS,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_DAMAGED_STATUS_DATE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BINDING_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PROVENANCE_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.REPRODUCTION_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_TEMPORARY_LOCATION,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.IS_BOUND_WITH,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BOUND_WITH_TITLES,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.TAGS,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.HOLDINGS_UUID,
+    ];
+
+    checkedByDefault.forEach((header) => {
+      cy.expect(DropdownMenu().find(Checkbox(header)).has({ checked: true }));
+    });
+    uncheckedByDefault.forEach((header) => {
+      cy.expect(DropdownMenu().find(Checkbox(header)).has({ checked: false }));
+    });
+  },
+
   verifyInstanceActionShowColumns() {
     cy.expect([
       DropdownMenu()
@@ -1232,6 +1298,7 @@ export default {
         }
       });
     });
+    cy.wait(500);
   },
 
   verifyCheckboxInActionsDropdownMenuChecked(name, isChecked = true) {
@@ -1279,7 +1346,8 @@ export default {
     });
   },
 
-  verifyResultColumnTitles(title) {
+  verifyResultColumnTitles(title, isNeedToScroll = false) {
+    if (isNeedToScroll) this.scrollInMatchedAccordion('right');
     cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
@@ -1293,7 +1361,8 @@ export default {
     });
   },
 
-  verifyAreYouSureColumnTitlesInclude(title) {
+  verifyAreYouSureColumnTitlesInclude(title, isNeedToScroll = false) {
+    if (isNeedToScroll) this.scrollInAreYouSureForm('right');
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).exists());
   },
 
@@ -1393,6 +1462,11 @@ export default {
 
   clearSearchColumnNameTextfield() {
     cy.do(searchColumnNameTextfield.clear());
+  },
+
+  verifySearchColumnNameTextFieldInFocus() {
+    cy.get('[placeholder="Search column name"]').click();
+    cy.expect(searchColumnNameTextfield.has({ focused: true }));
   },
 
   searchColumnNameTextfieldAbsent() {
@@ -1705,5 +1779,9 @@ export default {
           }),
       );
     });
+  },
+
+  verifySpinnerAbsent() {
+    cy.expect(bulkEditPane.find(Spinner()).absent());
   },
 };
