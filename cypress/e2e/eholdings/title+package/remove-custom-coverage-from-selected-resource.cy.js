@@ -22,26 +22,23 @@ describe('eHoldings', () => {
 
     before('Create user, login as admin & set custom coverage', () => {
       cy.getAdminToken();
+
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourcePath.split('/').pop(), {
+        customCoverages: [
+          {
+            beginCoverage: '2023-01-01',
+            endCoverage: '2023-12-31',
+          },
+        ],
+      });
+
       cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((user) => {
         testData.user = user;
-
-        cy.loginAsAdmin({
-          path: TopMenu.eholdingsPath + testData.resourcePath,
-          waiter: EHoldingsResourceView.waitLoading,
-        });
-
-        EHoldingsResourceView.goToEdit();
-        EHoldingsResourceEdit.waitLoading();
-        EHoldingsResourceEdit.swicthToCustomCoverageDates();
-        EHoldingsResourceEdit.setCustomCoverageDates(testData.coverageRange, 0);
-        EHoldingsResourceEdit.saveAndClose();
-        EHoldingsResourceView.waitLoading();
-
-        EHoldingsResourceView.checkCustomPeriods([testData.coverageRange]);
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
         EHoldingsSearch.switchToTitles();
       });

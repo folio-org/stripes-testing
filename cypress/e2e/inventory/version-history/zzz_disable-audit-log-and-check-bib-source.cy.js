@@ -135,8 +135,8 @@ describe('Inventory', () => {
             VersionHistorySection.verifyVersionHistoryCard(
               index,
               testData.date,
-              cardData.firstName,
-              cardData.lastName,
+              undefined,
+              undefined,
               cardData.isOriginal,
               cardData.isCurrent,
             );
@@ -203,8 +203,8 @@ describe('Inventory', () => {
                 VersionHistorySection.verifyVersionHistoryCard(
                   index,
                   testData.date,
-                  cardData.firstName,
-                  cardData.lastName,
+                  undefined,
+                  undefined,
                   cardData.isOriginal,
                   cardData.isCurrent,
                 );

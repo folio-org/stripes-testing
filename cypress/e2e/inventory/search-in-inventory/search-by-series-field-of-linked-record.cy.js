@@ -113,8 +113,6 @@ describe('Inventory', () => {
         cy.loginAsAdmin();
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
-        cy.reload();
-        InventoryInstances.waitContentLoading();
       }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
         cy.ifConsortia(true, () => {
@@ -134,9 +132,7 @@ describe('Inventory', () => {
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(3000);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.saveAndCloseWithValidationWarnings();
         InventoryInstance.verifySeriesStatement(0, including(testData.seriesStatement[i]));
         InventoryInstances.resetAllFilters();
       }
@@ -166,8 +162,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');

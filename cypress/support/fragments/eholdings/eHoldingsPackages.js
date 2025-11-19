@@ -378,4 +378,15 @@ export default {
   fillDateCoverage(startDate, endDate) {
     cy.do([startDateInput.fillIn(startDate), endDateInput.fillIn(endDate)]);
   },
+
+  waitForPackageToBeAdded(packageName) {
+    recurse(
+      () => this.getPackageViaApi(packageName),
+      (getPackageResponse) => getPackageResponse.body.data.length > 0,
+      {
+        timeout: 60_000,
+        delay: 1_000,
+      },
+    );
+  },
 };
