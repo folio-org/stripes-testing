@@ -33,6 +33,8 @@ const addCustomEmbargoPeriodButton = Button('Add custom embargo period');
 const removeCustomEmbargoButton = Button({ icon: 'trash', ariaLabel: 'Clear embargo period' });
 const proxiedURLKeyValue = KeyValue('Proxied URL');
 const customUrlField = TextField('Custom URL');
+const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
+const accessStatusTypeDefaultOptionText = 'Select an access status type';
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -204,5 +206,17 @@ export default {
         contentTypeHeader: 'application/vnd.api+json',
       });
     });
+  },
+
+  selectAccessStatusType: (accessStatusTypeName) => {
+    cy.do(accessStatusTypeDropdown.choose(accessStatusTypeName));
+    cy.expect(accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeName }));
+  },
+
+  removeAccessStatusType: () => {
+    cy.do(accessStatusTypeDropdown.choose(accessStatusTypeDefaultOptionText));
+    cy.expect(
+      accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeDefaultOptionText }),
+    );
   },
 };
