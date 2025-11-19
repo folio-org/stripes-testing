@@ -32,7 +32,7 @@ describe('MARC', () => {
         default: 'MARC authority - FOLIO',
         basicSearch: `MARC authority - AT_C442844_BasicSearch_${randomPostfix} - Search - FOLIO`,
         basicSearch2: `MARC authority - AT_C442844_MarcAuthority_${randomPostfix} - Search - FOLIO`,
-        basicSearch3: `MARC authority - AT_C442844_MarcAuthority_${randomPostfix}_B - Search - FOLIO`,
+        basicSearch3: `MARC authority - AT_C442844_MarcAuthority_${randomPostfix}_B - FOLIO`,
         advancedSearch: `MARC authority - keyword containsAll AT_C442844_AdvSearch_${randomPostfix} - Search - FOLIO`,
         advancedSearch2: `MARC authority - keyword containsAll AT_C442844_BasicSearch_${randomPostfix} - Search - FOLIO`,
       },
@@ -50,29 +50,29 @@ describe('MARC', () => {
       },
       {
         tag: testData.tag400,
-        content: `$a ${authorityHeadings[0]} - Field 400`,
+        content: `$a ${testData.authorityHeadingPrefix} - Field 400`,
         indicators: ['1', '\\'],
       },
       {
         tag: testData.tag500,
-        content: `$a ${authorityHeadings[0]} - Field 500`,
+        content: `$a ${testData.authorityHeadingPrefix} - Field 500`,
         indicators: ['1', '\\'],
       },
     ];
     const marcAuthorityFieldsB = [
       {
         tag: testData.tag110,
-        content: `$a ${authorityHeadings[0]} B`,
+        content: `$a ${authorityHeadings[1]}`,
         indicators: ['1', '\\'],
       },
       {
         tag: testData.tag410,
-        content: `$a ${authorityHeadings[0]} - Field 410`,
+        content: `$a ${testData.authorityHeadingPrefix} - Field 410`,
         indicators: ['1', '\\'],
       },
       {
         tag: testData.tag510,
-        content: `$a ${authorityHeadings[0]} - Field 510`,
+        content: `$a ${testData.authorityHeadingPrefix} - Field 510`,
         indicators: ['1', '\\'],
       },
     ];
@@ -151,13 +151,13 @@ describe('MARC', () => {
         MarcAuthorities.chooseTypeOfHeading(testData.typesOfHeading[0]);
         cy.title().should('eq', testData.expectedTitles.default);
 
+        MarcAuthorities.chooseTypeOfHeading(testData.typesOfHeading[1]);
         MarcAuthorities.searchBeats(testData.authorityHeadingPrefix);
         cy.title().should('eq', testData.expectedTitles.basicSearch2);
 
         MarcAuthoritiesSearch.selectExcludeReferencesFilter(
           REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
         );
-        MarcAuthorities.chooseTypeOfHeading(testData.typesOfHeading[1]);
         cy.title().should('eq', testData.expectedTitles.basicSearch2);
 
         MarcAuthorities.clickResetAndCheck();

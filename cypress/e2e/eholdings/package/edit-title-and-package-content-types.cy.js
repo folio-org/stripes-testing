@@ -7,11 +7,11 @@ import {
   EHoldingsPackagesSearch,
   EHoldingsPackage,
   EHoldingsSearch,
-  EHoldingsNewCustomTitle,
   EHoldingsResourceView,
   EHoldingsTitle,
   EHoldingsResourceEdit,
 } from '../../../support/fragments/eholdings';
+import EHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -34,66 +34,65 @@ describe('eHoldings', () => {
         packageName: testData.streamingPackageName,
         contentType: testData.streamingContentType,
         title: testData.titleName1,
-        customLabel: 'A',
+        customLabel: null,
         customValue: testData.customLabelValue1,
       },
       {
         packageName: testData.mixedPackageName,
         contentType: testData.mixedContentType,
         title: testData.titleName2,
-        customLabel: 'B',
+        customLabel: null,
         customValue: testData.customLabelValue2,
       },
     ];
 
     before('Creating user, packages via API, titles via UI and logging in', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleeHoldingsEnabled.gui,
-        Permissions.uieHoldingsRecordsEdit.gui,
-        Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-      ])
-        .then((user) => {
-          testData.user = user;
-          EHoldingsPackages.createPackageViaAPI({
-            data: {
-              type: 'packages',
-              attributes: {
-                name: testData.streamingPackageName,
-                contentType: testData.streamingContentType,
-              },
-            },
-          });
-        })
-        .then(() => {
-          EHoldingsPackages.createPackageViaAPI({
-            data: {
-              type: 'packages',
-              attributes: {
-                name: testData.mixedPackageName,
-                contentType: testData.mixedContentType,
-              },
-            },
-          });
-        })
-        .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsSearch.waitLoading,
-          });
-        })
-        .then(() => {
-          EHoldingsSearch.switchToTitles();
-          titlesToCreate.forEach((option) => {
-            EHoldingsNewCustomTitle.createNewTitle();
-            EHoldingsNewCustomTitle.waitLoading();
-            EHoldingsNewCustomTitle.fillInRequiredProperties(option.package, option.title);
-            EHoldingsNewCustomTitle.saveAndClose();
-            EHoldingsNewCustomTitle.checkCreationOfNewCustomTitle();
-            EHoldingsNewCustomTitle.close();
-            EHoldingsSearch.waitLoading();
-          });
+      cy.getKbsViaAPI().then((kbs) => {
+        testData.credentialsId = kbs[0].id;
+        cy.getEHoldingsCustomLabelsForKbViaAPI(testData.credentialsId).then((labels) => {
+          packageTitlePairs[0].customLabel = labels[0].attributes.displayLabel;
+          packageTitlePairs[1].customLabel = labels[1].attributes.displayLabel;
+          cy.createTempUser([
+            Permissions.moduleeHoldingsEnabled.gui,
+            Permissions.uieHoldingsRecordsEdit.gui,
+            Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
+          ])
+            .then((user) => {
+              testData.user = user;
+              EHoldingsPackages.createPackageViaAPI({
+                data: {
+                  type: 'packages',
+                  attributes: {
+                    name: testData.streamingPackageName,
+                    contentType: testData.streamingContentType,
+                  },
+                },
+              }).then(({ data: { id } }) => {
+                EHoldingsTitles.createEHoldingTitleVIaApi({
+                  titleName: titlesToCreate[0].title,
+                  packageId: id,
+                });
+              });
+            })
+            .then(() => {
+              EHoldingsPackages.createPackageViaAPI({
+                data: {
+                  type: 'packages',
+                  attributes: {
+                    name: testData.mixedPackageName,
+                    contentType: testData.mixedContentType,
+                  },
+                },
+              }).then(({ data: { id } }) => {
+                EHoldingsTitles.createEHoldingTitleVIaApi({
+                  titleName: titlesToCreate[1].title,
+                  packageId: id,
+                });
+              });
+            });
         });
+      });
     });
 
     after('Deleting user, data', () => {
@@ -111,6 +110,7 @@ describe('eHoldings', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsSearch.waitLoading,
+          authRefresh: true,
         });
 
         EHoldingsSearch.switchToPackages();

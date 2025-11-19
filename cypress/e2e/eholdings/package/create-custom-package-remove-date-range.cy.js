@@ -26,6 +26,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -33,9 +34,8 @@ describe('eHoldings', () => {
     after('Delete user and test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      EHoldingsPackages.getPackageViaApi(testData.customPackageName).then(() => {
-        EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
-      });
+      EHoldingsPackages.waitForPackageToBeAdded(testData.customPackageName);
+      EHoldingsPackages.deletePackageViaAPI(testData.customPackageName, true);
     });
 
     it(

@@ -46,8 +46,8 @@ export default {
   verifyTagAbsent(specialTag) {
     cy.do([
       tagsAccordion.clickHeader(),
-      tagsAccordion.find(byTagCheckbox).click(),
-      tagsAccordion.find(byTagCheckbox).click(),
+      tagsAccordion.find(byTagCheckbox).checkIfNotSelected(),
+      tagsAccordion.find(byTagCheckbox).checkIfNotSelected(),
       tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click(),
     ]);
     cy.expect(tagsAccordion.find(MultiSelectOption(including(specialTag))).absent());
