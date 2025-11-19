@@ -84,6 +84,7 @@ const bulkPageSelections = {
 export default {
   openStartBulkEditLocalForm() {
     cy.do(startBulkEditLocalButton.click());
+    cy.wait(2000);
   },
 
   openStartBulkEditFolioInstanceForm() {
