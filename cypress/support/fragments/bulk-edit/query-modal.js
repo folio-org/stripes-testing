@@ -170,9 +170,9 @@ export const instanceFieldValues = {
   series: 'Instance — Series',
 };
 export const itemFieldValues = {
-  instanceId: 'Instance — Instance UUID',
-  instanceHrid: 'Instance — Instance HRID',
-  instanceTitle: 'Instance — Resource title',
+  instanceId: 'Instances — Instance UUID',
+  instanceHrid: 'Instances — Instance HRID',
+  instanceTitle: 'Instances — Resource title',
   itemAccessionNumber: 'Items — Accession number',
   itemBarcode: 'Items — Barcode',
   itemCheckOutNotesNote: 'Item — Check out notes — Note',

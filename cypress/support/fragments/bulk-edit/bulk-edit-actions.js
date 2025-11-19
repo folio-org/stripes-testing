@@ -832,6 +832,14 @@ export default {
     ]);
   },
 
+  openSelectLoanTypeDropdown(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'loanType' }))
+        .click(),
+    );
+  },
+
   editSuppressFromDiscovery(value, rowIndex = 0, holdings = false) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })

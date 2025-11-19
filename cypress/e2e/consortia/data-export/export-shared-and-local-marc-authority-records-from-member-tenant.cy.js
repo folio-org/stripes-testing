@@ -240,7 +240,6 @@ describe('Data Export', () => {
             DataExportLogs.waitLoading();
 
             // Step 9-10: Upload CSV and run export job
-            cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
             ExportFileHelper.uploadFile(exportedCSVFileName);
             ExportFileHelper.exportWithDefaultJobProfile(
               exportedCSVFileName,
@@ -248,8 +247,7 @@ describe('Data Export', () => {
               'Authorities',
               '.csv',
             );
-            cy.wait(3000);
-
+            cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
             cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
               const { jobExecutions } = response.body;
               const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
