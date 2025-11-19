@@ -2,6 +2,7 @@ import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/consta
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -13,8 +14,8 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-// import Users from '../../../../support/fragments/users/users';
-import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -23,7 +24,7 @@ describe('Inventory', () => {
         instance: {},
         user: {},
         holdings: {},
-        item: {},
+        item: { barcode: getRandomPostfix() },
       };
 
       before('Create test data', () => {
@@ -84,39 +85,37 @@ describe('Inventory', () => {
         });
         cy.resetTenant();
 
-        cy.createTempUser([
-          // Permissions.uiInventoryViewCreateInstances.gui
-        ]).then((userProperties) => {
-          testData.user = userProperties;
+        cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then(
+          (userProperties) => {
+            testData.user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.inventoryAll.gui,
-            Permissions.uiInventoryUpdateOwnership.gui,
-          ]);
-          cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(testData.user.userId, [
+              Permissions.inventoryAll.gui,
+              Permissions.uiInventoryUpdateOwnership.gui,
+            ]);
+            cy.resetTenant();
 
-          cy.login(testData.user.username, testData.user.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
-        });
+            cy.login(testData.user.username, testData.user.password);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+          },
+        );
       });
 
-      // after('Delete test data', () => {
-      //   cy.resetTenant();
-      //   cy.getAdminToken();
-      //   cy.setTenant(Affiliations.College);
-      //   Orders.deleteOrderViaApi(testData.memberOrder.id);
-      //   InventoryHoldings.deleteHoldingRecordViaApi(testData.holdings.id);
-      //   cy.resetTenant();
-      //   cy.getAdminToken();
-      //   Orders.deleteOrderViaApi(testData.centralOrder.id);
-      //   InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      //   Users.deleteViaApi(testData.user.userId);
-      // });
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instance.instanceId);
+        cy.resetTenant();
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        Users.deleteViaApi(testData.user.userId);
+      });
 
       it(
         'C526748 (CONSORTIA) Verify presence of update ownership action for Holdings when the permission for updating ownership is assigned on Member tenant (consortia) (folijet)',
