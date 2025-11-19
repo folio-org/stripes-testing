@@ -29,27 +29,23 @@ const itemUUIDsFileName = `itemUUIDs-${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(itemUUIDsFileName, true);
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Material specified;URL public note\n';
-
 const itemWithoutElectronicAccess = {
-  instanceTitle: `AT_C877132_Instance_NoElectronicAccess_${getRandomPostfix()}`,
+  instanceTitle: `AT_C877132_FolioInstance_NoElectronicAccess_${getRandomPostfix()}`,
   barcode: `item_no_ea_${getRandomPostfix()}`,
 };
-
 const itemWithElectronicAccess = {
-  instanceTitle: `AT_C877132_Instance_WithElectronicAccess_${getRandomPostfix()}`,
+  instanceTitle: `AT_C877132_FolioInstance_WithElectronicAccess_${getRandomPostfix()}`,
   barcode: `item_with_ea_${getRandomPostfix()}`,
   electronicAccess: {
-    uri: 'http://search.ebscohost.com/login.aspx?direct=true&scope=site&db=e000xna&AN=281338',
-    linkText: 'eBooks on EBSCOhost',
-    materialsSpecification: 'Table of contents only',
-    publicNote:
-      'FTP access to PostScript version includes groups of article files with .pdf extension',
+    uri: 'http://www.jstor.org/stable/12345',
+    linkText: 'JSTOR Database Access',
+    materialsSpecification: 'Full text available',
+    publicNote: 'Access requires institutional login credentials',
     relationshipId: null,
   },
 };
-
 const itemWithMultipleElectronicAccess = {
-  instanceTitle: `AT_C877132_Instance_WithMultipleElectronicAccess_${getRandomPostfix()}`,
+  instanceTitle: `AT_C877132_FolioInstance_WithMultipleElectronicAccess_${getRandomPostfix()}`,
   barcode: `item_multiple_ea_${getRandomPostfix()}`,
   electronicAccess: [
     {
@@ -61,23 +57,100 @@ const itemWithMultipleElectronicAccess = {
       relationshipId: null,
     },
     {
-      uri: 'http://search.ebscohost.com/login.aspx?direct=true&scope=site&db=e000xna&AN=281338',
-      linkText: 'eBooks on EBSCOhost',
+      uri: 'https://doi.org/10.1234/example.doi',
+      linkText: 'Digital Object Identifier',
       materialsSpecification: '',
       publicNote: '',
       relationshipName: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
       relationshipId: null,
     },
     {
-      uri: 'http://search.ebscohost.com/login.aspx?direct=true&scope=site&db=e000xna&AN=281338',
-      linkText: 'eBooks on EBSCOhost',
-      materialsSpecification: 'Table of contents only',
-      publicNote:
-        'FTP access to PostScript version includes groups of article files with .pdf extension',
+      uri: 'http://www.archive.org/details/example12345',
+      linkText: 'Internet Archive Copy',
+      materialsSpecification: 'Archived version from 2020',
+      publicNote: 'Freely accessible digital preservation copy',
       relationshipName: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RELATED_RESOURCE,
       relationshipId: null,
     },
   ],
+};
+
+// Helper function to verify electronic access in table forms for all 3 items
+const verifyElectronicAccessInTableForm = (formType) => {
+  if (formType === BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED) {
+    BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+      itemWithoutElectronicAccess.itemHrid,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+      '',
+    );
+  } else if (formType === BULK_EDIT_FORMS.ARE_YOU_SURE) {
+    BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+      itemWithoutElectronicAccess.itemHrid,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+      '',
+    );
+  } else {
+    BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+      itemWithoutElectronicAccess.itemHrid,
+      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+      '',
+    );
+  }
+
+  BulkEditSearchPane.verifyElectronicAccessTableInForm(
+    formType,
+    itemWithElectronicAccess.itemHrid,
+    ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+    itemWithElectronicAccess.electronicAccess.uri,
+    itemWithElectronicAccess.electronicAccess.linkText,
+    itemWithElectronicAccess.electronicAccess.materialsSpecification,
+    itemWithElectronicAccess.electronicAccess.publicNote,
+  );
+
+  itemWithMultipleElectronicAccess.electronicAccess.forEach((access) => {
+    BulkEditSearchPane.verifyElectronicAccessTableInForm(
+      formType,
+      itemWithMultipleElectronicAccess.itemHrid,
+      access.relationshipName,
+      access.uri,
+      access.linkText || '-',
+      access.materialsSpecification || '-',
+      access.publicNote || '-',
+    );
+  });
+};
+
+// Helper function to verify electronic access in CSV files for all 3 items
+const verifyElectronicAccessInCSVFile = (fileName) => {
+  const singleElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${itemWithElectronicAccess.electronicAccess.uri};${itemWithElectronicAccess.electronicAccess.linkText};${itemWithElectronicAccess.electronicAccess.materialsSpecification};${itemWithElectronicAccess.electronicAccess.publicNote}`;
+
+  const multipleElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${itemWithMultipleElectronicAccess.electronicAccess
+    .map((access) => {
+      return `${access.relationshipName};${access.uri};${access.linkText || '-'};${access.materialsSpecification || '-'};${access.publicNote || '-'}`;
+    })
+    .join('|')}`;
+
+  BulkEditFiles.verifyValueInRowByUUID(
+    fileName,
+    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+    itemWithoutElectronicAccess.itemHrid,
+    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+    '',
+  );
+  BulkEditFiles.verifyValueInRowByUUID(
+    fileName,
+    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+    itemWithElectronicAccess.itemHrid,
+    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+    singleElectronicAccessInFile,
+  );
+  BulkEditFiles.verifyValueInRowByUUID(
+    fileName,
+    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+    itemWithMultipleElectronicAccess.itemHrid,
+    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
+    multipleElectronicAccessInFile,
+  );
 };
 
 describe('Bulk-edit', () => {
@@ -106,7 +179,6 @@ describe('Bulk-edit', () => {
         InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
           sourceId = folioSource.id;
 
-          // Get URL relationships for electronic access
           cy.wrap([
             ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
             ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE,
@@ -133,91 +205,52 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // Create item without electronic access
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId,
-              title: itemWithoutElectronicAccess.instanceTitle,
+          // Create items in a loop
+          const testItems = [
+            { data: itemWithoutElectronicAccess, electronicAccess: [] },
+            {
+              data: itemWithElectronicAccess,
+              electronicAccess: [itemWithElectronicAccess.electronicAccess],
             },
-          }).then((createdInstanceData) => {
-            itemWithoutElectronicAccess.instanceId = createdInstanceData.instanceId;
-
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: itemWithoutElectronicAccess.instanceId,
-              permanentLocationId: locationId,
-              sourceId,
-            }).then((holding) => {
-              InventoryItems.createItemViaApi({
-                barcode: itemWithoutElectronicAccess.barcode,
-                holdingsRecordId: holding.id,
-                materialType: { id: materialTypeId },
-                permanentLoanType: { id: loanTypeId },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              }).then((item) => {
-                itemWithoutElectronicAccess.itemId = item.id;
-                itemWithoutElectronicAccess.itemHrid = item.hrid;
-              });
-            });
-          });
-
-          // Create item with electronic access
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId,
-              title: itemWithElectronicAccess.instanceTitle,
+            {
+              data: itemWithMultipleElectronicAccess,
+              electronicAccess: itemWithMultipleElectronicAccess.electronicAccess,
             },
-          }).then((createdInstanceData) => {
-            itemWithElectronicAccess.instanceId = createdInstanceData.instanceId;
+          ];
 
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: itemWithElectronicAccess.instanceId,
-              permanentLocationId: locationId,
-              sourceId,
-            }).then((holding) => {
-              InventoryItems.createItemViaApi({
-                barcode: itemWithElectronicAccess.barcode,
-                holdingsRecordId: holding.id,
-                materialType: { id: materialTypeId },
-                permanentLoanType: { id: loanTypeId },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                electronicAccess: [itemWithElectronicAccess.electronicAccess],
-              }).then((item) => {
-                itemWithElectronicAccess.itemId = item.id;
-                itemWithElectronicAccess.itemHrid = item.hrid;
-              });
-            });
-          });
+          cy.wrap(testItems).each((testItem, index) => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId,
+                title: testItem.data.instanceTitle,
+              },
+            }).then((createdInstanceData) => {
+              testItem.data.instanceId = createdInstanceData.instanceId;
 
-          // Create item with multiple electronic access entries
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId,
-              title: itemWithMultipleElectronicAccess.instanceTitle,
-            },
-          }).then((createdInstanceData) => {
-            itemWithMultipleElectronicAccess.instanceId = createdInstanceData.instanceId;
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: testItem.data.instanceId,
+                permanentLocationId: locationId,
+                sourceId,
+              }).then((holding) => {
+                InventoryItems.createItemViaApi({
+                  barcode: testItem.data.barcode,
+                  holdingsRecordId: holding.id,
+                  materialType: { id: materialTypeId },
+                  permanentLoanType: { id: loanTypeId },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                  electronicAccess: testItem.electronicAccess,
+                }).then((item) => {
+                  testItem.data.itemId = item.id;
+                  testItem.data.itemHrid = item.hrid;
 
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: itemWithMultipleElectronicAccess.instanceId,
-              permanentLocationId: locationId,
-              sourceId,
-            }).then((holding) => {
-              InventoryItems.createItemViaApi({
-                barcode: itemWithMultipleElectronicAccess.barcode,
-                holdingsRecordId: holding.id,
-                materialType: { id: materialTypeId },
-                permanentLoanType: { id: loanTypeId },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                electronicAccess: itemWithMultipleElectronicAccess.electronicAccess,
-              }).then((item) => {
-                itemWithMultipleElectronicAccess.itemId = item.id;
-                itemWithMultipleElectronicAccess.itemHrid = item.hrid;
-
-                // Create CSV file with item UUIDs
-                FileManager.createFile(
-                  `cypress/fixtures/${itemUUIDsFileName}`,
-                  `${itemWithoutElectronicAccess.itemId}\n${itemWithElectronicAccess.itemId}\n${itemWithMultipleElectronicAccess.itemId}`,
-                );
+                  // Create CSV file after last item is created
+                  if (index === testItems.length - 1) {
+                    FileManager.createFile(
+                      `cypress/fixtures/${itemUUIDsFileName}`,
+                      `${itemWithoutElectronicAccess.itemId}\n${itemWithElectronicAccess.itemId}\n${itemWithMultipleElectronicAccess.itemId}`,
+                    );
+                  }
+                });
               });
             });
           });
@@ -269,75 +302,12 @@ describe('Bulk-edit', () => {
         );
 
         // Step 2: Check display of "Electronic access" Item data in the "Preview of records matched" table
-        // For Item without populated "Electronic access" data column is not populated
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
-
-        // For Item with "Electronic access" data column is populated with electronic access table
-        BulkEditSearchPane.verifyElectronicAccessTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
-          itemWithElectronicAccess.itemHrid,
-          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
-          itemWithElectronicAccess.electronicAccess.uri,
-          itemWithElectronicAccess.electronicAccess.linkText,
-          itemWithElectronicAccess.electronicAccess.materialsSpecification,
-          itemWithElectronicAccess.electronicAccess.publicNote,
-        );
-
-        // For Item with multiple "Electronic access" entries
-        itemWithMultipleElectronicAccess.electronicAccess.forEach((access) => {
-          BulkEditSearchPane.verifyElectronicAccessTableInForm(
-            BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
-            itemWithMultipleElectronicAccess.itemHrid,
-            access.relationshipName,
-            access.uri,
-            access.linkText || '-',
-            access.materialsSpecification || '-',
-            access.publicNote || '-',
-          );
-        });
+        verifyElectronicAccessInTableForm(BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED);
 
         // Step 3: Download matched records (CSV) and check display of "Electronic access" Item data
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
-
-        // Verify item without electronic access has empty electronic access column
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
-
-        // Verify item with electronic access
-        const singleElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${itemWithElectronicAccess.electronicAccess.uri};${itemWithElectronicAccess.electronicAccess.linkText};${itemWithElectronicAccess.electronicAccess.materialsSpecification};${itemWithElectronicAccess.electronicAccess.publicNote}`;
-
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          singleElectronicAccessInFile,
-        );
-
-        // Verify item with multiple electronic access entries
-        const multipleElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${itemWithMultipleElectronicAccess.electronicAccess
-          .map((access) => {
-            return `${access.relationshipName};${access.uri};${access.linkText || '-'};${access.materialsSpecification || '-'};${access.publicNote || '-'}`;
-          })
-          .join('|')}`;
-
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithMultipleElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          multipleElectronicAccessInFile,
-        );
+        verifyElectronicAccessInCSVFile(fileNames.matchedRecordsCSV);
 
         // Step 4: Start bulk edit - Select any option and any action to edit Item records, Click "Confirm changes"
         BulkEditActions.openStartBulkEditForm();
@@ -349,39 +319,7 @@ describe('Bulk-edit', () => {
 
         // Step 5: Check display of "Electronic access" Item data in "Preview of records to be changed" table
         BulkEditActions.verifyMessageBannerInAreYouSureForm(3);
-
-        // For Item without populated "Electronic access" data column is not populated in "Are you sure" form
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
-
-        // For Item with "Electronic access" - verify data is rendered consistently
-        BulkEditSearchPane.verifyElectronicAccessTableInForm(
-          BULK_EDIT_FORMS.ARE_YOU_SURE,
-          itemWithElectronicAccess.itemHrid,
-          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
-          itemWithElectronicAccess.electronicAccess.uri,
-          itemWithElectronicAccess.electronicAccess.linkText,
-          itemWithElectronicAccess.electronicAccess.materialsSpecification,
-          itemWithElectronicAccess.electronicAccess.publicNote,
-        );
-
-        // For Item with multiple "Electronic access" entries in "Are you sure" form
-        itemWithMultipleElectronicAccess.electronicAccess.forEach((access) => {
-          BulkEditSearchPane.verifyElectronicAccessTableInForm(
-            BULK_EDIT_FORMS.ARE_YOU_SURE,
-            itemWithMultipleElectronicAccess.itemHrid,
-            access.relationshipName,
-            access.uri,
-            access.linkText || '-',
-            access.materialsSpecification || '-',
-            access.publicNote || '-',
-          );
-        });
-
-        // Also verify suppress from discovery change
+        verifyElectronicAccessInTableForm(BULK_EDIT_FORMS.ARE_YOU_SURE);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           itemWithElectronicAccess.itemHrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
@@ -390,32 +328,7 @@ describe('Bulk-edit', () => {
 
         // Step 6: Download preview in CSV format and check display of "Electronic access" Item data
         BulkEditActions.downloadPreview();
-
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
-
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          singleElectronicAccessInFile,
-        );
-
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithMultipleElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          multipleElectronicAccessInFile,
-        );
-
-        // Verify suppress from discovery in preview CSV
+        verifyElectronicAccessInCSVFile(fileNames.previewRecordsCSV);
         BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
@@ -434,61 +347,18 @@ describe('Bulk-edit', () => {
         );
 
         // Step 8: Check display of "Electronic access" Item data in "Preview of records changed" table
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
-
-        // For Item with "Electronic access" - verify data is rendered consistently in "Preview of records changed" form
-        BulkEditSearchPane.verifyElectronicAccessTableInForm(
-          BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-          itemWithElectronicAccess.itemHrid,
-          ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
-          itemWithElectronicAccess.electronicAccess.uri,
-          itemWithElectronicAccess.electronicAccess.linkText,
-          itemWithElectronicAccess.electronicAccess.materialsSpecification,
-          itemWithElectronicAccess.electronicAccess.publicNote,
-        );
-
-        // For Item with multiple "Electronic access" entries in "Preview of records changed" form
-        itemWithMultipleElectronicAccess.electronicAccess.forEach((access, index) => {
-          BulkEditSearchPane.verifyElectronicAccessTableInForm(
-            BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-            itemWithMultipleElectronicAccess.itemHrid,
-            access.relationshipName,
-            access.uri,
-            access.linkText || '-',
-            access.materialsSpecification || '-',
-            access.publicNote || '-',
-            index,
-          );
-        });
+        verifyElectronicAccessInTableForm(BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED);
 
         // Step 9: Download changed records (CSV) and check display of "Electronic access" Item data
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.changedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
+        verifyElectronicAccessInCSVFile(fileNames.changedRecordsCSV);
         BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
           itemWithElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          singleElectronicAccessInFile,
-        );
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.changedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithMultipleElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          multipleElectronicAccessInFile,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          true,
         );
 
         // remove earlier downloaded files
@@ -504,74 +374,28 @@ describe('Bulk-edit', () => {
 
         // Step 12: Click on the "File with the matching records" hyperlink, Check display of "Electronic access" Item data
         BulkEditLogs.downloadFileWithMatchingRecords();
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          singleElectronicAccessInFile,
-        );
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.matchedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithMultipleElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          multipleElectronicAccessInFile,
-        );
+        verifyElectronicAccessInCSVFile(fileNames.matchedRecordsCSV);
 
         // Step 13: Click on the "File with the preview of proposed changes (CSV)" hyperlink, Check display of "Electronic access" Item data
         BulkEditLogs.downloadFileWithProposedChanges();
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
+        verifyElectronicAccessInCSVFile(fileNames.previewRecordsCSV);
         BulkEditFiles.verifyValueInRowByUUID(
           fileNames.previewRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
           itemWithElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          singleElectronicAccessInFile,
-        );
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithMultipleElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          multipleElectronicAccessInFile,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          true,
         );
 
         // Step 14: Click on the "File with updated records (CSV)" hyperlink, Check display of "Electronic access" Item data
         BulkEditLogs.downloadFileWithUpdatedRecords();
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.changedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithoutElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          '',
-        );
+        verifyElectronicAccessInCSVFile(fileNames.changedRecordsCSV);
         BulkEditFiles.verifyValueInRowByUUID(
           fileNames.changedRecordsCSV,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
           itemWithElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          singleElectronicAccessInFile,
-        );
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.changedRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
-          itemWithMultipleElectronicAccess.itemHrid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-          multipleElectronicAccessInFile,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          true,
         );
       },
     );
