@@ -10,6 +10,7 @@ import {
   Accordion,
   Badge,
 } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
 
@@ -64,5 +65,13 @@ export default {
     );
     if (isExist) cy.expect(targetCell.exists());
     else cy.expect(targetCell.absent());
+  },
+
+  checkHoldingsMoveSuccessCallout(holdingsCount) {
+    const message =
+      holdingsCount === 1
+        ? '1 holding has been successfully moved.'
+        : `${holdingsCount} holdings have been successfully moved.`;
+    InteractorsTools.checkCalloutMessage(message);
   },
 };
