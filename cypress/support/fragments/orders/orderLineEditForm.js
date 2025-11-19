@@ -50,7 +50,7 @@ const orderLineFields = {
   claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
 };
 
-const vendorDetailsFields = {
+export const vendorDetailsFields = {
   accountNumber: vendorDetailsSection.find(Select({ name: 'vendorDetail.vendorAccount' })),
 };
 
@@ -327,5 +327,10 @@ export default {
   },
   verifyOrderLineEditFormClosed() {
     cy.expect(orderLineEditFormRoot.absent());
+  },
+
+  checkSelectOptions(selectField, expectedOptions) {
+    cy.do(selectField.focus());
+    cy.expect(selectField.has({ optionsText: expectedOptions }));
   },
 };

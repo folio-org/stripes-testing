@@ -4,9 +4,11 @@ import {
   TextField,
   Button,
   Checkbox,
+  ListItem,
   MultiSelect,
   MultiSelectOption,
   including,
+  Section,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
@@ -16,6 +18,7 @@ const tagsAccordion = Accordion({ id: 'accordionTagFilter' });
 const byTagCheckbox = Checkbox('Search by tags only');
 const accessStatusTypesAccordion = Accordion('Access status types');
 const byAccessStatusTypesCheckbox = Checkbox('Search by access status types only');
+const resultSection = Section({ id: 'search-results' });
 
 export default {
   byContentType: (type) => {
@@ -65,5 +68,24 @@ export default {
     const targetOption = accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType));
     if (isShown) cy.expect(targetOption.exists());
     else cy.expect(targetOption.absent());
+  },
+
+  checkResultsListShown: (isShown = true) => {
+    const result = resultSection.find(
+      ListItem({ className: including('list-item-'), index: 0 }).find(Button()),
+    );
+    if (isShown) cy.expect(result.exists());
+    else cy.expect(result.absent());
+  },
+
+  selectAccessStatusType(accessStatusType) {
+    cy.do(accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType)).clickSegment());
+  },
+
+  verifyResultsCount(expectedCount) {
+    cy.expect([
+      ListItem({ className: including('list-item-'), index: expectedCount - 1 }).exists(),
+      ListItem({ className: including('list-item-'), index: expectedCount }).absent(),
+    ]);
   },
 };
