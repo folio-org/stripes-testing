@@ -4,6 +4,7 @@ import {
   ORDER_STATUSES,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import { TransactionDetails } from '../../support/fragments/finance';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -176,7 +177,7 @@ describe('ui-orders: Orders', () => {
 
   it(
     'C375290 Editing fund distribution and increasing cost in PO line when related Paid invoice exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C375290'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
@@ -190,13 +191,19 @@ describe('ui-orders: Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransactionFundTo(
-        defaultFiscalYear.code,
-        '($20.00)',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${secondFund.name} (${secondFund.code})`,
-      );
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: defaultFiscalYear.code },
+          { key: 'Amount', value: '0.00' },
+          { key: 'Source', value: `${orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${secondFund.name} (${secondFund.code})` },
+          { key: 'Initial encumbrance', value: '70.00' },
+          { key: 'Awaiting payment', value: '0.00' },
+          { key: 'Expended', value: '50.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
       Funds.closeTransactionDetails();
       Funds.closePaneHeader();
       Funds.closeBudgetDetails();
@@ -211,6 +218,7 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
+      Funds.checkNoTransactionOfType('Encumbrance');
       Funds.selectTransactionInList('Payment');
       Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
