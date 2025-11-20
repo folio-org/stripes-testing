@@ -229,13 +229,7 @@ export default {
   saveAndClose() {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
-    cy.expect([
-      actionsButton.exists(),
-      or(
-        PaneHeader(including('Edit instance')).absent(),
-        PaneHeader(including('Edit shared instance')).absent(),
-      ),
-    ]);
+    cy.expect([actionsButton.exists(), PaneHeader(matching(/Edit .*instance/)).absent()]);
   },
   clickSaveAndCloseButton() {
     cy.do(saveAndCloseButton.click());

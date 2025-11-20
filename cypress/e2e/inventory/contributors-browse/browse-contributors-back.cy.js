@@ -47,37 +47,39 @@ describe('Inventory', () => {
           },
         }).then((instanceIds) => {
           testData.instanceId = instanceIds.instanceId;
-        });
-      });
 
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
-      InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
-      InventorySearchAndFilter.selectSearchResultItem();
-      InventorySearchAndFilter.clickEditInstance();
-      for (let i = 0; i < 5; i++) {
-        InstanceRecordEdit.clickAddContributor();
-        InstanceRecordEdit.fillContributorData(
-          i,
-          `${testData.contributor.precedingNamesPrefix}${i}`,
-          testData.contributor.nameTypes.personal,
-          testData.contributor.types.actor,
-        );
-      }
-      InstanceRecordEdit.clickAddContributor();
-      InstanceRecordEdit.fillContributorData(
-        5,
-        testData.contributor.name,
-        testData.contributor.nameTypes.personal,
-        testData.contributor.types.actor,
-      );
-      InstanceRecordEdit.saveAndClose();
-      InventoryInstance.verifyInstanceTitle(testData.item.instanceName);
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+            authRefresh: true,
+          });
+          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
+          InventorySearchAndFilter.selectSearchResultItem();
+          InventorySearchAndFilter.clickEditInstance();
+          for (let i = 0; i < 5; i++) {
+            InstanceRecordEdit.clickAddContributor();
+            InstanceRecordEdit.fillContributorData(
+              i,
+              `${testData.contributor.precedingNamesPrefix}${i}`,
+              testData.contributor.nameTypes.personal,
+              testData.contributor.types.actor,
+            );
+          }
+          InstanceRecordEdit.clickAddContributor();
+          InstanceRecordEdit.fillContributorData(
+            5,
+            testData.contributor.name,
+            testData.contributor.nameTypes.personal,
+            testData.contributor.types.actor,
+          );
+          InstanceRecordEdit.saveAndClose();
+          InventoryInstance.verifyInstanceTitle(testData.item.instanceName);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+            authRefresh: true,
+          });
+        });
       });
     });
 
