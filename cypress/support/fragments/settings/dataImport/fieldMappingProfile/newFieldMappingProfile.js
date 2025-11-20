@@ -152,9 +152,9 @@ const selectOrganizationByName = (organizationName) => {
   cy.do([
     organizationModal.find(searchField).fillIn(organizationName),
     organizationModal.find(searchButton).click(),
-    organizationModal.find(HTML(including('1 record found'))).exists(),
-    MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
+  cy.expect(MultiColumnListCell(organizationName).exists());
+  cy.do(MultiColumnListCell({ content: organizationName }).click());
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
@@ -255,7 +255,7 @@ const addDonor = (profile) => {
         cy.wait(1000);
         cy.do(addDonorsModal.find(searchButton).click());
         cy.expect(addDonorsModal.find(HTML(including('1 record found'))).exists());
-        cy.do(MultiColumnListCell(profile.donor[i].value).click({ row: 0, columnIndex: 0 }));
+        cy.do(MultiColumnListCell({ content: profile.donor[i].value }).click());
       } else {
         cy.do([
           addDonorButton.click(),
@@ -285,8 +285,7 @@ const addMaterialSupplier = (profile) => {
       physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.materialSupplier),
       organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.materialSupplier).click({ row: 0, columnIndex: 0 }),
+      MultiColumnListCell({ content: profile.materialSupplier }).click(),
     ]);
   }
 };
@@ -297,8 +296,7 @@ const addAccessProvider = (profile) => {
       Accordion('E-resources details').find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.accessProvider),
       organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.accessProvider).click({ row: 0, columnIndex: 0 }),
+      MultiColumnListCell({ content: profile.accessProvider }).click(),
     ]);
   }
 };
