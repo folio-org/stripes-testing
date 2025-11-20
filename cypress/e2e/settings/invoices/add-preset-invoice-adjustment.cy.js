@@ -34,6 +34,9 @@ describe('Invoices', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Adjustments.getAdjustmentByDescription(adjustment.description).then((adj) => {
+          Adjustments.deleteViaApi(adj.id);
+        });
         Users.deleteViaApi(user.userId);
       });
     });
