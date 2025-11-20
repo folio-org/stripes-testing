@@ -1800,6 +1800,13 @@ export const INVENTORY_APP_CONTEXT_DROPDOWN_OPTIONS = {
   SHORTCUTS: 'Keyboard shortcuts',
 };
 
+export const EHOLDINGS_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'eholdings app Search',
+  SHORTCUTS: 'Keyboard shortcuts',
+  INQUIRY: 'Submit a KB Content Inquiry',
+  STATUS: 'EBSCO System status',
+};
+
 export const EHOLDINGS_KB_SETTINGS_TABS = {
   ROOT_PROXY: 'Root proxy',
   CUSTOM_LABELS: 'Custom labels',

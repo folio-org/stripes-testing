@@ -63,7 +63,7 @@ export default {
         searchParams: query,
       })
       .then((res) => {
-        return res.body.templates[0].id;
+        return res.body.templates[0]?.id;
       });
   },
   deleteViaApi(templateId) {
