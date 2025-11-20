@@ -11,6 +11,11 @@ describe('eHoldings', () => {
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
+        embargoValue: 4,
+        embargoUnit: 'Months',
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
@@ -20,6 +25,7 @@ describe('eHoldings', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
           waiter: EHoldingsResourceView.waitLoading,
+          authRefresh: true,
         });
       });
     });

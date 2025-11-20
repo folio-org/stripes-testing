@@ -39,6 +39,9 @@ describe('eHoldings', () => {
         EHoldingsTitle.searchTitle(testData.existingTitle);
         EHoldingsTitlesSearch.openTitle(testData.existingTitle);
         EHoldingsTitle.waitPackagesLoading();
+        EHoldingsTitle.changePackageStatusViaApi();
+        cy.reload();
+        EHoldingsTitle.waitPackagesLoading();
         EHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
         EHoldingsTitle.waitPackagesLoading();
 

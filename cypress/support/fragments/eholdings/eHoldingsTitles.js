@@ -138,4 +138,12 @@ export default {
   getEHoldingsTitlesByTitleNameViaApi({ titleName, include = 'resources' }) {
     return this.getEHoldingsTitlesViaApi({ 'filter[name]': titleName, include });
   },
+
+  verifyTitleFound(titleName) {
+    cy.expect(
+      resultSection
+        .find(ListItem({ className: including('list-item-'), h3Value: titleName }))
+        .exists(),
+    );
+  },
 };

@@ -46,8 +46,6 @@ describe('MARC', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           });
-          cy.reload();
-          DataImport.waitLoading();
         }, 20_000);
       });
 

@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -16,7 +18,7 @@ let patronUser;
 let staffUser;
 const patronUserExternalId = getRandomPostfix();
 const staffUserExternalId = getRandomPostfix();
-const errorReason = 'Duplicate entry';
+const errorReason = ERROR_MESSAGES.DUPLICATE_ENTRY;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;

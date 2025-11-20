@@ -203,7 +203,7 @@ describe('Data Import', () => {
         FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
-        ItemRecordView.checkElectronicAccess('-', '-');
+        ItemRecordView.checkElectronicAccess('-', '-', '-', '-', '-');
       },
     );
   });

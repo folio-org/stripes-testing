@@ -1,5 +1,5 @@
 module.exports = {
   projectId: 'stripes',
   recordKey: 'secretCypressKey',
-  cloudServiceUrl: 'https://folio-testing-sc-director.ci.folio.org',
+  cloudServiceUrl: 'https://folio-etesting-sc-director.ci.folio.org',
 };

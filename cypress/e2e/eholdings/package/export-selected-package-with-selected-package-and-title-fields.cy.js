@@ -42,6 +42,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
         EHoldingsSearch.switchToPackages();
       });
@@ -65,7 +66,7 @@ describe('eHoldings', () => {
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
         EHoldingsPackages.verifyOnlySelectedPackagesInResults();
 
-        EHoldingsPackages.openPackageWithExpectedTitels(20);
+        EHoldingsPackages.openPackageWithExpectedTitels(21);
         EHoldingsPackageView.waitLoading();
 
         EHoldingsPackageView.openExportModal();
