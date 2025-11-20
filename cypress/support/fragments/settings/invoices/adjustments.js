@@ -99,21 +99,26 @@ const Adjustments = {
   getAdjustmentByDescription: (description) => {
     return cy
       .okapiRequest({
-        path: 'invoice-storage/adjustment-presets',
+        path: 'configurations/entries',
         searchParams: {
-          query: `description=="${description}"`,
+          query: '(module==INVOICE and configName==INVOICE.adjustments) sortby code',
+          limit: 1000,
         },
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
-        return response.body.adjustmentPresets[0];
+        const adjustment = response.body.configs.find((config) => {
+          const value = JSON.parse(config.value);
+          return value.description === description;
+        });
+        return adjustment;
       });
   },
 
   deleteViaApi: (adjustmentId) => {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `invoice-storage/adjustment-presets/${adjustmentId}`,
+      path: `configurations/entries/${adjustmentId}`,
       isDefaultSearchParamsRequired: false,
     });
   },
