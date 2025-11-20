@@ -75,6 +75,7 @@ describe(
           );
           BulkEditActions.openStartBulkEditLocalForm();
           BulkEditSearchPane.uploadFile(editedFileName);
+          cy.wait(500);
           BulkEditActions.cancel();
           BulkEditSearchPane.verifyErrorLabel(1);
           BulkEditSearchPane.verifyMatchedResults(user.username);

@@ -1046,6 +1046,10 @@ export default {
     internal: 'ui-finance.settings.view',
     gui: 'Settings (Finance): View settings',
   },
+  uiSettingsFinanceExportFundAndExpenseClassCodes: {
+    internal: 'ui-finance.settings.exportFundAndExpenseClassCodes',
+    gui: 'Settings (Finance): Export fund and expense class codes',
+  },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',

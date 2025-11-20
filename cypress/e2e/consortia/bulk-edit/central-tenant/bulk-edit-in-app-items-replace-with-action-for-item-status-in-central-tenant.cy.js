@@ -185,7 +185,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
           QueryModal.fillInValueTextfield(`C496144_${postfix}`, 1);
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
         });
       });
 

@@ -22,7 +22,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      packageName: 'Book Online Library',
+      packageName: 'Wiley Online Library Biotechnology Backfiles',
       fileName: `C353945autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_package.csv',
       selectedStatus: 'Selected',
@@ -43,6 +43,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
         EHoldingsSearch.switchToPackages();
       });

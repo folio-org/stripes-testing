@@ -21,7 +21,7 @@ import {
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      searchQuery: 'A+ Lagomorph Journals',
+      searchQuery: 'E-Journal',
       selectedStatus: 'Selected',
       titlesNumber: 0,
       fileName: `C356414autoTestFile${getRandomPostfix()}.csv`,
@@ -39,6 +39,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
         EHoldingSearch.switchToPackages();
       });

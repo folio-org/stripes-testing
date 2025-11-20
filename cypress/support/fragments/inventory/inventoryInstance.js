@@ -962,7 +962,7 @@ export default {
     cy.wait(1000);
   },
 
-  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true, itemIndex = 0) {
+  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true) {
     cy.wait(5000);
     if (shouldOpen) {
       openHoldings(fromHolding);
@@ -970,7 +970,7 @@ export default {
     cy.wait(5000);
     cy.do([
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(MultiColumnListRow({ index: itemIndex }))
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
@@ -981,7 +981,7 @@ export default {
     InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
   },
 
-  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true, itemIndex = 0 } = {}) {
+  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true } = {}) {
     cy.wait(1000);
     cy.do(actionsButton.click());
     cy.wait(1000);
@@ -989,7 +989,7 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
-    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen, itemIndex);
+    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen);
   },
 
   confirmOrCancel(action) {

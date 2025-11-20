@@ -168,6 +168,8 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyResultColumnTitles(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+        );
+        BulkEditSearchPane.verifyResultColumnTitles(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
         );
 

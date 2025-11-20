@@ -267,7 +267,7 @@ describe('Bulk-edit', () => {
           );
 
           [sharedItemNoteType.payload.name, localItemNoteTypeName].forEach((column) => {
-            BulkEditSearchPane.verifyResultColumnTitles(column);
+            BulkEditSearchPane.verifyResultColumnTitles(column, true);
           });
 
           // Step 6: Uncheck checkboxes for shared and local note types

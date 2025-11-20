@@ -73,8 +73,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('instance');
-        BulkEditActions.clickOptionsSelection();
-        BulkEditActions.verifySelectOptionsInstanceSortedAlphabetically();
+        BulkEditActions.verifySelectOptionsSortedAlphabetically(true);
       },
     );
   });

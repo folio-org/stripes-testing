@@ -190,8 +190,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C350902'] },
+        'C916260 MARC fields behavior when editing "MARC Authority" record (spitfire)',
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C916260'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
