@@ -41,7 +41,7 @@ describe('MARC', () => {
         },
         {
           tag: testData.tag100,
-          content: `$0 ${authData.prefix}${authData.startsWithNumber}`,
+          content: `$a ${testData.authorityHeading} $0 ${authData.prefix}${authData.startsWithNumber}`,
           indicators: ['1', '\\'],
         },
         {

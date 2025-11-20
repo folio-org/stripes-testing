@@ -41,6 +41,8 @@ describe('MARC', () => {
 
     before('Creating user', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -64,6 +66,7 @@ describe('MARC', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         }).then(() => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -74,11 +77,13 @@ describe('MARC', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.verifySearchOptions();
           InventoryInstance.searchResults(testData.marcValue);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
         cy.login(testData.userProperties.username, testData.userProperties.password, {
