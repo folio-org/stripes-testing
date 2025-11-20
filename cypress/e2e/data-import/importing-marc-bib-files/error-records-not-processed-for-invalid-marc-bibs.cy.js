@@ -16,8 +16,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    // eslint-disable-next-line
-    const errorMessage = 'Failed to decode';
+    const errorMessage =
+      '{"errors":[{"name":"org.marc4j.MarcException","message":"Invalid tag: 00\\t"}]}';
     const nameMarcFileForImportCreate = `C350750 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'No content';
