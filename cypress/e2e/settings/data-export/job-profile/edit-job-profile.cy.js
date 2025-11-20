@@ -59,6 +59,7 @@ describe('Data Export', () => {
       () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
 
@@ -75,6 +76,7 @@ describe('Data Export', () => {
         SingleJobProfile.editJobProfile(jobProfileNewName);
         SingleJobProfile.clickCancelButton();
 
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.openActions();
@@ -83,6 +85,7 @@ describe('Data Export', () => {
         ExportNewJobProfile.saveJobProfile();
 
         InteractorsTools.checkCalloutMessage(secondNewJobProfileCalloutMessage);
+        ExportJobProfiles.searchJobProfile(jobProfileNewName);
         ExportJobProfiles.verifyJobProfileInTheTable(jobProfileNewName);
       },
     );
