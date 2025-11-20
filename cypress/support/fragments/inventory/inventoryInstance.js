@@ -1952,4 +1952,18 @@ export default {
       );
     cy.expect(targetEl.exists());
   },
+
+  copyItemBarcode(itemIndex = 0, holdingsLocation, whileMoving = false) {
+    const holdingSection = Accordion(including(holdingsLocation));
+    cy.do(
+      holdingSection
+        .find(MultiColumnListCell({ columnIndex: whileMoving ? 3 : 1, row: itemIndex }))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(
+      matching(/The item barcode .+ was successfully copied to the clipboard/),
+    );
+  },
 };
