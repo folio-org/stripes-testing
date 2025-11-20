@@ -103,9 +103,9 @@ describe('Prepare test data', () => {
           return null;
         }
 
-        return Budgets.getBudgetViaApi({ query: 'code=AFRICAHIST' }).then(({ budgetResp }) => {
+        return Budgets.getBudgetViaApi({ query: 'code=EUROHIST' }).then(({ budgetResp }) => {
           if (!budgetResp) {
-            cy.log('AFRICAHIST budget not found, skipping expense class assignment');
+            cy.log('EUROHIST budget not found, skipping expense class assignment');
             return null;
           }
 
