@@ -323,6 +323,7 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(fieldData.field010.tag);
           QuickMarcEditor.deleteField(31);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndCloseThenCheck('2');
           QuickMarcEditor.confirmDeletingFields();
           InstanceRecordView.waitLoading();

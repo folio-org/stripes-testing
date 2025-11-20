@@ -98,8 +98,8 @@ describe('MARC', () => {
           VersionHistorySection.verifyVersionHistoryCard(
             0,
             updatedDate,
-            testData.userProperties.firstName,
-            testData.userProperties.lastName,
+            undefined,
+            undefined,
             false,
             true,
           );

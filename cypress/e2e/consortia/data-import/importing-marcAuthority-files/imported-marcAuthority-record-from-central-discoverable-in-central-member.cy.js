@@ -30,6 +30,8 @@ describe('Data Import', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405119');
+
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

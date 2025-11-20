@@ -644,4 +644,8 @@ export default {
     cy.do(tagsAccordion.find(textFieldTagInput).choose(tagName));
     cy.wait(1500);
   },
+
+  checkInstanceTitle: (instanceTitle) => {
+    cy.expect(Pane(including('Item')).find(Link(instanceTitle)).exists());
+  },
 };
