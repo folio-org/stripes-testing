@@ -5,9 +5,6 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
-
 describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
     const servicePoints = [];
@@ -37,7 +34,11 @@ describe('Fees&Fines', () => {
       });
 
       ownerNames.forEach((ownerName) => {
-        UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` }).then((owner) => UsersOwners.deleteViaApi(owner.id));
+        UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` }).then((owner) => {
+          if (owner?.id) {
+            UsersOwners.deleteViaApi(owner.id);
+          }
+        });
       });
     });
 
