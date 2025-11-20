@@ -125,6 +125,7 @@ describe('Inventory', () => {
           false,
           0,
         );
+        InventoryInstance.openHoldings(locationA.name);
         InventoryInstancesMovement.verifyItemBarcodeInHoldings(itemBBarcode, locationA.name);
         InventoryInstancesMovement.verifyItemBarcodeInHoldings(itemBBarcode, locationB.name, false);
 

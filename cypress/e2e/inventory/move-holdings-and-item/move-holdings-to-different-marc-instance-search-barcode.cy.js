@@ -107,9 +107,7 @@ describe('Inventory', () => {
         InventoryInstancesMovement.verifyHoldingsMoved(location.name, '1');
 
         InventoryInstance.openHoldings(location.name);
-        cy.stubBrowserPrompt();
-        InventoryInstance.copyItemBarcode(0, location.name, true);
-        cy.checkBrowserPrompt({ callNumber: 0, promptValue: itemBarcode });
+        InventoryInstancesMovement.verifyItemBarcodeInHoldings(itemBarcode, location.name);
 
         InventoryInstancesMovement.closeInLeftForm();
         InventoryInstance.waitLoading();
