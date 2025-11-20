@@ -35,6 +35,10 @@ const instanceHridKeyValue = KeyValue('Instance HRID');
 const actionsButton = Button('Actions');
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const searchButton = Button({ ariaLabel: 'search' });
+const addItemButton = Button('Add item');
+const versionHistoryButton = Button({ icon: 'clock' });
+const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
@@ -44,20 +48,18 @@ const subjectAccordion = Accordion('Subject');
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const adminDataAccordion = Accordion('Administrative data');
 const titleDataAccordion = Accordion('Title data');
+const acquisitionAccordion = Accordion('Acquisition');
+const contributorAccordion = Accordion('Contributor');
+const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
 const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedingTitles' }));
 const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
-const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
-const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
-const versionHistoryButton = Button({ icon: 'clock' });
-const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
-const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
-const clipboardIcon = Button({ icon: 'clipboard' });
+
 const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
@@ -1052,6 +1054,88 @@ export default {
       cy.expect(alternativeTitleCell.has({ content: `Linked to MARC authority${value}` }));
     } else {
       cy.expect(alternativeTitleCell.has({ content: value }));
+    }
+  },
+
+  collapseAll() {
+    cy.get('#pane-instancedetails').find('button').contains('Expand all').first()
+      .click();
+    cy.wait(1500);
+    cy.get('#pane-instancedetails').find('button').contains('Collapse all').first()
+      .click();
+    cy.wait(1500);
+  },
+  openAcquisitionAccordion() {
+    cy.do(acquisitionAccordion.clickHeader());
+  },
+  verifyMemberTenantSubAccordionInAcquisitionAccordion(values) {
+    if (Array.isArray(values)) {
+      values.forEach((expectedValue, index) => {
+        cy.expect(
+          acquisitionAccordion
+            .find(Accordion({ id: 'active-acquisition-accordion' }))
+            .find(MultiColumnListCell({ row: 0, columnIndex: index, content: expectedValue }))
+            .exists(),
+        );
+      });
+    } else {
+      // Handle single value case
+      cy.expect(
+        acquisitionAccordion
+          .find(Accordion({ id: 'active-acquisition-accordion' }))
+          .find(MultiColumnListCell({ row: 0, content: values }))
+          .exists(),
+      );
+    }
+  },
+  verifyCentralTenantSubAccordionInAcquisitionAccordion(values) {
+    if (Array.isArray(values)) {
+      values.forEach((expectedValue, index) => {
+        cy.expect(
+          acquisitionAccordion
+            .find(Accordion({ id: 'central-acquisition-accordion' }))
+            .find(MultiColumnListCell({ row: 0, columnIndex: index, content: expectedValue }))
+            .exists(),
+        );
+      });
+    } else {
+      // Handle single value case
+      cy.expect(
+        acquisitionAccordion
+          .find(Accordion({ id: 'central-acquisition-accordion' }))
+          .find(MultiColumnListCell({ row: 0, content: values }))
+          .exists(),
+      );
+    }
+  },
+  verifyMemberTenantSubAccordionInAcquisitionAccordionIsEmpty(shouldOpen = true) {
+    if (shouldOpen) {
+      cy.do(
+        acquisitionAccordion.find(Accordion({ id: 'active-acquisition-accordion' })).clickHeader(),
+      );
+    }
+    cy.expect(
+      acquisitionAccordion
+        .find(Accordion({ id: 'active-acquisition-accordion' }))
+        .find(HTML('The list contains no items'))
+        .exists(),
+    );
+  },
+
+  verifyAcquisitionAccordionDetails: (values) => {
+    if (Array.isArray(values)) {
+      values.forEach((expectedValue, index) => {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: 0, columnIndex: index, content: expectedValue }))
+            .exists(),
+        );
+      });
+    } else {
+      // Handle single value case
+      cy.expect(
+        acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: values })).exists(),
+      );
     }
   },
 };

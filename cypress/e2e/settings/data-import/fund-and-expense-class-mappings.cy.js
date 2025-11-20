@@ -48,7 +48,7 @@ describe('Data Import', () => {
         amount: '$19.95',
       },
       {
-        fund: 'African History(AFRICAHIST)',
+        fund: 'European History(EUROHIST)',
         expenseClass: 'Electronic',
         value: '100%',
         amount: '$19.95',
@@ -66,7 +66,7 @@ describe('Data Import', () => {
         value: '100',
       },
       {
-        fundId: '"African History (AFRICAHIST)"',
+        fundId: '"European History (EUROHIST)"',
         expenseClass: '982$c; else "Electronic (Elec)"',
         value: '100',
       },

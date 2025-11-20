@@ -29,7 +29,6 @@ describe('Inventory', () => {
       };
 
       before('Create test data', () => {
-        cy.clearLocalStorage();
         cy.getAdminToken();
         cy.getConsortiaId().then((consortiaId) => {
           testData.consortiaId = consortiaId;

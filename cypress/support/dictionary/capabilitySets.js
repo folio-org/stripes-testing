@@ -204,6 +204,11 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiInventoryUpdateOwnership: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Inventory Update-Ownership Item',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {
