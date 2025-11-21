@@ -1,9 +1,12 @@
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import TopMenu from '../../../../support/fragments/topMenu';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import Capabilities from '../../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
@@ -42,10 +45,16 @@ describe('Eureka', () => {
                       cy.addRolesToNewUserApi(testData.userA.userId, [testData.roleId]);
                       cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleId]);
                     }
-                    cy.login(testData.tempUser.username, testData.tempUser.password, {
-                      path: TopMenu.settingsAuthorizationRoles,
-                      waiter: AuthorizationRoles.waitContentLoading,
-                    });
+                    cy.waitForAuthRefresh(() => {
+                      cy.login(testData.tempUser.username, testData.tempUser.password, {
+                        authRefresh: false,
+                      });
+                      TopMenuNavigation.navigateToApp(
+                        APPLICATION_NAMES.SETTINGS,
+                        SETTINGS_SUBSECTION_AUTH_ROLES,
+                      );
+                      AuthorizationRoles.waitContentLoading();
+                    }, 20_000);
                   });
                 });
               });
