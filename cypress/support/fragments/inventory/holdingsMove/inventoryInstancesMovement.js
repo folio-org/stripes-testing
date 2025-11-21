@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   Modal,
   MultiColumnListCell,
+  Pane,
   HTML,
   Section,
   including,
@@ -73,5 +74,13 @@ export default {
         ? '1 holding has been successfully moved.'
         : `${holdingsCount} holdings have been successfully moved.`;
     InteractorsTools.checkCalloutMessage(message);
+  },
+
+  verifyHoldingsLocationInInstancePane(holdingsLocation, instanceTitle, isExist = true) {
+    const targetAccordion = Pane(including(instanceTitle)).find(
+      Accordion({ label: including(`Holdings: ${holdingsLocation}`) }),
+    );
+    if (isExist) cy.expect(targetAccordion.exists());
+    else cy.expect(targetAccordion.absent());
   },
 };

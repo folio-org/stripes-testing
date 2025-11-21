@@ -7,9 +7,14 @@ import ClassificationBrowse, {
   classificationIdentifierTypesDropdownDefaultOptions,
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../../support/fragments/settings/inventory/instances/classificationBrowse';
-import ClassificationIdentifierTypes from '../../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
+import ClassificationIdentifierTypes, {
+  identifierTypesSectionName,
+} from '../../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
+import AreYouSureModal from '../../../../support/fragments/orders/modals/areYouSureModal';
+import { including } from '../../../../../interactors';
+import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 
 const resetClassificationBrowse = () => {
   // Reset the classification browse settings to default values
@@ -503,6 +508,76 @@ describe('Inventory', () => {
             ClassificationBrowse.clickInfoIcon();
             ClassificationBrowse.checkPopoverMessage();
           });
+        },
+      );
+    });
+
+    describe('Classification browse', () => {
+      const browseName = defaultClassificationBrowseNames[0];
+      const optionToSelect = 'UDC';
+      let user;
+
+      before('Create user, login', () => {
+        cy.getAdminToken();
+        resetClassificationBrowse();
+
+        cy.createTempUser([
+          Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
+          Permissions.crudClassificationIdentifierTypes.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+          cy.intercept('browse/config/instance-classification*').as('instanceClassifications');
+          ClassificationBrowse.openClassificationBrowse();
+          cy.wait('@instanceClassifications');
+        });
+      });
+
+      after('Delete user', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+      });
+
+      it(
+        'C451646 Switch to another pane during editing of "Classification browse" option (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C451646'] },
+        () => {
+          ClassificationBrowse.clickEditButtonInBrowseOption(browseName);
+          ClassificationBrowse.checkCancelButtonEnabledInBrowseOption(browseName);
+          ClassificationBrowse.checkSaveButtonEnabledInBrowseOption(browseName, false);
+
+          ClassificationBrowse.expandClassificationIdentifierTypesDropdownInBrowseOption(
+            browseName,
+          );
+          ClassificationBrowse.selectClassificationIdentifierTypesDropdownOption(optionToSelect);
+          ClassificationBrowse.checkOptionSelectedInClassificationIdentifierTypesDropdown(
+            browseName,
+            including(optionToSelect),
+          );
+          ClassificationBrowse.checkSaveButtonEnabledInBrowseOption(browseName);
+
+          SettingsPane.selectSettingsTab(identifierTypesSectionName);
+          AreYouSureModal.verifyAreYouSureForm(true);
+          AreYouSureModal.clickKeepEditingButton();
+          AreYouSureModal.verifyAreYouSureForm(false);
+          ClassificationBrowse.checkOptionSelectedInClassificationIdentifierTypesDropdown(
+            browseName,
+            including(optionToSelect),
+          );
+
+          SettingsPane.selectSettingsTab(identifierTypesSectionName);
+          AreYouSureModal.verifyAreYouSureForm(true);
+          AreYouSureModal.clickCloseWithoutSavingButton();
+          AreYouSureModal.verifyAreYouSureForm(false);
+          SettingsPane.checkPaneIsOpened(identifierTypesSectionName);
+
+          ClassificationBrowse.openClassificationBrowse();
+          ClassificationBrowse.validateClassificationIdentifierTypesSelectedOptions(
+            browseName,
+            optionToSelect,
+            false,
+          );
         },
       );
     });
