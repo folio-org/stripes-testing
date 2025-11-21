@@ -38,7 +38,7 @@ describe('Data Import', () => {
     const fileName = `C377019 autotestFile${getRandomPostfix()}.edi`;
     const title = 'ERROR_INVOICE';
     const errorMessage =
-      '{"errors":[{"name":"io.xlate.edi.internal.stream.tokenization.EDIException","message":"EDIE003 - Invalid processing state; INVALID (previous: TAG_1); input: \' \' in segment IMD at position 44"}]}';
+      '{"errors":[{"name":"io.xlate.edi.internal.stream.tokenization.EDIException","message":"EDIE003 - Invalid processing state after segment IMD at position 44; INVALID (previous: TAG_1); input: \' \'"}]}';
     const mappingProfile = {
       name: `C377019 Harrassowitz error invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
