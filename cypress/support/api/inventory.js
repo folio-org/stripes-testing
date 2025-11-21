@@ -888,3 +888,11 @@ Cypress.Commands.add('batchUpdateHoldingsViaApi', (holdingsRecords) => {
     body: { holdingsRecords },
   });
 });
+
+Cypress.Commands.add('getInventoryInstanceById', (instanceId) => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: `inventory/instances/${instanceId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
