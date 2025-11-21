@@ -8,20 +8,25 @@ import ConsortiumManager from '../../../support/fragments/settings/consortium-ma
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import FileManager from '../../../support/utils/fileManager';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let adminSourceRecord;
-const fileName = 'empty.csv';
+const fileNameInCentral = `empty_${getRandomPostfix()}.csv`;
+const fileNameInMember = `empty_${getRandomPostfix()}.csv`;
 const permissionErrorMessage = 'Could not load jobs data. User does not have required permissions.';
 
 describe('Data Export', () => {
   describe('Consortia', () => {
     before('Create test data', () => {
+      FileManager.createFile(`cypress/fixtures/${fileNameInCentral}`, '');
+      FileManager.createFile(`cypress/fixtures/${fileNameInMember}`, '');
       cy.getAdminToken();
       cy.getAdminUserDetails().then((record) => {
         adminSourceRecord = record;
@@ -48,17 +53,22 @@ describe('Data Export', () => {
           waiter: DataExportLogs.waitLoading,
         });
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ExportFile.uploadFile(fileName);
-        ExportFile.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
+
+        ExportFile.uploadFile(fileNameInCentral);
+        ExportFile.exportWithDefaultJobProfile(fileNameInCentral, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(
           'getCentralInfo',
         );
         cy.wait('@getCentralInfo', getLongDelay()).then(({ response }) => {
-          const { jobExecutions } = response.body;
-          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === adminSourceRecord.id);
+          const jobExecutions = response.body.jobExecutions;
+          const jobData = jobExecutions.find((jobExecution) => {
+            return jobExecution.exportedFiles[0].fileName.includes(
+              fileNameInCentral.replace('.csv', ''),
+            );
+          });
           const jobId = jobData.hrId;
-          const resultFileName = `${fileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
+          const resultFileName = `${fileNameInCentral.replace('.csv', '')}-${jobData.hrId}.mrc`;
 
           DataExportResults.verifyFailedExportResultCells(
             resultFileName,
@@ -72,17 +82,21 @@ describe('Data Export', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         DataExportLogs.waitLoading();
-        ExportFile.uploadFile(fileName);
-        ExportFile.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
+        ExportFile.uploadFile(fileNameInMember);
+        ExportFile.exportWithDefaultJobProfile(fileNameInMember, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(
           'getCollegeInfo',
         );
         cy.wait('@getCollegeInfo', getLongDelay()).then(({ response }) => {
           const { jobExecutions } = response.body;
-          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === adminSourceRecord.id);
+          const jobData = jobExecutions.find((jobExecution) => {
+            return jobExecution.exportedFiles[0].fileName.includes(
+              fileNameInMember.replace('.csv', ''),
+            );
+          });
           const jobId = jobData.hrId;
-          const resultFileName = `${fileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
+          const resultFileName = `${fileNameInMember.replace('.csv', '')}-${jobData.hrId}.mrc`;
 
           DataExportResults.verifyFailedExportResultCells(
             resultFileName,
@@ -104,6 +118,8 @@ describe('Data Export', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${fileNameInCentral}`);
+      FileManager.deleteFile(`cypress/fixtures/${fileNameInMember}`);
     });
 
     it(

@@ -186,7 +186,7 @@ export default {
 
   scrollInAreYouSureForm(direction) {
     cy.get('[class^=modal-] div[class^="mclScrollable"]').scrollTo(direction);
-    cy.wait(1000);
+    cy.wait(1500);
   },
 
   verifyAreYouSureFormScrollableHorizontally() {

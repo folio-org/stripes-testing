@@ -400,7 +400,7 @@ describe('Bulk-edit', () => {
         );
 
         // For MARC Instance with multiple "Electronic access" entries in "Preview of records changed" form
-        marcInstanceWithElectronicAccess.electronicAccess.forEach((access, index) => {
+        marcInstanceWithElectronicAccess.electronicAccess.forEach((access) => {
           BulkEditSearchPane.verifyElectronicAccessTableInForm(
             BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
             marcInstanceWithElectronicAccess.instanceHrid,
@@ -409,7 +409,6 @@ describe('Bulk-edit', () => {
             access.linkText || '-',
             access.materialsSpecification || '-',
             access.publicNote || '-',
-            index,
           );
         });
 

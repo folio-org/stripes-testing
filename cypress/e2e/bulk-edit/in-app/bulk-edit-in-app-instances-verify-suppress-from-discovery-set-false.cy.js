@@ -290,6 +290,8 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyResultColumnTitles(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
+        );
+        BulkEditSearchPane.verifyResultColumnTitles(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
         );
         BulkEditActions.openActions();
