@@ -23,6 +23,7 @@ describe('eHoldings', () => {
         user = userProperties;
         cy.getUserToken(userProperties.username, userProperties.password);
         EHoldingsPackages.unassignPackageViaAPI(testData.packageName);
+        EHoldingsPackages.waitForPackageStatusChangeViaAPI(testData.packageName, false);
       });
     });
 
@@ -47,8 +48,9 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         EHoldingsPackage.waitLoading(testData.packageName);
         EHoldingsPackage.addToHoldings();
-        cy.wait(3000);
-        EHoldingsPackage.verifyHoldingStatus();
+
+        EHoldingsPackages.waitForPackageStatusChangeViaAPI(testData.packageName, true);
+        EHoldingsPackage.verifySelectedPackage();
         EHoldingsPackage.filterTitles();
         EHoldingsPackage.checkEmptyTitlesList();
         // reset test data

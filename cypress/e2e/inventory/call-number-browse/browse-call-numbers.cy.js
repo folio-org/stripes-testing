@@ -2,13 +2,20 @@ import InventoryActions from '../../../support/fragments/inventory/inventoryActi
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
+    let existingCallNumber;
     beforeEach('navigate to inventory', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+      cy.getAdminToken();
+      BrowseCallNumber.getCallNumbersViaApi('all', 'DE4').then((callNumbers) => {
+        existingCallNumber = callNumbers[0].fullCallNumber;
+
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 
@@ -29,12 +36,12 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
-        InventorySearchAndFilter.fillInBrowseSearch('DE4');
+        InventorySearchAndFilter.fillInBrowseSearch(existingCallNumber);
         InventorySearchAndFilter.verifySearchButtonDisabled(false);
         InventorySearchAndFilter.verifyResetAllButtonDisabled(false);
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: 'DE4' }],
+          records: [{ callNumber: existingCallNumber }],
         });
         InventorySearchAndFilter.validateSearchTableHeaders();
       },
