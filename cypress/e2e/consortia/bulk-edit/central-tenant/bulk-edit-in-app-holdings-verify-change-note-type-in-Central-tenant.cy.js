@@ -151,7 +151,7 @@ describe('Bulk-edit', () => {
                       collegeHoldingIds.push(holding.id);
                       collegeHoldingHrids.push(holding.hrid);
                     });
-                    cy.wait(1000);
+                    cy.wait(3000);
                   });
                 });
             })
