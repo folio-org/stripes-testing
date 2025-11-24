@@ -1605,4 +1605,23 @@ export default {
       cy.expect([targetCell.exists(), targetCell.find(Icon({ warning: true })).absent()]);
     }
   },
+
+  verifyEveryRowContainsLinkButtonInBrowse(columnIndex = 0) {
+    cy.then(() => inventorySearchResultsPane.find(MultiColumnList()).rowCount()).then(
+      (rowsCount) => {
+        if (rowsCount) {
+          for (let i = 0; i < rowsCount; i++) {
+            const targetCell = inventorySearchResultsPane
+              .find(MultiColumnList())
+              .find(MultiColumnListCell({ columnIndex, row: i }));
+            cy.expect(
+              targetCell.has({
+                innerHTML: or(including('href="/inventory'), including('would be here')),
+              }),
+            );
+          }
+        }
+      },
+    );
+  },
 };
