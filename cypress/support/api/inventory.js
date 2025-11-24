@@ -901,3 +901,11 @@ Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
     }
   });
 });
+
+Cypress.Commands.add('getInventoryInstanceById', (instanceId) => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: `inventory/instances/${instanceId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
