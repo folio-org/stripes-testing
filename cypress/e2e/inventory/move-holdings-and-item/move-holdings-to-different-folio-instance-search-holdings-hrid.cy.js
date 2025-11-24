@@ -95,6 +95,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
 
         InventoryInstances.searchByTitle(instanceIds[0]);
@@ -115,9 +116,7 @@ describe('Inventory', () => {
 
         InventoryInstance.viewHoldings();
         HoldingsRecordView.waitLoading();
-        cy.stubBrowserPrompt();
-        HoldingsRecordView.copyHoldingsHrid();
-        cy.checkBrowserPrompt({ callNumber: 0, promptValue: holdingsHrid });
+        HoldingsRecordView.checkHrId(holdingsHrid);
 
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();

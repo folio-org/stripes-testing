@@ -526,8 +526,10 @@ describe('Inventory', () => {
           Permissions.crudClassificationIdentifierTypes.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+          }, 20_000);
           cy.intercept('browse/config/instance-classification*').as('instanceClassifications');
           ClassificationBrowse.openClassificationBrowse();
           cy.wait('@instanceClassifications');
