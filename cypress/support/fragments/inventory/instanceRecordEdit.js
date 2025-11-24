@@ -187,6 +187,18 @@ export default {
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
   },
+  addSubjectType: (subjectType) => {
+    cy.do([
+      subjectAccordion.find(Button('Add subject')).click(),
+      Select({ name: 'subjects[0].typeId' }).choose(subjectType),
+    ]);
+  },
+  addSubjectSource: (subjectSource) => {
+    cy.do([
+      subjectAccordion.find(Button('Add subject')).click(),
+      Select({ name: 'subjects[0].sourceId' }).choose(subjectSource),
+    ]);
+  },
   changeSubject: (subject) => {
     cy.do(subjectField.fillIn(subject));
   },
@@ -589,6 +601,14 @@ export default {
             ),
           ),
         )
+        .exists(),
+    );
+  },
+
+  verifyErrorMessage(message) {
+    cy.expect(
+      Modal('Saving instance failed')
+        .find(HTML(including(message)))
         .exists(),
     );
   },
