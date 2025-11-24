@@ -10,12 +10,12 @@ const DEFAULT_INSTANCE = {
   previouslyHeld: false,
 };
 
-const displaySettingsBody = {
-  id: uuid(),
-  key: 'display-settings',
+const defaultDisplaySettings = {
   scope: 'ui-inventory.display-settings.manage',
+  key: 'display-settings',
   value: {
-    defaultSort: '',
+    defaultSort: 'title',
+    defaultColumns: ['contributors', 'publishers', 'relation', 'hrid', 'normalizedDate1'],
   },
 };
 
@@ -652,8 +652,10 @@ Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
       updatedBody.value.defaultSort = sortOption;
       cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
     } else {
-      updatedBody = { ...displaySettingsBody };
-      updatedBody.value.defaultSort = sortOption;
+      updatedBody = { ...defaultDisplaySettings };
+      updatedBody.value = {
+        defaultSort: sortOption,
+      };
       cy.setInventoryDisplaySettingsViaAPI(updatedBody);
     }
   });
@@ -886,6 +888,17 @@ Cypress.Commands.add('batchUpdateHoldingsViaApi', (holdingsRecords) => {
     path: 'holdings-storage/batch/synchronous?upsert=true',
     isDefaultSearchParamsRequired: false,
     body: { holdingsRecords },
+  });
+});
+
+Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
+  cy.getInventoryDisplaySettingsViaAPI().then((entries) => {
+    if (entries.length) {
+      const entryId = entries[0].id;
+      cy.updateInventoryDisplaySettingsViaAPI(entryId, { ...defaultDisplaySettings, id: entryId });
+    } else {
+      cy.setInventoryDisplaySettingsViaAPI(defaultDisplaySettings);
+    }
   });
 });
 
