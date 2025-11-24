@@ -389,4 +389,19 @@ export default {
       },
     );
   },
+
+  waitForPackageStatusChangeViaAPI(packageName, isSelected = true) {
+    recurse(
+      () => this.getPackageViaApi(packageName),
+      (response) => {
+        const packageData = response.body.data[0];
+        const { attributes } = packageData;
+        return attributes.isSelected === isSelected;
+      },
+      {
+        timeout: 60_000,
+        delay: 1_000,
+      },
+    );
+  },
 };
