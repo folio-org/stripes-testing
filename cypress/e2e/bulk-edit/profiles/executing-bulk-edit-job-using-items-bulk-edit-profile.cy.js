@@ -196,7 +196,7 @@ describe('Bulk-edit', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(user?.userId);
 
       testData.profileIds.forEach((id) => cy.deleteBulkEditProfile(id, true));
 
