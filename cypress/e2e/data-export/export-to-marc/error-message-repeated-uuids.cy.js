@@ -9,6 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 const csvFileName = `repeatedUUIDs_${getRandomPostfix()}.csv`;
@@ -80,6 +81,7 @@ describe('Data Export', () => {
       () => {
         // Step 1: Trigger the data export by clicking on "or choose file" button and submitting .csv file
         ExportFileHelper.uploadFile(csvFileName);
+        SelectJobProfile.searchForAJobProfile('Default instances');
 
         // Step 2: Run the Default instances job profile
         ExportFileHelper.exportWithDefaultJobProfile(csvFileName, 'Default instances', 'Instances');

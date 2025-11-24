@@ -236,7 +236,7 @@ describe('Bulk-edit', () => {
       // Trillium
       it.skip(
         'C773233 ECS | Executing bulk edit job using Holdings bulk edit profile in Central tenant (Query) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C773233'] },
+        { tags: [] },
         () => {
           // Step 1: Click "Actions" menu
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);

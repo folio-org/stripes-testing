@@ -13,6 +13,7 @@ import DateTools from '../../../support/utils/dateTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -99,6 +100,7 @@ describe('Data Export', () => {
       { tags: ['criticalPath', 'firebird', 'C423567'] },
       () => {
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
+        SelectJobProfile.searchForAJobProfile('Default authority');
         ExportFileHelper.exportWithDefaultJobProfile(
           marcAuthorityUUIDFileName,
           'Default authority',

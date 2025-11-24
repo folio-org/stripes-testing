@@ -17,6 +17,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -131,6 +132,7 @@ describe('Data Export', () => {
     () => {
       // Step 1-2: Upload the .csv file
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);
+      SelectJobProfile.searchForAJobProfile('Default instances');
       ExportFileHelper.exportWithDefaultJobProfile(
         marcInstanceUUIDFileName,
         'Default instances',
@@ -218,6 +220,7 @@ describe('Data Export', () => {
 
       // Step 11: Trigger the data export by submitting .csv file with UUID of inventory instance from Preconditions
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);
+      SelectJobProfile.searchForAJobProfile('Default instances');
       ExportFileHelper.exportWithDefaultJobProfile(
         marcInstanceUUIDFileName,
         'Default instances',

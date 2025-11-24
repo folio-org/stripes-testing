@@ -21,6 +21,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -110,6 +111,7 @@ describe('Data Export', () => {
       () => {
         // Step 1-2: Upload the .csv file
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
+        SelectJobProfile.searchForAJobProfile('Default authority');
         ExportFileHelper.exportWithDefaultJobProfile(
           marcAuthorityUUIDFileName,
           'Default authority',
@@ -200,6 +202,7 @@ describe('Data Export', () => {
 
         // Step 11: Trigger the data export by submitting .csv file with UUID of authority record from Preconditions
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
+        SelectJobProfile.searchForAJobProfile('Default authority');
         ExportFileHelper.exportWithDefaultJobProfile(
           marcAuthorityUUIDFileName,
           'Default authority',
