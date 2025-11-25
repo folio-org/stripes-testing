@@ -83,7 +83,7 @@ describe('Funds', () => {
 
     Funds.deleteFundViaApi(firstFund.id);
     Funds.deleteFundViaApi(secondFund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

@@ -120,7 +120,7 @@ export default {
   deleteBudgetWithFundLedgerAndFYViaApi({ id: budgetId, fundId, ledgerId, fiscalYearId }) {
     this.deleteViaApi(budgetId);
     Funds.deleteFundViaApi(fundId);
-    Ledgers.deleteledgerViaApi(ledgerId);
+    Ledgers.deleteLedgerViaApi(ledgerId);
     FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
   },
 };

@@ -126,7 +126,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)',
-      { tags: ['smoke', 'feeFine', 'vega', 'C455'] },
+      { tags: ['smokeBroken', 'feeFine', 'vega', 'C455'] },
       () => {
         const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
         const itemInfo = [testData.instanceTitle + ' (book)', testData.barcode];

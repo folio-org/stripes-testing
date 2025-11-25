@@ -49,7 +49,7 @@ describe('Users', () => {
 
   it(
     'C770460 Expiration date is not affected by time zone change (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C770460'] },
+    { tags: ['extendedPath', 'volaris', 'nonParallel', 'C770460'] },
     () => {
       cy.waitForAuthRefresh(() => {}, 20_000);
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);

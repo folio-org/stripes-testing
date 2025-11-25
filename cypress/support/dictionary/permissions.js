@@ -985,11 +985,11 @@ export default {
     internal: 'ui-finance.fiscal-year.delete',
     gui: 'Finance: View, edit, delete fiscal year',
   },
-  uiFinanceViewEditDeletFundBudget: {
+  uiFinanceViewEditDeleteFundBudget: {
     internal: 'ui-finance.fund-budget.delete',
     gui: 'Finance: View, edit, delete fund and budget',
   },
-  uiFinanceViewEditDeletGroups: {
+  uiFinanceViewEditDeleteGroups: {
     internal: 'ui-finance.group.delete',
     gui: 'Finance: View, edit, delete group',
   },
@@ -997,7 +997,7 @@ export default {
     internal: 'ui-finance.ledger.delete',
     gui: 'Finance: View, edit, delete ledger',
   },
-  uiSettingsFinanceViewEditCreateDeleter: {
+  uiSettingsFinanceViewEditCreateDelete: {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
   },
@@ -1398,5 +1398,10 @@ export default {
   departmentsAll: {
     internal: 'ui-users.settings.departments.all',
     gui: 'Settings (Users): Can create, edit, view, and delete departments',
+  },
+
+  ebsconetAll: {
+    internal: 'ebsconet.all',
+    gui: 'Ebsconet API module - all permissions',
   },
 };

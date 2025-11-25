@@ -1,0 +1,410 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Invoice Lines",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "invoice_line.account_number": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.accounting_code": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.comment": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.description": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.invoice_line_number": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.invoice_number": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.invoice_id": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.jsonb": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.po_line_number": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.po_line_id": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.quantity": {
+            "type": ["number", "null"]
+          },
+          "invoice_line.reference_numbers": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.release_encumbrance": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.invoice_line_status": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.sub_total": {
+            "type": ["number", "null"]
+          },
+          "invoice_line.subscription_end": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.subscription_info": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.subscription_start": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.tag_list": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.total": {
+            "type": ["number", "null"]
+          },
+          "invoice_line.adjustments_total": {
+            "type": ["number", "null"]
+          },
+          "invoice_line.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.updated_date": {
+            "type": ["string", "null"]
+          },
+          "invoice_line.id": {
+            "type": ["string", "null"]
+          },
+          "invoice.account_no": {
+            "type": ["string", "null"]
+          },
+          "invoice.accounting_code": {
+            "type": ["string", "null"]
+          },
+          "invoice.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "invoice.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "invoice.approved_by": {
+            "type": ["string", "null"]
+          },
+          "invoice.approved_by_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.approval_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.batch_group": {
+            "type": ["string", "null"]
+          },
+          "invoice.batch_group_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.bill_to": {
+            "type": ["string", "null"]
+          },
+          "invoice.bill_to_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.chk_subscription_overlap": {
+            "type": ["string", "null"]
+          },
+          "invoice.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.created_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.currency": {
+            "type": ["string", "null"]
+          },
+          "invoice.enclosure_needed": {
+            "type": ["string", "null"]
+          },
+          "invoice.exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "invoice.export_to_accounting": {
+            "type": ["string", "null"]
+          },
+          "invoice.fiscal_year": {
+            "type": ["string", "null"]
+          },
+          "invoice.fiscal_year_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.folio_invoice_no": {
+            "type": ["string", "null"]
+          },
+          "invoice.invoice_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.jsonb": {
+            "type": ["string", "null"]
+          },
+          "invoice.next_invoice_line_number": {
+            "type": ["number", "null"]
+          },
+          "invoice.note": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_due": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_method": {
+            "type": ["string", "null"]
+          },
+          "invoice.po_numbers": {
+            "type": ["array", "null"]
+          },
+          "invoice.source": {
+            "type": ["string", "null"]
+          },
+          "invoice.status": {
+            "type": ["string", "null"]
+          },
+          "invoice.sub_total": {
+            "type": ["number", "null"]
+          },
+          "invoice.tag_list": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_terms": {
+            "type": ["string", "null"]
+          },
+          "invoice.adjustments_total": {
+            "type": ["number", "null"]
+          },
+          "invoice.total": {
+            "type": ["number", "null"]
+          },
+          "invoice.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.updated_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.id": {
+            "type": ["string", "null"]
+          },
+          "invoice.vendor_invoice_no": {
+            "type": ["string", "null"]
+          },
+          "invoice.vendor_name": {
+            "type": ["string", "null"]
+          },
+          "invoice.vendor_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.voucher_number": {
+            "type": ["string", "null"]
+          },
+          "created_by.active": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.email": {
+            "type": ["string", "null"]
+          },
+          "created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "created_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.id": {
+            "type": ["string", "null"]
+          },
+          "created_by.username": {
+            "type": ["string", "null"]
+          },
+          "updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "updated_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.username": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "invoice_line.account_number",
+          "invoice_line.accounting_code",
+          "invoice_line.comment",
+          "invoice_line.created_by_user_id",
+          "invoice_line.description",
+          "invoice_line.invoice_line_number",
+          "invoice_line.invoice_number",
+          "invoice_line.invoice_id",
+          "invoice_line.jsonb",
+          "invoice_line.po_line_number",
+          "invoice_line.po_line_id",
+          "invoice_line.quantity",
+          "invoice_line.reference_numbers",
+          "invoice_line.release_encumbrance",
+          "invoice_line.invoice_line_status",
+          "invoice_line.sub_total",
+          "invoice_line.subscription_end",
+          "invoice_line.subscription_info",
+          "invoice_line.subscription_start",
+          "invoice_line.tag_list",
+          "invoice_line.total",
+          "invoice_line.adjustments_total",
+          "invoice_line.updated_by_user_id",
+          "invoice_line.updated_date",
+          "invoice_line.id",
+          "invoice.account_no",
+          "invoice.accounting_code",
+          "invoice.acquisition_unit",
+          "invoice.acq_unit_ids",
+          "invoice.approved_by",
+          "invoice.approved_by_id",
+          "invoice.approval_date",
+          "invoice.batch_group",
+          "invoice.batch_group_id",
+          "invoice.bill_to",
+          "invoice.bill_to_id",
+          "invoice.chk_subscription_overlap",
+          "invoice.created_by_user_id",
+          "invoice.created_date",
+          "invoice.currency",
+          "invoice.enclosure_needed",
+          "invoice.exchange_rate",
+          "invoice.export_to_accounting",
+          "invoice.fiscal_year",
+          "invoice.fiscal_year_id",
+          "invoice.folio_invoice_no",
+          "invoice.invoice_date",
+          "invoice.jsonb",
+          "invoice.next_invoice_line_number",
+          "invoice.note",
+          "invoice.payment_date",
+          "invoice.payment_due",
+          "invoice.payment_method",
+          "invoice.po_numbers",
+          "invoice.source",
+          "invoice.status",
+          "invoice.sub_total",
+          "invoice.tag_list",
+          "invoice.payment_terms",
+          "invoice.adjustments_total",
+          "invoice.total",
+          "invoice.updated_by_user_id",
+          "invoice.updated_date",
+          "invoice.id",
+          "invoice.vendor_invoice_no",
+          "invoice.vendor_name",
+          "invoice.vendor_id",
+          "invoice.voucher_number",
+          "created_by.active",
+          "created_by.user_created_date",
+          "created_by.email",
+          "created_by.last_name_first_name",
+          "created_by.created_by_user_id",
+          "created_by.updated_by_user_id",
+          "created_by.user_updated_date",
+          "created_by.id",
+          "created_by.username",
+          "updated_by.active",
+          "updated_by.user_created_date",
+          "updated_by.email",
+          "updated_by.last_name_first_name",
+          "updated_by.created_by_user_id",
+          "updated_by.updated_by_user_id",
+          "updated_by.user_updated_date",
+          "updated_by.id",
+          "updated_by.username"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

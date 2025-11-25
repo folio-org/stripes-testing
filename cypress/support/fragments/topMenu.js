@@ -54,6 +54,8 @@ const settingsFinanceExpenseClassesPath = '/settings/finance/expense-classes';
 const settingsInvoiveApprovalPath = '/settings/invoice/approvals';
 const settingsOrganizationsPath = '/settings/organizations';
 const settingsOrdersPath = '/settings/orders';
+const settingsOrdersPrefixesPath = '/settings/orders/prefixes';
+const settingsOrdersSuffixesPath = '/settings/orders/suffixes';
 const oaPath = '/oa/publicationRequests';
 
 export default {
@@ -113,6 +115,8 @@ export default {
   settingsInvoiveApprovalPath,
   settingsOrganizationsPath,
   settingsOrdersPath,
+  settingsOrdersPrefixesPath,
+  settingsOrdersSuffixesPath,
   oaPath,
 
   openCheckInApp: () => {

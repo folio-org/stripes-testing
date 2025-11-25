@@ -68,6 +68,7 @@ describe('Lists', () => {
 
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
+        cy.wait(3000); // wait for data to be loaded
         Lists.openActions();
         Lists.exportListVisibleColumns();
 

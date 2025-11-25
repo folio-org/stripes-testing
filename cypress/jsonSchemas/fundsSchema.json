@@ -1,0 +1,308 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Funds",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fund.code": {
+            "type": ["string", "null"]
+          },
+          "ledger.fiscal_year_one_id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger_id": {
+            "type": ["string", "null"]
+          },
+          "fund.created_date": {
+            "type": ["string", "null"]
+          },
+          "ledger.code": {
+            "type": ["string", "null"]
+          },
+          "created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "ledger.name": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_status": {
+            "type": ["string", "null"]
+          },
+          "updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "fund.external_account_no": {
+            "type": ["string", "null"]
+          },
+          "fund_type.id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "updated_by.username": {
+            "type": ["string", "null"]
+          },
+          "ledger.restrict_expenditures": {
+            "type": ["string", "null"]
+          },
+          "created_by.active": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.donor_organizations": {},
+          "ledger.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.version": {
+            "type": ["number", "null"]
+          },
+          "created_by.id": {
+            "type": ["string", "null"]
+          },
+          "fund_type.name": {
+            "type": ["string", "null"]
+          },
+          "ledger.created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.locations": {},
+          "ledger.updated_date": {
+            "type": ["string", "null"]
+          },
+          "ledger.currency": {
+            "type": ["string", "null"]
+          },
+          "fund.tag_list": {},
+          "ledger.description": {
+            "type": ["string", "null"]
+          },
+          "fund.allocated_to": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.acq_unit_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.allocated_from": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "ledger.restrict_encumbrance": {
+            "type": ["string", "null"]
+          },
+          "updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "fund.donor_organization_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "fund.description": {
+            "type": ["string", "null"]
+          },
+          "created_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.username": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_type_id": {
+            "type": ["string", "null"]
+          },
+          "ledger.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "fund_type.version": {
+            "type": ["number", "null"]
+          },
+          "ledger.version": {
+            "type": ["number", "null"]
+          },
+          "ledger.acquisition_unit": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.email": {
+            "type": ["string", "null"]
+          },
+          "fund.acquisition_unit": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "ledger.fiscal_year_one": {
+            "type": ["string", "null"]
+          },
+          "ledger.id": {
+            "type": ["string", "null"]
+          },
+          "ledger.acq_unit_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.name": {
+            "type": ["string", "null"]
+          },
+          "fund.allocated_to_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "ledger.ledger_status": {
+            "type": ["string", "null"]
+          },
+          "fund.restrict_by_locations": {
+            "type": ["string", "null"]
+          },
+          "fund.id": {
+            "type": ["string", "null"]
+          },
+          "fund.allocated_from_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "fund.code",
+          "ledger.fiscal_year_one_id",
+          "fund.ledger_id",
+          "fund.created_date",
+          "ledger.code",
+          "created_by.last_name_first_name",
+          "ledger.name",
+          "fund.fund_status",
+          "fund.external_account_no",
+          "updated_by.last_name_first_name",
+          "ledger.restrict_expenditures",
+          "fund.donor_organizations",
+          "fund.updated_date",
+          "fund.version",
+          "fund_type.name",
+          "ledger.created_date",
+          "fund.locations",
+          "ledger.updated_date",
+          "ledger.currency",
+          "fund.tag_list",
+          "ledger.description",
+          "fund.allocated_to",
+          "fund.acq_unit_ids",
+          "updated_by.created_by_user_id",
+          "fund.allocated_from",
+          "ledger.restrict_encumbrance",
+          "fund.donor_organization_ids",
+          "fund.description",
+          "created_by.created_by_user_id",
+          "fund.fund_type_id",
+          "fund_type.version",
+          "ledger.version",
+          "fund.acquisition_unit",
+          "ledger.fiscal_year_one",
+          "ledger.id",
+          "ledger.acq_unit_ids",
+          "fund.name",
+          "fund.allocated_to_ids",
+          "ledger.ledger_status",
+          "fund.restrict_by_locations",
+          "fund.id",
+          "fund.allocated_from_ids"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {},
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

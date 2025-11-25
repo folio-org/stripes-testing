@@ -100,7 +100,7 @@ describe('Finance', () => {
           Funds.deleteFundViaApi(fund.id);
         });
         Object.values(ledgers).forEach((ledger) => {
-          Ledgers.deleteledgerViaApi(ledger.id);
+          Ledgers.deleteLedgerViaApi(ledger.id);
         });
         expenseClasses.forEach((expenseClasse) => {
           ExpenseClasses.deleteExpenseClassViaApi(expenseClasse.id);

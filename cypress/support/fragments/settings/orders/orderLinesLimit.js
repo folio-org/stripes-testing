@@ -83,7 +83,7 @@ export default {
     });
   },
 
-  setPOLLimitConfigEntery(limit) {
+  setPOLLimitConfigEntry(limit) {
     this.getPOLLimit(defaultSearchParams).then((configs) => {
       if (configs.length) {
         this.updatePOLLimit({ ...configs[0], value: limit });
