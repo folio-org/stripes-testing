@@ -18,7 +18,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.validateBrowseToggleIsSelected();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         InventorySearchAndFilter.verifyActionButtonNotExistsInBrowseMode();
         InventorySearchAndFilter.verifySearchButtonDisabled();
@@ -48,7 +48,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         InventorySearchAndFilter.selectBrowseSubjects();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventoryActions.actionsIsAbsent();
         InventorySearchAndFilter.filtersIsAbsent();
         InventorySearchAndFilter.browseSubjectsSearch();

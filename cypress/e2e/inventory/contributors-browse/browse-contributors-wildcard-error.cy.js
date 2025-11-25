@@ -60,7 +60,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.clearBrowseInputField();
 
           // Verify default message is displayed
-          InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+          InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         });
       },
     );
