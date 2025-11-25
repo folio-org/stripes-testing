@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-import { validate, Validator } from 'jsonschema';
+import { validate } from 'jsonschema';
 import budgetsSchema from '../../../jsonSchemas/budgetsSchema';
 import fundsSchema from '../../../jsonSchemas/fundsSchema';
 import invoiceLinesSchema from '../../../jsonSchemas/invoiceLinesSchema';
@@ -60,10 +60,7 @@ describe('Lists', () => {
         Lists.createQueryViaApi(query).then((createdQuery) => {
           Lists.getQueryViaApi(createdQuery.queryId, { includeResults: true, offset: 0, limit: 10 }).then((queryResponse) => {
             expect(queryResponse.status).to.eq(200);
-            // cy.log(schema);
-            // const v = new Validator();
-            // cy.log(v.validate(queryResponse.body, schema));
-            const result = validate(queryResponse.body, schema);
+            const result = validate(queryResponse.body, schema, { base: 'http://example.com/' });
             cy.wrap(result).then(() => {
               expect(result.valid, result.errors.toString()).to.be.equal(true);
 
