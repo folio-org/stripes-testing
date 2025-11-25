@@ -415,7 +415,7 @@ export default {
     cy.expect(Button(`${tab}`).has({ default: false }));
   },
 
-  verifyCallNumberBrowseEmptyPane() {
+  verifyBrowseResultsEmptyPane() {
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(
       callNumberBrowsePane.has({
@@ -1109,7 +1109,7 @@ export default {
 
   verifySearchAndFilterPaneBrowseToggle() {
     this.verifyKeywordsAsDefault();
-    this.verifyCallNumberBrowseEmptyPane();
+    this.verifyBrowseResultsEmptyPane();
     cy.expect([
       searchButton.has({ disabled: true }),
       resetAllBtn.has({ disabled: true }),

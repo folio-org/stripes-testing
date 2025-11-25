@@ -145,7 +145,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.validateBrowseToggleIsSelected();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
         InventorySearchAndFilter.selectBrowseSubjects();
         InventorySearchAndFilter.browseSearch(testData.browseQuery);
