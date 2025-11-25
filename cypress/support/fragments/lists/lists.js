@@ -108,11 +108,6 @@ const UI = {
   },
 
   clickOnQueryAccordion() {
-    cy.get('#results-viewer-accordion').click();
-    cy.wait(1000);
-  },
-
-  clickOnQueryAccordion() {
     cy.do(queryAccordion.click());
     cy.wait(500);
   },
@@ -415,22 +410,6 @@ const UI = {
         cy.wait(500);
       });
     cy.wait(500);
-  },
-
-  verifyListNameLabel(value) {
-    this.checkKeyValue('List name', value);
-  },
-
-  verifyListDescriptionLabel(value) {
-    this.checkKeyValue('Description', value);
-  },
-
-  verifyVisibilityLabel(value) {
-    this.checkKeyValue('Visibility', value);
-  },
-
-  verifyStatusLabel(value) {
-    this.checkKeyValue('Status', value);
   },
 
   checkKeyValue(label, value) {
