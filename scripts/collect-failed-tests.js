@@ -7,7 +7,7 @@ const { createTestRailClient } = require('./helpers/api.client');
 const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
-const selectedStatus = [status.Failed];
+const selectedStatus = [status.Failed, status.Retest, status.Untested];
 const selectedTeams = [
   team.Firebird,
   team.Folijet,
@@ -31,7 +31,7 @@ const ids = [];
 const arrayOfFiles = [];
 let filteredFiles = [];
 const shuffle = true;
-const numberOfChunks = 10;
+const numberOfChunks = 1;
 const chunks = [];
 
 function parseCommand() {
@@ -91,7 +91,6 @@ function parseCommand() {
           const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
           if (numberOfChunks === 1) {
             console.log(parsedCommand);
-
             // To print test cases IDs (NOT FILTERED!!!)
             // console.log(`\n${ids.join('')}`);
           } else {
