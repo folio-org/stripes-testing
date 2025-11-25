@@ -4,7 +4,7 @@ import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -39,11 +39,8 @@ describe('MARC', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
+          authRefresh: true,
         }).then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-            DataImport.waitLoading();
-          });
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
@@ -64,10 +61,7 @@ describe('MARC', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
-      });
-      cy.waitForAuthRefresh(() => {
-        cy.reload();
-        InventorySearchAndFilter.waitLoading();
+        authRefresh: true,
       });
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
       InventorySearchAndFilter.selectViewHoldings();
@@ -77,16 +71,8 @@ describe('MARC', () => {
 
     after(() => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
-      InventorySearchAndFilter.searchInstanceByTitle(instanceID);
-      InventorySearchAndFilter.selectViewHoldings();
-      HoldingsRecordView.delete();
-      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
+      if (instanceID) InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceID);
     });
 
     it(
