@@ -65,7 +65,7 @@ describe('ui-orders: Orders and Order lines', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
     Budgets.deleteViaApi(firstBudget.id);
     Funds.deleteFundViaApi(defaultFund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
     cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);

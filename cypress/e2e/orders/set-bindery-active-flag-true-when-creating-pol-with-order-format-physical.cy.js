@@ -84,7 +84,7 @@ describe('Orders', () => {
     cy.getAdminToken();
     Budgets.deleteViaApi(firstBudget.id);
     Funds.deleteFundViaApi(firstFund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
     Users.deleteViaApi(enterUser.userId);
   });
