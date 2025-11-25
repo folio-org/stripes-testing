@@ -95,7 +95,7 @@ describe('Lists', () => {
         Users.deleteViaApi(userData.userId);
       });
 
-      it.only('C451508 Search for "Organizations" in the query builder using "Organization — EDI vendor code" field (corsair)',
+      it('C451508 Search for "Organizations" in the query builder using "Organization — EDI vendor code" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C451508'] },
         () => {
           const fqlQuery = { 'organization.edi_vendor_edi_code': { '$empty': true } };
