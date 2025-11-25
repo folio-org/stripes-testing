@@ -30,7 +30,7 @@ describe('Funds', () => {
       });
     });
     cy.createTempUser([
-      permissions.uiFinanceViewEditDeletFundBudget.gui,
+      permissions.uiFinanceViewEditDeleteFundBudget.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiFinanceViewEditFundAndBudget.gui,
       permissions.uiFinanceViewEditCreateFundAndBudget.gui,
