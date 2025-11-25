@@ -58,6 +58,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     innerHTML: (el) => el.innerHTML,
     innerText: (el) => el.innerText,
     boldText: (el) => el.querySelector('b')?.innerText,
+    highlightedText: (el) => el.querySelector('mark')?.innerText,
   })
   .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 
