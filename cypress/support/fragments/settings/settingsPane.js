@@ -13,6 +13,7 @@ import {
   HTML,
   including,
   or,
+  NavList,
   NavListItem,
   Link,
 } from '../../../../interactors';
@@ -190,5 +191,9 @@ export default {
 
   checkPaneIsOpened: (paneName) => {
     cy.expect(Pane(paneName).exists());
+  },
+
+  verifyTabsCountInSection: (sectionName, expectedCount) => {
+    cy.expect(NavList({ title: sectionName }).has({ count: expectedCount }));
   },
 };
