@@ -5,10 +5,16 @@ function label(element) {
   return labelEl ? labelEl.textContent.trim() : '';
 }
 
+function title(el) {
+  return el.querySelector('[class^=header-]')?.textContent || '';
+}
+
 export default HTML.extend('Nav List')
   .selector('[data-test-nav-list]')
   .filters({
     count: (el) => el.querySelectorAll('a').length,
+    title,
+    content: (el) => el.textContent,
   })
   .actions({
     navTo: ({ find }, linkText) => find(Link(linkText)).click(),
