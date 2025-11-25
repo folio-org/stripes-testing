@@ -160,7 +160,6 @@ describe('Eureka', () => {
 
         cy.waitForAuthRefresh(() => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
         }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
@@ -208,7 +207,6 @@ describe('Eureka', () => {
         cy.login(userBData.username, userBData.password);
         cy.waitForAuthRefresh(() => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-          cy.reload();
         }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();

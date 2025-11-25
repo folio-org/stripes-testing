@@ -8,6 +8,8 @@ import {
   including,
   Select,
   not,
+  Accordion,
+  Checkbox,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
@@ -22,6 +24,12 @@ const itemToggleButton = Button('Item');
 const resultsList = selectInstanceModal.find(HTML({ id: 'list-plugin-find-records' }));
 const searchOptionSelect = Select('Search field index');
 const defaultSearchOption = including('Keyword (title, contributor, identifier, HRID, UUID');
+const dateCreatedErrorMessage = 'Please enter a valid date';
+const dateRangeErrorMessage = 'Please enter a valid year';
+const sourceAccordion = selectInstanceModal.find(Accordion('Source'));
+const startDateField = TextField({ name: 'startDate' });
+const endDateField = TextField({ name: 'endDate' });
+const clearIcon = Button({ icon: 'times-circle-solid' });
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
@@ -144,11 +152,15 @@ export default {
   checkDefaultSearchOptionSelected() {
     cy.expect(searchOptionSelect.has({ checkedOptionText: defaultSearchOption }));
   },
+  checkSearchOptionSelected(searchOption) {
+    cy.expect(searchOptionSelect.has({ checkedOptionText: searchOption }));
+  },
   checkSearchInputFieldValue(query) {
     cy.expect(searchInput.has({ value: query }));
   },
-  checkResultsListEmpty() {
-    cy.expect(resultsList.absent());
+  checkResultsListEmpty(isEmpty = true) {
+    if (isEmpty) cy.expect(resultsList.absent());
+    else cy.expect(resultsList.exists());
   },
   checkNoRecordsFound(headingReference) {
     cy.expect(
@@ -178,4 +190,88 @@ export default {
   },
   switchToHoldings: () => cy.do(holdingsToggleButton.click()),
   switchToItem: () => cy.do(itemToggleButton.click()),
+
+  expandSelectInstanceAccordion(accordion) {
+    cy.do(selectInstanceModal.find(Accordion(accordion)).clickHeader());
+  },
+  fillDateFields(accordionName, fromDate, toDate) {
+    cy.do([
+      selectInstanceModal.find(Accordion(accordionName)).find(startDateField).fillIn(fromDate),
+      selectInstanceModal.find(Accordion(accordionName)).find(endDateField).fillIn(toDate),
+    ]);
+  },
+  verifyDateFieldErrorMessages() {
+    cy.expect(
+      selectInstanceModal
+        .find(Accordion('Date created'))
+        .find(HTML(including(dateCreatedErrorMessage)))
+        .exists(),
+    );
+    cy.expect(
+      selectInstanceModal
+        .find(Accordion('Date updated'))
+        .find(HTML(including(dateCreatedErrorMessage)))
+        .exists(),
+    );
+    cy.expect(
+      selectInstanceModal
+        .find(Accordion('Date range'))
+        .find(HTML(including(dateRangeErrorMessage)))
+        .exists(),
+    );
+  },
+  verifyDateFieldsCleared() {
+    const accordions = ['Date range', 'Date created', 'Date updated'];
+    accordions.forEach((accordionName) => {
+      cy.expect([
+        selectInstanceModal.find(Accordion(accordionName)).find(startDateField).has({ value: '' }),
+        selectInstanceModal.find(Accordion(accordionName)).find(endDateField).has({ value: '' }),
+      ]);
+    });
+  },
+  selectSourceFilter(source) {
+    cy.do([
+      sourceAccordion.clickHeader(),
+      sourceAccordion
+        .find(Checkbox({ id: `clickable-filter-source-${source.toLowerCase()}` }))
+        .click(),
+    ]);
+  },
+  verifySourceFilterApplied() {
+    cy.expect(sourceAccordion.find(Checkbox({ checked: true })).exists());
+  },
+  checkSearchInputCleared() {
+    cy.expect(searchInput.has({ value: '' }));
+  },
+  verifyFiltersOrder(expectedFilters) {
+    expectedFilters.forEach((filterName, index) => {
+      cy.expect(
+        selectInstanceModal
+          .find(Accordion({ index }))
+          .find(HTML(including(filterName)))
+          .exists(),
+      );
+    });
+  },
+  fillInSearchQuery(searchValue) {
+    cy.do([searchInput.fillIn(searchValue)]);
+  },
+  focusOnSearchField() {
+    cy.do(searchInput.focus());
+  },
+  clearSearchInputField() {
+    cy.do(searchInput.focus());
+    cy.do(searchInput.find(clearIcon).click());
+    this.checkSearchInputFieldValue('');
+  },
+  checkClearIconShownInSearchField(isShown = true) {
+    if (isShown) cy.expect(searchInput.find(clearIcon).exists());
+    else cy.expect(searchInput.find(clearIcon).absent());
+  },
+  checkSearchInputFieldInFocus(isFocused) {
+    cy.expect(searchInput.has({ focused: isFocused }));
+  },
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
 };

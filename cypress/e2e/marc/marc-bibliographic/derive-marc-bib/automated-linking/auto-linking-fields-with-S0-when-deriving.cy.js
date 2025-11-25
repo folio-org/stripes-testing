@@ -141,9 +141,11 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.user = createdUserProperties;
 
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -154,12 +156,14 @@ describe('MARC', () => {
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.field130.tag130);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
         });
@@ -179,8 +183,7 @@ describe('MARC', () => {
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
-            InventoryInstance.deriveNewMarcBib();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
+            InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
@@ -213,7 +216,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);
             InventoryInstance.viewSource();

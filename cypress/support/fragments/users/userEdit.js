@@ -818,7 +818,7 @@ export default {
 
   closeEditPaneIfExists() {
     cy.get('body').then(($body) => {
-      if ($body.find('section[class*="pane"]').length > 0) {
+      if ($body.find('section [data-test-pane-header-title]')?.textContent === 'Edit') {
         cy.do(closeEditPaneButton.click());
       }
     });
@@ -1269,7 +1269,7 @@ export default {
   },
 
   verifyEmailCommunicationPreferencesDropdownItemExists(item) {
-    cy.expect(preferredEmailCommunicationsSelect.find(MultiSelectOption(including(item))).exists());
+    cy.expect(MultiSelectOption(including(item)).exists());
   },
 
   verifyRemoveButtonExists(preference) {
@@ -1424,7 +1424,7 @@ export default {
 
     const monthName = months[parseInt(month, 10) - 1];
 
-    return `${monthName} ${day}, ${year}`;
+    return `${monthName} ${+day}, ${year}`;
   },
 
   pickFutureDate() {
@@ -1459,5 +1459,9 @@ export default {
 
   verifyUserWillReactivateMessage() {
     cy.expect(HTML(including('User will reactivate after saving')).exists());
+  },
+
+  scrollToTheLastCustomField() {
+    cy.get('[data-test-record-edit-custom-field]').last().scrollIntoView();
   },
 };

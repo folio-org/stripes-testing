@@ -59,7 +59,7 @@ describe('Export Manager', () => {
             'Purchase',
           );
           InteractorsTools.checkCalloutMessage('Integration was saved');
-          OrderLinesLimit.setPOLLimit(3);
+          OrderLinesLimit.setPOLLimitViaApi(3);
           cy.visit(TopMenu.ordersPath);
           order.orderType = 'Ongoing';
           Orders.createOrder(order, true, false).then((orderId) => {
@@ -99,7 +99,7 @@ describe('Export Manager', () => {
 
       after(() => {
         cy.getAdminToken();
-        OrderLinesLimit.setPOLLimit(1);
+        OrderLinesLimit.setPOLLimitViaApi(1);
         Orders.deleteOrderViaApi(order.id);
         Organizations.deleteOrganizationViaApi(organization.id);
         Users.deleteViaApi(user.userId);

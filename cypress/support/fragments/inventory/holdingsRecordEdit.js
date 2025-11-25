@@ -35,7 +35,7 @@ const callNumberField = rootForm.find(TextArea({ name: 'callNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
 const callNumberTypeSelect = rootForm.find(Select('Call number type'));
-const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
+const statisticalCodeSelectionList = SelectionList({ id: including('sl-container-selection-:r') });
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
 const createAdministrativeNoteButton = Button('Add administrative note');
@@ -215,6 +215,10 @@ export default {
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
   },
+  selectTemporaryLocation(location) {
+    this.openTemporaryLocation();
+    cy.do([SelectionList().filter(location), SelectionList().select(including(location))]);
+  },
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());
@@ -263,14 +267,17 @@ export default {
     callNumberSuffix,
     copyNumber,
   }) {
-    if (callNumber) this.fillCallNumber(callNumber);
+    if (callNumber !== undefined) this.fillCallNumber(callNumber);
     if (callNumberType) this.chooseCallNumberType(callNumberType);
-    if (callNumberPrefix) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
-    if (callNumberSuffix) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
-    if (copyNumber) cy.do(TextField('Copy number').fillIn(copyNumber));
+    if (callNumberPrefix !== undefined) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
+    if (callNumberSuffix !== undefined) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
+    if (copyNumber !== undefined) cy.do(TextField('Copy number').fillIn(copyNumber));
   },
   markAsSuppressedFromDiscovery() {
     cy.do(Checkbox('Suppress from discovery').click());
+  },
+  checkMarkedAsSuppressedFromDiscovery(isMarked = true) {
+    cy.expect(Checkbox('Suppress from discovery').is({ checked: isMarked }));
   },
   checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: !saveAndClose }));

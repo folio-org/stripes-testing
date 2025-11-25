@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  validateApiResponse,
+  createFieldTestDataBuilder,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field API', () => {
   // User with required permissions to create fields and indicators
@@ -11,36 +16,39 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
     Permissions.specificationStorageCreateSpecificationFieldIndicator.gui,
   ];
 
+  const LOCAL_FIELD_TAG = '976'; // Unique tag for this test file
+  const BASE_URL = 'http://www.example.org/field976.html';
+
   let user;
   let bibSpecId;
   let localField;
-  const createdIndicators = [];
-
-  const localFieldPayload = {
-    tag: '899',
-    label: 'AT_C499650_Local Field for Indicators Test',
-    url: 'http://www.example.org/field899.html',
-    repeatable: false,
-    required: false,
-    deprecated: false,
-    scope: 'local',
-  };
+  let fieldId;
 
   before('Create user and setup local field', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
 
-        // Clean up any existing field with the same tag and create a new one
-        cy.deleteSpecificationFieldByTag(bibSpecId, localFieldPayload.tag, false).then(() => {
-          cy.createSpecificationField(bibSpecId, localFieldPayload).then((response) => {
-            expect(response.status).to.eq(201);
+        // Clean up any existing field with the same tag
+        cy.deleteSpecificationFieldByTag(bibSpecId, LOCAL_FIELD_TAG, false).then(() => {
+          const testCaseId = 'C499650';
+          const fieldTestDataBuilder = createFieldTestDataBuilder(testCaseId);
+          const testData = fieldTestDataBuilder
+            .withField(LOCAL_FIELD_TAG, 'Local Field for Indicators Test', {
+              url: BASE_URL,
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            })
+            .build();
+
+          cy.createSpecificationField(bibSpecId, testData.field).then((response) => {
+            validateApiResponse(response, 201);
             localField = response.body;
-            expect(localField.tag).to.eq(localFieldPayload.tag);
+            fieldId = localField.id;
+            expect(localField.tag).to.eq(LOCAL_FIELD_TAG);
             expect(localField.scope).to.eq('local');
           });
         });
@@ -51,8 +59,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
   after('Delete test user and clean up created field', () => {
     if (user) {
       cy.getAdminToken();
-      if (localField && localField.scope === 'local') {
-        cy.deleteSpecificationField(localField.id, false);
+      if (fieldId) {
+        cy.deleteSpecificationField(fieldId, false);
       }
       Users.deleteViaApi(user.userId);
     }
@@ -62,63 +70,60 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
     'C499650 Create Indicators of Local field for MARC bib spec (API) (spitfire)',
     { tags: ['C499650', 'extendedPath', 'spitfire'] },
     () => {
-      // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
 
       // Step 1: Create first indicator (order: 1)
       const indicator1Payload = {
         order: 1,
-        label: 'Ind 1 name',
+        label: 'AT_C499650_Ind 1 name',
       };
 
-      cy.createSpecificationFieldIndicator(localField.id, indicator1Payload).then((response) => {
-        expect(response.status, 'Step 1: Create first indicator').to.eq(201);
-        expect(response.body.fieldId).to.eq(localField.id);
-        expect(response.body.order).to.eq(1);
-        expect(response.body.label).to.eq('Ind 1 name');
-        expect(response.body.id).to.exist;
-        expect(response.body.metadata).to.exist;
-
+      cy.createSpecificationFieldIndicator(fieldId, indicator1Payload).then((response) => {
+        validateApiResponse(response, 201);
         const firstIndicator = response.body;
-        createdIndicators.push(firstIndicator);
+
+        expect(firstIndicator.fieldId).to.eq(fieldId);
+        expect(firstIndicator.order).to.eq(1);
+        expect(firstIndicator.label).to.eq('AT_C499650_Ind 1 name');
+        expect(firstIndicator.id).to.exist;
+        expect(firstIndicator.metadata).to.exist;
 
         // Step 2: Create second indicator (order: 2)
         const indicator2Payload = {
           order: 2,
-          label: 'Ind 2 name',
+          label: 'AT_C499650_Ind 2 name',
         };
 
-        cy.createSpecificationFieldIndicator(localField.id, indicator2Payload).then((response2) => {
-          expect(response2.status, 'Step 2: Create second indicator').to.eq(201);
-          expect(response2.body.fieldId).to.eq(localField.id);
-          expect(response2.body.order).to.eq(2);
-          expect(response2.body.label).to.eq('Ind 2 name');
-          expect(response2.body.id).to.exist;
-          expect(response2.body.metadata).to.exist;
-
+        cy.createSpecificationFieldIndicator(fieldId, indicator2Payload).then((response2) => {
+          validateApiResponse(response2, 201);
           const secondIndicator = response2.body;
-          createdIndicators.push(secondIndicator);
+
+          expect(secondIndicator.fieldId).to.eq(fieldId);
+          expect(secondIndicator.order).to.eq(2);
+          expect(secondIndicator.label).to.eq('AT_C499650_Ind 2 name');
+          expect(secondIndicator.id).to.exist;
+          expect(secondIndicator.metadata).to.exist;
 
           // Step 3: Verify both indicators are retrieved correctly
-          cy.getSpecificationFieldIndicators(localField.id).then((getResponse) => {
-            expect(getResponse.status, 'Step 3: Get field indicators').to.eq(200);
+          cy.getSpecificationFieldIndicators(fieldId).then((getResponse) => {
+            validateApiResponse(getResponse, 200);
             expect(getResponse.body.indicators).to.have.length(2);
 
             // Verify first indicator in response
             const retrievedIndicator1 = getResponse.body.indicators.find((ind) => ind.order === 1);
             expect(retrievedIndicator1, 'First indicator found in response').to.exist;
             expect(retrievedIndicator1.id).to.eq(firstIndicator.id);
-            expect(retrievedIndicator1.fieldId).to.eq(localField.id);
+            expect(retrievedIndicator1.fieldId).to.eq(fieldId);
             expect(retrievedIndicator1.order).to.eq(1);
-            expect(retrievedIndicator1.label).to.eq('Ind 1 name');
+            expect(retrievedIndicator1.label).to.eq('AT_C499650_Ind 1 name');
 
             // Verify second indicator in response
             const retrievedIndicator2 = getResponse.body.indicators.find((ind) => ind.order === 2);
             expect(retrievedIndicator2, 'Second indicator found in response').to.exist;
             expect(retrievedIndicator2.id).to.eq(secondIndicator.id);
-            expect(retrievedIndicator2.fieldId).to.eq(localField.id);
+            expect(retrievedIndicator2.fieldId).to.eq(fieldId);
             expect(retrievedIndicator2.order).to.eq(2);
-            expect(retrievedIndicator2.label).to.eq('Ind 2 name');
+            expect(retrievedIndicator2.label).to.eq('AT_C499650_Ind 2 name');
           });
         });
       });
@@ -129,7 +134,6 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
     'C499651 Cannot create Indicators of Local field with empty "label" for MARC bib spec (API) (spitfire)',
     { tags: ['C499651', 'extendedPath', 'spitfire'] },
     () => {
-      // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
 
       // Step 1: Attempt to create indicator without "label" field (order: 1)
@@ -137,9 +141,9 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
         order: 1,
       };
 
-      cy.createSpecificationFieldIndicator(localField.id, indicator1PayloadNoLabel, false).then(
+      cy.createSpecificationFieldIndicator(fieldId, indicator1PayloadNoLabel, false).then(
         (response) => {
-          expect(response.status, 'Step 1: Create indicator without label field').to.eq(400);
+          validateApiResponse(response, 400);
           expect(response.body.errors).to.exist;
           expect(response.body.errors[0].message).to.include("The 'label' field is required.");
         },
@@ -150,9 +154,9 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
         order: 2,
       };
 
-      cy.createSpecificationFieldIndicator(localField.id, indicator2PayloadNoLabel, false).then(
+      cy.createSpecificationFieldIndicator(fieldId, indicator2PayloadNoLabel, false).then(
         (response) => {
-          expect(response.status, 'Step 2: Create indicator without label field').to.eq(400);
+          validateApiResponse(response, 400);
           expect(response.body.errors).to.exist;
           expect(response.body.errors[0].message).to.include("The 'label' field is required.");
         },
@@ -164,9 +168,9 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
         label: '',
       };
 
-      cy.createSpecificationFieldIndicator(localField.id, indicator1PayloadEmptyLabel, false).then(
+      cy.createSpecificationFieldIndicator(fieldId, indicator1PayloadEmptyLabel, false).then(
         (response) => {
-          expect(response.status, 'Step 3: Create indicator with empty label field').to.eq(400);
+          validateApiResponse(response, 400);
           expect(response.body.errors).to.exist;
           expect(response.body.errors[0].message).to.include("The 'label' field is required.");
         },
@@ -178,9 +182,9 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
         label: '',
       };
 
-      cy.createSpecificationFieldIndicator(localField.id, indicator2PayloadEmptyLabel, false).then(
+      cy.createSpecificationFieldIndicator(fieldId, indicator2PayloadEmptyLabel, false).then(
         (response) => {
-          expect(response.status, 'Step 4: Create indicator with empty label field').to.eq(400);
+          validateApiResponse(response, 400);
           expect(response.body.errors).to.exist;
           expect(response.body.errors[0].message).to.include("The 'label' field is required.");
         },
@@ -192,55 +196,49 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
     'C499656 Cannot create Indicators of Local field with invalid value in "order" field for MARC bib spec (API) (spitfire)',
     { tags: ['C499656', 'extendedPath', 'spitfire'] },
     () => {
-      // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
 
       // Test scenarios for order field validation
       const orderValidationScenarios = [
         {
           description: 'order value 0 (below valid range)',
-          payload: { order: 0, label: 'Ind 1 name' },
+          payload: { order: 0, label: 'AT_C499656_Ind 1 name' },
           expectedError: "The indicator 'order' field can only accept numbers 1-2.",
         },
         {
           description: 'order value 3 (above valid range)',
-          payload: { order: 3, label: 'Ind 1 name' },
+          payload: { order: 3, label: 'AT_C499656_Ind 1 name' },
           expectedError: "The indicator 'order' field can only accept numbers 1-2.",
         },
         {
           description: 'empty order field',
-          payload: { order: '', label: 'Ind 1 name' },
+          payload: { order: '', label: 'AT_C499656_Ind 1 name' },
           expectedError: "The 'order' field is required.",
         },
         {
           description: 'order field with 2 characters',
-          payload: { order: '11', label: 'Ind 1 name' },
+          payload: { order: '11', label: 'AT_C499656_Ind 1 name' },
           expectedError: "The indicator 'order' field can only accept numbers 1-2.",
         },
         {
           description: 'order field with letter',
-          payload: { order: 'a', label: 'Ind 1 name' },
+          payload: { order: 'a', label: 'AT_C499656_Ind 1 name' },
           expectedError: 'JSON parse error',
         },
         {
           description: 'order field with special character',
-          payload: { order: '$', label: 'Ind 1 name' },
+          payload: { order: '$', label: 'AT_C499656_Ind 1 name' },
           expectedError: 'JSON parse error',
         },
       ];
 
       // Test each order field validation scenario
-      orderValidationScenarios.forEach((scenario, index) => {
-        cy.createSpecificationFieldIndicator(localField.id, scenario.payload, false).then(
-          (response) => {
-            expect(
-              response.status,
-              `Step ${index + 1}: Create indicator with ${scenario.description}`,
-            ).to.eq(400);
-            expect(response.body.errors).to.exist;
-            expect(response.body.errors[0].message).to.include(scenario.expectedError);
-          },
-        );
+      orderValidationScenarios.forEach((scenario) => {
+        cy.createSpecificationFieldIndicator(fieldId, scenario.payload, false).then((response) => {
+          validateApiResponse(response, 400);
+          expect(response.body.errors).to.exist;
+          expect(response.body.errors[0].message).to.include(scenario.expectedError);
+        });
       });
     },
   );

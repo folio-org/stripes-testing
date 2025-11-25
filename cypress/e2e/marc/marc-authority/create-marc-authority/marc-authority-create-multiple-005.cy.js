@@ -13,7 +13,6 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
       const marcAuthorityHeading = `AT_C423507_MarcAuthority_${getRandomPostfix()}`;
-      const todayDate = moment(new Date()).format('YYYYMMDD');
       const tag010 = '010';
       const tag100 = '100';
       const tag005 = '005';
@@ -49,7 +48,7 @@ describe('MARC', () => {
 
       it(
         'C423507 Create a new MARC authority record with multiple "005" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423507'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C423507'] },
         () => {
           // Step 1: Open new authority record pane
           MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -81,6 +80,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagValue(6, tag005);
           QuickMarcEditor.verifyAllBoxesInARowAreDisabled(6, true, false);
 
+          const todayDate = moment(new Date()).format('YYYYMMDD');
           // Step 7: Save and check for successful creation
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();

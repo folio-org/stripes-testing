@@ -24,6 +24,20 @@ Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUser
   });
 });
 
+Cypress.Commands.add('removeAffiliationFromUser', (tenantId, targetUserId) => {
+  cy.getConsortiaId().then((consortiaId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `consortia/${consortiaId}/user-tenants`,
+      searchParams: {
+        tenantId,
+        userId: targetUserId,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  });
+});
+
 Cypress.Commands.add('affiliateUserToTenant', ({ tenantId, userId, permissions }) => {
   cy.resetTenant();
   cy.assignAffiliationToUser(tenantId, userId);
@@ -87,8 +101,7 @@ Cypress.Commands.add('waitForPrimaryAffiliationSetup', (consortiaId, targetUserI
       });
     },
     (response) => {
-      expect(response.body).to.have.property('userTenants');
-      expect(response.body.userTenants.filter((el) => el.isPrimary === true)).to.have.lengthOf(1);
+      return response.body.userTenants?.some((el) => el.isPrimary === true) ?? false;
     },
     {
       limit: 20,

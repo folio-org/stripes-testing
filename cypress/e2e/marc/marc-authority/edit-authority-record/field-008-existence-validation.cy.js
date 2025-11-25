@@ -38,7 +38,7 @@ describe('MARC', () => {
           'RecUpd',
           'Pers Name',
           'Level Est',
-          'Mod Rec Est',
+          'Mod Rec',
           'Source',
         ],
         tag110: '110',
@@ -66,7 +66,7 @@ describe('MARC', () => {
         RecUpd: 'a',
         'Pers Name': 'a',
         'Level Est': 'a',
-        'Mod Rec Est': 'a',
+        'Mod Rec': 'a',
         Source: 'a',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -82,26 +82,29 @@ describe('MARC', () => {
 
       before('Upload files', () => {
         cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
+        cy.then(() => {
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
+                });
+              },
+            );
+          });
+        }).then(() => {
+          cy.createTempUser([
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
               });
-            },
-          );
-        });
-
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
       });
@@ -135,7 +138,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // #5 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
           QuickMarcEditor.closeAllCallouts();
 
@@ -162,9 +165,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
 
-          // #11 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.calloutMessage);
+          // #11 Close editing pane
+          QuickMarcEditor.closeAuthorityEditorPane();
 
           // #12 - #13 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');

@@ -5,22 +5,26 @@ import permissionsList from '../dictionary/permissions';
 import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
-  return cy.okapiRequest({
-    path: 'users',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    Cypress.env('users', body.users);
-    return body.users;
-  });
+  return cy
+    .okapiRequest({
+      path: 'users',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      Cypress.env('users', body.users);
+      return body.users;
+    });
 });
 
 Cypress.Commands.add('getAdminUserDetails', () => {
   if (!Cypress.env('adminUserDetails')) {
-    return cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((users) => {
-      Cypress.env('adminUserDetails', users[0]);
-      return users[0];
-    });
+    return cy
+      .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+      .then((users) => {
+        Cypress.env('adminUserDetails', users[0]);
+        return users[0];
+      });
   } else {
     return Cypress.env('adminUserDetails');
   }
@@ -119,6 +123,9 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
     }
     if (parameters.email) {
       userBody.personal.email = parameters.email;
+    } else {
+      // if a user should have only unique email
+      // userBody.personal.email = `test_${getRandomPostfix()}@test.com`;
     }
   } else {
     userBody = userModel;
@@ -154,25 +161,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
       cy.setUserPassword(userProperties);
       if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
         cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-          if (Cypress.env('ecsEnabled')) {
-            cy.recurse(
-              () => {
-                return cy.okapiRequest({
-                  path: `users-keycloak/users/${userProperties.userId}`,
-                  isDefaultSearchParamsRequired: false,
-                });
-              },
-              (response) => expect(response.body.id).to.eq(userProperties.userId),
-              {
-                limit: 10,
-                timeout: 40000,
-                delay: 1000,
-              },
-            ).then(() => {
-              cy.wait(10000);
-              cy.updateRolesForUserApi(userProperties.userId, [roleId]);
-            });
-          } else cy.updateRolesForUserApi(userProperties.userId, [roleId]);
+          cy.updateRolesForUserApi(userProperties.userId, [roleId]);
         });
       } else if (Cypress.env('eureka')) {
         let capabilitiesIds;
@@ -219,9 +208,9 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
                   responseCapabs.body.capabilities.filter(
                     (capab) => capab.permission === permissionName,
                   ).length > 0 ||
-                  responseSets.body.capabilitySets.filter(
-                    (set) => set.permission === permissionName,
-                  ).length > 0,
+                    responseSets.body.capabilitySets.filter(
+                      (set) => set.permission === permissionName,
+                    ).length > 0,
                   `Capabilities/sets found for "${permissionName}"`,
                 ).to.be.true;
               });
@@ -270,25 +259,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
   if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
     cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-      if (Cypress.env('ecsEnabled')) {
-        cy.recurse(
-          () => {
-            return cy.okapiRequest({
-              path: `users-keycloak/users/${userId}`,
-              isDefaultSearchParamsRequired: false,
-            });
-          },
-          (response) => expect(response.body.id).to.eq(userId),
-          {
-            limit: 10,
-            timeout: 40000,
-            delay: 1000,
-          },
-        ).then(() => {
-          cy.wait(10000);
-          cy.updateRolesForUserApi(userId, [roleId]);
-        });
-      } else cy.updateRolesForUserApi(userId, [roleId]);
+      cy.updateRolesForUserApi(userId, [roleId]);
     });
   } else if (Cypress.env('eureka')) {
     let capabilitiesIds;
@@ -331,8 +302,8 @@ Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = [
               responseCapabs.body.capabilities.filter(
                 (capab) => capab.permission === permissionName,
               ).length > 0 ||
-              responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
-                .length > 0,
+                responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
+                  .length > 0,
               `Capabilities/sets found for "${permissionName}"`,
             ).to.be.true;
           });

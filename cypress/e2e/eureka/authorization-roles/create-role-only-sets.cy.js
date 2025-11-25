@@ -132,7 +132,6 @@ describe('Eureka', () => {
               path: TopMenu.settingsAuthorizationRoles,
               waiter: AuthorizationRoles.waitContentLoading,
             });
-            cy.reload();
             AuthorizationRoles.waitContentLoading();
           }, 20_000);
         });
@@ -141,7 +140,7 @@ describe('Eureka', () => {
       afterEach(() => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
       });
 
       it(

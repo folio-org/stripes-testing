@@ -9,6 +9,8 @@ import Users from '../../support/fragments/users/users';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import ConfirmDeleteOrganizationModal from '../../support/fragments/organizations/modals/confirmDeleteOrganizationModal';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Organizations', () => {
   before('Enable Banking Information', () => {
@@ -211,6 +213,68 @@ describe('Organizations', () => {
     );
   });
 
+  describe('Delete organization with Banking information', () => {
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const bankingInformation = {
+      bankName: `Bank_${getRandomPostfix()}`,
+      bankAccountNumber: `${getRandomPostfix()}`,
+      transitNumber: '000111222',
+      notes: 'Created from automated test',
+    };
+    let user;
+
+    before(() => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((orgId) => {
+        organization.id = orgId;
+        bankingInformation.organizationId = orgId;
+        Organizations.createBankingInformationViaApi(bankingInformation);
+      });
+
+      cy.createTempUser([
+        permissions.uiOrganizationsViewEditDelete.gui,
+        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.organizationsPath,
+            waiter: Organizations.waitLoading,
+          });
+        });
+      });
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C613152 Delete organization with at least one existing Banking information (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsPresent();
+        Organizations.checkBankInformationExist(bankingInformation.bankName);
+        Organizations.deleteOrganization(false);
+        ConfirmDeleteOrganizationModal.waitLoading();
+        ConfirmDeleteOrganizationModal.verifyModalView(organization.name);
+        ConfirmDeleteOrganizationModal.clickCancel();
+        ConfirmDeleteOrganizationModal.isNotDisplayed();
+        Organizations.deleteOrganization(false);
+        ConfirmDeleteOrganizationModal.waitLoading();
+        ConfirmDeleteOrganizationModal.verifyModalView(organization.name);
+        ConfirmDeleteOrganizationModal.clickDeleteButton();
+        InteractorsTools.checkCalloutMessage(
+          `The organization ${organization.name} was successfully deleted`,
+        );
+        Organizations.checkZeroSearchResultsHeader(organization.name);
+      },
+    );
+  });
+
   describe('Searching in organization look-up', { retries: { runMode: 1 } }, () => {
     const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
     const secondOrganization = {
@@ -258,18 +322,20 @@ describe('Organizations', () => {
           Organizations.closeDetailsPane();
         },
       );
+      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+        C423432User = secondUserProperties;
+      });
       cy.createTempUser([
         permissions.uiOrdersView.gui,
         permissions.uiOrganizationsViewBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
-      });
-      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
-        C423432User = secondUserProperties;
       });
     });
 
@@ -298,6 +364,7 @@ describe('Organizations', () => {
       'C423426 Searching in "Organization look-up" by "Bank account number" with appropriate permission (thunderjet)',
       { tags: ['criticalPathBroken', 'thunderjet'] },
       () => {
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'Bank account number',
@@ -305,6 +372,7 @@ describe('Organizations', () => {
           firstOrganization,
         );
         Orders.resetFilters();
+        cy.wait(4000);
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'Bank account number',
@@ -318,9 +386,11 @@ describe('Organizations', () => {
       'C423427 Searching in "Organization look-up" by "Bank account number" in "All" section with banking permission (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex('All', firstBankingInformation.accountNumber, firstOrganization);
         Orders.resetFilters();
+        cy.wait(4000);
         Orders.openVendorFilterModal();
         Orders.searchVendorbyindex(
           'All',
@@ -339,6 +409,7 @@ describe('Organizations', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
+        Orders.resetFiltersIfActive();
         Orders.openVendorFilterModal();
         Orders.searchAbsentVendorbyindex(
           'All',
@@ -694,6 +765,148 @@ describe('Organizations', () => {
     );
   });
 
+  describe('Create an account type', () => {
+    let user;
+    const accountType = {
+      name: `TestAccountType_${getRandomPostfix()}`,
+    };
+
+    before('Create user', () => {
+      cy.getAdminToken();
+      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.settingsOrganizationsPath,
+              waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+            });
+            cy.reload();
+            SettingsOrganizations.waitLoadingOrganizationSettings();
+          }, 20_000);
+        },
+      );
+    });
+
+    after('Delete test data', () => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsOrganizationsPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.selectAccountTypes();
+      SettingsOrganizations.deleteAccountType(accountType);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C411687 Create an account type (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.clickNewButton();
+        SettingsOrganizations.clickOutsideAccountTypeField();
+        SettingsOrganizations.checkErrorMessage();
+        SettingsOrganizations.fillAccountTypeName(accountType.name);
+        SettingsOrganizations.saveAccountTypeChanges();
+        SettingsOrganizations.checkRowActionButtons(accountType.name);
+      },
+    );
+  });
+
+  describe('User cannot edit banking information', () => {
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const bankingInformation = {
+      bankName: `Test Bank ${Date.now()}`,
+      bankAccountNumber: '1234567890',
+      transitNumber: '987654321',
+      notes: 'Test banking information',
+    };
+
+    before('Create user and organization with banking information', () => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((orgId) => {
+        organization.id = orgId;
+        bankingInformation.organizationId = orgId;
+        Organizations.createBankingInformationViaApi(bankingInformation);
+      });
+      cy.createTempUser([
+        permissions.uiOrganizationsView.gui,
+        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C423518 A user cannot edit banking information without organization edit permission (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet'] },
+      () => {
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsPresent();
+        Organizations.checkAvailableActionsInTheActionsField();
+      },
+    );
+  });
+
+  describe('Error message related to Banking information does not appear', () => {
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const bankingInformation = {
+      bankName: `Test Bank ${Date.now()}`,
+      bankAccountNumber: `${getRandomPostfix()}`,
+      transitNumber: '987654321',
+      notes: 'Test banking information',
+    };
+
+    before('Create user and organization with banking information', () => {
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((orgId) => {
+        organization.id = orgId;
+        bankingInformation.organizationId = orgId;
+        Organizations.createBankingInformationViaApi(bankingInformation);
+      });
+      cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C434070 Error message related to Banking information does not appear when user without Banking permissions edits Organization details (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet'] },
+      () => {
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.verifyBankingInformationAccordionIsAbsent();
+        Organizations.editOrganization();
+        Organizations.selectDonorCheckbox();
+        Organizations.saveOrganization();
+        Organizations.varifySaveOrganizationCalloutMessage(organization);
+      },
+    );
+  });
+
   describe('Disable view banking information when "Enable banking information" setting is not active', () => {
     const organization = {
       name: `autotest_org_${getRandomPostfix()}`,
@@ -759,7 +972,6 @@ describe('Organizations', () => {
       'C423547 A user can not view banking information when "Enable banking information" setting is not active (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        // Search and select organization
         Organizations.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsAbsent();

@@ -166,7 +166,6 @@ describe('Eureka', () => {
         // Steps 8, 9: Switch active affiliation to College and verify in Settings
         cy.waitForAuthRefresh(() => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
         }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();

@@ -102,8 +102,6 @@ describe('Inventory', () => {
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag);
       QuickMarcEditor.pressSaveAndClose();
-      cy.wait(1500);
-      QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -123,9 +121,11 @@ describe('Inventory', () => {
       'C367973 Search for one "Instance" record by "Authority UUID" value of linked "MARC Authority" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C367973'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.AUTHORITY_UUID,

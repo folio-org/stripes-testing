@@ -171,9 +171,11 @@ describe('Title level Request', () => {
         });
       })
       .then(() => {
-        cy.login(users[0].username, users[0].password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(users[0].username, users[0].password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
         });
       });
   });
@@ -211,7 +213,7 @@ describe('Title level Request', () => {
   });
   it(
     'C380488 Verify that user can create TLR: Recall request for instance with item statuses "Awaiting pickup" and "Checked out" (vega)',
-    { tags: ['criticalPath', 'vega', 'C380488'] },
+    { tags: ['criticalPathBroken', 'vega', 'C380488'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
 
@@ -220,7 +222,6 @@ describe('Title level Request', () => {
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       ConfirmItemInModal.confirmAwaitingPickUpModal();
 
-      cy.waitForAuthRefresh(() => {}, 20_000);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);

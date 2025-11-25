@@ -52,6 +52,11 @@ export default {
     resource: 'UI-Inventory Settings Subject-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiDataImportSettingsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Data-Import Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Data capability sets
   capabilities: {
@@ -124,6 +129,16 @@ export default {
     resource: 'UI-Checkout',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiCheckin: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Checkin',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiCourses: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Courses',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   consortiaSharingRolesAllItemCreate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Consortia Sharing-Roles-All Item',
@@ -139,6 +154,56 @@ export default {
     resource: 'UI-Organizations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventoryInstanceEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventoryInstanceView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventoryInstanceStaffSuppressedRecordsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance Staff-Suppressed-Records',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiDataExportEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Data-Export',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventoryHoldingsCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Holdings',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiInventory: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiDataImport: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Data-Import',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiConsortiaDataImportCentralRecordUpdate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Data-Import Central-Record-Update',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiMarcAuthoritiesAuthorityRecordView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiQuickMarcQuickMarcEditor: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Editor',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {
@@ -149,6 +214,16 @@ export default {
   uiConsortiaSettingsConsortiumManagerShare: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Consortia-Settings Consortium-Manager Share',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiConsortiaInventoryLocalSharingInstances: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Consortia Inventory Local Sharing-Instances',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiInventoryInstanceSetRecordsForDeletion: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Instance Set-Records-For-Deletion',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

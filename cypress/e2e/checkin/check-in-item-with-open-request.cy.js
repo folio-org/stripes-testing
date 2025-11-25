@@ -5,6 +5,7 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_IDS,
 } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -15,7 +16,6 @@ import SwitchServicePoint from '../../support/fragments/settings/tenant/serviceP
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -33,14 +33,10 @@ describe('Check in', () => {
   const patronGroup = {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
-  const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-  };
-  const checkInResultsData = {
-    statusForS: [`In transit - ${testData.servicePointS1.name}`],
-    statusForS1: ['Awaiting pickup'],
-  };
+  const testData = {};
+  let servicePointS;
+  let servicePointS1;
+  let checkInResultsData;
   const itemData = {
     barcode: generateItemBarcode(),
     title: `Instance_${getRandomPostfix()}`,
@@ -54,10 +50,16 @@ describe('Check in', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.servicePointS);
-        ServicePoints.createViaApi(testData.servicePointS1);
-        testData.defaultLocation = Location.getDefaultLocation(testData.servicePointS.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+          servicePointS = sp1;
+        });
+        ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+          servicePointS1 = sp2;
+          checkInResultsData = {
+            statusForS: [`In transit - ${servicePointS1.name}`],
+            statusForS1: ['Awaiting pickup'],
+          };
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -65,7 +67,7 @@ describe('Check in', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C7148_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -83,7 +85,7 @@ describe('Check in', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
             },
           ],
           items: [
@@ -125,9 +127,9 @@ describe('Check in', () => {
       })
       .then(() => {
         UserEdit.addServicePointsViaApi(
-          [testData.servicePointS.id, testData.servicePointS1.id],
+          [servicePointS.id, servicePointS1.id],
           userData.userId,
-          testData.servicePointS.id,
+          servicePointS.id,
         );
 
         cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
@@ -136,9 +138,9 @@ describe('Check in', () => {
             requestUserData.userId = userProperties.userId;
             requestUserData.barcode = userProperties.barcode;
             UserEdit.addServicePointViaApi(
-              testData.servicePointS1.id,
+              servicePointS1.id,
               requestUserData.userId,
-              testData.servicePointS1.id,
+              servicePointS1.id,
             );
           },
         );
@@ -147,7 +149,7 @@ describe('Check in', () => {
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),
-          servicePointId: testData.servicePointS.id,
+          servicePointId: servicePointS.id,
           userBarcode: userData.barcode,
         }).then((checkoutResponse) => {
           Requests.createNewRequestViaApi({
@@ -156,7 +158,7 @@ describe('Check in', () => {
             instanceId: itemData.instanceId,
             item: { barcode: itemData.barcode },
             itemId: checkoutResponse.itemId,
-            pickupServicePointId: testData.servicePointS1.id,
+            pickupServicePointId: servicePointS1.id,
             requestDate: new Date(),
             requestExpirationDate: new Date(new Date().getTime() + 86400000),
             requestLevel: REQUEST_LEVELS.ITEM,
@@ -175,19 +177,10 @@ describe('Check in', () => {
     CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
-      servicePointId: testData.servicePointS.id,
+      servicePointId: servicePointS.id,
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
-      testData.servicePointS.id,
-      testData.servicePointS1.id,
-    ]);
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
-      testData.servicePointS1.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.servicePointS.id);
-    ServicePoints.deleteViaApi(testData.servicePointS1.id);
     Requests.deleteRequestViaApi(testData.requestsId);
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(requestUserData.userId);
@@ -195,14 +188,9 @@ describe('Check in', () => {
     cy.deleteItemViaApi(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
     cy.deleteLoanType(testData.loanTypeId);
   });
+
   it(
     'C7148 Check In: item with at least one open request (vega)',
     { tags: ['criticalPath', 'vega', 'C7148'] },
@@ -211,8 +199,8 @@ describe('Check in', () => {
         path: TopMenu.checkInPath,
         waiter: CheckInActions.waitLoading,
       });
-      SwitchServicePoint.switchServicePoint(testData.servicePointS.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointS.name);
+      SwitchServicePoint.switchServicePoint(servicePointS.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointS.name);
 
       CheckInActions.checkInItemGui(itemData.barcode);
       InTransit.verifyModalTitle();
@@ -225,7 +213,7 @@ describe('Check in', () => {
       CheckInActions.openRequestDetails(itemData.barcode);
       CheckInActions.openCheckInPane();
 
-      SwitchServicePoint.switchServicePoint(testData.servicePointS1.name);
+      SwitchServicePoint.switchServicePoint(servicePointS1.name);
       CheckInActions.checkInItemGui(itemData.barcode);
       AwaitingPickupForARequest.verifyModalTitle();
       AwaitingPickupForARequest.unselectCheckboxPrintSlip();

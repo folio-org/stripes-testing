@@ -10,7 +10,7 @@ import BrowseCallNumber from '../../../support/fragments/inventory/search/browse
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 
-describe('fse-inventory - UI', () => {
+describe('fse-inventory - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);

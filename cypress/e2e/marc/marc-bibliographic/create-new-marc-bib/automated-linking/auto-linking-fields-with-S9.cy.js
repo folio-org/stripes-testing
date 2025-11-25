@@ -136,7 +136,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
               InventoryInstances.waitContentLoading();
             }, 20_000);
           });
@@ -176,8 +175,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(newFields[2].contentWithout$9, 7);
             QuickMarcEditor.checkContent(newFields[3].contentWithout$9, 8);
             QuickMarcEditor.checkContent(testData.fieldContents.tag245Content, 4);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

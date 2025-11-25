@@ -39,9 +39,9 @@ const localUrlRelationship = {
 };
 const instances = [folioInstance, marcInstance];
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 const getRowsInCsvFileMatchingHrids = (csvFileData, hrids) => {
@@ -104,14 +104,14 @@ describe('Bulk-edit', () => {
                         electronicAccess: [
                           {
                             linkText: 'College shared link text',
-                            materialsSpecification: 'College shared materials specified',
+                            materialsSpecification: 'College shared material specified',
                             publicNote: 'College shared url public note',
                             uri: 'https://college-shared-uri.com',
                             relationshipId: sharedUrlRelationshipData.settingId,
                           },
                           {
                             linkText: 'College link text',
-                            materialsSpecification: 'College materials specified',
+                            materialsSpecification: 'College material specified',
                             publicNote: 'College url public note',
                             uri: 'https://college-uri.com',
                             relationshipId: localUrlRelationship.id,
@@ -184,8 +184,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(holdingIds.length);
 
           // Step 4: Show "Electronic access" column
           BulkEditActions.openActions();
@@ -197,7 +196,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
           );
 
-          const holdingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-shared-uri.comCollege shared link textCollege shared materials specifiedCollege shared url public note${localUrlRelationship.name}https://college-uri.comCollege link textCollege materials specifiedCollege url public note`;
+          const holdingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-shared-uri.comCollege shared link textCollege shared material specifiedCollege shared url public note${localUrlRelationship.name}https://college-uri.comCollege link textCollege material specifiedCollege url public note`;
 
           holdingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -221,7 +220,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
-          const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-shared-uri.com;College shared link text;College shared materials specified;College shared url public note|${localUrlRelationship.name};https://college-uri.com;College link text;College materials specified;College url public note`;
+          const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-shared-uri.com;College shared link text;College shared material specified;College shared url public note|${localUrlRelationship.name};https://college-uri.com;College link text;College material specified;College url public note`;
 
           FileManager.convertCsvToJson(fileNames.matchedRecordsCSV).then((csvFileData) => {
             const holdingRows = getRowsInCsvFileMatchingHrids(csvFileData, holdingHrids);
@@ -245,7 +244,7 @@ describe('Bulk-edit', () => {
             'URL relationship',
             'URI',
             'Link text',
-            'Materials specified',
+            'Material specified',
             'URL public note',
           ];
 
@@ -265,8 +264,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(holdingIds.length);
 
-          const updatedHoldingsElectronicAccess = electronicAccessTableHeaders;
-          const updatedHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile};;;;|;;;;`;
+          const updatedHoldingsElectronicAccess = `${electronicAccessTableHeaders}--------`;
+          const updatedHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}-;;-;-;-|-;;-;-;-`;
 
           holdingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -277,8 +276,7 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(holdingIds.length);
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(holdingIds.length);
 
           // Step 15: Download preview
           BulkEditActions.downloadPreview();
@@ -323,7 +321,7 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
             HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-');
-            HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-', 1);
+            HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-', '-', 1);
             HoldingsRecordView.close();
             InventorySearchAndFilter.resetAll();
           });

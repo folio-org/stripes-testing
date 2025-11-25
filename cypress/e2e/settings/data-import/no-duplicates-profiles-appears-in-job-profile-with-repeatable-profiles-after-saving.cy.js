@@ -88,7 +88,7 @@ describe('Data Import', () => {
       {
         matchProfile: {
           profileName: `C385629 Instance Status Batch Loaded.${getRandomPostfix()}`,
-          incomingStaticValue: 'Batch Loaded',
+          incomingStaticValue: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
           incomingStaticRecordValue: 'Text',
           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           existingRecordOption: 'instance.statusId',

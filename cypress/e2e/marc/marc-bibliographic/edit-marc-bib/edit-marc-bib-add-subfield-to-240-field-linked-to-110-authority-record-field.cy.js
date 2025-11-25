@@ -90,7 +90,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
           InventoryInstances.waitContentLoading();
         }, 20_000)
           .then(() => {
@@ -109,8 +108,6 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -125,7 +122,6 @@ describe('MARC', () => {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
                 });
-                cy.reload();
                 InventoryInstances.waitContentLoading();
               }, 20_000);
             });

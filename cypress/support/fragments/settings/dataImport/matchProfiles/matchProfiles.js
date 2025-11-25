@@ -78,6 +78,13 @@ export default {
     waitCreatingMatchProfile();
   },
 
+  createMatchProfileWithQualifierAndIncomingAndExistingRecordFields(profile) {
+    this.clickCreateNewMatchProfile();
+    NewMatchProfile.fillMatchProfileWithIncomingAndExistingRecordsAndComparePartValue(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
   createMatchProfileWithStaticValue(profile) {
     this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileWithStaticValue(profile);

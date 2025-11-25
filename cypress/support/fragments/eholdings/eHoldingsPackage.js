@@ -54,11 +54,30 @@ const titlesSearchOptionSelect = titlesSection.find(
   Select({ dataTestID: 'field-to-search-select' }),
 );
 const titlesSearchField = titlesSection.find(TextField({ type: 'search' }));
+const cancelButton = Button('Cancel');
+const saveAndCloseButton = Button('Save & close');
+const unsavedChangesModal = Modal({ id: 'navigation-modal' });
+const unsavedChangesText = Modal().find(
+  HTML('Your changes have not been saved. Are you sure you want to leave this page?'),
+);
+const keepEditingButton = Modal().find(Button('Keep editing'));
+const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
+const closeIconButton = Button({ icon: 'times' });
+const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
 
 export default {
   waitLoading: (specialPackage) => {
     cy.expect(Section({ id: getElementIdByName(specialPackage) }).exists());
     cy.expect(tagsSection.find(MultiSelect()).exists());
+  },
+  verifySectionsToggle: (sectionIds = []) => {
+    sectionIds.forEach((id) => {
+      const section = Section({ id });
+      cy.do(section.toggle());
+      cy.expect(section.is({ expanded: false }));
+      cy.do(section.toggle());
+      cy.expect(section.is({ expanded: true }));
+    });
   },
 
   filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
@@ -258,6 +277,21 @@ export default {
     cy.do(titlesSection.toggle());
     cy.expect(titlesSection.is({ expanded: isOpen }));
   },
+  verifyNotSelectedPackage: () => {
+    cy.expect(packageHoldingStatusSection.find(Button('Add package to holdings')).exists());
+  },
+
+  verifySelectedPackage: () => {
+    cy.expect(packageHoldingStatusSection.find(Button('Add package to holdings')).absent());
+  },
+
+  verifyTitlesAccordion: () => {
+    cy.expect(titlesSection.exists());
+  },
+
+  verifyTitlesLoadingIndicator: () => {
+    cy.expect(titlesSection.find(Spinner()).exists());
+  },
 
   /**
    * Waits until the title with the given name in the specified package
@@ -300,5 +334,54 @@ export default {
         timeout: 30_000,
       },
     );
+  },
+
+  verifyButtonsDisabled: () => {
+    cy.expect(cancelButton.has({ disabled: true }));
+    cy.expect(saveAndCloseButton.has({ disabled: true }));
+  },
+
+  verifyButtonsEnabled: () => {
+    cy.expect(cancelButton.has({ disabled: false }));
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+  },
+
+  cancelChanges: () => {
+    cy.expect(cancelButton.exists());
+    cy.do(cancelButton.click());
+  },
+
+  verifyUnsavedChangesModalExists: () => {
+    cy.expect(unsavedChangesModal.exists());
+    cy.expect(unsavedChangesText.exists());
+  },
+
+  verifyUnsavedChangesModalNotExists: () => {
+    cy.expect(unsavedChangesModal.absent());
+  },
+
+  clickKeepEditing: () => {
+    cy.expect(keepEditingButton.exists());
+    cy.do(keepEditingButton.click());
+  },
+
+  clickContinueWithoutSaving: () => {
+    cy.expect(continueWithoutSavingButton.exists());
+    cy.do(continueWithoutSavingButton.click());
+  },
+
+  closeEditingWindow: () => {
+    cy.expect(closeIconButton.exists());
+    cy.do(closeIconButton.click());
+  },
+
+  openTitle: (titleName) => {
+    cy.expect(titlesSection.exists());
+    cy.do(titlesSection.find(Button(titleName)).click());
+  },
+
+  selectAccessStatusType: (accessStatusTypeName) => {
+    cy.do(accessStatusTypeDropdown.choose(accessStatusTypeName));
+    cy.expect(accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeName }));
   },
 };

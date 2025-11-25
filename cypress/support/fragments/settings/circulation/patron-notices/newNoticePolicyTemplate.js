@@ -147,11 +147,9 @@ export default {
   },
 
   verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
-    cy.expect([
-      Accordion({ label: 'General information' }).exists(),
-      Button('General information').has({ ariaExpanded: 'true' }),
-    ]);
-    cy.do(Button(including('Record last updated')).click());
+    cy.expect(Accordion({ label: 'General information' }).exists());
+    cy.expect(Button('General information').has({ ariaExpanded: 'true' }));
+    cy.do(Pane(titles.newTemplate).find(MetaSection()).click());
     cy.expect(MetaSection({ updatedByText: including(creator) }).exists());
   },
 
@@ -322,7 +320,7 @@ export default {
     cy.expect(previewModal.absent());
   },
 
-  createPatronNoticeTemplate(template, dublicate = false) {
+  createPatronNoticeTemplate(template, duplicate = false) {
     cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
       statusCode: 201,
       body: {
@@ -331,7 +329,7 @@ export default {
       },
     });
 
-    if (dublicate) {
+    if (duplicate) {
       this.duplicateTemplate();
       this.typeTemplateName(template.name);
       this.typeTemplateSubject(template.subject);

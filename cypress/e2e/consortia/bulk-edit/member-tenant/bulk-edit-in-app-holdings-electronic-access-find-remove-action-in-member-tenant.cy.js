@@ -42,22 +42,22 @@ const localUrlRelationshipName = localUrlRelationship.name;
 const electronicAccessFields = {
   uri: 'https://www.testuri.com/uri',
   linkText: 'te;st: [sample] li*nk$text',
-  materialsSpecification: 'test materials specified',
+  materialsSpecification: 'test material specified',
   publicNote: 'url public note',
 };
 const electronicAccessFieldsEdited = {
   uri: 'https://www.testuri.com',
   linkText: 'te;st:  li*nk$text',
-  materialsSpecification: ' materials specified',
+  materialsSpecification: ' material specified',
   publicNote: 'url public ',
 };
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const userPermissions = [
   permissions.bulkEditEdit.gui,
   permissions.uiInventoryViewCreateEditHoldings.gui,
@@ -261,12 +261,12 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectSecondAction('Remove');
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          // Step 11-14: Add new rows for URI, Link text, Materials specified, URL public note find & remove
+          // Step 11-14: Add new rows for URI, Link text, Material specified, URL public note find & remove
           const bulkEditFilters = [
             { option: 'URI', value: '/uri' },
             { option: 'Link text', value: '[sample]' },
             {
-              option: 'Materials specified',
+              option: 'Material specified',
               value: 'test',
             },
             { option: 'URL public note', value: 'note' },
@@ -288,8 +288,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(holdingIds.length);
 
-          const editedElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}`;
-          const editedElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote}|;${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote.trim()}`;
+          const editedElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}-${electronicAccessFieldsEdited.uri}${electronicAccessFieldsEdited.linkText}${electronicAccessFieldsEdited.materialsSpecification}${electronicAccessFieldsEdited.publicNote}`;
+          const editedElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote}|-;${electronicAccessFieldsEdited.uri};${electronicAccessFieldsEdited.linkText};${electronicAccessFieldsEdited.materialsSpecification};${electronicAccessFieldsEdited.publicNote.trim()}`;
 
           holdingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -347,7 +347,7 @@ describe('Bulk-edit', () => {
               sharedUrlRelationshipData.payload.name,
               electronicAccessFieldsEdited.uri,
               electronicAccessFieldsEdited.linkText,
-
+              electronicAccessFieldsEdited.materialsSpecification,
               electronicAccessFieldsEdited.publicNote,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(
@@ -360,7 +360,9 @@ describe('Bulk-edit', () => {
               '-',
               electronicAccessFieldsEdited.uri,
               electronicAccessFieldsEdited.linkText,
+              electronicAccessFieldsEdited.materialsSpecification,
               electronicAccessFieldsEdited.publicNote,
+
               1,
             );
             HoldingsRecordView.verifyElectronicAccessByElementIndex(

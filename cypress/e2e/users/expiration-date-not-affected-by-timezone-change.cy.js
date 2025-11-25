@@ -1,18 +1,20 @@
 import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserEdit from '../../support/fragments/users/userEdit';
-import DateTools from '../../support/utils/dateTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
 import Localization from '../../support/fragments/settings/tenant/general/localization';
+import TenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Users', () => {
   const testData = {
     user: {},
     selectedExpirationDate: '',
+    selectedExpirationDatePlusOne: '',
+    selectedExpirationDatePlusOneInDetailPaneFormat: '',
     westernTimezone: 'Pacific/Nauru',
     easternTimezone: 'Pacific/Auckland',
     utcTimezone: 'UTC',
@@ -32,10 +34,25 @@ describe('Users', () => {
           },
           'MM/DD/YYYY',
         );
+        testData.selectedExpirationDatePlusOne = DateTools.getFormattedDate(
+          {
+            date: DateTools.addDays(1, testData.selectedExpirationDate),
+          },
+          'MM/DD/YYYY',
+        );
+        // M/D/YYYY format is expected to be displayed in user details pane
+        testData.selectedExpirationDatePlusOneInDetailPaneFormat = DateTools.getFormattedDate(
+          {
+            date: testData.selectedExpirationDatePlusOne,
+          },
+          'M/D/YYYY',
+        );
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.tenantPath,
-          waiter: TenantPane.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: SettingsMenu.tenantPath,
+            waiter: TenantPane.waitLoading,
+          });
         });
       });
     });
@@ -48,10 +65,9 @@ describe('Users', () => {
   });
 
   it(
-    'C770460 Expiration date is not affected by time zone change (volaris)',
-    { tags: ['extendedPath', 'volaris', 'nonParallel', 'C770460'] },
+    'C770460 The expiration date display differs by one day for a time zone that is in the next or previous day (volaris)',
+    { tags: ['extendedPath', 'volaris', 'C770460'] },
     () => {
-      cy.waitForAuthRefresh(() => {}, 20_000);
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.changeTimezone(testData.westernTimezone);
       Localization.clickSaveButton();
@@ -95,12 +111,15 @@ describe('Users', () => {
       UsersCard.verifyUserDetailsPaneOpen();
 
       // Check the "Expiration date" field on user details pane
-      // The date should be the same as was set in step #2
-      UsersCard.checkKeyValue('Expiration date', formattedSelectedExpirationDate);
+      // The date in "Expiration date" field is one day ahead of the date set in step #2
+      UsersCard.checkKeyValue(
+        'Expiration date',
+        testData.selectedExpirationDatePlusOneInDetailPaneFormat,
+      );
 
       // Step 6: Click "Actions" -> "Edit" on user details pane / Check the "Expiration date" field on user edit page
       UserEdit.openEdit();
-      UserEdit.verifyExpirationDateFieldValue(testData.selectedExpirationDate);
+      UserEdit.verifyExpirationDateFieldValue(testData.selectedExpirationDatePlusOne);
 
       cy.visit(SettingsMenu.tenantPath);
       TenantPane.waitLoading();

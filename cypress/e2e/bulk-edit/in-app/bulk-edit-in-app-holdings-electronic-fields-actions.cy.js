@@ -96,7 +96,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};${firstElectronicAccess.materialsSpecification};|${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${secondElectronicAccess.uri};${secondElectronicAccess.linkText};${secondElectronicAccess.materialsSpecification};",`;
+        let contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};${firstElectronicAccess.materialsSpecification};-|${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${secondElectronicAccess.uri};${secondElectronicAccess.linkText};${secondElectronicAccess.materialsSpecification};-",`;
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
@@ -118,7 +118,7 @@ describe('Bulk-edit', () => {
             elAccess.materialsSpecification,
             adjustedIndex,
           );
-          BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '', adjustedIndex);
+          BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-', adjustedIndex);
         });
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
@@ -138,7 +138,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyTheSecondActionOptions(possibleActions, 2);
         BulkEditActions.selectSecondAction('Remove', 2);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.selectOption('Materials specified', 3);
+        BulkEditActions.selectOption('Material specified', 3);
         BulkEditActions.selectAction('Find', 3);
         BulkEditActions.fillInFirstTextArea(firstElectronicAccess.materialsSpecification, 3);
         BulkEditActions.selectSecondAction('Replace with', 3);
@@ -150,7 +150,7 @@ describe('Bulk-edit', () => {
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           newElectronicAccessFields.materialsSpecification,
@@ -166,7 +166,7 @@ describe('Bulk-edit', () => {
           2,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '', 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -178,7 +178,7 @@ describe('Bulk-edit', () => {
           2,
         );
         BulkEditActions.downloadPreview();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;;${newElectronicAccessFields.materialsSpecification};${newElectronicAccessFields.publicNote}|${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;;${secondElectronicAccess.materialsSpecification};${newElectronicAccessFields.publicNote}",`;
+        contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;-;${newElectronicAccessFields.materialsSpecification};${newElectronicAccessFields.publicNote}|${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;-;${secondElectronicAccess.materialsSpecification};${newElectronicAccessFields.publicNote}",`;
         ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -187,7 +187,7 @@ describe('Bulk-edit', () => {
           ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           newElectronicAccessFields.materialsSpecification,
@@ -203,7 +203,7 @@ describe('Bulk-edit', () => {
           2,
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, '', 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -216,7 +216,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;;${newElectronicAccessFields.materialsSpecification};${newElectronicAccessFields.publicNote}|${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;;${secondElectronicAccess.materialsSpecification};${newElectronicAccessFields.publicNote}",`;
+        contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;-;${newElectronicAccessFields.materialsSpecification};${newElectronicAccessFields.publicNote}|${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};;-;${secondElectronicAccess.materialsSpecification};${newElectronicAccessFields.publicNote}",`;
         ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

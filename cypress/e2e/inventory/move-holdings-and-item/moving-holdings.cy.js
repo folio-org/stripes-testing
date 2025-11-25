@@ -33,10 +33,6 @@ describe('Inventory', () => {
         permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
 
         [item, secondItem].forEach((el) => {
           el.instanceId = InventoryInstances.createInstanceViaApi(el.instanceName, el.barcode);
@@ -49,6 +45,11 @@ describe('Inventory', () => {
               permanentLocationId: el.permanentLocationId,
             });
           });
+        });
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
         });
       });
     });
@@ -76,6 +77,7 @@ describe('Inventory', () => {
         InventoryInstancesMovement.verifyHoldingsMoved(secondItem.name, '3');
 
         InventoryInstance.moveItemBackToInstance(secondItem.name, item.instanceName);
+        InventoryInstance.openHoldings([item.name]);
         InventoryInstancesMovement.verifyHoldingsMoved(item.name, '2');
       },
     );

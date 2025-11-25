@@ -278,8 +278,7 @@ describe('Bulk-edit', () => {
               ITEM_STATUS_NAMES.AVAILABLE,
             );
           });
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,

@@ -200,6 +200,7 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
 const exportInstanceMarcButton = Button({ id: 'dropdown-clickable-export-marc' });
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
+const clearFieldIcon = Button({ icon: 'times-circle-solid' });
 
 const defaultField008Values = {
   Alph: '\\',
@@ -422,19 +423,16 @@ export default {
     }
   },
   searchByTag: (tagName) => {
-    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
-    // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
+    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     cy.wait('@getTags');
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tagName));
-    // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.expect(MultiSelectOption(including(tagName)).exists());
     cy.do(
       MultiSelectMenu()
         .find(MultiSelectOption(including(tagName)))
         .click(),
     );
-    cy.wait(2000);
   },
 
   searchAndVerify(value) {
@@ -641,8 +639,8 @@ export default {
   deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
       (instance) => {
-        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
+        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
@@ -655,7 +653,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body: { instances } }) => {
-        instances.forEach((instance) => {
+        instances?.forEach((instance) => {
           cy.okapiRequest({
             path: `holdings-storage/holdings?query=instanceId==${instance.id}`,
             isDefaultSearchParamsRequired: false,
@@ -1126,7 +1124,7 @@ export default {
   deleteInstanceByTitleViaApi(instanceTitle) {
     return cy
       .okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: {
           limit: 100,
           query: `title="${instanceTitle}"`,
@@ -1137,9 +1135,11 @@ export default {
         return res.body.instances;
       })
       .then((instances) => {
-        instances.forEach((instance) => {
-          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        if (instances && instances.length) {
+          instances.forEach((instance) => {
+            if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
+        }
       });
   },
 
@@ -1403,6 +1403,20 @@ export default {
     }
   },
 
+  focusOnAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(TextArea()).focus());
+  },
+
+  verifyClearIconInAdvancedSearchField(rowIndex, shouldExist = true) {
+    const targetIcon = AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon);
+    if (shouldExist) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  clickClearIconInAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon).click());
+  },
+
   clickSearchBtnInAdvSearchModal() {
     cy.do(buttonSearchInAdvSearchModal.click());
   },
@@ -1410,6 +1424,11 @@ export default {
   clickResetAllBtnInAdvSearchModal() {
     cy.do(buttonResetAllInAdvSearchModal.click());
   },
+
+  checkResetAllButtonInAdvSearchModalEnabled(enabled = true) {
+    cy.expect(buttonResetAllInAdvSearchModal.has({ disabled: !enabled }));
+  },
+
   closeAdvSearchModalUsingESC() {
     cy.get('#advanced-search-modal').type('{esc}');
   },
@@ -1670,5 +1689,19 @@ export default {
     } else {
       cy.expect(Button(optionName).absent());
     }
+  },
+
+  toggleMarcBibLccnValidationRule({ enable = true }) {
+    cy.getSpecificationIds({ family: 'MARC' }).then((specs) => {
+      const marcBibSpecId = specs.find((spec) => spec.profile === 'bibliographic').id;
+      cy.getSpecificationRules(marcBibSpecId).then(({ body }) => {
+        const lccnRuleId = body.rules.find(
+          (rule) => rule.name === 'Invalid LCCN Subfield Value',
+        ).id;
+        cy.updateSpecificationRule(marcBibSpecId, lccnRuleId, {
+          enabled: enable,
+        });
+      });
+    });
   },
 };

@@ -1,5 +1,6 @@
 export { default as AcquisitionMethods } from './acquisitionMethods';
-export { default as InventoryInteractionsDefaults } from './inventoryInteractionsDefaults';
+export { default as OrdersApprovals } from './approvals';
+export { default as InventoryInteractions } from './inventoryInteractions';
 export { default as NewPreffixSuffix } from './newPreffixSuffix';
 export { default as OpenOrder } from './openOrder';
 export { default as OrderLinesLimit } from './orderLinesLimit';

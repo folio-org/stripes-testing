@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  findStandardField,
+  getBibliographicSpec,
+  validateApiResponse,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API', () => {
   const requiredPermissions = [
@@ -12,10 +17,6 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
     Permissions.specificationStorageUpdateSpecificationFieldIndicator.gui,
   ];
 
-  function findStandardField(fields, tag) {
-    return fields.find((f) => f.tag === tag && f.scope === 'standard');
-  }
-
   let user;
   let bibSpecId;
   let standardField;
@@ -24,10 +25,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
-        // Find the specification with profile 'bibliographic'
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
       });
     });
@@ -49,7 +47,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
 
       // Get all fields for the MARC bib specification
       cy.getSpecificationFields(bibSpecId).then((response) => {
-        expect(response.status).to.eq(200);
+        validateApiResponse(response, 200);
 
         // Find a standard field (e.g., 100)
         standardField = findStandardField(response.body.fields, '100');
@@ -57,7 +55,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
 
         // Get indicators for the standard field
         cy.getSpecificationFieldIndicators(standardField.id).then((indicatorsResp) => {
-          expect(indicatorsResp.status).to.eq(200);
+          validateApiResponse(indicatorsResp, 200);
           expect(indicatorsResp.body.indicators).to.have.length.greaterThan(0);
 
           // Store original indicators for verification
@@ -99,7 +97,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
                 scenario.payload,
                 false,
               ).then((updateResp) => {
-                expect(updateResp.status).to.eq(400);
+                validateApiResponse(updateResp, 400);
                 expect(updateResp.body.errors[0].message).to.contain(scenario.expectedErrorMessage);
               });
             }
@@ -107,7 +105,7 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
 
           // Step 3: Verify standard field indicators didn't change
           cy.getSpecificationFieldIndicators(standardField.id).then((verifyResp) => {
-            expect(verifyResp.status).to.eq(200);
+            validateApiResponse(verifyResp, 200);
 
             // Verify all indicators remain unchanged
             expect(verifyResp.body.indicators).to.have.length(originalIndicators.length);

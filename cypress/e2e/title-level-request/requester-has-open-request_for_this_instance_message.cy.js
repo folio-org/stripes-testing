@@ -42,7 +42,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C1284_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -102,10 +102,14 @@ describe('Title Level Request. Create Item or Title level request', () => {
         testData.userServicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: RequestsSearchResultsPane.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: RequestsSearchResultsPane.waitLoading,
+        });
       });
+
       // create title-level request for user
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);

@@ -24,6 +24,9 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const instancePrefix = 'C404353Auto Instance';
       const callNumberPrefix = `C404353Auto${getRandomLetters(10)}`;
+      const Dropdowns = {
+        HELDBY: 'Held by',
+      };
       const testData = {
         instances: [
           {
@@ -464,20 +467,16 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             InventorySearchAndFilter.selectBrowseCallNumbers();
           });
+          cy.wait(2_000);
           cy.setTenant(Affiliations.College);
           BrowseSubjects.browse(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
-          allVisibleCNs.forEach((callNumber) => {
-            BrowseCallNumber.checkValuePresentInResults(callNumber);
-          });
-          InventorySearchAndFilter.clickAccordionByName(testData.heldByAccordionName);
-          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.heldByAccordionName);
-          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, false);
-          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.university, false);
-          InventorySearchAndFilter.selectHeldByOption(tenantNames.college);
+          InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
           visibleCollegeCNs.forEach((callNumber) => {
             BrowseCallNumber.checkValuePresentInResults(callNumber);
           });
+          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.university, false);
           InventorySearchAndFilter.selectHeldByOption(tenantNames.university);
           allVisibleCNs.forEach((callNumber) => {
             BrowseCallNumber.checkValuePresentInResults(callNumber);
@@ -531,6 +530,33 @@ describe('Inventory', () => {
             .forEach((callNumber) => {
               BrowseCallNumber.checkValuePresentInResults(callNumber);
             });
+          InventorySearchAndFilter.clickResetAllButton();
+          InventorySearchAndFilter.selectBrowseCallNumbers();
+          cy.wait(2_000);
+          BrowseSubjects.browse(callNumberPrefix);
+          BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
+          InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
+          visibleCollegeCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
+          BrowseSubjects.browse('C404353Auto');
+          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
+          visibleCollegeCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
+          InventorySearchAndFilter.selectHeldByOption(tenantNames.university);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
+          cy.reload();
+          cy.wait(2_000);
+          InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
+          InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.university, true);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
         },
       );
     });

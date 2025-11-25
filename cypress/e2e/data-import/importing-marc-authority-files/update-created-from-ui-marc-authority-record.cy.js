@@ -56,7 +56,7 @@ describe('Data Import', () => {
       RecUpd: 'a',
       'Pers Name': 'b',
       'Level Est': 'a',
-      'Mod Rec Est': 'a',
+      'Mod Rec': 'a',
       Source: 'a',
     };
     const newFields = [
@@ -226,7 +226,7 @@ describe('Data Import', () => {
         });
 
         // Click on the "Save & close" button
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndCloseButton();
         MarcAuthority.verifyAfterSaveAndClose();
         QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
         MarcAuthorities.verifyViewPaneContentExists();

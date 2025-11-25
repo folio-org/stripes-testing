@@ -89,14 +89,14 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        let contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.checkboxWithTextAbsent('URL relationship');
         BulkEditSearchPane.checkboxWithTextAbsent('URI');
         BulkEditSearchPane.checkboxWithTextAbsent('Link text');
-        BulkEditSearchPane.checkboxWithTextAbsent('Materials specified');
+        BulkEditSearchPane.checkboxWithTextAbsent('Material specified');
         BulkEditSearchPane.checkboxWithTextAbsent('URL public note');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
@@ -130,7 +130,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.downloadPreview();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -147,7 +147,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        contentToVerify = `"URL relationship;URI;Link text;Material specified;URL public note\n${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

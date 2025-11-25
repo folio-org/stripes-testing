@@ -196,8 +196,6 @@ describe('Data Import', () => {
               cy.loginAsAdmin();
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
               InventoryInstances.waitContentLoading();
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
@@ -211,8 +209,6 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
@@ -274,8 +270,6 @@ describe('Data Import', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
     });
@@ -337,6 +331,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated245Field);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated100Field);

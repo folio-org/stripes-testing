@@ -23,6 +23,7 @@ import {
 import ArrayUtils from '../../utils/arrays';
 
 const listInformationAccording = Accordion('List information');
+const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
 const listNameTextField = TextField({ name: 'listName' });
 const listDescriptionTextArea = TextArea({ name: 'description' });
 const saveButton = Button('Save');
@@ -83,8 +84,8 @@ const UI = {
     cy.get('[class^="spinner"]').should('not.exist');
   },
 
-  waitForCompilingToComplete() {
-    cy.wait(1000);
+  waitForCompilingToComplete(delay = 1500) {
+    cy.wait(delay);
     cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
     cy.wait(1000);
     cy.get('body').then(($body) => {
@@ -98,7 +99,7 @@ const UI = {
 
   clickOnListInformationAccordion() {
     cy.do(listInformationAccording.click());
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   expandListInformationAccordion() {
@@ -109,6 +110,20 @@ const UI = {
   clickOnQueryAccordion() {
     cy.get('#results-viewer-accordion').click();
     cy.wait(1000);
+  },
+
+  clickOnQueryAccordion() {
+    cy.do(queryAccordion.click());
+    cy.wait(500);
+  },
+
+  expandQueryAccordion() {
+    cy.do(queryAccordion.open());
+    cy.wait(500);
+  },
+
+  collapseQueryAccordion() {
+    cy.do(queryAccordion.close());
   },
 
   openActions() {
@@ -422,8 +437,24 @@ const UI = {
     cy.expect(KeyValue(label, { value }).exists());
   },
 
+  verifyListNameLabel(value) {
+    this.checkKeyValue('List name', value);
+  },
+
+  verifyListDescriptionLabel(value) {
+    this.checkKeyValue('Description', value);
+  },
+
+  verifyVisibilityLabel(value) {
+    this.checkKeyValue('Visibility', value);
+  },
+
   verifyRecordType(recordType) {
     this.checkKeyValue('Record type', recordType);
+  },
+
+  verifyStatusLabel(value) {
+    this.checkKeyValue('Status', value);
   },
 
   selectVisibility(visibility) {
@@ -837,6 +868,23 @@ const API = {
           fqlQuery: '{"users.active":{"$eq":"true"}}',
         },
         fields: ['users.active', 'user.id'],
+        uiQuery: 'users.active == True',
+      };
+    });
+  },
+
+  buildQueryOnActiveUsersWithZeroRecords() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"users.id":{"$eq":"1234567890"}}',
+        },
+        fields: ['users.active', 'user.id'],
+        uiQuery: 'users.id == 1234567890',
       };
     });
   },
@@ -900,7 +948,7 @@ const API = {
       path: `query/${queryId}`,
       isDefaultSearchParamsRequired: false,
       searchParams: searchParameters,
-      responseTimeout: 5000,
+      customTimeout: 5000,
     });
   },
 
@@ -986,9 +1034,7 @@ const API = {
 
   getTypeIdByNameViaApi(type) {
     return this.getTypesViaApi().then((response) => {
-      return response.body.entityTypes.find(
-        (entityType) => entityType.label === type,
-      ).id;
+      return response.body.entityTypes.find((entityType) => entityType.label === type).id;
     });
   },
 

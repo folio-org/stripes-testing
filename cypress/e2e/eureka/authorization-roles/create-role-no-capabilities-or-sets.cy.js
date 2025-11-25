@@ -29,9 +29,11 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
           });
         });
       });
@@ -40,7 +42,7 @@ describe('Eureka', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
       });
 
@@ -55,11 +57,19 @@ describe('Eureka', () => {
           AuthorizationRoles.verifySelectApplicationModal();
           AuthorizationRoles.selectApplicationInModal(testData.firstApplicationName);
           AuthorizationRoles.selectApplicationInModal(testData.secondApplicationName);
-          cy.intercept('GET', capabilityCallRegExp).as('capabilities');
-          cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
+          cy.intercept('GET', '/capabilities?*').as('capabilities');
+          cy.intercept('GET', '/capability-sets?*').as('capabilitySets');
           AuthorizationRoles.clickSaveInModal();
-          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
-          cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
+          cy.wait('@capabilities').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilityCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
+          cy.wait('@capabilitySets').then(({ request, response }) => {
+            const url = decodeURIComponent(request.url);
+            expect(url).to.match(capabilitySetsCallRegExp);
+            expect(response.statusCode).to.eq(200);
+          });
           AuthorizationRoles.verifyAppNamesInCapabilityTables([
             testData.firstApplicationName,
             testData.secondApplicationName,

@@ -10,11 +10,13 @@ import {
   MultiColumnListRow,
   PaneHeader,
   Section,
+  matching,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -23,7 +25,7 @@ const editButton = Button({ id: 'edit-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
-const deleteConfirmationModal = Modal({ id: 'delete-confirmation-modal' });
+const deleteConfirmationModal = Modal('Confirm deletion of holdings record');
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
@@ -84,9 +86,11 @@ export default {
     cy.do(viewSourceButton.click());
     InventoryViewSource.waitHoldingLoading();
   },
-  tryToDelete: () => {
+  tryToDelete: ({ deleteButtonShown = true } = {}) => {
     cy.do([actionsButton.click(), deleteButton.click()]);
     cy.expect(deleteConfirmationModal.exists());
+    if (!deleteButtonShown) cy.expect(deleteConfirmationModal.find(Button('Delete')).absent());
+    else cy.expect(deleteConfirmationModal.find(Button('Delete')).exists());
     cy.do(deleteConfirmationModal.find(Button('Cancel')).click());
     cy.expect(deleteConfirmationModal.absent());
   },
@@ -157,6 +161,11 @@ export default {
       .find(HTML(including(statement)))
       .exists(),
   ),
+  checkHoldingsStatementForIndexes: (statement) => cy.expect(
+    MultiColumnList({ id: 'list-holdingsStatementForIndexes' })
+      .find(HTML(including(statement)))
+      .exists(),
+  ),
   checkStatisticalCode: (code) => cy.expect(
     MultiColumnList({ id: 'list-statistical-codes' })
       .find(MultiColumnListCell({ content: code }))
@@ -197,6 +206,7 @@ export default {
     relationshipValue,
     uriValue,
     linkText = '-',
+    materialsSpecified = '-',
     urlPublicNote = '-',
     rowIndex = 0,
   ) => {
@@ -213,6 +223,11 @@ export default {
     cy.expect(
       electronicAccessAccordion
         .find(MultiColumnListCell({ row: rowIndex, columnIndex: 2, content: linkText }))
+        .exists(),
+    );
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 3, content: materialsSpecified }))
         .exists(),
     );
     cy.expect(
@@ -380,4 +395,9 @@ export default {
   },
 
   checkNumberOfItems: (numberOfItems) => cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),
+
+  copyHoldingsHrid() {
+    cy.do(holdingHrIdKeyValue.find(Button({ icon: 'clipboard' })).click());
+    InteractorsTools.checkCalloutMessage(matching(/Successfully copied ".*" to clipboard./));
+  },
 };

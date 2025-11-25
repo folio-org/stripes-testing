@@ -115,9 +115,11 @@ export default {
       addCustomFieldDropdown.choose('Text field'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
-      saveAndCloseButton.click(),
     ]);
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
+    cy.expect(Pane('Custom fields').exists());
     cy.expect(Accordion(`${data.fieldLabel} · Text field`).exists());
   },
 
@@ -127,8 +129,9 @@ export default {
       addCustomFieldDropdown.choose('Text area'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
-      saveAndCloseButton.click(),
     ]);
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
     cy.expect(Accordion(`${data.fieldLabel} · Text area`).exists());
   },
@@ -148,9 +151,11 @@ export default {
       addCustomFieldDropdown.choose('Checkbox'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
-      saveAndCloseButton.click(),
     ]);
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
+    cy.expect(Pane('Custom fields').exists());
     cy.expect(Accordion(`${data.fieldLabel} · Checkbox`).exists());
   },
 
@@ -162,8 +167,9 @@ export default {
       helpText.fillIn(data.helpText),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
-      saveAndCloseButton.click(),
     ]);
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
     cy.expect(Accordion(`${data.fieldLabel} · Radio button set`).exists());
   },
@@ -176,9 +182,11 @@ export default {
       helpText.fillIn(data.helpText),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.firstLabel),
       MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.secondLabel),
-      saveAndCloseButton.click(),
     ]);
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
+    cy.expect(Pane('Custom fields').exists());
     cy.expect(Accordion(`${data.fieldLabel} · Single select`).exists());
   },
 

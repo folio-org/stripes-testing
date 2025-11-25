@@ -18,6 +18,7 @@ import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import DateTools from '../../support/utils/dateTools';
+import { getRandomDelay } from '../../support/utils/stringTools';
 
 const folioInstances = InventoryInstances.generateFolioInstances({
   itemsProperties: { missingPieces: '3', numberOfMissingPieces: '3' },
@@ -40,7 +41,8 @@ describe('Loans', () => {
     () => {
       beforeEach('create inventory instance', () => {
         let source;
-
+        // wait for some time to avoid concurrency issues (random delay from 60 to 120 seconds delay)
+        cy.wait(getRandomDelay(60));
         cy.createTempUser([
           Permissions.loansAll.gui,
           Permissions.checkoutAll.gui,
@@ -74,6 +76,7 @@ describe('Loans', () => {
                 path: TopMenu.checkOutPath,
                 waiter: Checkout.waitLoading,
               });
+
               CheckOutActions.checkOutItemUser(
                 Cypress.env('users')[0].barcode,
                 folioInstances[0].barcodes[0],

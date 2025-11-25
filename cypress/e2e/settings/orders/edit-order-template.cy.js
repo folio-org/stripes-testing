@@ -41,13 +41,16 @@ describe('Orders', () => {
       cy.createTempUser([
         Permissions.uiSettingsOrdersCanViewEditOrderTemplates.gui,
         Permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
+        Permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
         Permissions.uiOrdersCreate.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.ordersOrderTemplatesPath,
-          waiter: OrderTemplate.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.ordersOrderTemplatesPath,
+            waiter: OrderTemplate.waitLoading,
+          });
+        }, 20_000);
       });
     });
 
@@ -71,6 +74,7 @@ describe('Orders', () => {
         Orders.checkCreatedOrderFromTemplate(organization.name);
         TopMenuNavigation.navigateToApp('Settings');
         OrderTemplate.goToTemplatesFromOrders();
+        OrderTemplate.selectTemplate(`${orderTemplateName}-edited`);
         OrderTemplate.deleteTemplate(`${orderTemplateName}-edited`);
       },
     );

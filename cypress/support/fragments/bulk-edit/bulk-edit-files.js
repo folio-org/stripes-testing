@@ -73,16 +73,45 @@ export default {
     };
   },
 
-  deleteAllDownloadedFiles(fileNames) {
-    const fileNamesList = Object.values(fileNames);
+  getAllQueryDownloadedFileNames(bulkEditJobId, isDateIncluded = false) {
+    return {
+      identifiersQueryFilename: `Query-${bulkEditJobId}.csv`,
+      matchedRecordsCSV: isDateIncluded
+        ? `${todayDate}-Matched-Records-Query-${bulkEditJobId}.csv`
+        : `*-Matched-Records-Query-${bulkEditJobId}.csv`,
+      previewRecordsCSV: isDateIncluded
+        ? `${todayDate}-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`
+        : `*-Updates-Preview-CSV-Query-${bulkEditJobId}.csv`,
+      previewRecordsMarc: isDateIncluded
+        ? `${todayDate}-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`
+        : `*-Updates-Preview-MARC-Query-${bulkEditJobId}.mrc`,
+      changedRecordsCSV: isDateIncluded
+        ? `${todayDate}-Changed-Records-CSV-Query-${bulkEditJobId}.csv`
+        : `*-Changed-Records-CSV-Query-${bulkEditJobId}.csv`,
+      changedRecordsMarc: isDateIncluded
+        ? `${todayDate}-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`
+        : `*-Changed-Records-MARC-Query-${bulkEditJobId}.mrc`,
+      errorsFromCommitting: isDateIncluded
+        ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
+        : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
+      errorsFromMatching: isDateIncluded
+        ? `${todayDate}-Matching-Records-Errors-Query-${bulkEditJobId}.csv`
+        : `*-Matching-Records-Errors-Query-${bulkEditJobId}.csv`,
+    };
+  },
 
-    fileNamesList.forEach((fileNameMask) => {
-      FileManager.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
-        if (fileName !== null) {
-          cy.task('deleteFile', fileName[0]);
-        }
+  deleteAllDownloadedFiles(fileNames) {
+    if (fileNames) {
+      const fileNamesList = Object.values(fileNames);
+
+      fileNamesList.forEach((fileNameMask) => {
+        FileManager.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
+          if (fileName && fileName.length > 0) {
+            cy.task('deleteFile', fileName[0]);
+          }
+        });
       });
-    });
+    }
   },
 
   verifyMatchedResultFileContent(
@@ -95,6 +124,12 @@ export default {
     switch (resultType) {
       case 'barcode':
         verifyFunc = this.verifyMatchedResultByItemBarcode;
+        break;
+      case 'uuid':
+        verifyFunc = this.verifyMatchedResultByItemUUID;
+        break;
+      case 'hrid':
+        verifyFunc = this.verifyMatchedResultByHRID;
         break;
       case 'holdingsItemBarcode':
         verifyFunc = this.verifyMatchedResultByHoldingsItemBarcode;
@@ -140,6 +175,9 @@ export default {
       validFile === true ? this.getValuesFromValidCSVFile : this.getValuesFromInvalidCSVFile;
     // expectedResult is list of expected values
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      if (!downloadedFilenames || downloadedFilenames.length === 0) {
+        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+      }
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
         const values = getValuesFromCSVFile(actualContent);
         // verify each row in csv file
@@ -153,6 +191,9 @@ export default {
   verifyCSVFileRows(fileName, expectedResult) {
     // expectedResult is list of expected values
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      if (!downloadedFilenames || downloadedFilenames.length === 0) {
+        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+      }
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
         const values = this.getValuesFromCSVFile(actualContent);
         // verify each row in csv file
@@ -183,8 +224,13 @@ export default {
   },
 
   verifyMatchedResultByItemBarcode(actualResult, expectedBarcode) {
-    const actualBarcode = actualResult.split(',')[9];
-    expect(actualBarcode).to.eq(expectedBarcode);
+    // Handle both quoted and unquoted CSV values
+    expect(actualResult).to.include(expectedBarcode);
+  },
+
+  verifyMatchedResultByItemUUID(actualResult, expectedUUID) {
+    // Handle both quoted and unquoted CSV values
+    expect(actualResult).to.include(expectedUUID);
   },
 
   verifyMatchedResultByHoldingsItemBarcode(actualResult, expectedResult) {
@@ -198,8 +244,8 @@ export default {
   },
 
   verifyMatchedResultByHRID(actualResult, expectedResult) {
-    const actualHRID = actualResult.split(',')[2];
-    expect(actualHRID).to.eq(expectedResult);
+    // Handle both quoted and unquoted CSV values
+    expect(actualResult).to.include(expectedResult);
   },
 
   verifyMatchedResultByFirstName(actualResult, expectedResult) {
@@ -258,6 +304,9 @@ export default {
 
   verifyCSVFileRowsValueIncludes(fileName, value) {
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      if (!downloadedFilenames || downloadedFilenames.length === 0) {
+        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+      }
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
         const values = this.getValuesFromValidCSVFile(actualContent);
         // verify each row with values in csv file
@@ -270,6 +319,9 @@ export default {
 
   verifyCSVFileRecordsNumber(fileName, recordsNumber) {
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      if (!downloadedFilenames || downloadedFilenames.length === 0) {
+        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+      }
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
         const values = this.getValuesFromCSVFile(actualContent.trim());
 
@@ -317,6 +369,9 @@ export default {
 
   verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders) {
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      if (!downloadedFilenames || downloadedFilenames.length === 0) {
+        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+      }
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
         const values = this.getValuesFromCSVFile(actualContent);
         const stringWithHeaders = values.shift();

@@ -27,7 +27,6 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -48,7 +47,7 @@ describe('Data Import', () => {
         amount: '$19.95',
       },
       {
-        fund: 'African History(AFRICAHIST)',
+        fund: 'European History(EUROHIST)',
         expenseClass: 'Electronic',
         value: '100%',
         amount: '$19.95',
@@ -66,7 +65,7 @@ describe('Data Import', () => {
         value: '100',
       },
       {
-        fundId: '"African History (AFRICAHIST)"',
+        fundId: '"European History (EUROHIST)"',
         expenseClass: '982$c; else "Electronic (Elec)"',
         value: '100',
       },
@@ -120,10 +119,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+        SettingsFieldMappingProfiles.waitLoading();
       });
     });
 

@@ -158,7 +158,6 @@ describe('Eureka', () => {
         testData.originalCapabilitySets.forEach((set) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(set, false);
         });
-        cy.wait(3000);
         testData.newCapabilitySets.forEach((set) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(set);
         });
@@ -182,7 +181,6 @@ describe('Eureka', () => {
 
         cy.waitForAuthRefresh(() => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
         }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();

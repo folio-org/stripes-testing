@@ -42,6 +42,23 @@ export default {
   },
   bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
+  bulkEditSettingsCreate: {
+    internal: 'ui-bulk-edit.settings.create',
+    gui: 'Settings (Bulk edit): Can view, add, update profiles',
+  },
+  bulkEditSettingsView: {
+    internal: 'ui-bulk-edit.settings.view',
+    gui: 'Settings (Bulk edit): Can view only',
+  },
+  bulkEditSettingsDelete: {
+    internal: 'ui-bulk-edit.settings.delete',
+    gui: 'Settings (Bulk edit): Can delete profiles',
+  },
+  bulkEditSettingsLockEdit: {
+    internal: 'ui-bulk-edit.settings.lock.edit',
+    gui: 'Settings (Bulk edit): Can lock and unlock profiles',
+  },
+
   // eHoldings
   uieHoldingsRecordsEdit: {
     internal: 'ui-eholdings.records.edit',
@@ -225,6 +242,10 @@ export default {
     internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
+  uiInventoryMarcItemInProcessDefault: {
+    internal: 'ui-inventory.items.mark-in-process.execute',
+    gui: 'Inventory: Mark items in process',
+  },
   uiInventoryMarcItemIntellectual: {
     internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
@@ -329,6 +350,22 @@ export default {
   inventoryCreateAndDownloadInTransitItemsReport: {
     internal: 'ui-inventory.items.in-transit-report.create',
     gui: 'Inventory: Create and download In transit items report',
+  },
+  inventoryStorageBatchCreateUpdateItems: {
+    internal: 'inventory-storage.items.batch.post',
+    gui: 'inventory storage - create or update a number of items',
+  },
+  inventoryStorageBatchUpdateItemsPatch: {
+    internal: 'inventory-storage.items.collection.patch',
+    gui: 'inventory storage - update items collection',
+  },
+  inventoryFastAddCreate: {
+    internal: 'ui-plugin-create-inventory-records.create',
+    gui: 'Fast add: Create',
+  },
+  inventoryStorageHoldingsBatchUpdate: {
+    internal: 'inventory-storage.holdings.batch.post',
+    gui: 'inventory storage - create or update a number of holdings',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
@@ -442,25 +479,25 @@ export default {
     internal: 'specification-storage.subfields.item.put',
     gui: 'Specification Storage - Update subfield definition',
   },
-
   specificationStorageSpecificationRulesItemPatch: {
     internal: 'specification-storage.specification.rules.item.patch',
     gui: 'Specification Storage - Toggle rule for specification',
   },
-
   specificationStorageSpecificationRulesCollectionGet: {
     internal: 'specification-storage.specification.rules.collection.get',
     gui: 'Specification Storage - Get specification rules collection',
   },
-
   specificationStorageSpecificationItemGet: {
     internal: 'specification-storage.specifications.item.get',
     gui: 'Specification Storage - Get specification',
   },
-
   specificationStorageSpecificationCollectionGet: {
     internal: 'specification-storage.specifications.collection.get',
     gui: 'Specification Storage - Get specification collection',
+  },
+  rtacGetBatchHoldingsCollection: {
+    internal: 'rtac.batch.post',
+    gui: 'RTAC - get batch holding collection',
   },
 
   // Circulation log
@@ -802,6 +839,10 @@ export default {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
+  invoiceSettingsBatchGroupView: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.view',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view',
+  },
   uiInvoicesCancelInvoices: {
     internal: 'ui-invoice.invoice.cancel.execute',
     gui: 'Invoice: Cancel invoices',
@@ -1005,9 +1046,21 @@ export default {
     internal: 'ui-finance.settings.view',
     gui: 'Settings (Finance): View settings',
   },
+  uiSettingsFinanceExportFundAndExpenseClassCodes: {
+    internal: 'ui-finance.settings.exportFundAndExpenseClassCodes',
+    gui: 'Settings (Finance): Export fund and expense class codes',
+  },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
+  },
+  uiFinanceFundUpdateLogsView: {
+    internal: 'ui-finance.fund-update-logs.view',
+    gui: 'Finance: View batch allocation logs',
+  },
+  uiFinanceFundUpdateLogsDelete: {
+    internal: 'ui-finance.fund-update-logs.delete',
+    gui: 'Finance: Delete batch allocation logs',
   },
   // Organizations
   uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
@@ -1208,6 +1261,10 @@ export default {
     internal: 'ui-eholdings.settings.access-types.view',
     gui: 'Settings (eholdings): Can view access status types',
   },
+  uiSettingsEHoldingsAccessStatusTypesAll: {
+    internal: 'ui-eholdings.settings.access-types.all',
+    gui: 'Settings (eholdings): Can create, edit, view, and delete access status types',
+  },
   uiSettingsEHoldingsViewCustomLabel: {
     internal: 'ui-eholdings.settings.custom-labels.view',
     gui: 'Settings (eholdings): Can view custom labels',
@@ -1219,6 +1276,18 @@ export default {
   uiSettingsEHoldingsViewSettings: {
     internal: 'ui-eholdings.settings.enabled',
     gui: 'Settings (eHoldings): View settings',
+  },
+  uiSettingsEHoldingsAssignUsers: {
+    internal: 'ui-eholdings.settings.assignedUser.edit',
+    gui: 'Settings (eHoldings): Can assign/unassign a user from a KB',
+  },
+  uiSettingsEHoldingsRootProxyEdit: {
+    internal: 'ui-eholdings.settings.root-proxy.edit',
+    gui: 'Settings (eHoldings): configure root proxy setting',
+  },
+  uiSettingsEHoldingsUsageConsolidationView: {
+    internal: 'ui-eholdings.settings.usage-consolidation.view',
+    gui: 'Settings (eholdings): View Usage Consolidation API credentials',
   },
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',

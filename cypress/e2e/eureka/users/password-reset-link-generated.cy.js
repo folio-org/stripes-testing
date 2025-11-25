@@ -36,10 +36,12 @@ describe('Eureka', () => {
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
-          cy.login(testData.tempUser.username, testData.tempUser.password, {
-            path: TopMenu.usersPath,
-            waiter: Users.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.tempUser.username, testData.tempUser.password, {
+              path: TopMenu.usersPath,
+              waiter: Users.waitLoading,
+            });
+          }, 20_000);
         });
       });
     });

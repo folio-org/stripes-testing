@@ -73,6 +73,7 @@ export default {
   },
   clickExportResultsToCsvButton() {
     this.expandActionsDropdown();
+    cy.expect(Button('Export results (CSV)').is({ disabled: false }));
     cy.do(Button('Export results (CSV)').click());
     ExportSettingsModal.verifyModalView();
 
@@ -469,7 +470,7 @@ export default {
   verifyRequestIsCreated: () => {
     cy.expect(
       Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ columnIndex: 8, content: 'Yes' }))
+        .find(MultiColumnListCell({ columnIndex: 11, content: 'Yes' }))
         .exists(),
     );
   },

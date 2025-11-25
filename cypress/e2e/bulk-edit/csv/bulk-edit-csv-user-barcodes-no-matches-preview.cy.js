@@ -59,6 +59,7 @@ describe(
           BulkEditSearchPane.matchedAccordionIsAbsent();
           BulkEditSearchPane.verifyErrorLabel(1);
           BulkEditSearchPane.verifyNonMatchedResults(invalidUserBarcode);
+          BulkEditSearchPane.verifySpinnerAbsent();
 
           BulkEditActions.openActions();
           BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();

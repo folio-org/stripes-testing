@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
@@ -10,6 +11,7 @@ import {
   TextField,
   Spinner,
   and,
+  or,
   some,
   Pane,
   HTML,
@@ -147,6 +149,16 @@ const validationCalloutMainText =
   'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
 const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
 const derivePaneHeaderText = /Derive a new .*MARC bib record/;
+const searchButtonIn010Field = Button({ ariaLabel: 'search' });
+const getTag008BoxErrorText = (boxName) => `Fail: Record cannot be saved. Field 008 contains an invalid value in "${boxName}" position.`;
+const tagLengthNumbersOnlyInlineErrorText =
+  'Fail: Tag must contain three characters and can only accept numbers 0-9.';
+const tagLengthInlineErrorText =
+  'Fail: Record cannot be saved. A MARC tag must contain three characters.';
+const invalidTagInlineErrorText = 'Fail: Invalid MARC tag. Please try again.';
+const tag1XXNonRepeatableRequiredCalloutText = 'Field 1XX is non-repeatable and required.';
+const getSubfieldNonRepeatableInlineErrorText = (subfield) => `Fail: Subfield '${subfield}' is non-repeatable.`;
+const paneheaderDateFormat = 'M/D/YYYY h:mm A';
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -347,8 +359,8 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 );
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
-const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
-const readOnlyHoldingsTags = ['001', '004', '005', '999'];
+const readOnlyAuthorityTags = ['LDR', '001', '999'];
+const readOnlyHoldingsTags = ['001', '004', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -441,6 +453,15 @@ const defaultValid008Values = {
   LitF: '\\',
   Biog: '\\',
 };
+const valid008ValuesInstance = {
+  ...defaultValid008Values,
+  Type: 'a',
+  DtSt: 'm',
+  Conf: '1',
+  Fest: '1',
+  Indx: '1',
+  LitF: 'i',
+};
 const defaultValid008HoldingsValues = {
   AcqEndDate: '\\\\\\\\',
   AcqMethod: '\\',
@@ -517,7 +538,14 @@ export default {
   defaultValidLdr,
   defaultValidHoldingsLdr,
   defaultValid008Values,
+  valid008ValuesInstance,
   defaultValid008HoldingsValues,
+  getTag008BoxErrorText,
+  tagLengthNumbersOnlyInlineErrorText,
+  tag1XXNonRepeatableRequiredCalloutText,
+  getSubfieldNonRepeatableInlineErrorText,
+  tagLengthInlineErrorText,
+  invalidTagInlineErrorText,
 
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
@@ -588,8 +616,26 @@ export default {
     ]);
   },
 
-  pressSaveAndClose() {
+  pressSaveAndCloseButton() {
     cy.do(saveAndCloseButton.click());
+  },
+
+  pressSaveAndClose({ acceptLinkedBibModal = false, acceptDeleteModal = false } = {}) {
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
+    cy.do(saveAndCloseButton.click());
+    if (acceptLinkedBibModal) {
+      cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+      cy.do(saveButton.click());
+    }
+    if (acceptDeleteModal) {
+      this.deleteConfirmationPresented();
+      this.confirmDelete();
+    }
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
   },
 
   saveAndCloseWithValidationWarnings({
@@ -598,7 +644,7 @@ export default {
   } = {}) {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
-    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+    cy.wait('@validateRequest', { timeout: 10_000 }).its('response.statusCode').should('eq', 200);
 
     this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
@@ -618,7 +664,7 @@ export default {
       this.confirmDelete();
     }
 
-    cy.wait('@saveRecordRequest', { timeout: 5_000 })
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },
@@ -760,6 +806,10 @@ export default {
     );
   },
 
+  verifyContentBoxIsFocused(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ focused: true }));
+  },
+
   movetoFourthBoxUsingTab(rowNumber) {
     cy.get(`[name="records[${rowNumber}].tag"]`).tab().tab().tab();
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(fourthBox).has({ focused: true }));
@@ -832,10 +882,14 @@ export default {
     ]);
   },
 
-  cancelEditConfirmationPresented() {
-    cy.expect(cancelEditConformModel.exists());
-    cy.expect(closeWithoutSavingBtn.exists());
-    cy.expect(cancelEditConfirmBtn.exists());
+  cancelEditConfirmationPresented(isPresented = true) {
+    if (isPresented) {
+      cy.expect([
+        cancelEditConformModel.exists(),
+        closeWithoutSavingBtn.exists(),
+        cancelEditConfirmBtn.exists(),
+      ]);
+    } else cy.expect(cancelEditConformModel.absent());
   },
 
   confirmEditCancel() {
@@ -999,7 +1053,11 @@ export default {
   },
 
   undoDelete() {
-    cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
+    cy.get('[class^=deletedRowPlaceholder-]').each(($placeholder) => {
+      cy.wrap($placeholder).within(() => {
+        cy.contains('span', 'Undo').click();
+      });
+    });
   },
 
   checkUndoDeleteAbsent() {
@@ -1115,6 +1173,10 @@ export default {
 
   moveFieldUp(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
+  },
+
+  moveFieldDown(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).click());
   },
 
   moveFieldUpWithEnter(rowNumber) {
@@ -1476,25 +1538,32 @@ export default {
     );
   },
 
-  selectFieldsDropdownOption(tag, dropdownLabel, option) {
+  selectFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .choose(option),
     );
+    cy.wait(500);
   },
 
-  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+  verifyFieldsDropdownOption(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
     );
   },
 
-  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
+      targetRow
         .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
@@ -1606,10 +1675,7 @@ export default {
       'ui-quick-marc.record.fixedField-Level Est-text',
       'Level of establishment',
     );
-    this.verifyDropdownHoverText(
-      'ui-quick-marc.record.fixedField-Mod Rec Est-text',
-      'Modified record',
-    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Mod Rec-text', 'Modified record');
     this.verifyDropdownHoverText(
       'ui-quick-marc.record.fixedField-Source-text',
       'Cataloging source',
@@ -1675,6 +1741,7 @@ export default {
     cy.expect([
       Pane({ id: 'quick-marc-editor-pane' }).exists(),
       QuickMarcEditorRow({ tagValue: '999' }).exists(),
+      cancelButton.exists(),
     ]);
   },
 
@@ -1924,6 +1991,14 @@ export default {
     });
   },
 
+  check005TagIsEditable() {
+    cy.expect(
+      QuickMarcEditorRow({ index: 2 })
+        .find(TextField('Field'))
+        .has({ value: '005', disabled: false }),
+    );
+  },
+
   verifyAllBoxesInARowAreEditable(tag) {
     cy.expect([
       getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
@@ -2069,13 +2144,15 @@ export default {
   },
 
   checkFieldsCount(expectedCount) {
-    cy.then(() => QuickMarcEditor().rowsCount()).then((FieldsCount) => {
-      cy.expect(FieldsCount).equal(expectedCount);
-    });
+    cy.expect(QuickMarcEditor().has({ rowsCount: expectedCount }));
   },
 
   checkAfterSaveAndCloseDerive() {
     cy.expect([calloutAfterSaveAndCloseNewRecord.exists(), instanceDetailsPane.exists()]);
+  },
+
+  checkAfterSaveAndKeepEditingDerive() {
+    cy.expect([calloutAfterSaveAndCloseNewRecord.exists(), rootSection.exists()]);
   },
 
   verifyAndDismissRecordUpdatedCallout() {
@@ -2346,7 +2423,7 @@ export default {
     cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
-  verifyInvalidLDRValueCallout(positions) {
+  verifyInvalidLDRValueError(positions) {
     let positionsArray = positions;
     if (!Array.isArray(positions)) {
       positionsArray = [positions];
@@ -2367,8 +2444,9 @@ export default {
         return leaderText;
       })
       .join(' ');
-    const callOutText = `Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
-    cy.expect(Callout(callOutText).exists());
+    const errorText = `Fail: Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
+    const errorElement = getRowInteractorByTagName('LDR').find(HTML(including(errorText)));
+    cy.expect(errorElement.exists());
   },
 
   closeCallout(text) {
@@ -2687,8 +2765,9 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: 2 })
         .find(TextField('Field'))
-        .has({ value: '005', disabled: true }),
+        .has({ value: '005', disabled: false }),
     );
+    this.checkFourthBoxEditable(2, false);
     this.checkEmptyContent('005');
     cy.expect(
       QuickMarcEditorRow({ index: 3 })
@@ -3122,24 +3201,242 @@ export default {
     this.checkPaneheaderContains(derivePaneHeaderText);
   },
 
-  fillInTextBoxInField(tag, boxLabel, value) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(TextField({ label: boxLabel }))
-        .fillIn(value),
-    );
+  fillInTextBoxInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(targetRow.find(TextField({ label: boxLabel })).fillIn(value));
+    cy.wait(500);
   },
 
-  verifyTextBoxValueInField(tag, boxLabel, value) {
-    cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(TextField({ label: boxLabel }))
-        .has({ value }),
-    );
+  verifyTextBoxValueInField(tag, boxLabel, value, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ value }));
   },
 
   verifyDropdownsShownInField(rowIndex, isShown = true) {
     if (isShown) cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).exists());
     else cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(Select()).absent());
+  },
+
+  checkSearchButtonShownIn010Field({ checkHoverText = false } = {}) {
+    cy.expect(getRowInteractorByTagName('010').find(searchButtonIn010Field).exists());
+    if (checkHoverText) {
+      cy.do(getRowInteractorByTagName('010').find(searchButtonIn010Field).hoverMouse());
+      cy.expect(Tooltip().has({ text: 'Search for records by 010 value(s)' }));
+    }
+  },
+
+  checkAddButtonShownInField(tag, isShown = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(addFieldButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  clickSearchButtonIn010Field() {
+    cy.do(
+      getRowInteractorByTagName('010')
+        .find(searchButtonIn010Field)
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
+    cy.url().should('include', 'advancedSearch');
+  },
+
+  verifyFieldDropdownFocused(tag, dropdownLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow.find(Select({ label: including(dropdownLabel) })).has({ focused: isFocused }),
+    );
+  },
+
+  verifyIndicatorBoxIsFocused(tag, indicatorIndex, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.expect(targetRow.find(indicator).has({ focused: true }));
+  },
+
+  focusOnFieldsDropdown(tag, dropdownLabel, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.do(
+      targetRow.find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) })).focus(),
+    );
+    cy.wait(500);
+  },
+
+  close() {
+    cy.do(QuickMarcEditor().find(PaneHeader()).find(closeButton).click());
+  },
+
+  checkSomeDropdownsMarkedAsInvalid(tag, someInvalid = true) {
+    const invalidDropdown = getRowInteractorByTagName(tag).find(Select({ valid: false }));
+    if (someInvalid) cy.expect(invalidDropdown.exists());
+    else cy.expect(invalidDropdown.absent());
+  },
+
+  checkUnlinkButtonShown(tag, isShown = true, rowIndex = null) {
+    const targetButton =
+      rowIndex === null
+        ? getRowInteractorByTagName(tag).find(unlinkIconButton)
+        : getRowInteractorByRowNumber(rowIndex).find(unlinkIconButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
+  },
+
+  /**
+    A method for linking MARC bibliographic and authority records via API.
+    `bibFieldIndexes` to be used in case of multiple bib fields with the same tag
+  */
+  linkMarcRecordsViaApi({
+    bibId,
+    authorityIds,
+    bibFieldTags,
+    authorityFieldTags,
+    finalBibFieldContents,
+    bibFieldIndexes = null,
+  } = {}) {
+    let relatedRecordVersion;
+    const linkingRuleIds = [];
+    const authorityNaturalIds = [];
+    const sourceFileIds = [];
+    const sourceFileUrls = [];
+
+    cy.then(() => {
+      cy.getAllRulesViaApi().then((rules) => {
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          linkingRuleIds.push(
+            rules
+              .filter((rule) => rule.bibField === bibFieldTag)
+              .find((rule) => rule.authorityField === authorityFieldTags[index]).id,
+          );
+        });
+      });
+      cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
+        relatedRecordVersion = `${auditData.totalRecords}`;
+      });
+      authorityIds.forEach((authorityId) => {
+        cy.okapiRequest({
+          path: 'search/authorities',
+          searchParams: { query: `id=="${authorityId}"` },
+          isDefaultSearchParamsRequired: false,
+        }).then((res) => {
+          authorityNaturalIds.push(res.body.authorities[0].naturalId);
+          const sourceFileId = res.body.authorities[0].sourceFileId;
+          sourceFileIds.push(sourceFileId);
+
+          if (sourceFileId && sourceFileId !== 'NULL') {
+            cy.getAuthoritySourceFileDataByIdViaAPI(sourceFileId).then((sourceFileData) => {
+              sourceFileUrls.push(sourceFileData.baseUrl);
+            });
+          } else sourceFileUrls.push('');
+        });
+      });
+    }).then(() => {
+      cy.getMarcRecordDataViaAPI(bibId).then((marcData) => {
+        const updatedMarcData = { ...marcData };
+        bibFieldTags.forEach((bibFieldTag, index) => {
+          const targetFieldIndex =
+            bibFieldIndexes !== null
+              ? bibFieldIndexes[index] - 1
+              : updatedMarcData.fields.findIndex((field) => field.tag === bibFieldTag);
+          updatedMarcData.fields[targetFieldIndex].content =
+            `${finalBibFieldContents[index]} $0 ${sourceFileUrls[index]}${authorityNaturalIds[index]} $9 ${authorityIds[index]}`;
+          updatedMarcData.fields[targetFieldIndex].linkDetails = {
+            authorityId: authorityIds[index],
+            authorityNaturalId: authorityNaturalIds[index],
+            linkingRuleId: linkingRuleIds[index],
+            status: 'NEW',
+          };
+        });
+        updatedMarcData.relatedRecordVersion = relatedRecordVersion;
+
+        cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, updatedMarcData);
+        cy.recurse(
+          () => cy.getMarcRecordDataViaAPI(bibId),
+          (marcBibData) => {
+            return bibFieldTags.every((bibFieldTag, index) => {
+              const targetFieldIndex =
+                bibFieldIndexes !== null
+                  ? bibFieldIndexes[index] - 1
+                  : marcBibData.fields.findIndex((field) => field.tag === bibFieldTag);
+              return (
+                marcBibData.fields[targetFieldIndex].linkDetails?.authorityId ===
+                authorityIds[index]
+              );
+            });
+          },
+          {
+            limit: 20,
+            timeout: 40000,
+            delay: 1000,
+          },
+        );
+      });
+    });
+  },
+
+  verifyValuesInLdrNonEditableBoxes({
+    positions0to4BoxValues,
+    positions9to16BoxValues,
+    positions20to23BoxValues,
+  } = {}) {
+    const positions0to4Box = TextField({ name: 'records[0].content.Record length' });
+    const positions9to16Box = TextField({ name: 'records[0].content.9-16 positions' });
+    const positions20to23Box = TextField({ name: 'records[0].content.20-23 positions' });
+    if (positions0to4BoxValues) cy.expect(positions0to4Box.has({ value: positions0to4BoxValues, disabled: true }));
+    if (positions9to16BoxValues) cy.expect(positions9to16Box.has({ value: positions9to16BoxValues, disabled: true }));
+    if (positions20to23BoxValues) cy.expect(positions20to23Box.has({ value: positions20to23BoxValues, disabled: true }));
+  },
+
+  checkMarcBibHeader({ instanceTitle, status }, userName) {
+    const dateMatchers = [];
+    for (let i = -2; i <= 2; i++) {
+      dateMatchers.push(
+        including(`Last updated: ${moment.utc().add(i, 'minutes').format(paneheaderDateFormat)}`),
+      );
+    }
+    const targetPane = Pane(matching(new RegExp(`Edit .*MARC record - ${instanceTitle}`)));
+    cy.expect(targetPane.exists());
+    cy.expect(
+      targetPane.has({
+        subtitle: and(
+          including('Status:'),
+          including(status),
+          including('Last updated:'),
+          including(`Source: ${userName}`),
+        ),
+      }),
+    );
+    cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
+  },
+
+  verifyBoxIsFocusedInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.expect(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .has({ focused: true }),
+    );
+  },
+
+  verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ focused: isFocused }));
   },
 };

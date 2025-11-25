@@ -164,8 +164,6 @@ describe('Data Import', () => {
           cy.loginAsAdmin();
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -180,8 +178,6 @@ describe('Data Import', () => {
             linkingTagAndValue.rowIndex,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 
@@ -190,8 +186,6 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });

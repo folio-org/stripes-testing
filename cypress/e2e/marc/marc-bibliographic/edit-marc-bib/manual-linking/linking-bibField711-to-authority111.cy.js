@@ -127,7 +127,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib711AfterLinkingToAuth111);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -138,7 +137,6 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
             InventoryInstance.goToPreviousPage();
-            cy.wait('@/authn/refresh', { timeout: 30000 });
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
@@ -158,7 +156,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib711AfterUnlinking);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(5, 1, testData.contributor);
             InventoryInstance.checkMarcAppIconAbsent(5);

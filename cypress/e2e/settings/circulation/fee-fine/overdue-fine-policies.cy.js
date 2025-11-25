@@ -112,7 +112,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C5557_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -215,9 +215,11 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     'C5557 C3613 Verify that you can create/edit/delete overdue fine policies (vega)',
     { tags: ['vega', 'smokeFlaky', 'C5557', 'C3613'] },
     () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationOverdueFinePoliciesPath,
-        waiter: () => cy.wait(3000),
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationOverdueFinePoliciesPath,
+          waiter: () => cy.wait(6000),
+        });
       });
 
       const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
@@ -246,9 +248,11 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     'C9267 Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (vega)',
     { tags: ['vega', 'smoke', 'C9267'] },
     () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.checkOutPath,
-        waiter: Checkout.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
       });
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(instanceData.itemBarcode);

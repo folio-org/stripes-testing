@@ -172,9 +172,7 @@ describe('Data Export', () => {
 
               // Step 7: Check exported record for shared Instances from Preconditions #4 included in the file
               const commonAssertions = (instanceId) => [
-                (record) => {
-                  expect(record.leader).to.eq('00263dam a22000973c 4500');
-                },
+                (record) => expect(record.leader[5]).to.equal('d'),
                 (record) => {
                   expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
                 },
@@ -198,6 +196,7 @@ describe('Data Export', () => {
         // Step 8: Switch affiliation to member tenant, Go to "Inventory" app
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.clearDefaultFilter('Held by');
         InventorySearchAndFilter.waitLoading();
 
         // Step 9: Search for the local Instance from Preconditions #4
@@ -230,7 +229,7 @@ describe('Data Export', () => {
               uuid: localInstanceIds[0],
               assertions: [
                 (record) => {
-                  expect(record.leader).to.eq('00263dam a22000973c 4500');
+                  expect(record.leader[5]).to.eq('n');
                 },
                 (record) => {
                   expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;

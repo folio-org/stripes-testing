@@ -68,7 +68,9 @@ describe('Fees&Fines', () => {
                       path: TopMenu.usersPath,
                       waiter: UsersSearchPane.waitLoading,
                     });
-                    UsersSearchPane.searchByUsername(testData.userProperties.username);
+                    cy.waitForAuthRefresh(() => {
+                      UsersSearchPane.searchByUsername(testData.userProperties.username);
+                    });
                   });
                 });
               });
@@ -172,7 +174,6 @@ describe('Fees&Fines', () => {
         Checkout.waitLoading();
         cy.checkOutItem(testData.userProperties.barcode, testData.barcode);
         cy.verifyItemCheckOut();
-
 
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
         // Close fee/fine page

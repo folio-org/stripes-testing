@@ -9,14 +9,20 @@ import {
   Section,
   Select,
   TextField,
+  matching,
 } from '../../../../../interactors';
+import OrderStorageSettings from '../../orders/orderStorageSettings';
 import InteractorsTools from '../../../utils/interactorsTools';
-import Configs from '../configs';
+
+const ORDER_NUMBER_SETTING_KEY = 'orderNumber';
+const INSTANCE_MATCHING_DESCRIPTION =
+  'With instance matching disabled, purchase order lines will create new instances and will not be linked with existing instance records. With instance matching enabled, FOLIO will first search instances to find a match for one or more product IDs provided on the PO Line. If a product ID is found, that instance will be linked to the POL and FOLIO will NOT create a new instance for that POL. If no matches are found, the system will create a new instance record and link the POL to that instance.';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
 const trashIconButton = Button({ icon: 'trash' });
 const deleteButton = Button('Delete');
+const checkboxInstanceMatching = Checkbox({ name: 'isInstanceMatchingDisabled' });
 
 function getEditableListRow(rowNumber) {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
@@ -112,7 +118,16 @@ export default {
   },
 
   verifyPurchaseOrderLinesLimitValue: (value) => {
-    cy.expect(TextField('Set purchase order lines limit').has({ value }));
+    const limit = String(value);
+    cy.expect(TextField('Set purchase order lines limit').has({ value: limit }));
+  },
+
+  verifyPurchaseOrderLinesLimit: () => {
+    cy.expect(
+      TextField('Set purchase order lines limit').has({
+        value: matching(/^([1-9]|[1-9][0-9]|100)$/),
+      }),
+    );
   },
 
   fillRequiredFields: (info) => {
@@ -210,26 +225,25 @@ export default {
   generateUserCanEditPONumberConfig(canUserEditOrderNumber = false) {
     return {
       value: JSON.stringify({ canUserEditOrderNumber }),
-      module: 'ORDERS',
-      configName: 'orderNumber',
+      key: ORDER_NUMBER_SETTING_KEY,
       id: uuid(),
     };
   },
 
   getUserCanEditPONumberViaApi() {
-    return Configs.getConfigViaApi({ query: '(module==ORDERS and configName==orderNumber)' });
+    return OrderStorageSettings.getSettingsViaApi({ key: ORDER_NUMBER_SETTING_KEY });
   },
 
   setUserCanEditPONumberViaApi(canUserEditOrderNumber) {
-    this.getUserCanEditPONumberViaApi().then((configs) => {
-      if (configs[0]) {
-        Configs.updateConfigViaApi({
-          ...configs[0],
+    this.getUserCanEditPONumberViaApi().then((settings) => {
+      if (settings[0]) {
+        OrderStorageSettings.updateSettingViaApi({
+          ...settings[0],
           value: JSON.stringify({ canUserEditOrderNumber }),
         });
       } else {
-        const config = this.generateUserCanEditPONumberConfig(canUserEditOrderNumber);
-        Configs.createConfigViaApi(config);
+        const setting = this.generateUserCanEditPONumberConfig(canUserEditOrderNumber);
+        OrderStorageSettings.createSettingViaApi(setting);
       }
     });
   },
@@ -267,5 +281,37 @@ export default {
 
   selectApprovalRequired() {
     cy.do([Checkbox({ name: 'isApprovalRequired' }).click(), saveButton.click()]);
+  },
+
+  switchDisableInstanceMatching() {
+    cy.do([checkboxInstanceMatching.click(), saveButton.click()]);
+  },
+
+  checkSaveButtonIsDisabled() {
+    cy.expect(saveButton.is({ disabled: true }));
+  },
+
+  verifyCheckboxIsSelected(checkbox, isChecked = false) {
+    cy.expect(Checkbox({ name: checkbox }).has({ checked: isChecked }));
+  },
+
+  uncheckDisableInstanceMatchingIfChecked() {
+    cy.expect(checkboxInstanceMatching.exists());
+    cy.do(checkboxInstanceMatching.uncheckIfSelected());
+    cy.get('#clickable-save-config').then((btn) => {
+      if (btn && !btn.prop('disabled')) {
+        cy.wrap(btn).click();
+      }
+    });
+  },
+
+  verifyInstanceMatchingDescription() {
+    cy.contains(INSTANCE_MATCHING_DESCRIPTION).should('exist');
+  },
+
+  verifyOptionsAbsentInSettingsOrders(options) {
+    options.forEach((option) => {
+      cy.contains(option).should('not.exist');
+    });
   },
 };

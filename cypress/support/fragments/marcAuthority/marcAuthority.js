@@ -143,8 +143,8 @@ const defaultAuthority = {
       defaultValue: 'a - Fully established',
       newValue: 'v',
     },
-    modRecEst: {
-      interactor: Select('Mod Rec Est'),
+    modRec: {
+      interactor: Select('Mod Rec'),
       defaultValue: '\\ - Not modified',
       newValue: 'v',
     },
@@ -550,8 +550,9 @@ export default {
     return cy.get('@records');
   },
 
-  checkSourceFileSelectShown: () => {
-    cy.expect(sourceFileSelect.exists());
+  checkSourceFileSelectShown: (isShown = true) => {
+    if (isShown) cy.expect(sourceFileSelect.exists());
+    else cy.expect(sourceFileSelect.absent());
   },
 
   selectSourceFile(sourceFileName) {

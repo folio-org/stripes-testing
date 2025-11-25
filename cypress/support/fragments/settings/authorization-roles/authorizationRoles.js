@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   Button,
   Checkbox,
@@ -108,9 +109,22 @@ const shareToAllModal = Modal('Confirm share to all');
 const submitButton = Button('Submit');
 const successShareText = 'Role has been shared successfully';
 const centrallyManagedKeyValue = KeyValue('Centrally managed');
-const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
+const createNameErrorText = including('Role could not be created: Failed to create keycloak role');
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
+const generalInfoDateFormat = 'M/D/YYYY h:mm A';
+const unselectAppConfirmationModal = Modal({ id: 'unselect-application-confirmation-modal' });
+const continueButton = Button('Continue');
+const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
+  const appText = Array.isArray(appNames)
+    ? appNames.map((appName) => `${appName}-\\d\\..+`).join(', ')
+    : `${appNames}-\\d\\..+`;
+  const capabCountText = capabilitiesCount === undefined ? '\\d+' : capabilitiesCount;
+  const setCountText = setsCount === undefined ? '\\d+' : setsCount;
+  return new RegExp(
+    `By unselecting ${appText}, ${capabCountText} capabilit(ies|y) and ${setCountText} capability sets* will also be unselected\\. Are you sure you'd like to proceed\\?`,
+  );
+};
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -163,7 +177,11 @@ export default {
       selectAppSearchButton.has({ disabled: true }),
       selectAppResetAllButton.has({ disabled: true }),
       selectAppSearchInput.exists(),
+      selectApplicationModal.find(MultiColumnListRow()).exists(),
     ]);
+    const listSelector = 'div#applications-paneset [class^="mclScrollable"]';
+    cy.get(listSelector).scrollTo('bottom').scrollTo('top');
+    cy.expect(MultiColumnListRow({ index: 0 }).exists());
   },
 
   verifySelectApplicationModal() {
@@ -171,17 +189,18 @@ export default {
       saveButtonInModal.exists(),
       cancelButtonInModal.exists(),
       selectAppSearchInput.exists(),
-      selectApplicationModal
-        .find(MultiColumnListRow({ index: 0, isContainer: false }))
-        .find(Checkbox())
-        .exists(),
+      selecAllAppsCheckbox.exists(),
     ]);
     this.checkButtonsEnabledInSelectAppModal({ resetAll: false, search: false });
   },
 
-  selectApplicationInModal: (appName, isSelected = true) => {
+  selectApplicationInModal(appName, isSelected = true) {
     const targetCheckbox = selectApplicationModal
-      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
+      .find(
+        MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), {
+          isContainer: false,
+        }),
+      )
       .find(Checkbox());
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
@@ -192,9 +211,26 @@ export default {
     cy.expect(selecAllAppsCheckbox.has({ checked: isSelected }));
   },
 
-  clickSaveInModal: () => {
+  clickSaveInModal({ confirmUnselect = null, checkModalClosed = true } = {}) {
     cy.do(saveButtonInModal.click());
-    cy.expect(selectApplicationModal.absent());
+    if (confirmUnselect === true) this.confirmAppUnselection();
+    if (confirmUnselect === false) this.cancelAppUnselection();
+    if (checkModalClosed) cy.expect(selectApplicationModal.absent());
+  },
+
+  clickSaveInModalAndCheckUnselectModal(appNames, capabiliesCount, setsCount) {
+    this.clickSaveInModal({ checkModalClosed: false });
+    this.verifyUnselectModal(appNames, capabiliesCount, setsCount);
+  },
+
+  verifyUnselectModal(appNames, capabiliesCount, setsCount) {
+    cy.expect([
+      unselectAppConfirmationModal.has({
+        message: matching(unselectModalContentRegExp(appNames, capabiliesCount, setsCount)),
+      }),
+      unselectAppConfirmationModal.find(continueButton).exists(),
+      unselectAppConfirmationModal.find(cancelButton).exists(),
+    ]);
   },
 
   searchForAppInModal(appName) {
@@ -625,25 +661,68 @@ export default {
   },
 
   verifyGeneralInformationWhenCollapsed: (updatedDate) => {
+    const momentDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const updatedDatePlus1Minute = momentDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDateMinus1Minute = momentDate.subtract(1, 'minute').format(generalInfoDateFormat);
     cy.expect(
       generalInformationAccordion.has({
-        content: including(`Record last updated: ${updatedDate}`),
+        content: or(
+          including(`Record last updated: ${updatedDate}`),
+          including(`Record last updated: ${updatedDatePlus1Minute}`),
+          including(`Record last updated: ${updatedDateMinus1Minute}`),
+        ),
       }),
     );
   },
 
   verifyGeneralInformationWhenExpanded: (updatedDate, updatedUser, createdDate, createdUser) => {
+    const momentUpdatedDate = moment.utc(updatedDate, generalInfoDateFormat);
+    const momentCreatedDate = moment.utc(createdDate, generalInfoDateFormat);
+    const updatedDatePlus1Minute = momentUpdatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const createdDatePlus1Minute = momentCreatedDate.add(1, 'minute').format(generalInfoDateFormat);
+    const updatedDateMinus1Minute = momentUpdatedDate
+      .subtract(1, 'minute')
+      .format(generalInfoDateFormat);
+    const createdDateMinus1Minute = momentCreatedDate
+      .subtract(1, 'minute')
+      .format(generalInfoDateFormat);
     cy.do(recordLastUpdatedHeader.click());
     cy.expect([
       generalInformationAccordion.has({
         content: and(
-          including(`Record last updated: ${updatedDate}`),
+          or(
+            including(`Record last updated: ${updatedDate}`),
+            including(`Record last updated: ${updatedDatePlus1Minute}`),
+            including(`Record last updated: ${updatedDateMinus1Minute}`),
+          ),
           including(`Source: ${updatedUser}`),
-          including(`Record created: ${createdDate}`),
+          or(
+            including(`Record created: ${createdDate}`),
+            including(`Record created: ${createdDatePlus1Minute}`),
+            including(`Record created: ${createdDateMinus1Minute}`),
+          ),
           including(`Source: ${createdUser}`),
         ),
       }),
     ]);
+  },
+
+  checkUserInGeneralInformation(updateUser, createUser) {
+    cy.do(recordLastUpdatedHeader.click());
+    if (updateUser) {
+      cy.expect(
+        generalInformationAccordion.has({
+          content: including(`Source: ${updateUser} Record created`),
+        }),
+      );
+    }
+    if (createUser) {
+      cy.expect(
+        generalInformationAccordion.has({
+          content: including(`Source: ${createUser} Name`),
+        }),
+      );
+    }
   },
 
   checkCapabilitySpinnersShown() {
@@ -753,8 +832,8 @@ export default {
   },
 
   checkNoUsernameErrorCallout: () => {
-    InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
-    InteractorsTools.dismissCallout(noUsernameCalloutText);
+    InteractorsTools.checkCalloutErrorMessage(including(noUsernameCalloutText));
+    InteractorsTools.dismissCallout(including(noUsernameCalloutText));
   },
 
   checkNewButtonShown: (isShown = true) => {
@@ -1017,5 +1096,15 @@ export default {
   clickResetAllInSelectAppModal() {
     cy.do(selectAppResetAllButton.click());
     this.verifySelectApplicationModal();
+  },
+
+  confirmAppUnselection() {
+    cy.do(unselectAppConfirmationModal.find(continueButton).click());
+    cy.expect(unselectAppConfirmationModal.absent());
+  },
+
+  cancelAppUnselection() {
+    cy.do(unselectAppConfirmationModal.find(cancelButton).click());
+    cy.expect(unselectAppConfirmationModal.absent());
   },
 };

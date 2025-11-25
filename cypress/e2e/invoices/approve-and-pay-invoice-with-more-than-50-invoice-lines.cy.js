@@ -85,7 +85,7 @@ describe('Invoices', () => {
           path: SettingsMenu.ordersPurchaseOrderLinesLimit,
           waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
         });
-        OrderLinesLimit.setPOLLimit(51);
+        OrderLinesLimit.setPOLLimitViaApi(51);
       });
     });
 
@@ -172,7 +172,7 @@ describe('Invoices', () => {
   after(() => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
-    OrderLinesLimit.setPOLLimit(1);
+    OrderLinesLimit.setPOLLimitViaApi(1);
   });
 
   it(

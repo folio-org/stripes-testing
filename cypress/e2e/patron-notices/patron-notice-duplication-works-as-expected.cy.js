@@ -60,7 +60,7 @@ describe('Patron notices', () => {
     () => {
       NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
       NewNoticePolicyTemplate.duplicateTemplate();
-      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();
+      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible('ADMINISTRATOR');
       NewNoticePolicyTemplate.verifyGeneralInformationForDuplicate(testData.noticeTemplateBody);
       NewNoticePolicyTemplate.typeTemplateName(newNoticeTemplateName);
       NewNoticePolicyTemplate.saveAndClose();

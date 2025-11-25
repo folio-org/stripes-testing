@@ -1,6 +1,12 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  findLocalField,
+  getBibliographicSpec,
+  validateApiResponse,
+  createFieldTestDataBuilder,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Validation API', () => {
   const requiredPermissions = [
@@ -17,30 +23,30 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
   let localField;
   let localFieldIndicator;
 
-  const localFieldData = {
-    tag: '998',
-    label: 'Test Local Field',
-    repeatable: true,
-    required: false,
-    deprecated: false,
-    scope: 'local',
-  };
+  const TEST_CASE_ID = 'C502976';
+  const LOCAL_FIELD_TAG = '998';
+
+  // Generate test data using builder pattern
+  const fieldTestDataBuilder = createFieldTestDataBuilder(TEST_CASE_ID);
+  const testData = fieldTestDataBuilder
+    .withField(LOCAL_FIELD_TAG, 'Local_Field')
+    .withIndicator(1, 'Ind_1')
+    .build();
+
+  const localFieldData = testData.field;
+  const indicatorData = testData.indicators[0];
 
   before('Create user and fetch MARC bib specification', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
 
         // Clean up any existing local field with tag 999 before test execution
         cy.getSpecificationFields(bibSpecId).then((response) => {
           if (response.status === 200) {
-            const existingLocalField = response.body.fields.find(
-              (f) => f.tag === '999' && f.scope === 'local',
-            );
+            const existingLocalField = findLocalField(response.body.fields, '999');
             if (existingLocalField) {
               cy.deleteSpecificationField(existingLocalField.id, false);
             }
@@ -68,15 +74,12 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
 
       // Create local field since we cleaned up any existing one in before hook
       cy.createSpecificationField(bibSpecId, localFieldData).then((createResp) => {
-        expect(createResp.status).to.eq(201);
+        validateApiResponse(createResp, 201);
         localField = createResp.body;
 
-        // Create indicator for the local field
-        cy.createSpecificationFieldIndicator(localField.id, {
-          order: 1,
-          label: 'Ind 1',
-        }).then((indicatorResp) => {
-          expect(indicatorResp.status).to.eq(201);
+        // Create indicator for the local field using builder data
+        cy.createSpecificationFieldIndicator(localField.id, indicatorData).then((indicatorResp) => {
+          validateApiResponse(indicatorResp, 201);
           localFieldIndicator = indicatorResp.body;
 
           // Step 1: Test order value 0 (below valid range)
@@ -85,7 +88,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: 0, label: 'Ind 1 name' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 1: Order value 0').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.contain(
               "The indicator 'order' field can only accept numbers 1-2.",
             );
@@ -97,7 +100,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: 3, label: 'Ind 1 name' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 2: Order value 3').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.contain(
               "The indicator 'order' field can only accept numbers 1-2.",
             );
@@ -109,7 +112,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: '', label: 'Ind 1 name' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 3: Empty order field').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.contain("The 'order' field is required.");
           });
 
@@ -119,7 +122,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: '11', label: 'Ind 1 name' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 4: Order field with 2 characters').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.contain(
               "The indicator 'order' field can only accept numbers 1-2.",
             );
@@ -131,7 +134,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: 'a', label: 'Ind 1 name' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 5: Order field with letter').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.contain('JSON parse error');
           });
 
@@ -141,7 +144,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: '$', label: 'Ind 1 name' },
             false,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 6: Order field with special character').to.eq(400);
+            validateApiResponse(updateResp, 400);
             expect(updateResp.body.errors[0].message).to.contain('JSON parse error');
           });
 
@@ -151,7 +154,7 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
             { order: 2, label: 'Ind 2 name' },
             true,
           ).then((updateResp) => {
-            expect(updateResp.status, 'Step 7: Valid order value 2').to.eq(202);
+            validateApiResponse(updateResp, 202);
             expect(updateResp.body.order).to.eq(2);
             expect(updateResp.body.label).to.eq('Ind 2 name');
           });

@@ -114,7 +114,7 @@ const authoritySourceOptions = [
   'LC Subject Headings (LCSH)',
   "LC Children's Subject Headings",
   'LC Genre/Form Terms (LCGFT)',
-  'LC Demographic Group Terms (LCFGT)',
+  'LC Demographic Group Terms (LCDGT)',
   'LC Medium of Performance Thesaurus for Music (LCMPT)',
   'Faceted Application of Subject Terminology (FAST)',
   'Medical Subject Headings (MeSH)',
@@ -136,7 +136,7 @@ const valid008FieldValues = {
   Lang: '\\',
   'Level Est': 'a',
   'Main use': 'a',
-  'Mod Rec Est': '\\',
+  'Mod Rec': '\\',
   'Numb Series': 'n',
   'Pers Name': 'a',
   RecUpd: 'a',
@@ -160,8 +160,13 @@ const resultsListColumns = [
   'Authority source',
   'Number of titles',
 ];
+const clearFieldIcon = Button({ icon: 'times-circle-solid' });
+const searchToggleButton = Button({ id: 'segment-navigation-search' });
+const browseToggleButton = Button({ id: 'segment-navigation-browse' });
 
 export default {
+  valid008FieldValues,
+
   waitLoading() {
     cy.expect(resultsPaneHeader.exists());
   },
@@ -268,6 +273,38 @@ export default {
 
   verifyContentOfExportFile(actual, ...expectedArray) {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
+  },
+
+  verifyContentOfHeadingsUpdateReportParsed(
+    actual,
+    rowIndex = 1,
+    originalHeading,
+    newHeading,
+    identifier,
+    expectedLinkedCount,
+  ) {
+    const clean = actual.trim();
+    const lines = clean.split(/\r?\n/);
+    const parseCsvLine = (line) => {
+      const regex = /("([^"]|"")*"|[^,]*)/g;
+      return line
+        .match(regex)
+        .filter((cell) => cell.length > 0 && cell !== ',')
+        .map((cell) => cell.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+    };
+
+    const headers = parseCsvLine(lines[0]);
+    const values = parseCsvLine(lines[rowIndex]);
+
+    const record = {};
+    headers.forEach((header, i) => {
+      record[header] = values[i] ?? '';
+    });
+    expect(record['Original heading']).to.include(originalHeading);
+    expect(record['New heading']).to.include(newHeading);
+    // eslint-disable-next-line dot-notation
+    expect(record['Identifier']).to.include(identifier);
+    expect(record['Number of bibliographic records linked']).to.eq(expectedLinkedCount);
   },
 
   select: (specialInternalId) => cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
@@ -664,7 +701,10 @@ export default {
       MultiSelect({ label: including('Authority source') }),
     );
     cy.wait(1000);
+    cy.intercept('search/authorities/facets?*').as('getFacets');
     cy.do(multiSelect.select(including(option)));
+    cy.wait('@getFacets');
+    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
@@ -825,7 +865,7 @@ export default {
 
   clickAdvancedSearchButton() {
     cy.do(buttonAdvancedSearch.click());
-    cy.expect(modalAdvancedSearch.exists());
+    cy.expect([modalAdvancedSearch.exists()]);
   },
 
   fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
@@ -833,6 +873,20 @@ export default {
     cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
     if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
     if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
+  },
+
+  focusOnAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(TextArea()).focus());
+  },
+
+  verifyClearIconInAdvancedSearchField(rowIndex, shouldExist = true) {
+    const targetIcon = AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon);
+    if (shouldExist) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  clickClearIconInAdvancedSearchField(rowIndex) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(clearFieldIcon).click());
   },
 
   clickSearchButton() {
@@ -845,6 +899,10 @@ export default {
 
   clickResetAllButtonInAdvSearchModal() {
     cy.do(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).click());
+  },
+
+  checkResetAllButtonInAdvSearchModalEnabled(enabled = true) {
+    cy.expect(modalAdvancedSearch.find(buttonResetAllInAdvancedModal).has({ disabled: !enabled }));
   },
 
   checkAdvancedSearchModalAbsence() {
@@ -873,6 +931,7 @@ export default {
         .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).is({ disabled: or(true, false) }),
       modalAdvancedSearch.find(buttonResetAllInAdvancedModal).is({ disabled: or(true, false) }),
+      modalAdvancedSearch.find(buttonClose).exists(),
     ]);
     if (boolean) {
       cy.expect([
@@ -944,7 +1003,7 @@ export default {
         .find(MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')))
         .exists(),
       sourceFileAccordion
-        .find(MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')))
+        .find(MultiSelectOption(including('LC Demographic Group Terms (LCDGT)')))
         .exists(),
       sourceFileAccordion
         .find(MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')))
@@ -979,7 +1038,7 @@ export default {
       MultiSelectOption(including('LC Subject Headings (LCSH)')).exists(),
       MultiSelectOption(including("LC Children's Subject Headings")).exists(),
       MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')).exists(),
-      MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')).exists(),
+      MultiSelectOption(including('LC Demographic Group Terms (LCDGT)')).exists(),
       MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')).exists(),
       MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)')).exists(),
       MultiSelectOption(including('Medical Subject Headings (MeSH)')).exists(),
@@ -1179,7 +1238,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((res) => {
-        return res.body.authorities;
+        return res.body.authorities || [];
       });
   },
 
@@ -1669,8 +1728,9 @@ export default {
     });
   },
 
-  checkButtonNewExistsInActionDropdown() {
-    cy.expect(buttonNew.exists());
+  checkButtonNewExistsInActionDropdown(buttonShown = true) {
+    if (buttonShown) cy.expect(buttonNew.exists());
+    else cy.expect(buttonNew.absent());
   },
 
   checkAuthorityActionsDropDownExpanded() {
@@ -1682,10 +1742,11 @@ export default {
     authorityFileHridStartsWith,
     fields,
     LDR = defaultLDR,
+    tag008Values = valid008FieldValues,
   ) {
     return cy.createMarcAuthorityViaAPI(LDR, [
       { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: valid008FieldValues, indicators: ['\\', '\\'] },
+      { tag: '008', content: tag008Values },
       ...fields,
     ]);
   },
@@ -1701,11 +1762,13 @@ export default {
 
   deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
-      records.forEach((record) => {
-        if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id, true);
-        }
-      });
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          if (record.authRefType === authRefType) {
+            this.deleteViaAPI(record.id, true);
+          }
+        });
+      }
     });
   },
 
@@ -1771,15 +1834,76 @@ export default {
   },
 
   toggleAuthorityLccnValidationRule({ enable = true }) {
-    cy.getSpecificatoinIds({ family: 'MARC' }).then((specs) => {
+    cy.getSpecificationIds({ family: 'MARC' }).then((specs) => {
       // Find the specification with profile 'authority'
       const authoritySpecId = specs.find((spec) => spec.profile === 'authority').id;
-      cy.getSpecificatoinRules(authoritySpecId).then((rules) => {
-        const lccnRuleId = rules.find((rule) => rule.name === 'Invalid LCCN Subfield Value').id;
-        cy.updateSpecificatoinRule(authoritySpecId, lccnRuleId, {
+      cy.getSpecificationRules(authoritySpecId).then(({ body }) => {
+        const lccnRuleId = body.rules.find(
+          (rule) => rule.name === 'Invalid LCCN Subfield Value',
+        ).id;
+        cy.updateSpecificationRule(authoritySpecId, lccnRuleId, {
           enabled: enable,
         });
       });
     });
+  },
+
+  checkSearchQuery(searchQuery) {
+    cy.expect(SearchField({ id: 'textarea-authorities-search', value: searchQuery }).exists());
+  },
+
+  verifyMultiselectFilterOptionsCount(accordionName, expectedCount) {
+    cy.expect(Accordion(accordionName).find(MultiSelect()).has({ optionsCount: expectedCount }));
+  },
+
+  verifyMultiselectFilterOptionExists(accordionName, optionName) {
+    const optionRegExp = new RegExp(
+      `${optionName.replace(/[\\(\\)]/g, (match) => `\\${match}`)}\\(\\d+\\)`,
+    );
+    cy.expect(
+      Accordion(accordionName)
+        .find(MultiSelectOption(matching(optionRegExp), { visible: or(true, false) }))
+        .exists(),
+    );
+  },
+
+  verifyRecordFound(heading, isFound = true) {
+    const targetCell = searchResults.find(
+      MultiColumnListCell({ columnIndex: 2, content: heading }),
+    );
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  verifySearchTabIsOpened() {
+    cy.do(
+      searchToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  verifyBrowseTabIsOpened() {
+    cy.do(
+      browseToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  clickNextPaginationButtonIfEnabled() {
+    return cy
+      .then(() => {
+        return Button({
+          id: 'authority-result-list-next-paging-button',
+          disabled: or(true, false),
+        }).disabled();
+      })
+      .then((isDisabled) => {
+        if (!isDisabled) {
+          cy.do(nextButton.click());
+        }
+        return cy.wrap(!isDisabled);
+      });
   },
 };

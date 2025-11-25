@@ -1,6 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -10,7 +11,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 let user;
 const externalId = getRandomPostfix();
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `Matched-Records-${userExternalIDsFileName}`;
+const fileNames = BulkEditFiles.getAllDownloadedFileNames(userExternalIDsFileName, true);
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('Bulk-edit', () => {
@@ -37,7 +38,7 @@ describe('Bulk-edit', () => {
       cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
+      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
       Users.deleteViaApi(user.userId);
     });
 
@@ -56,7 +57,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         const newUserName = `testName_${getRandomPostfix()}`;
         BulkEditActions.prepareValidBulkEditFile(
-          matchedRecordsFileName,
+          fileNames.matchedRecordsCSV,
           editedFileName,
           user.username,
           newUserName,

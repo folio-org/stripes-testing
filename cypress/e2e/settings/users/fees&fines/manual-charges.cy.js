@@ -22,10 +22,11 @@ describe('Fees&Fines', () => {
         owners.forEach((owner) => UsersOwners.createViaApi(owner));
         templates.forEach((template) => NoticeTemplates.createViaApi(template));
       });
-
-      cy.loginAsAdmin({
-        path: SettingsMenu.manualCharges,
-        waiter: ManualCharges.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.manualCharges,
+          waiter: ManualCharges.waitLoading,
+        });
       });
     });
 

@@ -14,12 +14,12 @@ import NewFieldMappingProfile from '../../../support/fragments/settings/dataImpo
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
+import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -40,7 +40,7 @@ describe('Data Import', () => {
       description: '',
     };
     const defaultPurchaseOrderLinesLimit = '1';
-    const newPurchaseOrderLinesLimit = '15';
+    const newPurchaseOrderLinesLimit = randomTwoDigitNumber();
 
     before('Create test data and login', () => {
       // Make sure that defaulted value is "1" in "Purchase order lines limit setting"
@@ -51,7 +51,7 @@ describe('Data Import', () => {
       SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
       // First set to a random number, to make sure "Save" button is clickable
       OrderLinesLimit.setPOLLimit(defaultPurchaseOrderLinesLimit);
-      SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
+      SettingsOrders.verifyPurchaseOrderLinesLimit();
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -60,10 +60,9 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.ordersPath,
-          waiter: SettingsOrders.waitLoadingOrderSettings,
-        });
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.ORDERS);
+        SettingsOrders.waitLoadingOrderSettings();
       });
     });
 
@@ -79,7 +78,7 @@ describe('Data Import', () => {
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
-        SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
+        SettingsOrders.verifyPurchaseOrderLinesLimit();
 
         // #2 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

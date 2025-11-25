@@ -69,12 +69,14 @@ describe('Inventory', () => {
 
     it(
       'C543802 Create FOLIO Holdings record with typed call number and trailing spaces (LC case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C543802'] },
+      { tags: ['extendedPath', 'spitfire', 'C543802'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        }, 20_000);
 
         // Navigate to instance
         InventoryInstances.searchByTitle(instanceId);

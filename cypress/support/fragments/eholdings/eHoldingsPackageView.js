@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   HTML,
   Pane,
   Section,
@@ -16,6 +17,7 @@ import {
   TextField,
   FieldSet,
   PaneHeader,
+  DropdownMenu,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
 import EHoldingsResourceView from './eHoldingsResourceView';
@@ -60,6 +62,10 @@ const patronRadioButton = FieldSet('Show titles in package to patrons');
 const packageInformationSection = Section({ id: 'packageShowInformation' });
 const notesSection = Section({ id: 'packageShowNotes' });
 const titlesSection = Section({ id: 'packageShowTitles' });
+const agreementsAccordion = Accordion('Agreements');
+const deleteAgreementModal = Modal('Delete agreement line');
+const accessStatusTypeKeyValue = KeyValue('Access status type');
+const byAccessStatusTypesCheckbox = Checkbox('Search by access status types only');
 
 export default {
   getCalloutMessageText,
@@ -114,11 +120,7 @@ export default {
   },
 
   clickOnAgreementInAgreementSection(agreementName) {
-    cy.do(
-      Accordion('Agreements')
-        .find(MultiColumnListCell({ content: agreementName }))
-        .click(),
-    );
+    cy.do(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).click());
   },
 
   verifyPackageName(packageName) {
@@ -133,11 +135,7 @@ export default {
   },
 
   verifyLinkedAgreement(agreementName) {
-    cy.expect(
-      Accordion('Agreements')
-        .find(MultiColumnListCell({ content: agreementName }))
-        .exists(),
-    );
+    cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).exists());
   },
 
   verifyPackageDetailViewIsOpened: (name, titlesNumber, status) => {
@@ -364,5 +362,144 @@ export default {
     );
     EHoldingsResourceView.waitLoading();
     return EHoldingsResourceView;
+  },
+
+  verifyNoCoveragesDatesSet() {
+    cy.expect(KeyValue('Custom coverage dates').absent());
+  },
+
+  verifyCoverageDatesSet(startDate, endDate) {
+    cy.expect(KeyValue('Custom coverage dates').exists());
+    cy.expect(KeyValue('Custom coverage dates').has({ value: including(startDate) }));
+    cy.expect(KeyValue('Custom coverage dates').has({ value: including(endDate) }));
+  },
+
+  edit() {
+    cy.expect(KeyValue('Package type').exists());
+    cy.expect(KeyValue('Total titles').exists());
+    cy.wait(3000);
+    cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
+    cy.expect([
+      TextField('Name*').exists(),
+      Button('Save & close').has({ disabled: true }),
+      Button('Cancel').has({ disabled: true }),
+    ]);
+  },
+
+  verifyDeleteAgreementIconExists(agreementName) {
+    cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).exists());
+  },
+
+  clickDeleteAgreementIcon(agreementName) {
+    cy.get('#packageShowAgreements')
+      .contains('[role="row"]', agreementName)
+      .find('[data-test-delete-agreement="true"]')
+      .first()
+      .click();
+  },
+
+  verifyDeleteAgreementModal() {
+    cy.expect([
+      deleteAgreementModal.exists(),
+      deleteAgreementModal.find(Button('Cancel')).exists(),
+      deleteAgreementModal.find(Button('Delete')).exists(),
+    ]);
+  },
+
+  cancelDeleteAgreement() {
+    cy.do(deleteAgreementModal.find(Button('Cancel')).click());
+  },
+
+  confirmDeleteAgreement() {
+    cy.do(deleteAgreementModal.find(Button('Delete')).click());
+  },
+
+  verifyAgreementNotLinked(agreementName) {
+    cy.expect(agreementsAccordion.find(MultiColumnListCell({ content: agreementName })).absent());
+  },
+
+  verifyTitlesTableColumns(columns) {
+    columns.forEach((column) => {
+      cy.expect(titlesSection.find(HTML(including(column))).exists());
+    });
+  },
+
+  verifyTitlesSearchElements() {
+    cy.expect([
+      titlesSection.find(Button('Actions')).exists(),
+      titlesSection.find(TextField()).exists(),
+    ]);
+  },
+
+  findTitleInList(titleName) {
+    cy.expect(titlesSection.find(MultiColumnListCell(including(titleName))).exists());
+  },
+
+  verifyPaginationButtonState(buttonName, isEnabled) {
+    const buttonSelector = Button(buttonName);
+    if (isEnabled) {
+      cy.expect(buttonSelector.has({ disabled: false }));
+    } else {
+      cy.expect(buttonSelector.has({ disabled: true }));
+    }
+  },
+
+  clickNextPaginationButton() {
+    cy.do(Button('Next').click());
+    cy.wait(1000);
+  },
+
+  verifyNextPageTitlesDisplayed() {
+    cy.wait(500);
+    cy.expect(titlesSection.exists());
+  },
+
+  clickPreviousPaginationButton() {
+    cy.do(Button('Previous').click());
+    cy.wait(1000);
+  },
+
+  verifyFirstPageTitlesDisplayed() {
+    cy.wait(500);
+    cy.expect([titlesSection.exists(), Button('Previous').has({ disabled: true })]);
+  },
+
+  verifyAccessStatusType(accessStatusTypeName) {
+    cy.expect(accessStatusTypeKeyValue.has({ value: accessStatusTypeName }));
+  },
+
+  clickActionsButtonInTitlesSection(dropdownMenuOpened = true) {
+    cy.do(titlesSection.find(actionsButton).click());
+    if (dropdownMenuOpened) cy.expect(DropdownMenu().exists());
+    else cy.expect(DropdownMenu().absent());
+  },
+
+  openAccessStatusTypesDropdown() {
+    cy.do(DropdownMenu().find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(DropdownMenu().find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(DropdownMenu().find(MultiSelect()).open());
+  },
+
+  selectAccessStatusType(accessStatusType) {
+    cy.do(DropdownMenu().find(MultiSelectOption(accessStatusType)).click());
+  },
+
+  filterTitlesByAccessStatusTypes(accessStatusTypeNames) {
+    const typeNames = Array.isArray(accessStatusTypeNames)
+      ? accessStatusTypeNames
+      : [accessStatusTypeNames];
+    this.clickActionsButtonInTitlesSection();
+    this.openAccessStatusTypesDropdown();
+    typeNames.forEach((typeName) => {
+      this.selectAccessStatusType(typeName);
+    });
+  },
+
+  verifyFilteredTitlesCount(expectedCount) {
+    cy.expect(
+      titlesSection
+        .find(KeyValue('Records found'))
+        .has({ value: expectedCount.toLocaleString('en-US') }),
+    );
   },
 };

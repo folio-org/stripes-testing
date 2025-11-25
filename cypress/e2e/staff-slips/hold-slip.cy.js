@@ -1,6 +1,11 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  REQUEST_TYPES,
+  LOCATION_IDS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
@@ -12,7 +17,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Requests from '../../support/fragments/requests/requests';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -28,13 +32,11 @@ describe('Staff slips', () => {
   const patronGroup = {
     name: `groupChekIn ${getRandomPostfix()}`,
   };
-  const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-  };
+  const testData = {};
+  let userServicePoint;
   const itemData = {
     barcode: generateItemBarcode(),
     title: `Instance_${getRandomPostfix()}`,
-    servicePoint: testData.userServicePoint.name,
   };
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.HOLD],
@@ -45,9 +47,10 @@ describe('Staff slips', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          userServicePoint = sp;
+          itemData.servicePoint = sp.name;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -55,7 +58,7 @@ describe('Staff slips', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C347898_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -73,7 +76,7 @@ describe('Staff slips', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
             },
           ],
           items: [
@@ -115,11 +118,7 @@ describe('Staff slips', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id,
-        );
+        UserEdit.addServicePointViaApi(userServicePoint.id, userData.userId, userServicePoint.id);
 
         cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
           (userProperties) => {
@@ -127,9 +126,9 @@ describe('Staff slips', () => {
             requestUserData.userId = userProperties.userId;
             requestUserData.barcode = userProperties.barcode;
             UserEdit.addServicePointViaApi(
-              testData.userServicePoint.id,
+              userServicePoint.id,
               requestUserData.userId,
-              testData.userServicePoint.id,
+              userServicePoint.id,
             );
           },
         );
@@ -138,8 +137,12 @@ describe('Staff slips', () => {
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),
-          servicePointId: testData.userServicePoint.id,
+          servicePointId: userServicePoint.id,
           userBarcode: userData.barcode,
+        });
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
         });
       });
   });
@@ -148,16 +151,11 @@ describe('Staff slips', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
-      servicePointId: testData.userServicePoint.id,
+      servicePointId: userServicePoint.id,
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(testData.addedRule);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
-      testData.userServicePoint.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
       (requestResponse) => {
         Requests.deleteRequestViaApi(requestResponse[0].id);
@@ -169,25 +167,14 @@ describe('Staff slips', () => {
     cy.deleteItemViaApi(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
     cy.deleteLoanType(testData.loanTypeId);
   });
 
   it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega', 'C347898'] }, () => {
-    cy.login(userData.username, userData.password, {
-      path: TopMenu.requestsPath,
-      waiter: Requests.waitLoading,
-    });
-
     NewRequest.createNewRequest({
       requesterBarcode: requestUserData.barcode,
       itemBarcode: itemData.barcode,
-      pickupServicePoint: testData.userServicePoint.name,
+      pickupServicePoint: userServicePoint.name,
       requestType: REQUEST_TYPES.HOLD,
     });
 

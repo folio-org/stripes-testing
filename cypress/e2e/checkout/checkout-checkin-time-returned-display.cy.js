@@ -1,11 +1,10 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
@@ -25,15 +24,14 @@ describe('Check out and Check in with End Session', () => {
     barcode: generateItemBarcode(),
     instanceTitle: getTestEntityValue('Instance'),
   };
-  let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  let servicePoint;
 
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(servicePoint);
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
-        Location.createViaApi(defaultLocation);
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           itemData.instanceTypeId = instanceTypes[0].id;
         });
@@ -60,7 +58,7 @@ describe('Check out and Check in with End Session', () => {
           holdings: [
             {
               holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: defaultLocation.id,
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
             },
           ],
           items: [
@@ -107,16 +105,8 @@ describe('Check out and Check in with End Session', () => {
       checkInDate: new Date().toISOString(),
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroupId);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      defaultLocation.institutionId,
-      defaultLocation.campusId,
-      defaultLocation.libraryId,
-      defaultLocation.id,
-    );
-    ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it(
@@ -129,7 +119,7 @@ describe('Check out and Check in with End Session', () => {
       });
       cy.wait(1000);
 
-      CheckOutActions.checkOutUser(userData.barcode, userData.username);
+      CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, userData.patronGroup);
 
       CheckOutActions.checkOutItem(itemData.barcode);

@@ -31,7 +31,7 @@ const secondItem = {
   itemBarcode: `secondItem-itemBarcode${getRandomPostfix()}`,
 };
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingsHRIDFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
@@ -167,12 +167,12 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
 
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, secondElectronicAccess.uri, 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -188,7 +188,7 @@ describe('Bulk-edit', () => {
           secondItem.holdingsHRID,
         );
 
-        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
+        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};-;-|-;${secondElectronicAccess.uri};-;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
 
         verifyValuesInCsvFile(
           matchedRecordsFileName,
@@ -207,12 +207,12 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
 
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, secondElectronicAccess.uri, 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,
@@ -242,12 +242,12 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, firstElectronicAccess.uri);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, firstElectronicAccess.linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '');
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(3, '-');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '-');
 
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(0, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, secondElectronicAccess.uri, 2);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '', 2);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, '-', 2);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           3,
           secondElectronicAccess.materialsSpecification,

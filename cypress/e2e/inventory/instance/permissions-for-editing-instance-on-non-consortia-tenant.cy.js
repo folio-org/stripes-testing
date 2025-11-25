@@ -56,9 +56,10 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.edit();
-          InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
+          InstanceRecordEdit.chooseInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
           InstanceRecordEdit.saveAndClose();
           InstanceRecordView.verifySuccsessCalloutMessage();
+          cy.reload();
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
         },

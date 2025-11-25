@@ -89,7 +89,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
           InventoryInstances.waitContentLoading();
         }, 20_000)
           .then(() => {
@@ -113,9 +112,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
+            QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
             cy.createTempUser([
@@ -133,7 +130,6 @@ describe('MARC', () => {
                   path: TopMenu.marcAuthorities,
                   waiter: MarcAuthorities.waitLoading,
                 });
-                cy.reload();
                 MarcAuthorities.waitLoading();
               }, 20_000);
             });
@@ -162,8 +158,6 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.tag010NewValue);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.verifyAreYouSureModal(testData.areYouSureModalMessage);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);

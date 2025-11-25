@@ -35,6 +35,10 @@ const instanceHridKeyValue = KeyValue('Instance HRID');
 const actionsButton = Button('Actions');
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const searchButton = Button({ ariaLabel: 'search' });
+const addItemButton = Button('Add item');
+const versionHistoryButton = Button({ icon: 'clock' });
+const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
+const clipboardIcon = Button({ icon: 'clipboard' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
@@ -44,20 +48,17 @@ const subjectAccordion = Accordion('Subject');
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const adminDataAccordion = Accordion('Administrative data');
 const titleDataAccordion = Accordion('Title data');
+const contributorAccordion = Accordion('Contributor');
+const acquisitionAccordion = Accordion('Acquisition');
+const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
 const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedingTitles' }));
 const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
-const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
-const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
-const versionHistoryButton = Button({ icon: 'clock' });
-const contributorAccordion = Accordion('Contributor');
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
-const addHoldingsButton = Button({ id: 'clickable-new-holdings-record' });
-const clipboardIcon = Button({ icon: 'clipboard' });
 const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
@@ -102,24 +103,36 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1000);
+  cy.wait(500);
   cy.do(viewSourceButton.click());
 };
 
-const verifyAdministrativeNote = (value) => {
-  cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+const verifyAdministrativeNote = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+  } else {
+    cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).absent());
+  }
 };
 
 const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
-const verifyStatisticalCode = (value) => {
-  cy.expect(
-    MultiColumnList({ id: 'list-statistical-codes' })
-      .find(MultiColumnListCell({ content: value }))
-      .exists(),
-  );
+const verifyStatisticalCode = (value, isExist = true) => {
+  if (isExist) {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .exists(),
+    );
+  } else {
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: value }))
+        .absent(),
+    );
+  }
 };
 
 const verifyStatisticalCodeTypeAndName = (type, name) => {
@@ -202,6 +215,7 @@ export const actionsMenuOptions = {
   newRequest: 'New request',
   setRecordForDeletion: 'Set record for deletion',
   newMarcBibRecord: 'New MARC bibliographic record',
+  exportInstanceMarc: 'Export instance (MARC)',
 };
 
 export default {
@@ -228,16 +242,8 @@ export default {
   verifyElectronicAccess,
   verifyElectronicAccessAbsent,
   verifyHotlinkToPOL: (number) => {
-    cy.expect(
-      Accordion('Acquisition')
-        .find(MultiColumnListCell({ row: 0, content: number }))
-        .exists(),
-    );
-    cy.expect(
-      Accordion('Acquisition')
-        .find(Link({ href: including('/orders/lines/view') }))
-        .exists(),
-    );
+    cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
+    cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
   verifyIsHoldingsCreated: (...holdingToBeOpened) => {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
@@ -361,6 +367,17 @@ export default {
         .click(),
     );
 
+    ItemRecordView.waitLoading();
+  },
+
+  openItemByHyperlink(barcode) {
+    cy.wait(2000);
+    cy.do(
+      rootSection
+        .find(MultiColumnListCell({ column: 'Item: barcode', content: barcode }))
+        .find(Link({ href: including('/inventory/view/') }))
+        .click(),
+    );
     ItemRecordView.waitLoading();
   },
 
@@ -537,15 +554,6 @@ export default {
     cy.expect(list.find(MultiColumnListCell({ columnIndex: 1, content: classification })).exists());
   },
 
-  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
-    cy.expect(
-      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .find(HTML(including(itemBarcode)))
-        .exists(),
-    );
-  },
-
   verifyModeOfIssuance(value) {
     cy.expect(KeyValue('Mode of issuance').has({ value }));
   },
@@ -651,6 +659,15 @@ export default {
     InventoryNewHoldings.waitLoading();
   },
 
+  addConsortiaHoldings: (memberTenantName) => {
+    cy.wait(2000);
+    cy.intercept('locations?*').as('getHoldingsPage');
+    cy.do(Accordion(memberTenantName).find(addHoldingsButton).click());
+    cy.wait('@getHoldingsPage', { timeout: 5_000 }).then(() => {
+      InventoryNewHoldings.waitLoading();
+    });
+  },
+
   clickAddItemByHoldingName({ holdingName } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).click());
@@ -665,11 +682,6 @@ export default {
   exportInstanceMarc: () => {
     cy.wait(1000);
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
-  },
-
-  exportInstanceMarcButtonAbsent: () => {
-    clickActionsButton();
-    cy.expect(rootSection.find(Button('Export instance (MARC)')).absent());
   },
 
   setRecordForDeletion: () => {
@@ -703,6 +715,22 @@ export default {
     cy.expect(consortiaHoldingsAccordion.has({ open: true }));
   },
 
+  expandAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Expand all'))
+        .click(),
+    ]);
+  },
+
+  collapseAllInConsortialHoldingsAccordion(instanceId) {
+    cy.do([
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(Button('Collapse all'))
+        .click(),
+    ]);
+  },
+
   expandMemberSubHoldings(memberTenantName) {
     cy.wait(4000);
     cy.do(Accordion(memberTenantName).focus());
@@ -717,11 +745,15 @@ export default {
     cy.wait(6000);
   },
 
-  verifyIsItemCreated: (itemBarcode) => {
+  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
     cy.expect(
-      rootSection
-        .find(MultiColumnListCell({ columnIndex: 2, content: itemBarcode }))
-        .find(Button(including(itemBarcode)))
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .find(
+          MultiColumnListCell({
+            column: 'Item: barcode',
+            content: itemBarcode,
+          }),
+        )
         .exists(),
     );
   },
@@ -754,7 +786,7 @@ export default {
     }
   },
 
-  validateHoldingsAbsent(holdingsLocation) {
+  verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 
@@ -780,12 +812,23 @@ export default {
     });
   },
 
-  verifyInstanceSubject: (subjectSource) => {
+  verifyInstanceSubject: (subjectSource, isLinkedToMarcAuthority = false) => {
+    if (isLinkedToMarcAuthority) {
+      cy.expect(
+        subjectList
+          .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+          .find(MultiColumnListCell({ column: 'Subject headings' }))
+          .has({ content: `Linked to MARC authority${subjectSource.subjectHeadings}` }),
+      );
+    } else {
+      cy.expect(
+        subjectList
+          .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+          .find(MultiColumnListCell({ column: 'Subject headings' }))
+          .has({ content: subjectSource.subjectHeadings }),
+      );
+    }
     cy.expect([
-      subjectList
-        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
-        .find(MultiColumnListCell({ column: 'Subject headings' }))
-        .has({ content: subjectSource.subjectHeadings }),
       subjectList
         .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject source' }))
@@ -799,6 +842,18 @@ export default {
 
   verifyInstanceSubjectAbsent: () => {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
+  },
+
+  verifyHoldingsListIsEmpty(instanceId) {
+    cy.expect(
+      Section({ id: `consortialHoldings.${instanceId}` })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
+  verifyItemsListIsEmpty() {
+    cy.expect(HTML(including('The list contains no items')).exists());
   },
 
   checkNotesByType(
@@ -881,10 +936,17 @@ export default {
     cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
   },
 
-  verifyConsortiaHoldingsAccordion(isOpen = false) {
+  verifyConsortialHoldingsAccordion(isOpen = false) {
     cy.expect([
       Section({ id: including('consortialHoldings') }).exists(),
       consortiaHoldingsAccordion.has({ open: isOpen }),
+    ]);
+  },
+
+  verifyConsortiaHoldingsAccordion(instanceId, isOpen = false) {
+    cy.expect([
+      Section({ id: `consortialHoldings.${instanceId}` }).exists(),
+      Accordion({ id: `consortialHoldings.${instanceId}` }).has({ open: isOpen }),
     ]);
   },
 
@@ -901,13 +963,19 @@ export default {
     ]);
   },
 
+  verifySubHoldingsAccordion(memberId, holdingId, isOpen = true) {
+    cy.wait(1000);
+    cy.expect([
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).has({ open: isOpen }),
+    ]);
+  },
+
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
   },
 
   moveItemsWithinAnInstance() {
     clickActionsButton();
-    cy.wait(500);
     cy.do(Button({ id: 'move-instance-items' }).click());
   },
 
@@ -926,7 +994,6 @@ export default {
       );
     }
   },
-  // clickable-move-holdings-38e72617-9faa-47d3-a791-1baeca7d0d86
 
   verifyInstanceFormat(category, term, code, source) {
     let matchingString = category;
@@ -941,9 +1008,14 @@ export default {
     cy.expect(addHoldingsButton.absent());
   },
 
-  verifyAddItemButtonIsAbsent({ holdingName } = {}) {
+  verifyAddItemButtonVisibility({ holdingName, shouldBePresent = true } = {}) {
     const holdingSection = rootSection.find(Accordion(including(holdingName)));
-    cy.do(holdingSection.find(addItemButton).absent());
+
+    if (shouldBePresent) {
+      cy.expect(holdingSection.find(addItemButton).exists());
+    } else {
+      cy.expect(holdingSection.find(addItemButton).absent());
+    }
   },
 
   verifyCopyClassificationNumberToClipboard(classificationNumber, clipboardIndex = 0) {
@@ -959,5 +1031,99 @@ export default {
     }).then(() => {
       cy.checkBrowserPrompt({ callNumber: clipboardIndex, promptValue: classificationNumber });
     });
+  },
+
+  verifyAlternativeTitle(indexRow, value, isLinkedToMarcAuthority = false) {
+    const alternativeTitleCell = titleDataAccordion
+      .find(MultiColumnList({ id: 'list-alternative-titles' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell({ column: 'Alternative title' }));
+
+    if (isLinkedToMarcAuthority) {
+      cy.expect(alternativeTitleCell.has({ content: `Linked to MARC authority${value}` }));
+    } else {
+      cy.expect(alternativeTitleCell.has({ content: value }));
+    }
+  },
+  collapseAll() {
+    cy.get('#pane-instancedetails').find('button').contains('Expand all').first()
+      .click();
+    cy.wait(1500);
+    cy.get('#pane-instancedetails').find('button').contains('Collapse all').first()
+      .click();
+    cy.wait(1500);
+  },
+  openAcquisitionAccordion() {
+    cy.do(acquisitionAccordion.clickHeader());
+  },
+  verifyMemberTenantSubAccordionInAcquisitionAccordion(values) {
+    if (Array.isArray(values)) {
+      values.forEach((expectedValue, index) => {
+        cy.expect(
+          acquisitionAccordion
+            .find(Accordion({ id: 'active-acquisition-accordion' }))
+            .find(MultiColumnListCell({ row: 0, columnIndex: index, content: expectedValue }))
+            .exists(),
+        );
+      });
+    } else {
+      // Handle single value case
+      cy.expect(
+        acquisitionAccordion
+          .find(Accordion({ id: 'active-acquisition-accordion' }))
+          .find(MultiColumnListCell({ row: 0, content: values }))
+          .exists(),
+      );
+    }
+  },
+  verifyCentralTenantSubAccordionInAcquisitionAccordion(values) {
+    if (Array.isArray(values)) {
+      values.forEach((expectedValue, index) => {
+        cy.expect(
+          acquisitionAccordion
+            .find(Accordion({ id: 'central-acquisition-accordion' }))
+            .find(MultiColumnListCell({ row: 0, columnIndex: index, content: expectedValue }))
+            .exists(),
+        );
+      });
+    } else {
+      // Handle single value case
+      cy.expect(
+        acquisitionAccordion
+          .find(Accordion({ id: 'central-acquisition-accordion' }))
+          .find(MultiColumnListCell({ row: 0, content: values }))
+          .exists(),
+      );
+    }
+  },
+  verifyMemberTenantSubAccordionInAcquisitionAccordionIsEmpty(shouldOpen = true) {
+    if (shouldOpen) {
+      cy.do(
+        acquisitionAccordion.find(Accordion({ id: 'active-acquisition-accordion' })).clickHeader(),
+      );
+    }
+    cy.expect(
+      acquisitionAccordion
+        .find(Accordion({ id: 'active-acquisition-accordion' }))
+        .find(HTML('The list contains no items'))
+        .exists(),
+    );
+  },
+
+  verifyAcquisitionAccordionDetails: (values) => {
+    if (Array.isArray(values)) {
+      values.forEach((expectedValue, index) => {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: 0, columnIndex: index, content: expectedValue }))
+            .exists(),
+        );
+      });
+    } else {
+      // Handle single value case
+      cy.expect(
+        acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: values })).exists(),
+      );
+    }
   },
 };

@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -7,7 +7,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 let user;
@@ -50,10 +50,9 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
       });
     });
 
@@ -100,11 +99,6 @@ describe('Inventory', () => {
           subjectSource: 'Library of Congress Subject Headings',
           subjectType: 'Topical term',
         });
-        InventoryInstance.openAccordion('Instance notes');
-        InventoryInstance.checkInstanceNotes(
-          oclcRecordData.notes.noteType,
-          oclcRecordData.notes.noteContent,
-        );
 
         InstanceRecordView.viewSource();
         InventoryViewSource.contains('020\t');

@@ -146,10 +146,13 @@ describe('Loans', () => {
         let selectedItem = folioInstances.find(
           (item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT,
         );
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
+
         UsersSearchPane.openUserCard(userData.username);
         UsersCard.viewCurrentLoans({ openLoans: folioInstances.length });
         UserLoans.openLoanDetails(selectedItem.barcodes[0]);

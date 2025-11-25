@@ -16,14 +16,14 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
     label: 'AT_C490921_Custom Field - Contributor Data',
     url: 'http://www.example.org/field100.html',
     repeatable: true,
-    required: true,
+    required: false,
   };
 
   before('Create user and fetch MARC bib specification', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         const bibSpec = specs.find((s) => s.profile === 'bibliographic');
         expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
         bibSpecId = bibSpec.id;

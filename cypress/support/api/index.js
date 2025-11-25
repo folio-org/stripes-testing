@@ -47,3 +47,5 @@ import './mediated-requests';
 import './circulation-bff';
 import './linkedDataEditor';
 import './oa';
+import './smtp';
+import './aoi-pmh';

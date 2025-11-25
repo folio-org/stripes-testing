@@ -221,12 +221,13 @@ export default {
     cy.expect(targetRow.find(MultiSelect({ selected: option })).exists());
   },
 
-  validateClassificationIdentifierTypesSelectedOptions(browseOption, option) {
+  validateClassificationIdentifierTypesSelectedOptions(browseOption, option, isShown = true) {
     const targetRow = this.getTargetRowWithClassificationName(browseOption);
     const targetCell = targetRow.find(
       MultiColumnListCell({ column: 'Classification identifier types' }),
     );
-    cy.expect(targetCell.find(ListItem({ text: option })).exists());
+    if (isShown) cy.expect(targetCell.find(ListItem({ text: option })).exists());
+    else cy.expect(targetCell.find(ListItem({ text: option })).absent());
   },
 
   clickSaveButtonInBrowseOption(browseOption) {

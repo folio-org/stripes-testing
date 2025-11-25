@@ -5,6 +5,7 @@ import {
   Checkbox,
   DropdownMenu,
   Form,
+  Icon,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
@@ -25,7 +26,12 @@ import {
   not,
   or,
 } from '../../../../interactors';
-import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
+import {
+  BROWSE_CALL_NUMBER_OPTIONS,
+  BROWSE_CLASSIFICATION_OPTIONS,
+  INVENTORY_COLUMN_HEADERS,
+  INSTANCE_STATUS_TERM_NAMES,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
@@ -172,7 +178,7 @@ const checkInstanceDetails = () => {
   });
   // when creating mapping profile we choose instance status term as "Batch Loaded"
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
-  const expectedStatusTerm = 'Batch Loaded';
+  const expectedStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
   const expectedStatusCode = 'batch';
 
   cy.do(
@@ -589,8 +595,8 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body: { instances } }) => {
-        return instances;
+      .then((resp) => {
+        return resp.body;
       });
   },
 
@@ -707,11 +713,24 @@ export default {
   },
 
   searchTag(tag) {
-    cy.wait(500);
-    cy.do([
-      tagsAccordionButton.click(),
-      MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
-    ]);
+    // If Tags filter is expanded, directly fill in the tag
+    // If Tags filter is collapsed, open it first then fill in the tag
+    cy.get('body').then(($body) => {
+      const tagsSection = $body.find('[data-test-accordion-section][id*="Tags"]');
+      if (tagsSection.length > 0) {
+        const contentWrap = tagsSection.find('[class^="content-wrap"]');
+        const isExpanded = contentWrap.length > 0 && contentWrap.hasClass('expanded');
+
+        if (isExpanded) {
+          cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag));
+        } else {
+          cy.do([
+            tagsAccordionButton.click(),
+            MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
+          ]);
+        }
+      }
+    });
   },
 
   filterByTag(tag) {
@@ -720,6 +739,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
     cy.wait(500);
+    cy.expect(MultiSelectOption(including(tag)).exists());
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
   },
@@ -730,6 +750,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'holdingsTags-multiselect' }).toggle());
     cy.wait(500);
+    cy.expect(MultiSelectOption(including(tag)).exists());
     cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
   },
@@ -772,6 +793,8 @@ export default {
   resetAllAndVerifyNoResultsAppear() {
     cy.do(resetAllButton.click());
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+    // Wait until focus appears in the search field to avoid closing open dropdowns.
+    cy.wait(1000);
   },
 
   closeInstanceDetailPane() {
@@ -901,6 +924,10 @@ export default {
 
   fillInBrowseSearch(searchValue) {
     cy.do([browseSearchInputField.fillIn(searchValue)]);
+  },
+
+  fillInSearchQuery(searchValue) {
+    cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
   },
 
   browseSearch(searchValue) {
@@ -1098,8 +1125,9 @@ export default {
     cy.expect(keywordInput.has({ value: '' }));
   },
 
-  verifyAccordionExistance(accordionName) {
-    cy.expect(Accordion(accordionName).exists());
+  verifyAccordionExistance(accordionName, isShown = true) {
+    if (isShown) cy.expect(Accordion(accordionName).exists());
+    else cy.expect(Accordion(accordionName).absent());
   },
 
   verifyAccordionByNameExpanded(accordionName, status = true) {
@@ -1218,6 +1246,10 @@ export default {
     cy.expect(browseSearchInputField.has({ focused: isFocused }));
   },
 
+  checkSearchInputFieldInFocus(isFocused) {
+    cy.expect(keywordInput.has({ focused: isFocused }));
+  },
+
   checkBrowseInventoryResultPaneInFocus(isFocused) {
     cy.expect(
       PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).has({ focused: isFocused }),
@@ -1247,6 +1279,17 @@ export default {
       }).click(),
     );
     cy.wait('@getData');
+  },
+
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
   },
 
   checkSharedInstancesInResultList() {
@@ -1471,7 +1514,95 @@ export default {
     this.checkBrowseSearchInputFieldContent('');
   },
 
+  deleteQueryUsingButton(count, key) {
+    // transfer number of chars for deleting and keyboard button
+    cy.get('#input-record-search')
+      .focus()
+      .invoke('val')
+      .then((initialValue) => {
+        let expectedValue;
+        let cursorPos;
+        if (key === '{del}') {
+          cursorPos = 0; // set cursor in the begining of query, before chars
+          expectedValue = initialValue.substring(count);
+        } else if (key === '{backspace}') {
+          cursorPos = count; // set cursor after specified char of query
+          expectedValue = initialValue.substring(count);
+        }
+
+        cy.get('#input-record-search')
+          .focus()
+          .then((input) => input[0].setSelectionRange(cursorPos, cursorPos))
+          .type(key.repeat(count))
+          .should('have.value', expectedValue)
+          .then((input) => {
+            const el = input[0];
+            expect(el.selectionStart, 'cursor position (start)').to.eq(0);
+            expect(el.selectionEnd, 'cursor position (end)').to.eq(0);
+          });
+      });
+  },
+
   verifyBrowseFacetsNotDisplayed() {
     cy.expect(searchAndFilterSection.find(Accordion()).absent());
+  },
+
+  clearSearchInputField() {
+    cy.do(inventorySearchAndFilter.focus());
+    cy.do(inventorySearchAndFilter.find(clearIcon).click());
+    this.checkSearchQueryText('');
+  },
+
+  checkClearIconShownInSearchField(isShown = true) {
+    if (isShown) cy.expect(inventorySearchAndFilter.find(clearIcon).exists());
+    else cy.expect(inventorySearchAndFilter.find(clearIcon).absent());
+  },
+
+  focusOnSearchField() {
+    cy.do(inventorySearchAndFilter.focus());
+  },
+
+  validateSearchTableColumnsShown(
+    columnHeaders = Object.values(INVENTORY_COLUMN_HEADERS),
+    isShown = true,
+  ) {
+    const headers = Array.isArray(columnHeaders) ? columnHeaders : [columnHeaders];
+    headers.forEach((header) => {
+      if (isShown) cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).exists());
+      else cy.expect(paneResultsSection.find(MultiColumnListHeader(header)).absent());
+    });
+  },
+
+  verifyShowColumnsCheckboxesChecked(
+    columnNames = Object.values(INVENTORY_COLUMN_HEADERS).slice(1),
+    isChecked = true,
+  ) {
+    const names = Array.isArray(columnNames) ? columnNames : [columnNames];
+    names.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).has({ checked: isChecked }));
+    });
+  },
+
+  verifyShowColumnsMenu() {
+    cy.expect(DropdownMenu().find(HTML('Show columns')).exists());
+    Object.values(INVENTORY_COLUMN_HEADERS)
+      .slice(1)
+      .forEach((columnName) => {
+        cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
+      });
+  },
+
+  toggleShowColumnCheckbox(columnName, isChecked = true) {
+    cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    cy.wait(200);
+    this.verifyShowColumnsCheckboxesChecked(columnName, isChecked);
+  },
+
+  verifyWarningIconForSearchResult: (cellContent, hasWarningItem = true) => {
+    const targetCell = MultiColumnListCell({ content: cellContent });
+    if (hasWarningItem) cy.expect(targetCell.find(Icon({ warning: true })).exists());
+    else {
+      cy.expect([targetCell.exists(), targetCell.find(Icon({ warning: true })).absent()]);
+    }
   },
 };

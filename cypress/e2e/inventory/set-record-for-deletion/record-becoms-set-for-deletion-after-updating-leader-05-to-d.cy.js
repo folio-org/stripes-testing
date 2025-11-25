@@ -33,9 +33,9 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -97,11 +97,9 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventoryInstances.searchByTitle(testData.instanceId);
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
       });
     });
 
@@ -122,16 +120,21 @@ describe('Inventory', () => {
       'C663275 Record becomes "Set for deletion" after updating Leader 05 to "d" (folijet)',
       { tags: ['criticalPath', 'folijet', 'C663275'] },
       () => {
+        InventoryInstances.searchByTitle(testData.instanceId);
+        InventoryInstances.selectInstance();
+        InstanceRecordView.waitLoading();
         InstanceRecordView.exportInstanceMarc();
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.fileName = name;
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-          cy.wait(4000);
-          ExportFile.downloadExportedMarcFile(marcFile.exportedFileName);
-
+          // download exported marc file
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(
+            expectedRecordHrid,
+            marcFile.exportedFileName,
+          );
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           DataImport.editMarcFile(
             marcFile.exportedFileName,
             marcFile.modifiedMarcFile,

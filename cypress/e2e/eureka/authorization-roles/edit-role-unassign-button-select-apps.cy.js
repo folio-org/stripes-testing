@@ -169,7 +169,7 @@ describe('Eureka', () => {
 
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(applications[1], false);
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           testData.capabilitySets
             .filter((item) => item.application === applications[0])
             .forEach((set) => {

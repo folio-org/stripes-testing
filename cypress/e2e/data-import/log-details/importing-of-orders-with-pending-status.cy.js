@@ -15,9 +15,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import {
@@ -100,21 +97,6 @@ describe('Data Import', () => {
     };
 
     before('Create test data', () => {
-      cy.getAdminToken();
-      ['GIFTS-ONE-TIME', 'HIST'].forEach((code) => {
-        const budget = {
-          ...Budgets.getDefaultBudget(),
-          allocated: 1000,
-        };
-        FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
-          budget.fiscalYearId = resp.fiscalYears[0].id;
-          Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
-            budget.fundId = body.funds[0].id;
-            Budgets.createViaApi(budget);
-          });
-        });
-      });
-
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -154,16 +136,15 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumbers[0]}"` }).then(
-          (orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          },
-        );
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumbers[2]}"` }).then(
-          (orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          },
-        );
+        orderNumbers.forEach((orderNumber) => {
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              if (orderId.totalRecords > 0) {
+                Orders.deleteOrderViaApi(orderId[0].id);
+              }
+            },
+          );
+        });
       });
     });
 

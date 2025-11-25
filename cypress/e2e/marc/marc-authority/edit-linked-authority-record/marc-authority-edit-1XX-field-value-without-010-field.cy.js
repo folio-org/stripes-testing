@@ -81,8 +81,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
@@ -97,10 +95,7 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
-              cy.wait(3_000);
             });
           })
           .then(() => {
@@ -109,8 +104,6 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-              cy.reload();
-              MarcAuthorities.waitLoading();
             }, 20_000);
           });
       });
@@ -135,17 +128,11 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag111, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.closeModalWithEscapeKey();
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();

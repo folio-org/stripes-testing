@@ -36,7 +36,7 @@ describe('Citation: MARC Authority integration', () => {
     creator: testData.uniqueCreator,
     language: 'spa',
     classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
     isbnIdentifier: testData.uniqueIsbn,
     lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',

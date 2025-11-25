@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../../support/fragments/users/users';
@@ -51,7 +53,7 @@ const marcInstanceFields = [
 const instances = [folioInstance, marcInstance];
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
-const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
+const errorReason = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
@@ -334,6 +336,7 @@ describe('Bulk-edit', () => {
           // Step 19: Inventory app verification
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -347,6 +350,7 @@ describe('Bulk-edit', () => {
             notes.reproductionUpper,
           );
           InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -457,6 +461,7 @@ describe('Bulk-edit', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -470,6 +475,7 @@ describe('Bulk-edit', () => {
             notes.reproductionUpper,
           );
           InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

@@ -24,8 +24,8 @@ const testUsername = process.env.TESTRAIL_API_USER;
 const testPassword = process.env.TESTRAIL_API_KEY;
 const runId = process.env.TESTRAIL_RUN_ID;
 
-const testrailClient = createTestRailClient(testUsername, testPassword);
-const getTests = getTestRunResults.bind(null, testrailClient, runId);
+const testRailClient = createTestRailClient(testUsername, testPassword);
+const getTests = getTestRunResults.bind(null, testRailClient, runId);
 
 const ids = [];
 const arrayOfFiles = [];

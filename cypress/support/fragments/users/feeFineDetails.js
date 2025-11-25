@@ -1,6 +1,7 @@
-import { Button, HTML, KeyValue, Pane, including } from '../../../../interactors';
+import { Button, HTML, KeyValue, Pane, including, TextArea, Modal } from '../../../../interactors';
 
 const rootPane = Pane({ id: 'pane-account-action-history' });
+const errorModal = Modal({ id: 'error-modal' });
 
 export default {
   waitLoading: () => {
@@ -47,5 +48,59 @@ export default {
       Pane(including('Fee/fine details')).exists(),
       KeyValue('Billed amount').has({ value: amount }),
     ]);
+  },
+  checkFeeFineLatestPaymentStatus(status) {
+    cy.expect([
+      Pane(including('Fee/fine details')).exists(),
+      KeyValue('Latest payment status').has({ value: status }),
+    ]);
+  },
+  checkFeeFineRemainingAmount(amount) {
+    cy.expect([
+      Pane(including('Fee/fine details')).exists(),
+      KeyValue('Remaining amount').has({ value: amount }),
+    ]);
+  },
+  verifyActionsAreAvailable: (actions) => {
+    actions.forEach((action) => {
+      if (action === 'Export') {
+        cy.expect(
+          Button({
+            id: `${action.toLowerCase()}AccountActionsHistoryReport`,
+            disabled: false,
+          }).exists(),
+        );
+      } else {
+        cy.expect(
+          Button({ id: `${action.toLowerCase()}AccountActionsHistory`, disabled: false }).exists(),
+        );
+      }
+    });
+  },
+  verifyWaiveReasonInHistory: (reasonName) => {
+    cy.expect(HTML(including(reasonName)).exists());
+  },
+  verifyNoCommentInHistory: () => {
+    cy.expect(HTML(including('Additional information for staff')).absent());
+  },
+  checkComment: (comment) => {
+    cy.expect(HTML(including(comment)).exists());
+  },
+  cancelAsError: (comment) => {
+    cy.do(Button('Actions').click());
+    cy.wait(500);
+    cy.do(Button('Error').click());
+    cy.wait(500);
+    cy.do(errorModal.find(TextArea({ name: 'comment' })).fillIn(''));
+    cy.expect(errorModal.find(HTML(including('Comment must be provided'))).exists());
+    cy.do([
+      errorModal.find(TextArea({ name: 'comment' })).fillIn(comment),
+      Button({ type: 'submit' }).click(),
+    ]);
+    cy.wait(1000);
+  },
+  closeDetails: () => {
+    cy.do(Button({ icon: 'times' }).click());
+    cy.wait(500);
   },
 };

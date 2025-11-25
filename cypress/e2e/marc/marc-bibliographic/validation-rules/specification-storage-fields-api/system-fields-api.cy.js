@@ -21,7 +21,7 @@ describe('Specification Storage - System Fields API', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         // Find the specification with profile 'bibliographic'
         const bibSpec = specs.find((s) => s.profile === 'bibliographic');
         expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
@@ -39,7 +39,7 @@ describe('Specification Storage - System Fields API', () => {
 
   it(
     'C499785 Cannot update System Field (except "url") for MARC bib spec (API) (spitfire)',
-    { tags: ['smoke', 'C499785', 'spitfire'] },
+    { tags: ['criticalPath', 'C499785', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

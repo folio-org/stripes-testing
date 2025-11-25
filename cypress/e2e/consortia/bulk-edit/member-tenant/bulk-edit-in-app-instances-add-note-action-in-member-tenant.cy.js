@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -43,7 +45,7 @@ const notes = {
   dataQuality: 'New data quality note',
 };
 const instances = [folioInstance, marcInstance];
-const errorReason = 'Bulk edit of instance notes is not supported for MARC Instances.';
+const errorReason = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
@@ -171,8 +173,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-            BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
             BulkEditActions.downloadMatchedResults();
 
             instances.forEach((instance) => {
@@ -286,6 +287,7 @@ describe('Bulk-edit', () => {
             ]);
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.clearDefaultFilter('Held by');
             InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
@@ -298,6 +300,7 @@ describe('Bulk-edit', () => {
             );
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.clearDefaultFilter('Held by');
             InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();

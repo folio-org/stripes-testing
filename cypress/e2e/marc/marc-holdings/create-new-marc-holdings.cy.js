@@ -142,7 +142,7 @@ describe('MARC', () => {
         QuickMarcEditor.updateExistingTagValue(4, '00');
         QuickMarcEditor.checkDeleteButtonExist(4);
         QuickMarcEditor.deleteFieldAndCheck(4, '008');
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkDelete008Callout();
         QuickMarcEditor.verifyValidationCallout(0, 1);
         QuickMarcEditor.undoDelete();
@@ -222,6 +222,8 @@ describe('MARC', () => {
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
         QuickMarcEditor.checkReadOnlyHoldingsTags();
+        QuickMarcEditor.check005TagIsEditable();
+        QuickMarcEditor.checkFourthBoxEditable(2, false);
         QuickMarcEditor.verifyHoldingsDefault008BoxesValues(testData.default008BoxesValues);
         QuickMarcEditor.verifyTagValue(5, testData.tag852);
         QuickMarcEditor.verifyTagValue(6, testData.tag999);
@@ -300,7 +302,7 @@ describe('MARC', () => {
         QuickMarcEditor.checkContent('', 5);
         QuickMarcEditor.deleteFieldAndCheck(5, '85');
         QuickMarcEditor.afterDeleteNotification('85');
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.tag852callout);
         QuickMarcEditor.verifyValidationCallout(0, 1);
       },

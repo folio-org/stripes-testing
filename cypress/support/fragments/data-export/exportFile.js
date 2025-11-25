@@ -5,6 +5,12 @@ import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
 
 const areYouSureModal = Modal('Are you sure you want to run this job?');
+export const defaultJobProfiles = [
+  'Default authority export job profile',
+  'Default holdings export job profile',
+  'Default instances export job profile',
+  'Deleted authority export job profile',
+];
 
 const downloadCSVFile = (fileName, mask) => {
   // retry until file has been downloaded
@@ -183,7 +189,7 @@ const waitLandingPageOpened = () => {
 };
 
 const uploadFile = (fileName) => {
-  cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+  cy.get('input[type=file]', getLongDelay()).attachFile(fileName, { allowEmpty: true });
 };
 
 export default {
@@ -199,13 +205,21 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
-    cy.do([
+    const profileName = `${jobType} export job profile`;
+
+    cy.do(
       MultiColumnListCell({
-        content: `${jobType} export job profile`,
+        content: profileName,
         columnIndex: 0,
       }).click(),
-      areYouSureModal.find(Select()).choose(selectType),
-    ]);
+    );
+
+    cy.expect(areYouSureModal.exists());
+
+    if (!defaultJobProfiles.includes(profileName)) {
+      cy.do(areYouSureModal.find(Select()).choose(selectType));
+    }
+
     cy.expect(areYouSureModal.find(Button('Cancel')).has({ disabled: false }));
     cy.do(Button('Run').click());
     cy.get('#job-logs-list').contains(fileName.replace(fileType, ''));

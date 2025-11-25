@@ -50,7 +50,7 @@ describe('Create Item or Title level request', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C350417_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -134,9 +134,11 @@ describe('Create Item or Title level request', () => {
         servicePointId: testData.userServicePoint.id,
         userBarcode: userData.barcode,
       });
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
     });
   });

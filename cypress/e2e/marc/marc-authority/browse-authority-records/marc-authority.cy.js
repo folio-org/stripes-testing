@@ -106,7 +106,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
         if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
-        Users.deleteViaApi(testData.userProperties.userId);
+        if (testData?.userProperties?.userId) {
+          Users.deleteViaApi(testData.userProperties.userId);
+        }
       });
 
       it(
@@ -146,7 +148,7 @@ describe('MARC', () => {
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
           MarcAuthority.change008Field('b', 'f', 'a');
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.contains('bfa');
         },
       );
@@ -192,6 +194,8 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
+          QuickMarcEditor.check005TagIsEditable();
+          QuickMarcEditor.checkFourthBoxEditable(2, false);
           QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
             '00853',
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
@@ -204,7 +208,7 @@ describe('MARC', () => {
           MarcAuthority.check008Field('e');
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             9,
             'Tag must contain three characters and can only accept numbers 0-9.',

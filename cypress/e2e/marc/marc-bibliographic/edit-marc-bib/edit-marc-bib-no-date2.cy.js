@@ -94,7 +94,7 @@ describe('MARC', () => {
             testData.date2,
           );
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
           InstanceRecordView.verifyDates(testData.date1, undefined, testData.dateTypeText);

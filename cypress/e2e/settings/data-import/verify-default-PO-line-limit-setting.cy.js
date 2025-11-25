@@ -17,7 +17,9 @@ import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLin
 
 describe('Data Import', () => {
   describe('Settings', () => {
-    const testData = {};
+    const testData = {
+      orderLinesLimit: '"1"',
+    };
     const mappingProfile = {
       name: `C374181 testMappingProfile.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -36,7 +38,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       // Make sure that defaulted value is "1" in "Purchase order lines limit setting"
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimit(1);
+      OrderLinesLimit.setPOLLimitViaApi(1);
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.uiOrganizationsView.gui,
@@ -66,13 +68,13 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
         NewFieldMappingProfile.checkPreviouslyPopulatedDataIsDisplayed(mappingProfile);
         // #3 Check "Purchase order lines limit setting" field in "Order information" accordion
-        NewFieldMappingProfile.verifyDefaultPurchaseOrderLinesLimit(1);
+        NewFieldMappingProfile.verifyDefaultPurchaseOrderLinesLimit(testData.orderLinesLimit);
         // #4 Click "Save as profile & close" button
         NewFieldMappingProfile.save();
         FieldMappingProfileView.checkCalloutMessage('New record created:');
         FieldMappingProfileView.verifyMappingProfileOpened();
         // #5 Check "Purchase order lines limit setting" field in "Order information" accordion of the Settings details view screen
-        FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(1);
+        FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(testData.orderLinesLimit);
       },
     );
   });

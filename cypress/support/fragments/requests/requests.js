@@ -276,12 +276,15 @@ export default {
   selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
-  selectFirstRequest: (title) => cy.do(
-    requestsPane
-      .find(MultiColumnListCell({ row: 0, content: title }))
-      .find(Link(including(title)))
-      .click(),
-  ),
+  selectFirstRequest(title) {
+    cy.do(
+      requestsPane
+        .find(MultiColumnListCell({ row: 0, content: title }))
+        .find(Link(including(title)))
+        .click(),
+    );
+    cy.wait(2000);
+  },
 
   selectRequest: (title, rowIndex) => cy.do(
     requestsPane
@@ -661,6 +664,7 @@ export default {
         .find(Link())
         .click(),
     );
+    cy.wait(1000);
   },
 
   verifyRequestIsPresent(itemData) {

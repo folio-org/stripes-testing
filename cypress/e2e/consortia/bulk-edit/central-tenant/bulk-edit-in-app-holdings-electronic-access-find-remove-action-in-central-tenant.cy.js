@@ -53,14 +53,14 @@ const localUrlRelationshipNameWithAffiliation = `${localUrlRelationship.name} ($
 const electronicAccessFields = {
   uri: 'https://www.testuri.com/uri',
   linkText: 'te;st: [sample] li*nk$text',
-  materialsSpecification: 'test materials specified',
+  materialsSpecification: 'test material specified',
   publicNote: 'url public note',
 };
 const instances = [folioInstance, marcInstance];
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
@@ -274,8 +274,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckbox(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -342,7 +341,7 @@ describe('Bulk-edit', () => {
             { option: 'URI', action: 'Find', value: electronicAccessFields.uri },
             { option: 'Link text', action: 'Find', value: electronicAccessFields.linkText },
             {
-              option: 'Materials specified',
+              option: 'Material specified',
               action: 'Find',
               value: electronicAccessFields.materialsSpecification,
             },
@@ -364,23 +363,30 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-          const editedHoldingElectronicAccessFields = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}`;
+          const editedHoldingElectronicAccessFieldsInCollege = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}-------`;
+          const editedHoldingElectronicAccessFieldsInUniversity = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}---`;
 
-          holdingHrids.forEach((holdingHrid) => {
+          collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
               holdingHrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
-              editedHoldingElectronicAccessFields,
+              editedHoldingElectronicAccessFieldsInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              holdingHrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+              editedHoldingElectronicAccessFieldsInUniversity,
             );
           });
 
           BulkEditActions.verifyAreYouSureForm(4);
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(4);
           BulkEditActions.downloadPreview();
 
-          const editedHoldingElectronicAccessFieldsInCollegeInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;;;|;;;;`;
-          const editedHoldingElectronicAccessFieldsInUniversityInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;;;`;
+          const editedHoldingElectronicAccessFieldsInCollegeInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;-;-;-|-;;-;-;-`;
+          const editedHoldingElectronicAccessFieldsInUniversityInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};;-;-;-`;
 
           verifyElectronicAccessFieldsInCSVFile(
             previewFileName,
@@ -390,11 +396,18 @@ describe('Bulk-edit', () => {
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
-          holdingHrids.forEach((holdingHrid) => {
+          collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
               holdingHrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
-              editedHoldingElectronicAccessFields,
+              editedHoldingElectronicAccessFieldsInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+              holdingHrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
+              editedHoldingElectronicAccessFieldsInUniversity,
             );
           });
 

@@ -291,8 +291,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
@@ -407,6 +406,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.fillPermanentLoanType(centralSharedLoanType.payload.name);
+          BulkEditActions.openSelectLoanTypeDropdown();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             collegeItemLoanTypeNameWithAffiliation,
           );
@@ -414,6 +414,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.fillTemporaryLoanType(collegeItemLoanTypeNameWithAffiliation, 1);
+          BulkEditActions.openSelectLoanTypeDropdown(1);
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedLoanType.payload.name,
           );

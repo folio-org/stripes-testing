@@ -54,7 +54,7 @@ describe('Request queue. TLR', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: `type_C347887_${getRandomPostfix()}`,
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -151,9 +151,12 @@ describe('Request queue. TLR', () => {
       }).then((request) => {
         requestIds.push(request.body.id);
       });
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+
+      cy.waitForAuthRefresh(() => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
     });
   });

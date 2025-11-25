@@ -1,11 +1,32 @@
 /* eslint-disable no-unused-expressions */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  validateApiResponse,
+  cleanupField,
+} from '../../../../../support/api/specifications-helper';
 
-const createFieldPayload = {
-  tag: '890',
-  label: 'AT Custom Field - Contributor Data',
-  url: 'http://www.example.org/field890.html',
+const BASE_FIELD_TAG = '975'; // Unique tag not used by other tests
+const BASE_URL = 'http://www.example.org/field975.html';
+
+// Define tags that will be used in tests (minimal set since we cleanup after each test)
+const TEST_TAGS = [
+  BASE_FIELD_TAG, // 975 - used by most tests
+  '897', // C490936 - needs different tag for permission test
+];
+
+// Cleanup function to remove existing fields with test tags
+const cleanupTestFields = (specId) => {
+  cy.getSpecificationFields(specId).then((response) => {
+    if (response.body && response.body.fields) {
+      const fieldsToDelete = response.body.fields.filter((field) => TEST_TAGS.includes(field.tag));
+
+      const cleanupPromises = fieldsToDelete.map((field) => cleanupField(field.id));
+      return Cypress.Promise.all(cleanupPromises);
+    }
+    return Cypress.Promise.resolve();
+  });
 };
 
 const requiredPermissions = [
@@ -32,10 +53,10 @@ describe('Specification Storage - Create Field API', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
-        const bibSpec = specs.find((s) => s.profile === 'bibliographic');
-        expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
+      getBibliographicSpec().then((bibSpec) => {
         bibSpecId = bibSpec.id;
+        // Clean up any existing fields with tags we'll use in tests
+        cleanupTestFields(bibSpecId);
       });
     });
   });
@@ -43,7 +64,7 @@ describe('Specification Storage - Create Field API', () => {
   afterEach('Cleanup: delete field', () => {
     cy.getAdminToken();
     if (fieldId) {
-      cy.deleteSpecificationField(fieldId, false);
+      cleanupField(fieldId);
     }
   });
 
@@ -58,14 +79,17 @@ describe('Specification Storage - Create Field API', () => {
     { tags: ['C490917', 'criticalPath', 'spitfire'] },
     () => {
       const payload = {
-        ...createFieldPayload,
+        tag: BASE_FIELD_TAG,
+        label: 'AT_C490917_Custom Field - Contributor Data',
+        url: BASE_URL,
         repeatable: false,
         required: false,
         deprecated: false,
       };
+
       cy.getUserToken(user.username, user.password);
       cy.createSpecificationField(bibSpecId, payload).then((response) => {
-        expect(response.status).to.eq(201);
+        validateApiResponse(response, 201);
         const respBody = response.body;
         fieldId = respBody.id;
         expect(respBody).to.include({
@@ -82,11 +106,14 @@ describe('Specification Storage - Create Field API', () => {
     { tags: ['C490918', 'criticalPath', 'spitfire'] },
     () => {
       const payload = {
-        ...createFieldPayload,
+        tag: BASE_FIELD_TAG,
+        label: 'AT_C490918_Custom Field - Contributor Data',
+        url: BASE_URL,
       };
+
       cy.getUserToken(user.username, user.password);
       cy.createSpecificationField(bibSpecId, payload).then((response) => {
-        expect(response.status).to.eq(201);
+        validateApiResponse(response, 201);
         const respBody = response.body;
         fieldId = respBody.id;
         expect(respBody).to.include({
@@ -108,13 +135,15 @@ describe('Specification Storage - Create Field API', () => {
       const labels = ['Control Number', 'Title Statement', 'Local'];
       labels.forEach((label) => {
         const payload = {
-          ...createFieldPayload,
-          label,
+          tag: BASE_FIELD_TAG,
+          label: `AT_C490928_${label}`,
+          url: BASE_URL,
         };
+
         cy.getUserToken(user.username, user.password);
         cy.createSpecificationField(bibSpecId, payload)
           .then((response) => {
-            expect(response.status).to.eq(201);
+            validateApiResponse(response, 201);
             const respBody = response.body;
             fieldId = respBody.id;
           })
@@ -131,15 +160,17 @@ describe('Specification Storage - Create Field API', () => {
     () => {
       // Step 1: Create a Local MARC field with all flags true
       const initialPayload = {
-        ...createFieldPayload,
-        tag: '898',
+        tag: BASE_FIELD_TAG,
+        label: 'AT_C490951_Custom Field - Contributor Data',
+        url: BASE_URL,
         repeatable: true,
-        required: true,
+        required: false,
         deprecated: true,
       };
+
       cy.getUserToken(user.username, user.password);
       cy.createSpecificationField(bibSpecId, initialPayload).then((response) => {
-        expect(response.status).to.eq(201);
+        validateApiResponse(response, 201);
         const respBody = response.body;
         fieldId = respBody.id;
         expect(respBody).to.include({
@@ -150,15 +181,16 @@ describe('Specification Storage - Create Field API', () => {
 
         // Step 2: Update the field with all flags false
         const updatePayload1 = {
-          tag: '899',
-          label: 'Field name with updates made by user',
+          tag: BASE_FIELD_TAG, // Keep same tag, just update other properties
+          label: 'AT_C490951_Field name with updates made by user',
           url: 'http://www.example.org/updated',
           repeatable: false,
           required: false,
           deprecated: false,
         };
+
         cy.updateSpecificationField(fieldId, updatePayload1).then((updateResp1) => {
-          expect(updateResp1.status).to.eq(202);
+          validateApiResponse(updateResp1, 202);
           expect(updateResp1.body).to.include({
             ...updatePayload1,
             specificationId: bibSpecId,
@@ -167,7 +199,7 @@ describe('Specification Storage - Create Field API', () => {
 
           // Step 3: GET all fields and verify the update
           cy.getSpecificationFields(bibSpecId).then((getResp1) => {
-            expect(getResp1.status).to.eq(200);
+            validateApiResponse(getResp1, 200);
             const updatedField1 = getResp1.body.fields.find((f) => f.id === fieldId);
             expect(updatedField1).to.include({
               ...updatePayload1,
@@ -177,15 +209,16 @@ describe('Specification Storage - Create Field API', () => {
 
             // Step 4: Update the field again with all flags true and new values
             const updatePayload2 = {
-              tag: '900',
-              label: 'Field name with updates made by user #2',
+              tag: BASE_FIELD_TAG, // Keep same tag
+              label: 'AT_C490951_Field name with updates made by user #2',
               url: 'http://www.example.org/updated2',
               repeatable: true,
-              required: true,
+              required: false,
               deprecated: true,
             };
+
             cy.updateSpecificationField(fieldId, updatePayload2).then((updateResp2) => {
-              expect(updateResp2.status).to.eq(202);
+              validateApiResponse(updateResp2, 202);
               expect(updateResp2.body).to.include({
                 ...updatePayload2,
                 specificationId: bibSpecId,
@@ -194,7 +227,7 @@ describe('Specification Storage - Create Field API', () => {
 
               // Step 5: GET all fields and verify the second update
               cy.getSpecificationFields(bibSpecId).then((getResp2) => {
-                expect(getResp2.status).to.eq(200);
+                validateApiResponse(getResp2, 200);
                 const updatedField2 = getResp2.body.fields.find((f) => f.id === fieldId);
                 expect(updatedField2).to.include({
                   ...updatePayload2,
@@ -217,22 +250,27 @@ describe('Specification Storage - Create Field API', () => {
       cy.getAdminToken();
       cy.createTempUser(limitedPermissions).then((createdUser) => {
         limitedUser = createdUser;
+
         const payload = {
-          ...createFieldPayload,
           tag: '897',
+          label: 'AT_C490936_Custom Field - Contributor Data',
+          url: BASE_URL,
         };
 
         cy.getUserToken(limitedUser.username, limitedUser.password);
+
         // Step 2: Create a Local MARC field as this user
         cy.createSpecificationField(bibSpecId, payload).then((response) => {
-          expect(response.status).to.eq(201);
+          validateApiResponse(response, 201);
           fieldId = response.body.id;
+
           // Step 3: Attempt to update the field (should fail with 403)
           const updatePayload = {
-            label: 'Name test field',
+            label: 'AT_C490936_Name test field',
           };
+
           cy.updateSpecificationField(fieldId, updatePayload, false).then((updateResp) => {
-            expect(updateResp.status).to.eq(403);
+            validateApiResponse(updateResp, 403);
             expect(updateResp.body.errors[0].message).to.include('Access Denied');
           });
         });

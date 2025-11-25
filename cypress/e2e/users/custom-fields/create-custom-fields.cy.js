@@ -39,14 +39,15 @@ describe('Users', () => {
       { tags: ['extendedPath', 'volaris', 'C15693'] },
       () => {
         const fieldData = {
-          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-          helpText: `autotestHelpText_${getRandomPostfix()}`,
+          fieldLabel: `TF_${getRandomPostfix()}`,
+          helpText: `TF_HelpText_${getRandomPostfix()}`,
         };
 
         CustomFields.addCustomTextField(fieldData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyTextFieldPresented(fieldData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -61,14 +62,15 @@ describe('Users', () => {
       { tags: ['extendedPath', 'volaris', 'C15694', 'eurekaPhase1'] },
       () => {
         const fieldData = {
-          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-          helpText: `autotestHelpText_${getRandomPostfix()}`,
+          fieldLabel: `TA_${getRandomPostfix()}`,
+          helpText: `TA_HelpText_${getRandomPostfix()}`,
         };
 
         CustomFields.addCustomTextArea(fieldData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyAreaFieldPresented(fieldData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -83,14 +85,15 @@ describe('Users', () => {
       { tags: ['extendedPath', 'volaris', 'C15695', 'eurekaPhase1'] },
       () => {
         const checkboxData = {
-          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-          helpText: `autotestHelpText_${getRandomPostfix()}`,
+          fieldLabel: `CB_${getRandomPostfix()}`,
+          helpText: `CB_HelpText_${getRandomPostfix()}`,
         };
 
         CustomFields.addCustomCheckBox(checkboxData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyCheckboxPresented(checkboxData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -106,10 +109,10 @@ describe('Users', () => {
       () => {
         const radioButtonData = {
           data: {
-            fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-            helpText: `autotestHelpText_${getRandomPostfix()}`,
-            label1: `autotestRadio1_${getRandomPostfix()}`,
-            label2: `autotestRadio2_${getRandomPostfix()}`,
+            fieldLabel: `RB_${getRandomPostfix()}`,
+            helpText: `RB_HelpText_${getRandomPostfix()}`,
+            label1: `RB_Radio1_${getRandomPostfix()}`,
+            label2: `RB_Radio2_${getRandomPostfix()}`,
           },
         };
 
@@ -117,6 +120,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifyRadioButtonPresented(radioButtonData);
         UserEdit.clickCloseWithoutSavingIfModalExists();
 
@@ -132,10 +136,10 @@ describe('Users', () => {
       () => {
         const singleSelectData = {
           data: {
-            fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-            helpText: `autotestHelpText_${getRandomPostfix()}`,
-            firstLabel: `autotestFirstLabel_${getRandomPostfix()}`,
-            secondLabel: `autotestSecondLabel_${getRandomPostfix()}`,
+            fieldLabel: `SS_${getRandomPostfix()}`,
+            helpText: `SS_HelpText_${getRandomPostfix()}`,
+            firstLabel: `SS_FirstLabel_${getRandomPostfix()}`,
+            secondLabel: `SS_SecondLabel_${getRandomPostfix()}`,
           },
         };
 
@@ -143,6 +147,7 @@ describe('Users', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
+        UserEdit.scrollToTheLastCustomField();
         UserEdit.verifySingleSelectPresented(singleSelectData);
         UserEdit.selectSingleSelectValue(singleSelectData);
         UserEdit.saveAndClose();

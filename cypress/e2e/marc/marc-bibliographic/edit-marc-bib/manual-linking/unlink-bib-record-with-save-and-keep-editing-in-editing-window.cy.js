@@ -101,8 +101,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
@@ -119,15 +117,13 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
               QuickMarcEditor.closeCallout();
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
               cy.waitForAuthRefresh(() => {
                 cy.login(userData.username, userData.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
                 });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
               }, 20_000);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
             });
@@ -165,8 +161,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
             QuickMarcEditor.checkLinkButtonExist(testData.tag100);
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-            // QuickMarcEditor.closeCallout();
+            QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
 
             QuickMarcEditor.clickLinkIconInTagField(testData.tag100RowIndex);

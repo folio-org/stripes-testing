@@ -74,9 +74,11 @@ describe('Remote Storage', () => {
           });
         })
         .then(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventorySearchAndFilter.waitLoading,
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventorySearchAndFilter.waitLoading,
+            });
           });
         });
     });

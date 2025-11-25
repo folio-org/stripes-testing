@@ -85,8 +85,6 @@ describe('MARC', () => {
           MarcAuthority.changeField(testData.field010.tag, testData.field010.subfield1);
           QuickMarcEditor.checkContent(testData.field010.subfield1, 5);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
 
           cy.wait(3000);
@@ -102,7 +100,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010Subfields);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010Subfields);
         },
       );

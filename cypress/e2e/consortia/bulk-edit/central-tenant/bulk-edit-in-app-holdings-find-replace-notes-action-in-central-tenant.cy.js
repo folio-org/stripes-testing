@@ -262,8 +262,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
@@ -284,7 +283,7 @@ describe('Bulk-edit', () => {
           const initialHeaderValues = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: `${notes.adminUpperCase};${notes.adminLowerCase}`,
+              value: `${notes.adminUpperCase}|${notes.adminLowerCase}`,
             },
             {
               header: centralSharedHoldingNoteType.payload.name,
@@ -388,7 +387,7 @@ describe('Bulk-edit', () => {
           const editedHeaderValues = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: `${notes.adminLowerCase};${notes.adminLowerCase}`,
+              value: `${notes.adminLowerCase}|${notes.adminLowerCase}`,
             },
             {
               header: centralSharedHoldingNoteType.payload.name,

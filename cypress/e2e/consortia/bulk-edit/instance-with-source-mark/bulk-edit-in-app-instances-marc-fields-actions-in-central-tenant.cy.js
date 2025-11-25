@@ -175,7 +175,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectActionForMarcInstance('Add');
           BulkEditActions.fillInDataTextAreaForMarcInstance('Action note');
           BulkEditActions.verifyConfirmButtonDisabled(false);
-          BulkEditActions.verifyTheActionOptionsForMarcInstance(['Additional subfield']);
+          BulkEditActions.verifyTheActionOptionsEqual(['Additional subfield']);
           BulkEditActions.selectSecondActionForMarcInstance('Additional subfield');
           BulkEditActions.verifyAdditionalSubfieldRowInitialState();
           BulkEditActions.fillInSubfieldInSubRow('3');
@@ -245,8 +245,7 @@ describe('Bulk-edit', () => {
             notes.firstLocalReplaced,
             notes.secondLocalRemoved,
           );
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const assertionsOnMarcFileContent = [
@@ -307,8 +306,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
             true,
           );
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 

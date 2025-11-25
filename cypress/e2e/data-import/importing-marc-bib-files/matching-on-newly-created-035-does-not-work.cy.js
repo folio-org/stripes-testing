@@ -90,18 +90,18 @@ describe('Data Import', () => {
       cy.getAdminToken().then(() => {
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(
           resourceIdentifierForFirstInstance.value,
-        ).then((listOfInstancesWithFirstIdentifiers) => {
-          if (listOfInstancesWithFirstIdentifiers) {
-            listOfInstancesWithFirstIdentifiers.forEach(({ id }) => {
+        ).then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }
         });
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(
           resourceIdentifierForSecondInstance.value,
-        ).then((listOfInstancesWithSecondIdentifiers) => {
-          if (listOfInstancesWithSecondIdentifiers) {
-            listOfInstancesWithSecondIdentifiers.forEach(({ id }) => {
+        ).then((response) => {
+          if (response.totalRecords !== 0) {
+            response.instances.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }

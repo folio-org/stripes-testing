@@ -47,13 +47,13 @@ const localUrlRelationship = {
 const localUrlRelationshipNameWithAffiliation = `${localUrlRelationship.name} (${Affiliations.College})`;
 const newUri = 'https://www.NewUri.org';
 const newLinkText = 'New Link text';
-const newMaterialSpecified = 'New Materials specified';
+const newMaterialSpecified = 'New Material specified';
 const newUrlPublicNote = 'New URL public note';
 const instances = [folioInstance, marcInstance];
 const electronicAccessTableHeaders =
-  'URL relationshipURILink textMaterials specifiedURL public note';
+  'URL relationshipURILink textMaterial specifiedURL public note';
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
@@ -137,7 +137,7 @@ describe('Bulk-edit', () => {
                   electronicAccess: [
                     {
                       linkText: 'College link text',
-                      materialsSpecification: 'College materials specified',
+                      materialsSpecification: 'College material specified',
                       publicNote: 'College url public note',
                       uri: 'https://college-uri.com',
                       relationshipId: sharedUrlRelationship.settingId,
@@ -162,7 +162,7 @@ describe('Bulk-edit', () => {
                   electronicAccess: [
                     {
                       linkText: 'University link text',
-                      materialsSpecification: 'University materials specified',
+                      materialsSpecification: 'University material specified',
                       publicNote: 'University url public note',
                       uri: 'https://university-uri.com',
                       relationshipId: sharedUrlRelationship.settingId,
@@ -245,8 +245,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckbox(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
@@ -256,8 +255,8 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
           );
 
-          const collegeHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-uri.comCollege link textCollege materials specifiedCollege url public note`;
-          const universityHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://university-uri.comUniversity link textUniversity materials specifiedUniversity url public note`;
+          const collegeHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://college-uri.comCollege link textCollege material specifiedCollege url public note`;
+          const universityHoldingsElectronicAccess = `${electronicAccessTableHeaders}${sharedUrlRelationship.payload.name}https://university-uri.comUniversity link textUniversity material specifiedUniversity url public note`;
 
           collegeHoldingHrids.forEach((holdingHrid) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -287,8 +286,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
-          const collegeHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-uri.com;College link text;College materials specified;College url public note`;
-          const universityHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://university-uri.com;University link text;University materials specified;University url public note`;
+          const collegeHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://college-uri.com;College link text;College material specified;College url public note`;
+          const universityHoldingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${sharedUrlRelationship.payload.name};https://university-uri.com;University link text;University material specified;University url public note`;
 
           FileManager.convertCsvToJson(matchedRecordsFileName).then((csvFileData) => {
             const collegeHoldingRows = getRowsInCsvFileMatchingHrids(
@@ -333,7 +332,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
-          BulkEditActions.replaceWithAction('Materials specified', newMaterialSpecified, 3);
+          BulkEditActions.replaceWithAction('Material specified', newMaterialSpecified, 3);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(4);
@@ -356,8 +355,7 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(4);
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(4);
           BulkEditActions.downloadPreview();
 
           FileManager.convertCsvToJson(previewFileName).then((csvFileData) => {

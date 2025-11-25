@@ -147,9 +147,10 @@ describe(
           BulkEditSearchPane.verifyMatchedResults(instance.holdingHRID);
           BulkEditActions.openActions();
           BulkEditSearchPane.searchColumnName('note');
+          cy.wait(1000);
 
           initialValueSets.forEach((initialValueSet) => {
-            BulkEditSearchPane.changeShowColumnCheckbox(initialValueSet[0]);
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(initialValueSet[0]);
             cy.wait(500);
           });
 

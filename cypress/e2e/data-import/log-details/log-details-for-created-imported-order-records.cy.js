@@ -23,16 +23,12 @@ import SettingsDataImport, {
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -95,22 +91,6 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken().then(() => {
-        ['GIFTS-ONE-TIME', 'HIST', 'EUROHIST', 'MISCHIST', 'LATAMHIST'].forEach((code) => {
-          const budget = {
-            ...Budgets.getDefaultBudget(),
-            allocated: 1000,
-          };
-          FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
-            budget.fiscalYearId = resp.fiscalYears[0].id;
-            Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
-              budget.fundId = body.funds[0].id;
-
-              Budgets.createViaApi(budget);
-            });
-          });
-        });
-      });
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -137,10 +117,9 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        DataImport.waitLoading();
       });
     });
 

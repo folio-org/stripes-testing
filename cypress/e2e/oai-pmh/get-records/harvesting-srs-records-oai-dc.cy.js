@@ -39,7 +39,7 @@ describe('OAI-PMH', () => {
       { tags: ['extendedPath', 'firebird', 'C376984'] },
       () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'oai_dc').then((response) => {
-          OaiPmh.verifyDublinCoreField(response, {
+          OaiPmh.verifyDublinCoreField(response, marcInstance.id, {
             title: marcInstance.title,
           });
           OaiPmh.verifyOaiPmhRecordHeader(response, marcInstance.id, false, true);

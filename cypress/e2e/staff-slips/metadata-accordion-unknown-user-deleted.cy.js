@@ -56,6 +56,7 @@ describe('Staff slips', () => {
 
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
+        Users.waitForUserDeletion({ id: userData.userId });
 
         cy.createTempUser(
           [Permissions.uiCirculationCreateEditRemoveStaffSlips.gui, Permissions.uiUsersView.gui],
@@ -83,29 +84,31 @@ describe('Staff slips', () => {
     () => {
       StaffSlips.waitLoading();
       // Step 2: Click on first staff slip record (Due date receipt)
-      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.DUE_DATE_RECEIPT);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.DUE_DATE_RECEIPT, { interceptUsers: true });
 
       // Step 3: Click on "Record last updated" accordion
       StaffSlip.checkUnknownUserInMetadata();
 
       // Step 4: Click on next slip (Hold) and repeat step #3
-      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.HOLD);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.HOLD, { interceptUsers: true });
       StaffSlip.checkUnknownUserInMetadata();
 
       // Step 5: Click on next slip (Pick slip) and repeat step #3
-      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.PICK_SLIP);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.PICK_SLIP, { interceptUsers: true });
       StaffSlip.checkUnknownUserInMetadata();
 
       // Step 6: Click on next slip (Request delivery) and repeat step #3
-      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.REQUEST_DELIVERY);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.REQUEST_DELIVERY, { interceptUsers: true });
       StaffSlip.checkUnknownUserInMetadata();
 
       // Step 7: Click on next slip (Search slip (Hold requests)) and repeat step #3
-      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.SEARCH_SLIP_HOLD_REQUESTS);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.SEARCH_SLIP_HOLD_REQUESTS, {
+        interceptUsers: true,
+      });
       StaffSlip.checkUnknownUserInMetadata();
 
       // Step 8: Click on next slip (Transit) and repeat step #3
-      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.TRANSIT);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.TRANSIT, { interceptUsers: true });
       StaffSlip.checkUnknownUserInMetadata();
     },
   );

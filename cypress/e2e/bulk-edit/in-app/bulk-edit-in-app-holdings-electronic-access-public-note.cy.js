@@ -118,13 +118,13 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, editedPublicNote);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [`;uri.com;;;${editedPublicNote}"`]);
+        ExportFile.verifyFileIncludes(previewFileName, [`-;uri.com;-;-;${editedPublicNote}"`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, editedPublicNote);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [';uri.com;;; URL public note"']);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, ['-;uri.com;-;-; URL public note"']);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();

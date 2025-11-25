@@ -4,9 +4,11 @@ import {
   TextField,
   Button,
   Checkbox,
+  ListItem,
   MultiSelect,
   MultiSelectOption,
   including,
+  Section,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
@@ -14,6 +16,9 @@ const contentTypeAccordion = Accordion({ id: 'filter-packages-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-packages-selected' });
 const tagsAccordion = Accordion({ id: 'accordionTagFilter' });
 const byTagCheckbox = Checkbox('Search by tags only');
+const accessStatusTypesAccordion = Accordion('Access status types');
+const byAccessStatusTypesCheckbox = Checkbox('Search by access status types only');
+const resultSection = Section({ id: 'search-results' });
 
 export default {
   byContentType: (type) => {
@@ -49,5 +54,38 @@ export default {
   },
   resetTagFilter: () => {
     cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+  },
+
+  openAccessStatusTypesDropdown() {
+    cy.do(accessStatusTypesAccordion.clickHeader());
+    // for unclear reasons, clicking the checkbox twice is required to set it to checked state
+    cy.do(accessStatusTypesAccordion.find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(accessStatusTypesAccordion.find(byAccessStatusTypesCheckbox).checkIfNotSelected());
+    cy.do(accessStatusTypesAccordion.find(MultiSelect()).open());
+  },
+
+  checkAccessStatusTypeOptionAvailable: (accessStatusType, isShown = true) => {
+    const targetOption = accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType));
+    if (isShown) cy.expect(targetOption.exists());
+    else cy.expect(targetOption.absent());
+  },
+
+  checkResultsListShown: (isShown = true) => {
+    const result = resultSection.find(
+      ListItem({ className: including('list-item-'), index: 0 }).find(Button()),
+    );
+    if (isShown) cy.expect(result.exists());
+    else cy.expect(result.absent());
+  },
+
+  selectAccessStatusType(accessStatusType) {
+    cy.do(accessStatusTypesAccordion.find(MultiSelectOption(accessStatusType)).clickSegment());
+  },
+
+  verifyResultsCount(expectedCount) {
+    cy.expect([
+      ListItem({ className: including('list-item-'), index: expectedCount - 1 }).exists(),
+      ListItem({ className: including('list-item-'), index: expectedCount }).absent(),
+    ]);
   },
 };

@@ -13,6 +13,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
 const enableBankingInformationCheckbox = Checkbox('Enable banking information');
 const saveButton = Button('Save');
+const newCategory = Button('+ New');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
@@ -62,6 +63,7 @@ export default {
 
   selectCategories: () => {
     cy.do(NavListItem('Categories').click());
+    cy.wait(2000);
   },
 
   selectBankingInformation: () => {
@@ -135,7 +137,7 @@ export default {
   },
 
   clickNewCategoriesButton() {
-    cy.do(Button({ id: 'clickable-add-categories' }).click());
+    cy.do(newCategory.click());
   },
 
   fillCategoryName(name) {
@@ -144,7 +146,7 @@ export default {
   },
 
   saveCategoryChanges() {
-    cy.get('button[id^="clickable-save-categories-"]').click();
+    cy.do(Button('Save').click());
   },
 
   checkCategoriesTableContent(typeName) {
@@ -175,6 +177,7 @@ export default {
 
   selectAccountTypes: () => {
     cy.do(NavListItem('Account types').click());
+    cy.wait(2000);
   },
 
   createCategoriesViaApi(categories) {
@@ -274,6 +277,15 @@ export default {
       .blur();
   },
 
+  clickOutsideAccountTypeField() {
+    cy.get('#editList-bankingAccountTypes').find('input[type="text"]').blur();
+  },
+
+  checkErrorMessage(errorText = 'Please fill this in to continue') {
+    const grid = '#editList-bankingAccountTypes';
+    cy.get(`${grid} [class*="feedbackError"]`).should('be.visible').and('contain.text', errorText);
+  },
+
   saveAccountTypeChanges() {
     cy.get('button[id^="clickable-save-bankingAccountTypes-"]').click();
   },
@@ -338,6 +350,25 @@ export default {
     );
   },
 
+  tryToDeleteAccountTypeWhenItUnable(typeName) {
+    cy.do(
+      MultiColumnListCell({ content: typeName.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber).find(trashIconButton).click(),
+          Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click(),
+        ]);
+      }),
+    );
+    cy.wait(1000);
+    InteractorsTools.checkModalMessage(
+      'Cannot delete account type',
+      'Unable to delete. Account type is in use by one or more organizations.',
+    );
+    cy.wait(1000);
+    cy.do([Button('Okay').click()]);
+  },
+
   checkAccountTypeAbsent(typeName) {
     cy.get('#editList-bankingAccountTypes')
       .should('exist')
@@ -347,6 +378,7 @@ export default {
 
   clickNewButton() {
     cy.do(Button({ id: 'clickable-add-bankingAccountTypes' }).click());
+    cy.wait(2000);
   },
 
   checkNewAccountTypeRow() {

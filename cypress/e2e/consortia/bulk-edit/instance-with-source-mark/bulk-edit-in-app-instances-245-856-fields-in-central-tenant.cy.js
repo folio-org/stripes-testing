@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -42,7 +44,7 @@ const electronicAccessFields = {
   newUri: 'http://www.koreascience.or.kr/journal/E1TAAE/v2n1.page http://www.ksiam.org',
 };
 const electronicAccessTableHeadersInFile =
-  'URL relationship;URI;Link text;Materials specified;URL public note\n';
+  'URL relationship;URI;Link text;Material specified;URL public note\n';
 const marcInstanceFields = [
   {
     tag: '008',
@@ -60,8 +62,6 @@ const marcInstanceFields = [
     indicators: ['4', '0'],
   },
 ];
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const previewFileNameMrc = BulkEditFiles.getPreviewMarcFileName(instanceUUIDsFileName, true);
 const previewFileNameCsv = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
@@ -239,8 +239,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyAreYouSureForm(1);
           BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
-          BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
           BulkEditActions.downloadPreviewInMarcFormat();
 
           const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
@@ -270,7 +269,9 @@ describe('Bulk-edit', () => {
                 (record) => expect(record.get('856')[0].ind1).to.eq('4'),
                 (record) => expect(record.get('856')[0].ind2).to.eq('0'),
                 (record) => expect(record.get('856')[0].subf[0][0]).to.eq('h'),
-                (record) => expect(record.get('856')[0].subf[0][1]).to.eq('http://mathnet.kaist.ac.kr'),
+                (record) => {
+                  expect(record.get('856')[0].subf[0][1]).to.eq('http://mathnet.kaist.ac.kr');
+                },
                 (record) => expect(record.get('856')[0].subf[1][0]).to.eq('u'),
                 (record) => {
                   expect(record.get('856')[0].subf[1][1]).to.eq(
@@ -326,6 +327,11 @@ describe('Bulk-edit', () => {
               },
             ],
           );
+          BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(
+            folioInstance.uuid,
+            folioInstance.hrid,
+            folioInstance.title,
+          );
           BulkEditSearchPane.verifyElectronicAccessTableInForm(
             BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
             marcInstance.hrid,
@@ -336,7 +342,10 @@ describe('Bulk-edit', () => {
             '-',
           );
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
-          BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+          BulkEditSearchPane.verifyError(
+            folioInstance.uuid,
+            ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+          );
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -352,7 +361,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(changedRecordsFileNameCsv, 1);
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `ERROR,${folioInstance.uuid},${errorMessage}`,
+            `ERROR,${folioInstance.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
           ]);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

@@ -21,7 +21,7 @@ describe('Specification Storage - Standard Fields API', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         // Find the specification with profile 'bibliographic'
         const bibSpec = specs.find((s) => s.profile === 'bibliographic');
         expect(bibSpec, 'MARC bibliographic specification exists').to.exist;
@@ -39,7 +39,7 @@ describe('Specification Storage - Standard Fields API', () => {
 
   it(
     'C499802 Cannot update Fields of Standard Field (except "url", "required") for MARC bib spec (API) (spitfire)',
-    { tags: ['smoke', 'C499802', 'spitfire'] },
+    { tags: ['criticalPath', 'C499802', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
@@ -145,7 +145,7 @@ describe('Specification Storage - Standard Fields API', () => {
 
   it(
     'C499819 Cannot update Standard Field with invalid value in "required" field for MARC bib spec (API) (spitfire)',
-    { tags: ['smoke', 'C499819', 'spitfire'] },
+    { tags: ['criticalPath', 'C499819', 'spitfire'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 const testData = {
   new100fieldRecordForFirstFile: getRandomPostfix(),
   new100fieldRecordForSecondFile: getRandomPostfix(),
-  field008Updated: { 'Geo Subd': 'b', RecUpd: 'a', 'Mod Rec Est': 's', Source: 'c' },
+  field008Updated: { 'Geo Subd': 'b', RecUpd: 'a', 'Mod Rec': 's', Source: 'c' },
   second008Field008Updated: { RefEval: 'a', RecUpd: 'a', 'Pers Name': 'b', 'Level Est': 'a' },
 };
 const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -64,7 +64,7 @@ describe('MARC', () => {
           QuickMarcEditor.check008BoxesCount(19);
           MarcAuthority.select008DropdownsIfOptionsExist(testData.field008Updated);
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForFirstFile);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           TopMenu.openDataImportApp();
           Logs.verifyInstanceStatus(0, 2);
@@ -74,7 +74,7 @@ describe('MARC', () => {
           QuickMarcEditor.check008BoxesCount(19);
           MarcAuthority.select008DropdownsIfOptionsExist(testData.second008Field008Updated);
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForSecondFile);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },
       );

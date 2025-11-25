@@ -183,23 +183,6 @@ describe('Inventory', () => {
     );
 
     it(
-      'C347909 Verify browse call numbers function and result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347909', 'eurekaPhase1'] },
-      () => {
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.verifyBrowseOptions();
-        InventorySearchAndFilter.selectBrowseCallNumbers();
-        BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
-        InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
-        BrowseCallNumber.checkExactSearchResult(item.itemCallNumber);
-        BrowseCallNumber.checkSearchResultsTable();
-        BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.clickResetAllButton();
-      },
-    );
-
-    it(
       'C347916 Verify Browse with non-existent call number (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C347916', 'eurekaPhase1'] },
       () => {

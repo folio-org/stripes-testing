@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -28,8 +30,6 @@ const folioInstance = {
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
 const note999a = 'Local note';
-const errorMessage =
-  'Instance with source FOLIO is not supported by MARC records bulk edit and cannot be updated.';
 
 describe('Bulk-edit', () => {
   describe('Instances with source MARC', () => {
@@ -180,7 +180,7 @@ describe('Bulk-edit', () => {
           DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
         let assertionsOnMarcFileContent = [
           {
-            uuid: note999a,
+            uuid: marcInstance.uuid,
             assertions: [
               (record) => {
                 expect(
@@ -217,13 +217,19 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
         BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(note999a);
-        BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+        BulkEditSearchPane.verifyError(
+          folioInstance.uuid,
+          ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+        );
 
         // Step 15: Check errors table
         BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
         BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
-        BulkEditSearchPane.verifyError(folioInstance.uuid, errorMessage);
+        BulkEditSearchPane.verifyError(
+          folioInstance.uuid,
+          ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT,
+        );
 
         // Step 16: Download changed records (MARC)
         BulkEditActions.openActions();
@@ -267,7 +273,7 @@ describe('Bulk-edit', () => {
         // Step 18: Download errors (CSV)
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-          `ERROR,${folioInstance.uuid},${errorMessage}`,
+          `ERROR,${folioInstance.uuid},${ERROR_MESSAGES.FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT}`,
         ]);
 
         // Step 19: Inventory app - verify changes

@@ -106,7 +106,6 @@ describe('Eureka', () => {
           cy.login(userData.username, userData.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           ConsortiumManagerApp.waitLoading();
-          cy.reload();
           ConsortiumManagerApp.waitLoading();
         }, 20_000);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);

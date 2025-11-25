@@ -81,16 +81,12 @@ describe('MARC', () => {
           MarcAuthority.edit();
 
           tags.forEach((tag) => {
+            cy.wait(1000);
             MarcAuthority.changeTag(rowIndexTag1XX, tag);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
-            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
           });
-
           MarcAuthority.changeTag(rowIndexTag1XX, '110');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.edit();
 

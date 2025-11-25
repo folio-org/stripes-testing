@@ -139,8 +139,6 @@ describe('Data Import', () => {
         Object.values(fieldsForChanging).forEach((field) => InventoryEditMarcRecord.editField(field, `${field} $5 NcD`));
         InventoryEditMarcRecord.addField('580', 'Test $5 NcD');
         InventoryEditMarcRecord.saveAndClose();
-        cy.wait(1500);
-        InventoryEditMarcRecord.saveAndClose();
         cy.wait(8000);
         // overlay source bibliographic record
         InventoryInstance.startOverlaySourceBibRecord();

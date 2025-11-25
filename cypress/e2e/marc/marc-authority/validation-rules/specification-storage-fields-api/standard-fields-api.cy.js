@@ -21,7 +21,7 @@ describe('MARC Authority Validation Rules - Standard Fields API', () => {
     cy.getAdminToken();
     cy.createTempUser(requiredPermissions).then((createdUser) => {
       user = createdUser;
-      cy.getSpecificatoinIds().then((specs) => {
+      cy.getSpecificationIds().then((specs) => {
         // Find the specification with profile 'authority'
         const authoritySpec = specs.find((s) => s.profile === 'authority');
         expect(authoritySpec, 'MARC authority specification exists').to.exist;
@@ -138,6 +138,190 @@ describe('MARC Authority Validation Rules - Standard Fields API', () => {
           expect(unchangedField.required).to.eq(originalField.required);
           expect(unchangedField.deprecated).to.eq(originalField.deprecated);
           expect(unchangedField.scope).to.eq('standard');
+        });
+      });
+    },
+  );
+
+  it(
+    'C499841 Cannot update Standard field with invalid "url" for MARC authority spec (API) (spitfire)',
+    { tags: ['extendedPath', 'C499841', 'spitfire'] },
+    () => {
+      // Ensure token is set for the user before API calls
+      cy.getUserToken(user.username, user.password);
+
+      // Get all fields for the MARC authority specification
+      cy.getSpecificationFields(authoritySpecId).then((response) => {
+        expect(response.status).to.eq(200);
+
+        // Find a standard field (e.g., field "100")
+        standardField = findStandardField(response.body.fields, '100');
+        expect(standardField, 'Standard field 100 exists').to.exist;
+
+        // Step 1: Update standard field without "url" field (should succeed)
+        const payloadWithoutUrl = {
+          tag: '100',
+          label: 'Heading - Personal Name',
+          repeatable: false,
+          required: false,
+          deprecated: false,
+        };
+
+        cy.updateSpecificationField(standardField.id, payloadWithoutUrl, true).then(
+          (updateResp) => {
+            expect(updateResp.status).to.eq(202);
+            expect(updateResp.body).to.not.have.property('url');
+          },
+        );
+
+        // Step 2: Verify the updated field doesn't have "url" field
+        cy.getSpecificationFields(authoritySpecId).then((getResp) => {
+          expect(getResp.status).to.eq(200);
+          const updatedField = findStandardField(getResp.body.fields, '100');
+          expect(updatedField).to.not.have.property('url');
+        });
+
+        // Step 3: Invalid URL validation test scenarios
+        const invalidUrlScenarios = [
+          {
+            description: 'empty URL',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: '',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 400,
+            expectedError: "The 'url' field should be valid URL.",
+          },
+          {
+            description: 'URL without protocol',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: 'www.loc.gov/marc/authority/ad100.html',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 400,
+            expectedError: "The 'url' field should be valid URL.",
+          },
+          {
+            description: 'URL with invalid protocol',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: 'https/www.loc.gov/marc/authority/ad100.html',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 400,
+            expectedError: "The 'url' field should be valid URL.",
+          },
+          {
+            description: 'URL with space only',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: ' ',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 400,
+            expectedError: "The 'url' field should be valid URL.",
+          },
+          {
+            description: 'URL with space in the middle',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: 'https://www.lo c.gov/marc/authority/ad100.html',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 400,
+            expectedError: "The 'url' field should be valid URL.",
+          },
+          {
+            description: 'URL with multiple concatenated URLs',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: 'https://www.loc.gov/marc/authority/ad100.https://www.loc.gov/marc/authority/ad1001.html',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 400,
+            expectedError: "The 'url' field should be valid URL.",
+          },
+        ];
+
+        // Execute invalid URL test scenarios
+        invalidUrlScenarios.forEach((scenario) => {
+          cy.updateSpecificationField(standardField.id, scenario.payload, false).then(
+            (updateResp) => {
+              expect(updateResp.status, `${scenario.description} should fail with 400`).to.eq(
+                scenario.expectedStatus,
+              );
+              expect(updateResp.body.errors).to.exist;
+              expect(updateResp.body.errors[0].message).to.contain(scenario.expectedError);
+            },
+          );
+        });
+
+        // Step 4: Valid URL scenarios
+        const validUrlScenarios = [
+          {
+            description: 'URL with spaces at beginning and end (should trim)',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: ' https://www.loc.gov/marc/authority/ad100.html ',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 202,
+          },
+          {
+            description: 'valid updated URL',
+            payload: {
+              tag: '100',
+              label: 'Heading - Personal Name',
+              url: 'https://www.loc.gov/marc/authority/ad100/updated.html',
+              repeatable: false,
+              required: false,
+              deprecated: false,
+            },
+            expectedStatus: 202,
+          },
+        ];
+
+        // Execute valid URL test scenarios
+        validUrlScenarios.forEach((scenario) => {
+          cy.updateSpecificationField(standardField.id, scenario.payload, true).then(
+            (updateResp) => {
+              expect(updateResp.status, `${scenario.description} should succeed with 202`).to.eq(
+                scenario.expectedStatus,
+              );
+              expect(updateResp.body.url).to.eq(scenario.payload.url.trim());
+            },
+          );
+        });
+
+        // Step 5: Final verification - Get updated field with valid URL
+        cy.getSpecificationFields(authoritySpecId).then((finalResp) => {
+          expect(finalResp.status).to.eq(200);
+          const finalField = findStandardField(finalResp.body.fields, '100');
+          expect(finalField, 'Standard field 100 still exists').to.exist;
+          expect(finalField.url).to.eq('https://www.loc.gov/marc/authority/ad100/updated.html');
         });
       });
     },

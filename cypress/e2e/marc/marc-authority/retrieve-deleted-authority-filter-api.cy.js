@@ -37,7 +37,7 @@ describe('MARC', () => {
         'LC Subject Headings (LCSH)',
         "LC Children's Subject Headings",
         'LC Genre/Form Terms (LCGFT)',
-        'LC Demographic Group Terms (LCFGT)',
+        'LC Demographic Group Terms (LCDGT)',
         'LC Medium of Performance Thesaurus for Music (LCMPT)',
         'Faceted Application of Subject Terminology (FAST)',
         'Medical Subject Headings (MeSH)',
@@ -109,8 +109,6 @@ describe('MARC', () => {
               testData.tag010,
               `$a ${testData.localSourceCode}432317`,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           });

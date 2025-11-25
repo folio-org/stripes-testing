@@ -225,13 +225,6 @@ describe('Inventory', () => {
                   InventorySearchAndFilter.toggleAccordionByName(
                     testData.statisticalCodeAccordionName,
                   );
-
-                  InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
-                    testData.statisticalCodeAccordionName,
-                    statisticalCodes[3].uiOptionName,
-                    true,
-                    1,
-                  );
                   InventorySearchAndFilter.selectMultiSelectFilterOption(
                     testData.statisticalCodeAccordionName,
                     statisticalCodes[3].uiOptionName,

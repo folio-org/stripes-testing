@@ -10,52 +10,57 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {
-      instanceTitle: `C411684 folio instance-${getRandomPostfix()}`,
-    };
+    describe('Consortia', () => {
+      const testData = {
+        instanceTitle: `C411684 folio instance-${getRandomPostfix()}`,
+      };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-        testData.instanceTypeId = instanceTypes[0].id;
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle,
-          },
-        }).then((instanceData) => {
-          testData.instanceId = instanceData.instanceId;
+      before('Create test data', () => {
+        cy.getAdminToken();
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          testData.instanceTypeId = instanceTypes[0].id;
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: testData.instanceTitle,
+            },
+          }).then((instanceData) => {
+            testData.instanceId = instanceData.instanceId;
+          });
+        });
+
+        cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+          testData.user = userProperties;
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
 
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       });
-    });
 
-    after('Delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      it(
+        'C411684 (CONSORTIA) Verify that the Add item and Add holdings buttons are not available in the Instance detail screen of Central tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C411684'] },
+        () => {
+          InventoryInstances.searchByTitle(testData.instanceId);
+          InventoryInstances.selectInstance();
+          InstanceRecordView.waitLoading();
+          InstanceRecordView.verifyAddHoldingsButtonIsAbsent();
+          InstanceRecordView.expandConsortiaHoldings();
+          InstanceRecordView.verifyAddItemButtonVisibility({
+            holdingName: 'Consortial holdings',
+            shouldBePresent: false,
+          });
+        },
+      );
     });
-
-    it(
-      'C411684 (CONSORTIA) Verify that the Add item and Add holdings buttons are not available in the Instance detail screen of Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C411684'] },
-      () => {
-        InventoryInstances.searchByTitle(testData.instanceId);
-        InventoryInstances.selectInstance();
-        InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyAddHoldingsButtonIsAbsent();
-        InstanceRecordView.expandConsortiaHoldings();
-        InstanceRecordView.verifyAddItemButtonIsAbsent({ holdingName: 'Consortial holdings' });
-      },
-    );
   });
 });

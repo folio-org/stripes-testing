@@ -109,7 +109,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
           InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(testData.bibFile.instanceTitle);
@@ -124,7 +123,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(field.index, field.tag);
           });
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.waitForAuthRefresh(() => {
@@ -132,7 +131,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
             InventoryInstances.waitContentLoading();
           }, 20_000);
         });
@@ -160,7 +158,7 @@ describe('MARC', () => {
           QuickMarcEditor.fillLinkedFieldBox(field.index, field.fillBoxNumber, field.fillValue);
         });
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
 
         linkableFields.forEach((field) => {
           QuickMarcEditor.checkErrorMessage(field.index, testData.errorMessage);

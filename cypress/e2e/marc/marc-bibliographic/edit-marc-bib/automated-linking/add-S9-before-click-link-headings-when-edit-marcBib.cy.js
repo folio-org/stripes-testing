@@ -96,8 +96,6 @@ describe('MARC', () => {
                   QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
                 });
                 QuickMarcEditor.pressSaveAndClose();
-                cy.wait(1500);
-                QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -106,8 +104,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -175,8 +171,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkValueExist(14, '$9');
             QuickMarcEditor.checkValueExist(15, '$9');
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();

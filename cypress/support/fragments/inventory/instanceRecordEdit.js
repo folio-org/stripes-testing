@@ -187,6 +187,18 @@ export default {
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
   },
+  addSubjectType: (subjectType) => {
+    cy.do([
+      subjectAccordion.find(Button('Add subject')).click(),
+      Select({ name: 'subjects[0].typeId' }).choose(subjectType),
+    ]);
+  },
+  addSubjectSource: (subjectSource) => {
+    cy.do([
+      subjectAccordion.find(Button('Add subject')).click(),
+      Select({ name: 'subjects[0].sourceId' }).choose(subjectSource),
+    ]);
+  },
   changeSubject: (subject) => {
     cy.do(subjectField.fillIn(subject));
   },
@@ -221,10 +233,15 @@ export default {
     cy.do([Selection({ id: 'additem_permanentlocation' }).choose(including(locationName))]);
   },
   chooseTemporaryLocation(locationName) {
-    cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
+    cy.do(Button({ id: 'additem_temporarylocation' }).click());
+    cy.do([
+      SelectionList({ id: 'sl-container-additem_temporarylocation' }).select(
+        including(locationName),
+      ),
+    ]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(matching(new RegExp(`^${statusTerm}`))));
+    cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
   saveAndClose() {
     cy.wait(1500);
@@ -245,10 +262,15 @@ export default {
     cy.do(contributorButton.click());
   },
 
-  fillContributorData(indexRow, name, nameType, type) {
+  fillContributorData(indexRow, name, nameType, type, typeFreeText) {
     cy.do(TextArea({ name: `contributors[${indexRow}].name` }).fillIn(name));
     cy.do(Select({ name: `contributors[${indexRow}].contributorNameTypeId` }).choose(nameType));
     cy.do(Select({ name: `contributors[${indexRow}].contributorTypeId` }).choose(type));
+    if (typeFreeText) {
+      cy.do(
+        TextArea({ name: `contributors[${indexRow}].contributorTypeText` }).fillIn(typeFreeText),
+      );
+    }
   },
 
   fillResourceTitle(title) {
@@ -279,6 +301,9 @@ export default {
     ]);
     cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
     cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
+  },
+  clickDiscoverySuppressCheckbox() {
+    cy.do(supressFromDiscoveryCheckbox.click());
   },
   verifyDiscoverySuppressCheckbox(isChecked = false, isDisabled = false) {
     if (isChecked) {
@@ -576,6 +601,14 @@ export default {
             ),
           ),
         )
+        .exists(),
+    );
+  },
+
+  verifyErrorMessage(message) {
+    cy.expect(
+      Modal('Saving instance failed')
+        .find(HTML(including(message)))
         .exists(),
     );
   },

@@ -17,7 +17,7 @@ Cypress.Commands.add(
     failOnStatusCode = true,
     additionalHeaders = null,
     encoding = null,
-    responseTimeout = null,
+    customTimeout = null,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -43,9 +43,7 @@ Cypress.Commands.add(
     if (encoding) {
       requestObject = { ...requestObject, encoding };
     }
-    if (responseTimeout) {
-      requestObject = { ...requestObject, timeout: responseTimeout };
-    }
+    if (customTimeout) requestObject = { ...requestObject, timeout: customTimeout };
     cy.request(requestObject);
   },
 );

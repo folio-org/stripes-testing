@@ -7,6 +7,10 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import Users from '../../../../../support/fragments/users/users';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -33,10 +37,16 @@ describe('MARC', () => {
       900: { index: 12, message: 'Warn: Field is undefined.' },
     };
 
+    let specId;
+
     before(() => {
       cy.getAdminToken();
+      getAuthoritySpec().then((spec) => {
+        specId = spec.id;
+        toggleAllUndefinedValidationRules(specId, { enable: true });
+      });
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C552450');
-      cy.getSpecificatoinIds().then((specifications) => {
+      cy.getSpecificationIds().then((specifications) => {
         specifications.forEach(({ id }) => {
           cy.syncSpecifications(id);
         });
@@ -74,12 +84,13 @@ describe('MARC', () => {
         MarcAuthorities.deleteViaAPI(id);
       });
       Users.deleteViaApi(testData.userProperties.userId);
+      toggleAllUndefinedValidationRules(specId, { enable: false });
     });
 
     describe('Edit MARC bib', () => {
       it(
         "C552450 MARC validation doesn't start on deleted field during editing of MARC authority record (spitfire)",
-        { tags: ['criticalPath', 'spitfire', 'C552450'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C552450'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFile.queryValue);
           MarcAuthorities.selectFirst(marcFile.queryValue);

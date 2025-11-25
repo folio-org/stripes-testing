@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -133,7 +135,7 @@ describe('Bulk-edit', () => {
           [hridValues.folioHrid, hridValues.marcHrid].forEach((hrid) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               hrid,
-              'No change in value required',
+              ERROR_MESSAGES.NO_CHANGE_REQUIRED,
               'Warning',
             );
           });

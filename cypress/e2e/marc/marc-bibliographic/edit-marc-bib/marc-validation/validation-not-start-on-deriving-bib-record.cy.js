@@ -6,6 +6,10 @@ import InventoryInstances from '../../../../../support/fragments/inventory/inven
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -56,9 +60,15 @@ describe('MARC', () => {
       },
     ];
 
+    let specId;
+
     before(() => {
       cy.getAdminToken();
-      cy.getSpecificatoinIds().then((specifications) => {
+      getBibliographicSpec().then((spec) => {
+        specId = spec.id;
+        toggleAllUndefinedValidationRules(specId, { enable: true });
+      });
+      cy.getSpecificationIds().then((specifications) => {
         specifications.forEach(({ id }) => {
           cy.syncSpecifications(id);
         });
@@ -91,11 +101,12 @@ describe('MARC', () => {
     after(() => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+      toggleAllUndefinedValidationRules(specId, { enable: false });
     });
     describe('Edit MARC bib', () => {
       it(
         "C552449 MARC validation doesn't start on deleted field during deriving of MARC bib record (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C552449'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C552449'] },
         () => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();

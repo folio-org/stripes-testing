@@ -9,7 +9,7 @@ import Users from '../../support/fragments/users/users';
 describe('Users', () => {
   let userData;
   let servicePointId;
-  const newPassword = generatePassword();
+  const newPassword = `${generatePassword()}_${generatePassword()}`;
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
@@ -35,8 +35,10 @@ describe('Users', () => {
     'C511 User is able to change password locally (volaris)',
     { tags: ['extendedPath', 'volaris', 'C511'] },
     () => {
-      ChangePassword.openChangePasswordViaUserProfile();
-      ChangePassword.checkInitialState();
+      cy.waitForAuthRefresh(() => {
+        ChangePassword.openChangePasswordViaUserProfile();
+        ChangePassword.checkInitialState();
+      });
 
       ChangePassword.fillPasswordFields(userData.password, newPassword, newPassword);
 

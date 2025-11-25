@@ -7,8 +7,10 @@ import {
   Link,
   MultiColumnList,
   MultiColumnListCell,
+  MultiSelect,
   Pane,
   PaneHeader,
+  Spinner,
   TextField,
 } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
@@ -28,6 +30,7 @@ const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
 const tagsAccordion = Accordion('Tags');
 const hridKeyValue = KeyValue('Item HRID');
+const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -56,7 +59,11 @@ const verifyItemStatusInPane = (itemStatus) => {
 };
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
-  cy.do(Button({ icon: 'times' }).click());
+  cy.do(
+    PaneHeader()
+      .find(Button({ icon: 'times' }))
+      .click(),
+  );
   cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
@@ -559,17 +566,27 @@ export default {
     );
   },
 
-  checkElectronicAccess: (relationshipValue, uriValue) => {
-    cy.expect(
-      electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
-        .exists(),
-    );
-    cy.expect(
-      electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
-        .exists(),
-    );
+  checkElectronicAccess: (
+    relationshipValue,
+    uriValue,
+    linkText,
+    materialsSpecified,
+    urlPublicNote,
+    row = 0,
+  ) => {
+    const columnMap = new Map([
+      ['URL relationship', relationshipValue],
+      ['URI', uriValue],
+      ['Link text', linkText],
+      ['Materials specified', materialsSpecified],
+      ['URL public note', urlPublicNote],
+    ]);
+
+    columnMap.forEach((content, column) => {
+      cy.expect(
+        electronicAccessAccordion.find(MultiColumnListCell({ row, column, content })).exists(),
+      );
+    });
   },
 
   verifyLastUpdatedDate(date, userName) {
@@ -615,4 +632,20 @@ export default {
   },
 
   verifyHrid: (hrid) => cy.expect(hridKeyValue.has({ value: hrid })),
+
+  verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),
+
+  verifyRequestsCount: (count) => {
+    cy.expect(loanAccordion.find(KeyValue('Requests', { value: count.toString() })).exists());
+  },
+
+  addTag: (tagName) => {
+    cy.expect(tagsAccordion.find(Spinner()).absent());
+    cy.do(tagsAccordion.find(textFieldTagInput).choose(tagName));
+    cy.wait(1500);
+  },
+
+  checkInstanceTitle: (instanceTitle) => {
+    cy.expect(Pane(including('Item')).find(Link(instanceTitle)).exists());
+  },
 };

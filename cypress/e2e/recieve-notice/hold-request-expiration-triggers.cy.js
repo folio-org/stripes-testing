@@ -1,35 +1,36 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Checkout from '../../support/fragments/checkout/checkout';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NoticePolicyApi, {
   NOTICE_CATEGORIES,
 } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
-import Requests from '../../support/fragments/requests/requests';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
-  describe('Request notice triggers', { retries: { runMode: 1 } }, () => {
+  describe('Request notice triggers', () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       adminSourceRecord: {},
@@ -228,9 +229,9 @@ describe('Patron notices', () => {
           NewNoticePolicyTemplate.checkAfterSaving(template);
         });
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
-
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
         NewNoticePolicy.checkPolicyName(noticePolicy);
         cy.wait(5000);
@@ -244,14 +245,19 @@ describe('Patron notices', () => {
             testData.addedRule = newRule;
           });
         });
-        cy.visit(TopMenu.checkOutPath);
+
+        cy.login(testData.checkOutUser.username, testData.checkOutUser.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
         CheckOutActions.checkOutUser(testData.checkOutUser.barcode);
         CheckOutActions.checkOutItem(itemData.barcode);
         Checkout.verifyResultsInTheRow([itemData.barcode]);
         CheckOutActions.endCheckOutSession();
         cy.wait(5000);
 
-        cy.visit(TopMenu.requestsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+        Requests.waitLoading();
         NewRequest.createNewRequest({
           itemBarcode: itemData.barcode,
           itemTitle: itemData.title,
@@ -261,7 +267,8 @@ describe('Patron notices', () => {
         });
         NewRequest.waitLoading();
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+        CheckInActions.waitLoading();
         CheckInActions.checkInItemModified(itemData.barcode);
         AwaitingPickupForARequest.unselectCheckboxPrintSlipModified();
         AwaitingPickupForARequest.closeModalModified();

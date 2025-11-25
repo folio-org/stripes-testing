@@ -72,8 +72,6 @@ describe('MARC', () => {
               cy.loginAsAdmin();
               cy.visit(TopMenu.inventoryPath);
               InventoryInstances.waitContentLoading();
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             cy.ifConsortia(true, () => {
@@ -96,9 +94,7 @@ describe('MARC', () => {
               testData.tag600RowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3_000);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3_000);
+            QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
             cy.createTempUser([
@@ -113,8 +109,6 @@ describe('MARC', () => {
                   path: TopMenu.marcAuthorities,
                   waiter: MarcAuthorities.waitLoading,
                 });
-                cy.reload();
-                MarcAuthorities.waitLoading();
               }, 20_000);
             });
           });
@@ -151,9 +145,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(6, testData.calloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3_000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyConfirmModal();
 
           QuickMarcEditor.confirmDelete();

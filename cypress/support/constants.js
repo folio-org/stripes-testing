@@ -73,6 +73,7 @@ export const ITEM_STATUS_NAMES = {
   IN_PROCESS: 'In process',
   AVAILABLE: 'Available',
   MISSING: 'Missing',
+  LONG_MISSING: 'Long missing',
   IN_TRANSIT: 'In transit',
   PAGED: 'Paged',
   AWAITING_PICKUP: 'Awaiting pickup',
@@ -356,6 +357,11 @@ export const INSTANCE_SOURCE_NAMES = {
   LDE: 'LINKED_DATA',
 };
 
+export const HOLDINGS_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO',
+};
+
 export const PROFILE_TYPE_NAMES = {
   JOB_PROFILE: 'JOB_PROFILE',
   MATCH_PROFILE: 'MATCH_PROFILE',
@@ -482,7 +488,7 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   LC_SUBJECT_HEADINGS: 'LC Subject Headings (LCSH)',
   LC_CHILDREN_SUBJECT_HEADINGS: "LC Children's Subject Headings",
   LC_GENRE_FORM_TERMS: 'LC Genre/Form Terms (LCGFT)',
-  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCFGT)',
+  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCDGT)',
   LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC:
     'LC Medium of Performance Thesaurus for Music (LCMPT)',
   FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY: 'Faceted Application of Subject Terminology (FAST)',
@@ -491,6 +497,21 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   RARE_BOOKS_AND_MANUSCRIPTS_SECTION: 'Rare Books and Manuscripts Section (RBMS)',
   ART_AND_ARCHITECTURE_THESAURUS: 'Art & architecture thesaurus (AAT)',
   GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
+};
+
+export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
+  AUTHORITY_SOURCE: 'Authority source',
+  REFERENCES: 'References',
+  THESAURUS: 'Thesaurus',
+  TYPE_OF_HEADING: 'Type of heading',
+  DATE_CREATED: 'Date created',
+  DATE_UPDATED: 'Date updated',
+};
+
+export const AUTHORITY_TYPES = {
+  AUTHORIZED: 'Authorized',
+  REFERENCE: 'Reference',
+  AUTH_REF: 'Auth/Ref',
 };
 
 export const ACTION_NAMES_IN_ACTION_PROFILE = {
@@ -826,7 +847,7 @@ export const AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
   RECUPD: 'RecUpd',
   PERSNAME: 'Pers Name',
   LEVELEST: 'Level Est',
-  MODRECEST: 'Mod Rec Est',
+  MODREC: 'Mod Rec',
   SOURCE: 'Source',
 };
 
@@ -1085,6 +1106,115 @@ export const MATERIAL_TYPE_IDS = {
   DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
 };
 
+export const EHOLDINGS_PACKAGE_HEADERS = [
+  'Provider Level Token',
+  'Provider Name',
+  'Provider Id',
+  'Package Level Token',
+  'Package Name',
+  'Package Id',
+  'Package Type',
+  'Package Content Type',
+  'Package Holdings Status',
+  'Package Custom Coverage',
+  'Package Show To Patrons',
+  'Package Automatically Select',
+  'Package Proxy',
+  'Package Access Status Type',
+  'Package Tags',
+  'Package Agreements',
+  'Package Note',
+];
+
+export const EHOLDINGS_TITLE_HEADERS = [
+  'Title Name',
+  'Alternate Titles',
+  'Title Id',
+  'Publication Type',
+  'Title Type',
+  'Title Holdings Status',
+  'Title Show To Patrons',
+  'Managed Coverage',
+  'Managed Embargo',
+  'Custom Coverage',
+  'Custom Embargo',
+  'Coverage Statement',
+  'Title Proxy',
+  'Url',
+  'Title Access Status Type',
+  'Title Tags',
+  'Contributors',
+  'Edition',
+  'Publisher',
+  'ISSN Print',
+  'ISSN Online',
+  'ISBN Print',
+  'ISBN Online',
+  'Subjects',
+  'Peer Reviewed',
+  'Description',
+  'Custom Value 1',
+  'Custom Value 2',
+  'Custom Value 3',
+  'Custom Value 4',
+  'Custom Value 5',
+  'Title Agreements',
+  'Title Note',
+];
+
+export const EHOLDINGS_EXPORT_FIELDS = {
+  PACKAGE: [
+    'Access Status Type',
+    'Agreements',
+    'Automatically Select titles',
+    'Custom Coverage',
+    'Holdings status',
+    'Notes',
+    'Package Content Type',
+    'Package Id',
+    'Package Level Token',
+    'Package Name',
+    'Package Type',
+    'Provider Id',
+    'Provider Level Token',
+    'Provider Name',
+    'Proxy',
+    'Show To Patrons',
+    'Tags',
+  ],
+  TITLE: [
+    'Access status type',
+    'Agreements',
+    'Alternate title(s)',
+    'Contributors',
+    'Coverage statement',
+    'Custom coverage dates',
+    'Custom Embargo',
+    'Custom label',
+    'Description',
+    'Edition',
+    'Holdings Status',
+    'ISBN_Online',
+    'ISBN_Print',
+    'ISSN_Online',
+    'ISSN_Print',
+    'Managed coverage dates',
+    'Managed Embargo',
+    'Notes',
+    'Peer reviewed',
+    'Proxy',
+    'Publication Type',
+    'Publisher',
+    'Show to patron',
+    'Subjects',
+    'Tags',
+    'Title ID',
+    'Title name',
+    'Title Type',
+    'URL',
+  ],
+};
+
 export const CLASSIFICATION_IDENTIFIER_TYPES = {
   ADDITIONAL_DEWEY: '74c08086-81a4-4466-93d8-d117ce8646db',
   CANADIAN_CLASSIFICATION: 'ad615f6e-e28c-4343-b4a0-457397c5be3e',
@@ -1180,7 +1310,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CITATION_REFERENCES_NOTE: 'Citation / References note',
     COPY_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
     CREATION_PRODUCTION_CREDITS_NOTE: 'Creation / Production Credits note',
-    CUMULATIVE_INDEX_FINDING_AIDES_NOTES: 'Cumulative Index / Finding Aides notes',
+    CUMULATIVE_INDEX_FINDING_AIDS_NOTES: 'Cumulative Index / Finding Aids notes',
     DATA_QUALITY_NOTE: 'Data quality note',
     DATE_TIME_PLACE_EVENT_NOTE: 'Date / time and place of an event note',
     DISSERTATION_NOTE: 'Dissertation note',
@@ -1225,26 +1355,57 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CLASSIFICATION: 'Classification',
   },
   INVENTORY_ITEMS: {
+    ITEM_UUID: 'Item UUID',
+    INSTANCE: 'Instance (Title, Publisher, Publication date)',
+    HOLDINGS: 'Holdings (Location, Call number)',
+    ITEM_EFFECTIVE_LOCATION: 'Item effective location',
+    EFFECTIVE_CALL_NUMBER: 'Effective call number',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    ITEM_HRID: 'Item HRID',
     BARCODE: 'Barcode',
-    STATUS: 'Status',
+    ACCESSION_NUMBER: 'Accession number',
+    ITEM_IDENTIFIER: 'Item identifier',
+    FORMER_IDENTIFIER: 'Former identifier',
+    STATISTICAL_CODES: 'Statistical codes',
     ADMINISTRATIVE_NOTE: 'Administrative note',
+    MATERIAL_TYPE: 'Material type',
+    COPY_NUMBER: 'Copy number',
+    SHELVING_ORDER: 'Shelving order',
+    ITEM_LEVEL_CALL_NUMBER_TYPE: 'Item level call number type',
+    ITEM_LEVEL_CALL_NUMBER_PREFIX: 'Item level call number prefix',
+    ITEM_LEVEL_CALL_NUMBER: 'Item level call number',
+    ITEM_LEVEL_CALL_NUMBER_SUFFIX: 'Item level call number suffix',
+    NUMBER_OF_PIECES: 'Number of pieces',
+    DESCRIPTION_OF_PIECES: 'Description of pieces',
+    ENUMERATION: 'Enumeration',
+    CHRONOLOGY: 'Chronology',
+    VOLUME: 'Volume',
+    YEAR_CAPTION: 'Year, caption',
+    NUMBER_OF_MISSING_PIECES: 'Number of missing pieces',
+    MISSING_PIECES: 'Missing pieces',
+    MISSING_PIECES_DATE: 'Missing pieces date',
+    ITEM_DAMAGED_STATUS: 'Item damaged status',
+    ITEM_DAMAGED_STATUS_DATE: 'Item damaged status date',
     ACTION_NOTE: 'Action note',
     BINDING_NOTE: 'Binding note',
-    CHECK_IN_NOTE: 'Check in note',
-    CHECK_OUT_NOTE: 'Check out note',
+    COPY_NOTE: 'Copy note',
     ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
-    ITEM_UUID: 'Item UUID',
+    NOTE: 'Note',
     PROVENANCE_NOTE: 'Provenance note',
-    MEMBER: 'Member',
-    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    REPRODUCTION_NOTE: 'Reproduction note',
     PERMANENT_LOAN_TYPE: 'Permanent loan type',
     TEMPORARY_LOAN_TYPE: 'Temporary loan type',
-    COPY_NOTE: 'Copy note',
-    REPRODUCTION_NOTE: 'Reproduction note',
-    NOTE: 'Note',
+    STATUS: 'Status',
+    CHECK_IN_NOTE: 'Check in note',
+    CHECK_OUT_NOTE: 'Check out note',
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
-    ITEM_HRID: 'Item HRID',
+    ELECTRONIC_ACCESS: 'Electronic access',
+    IS_BOUND_WITH: 'Is bound with',
+    BOUND_WITH_TITLES: 'Bound with titles',
+    TAGS: 'Tags',
+    HOLDINGS_UUID: 'Holdings UUID',
+    MEMBER: 'Member',
   },
   USERS: {
     USERNAME: 'Username',
@@ -1287,18 +1448,49 @@ export const HOLDING_NOTE_TYPES = {
 };
 
 export const ITEM_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  BINDING: 'Binding',
   CHECK_IN_NOTE: 'Check in note',
   CHECK_OUT_NOTE: 'Check out note',
+  COPY_NOTE: 'Copy note',
+  ELECTRONIC_BOOKPLATE: 'Electronic bookplate',
+  PROVENANCE: 'Provenance',
+  REPRODUCTION: 'Reproduction',
+  NOTE: 'Note',
 };
 
 export const INSTANCE_NOTE_TYPES = {
   ACTION_NOTE: 'Action note',
   ADMINISTRATIVE_NOTE: 'Administrative note',
+  AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
+  LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
+};
+
+export const BULK_EDIT_ACTIONS = {
+  ADD: 'Add',
+  ADD_NOTE: 'Add note',
+  ADDITIONAL_SUBFIELD: 'Additional subfield',
+  APPEND: 'Append',
+  CLEAR_FIELD: 'Clear field',
+  CHANGE_NOTE_TYPE: 'Change note type',
+  DUPLICATE_TO: 'Duplicate to',
+  FIND: 'Find',
+  FIND_FULL_FIELD_SEARCH: 'Find (full field search)',
+  REPLACE_WITH: 'Replace with',
+  REMOVE: 'Remove',
+  REMOVE_ALL: 'Remove all',
+  REMOVE_MARK_AS_STAFF_ONLY: 'Remove mark as staff only',
+  REMOVE_FIELD: 'Remove field',
+  REMOVE_SUBFIELD: 'Remove subfield',
+  SET_TRUE: 'Set true',
+  SET_FALSE: 'Set false',
+  MARK_AS_STAFF_ONLY: 'Mark as staff only',
 };
 
 export const AUTHORITY_FILE_SOURCES = {
@@ -1417,10 +1609,12 @@ export const BULK_EDIT_FORMS = {
 
 export const INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES = {
   TYPE: 'Type',
+  COMP: 'Comp',
   AUDN: 'Audn',
   FORM: 'Form',
   FILE: 'File',
   GPUB: 'GPub',
+  PROJ: 'Proj',
 };
 
 export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
@@ -1441,6 +1635,11 @@ export const INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES = {
   DETST: 'DetSt',
   COMPL: 'Compl',
   FID: 'FID',
+  IBD: 'IBD',
+  COBRWR: 'CoBrWr',
+  BMF: 'BMF',
+  RRRRR: 'RRR/RR',
+  DATATYPE: 'Data type',
 };
 
 export const INVENTORY_006_FIELD_TYPE_DROPDOWN = {
@@ -1575,3 +1774,45 @@ export const STANDARD_FIELDS = [
 export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
 
 export const DEFAULT_WAIT_TIME = 4000;
+
+export const API_PATH = {
+  INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
+  ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',
+};
+
+export const INVENTORY_COLUMN_HEADERS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  PUBLISHERS: 'Publishers',
+  DATE: 'Date',
+  RELATION: 'Relation',
+  INSTANCE_HRID: 'Instance HRID',
+};
+
+export const AUTHORITY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'MARC authority app Search',
+  SHORTCUTS: 'Keyboard shortcuts',
+  DOCUMENTATION: 'MARC authority documentation',
+};
+
+export const INVENTORY_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'Inventory app search',
+  SHORTCUTS: 'Keyboard shortcuts',
+};
+
+export const EHOLDINGS_APP_CONTEXT_DROPDOWN_OPTIONS = {
+  SEARCH: 'eholdings app Search',
+  SHORTCUTS: 'Keyboard shortcuts',
+  INQUIRY: 'Submit a KB Content Inquiry',
+  STATUS: 'EBSCO System status',
+};
+
+export const EHOLDINGS_KB_SETTINGS_TABS = {
+  ROOT_PROXY: 'Root proxy',
+  CUSTOM_LABELS: 'Custom labels',
+  ACCESS_STATUS_TYPES: 'Access status types',
+  ASSIGNED_USERS: 'Assigned users',
+  USAGE_CONSOLIDATION: 'Usage consolidation',
+};
+
+export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';

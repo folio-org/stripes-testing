@@ -2,12 +2,12 @@ import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
 import permissions from '../../support/dictionary/permissions';
+import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -19,30 +19,25 @@ import { getTestEntityValue } from '../../support/utils/stringTools';
 describe('Service Points Switching for Check In', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ itemsCount: 2 }),
-    servicePointA: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    servicePointB: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     userGroup: getTestEntityValue('staff$'),
   };
 
   let patronGroupId = '';
-
-  testData.servicePointA.name = `ServicePointA_${getTestEntityValue()}`;
-  testData.servicePointB.name = `ServicePointB_${getTestEntityValue()}`;
+  let servicePointA;
+  let servicePointB;
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.servicePointA);
-      ServicePoints.createViaApi(testData.servicePointB);
+      ServicePoints.getCircDesk1ServicePointViaApi().then((sp1) => {
+        servicePointA = sp1;
+      });
+      ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
+        servicePointB = sp2;
+      });
 
-      testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.servicePointA.id,
-      }).location;
-
-      Locations.createViaApi(testData.defaultLocation).then((location) => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location,
-        });
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
       });
 
       PatronGroups.createViaApi(testData.userGroup).then((patronGroupResponse) => {
@@ -61,16 +56,16 @@ describe('Service Points Switching for Check In', () => {
           testData.user = userProperties;
 
           UserEdit.addServicePointsViaApi(
-            [testData.servicePointA.id, testData.servicePointB.id],
+            [servicePointA.id, servicePointB.id],
             testData.user.userId,
-            testData.servicePointA.id,
+            servicePointA.id,
           );
 
           Checkout.checkoutItemViaApi({
             id: uuid(),
             itemBarcode: testData.folioInstances[0].items[0].barcode,
             loanDate: moment.utc().format(),
-            servicePointId: testData.servicePointA.id,
+            servicePointId: servicePointA.id,
             userBarcode: testData.user.barcode,
           });
 
@@ -78,7 +73,7 @@ describe('Service Points Switching for Check In', () => {
             id: uuid(),
             itemBarcode: testData.folioInstances[0].items[1].barcode,
             loanDate: moment.utc().format(),
-            servicePointId: testData.servicePointA.id,
+            servicePointId: servicePointA.id,
             userBarcode: testData.user.barcode,
           });
         });
@@ -90,22 +85,11 @@ describe('Service Points Switching for Check In', () => {
     cy.getAdminToken().then(() => {
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
-        servicePoint: testData.servicePointA,
+        servicePoint: servicePointA,
         shouldCheckIn: true,
       });
-
-      UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
-        testData.servicePointA.id,
-        testData.servicePointB.id,
-      ]);
       Users.deleteViaApi(testData.user.userId);
-
       PatronGroups.deleteViaApi(patronGroupId);
-
-      Locations.deleteViaApi(testData.defaultLocation);
-
-      ServicePoints.deleteViaApi(testData.servicePointA.id);
-      ServicePoints.deleteViaApi(testData.servicePointB.id);
     });
   });
 
@@ -120,10 +104,10 @@ describe('Service Points Switching for Check In', () => {
         waiter: CheckInActions.waitLoading,
       });
 
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointA.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointA.name);
       CheckInActions.checkInItemGui(firstItem.barcode);
-      SwitchServicePoint.switchServicePoint(testData.servicePointB.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointB.name);
+      SwitchServicePoint.switchServicePoint(servicePointB.name);
+      SwitchServicePoint.checkIsServicePointSwitched(servicePointB.name);
       CheckInActions.checkInItemGui(secondItem.barcode);
 
       InTransit.verifyModalTitle();
@@ -134,22 +118,24 @@ describe('Service Points Switching for Check In', () => {
       SearchPane.waitLoading();
 
       SearchPane.searchByItemBarcode(firstItem.barcode);
-      SearchPane.findResultRowIndexByContent(firstItem.barcode).then((rowIndex) => {
-        const expectedFirstItemData = {
-          itemBarcode: firstItem.barcode,
-          circAction: 'Checked in',
-          servicePoint: testData.servicePointA.name,
-        };
+
+      const expectedFirstItemData = {
+        itemBarcode: firstItem.barcode,
+        circAction: 'Checked in',
+        servicePoint: servicePointA.name,
+      };
+      SearchPane.findResultRowIndexByContent(expectedFirstItemData.circAction).then((rowIndex) => {
         SearchPane.checkResultSearch(expectedFirstItemData, rowIndex);
       });
 
       SearchPane.searchByItemBarcode(secondItem.barcode);
-      SearchPane.findResultRowIndexByContent(secondItem.barcode).then((rowIndex) => {
-        const expectedSecondItemData = {
-          itemBarcode: secondItem.barcode,
-          circAction: 'Checked in',
-          servicePoint: testData.servicePointB.name,
-        };
+
+      const expectedSecondItemData = {
+        itemBarcode: secondItem.barcode,
+        circAction: 'Checked in',
+        servicePoint: servicePointB.name,
+      };
+      SearchPane.findResultRowIndexByContent(expectedSecondItemData.circAction).then((rowIndex) => {
         SearchPane.checkResultSearch(expectedSecondItemData, rowIndex);
       });
     },

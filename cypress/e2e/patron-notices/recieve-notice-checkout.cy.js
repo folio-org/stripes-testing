@@ -232,8 +232,8 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
-        cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-        cy.wait(10000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
@@ -259,6 +259,7 @@ describe('Patron notices', () => {
           path: topMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
+        cy.wait(7000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {
@@ -286,12 +287,12 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
-        cy.visit(settingsMenu.circulationOtherSettingsPath);
-        cy.wait(10000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        OtherSettings.openTabCirculationOtherSettings();
         OtherSettings.waitLoading();
         OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
-        cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-        cy.wait(10000);
+
+        NewNoticePolicy.openTabCirculationPatronNoticePolicies();
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
@@ -317,6 +318,7 @@ describe('Patron notices', () => {
           path: topMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
+        cy.wait(7000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {

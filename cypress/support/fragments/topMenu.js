@@ -51,6 +51,7 @@ const linkedDataEditor = '/linked-data-editor/search';
 const sudocPath = '/sudoc';
 const settingsBankingInformationPath = '/settings/organizations/banking-information';
 const settingsFinanceExpenseClassesPath = '/settings/finance/expense-classes';
+const settingsFinanceFundTypePath = '/settings/finance/fund-types';
 const settingsInvoiveApprovalPath = '/settings/invoice/approvals';
 const settingsOrganizationsPath = '/settings/organizations';
 const settingsOrdersPath = '/settings/orders';
@@ -118,6 +119,7 @@ export default {
   settingsOrdersPrefixesPath,
   settingsOrdersSuffixesPath,
   oaPath,
+  settingsFinanceFundTypePath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

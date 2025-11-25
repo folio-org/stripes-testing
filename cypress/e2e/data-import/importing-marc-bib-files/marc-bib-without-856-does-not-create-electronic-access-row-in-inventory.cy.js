@@ -201,7 +201,13 @@ describe('Data Import', () => {
         FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
-        ItemRecordView.checkElectronicAccess('No value set-', 'No value set-');
+        ItemRecordView.checkElectronicAccess(
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          'No value set-',
+        );
       },
     );
   });

@@ -10,12 +10,12 @@ const DEFAULT_INSTANCE = {
   previouslyHeld: false,
 };
 
-const displaySettingsBody = {
-  id: uuid(),
-  key: 'display-settings',
+const defaultDisplaySettings = {
   scope: 'ui-inventory.display-settings.manage',
+  key: 'display-settings',
   value: {
-    defaultSort: '',
+    defaultSort: 'title',
+    defaultColumns: ['contributors', 'publishers', 'relation', 'hrid', 'normalizedDate1'],
   },
 };
 
@@ -76,14 +76,16 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
 
 // Returns the LIST of all material types (array of objects, depending on searchParams)
 Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
-  return cy.okapiRequest({
-    path: 'material-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  }).then((response) => {
-    Cypress.env('materialTypes', response.body.mtypes);
-    return response.body.mtypes;
-  });
+  return cy
+    .okapiRequest({
+      path: 'material-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      Cypress.env('materialTypes', response.body.mtypes);
+      return response.body.mtypes;
+    });
 });
 
 // Returns the FIRST material type (object) from the list of all material types
@@ -318,7 +320,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
 });
 
 // Depricated, use createFolioInstanceViaApi instead
-Cypress.Commands.add('createItem', (item) => {
+Cypress.Commands.add('createItem', (item, ignoreErrors = false) => {
   const { itemId = uuid() } = item;
   delete item.itemId;
   cy.okapiRequest({
@@ -329,6 +331,7 @@ Cypress.Commands.add('createItem', (item) => {
       ...item,
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then((res) => {
     return res;
   });
@@ -451,7 +454,7 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       },
       (response) => response.body.status === 'CREATED',
       {
-        limit: 10,
+        limit: 14,
         timeout: 80000,
         delay: 5000,
       },
@@ -655,8 +658,10 @@ Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
       updatedBody.value.defaultSort = sortOption;
       cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
     } else {
-      updatedBody = { ...displaySettingsBody };
-      updatedBody.value.defaultSort = sortOption;
+      updatedBody = { ...defaultDisplaySettings };
+      updatedBody.value = {
+        defaultSort: sortOption,
+      };
       cy.setInventoryDisplaySettingsViaAPI(updatedBody);
     }
   });
@@ -776,5 +781,137 @@ Cypress.Commands.add('toggleLccnDuplicateCheck', ({ enable = true }) => {
         },
       });
     }
+  });
+});
+
+Cypress.Commands.add('batchCreateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'item-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('batchUpdateItemsPatchViaApi', (items) => {
+  return cy.okapiRequest({
+    method: 'PATCH',
+    path: 'item-storage/items',
+    isDefaultSearchParamsRequired: false,
+    body: { items },
+  });
+});
+
+Cypress.Commands.add('getRtacBatchViaApi', (instanceIds, fullPeriodicals = true) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'rtac-batch',
+    body: {
+      instanceIds: Array.isArray(instanceIds) ? instanceIds : [instanceIds],
+      fullPeriodicals,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getMarcRecordDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `records-editor/records?externalId=${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('updateMarcRecordDataViaAPI', (parsedRecordId, updatedData) => {
+  const body = updatedData;
+  body._actionType = 'edit';
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `records-editor/records/${parsedRecordId}`,
+    isDefaultSearchParamsRequired: false,
+    body,
+  });
+});
+
+Cypress.Commands.add('getInstanceAuditDataViaAPI', (recordId) => {
+  cy.okapiRequest({
+    path: `audit-data/inventory/instance/${recordId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
+  cy.okapiRequest({
+    path: 'records-editor/records',
+    method: 'POST',
+    isDefaultSearchParamsRequired: false,
+    body: {
+      _actionType: 'create',
+      externalId: instanceId,
+      fields,
+      leader: QuickMarcEditor.defaultValidHoldingsLdr,
+      marcFormat: 'HOLDINGS',
+      suppressDiscovery: false,
+    },
+  }).then(({ body }) => {
+    recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => response.body.status === 'CREATED',
+      {
+        limit: 10,
+        timeout: 80000,
+        delay: 5000,
+      },
+    ).then((response) => {
+      cy.wrap(response.body.externalId).as('createdMarcHoldingId');
+
+      return cy.get('@createdMarcHoldingId');
+    });
+  });
+});
+
+Cypress.Commands.add('batchUpdateHoldingsViaApi', (holdingsRecords) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'holdings-storage/batch/synchronous?upsert=true',
+    isDefaultSearchParamsRequired: false,
+    body: { holdingsRecords },
+  });
+});
+
+Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
+  cy.getInventoryDisplaySettingsViaAPI().then((entries) => {
+    if (entries.length) {
+      const entryId = entries[0].id;
+      cy.updateInventoryDisplaySettingsViaAPI(entryId, { ...defaultDisplaySettings, id: entryId });
+    } else {
+      cy.setInventoryDisplaySettingsViaAPI(defaultDisplaySettings);
+    }
+  });
+});
+
+Cypress.Commands.add('getInventoryInstanceById', (instanceId) => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: `inventory/instances/${instanceId}`,
+    isDefaultSearchParamsRequired: false,
   });
 });

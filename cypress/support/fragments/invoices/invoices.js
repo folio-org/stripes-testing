@@ -906,13 +906,17 @@ export default {
   },
 
   updateCurrency: (currency) => {
-    cy.do([
-      invoiceDetailsPaneHeader.find(actionsButton).click(),
-      Button('Edit').click(),
-      Selection('Currency*').open(),
-      SelectionList().select(currency),
-      saveAndClose.click(),
-    ]);
+    cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+    cy.wait(500);
+    cy.do(Button('Edit').click());
+    cy.wait(1000);
+    cy.get('label[id=sl-label-currency]').scrollIntoView();
+    cy.do(Selection('Currency*').open());
+    cy.wait(500);
+    cy.do(SelectionList().select(currency));
+    cy.wait(500);
+    cy.do(saveAndClose.click());
+    cy.wait(500);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
@@ -1205,6 +1209,7 @@ export default {
   },
 
   selectStatusFilter: (status) => {
+    cy.wait(500);
     cy.do([
       invoiceFiltersSection
         .find(Section({ id: 'status' }))
@@ -1280,7 +1285,7 @@ export default {
         .find(Button({ ariaLabel: 'Fiscal year filter list' }))
         .click(),
       fiscalYearFilterSection.find(Button({ id: 'fiscalYearId-selection' })).click(),
-      fiscalYearFilterSection.find(SelectionOption(fiscalYear)).click(),
+      SelectionList().select(fiscalYear),
     ]);
   },
 
@@ -1291,7 +1296,7 @@ export default {
         .find(Button({ ariaLabel: 'Batch group filter list' }))
         .click(),
       batchGroupFilterSection.find(Button({ id: 'batchGroupId-selection' })).click(),
-      batchGroupFilterSection.find(SelectionOption(batchGroup)).click(),
+      SelectionList().select(batchGroup),
     ]);
   },
 
@@ -1394,5 +1399,75 @@ export default {
       .then((rowCount) => {
         expect(rowCount).to.eq(1);
       });
+  },
+
+  clickNewInvoiceButton() {
+    cy.do([Button('Actions').click(), Button('New').click()]);
+  },
+
+  checkPresetAdjustment(adjustment) {
+    cy.get('input[name$=".description"]').then((inputs) => {
+      const values = Array.from(inputs).map((input) => input.value);
+      const index = values.indexOf(adjustment.description);
+      cy.wrap(index).as('adjIndex');
+      cy.expect([
+        TextField({ name: `adjustments[${index}].description` }).has({
+          value: adjustment.description,
+        }),
+        TextField({ name: `adjustments[${index}].value` }).has({ value: adjustment.value }),
+        Select({ name: `adjustments[${index}].prorate` }).has({ value: adjustment.prorate }),
+        Select({ name: `adjustments[${index}].relationToTotal` }).has({
+          value: adjustment.relationToTotal,
+        }),
+        Checkbox({ name: `adjustments[${index}].exportToAccounting` }).has({ checked: false }),
+      ]);
+    });
+    cy.get('@adjIndex').then((index) => {
+      cy.get(`input[name="adjustments[${index}].description"]`)
+        .parents()
+        .eq(5)
+        .within(() => {
+          cy.get('button[data-test-adjustments-type-amount="true"]')
+            .filter(':contains("$")')
+            .should('have.class', 'primary---xHTjI');
+        });
+    });
+  },
+
+  deleteAdjustment() {
+    cy.get('@adjIndex').then((index) => {
+      cy.get(`input[name="adjustments[${index}].description"]`)
+        .parents()
+        .eq(5)
+        .find('button[icon="trash"]')
+        .click();
+    });
+  },
+
+  checkAdjustmentAbsent(adjustment) {
+    cy.expect(
+      TextField({ name: including('description'), value: adjustment.description }).absent(),
+    );
+  },
+
+  selectAdjustmentInDropdown(adjustmentDescription) {
+    cy.expect(Selection('Preset adjustment').exists());
+    cy.do([
+      Selection('Preset adjustment').focus(),
+      Selection('Preset adjustment').open(),
+      SelectionList().select(adjustmentDescription),
+    ]);
+  },
+
+  clickAddAdjustmentButton() {
+    cy.wait(2000);
+    cy.do(Button({ id: 'adjustments-add-button' }).click());
+  },
+
+  createInvoiceLineNewBlankLine() {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      newBlankLineButton.click(),
+    ]);
   },
 };

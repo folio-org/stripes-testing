@@ -8,6 +8,9 @@ import {
   TextField,
   KeyValue,
   Link,
+  Modal,
+  Selection,
+  SelectionList,
 } from '../../../../interactors';
 import FilterPackagesModal from './modals/filterPackagesModal';
 import EHoldingsResourceView from './eHoldingsResourceView';
@@ -17,13 +20,27 @@ const closeViewButton = Button({ dataTestID: 'close-details-view-button' });
 const packagesSection = Section({ id: 'titleShowPackages' });
 const titleSearchField = TextField({ id: 'eholdings-search' });
 const titleSearchButton = Button('Search');
+const actionsButton = Button('Actions');
+const editTitleButton = Button('Edit');
 const titleInformationSection = Section({ id: 'titleShowTitleInformation' });
+const addToCustomPackageButton = Button('Add to custom package');
+const addTitleToCustomPackageModal = Modal('Add title to custom package');
+const packageDropdown = Selection({ value: including('Choose a package') });
+const customUrlField = TextField('Custom URL');
+const submitButton = Button('Submit');
+const cancelButton = Button('Cancel');
 const publisherKeyValue = KeyValue('Publisher');
 const subjectKeyValue = KeyValue('Subjects');
 
 export default {
   waitLoading: (specialTitle) => {
     cy.expect(Section({ id: specialTitle.replaceAll(' ', '-').toLowerCase() }).exists());
+  },
+
+  editTitle: () => {
+    cy.do(actionsButton.click());
+    cy.do(editTitleButton.click());
+    cy.wait(1000);
   },
 
   filterPackages(selectionStatus = FILTER_STATUSES.NOT_SELECTED, packageName) {
@@ -118,6 +135,11 @@ export default {
   verifySubjectIncludesValue(subject) {
     cy.expect(subjectKeyValue.has({ value: including(subject) }));
   },
+  verifyContentTypeIncludesValue(contentType) {
+    cy.expect(
+      titleInformationSection.find(KeyValue('Content Type')).has({ value: including(contentType) }),
+    );
+  },
 
   getTitleIdFromUrl() {
     return cy.location('pathname').then((path) => {
@@ -130,13 +152,14 @@ export default {
     this.getTitleIdFromUrl().then((id) => {
       cy.okapiRequest({
         method: 'GET',
-        path: `/eholdings/titles/${id}`,
+        path: `eholdings/titles/${id}`,
         searchParams: {
           include: 'resources',
         },
       }).then((response) => {
         const resources = response.body.included.filter(
-          (resource) => resource.attributes.isSelected === !isSelected,
+          (resource) => resource.attributes.isSelected === !isSelected &&
+            resource.attributes.visibilityData.isHidden === false,
         );
         // If packageName is not set, pick first suitable resource
         const selectedResource = packageName
@@ -156,11 +179,102 @@ export default {
           };
           cy.okapiRequest({
             method: 'PUT',
-            path: `/eholdings/resources/${resourceId}`,
+            path: `eholdings/resources/${resourceId}`,
             body: payload,
             contentTypeHeader: 'application/vnd.api+json',
           });
         }
+      });
+    });
+  },
+
+  verifyAddToCustomPackageButtonDisplayed: () => {
+    cy.expect(titleInformationSection.find(addToCustomPackageButton).exists());
+  },
+
+  clickAddToCustomPackage: () => {
+    cy.do(titleInformationSection.find(addToCustomPackageButton).click());
+    cy.expect(addTitleToCustomPackageModal.exists());
+  },
+
+  verifyAddTitleToCustomPackageModalView: () => {
+    cy.expect([
+      addTitleToCustomPackageModal.exists(),
+      packageDropdown.exists(),
+      customUrlField.exists(),
+      cancelButton.exists(),
+      submitButton.exists(),
+    ]);
+  },
+
+  openPackageDropdownInModal: () => {
+    cy.do(packageDropdown.open());
+  },
+
+  verifyPackageDropdownExpanded: () => {
+    cy.expect(SelectionList().exists());
+  },
+
+  selectPackageInModal: (packageName) => {
+    cy.do([SelectionList().filter(packageName), SelectionList().select(packageName)]);
+  },
+
+  verifyPackageSelectedInModal: (packageName) => {
+    cy.expect(Selection({ value: including(packageName) }).exists());
+  },
+
+  fillInCustomUrl: (customUrl) => {
+    cy.do(customUrlField.fillIn(customUrl));
+  },
+
+  verifyCustomUrlFilled: (customUrl) => {
+    cy.expect(customUrlField.has({ value: customUrl }));
+  },
+
+  submitAddTitleToCustomPackageModal: () => {
+    cy.do(submitButton.click());
+  },
+
+  verifyAddTitleToCustomPackageModalClosed: () => {
+    cy.expect(addTitleToCustomPackageModal.absent());
+  },
+
+  addTitleToCustomPackage: (packageName, customUrl) => {
+    cy.expect(addTitleToCustomPackageModal.exists());
+
+    cy.do(packageDropdown.open());
+    cy.expect(SelectionList().exists());
+    cy.do([SelectionList().filter(packageName), SelectionList().select(packageName)]);
+    cy.expect(Selection({ value: including(packageName) }).exists());
+
+    if (customUrl) {
+      cy.do(customUrlField.fillIn(customUrl));
+      cy.expect(customUrlField.has({ value: customUrl }));
+    }
+
+    cy.do(submitButton.click());
+    cy.expect(addTitleToCustomPackageModal.absent());
+  },
+
+  removeTitleFromPackageViaApi(resourceId) {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/resources/${resourceId}`,
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      const updatedBody = { ...response.body };
+      updatedBody.data.attributes.isSelected = false;
+      delete updatedBody.data.relationships;
+      delete updatedBody.included;
+      delete updatedBody.data.included;
+      delete updatedBody.jsonapi;
+
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `eholdings/resources/${resourceId}`,
+        body: updatedBody,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/vnd.api+json',
       });
     });
   },
