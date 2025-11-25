@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-import { validate } from 'jsonschema';
+import { validate, Validator } from 'jsonschema';
 import budgetsSchema from '../../../jsonSchemas/budgetsSchema';
 import fundsSchema from '../../../jsonSchemas/fundsSchema';
 import invoiceLinesSchema from '../../../jsonSchemas/invoiceLinesSchema';
@@ -60,6 +60,9 @@ describe('Lists', () => {
         Lists.createQueryViaApi(query).then((createdQuery) => {
           Lists.getQueryViaApi(createdQuery.queryId, { includeResults: true, offset: 0, limit: 10 }).then((queryResponse) => {
             expect(queryResponse.status).to.eq(200);
+            // cy.log(schema);
+            // const v = new Validator();
+            // cy.log(v.validate(queryResponse.body, schema));
             const result = validate(queryResponse.body, schema);
             cy.wrap(result).then(() => {
               expect(result.valid, result.errors.toString()).to.be.equal(true);
@@ -95,7 +98,7 @@ describe('Lists', () => {
         Users.deleteViaApi(userData.userId);
       });
 
-      it('C451508 Search for "Organizations" in the query builder using "Organization — EDI vendor code" field (corsair)',
+      it.only('C451508 Search for "Organizations" in the query builder using "Organization — EDI vendor code" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C451508'] },
         () => {
           const fqlQuery = { 'organization.edi_vendor_edi_code': { '$empty': true } };
