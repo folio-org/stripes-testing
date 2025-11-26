@@ -1565,4 +1565,11 @@ export default {
       },
     );
   },
+
+  validateColumnValueForSearchResult(columnName, expectedValue, rowIndex = 0) {
+    const targetCell = instancesList.find(
+      MultiColumnListCell({ column: columnName, row: rowIndex }),
+    );
+    cy.expect(targetCell.has({ content: expectedValue }));
+  },
 };

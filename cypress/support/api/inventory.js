@@ -659,6 +659,7 @@ Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
       cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
     } else {
       updatedBody = { ...defaultDisplaySettings };
+      updatedBody.id = uuid();
       updatedBody.value = {
         defaultSort: sortOption,
       };
