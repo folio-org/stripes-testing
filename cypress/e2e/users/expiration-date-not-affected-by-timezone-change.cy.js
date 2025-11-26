@@ -1,13 +1,13 @@
 import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserEdit from '../../support/fragments/users/userEdit';
-import DateTools from '../../support/utils/dateTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
 import Localization from '../../support/fragments/settings/tenant/general/localization';
+import TenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Users', () => {
   const testData = {

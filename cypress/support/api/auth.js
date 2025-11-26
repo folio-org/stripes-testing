@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
-import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
+import Tenant from '../tenant';
 
 let authRefreshCounter = 0;
 

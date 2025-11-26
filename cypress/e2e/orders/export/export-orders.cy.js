@@ -1,27 +1,27 @@
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import { PrefixSuffix } from '../../../support/fragments/settings/orders/newPrefixSuffix';
+import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
-import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import NewPreffixSuffix from '../../../support/fragments/settings/orders/newPreffixSuffix';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 
 describe('Orders', () => {
   describe('Export', () => {
     let user;
     const organization = { ...NewOrganization.defaultUiOrganizations };
-    const poNumberPrefix = { ...NewPreffixSuffix.defaultPreffix };
-    const poNumberSuffix = { ...NewPreffixSuffix.defaultSuffix };
+    const poNumberPrefix = { ...PrefixSuffix.defaultPrefix };
+    const poNumberSuffix = { ...PrefixSuffix.defaultSuffix };
     const order = {
       ...NewOrder.defaultOneTimeOrder,
       poNumberPrefix: poNumberPrefix.name,

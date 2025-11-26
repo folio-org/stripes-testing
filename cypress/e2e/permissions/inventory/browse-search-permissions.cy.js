@@ -72,8 +72,8 @@ describe('Permissions', () => {
     );
 
     it(
-      'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (spitfire)',
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.login(userWithAllPermissions.username, userWithAllPermissions.password, {
           path: TopMenu.inventoryPath,

@@ -39,7 +39,7 @@ describe('Finance: Funds', () => {
   after(() => {
     cy.getAdminToken();
     Funds.deleteFundViaApi(firstFund.id);
-    Ledgers.deleteledgerViaApi(firstLedger.id);
+    Ledgers.deleteLedgerViaApi(firstLedger.id);
     FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

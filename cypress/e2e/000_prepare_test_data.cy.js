@@ -133,13 +133,16 @@ describe('Prepare test data', () => {
           userId = id;
         })
         .then(() => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          // Get or create Circ Desk 1 service point
+          ServicePoints.getOrCreateCircDesk1ServicePointViaApi().then((servicePoint) => {
             servicePointIds.push(servicePoint.id);
             defaultServicePointId = servicePoint.id;
           });
-          ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+          // Get or create Circ Desk 2 service point
+          ServicePoints.getOrCreateCircDesk2ServicePointViaApi().then((servicePoint) => {
             servicePointIds.push(servicePoint.id);
           });
+          // Get Online service point (assuming it exists or should be created elsewhere)
           ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
             servicePointIds.push(servicePoint.id);
           });

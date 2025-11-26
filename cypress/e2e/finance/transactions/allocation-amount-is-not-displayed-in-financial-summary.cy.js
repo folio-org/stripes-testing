@@ -102,7 +102,7 @@ describe('Finance', () => {
         Object.values(funds).forEach((fund) => {
           Funds.deleteFundViaApi(fund.id, false);
         });
-        Ledgers.deleteledgerViaApi(ledger.id, false);
+        Ledgers.deleteLedgerViaApi(ledger.id, false);
         FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false);
         Users.deleteViaApi(testData.user.userId);
       });

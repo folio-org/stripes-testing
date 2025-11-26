@@ -40,7 +40,7 @@ describe('Groups', () => {
   after(() => {
     cy.getAdminToken();
     Groups.deleteGroupViaApi(defaultGroup.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

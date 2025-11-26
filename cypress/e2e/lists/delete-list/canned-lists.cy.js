@@ -30,7 +30,7 @@ describe('Lists', () => {
 
     it(
       'C411769 Delete list: Canned reports (corsair)',
-      { tags: ['smokeFlaky', 'corsair', 'C411769'] },
+      { tags: ['smoke', 'corsair', 'C411769'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

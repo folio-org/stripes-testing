@@ -43,9 +43,9 @@ describe('MARC', () => {
             cy.login(userProperties.username, userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
 
-            cy.reload();
             InventoryActions.import();
             InventoryInstance.getId().then((id) => {
               instanceID = id;

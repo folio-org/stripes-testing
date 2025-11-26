@@ -1,0 +1,437 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Transactions",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "to_fund.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "to_fund.id": {
+            "type": ["string", "null"]
+          },
+          "to_fund.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.acq_unit_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "transaction.id": {
+            "type": ["string", "null"]
+          },
+          "to_fund.description": {
+            "type": ["string", "null"]
+          },
+          "updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "updated_by.username": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.updated_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "to_fund.allocated_to": {
+            "type": "array",
+            "items": {}
+          },
+          "transaction.amount_credited": {
+            "type": ["number", "null"]
+          },
+          "from_fund.updated_date": {
+            "type": ["string", "null"]
+          },
+          "to_fund.name": {
+            "type": ["string", "null"]
+          },
+          "transaction.transaction_type": {
+            "type": ["string", "null"]
+          },
+          "from_fund.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "to_fund.allocated_from_ids": {
+            "type": ["array", "null"],
+            "items": {}
+          },
+          "to_fund.allocated_from": {
+            "type": "array",
+            "items": {}
+          },
+          "transaction.from_fund_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.description": {
+            "type": ["string", "null"]
+          },
+          "from_fund.allocated_to_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "to_fund.restrict_by_locations": {
+            "type": ["string", "null"]
+          },
+          "to_fund.allocated_to_ids": {
+            "type": ["array", "null"],
+            "items": {}
+          },
+          "from_fund.restrict_by_locations": {
+            "type": ["string", "null"]
+          },
+          "created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "from_fund.description": {
+            "type": ["string", "null"]
+          },
+          "transaction.source": {
+            "type": ["string", "null"]
+          },
+          "transaction.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.fiscal_year_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "transaction.currency": {
+            "type": ["string", "null"]
+          },
+          "from_fund.donor_organizations": {
+            "type": ["string", "null"]
+          },
+          "created_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.username": {
+            "type": ["string", "null"]
+          },
+          "from_fund.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {}
+          },
+          "fiscal_year.currency": {
+            "type": ["string", "null"]
+          },
+          "to_fund.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.series": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.created_date": {
+            "type": ["string", "null"]
+          },
+          "transaction.description": {
+            "type": ["string", "null"]
+          },
+          "from_fund.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "from_fund.locations": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "from_fund.name": {
+            "type": ["string", "null"]
+          },
+          "transaction.source_fiscal_year_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.invoice_cancelled": {
+            "type": ["string", "null"]
+          },
+          "updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.to_fund_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.source_po_line_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.name": {
+            "type": ["string", "null"]
+          },
+          "from_fund.id": {
+            "type": ["string", "null"]
+          },
+          "transaction.source_invoice_line_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.tags": {
+            "type": ["string", "null"]
+          },
+          "from_fund.tag_list": {
+            "type": ["string", "null"]
+          },
+          "to_fund.external_account_no": {
+            "type": ["string", "null"]
+          },
+          "from_fund.allocated_from_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "to_fund.updated_date": {
+            "type": ["string", "null"]
+          },
+          "from_fund.external_account_no": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.code": {
+            "type": ["string", "null"]
+          },
+          "created_by.active": {
+            "type": ["string", "null"]
+          },
+          "from_fund.donor_organization_ids": {
+            "type": ["array", "null"],
+            "items": {}
+          },
+          "transaction.status": {
+            "type": ["string", "null"]
+          },
+          "transaction.initial_amount_encumbered": {
+            "type": ["number", "null"]
+          },
+          "transaction.order_status": {
+            "type": ["string", "null"]
+          },
+          "from_fund.allocated_to": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "from_fund.fund_type_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.version": {
+            "type": ["number", "null"]
+          },
+          "created_by.id": {
+            "type": ["string", "null"]
+          },
+          "transaction.updated_date": {
+            "type": ["string", "null"]
+          },
+          "from_fund.ledger_id": {
+            "type": ["string", "null"]
+          },
+          "from_fund.created_date": {
+            "type": ["string", "null"]
+          },
+          "transaction.created_date": {
+            "type": ["string", "null"]
+          },
+          "from_fund.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.id": {
+            "type": ["string", "null"]
+          },
+          "to_fund.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {}
+          },
+          "to_fund.donor_organization_ids": {
+            "type": ["array", "null"],
+            "items": {}
+          },
+          "updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "transaction.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.period_begin_date": {
+            "type": ["string", "null"]
+          },
+          "to_fund.version": {
+            "type": ["number", "null"]
+          },
+          "updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "to_fund.tag_list": {
+            "type": ["string", "null"]
+          },
+          "to_fund.fund_status": {
+            "type": ["string", "null"]
+          },
+          "to_fund.code": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.period_end_date": {
+            "type": ["string", "null"]
+          },
+          "transaction.source_purchase_order_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.re_encumber": {
+            "type": ["string", "null"]
+          },
+          "transaction.subscription": {
+            "type": ["string", "null"]
+          },
+          "from_fund.allocated_from": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "transaction.order_type": {
+            "type": ["string", "null"]
+          },
+          "from_fund.fund_status": {
+            "type": ["string", "null"]
+          },
+          "transaction.amount_expended": {
+            "type": ["number", "null"]
+          },
+          "to_fund.locations": {
+            "type": ["string", "null"]
+          },
+          "transaction.expense_class_id": {
+            "type": ["string", "null"]
+          },
+          "to_fund.ledger_id": {
+            "type": ["string", "null"]
+          },
+          "transaction.amount": {
+            "type": ["number", "null"]
+          },
+          "fiscal_year.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "created_by.email": {
+            "type": ["string", "null"]
+          },
+          "transaction.amount_awaiting_payment": {
+            "type": ["number", "null"]
+          },
+          "to_fund.created_date": {
+            "type": ["string", "null"]
+          },
+          "from_fund.version": {
+            "type": ["number", "null"]
+          },
+          "transaction.source_invoice_id": {
+            "type": ["string", "null"]
+          },
+          "from_fund.code": {
+            "type": ["string", "null"]
+          },
+          "to_fund.donor_organizations": {
+            "type": ["string", "null"]
+          },
+          "to_fund.fund_type_id": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "fiscal_year.acq_unit_ids",
+          "created_by.last_name_first_name",
+          "transaction.id",
+          "updated_by.last_name_first_name",
+          "fiscal_year.updated_date",
+          "to_fund.allocated_to",
+          "transaction.transaction_type",
+          "to_fund.allocated_from",
+          "fiscal_year.description",
+          "from_fund.allocated_to_ids",
+          "transaction.source",
+          "transaction.fiscal_year_id",
+          "transaction.currency",
+          "from_fund.acq_unit_ids",
+          "fiscal_year.currency",
+          "fiscal_year.series",
+          "fiscal_year.created_date",
+          "from_fund.allocated_from_ids",
+          "fiscal_year.code",
+          "from_fund.donor_organization_ids",
+          "from_fund.allocated_to",
+          "fiscal_year.version",
+          "transaction.updated_date",
+          "transaction.created_date",
+          "fiscal_year.id",
+          "fiscal_year.period_begin_date",
+          "fiscal_year.period_end_date",
+          "from_fund.allocated_from"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {},
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Organizations",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "organization.status": {
+            "type": ["string", "null"]
+          },
+          "organization.is_vendor": {
+            "type": ["string", "null"]
+          },
+          "organization.code": {
+            "type": ["string", "null"]
+          },
+          "organization.is_donor": {
+            "type": ["string", "null"]
+          },
+          "organization._id": {
+            "type": ["string", "null"]
+          },
+          "organization.name": {
+            "type": ["string", "null"]
+          },
+          "organization.edi_vendor_edi_type": {
+            "type": ["string", "null"]
+          },
+          "organization.jsonb": {
+            "type": ["string", "null"]
+          },
+          "organization.edi_vendor_edi_code": {
+            "type": ["string", "null"]
+          },
+          "organization.id": {
+            "type": ["string", "null"]
+          },
+          "created_by.active": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.email": {
+            "type": ["string", "null"]
+          },
+          "created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "created_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.id": {
+            "type": ["string", "null"]
+          },
+          "created_by.username": {
+            "type": ["string", "null"]
+          },
+          "updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "updated_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.username": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "organization.status",
+          "organization.is_vendor",
+          "organization.code",
+          "organization.is_donor",
+          "organization._id",
+          "organization.name",
+          "organization.edi_vendor_edi_type",
+          "organization.jsonb",
+          "organization.edi_vendor_edi_code",
+          "organization.id",
+          "created_by.active",
+          "created_by.user_created_date",
+          "created_by.email",
+          "created_by.last_name_first_name",
+          "created_by.created_by_user_id",
+          "created_by.updated_by_user_id",
+          "created_by.user_updated_date",
+          "created_by.id",
+          "created_by.username",
+          "updated_by.active",
+          "updated_by.user_created_date",
+          "updated_by.email",
+          "updated_by.last_name_first_name",
+          "updated_by.created_by_user_id",
+          "updated_by.updated_by_user_id",
+          "updated_by.user_updated_date",
+          "updated_by.id",
+          "updated_by.username"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}
