@@ -63,6 +63,7 @@ describe('Data Import', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -91,7 +92,7 @@ describe('Data Import', () => {
         QuickMarcEditor.waitLoading();
 
         QuickMarcEditor.updateExistingField(tags.tag852, updatedTag852Content);
-        QuickMarcEditor.pressSaveAndCloseButton();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkDelete008Callout();
 
         QuickMarcEditor.addNewField(tags.tag008, '', 3);

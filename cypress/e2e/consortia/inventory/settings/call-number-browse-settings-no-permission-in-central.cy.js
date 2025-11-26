@@ -30,11 +30,13 @@ describe('Inventory', () => {
               ]);
 
               cy.resetTenant();
-              cy.login(user.username, user.password, {
-                path: TopMenu.settingsPath,
-                waiter: SettingsPane.waitLoading,
-              });
-              SettingsPane.selectSettingsTab(APPLICATION_NAMES.INVENTORY);
+              cy.waitForAuthRefresh(() => {
+                cy.login(user.username, user.password, {
+                  path: TopMenu.settingsPath,
+                  waiter: SettingsPane.waitLoading,
+                });
+                SettingsPane.selectSettingsTab(APPLICATION_NAMES.INVENTORY);
+              }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             },
           );

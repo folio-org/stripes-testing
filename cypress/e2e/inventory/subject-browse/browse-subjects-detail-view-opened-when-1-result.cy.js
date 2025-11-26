@@ -127,6 +127,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.switchToBrowseTab();
