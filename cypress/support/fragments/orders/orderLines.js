@@ -1949,8 +1949,8 @@ export default {
     cy.wait(4000);
   },
 
-  deleteFundInPOLwithoutSave() {
-    cy.do(Section({ id: 'fundDistributionAccordion' }).find(trashButton).click());
+  deleteFundInPOLwithoutSave(index = 0) {
+    cy.get('#fundDistributionAccordion').find('button[icon="trash"]').eq(index).click();
   },
 
   deleteFundsInPOL() {
