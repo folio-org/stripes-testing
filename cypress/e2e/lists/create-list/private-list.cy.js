@@ -55,6 +55,15 @@ describe('Lists', () => {
       "C411710 Verify that private list isn't visible for the other users (corsair)",
       { tags: ['smoke', 'corsair', 'shiftLeft', 'C411710', 'eurekaPhase1'] },
       () => {
+        // cy.waitForAuthRefresh(() => {
+        //   cy.login(firstUser.username, firstUser.password, {
+        //     path: TopMenu.listsPath,
+        //     waiter: Lists.waitLoading,
+        //   });
+        //   cy.reload();
+        //   Lists.waitLoading();
+        // }, 20_000);
+
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,

@@ -158,7 +158,7 @@ describe('Acquisition Units', () => {
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 

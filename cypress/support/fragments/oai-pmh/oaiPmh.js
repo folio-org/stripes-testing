@@ -52,9 +52,9 @@ export default {
       return cy.wrap(cachedBaseUrl);
     }
 
-    return cy.getConfigByName('OAIPMH', 'general').then(({ configs }) => {
+    return cy.getOaiPmhConfigurations('general').then((body) => {
       // Extract baseUrl from the configuration string
-      const configValue = JSON.parse(configs[0].value);
+      const configValue = body?.configurationSettings[0]?.configValue;
       const fullBaseUrl = configValue.baseUrl;
       const baseUrl = fullBaseUrl.replace(/^https?:\/\//, '').replace(/\/oai.*$/, '');
 

@@ -1,0 +1,282 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vouchers",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "voucher.account_no": {
+            "type": ["string", "null"]
+          },
+          "voucher.accounting_code": {
+            "type": ["string", "null"]
+          },
+          "voucher.acquisition_units": {
+            "type": ["string", "null"]
+          },
+          "voucher.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "voucher.batch_group": {
+            "type": ["string", "null"]
+          },
+          "voucher.batch_group_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.created_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.disbursement_amount": {
+            "type": ["number", "null"]
+          },
+          "voucher.disbursement_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.disbursement_number": {
+            "type": ["string", "null"]
+          },
+          "voucher.enclosure_needed": {
+            "type": ["string", "null"]
+          },
+          "voucher.exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "voucher.export_to_accounting": {
+            "type": ["string", "null"]
+          },
+          "voucher.invoice_currency": {
+            "type": ["string", "null"]
+          },
+          "voucher.invoice_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.status": {
+            "type": ["string", "null"]
+          },
+          "voucher.system_currency": {
+            "type": ["string", "null"]
+          },
+          "voucher.amount": {
+            "type": ["number", "null"]
+          },
+          "voucher.type": {
+            "type": ["string", "null"]
+          },
+          "voucher.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.updated_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.id": {
+            "type": ["string", "null"]
+          },
+          "voucher.vendor_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.voucher_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.voucher_number": {
+            "type": ["string", "null"]
+          },
+          "vendor.code": {
+            "type": ["string", "null"]
+          },
+          "vendor.edi_vendor_edi_code": {
+            "type": ["string", "null"]
+          },
+          "vendor.edi_vendor_edi_type": {
+            "type": ["string", "null"]
+          },
+          "vendor.is_donor": {
+            "type": ["string", "null"]
+          },
+          "vendor.is_vendor": {
+            "type": ["string", "null"]
+          },
+          "vendor.jsonb": {
+            "type": ["string", "null"]
+          },
+          "vendor.name": {
+            "type": ["string", "null"]
+          },
+          "vendor.status": {
+            "type": ["string", "null"]
+          },
+          "vendor.id": {
+            "type": ["string", "null"]
+          },
+          "vendor._id": {
+            "type": ["string", "null"]
+          },
+          "created_by.active": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.email": {
+            "type": ["string", "null"]
+          },
+          "created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "created_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.id": {
+            "type": ["string", "null"]
+          },
+          "created_by.username": {
+            "type": ["string", "null"]
+          },
+          "updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "updated_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.username": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "voucher.account_no",
+          "voucher.accounting_code",
+          "voucher.acquisition_units",
+          "voucher.acq_unit_ids",
+          "voucher.batch_group",
+          "voucher.batch_group_id",
+          "voucher.created_by_user_id",
+          "voucher.created_date",
+          "voucher.disbursement_amount",
+          "voucher.disbursement_date",
+          "voucher.disbursement_number",
+          "voucher.enclosure_needed",
+          "voucher.exchange_rate",
+          "voucher.export_to_accounting",
+          "voucher.invoice_currency",
+          "voucher.invoice_id",
+          "voucher.status",
+          "voucher.system_currency",
+          "voucher.amount",
+          "voucher.type",
+          "voucher.updated_by_user_id",
+          "voucher.updated_date",
+          "voucher.id",
+          "voucher.vendor_id",
+          "voucher.voucher_date",
+          "voucher.voucher_number",
+          "vendor.code",
+          "vendor.edi_vendor_edi_code",
+          "vendor.edi_vendor_edi_type",
+          "vendor.is_donor",
+          "vendor.is_vendor",
+          "vendor.jsonb",
+          "vendor.name",
+          "vendor.status",
+          "vendor.id",
+          "vendor._id",
+          "created_by.active",
+          "created_by.user_created_date",
+          "created_by.email",
+          "created_by.last_name_first_name",
+          "created_by.created_by_user_id",
+          "created_by.updated_by_user_id",
+          "created_by.user_updated_date",
+          "created_by.id",
+          "created_by.username",
+          "updated_by.active",
+          "updated_by.user_created_date",
+          "updated_by.email",
+          "updated_by.last_name_first_name",
+          "updated_by.created_by_user_id",
+          "updated_by.updated_by_user_id",
+          "updated_by.user_updated_date",
+          "updated_by.id",
+          "updated_by.username"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

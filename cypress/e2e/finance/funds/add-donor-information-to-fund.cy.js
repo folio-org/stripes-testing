@@ -36,7 +36,7 @@ describe('Finance', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      Ledgers.deleteledgerViaApi(testData.ledger.id);
+      Ledgers.deleteLedgerViaApi(testData.ledger.id);
       FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);

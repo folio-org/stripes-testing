@@ -582,7 +582,9 @@ export default {
   },
 
   clickRunQueryAndSave() {
+    cy.wait(1000);
     cy.do(runQueryAndSave.click());
+    cy.wait(3000);
   },
 
   clickRunQuery() {

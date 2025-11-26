@@ -12,6 +12,7 @@ cypress/screenshots
 .DS_Store
 
 allure-results
+allure-report
 
 videos
 .vs
