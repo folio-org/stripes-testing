@@ -132,7 +132,6 @@ describe('Inventory', () => {
         'C421985 (CONSORTIA) Verify the closing after Add holdings action on Consortial holdings accordion details on shadow Instance on Member Tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C421985'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -153,6 +152,7 @@ describe('Inventory', () => {
           InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
+          cy.wait(1000);
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
         },
       );

@@ -95,7 +95,6 @@ describe('Inventory', () => {
         'C436944 (CONSORTIA) Check "Expand All/Collapse all" button for Consortial holdings accordion on Shadow Instance from Member Tenant on another Member Tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C436944'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
