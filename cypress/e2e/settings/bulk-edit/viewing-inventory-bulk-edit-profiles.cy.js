@@ -7,7 +7,9 @@ import {
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   LOCATION_NAMES,
 } from '../../../support/constants';
-import BulkEditPane from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
+import BulkEditPane, {
+  PROFILE_TYPES,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
 import ItemsBulkEditProfilesPane from '../../../support/fragments/settings/bulk-edit/profilePane/itemsBulkEditProfilesPane';
 import ItemsBulkEditProfileView from '../../../support/fragments/settings/bulk-edit/profileView/itemsBulkEditProfileView';
 import HoldingsBulkEditProfilesPane from '../../../support/fragments/settings/bulk-edit/profilePane/holdingsBulkEditProfilesPane';
@@ -170,11 +172,11 @@ describe('Bulk-edit', () => {
 
         // Step 2: Verify profiles types listed under "Inventory profiles" group
         BulkEditPane.verifyProfilesTypesPresent([
-          'Holdings bulk edit profiles',
-          'Instances bulk edit profiles',
-          'Items bulk edit profiles',
+          PROFILE_TYPES.HOLDINGS,
+          PROFILE_TYPES.INSTANCES,
+          PROFILE_TYPES.ITEMS,
         ]);
-        BulkEditPane.verifyProfilesTypesAbsent(['Users bulk edit profiles']);
+        BulkEditPane.verifyProfilesTypesAbsent([PROFILE_TYPES.USERS]);
 
         // Step 3: Click "Items bulk edit profiles" and click on any existing items bulk edit profile row
         BulkEditPane.clickItemsBulkEditProfiles();
