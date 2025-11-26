@@ -9,6 +9,7 @@ export const getTestEntityValue = (entityName) => `AT_${entityName ? `${entityNa
 export const replaceByIndex = (initialString, index, newChar) => `${initialString.substring(0, index)}${newChar}${initialString.substring(index + 1)}`;
 export const randomFourDigitNumber = () => Math.floor(Math.random(9000) * 1000) + 1000;
 export const randomTwoDigitNumber = () => Math.floor(Math.random() * 90 + 10);
+export const randomNDigitNumber = (n) => Math.floor(Math.random() * (10 ** n - 10 ** (n - 1))) + 10 ** (n - 1);
 // generates random delay in a range from 1 to 61 seconds plus specified number of seconds (e.g. to handle concurrency issues)
 export const getRandomDelay = (seconds) => (Math.floor(Math.random() * 60) + 1 + seconds) * 1000;
 

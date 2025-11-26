@@ -68,7 +68,7 @@ describe('Inventory', () => {
       BrowseCallNumber.clickBrowseBtn();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
       InventorySearchAndFilter.selectBrowseCallNumbers();
-      InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+      InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
       InventoryActions.actionsIsAbsent();
       InventorySearchAndFilter.showsOnlyEffectiveLocation();
       InventorySearchAndFilter.browseSubjectsSearch(query);

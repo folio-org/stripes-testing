@@ -39,7 +39,7 @@ describe('Funds', () => {
     FinanceHelp.searchByName(defaultfund.name);
     Funds.selectFund(defaultfund.name);
     Funds.deleteFundViaActions();
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

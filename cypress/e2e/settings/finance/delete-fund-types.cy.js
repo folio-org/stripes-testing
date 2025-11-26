@@ -37,7 +37,7 @@ describe('Finance › Settings (Finance)', () => {
       });
     });
 
-    cy.createTempUser([permissions.uiSettingsFinanceViewEditCreateDeleter.gui]).then(
+    cy.createTempUser([permissions.uiSettingsFinanceViewEditCreateDelete.gui]).then(
       (userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -51,7 +51,7 @@ describe('Finance › Settings (Finance)', () => {
   after(() => {
     cy.getAdminToken();
     Funds.deleteFundViaApi(defaultfund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     FundTypes.deleteFundTypesViaApi(firstFundType.id);
   });

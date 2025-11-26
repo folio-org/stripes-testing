@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Query Builder ', () => {
+  describe('Query Builder', () => {
     let userData = {};
     let listName;
 
