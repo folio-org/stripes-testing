@@ -1,11 +1,18 @@
 import { Pane, NavListItem } from '../../../../../interactors';
 
+export const PROFILE_TYPES = {
+  HOLDINGS: 'Holdings bulk edit profiles',
+  INSTANCES: 'Instances bulk edit profiles',
+  ITEMS: 'Items bulk edit profiles',
+  USERS: 'Users bulk edit profiles',
+};
+
 const bulkEditPane = Pane('Bulk edit');
 const navListItems = {
-  holdings: bulkEditPane.find(NavListItem('Holdings bulk edit profiles')),
-  instances: bulkEditPane.find(NavListItem('Instances bulk edit profiles')),
-  items: bulkEditPane.find(NavListItem('Items bulk edit profiles')),
-  users: bulkEditPane.find(NavListItem('Users bulk edit profiles')),
+  holdings: bulkEditPane.find(NavListItem(PROFILE_TYPES.HOLDINGS)),
+  instances: bulkEditPane.find(NavListItem(PROFILE_TYPES.INSTANCES)),
+  items: bulkEditPane.find(NavListItem(PROFILE_TYPES.ITEMS)),
+  users: bulkEditPane.find(NavListItem(PROFILE_TYPES.USERS)),
 };
 
 export default {

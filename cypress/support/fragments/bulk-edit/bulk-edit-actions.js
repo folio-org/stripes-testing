@@ -55,6 +55,7 @@ const startBulkEditButton = Button('Start bulk edit');
 const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
+const nextButton = Button('Next');
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
 const downloadChangedRecordsButton = Button('Download changed records (CSV)');
@@ -1338,7 +1339,11 @@ export default {
   },
 
   clickNext() {
-    cy.do([Modal().find(Button('Next')).click()]);
+    cy.do([Modal().find(nextButton).click()]);
+  },
+
+  verifyNextButtonInCsvModalDisabled(isDisabled = true) {
+    cy.expect(Modal().find(nextButton).has({ disabled: isDisabled }));
   },
 
   verifyNoNewBulkEditButton() {
@@ -2657,5 +2662,23 @@ export default {
     cy.do(bulkEditsMarcInstancesAccordion.find(Icon({ info: true })).hoverMouse());
     cy.expect(Tooltip({ text }).exists());
     cy.do(bulkEditsMarcInstancesAccordion.find(Icon({ info: true })).unhoverMouse());
+  },
+
+  verifyTheActionOptionsEqual(expectedOptions, isMarcInstancesAccordion = true, rowIndex = 0) {
+    const targetAccordion = isMarcInstancesAccordion
+      ? bulkEditsMarcInstancesAccordion
+      : bulkEditsAccordions;
+
+    cy.then(() => {
+      return targetAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select(including('Actions select')))
+        .allOptionsText();
+    }).then((actualOptions) => {
+      const actualEnabledOptions = actualOptions.filter(
+        (actualOption) => !actualOption.includes('disabled'),
+      );
+      expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+    });
   },
 };

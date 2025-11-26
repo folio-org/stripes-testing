@@ -1275,6 +1275,7 @@ export default {
   changeShowColumnCheckbox(...names) {
     names.forEach((name) => {
       cy.do(DropdownMenu().find(Checkbox(name)).click());
+      cy.wait(500);
     });
     cy.wait(500);
   },
