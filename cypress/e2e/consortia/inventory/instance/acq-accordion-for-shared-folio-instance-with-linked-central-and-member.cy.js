@@ -160,7 +160,6 @@ describe('Inventory', () => {
           const memberPolNumber = `${testData.memberOrder.poNumber}-1`;
           const centralPolNumber = `${testData.centralOrder.poNumber}-1`;
 
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
@@ -184,7 +183,6 @@ describe('Inventory', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();

@@ -104,7 +104,6 @@ describe('Inventory', () => {
         'C411663 (CONSORTIA) Verify closing View source does not collapse Consortial holdings accordion details on shared Instance in Member Tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C411663'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();

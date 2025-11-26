@@ -1,31 +1,45 @@
 import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SubjectTypes from '../../../../support/fragments/settings/inventory/instances/subjectTypes';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
-  describe('Instance', () => {
+  describe('Subject Browse', () => {
     describe('Consortia', () => {
-      const testData = {
-        instanceTitle: `AT_C436942_FolioInstance${getRandomPostfix()}`,
+      const testData = {};
+      const localSubjectTypeOnCollege = {
+        name: `C580266 autotestSubjectTypeName${getRandomPostfix()}`,
+        source: 'local',
       };
 
-      before('Create test data', () => {
+      before('Create user, data', () => {
         cy.getAdminToken();
-        cy.getConsortiaId().then((consortiaId) => {
-          testData.consortiaId = consortiaId;
+        cy.getConsortiaId()
+          .then((consortiaId) => {
+            testData.consortiaId = consortiaId;
 
-          cy.setTenant(Affiliations.College);
-          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-            testData.instanceId = instanceData.instanceId;
-
+            cy.setTenant(Affiliations.College);
+            SubjectTypes.createViaApi({
+              source: localSubjectTypeOnCollege.source,
+              name: localSubjectTypeOnCollege.name,
+            }).then((response) => {
+              localSubjectTypeOnCollege.id = response.body.id;
+            });
+            InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+              testData.instanceId = instanceData.instanceId;
+            });
+            cy.resetTenant();
+          })
+          .then(() => {
             InventoryInstance.shareInstanceViaApi(
               testData.instanceId,
               testData.consortiaId,
@@ -33,7 +47,6 @@ describe('Inventory', () => {
               Affiliations.Consortia,
             );
           });
-        });
         cy.resetTenant();
 
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -52,25 +65,29 @@ describe('Inventory', () => {
         });
       });
 
-      after('Delete test data', () => {
+      after('Delete user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        cy.setTenant(Affiliations.College);
+        SubjectTypes.deleteViaApi(localSubjectTypeOnCollege.id);
       });
 
       it(
-        'C436942 (CONSORTIA) Check Expand All/Collapse all button for Consortial holdings accordion on Shared Instance on Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C436942'] },
+        "C580266 (CONSORTIA) Local Subject type can't be settled for shared instance (consortia) (folijet)",
+        { tags: ['extendedPathECS', 'folijet', 'C580266'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.expandAllInConsortialHoldingsAccordion(testData.instanceId);
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, true);
-          InstanceRecordView.verifyHoldingsListIsEmpty(testData.instanceId);
-          InstanceRecordView.collapseAllInConsortialHoldingsAccordion(testData.instanceId);
-          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
+          InstanceRecordView.edit();
+          InstanceRecordEdit.waitLoading();
+          InstanceRecordEdit.addSubjectType(localSubjectTypeOnCollege.name);
+          InstanceRecordEdit.clickSaveAndCloseButton();
+          InstanceRecordEdit.verifyErrorMessage(
+            `400: insert or update on table "instance_subject_type" violates foreign key constraint "fk_type_id": Key (type_id)=(${localSubjectTypeOnCollege.id}) is not present in table "subject_type".`,
+          );
         },
       );
     });

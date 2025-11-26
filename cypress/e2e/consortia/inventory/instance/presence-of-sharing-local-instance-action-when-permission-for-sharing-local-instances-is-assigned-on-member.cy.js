@@ -36,6 +36,7 @@ describe('Inventory', () => {
             [],
             [
               CapabilitySets.uiInventoryInstanceView,
+              CapabilitySets.uiInventoryInstanceCreate,
               CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
             ],
           );
@@ -61,7 +62,6 @@ describe('Inventory', () => {
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
           InstanceRecordView.validateOptionInActionsMenu(

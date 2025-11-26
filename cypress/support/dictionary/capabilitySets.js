@@ -174,6 +174,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventoryInstanceCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiInventoryHoldingsCreate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Holdings',

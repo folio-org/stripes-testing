@@ -199,6 +199,9 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
+    cy.get('#search-results-list').within(() => {
+      cy.get('[class*="mclScrollable"]').scrollTo('bottom');
+    });
     cy.do(
       MultiColumnListCell({
         content: `${jobType} export job profile`,
