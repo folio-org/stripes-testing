@@ -135,3 +135,12 @@ Cypress.Commands.add('deleteSrsRecord', (srsRecordId) => {
     failOnStatusCode: false,
   });
 });
+
+Cypress.Commands.add('updateSrsRecord', (srsRecordId, srsRecordBody) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.PUT,
+    path: `source-storage/records/${srsRecordId}`,
+    body: srsRecordBody,
+    isDefaultSearchParamsRequired: false,
+  });
+});
