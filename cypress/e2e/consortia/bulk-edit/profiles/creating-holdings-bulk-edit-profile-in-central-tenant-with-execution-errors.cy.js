@@ -185,13 +185,13 @@ describe('Bulk-edit', () => {
           HoldingsBulkEditProfileForm.verifyFormElements('New holdings bulk edit profile');
 
           // Step 2: Verify only shared note types are displayed
-          HoldingsBulkEditProfileForm.selectOption('Holdings notes');
           HoldingsBulkEditProfileForm.clickSelectOptionDropdown();
           HoldingsBulkEditProfileForm.verifyOptionExistsInSelectOptionDropdown(
             localHoldingNoteType.name,
             0,
             false,
           );
+          HoldingsBulkEditProfileForm.clickSelectOptionDropdown();
 
           // Step 3: Select shared note type and verify Change note type action
           HoldingsBulkEditProfileForm.selectOption(
@@ -212,12 +212,13 @@ describe('Bulk-edit', () => {
           HoldingsBulkEditProfileForm.clickPlusButton();
           HoldingsBulkEditProfileForm.selectOption('URL relationship', 1);
           HoldingsBulkEditProfileForm.selectAction(BULK_EDIT_ACTIONS.FIND_FULL_FIELD_SEARCH, 1);
-          HoldingsBulkEditProfileForm.verifyOptionExistsInSelectOptionDropdown(
+          HoldingsBulkEditProfileForm.verifyUrlRelationshipExistsInSelectOptionDropdown(
             ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+            1,
           );
-          HoldingsBulkEditProfileForm.verifyOptionExistsInSelectOptionDropdown(
-            localHoldingNoteType.name,
-            0,
+          HoldingsBulkEditProfileForm.verifyUrlRelationshipExistsInSelectOptionDropdown(
+            localUrlRelationship.name,
+            1,
             false,
           );
 
