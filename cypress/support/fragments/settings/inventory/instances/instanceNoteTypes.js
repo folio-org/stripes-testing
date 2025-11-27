@@ -71,6 +71,11 @@ export default {
     }
   },
 
+  verifyFolioInstanceNoteTypesInTheList({ name }) {
+    const row = MultiColumnListRow({ content: including(name) });
+    cy.expect(row.exists());
+  },
+
   verifyInstanceNoteTypesAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ content: including(name) });
     cy.expect(row.absent());

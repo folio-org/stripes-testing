@@ -150,7 +150,7 @@ describe('Finance', () => {
             ExpenseClasses.deleteExpenseClassViaApi(ec.id);
           });
           testData.ledgers.forEach((ledger) => {
-            Ledgers.deleteledgerViaApi(ledger.id);
+            Ledgers.deleteLedgerViaApi(ledger.id);
           });
           testData.fiscalYears.forEach((fy) => {
             FiscalYears.deleteFiscalYearViaApi(fy.id);
