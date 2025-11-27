@@ -1,0 +1,510 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Purchase Order Lines",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pol.cost_currency": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_resource_url": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "po.notes": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.payment_status": {
+            "type": ["string", "null"]
+          },
+          "po.approved": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "pol.publication_date": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.name": {
+            "type": ["string", "null"]
+          },
+          "rates.rate": {
+            "type": ["number", "null"]
+          },
+          "po.jsonb": {
+            "type": ["string", "null"]
+          },
+          "po.po_number": {
+            "type": ["string", "null"]
+          },
+          "po.re_encumber": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.email": {
+            "type": ["string", "null"]
+          },
+          "po.created_at": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.edi_vendor_edi_type": {
+            "type": ["string", "null"]
+          },
+          "pol.id": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_create_inventory": {
+            "type": ["string", "null"]
+          },
+          "pol.physical_expected_receipt_date": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "po.id": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.username": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "pol.updated_at": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "pol.details_receiving_note": {
+            "type": ["string", "null"]
+          },
+          "po.created_by": {
+            "type": ["string", "null"]
+          },
+          "po.tags": {
+            "type": ["string", "null"]
+          },
+          "pol.description": {
+            "type": ["string", "null"]
+          },
+          "po.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "pol.selector": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "po.updated_at": {
+            "type": ["string", "null"]
+          },
+          "pol.locations": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_expected_activation": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "po.order_type": {
+            "type": ["string", "null"]
+          },
+          "po.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "pol_created_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.active": {
+            "type": ["string", "null"]
+          },
+          "pol.source": {
+            "type": ["string", "null"]
+          },
+          "pol.receipt_date": {
+            "type": ["string", "null"]
+          },
+          "pol.donor": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.acquisition_method_name": {
+            "type": ["string", "null"]
+          },
+          "pol.acquisition_method": {
+            "type": ["string", "null"]
+          },
+          "pol.tags": {
+            "type": ["string", "null"]
+          },
+          "po.updated_by": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.is_vendor": {
+            "type": ["string", "null"]
+          },
+          "pol.fund_distribution": {
+            "type": ["string", "null"]
+          },
+          "po.assigned_to": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.id": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "po.workflow_status": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "pol.po_line_number": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.code": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "pol.jsonb": {
+            "type": ["string", "null"]
+          },
+          "pol.cost_exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "vendor_organization.status": {
+            "type": ["string", "null"]
+          },
+          "pol.cost_po_line_estimated_price": {
+            "type": ["number", "null"]
+          },
+          "pol.created_at": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.receipt_status": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "rates.currency": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "po_updated_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.rush": {
+            "type": ["string", "null"]
+          },
+          "pol.order_format": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.is_donor": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.jsonb": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "pol.created_by": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization._id": {
+            "type": ["string", "null"]
+          },
+          "pol_exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "po.date_ordered": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "pol.publisher": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "vendor_organization.edi_vendor_edi_code": {
+            "type": ["string", "null"]
+          },
+          "pol.updated_by": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_activated": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "pol.agreement_id": {
+            "type": ["string", "null"]
+          },
+          "pol.title_or_package": {
+            "type": ["string", "null"]
+          },
+          "po_created_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "assigned_to_user.id": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_trial": {
+            "type": ["string", "null"]
+          },
+          "po.close_reason": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "pol.cost_currency",
+          "po_updated_by_user.user_created_date",
+          "pol.eresource_resource_url",
+          "assigned_to_user.user_updated_date",
+          "pol_created_by_user.user_created_date",
+          "po.notes",
+          "po_created_by_user.active",
+          "po_created_by_user.last_name_first_name",
+          "pol_created_by_user.created_by_user_id",
+          "pol.payment_status",
+          "po.approved",
+          "po_updated_by_user.email",
+          "pol.publication_date",
+          "vendor_organization.name",
+          "rates.rate",
+          "po.jsonb",
+          "po.po_number",
+          "po.re_encumber",
+          "assigned_to_user.email",
+          "po.created_at",
+          "vendor_organization.edi_vendor_edi_type",
+          "pol.id",
+          "pol.eresource_create_inventory",
+          "pol.physical_expected_receipt_date",
+          "pol_updated_by_user.username",
+          "po.id",
+          "assigned_to_user.username",
+          "assigned_to_user.last_name_first_name",
+          "pol.updated_at",
+          "po_created_by_user.user_created_date",
+          "assigned_to_user.created_by_user_id",
+          "po_updated_by_user.active",
+          "pol.details_receiving_note",
+          "po.created_by",
+          "po.tags",
+          "pol.description",
+          "po.acquisition_unit",
+          "po_updated_by_user.username",
+          "pol.selector",
+          "pol_updated_by_user.id",
+          "pol_updated_by_user.active",
+          "po.updated_at",
+          "pol.locations",
+          "po_updated_by_user.id",
+          "pol.eresource_expected_activation",
+          "pol_updated_by_user.user_updated_date",
+          "po.order_type",
+          "po.acq_unit_ids",
+          "pol_created_by_user.updated_by_user_id",
+          "pol_updated_by_user.created_by_user_id",
+          "assigned_to_user.active",
+          "pol.source",
+          "pol.receipt_date",
+          "pol.donor",
+          "po_updated_by_user.updated_by_user_id",
+          "pol.acquisition_method_name",
+          "pol.acquisition_method",
+          "pol.tags",
+          "po.updated_by",
+          "vendor_organization.is_vendor",
+          "pol.fund_distribution",
+          "po.assigned_to",
+          "vendor_organization.id",
+          "po_updated_by_user.last_name_first_name",
+          "pol_created_by_user.email",
+          "po.workflow_status",
+          "po_updated_by_user.user_updated_date",
+          "pol.po_line_number",
+          "vendor_organization.code",
+          "pol_created_by_user.user_updated_date",
+          "pol.jsonb",
+          "pol.cost_exchange_rate",
+          "vendor_organization.status",
+          "pol.cost_po_line_estimated_price",
+          "pol.created_at",
+          "assigned_to_user.user_created_date",
+          "po_created_by_user.user_updated_date",
+          "po_created_by_user.email",
+          "assigned_to_user.updated_by_user_id",
+          "pol.receipt_status",
+          "pol_created_by_user.last_name_first_name",
+          "rates.currency",
+          "po_created_by_user.updated_by_user_id",
+          "po_updated_by_user.created_by_user_id",
+          "pol.rush",
+          "pol.order_format",
+          "vendor_organization.is_donor",
+          "pol_created_by_user.username",
+          "vendor_organization.jsonb",
+          "pol_updated_by_user.last_name_first_name",
+          "pol.created_by",
+          "vendor_organization._id",
+          "pol_exchange_rate",
+          "po.date_ordered",
+          "pol_updated_by_user.user_created_date",
+          "pol.publisher",
+          "pol_created_by_user.id",
+          "vendor_organization.edi_vendor_edi_code",
+          "pol.updated_by",
+          "pol_updated_by_user.updated_by_user_id",
+          "pol.eresource_activated",
+          "po_created_by_user.created_by_user_id",
+          "po_created_by_user.username",
+          "pol.agreement_id",
+          "pol.title_or_package",
+          "po_created_by_user.id",
+          "assigned_to_user.id",
+          "pol_updated_by_user.email",
+          "pol_created_by_user.active",
+          "pol.eresource_trial",
+          "po.close_reason"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

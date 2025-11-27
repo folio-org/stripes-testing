@@ -14,10 +14,12 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 let user;
-let marcInstanceId;
+let marcInstanceIdC850013;
+let marcInstanceIdC692112;
 const instanceUUIDsFileName = `instanceUUIDs_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
-const marcFileName = 'marcBibC850013.mrc';
+const marcFileNameC850013 = 'marcBibC850013.mrc';
+const marcFileNameC692112 = 'marcBibC692112.mrc';
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -29,16 +31,35 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
+        // Import MARC file for C850013 (invalid 008 field)
         DataImport.uploadFileViaApi(
-          marcFileName,
+          marcFileNameC850013,
           `marcBibInvalid008_${getRandomPostfix()}.mrc`,
           DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
-          response.forEach((record) => {
-            marcInstanceId = record.instance.id;
+          marcInstanceIdC850013 = response[0].instance.id;
+        });
+
+        // Import MARC file for C692112 (missing SRS record)
+        DataImport.uploadFileViaApi(
+          marcFileNameC692112,
+          `marcBibMissingSRS_${getRandomPostfix()}.mrc`,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          marcInstanceIdC692112 = response[0].instance.id;
+
+          // Update SRS record state to OLD to create corrupted MARC Instance
+          cy.getSrsRecordsByInstanceId(marcInstanceIdC692112).then((srsRecord) => {
+            const updatedSrsRecord = {
+              ...srsRecord,
+              state: 'OLD',
+            };
+            cy.updateSrsRecord(srsRecord.id, updatedSrsRecord);
           });
 
-          FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, marcInstanceId);
+          const instanceIds = `${marcInstanceIdC850013}\n${marcInstanceIdC692112}`;
+
+          FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, instanceIds);
 
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
@@ -50,15 +71,16 @@ describe('Bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(marcInstanceId);
+      InventoryInstance.deleteInstanceViaApi(marcInstanceIdC850013);
+      InventoryInstance.deleteInstanceViaApi(marcInstanceIdC692112);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
     it(
-      'C850013 Verify preventing bulk edit of MARC Instances with invalid 008 field in MARC record (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C850013'] },
+      'C850013, C692112 Verify preventing bulk edit of MARC Instances with invalid 008 field in MARC record and missing or old status underlying SRS record (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C850013', 'C692112'] },
       () => {
         // Step 1: Select "Inventory - instances" radio button and "Instance UUIDs" from dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
@@ -70,14 +92,18 @@ describe('Bulk-edit', () => {
         // Step 3: Check the result of uploading the CSV file
         BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
         BulkEditSearchPane.verifyPaneRecordsCount('0 instance');
-        BulkEditSearchPane.verifyErrorLabel(1, 0);
+        BulkEditSearchPane.verifyErrorLabel(2, 0);
         BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
-        BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
+        BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
 
         // Step 4: Check the columns in the "Errors & warnings" accordion
         BulkEditSearchPane.verifyErrorByIdentifier(
-          marcInstanceId,
+          marcInstanceIdC850013,
           ERROR_MESSAGES.INVALID_MARC_RECORD,
+        );
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          marcInstanceIdC692112,
+          ERROR_MESSAGES.MISSING_SRS_RECORD,
         );
 
         // Step 5: Click "Actions" menu
@@ -87,9 +113,8 @@ describe('Bulk-edit', () => {
         // Step 6: Download errors CSV file
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
-          'ERROR',
-          marcInstanceId,
-          ERROR_MESSAGES.INVALID_MARC_RECORD,
+          `ERROR,${marcInstanceIdC850013},${ERROR_MESSAGES.INVALID_MARC_RECORD}`,
+          `ERROR,${marcInstanceIdC692112},${ERROR_MESSAGES.MISSING_SRS_RECORD}`,
         ]);
       },
     );

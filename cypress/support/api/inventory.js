@@ -74,6 +74,7 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
   });
 });
 
+// Returns the LIST of all material types (array of objects, depending on searchParams)
 Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
   return cy
     .okapiRequest({
@@ -87,12 +88,14 @@ Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
     });
 });
 
+// Returns the FIRST material type (object) from the list of all material types
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {
   return cy.getAllMaterialTypes(searchParams).then((materialTypes) => {
     return materialTypes.length ? materialTypes[0] : null;
   });
 });
 
+// Returns the FIRST material type (object) with the name "book"
 Cypress.Commands.add('getBookMaterialType', () => {
   if (!Cypress.env('BOOK_MATERIAL_TYPE')) {
     return cy.getMaterialTypes({ limit: 1, query: 'name=="book"' }).then((materialType) => {
@@ -104,6 +107,7 @@ Cypress.Commands.add('getBookMaterialType', () => {
   }
 });
 
+// Returns the FIRST material type (object) with the name "text"
 Cypress.Commands.add('getTextMaterialType', () => {
   if (!Cypress.env('TEXT_MATERIAL_TYPE')) {
     return cy.getMaterialTypes({ limit: 1, query: 'name=="text"' }).then((materialType) => {
@@ -115,6 +119,7 @@ Cypress.Commands.add('getTextMaterialType', () => {
   }
 });
 
+// Returns the FIRST material type (object) with the name "dvd"
 Cypress.Commands.add('getDvdMaterialType', () => {
   if (!Cypress.env('DVD_MATERIAL_TYPE')) {
     return cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialType) => {
@@ -126,6 +131,7 @@ Cypress.Commands.add('getDvdMaterialType', () => {
   }
 });
 
+// Returns default material type, should be used in most cases, if possible
 Cypress.Commands.add('getDefaultMaterialType', () => {
   return cy.getBookMaterialType();
 });
@@ -653,6 +659,7 @@ Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
       cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
     } else {
       updatedBody = { ...defaultDisplaySettings };
+      updatedBody.id = uuid();
       updatedBody.value = {
         defaultSort: sortOption,
       };

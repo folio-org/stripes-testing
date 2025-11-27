@@ -308,15 +308,8 @@ export default {
     cy.expect(Accordion().absent());
   },
 
-  selectRecordByTitle(title) {
-    cy.do(
-      MultiColumnListRow({
-        isContainer: true,
-        content: title,
-      })
-        .find(Link())
-        .click(),
-    );
+  selectRecordByTitle(subjectValue) {
+    cy.do(MultiColumnListCell(subjectValue).find(Link()).click());
   },
 
   checkSearchResultRecord(record) {
@@ -503,5 +496,14 @@ export default {
         cy.visit(openedUrl);
         cy.url().should('include', '/marc-authorities/authorities');
       });
+  },
+
+  verifyRowShownAsSelected(subjectValue) {
+    cy.expect(
+      MultiColumnListRow({
+        content: including(subjectValue),
+        selected: true,
+      }).exists(),
+    );
   },
 };

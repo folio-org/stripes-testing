@@ -63,8 +63,8 @@ describe('Groups', () => {
     });
     cy.createTempUser([
       permissions.uiFinanceCreateViewEditGroups.gui,
-      permissions.uiFinanceViewEditDeletGroups.gui,
-      permissions.uiFinanceViewEditDeletFundBudget.gui,
+      permissions.uiFinanceViewEditDeleteGroups.gui,
+      permissions.uiFinanceViewEditDeleteFundBudget.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -85,7 +85,7 @@ describe('Groups', () => {
     // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
     cy.wait(1000);
     Groups.deleteGroupViaApi(defaultGroup.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
     cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
