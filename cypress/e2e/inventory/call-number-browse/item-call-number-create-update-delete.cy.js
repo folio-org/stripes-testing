@@ -129,7 +129,7 @@ describe('Inventory', () => {
         });
         // Browse in LC
         InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
@@ -169,7 +169,7 @@ describe('Inventory', () => {
 
         // Browse in LC
         InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
@@ -200,7 +200,7 @@ describe('Inventory', () => {
         // Browse for deleted call number in both options, verify not present
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.fillInBrowseSearch(callNumberUpdated);
         InventorySearchAndFilter.clickSearch();
@@ -208,7 +208,7 @@ describe('Inventory', () => {
         BrowseCallNumber.verifyCallNumbersNotFound([callNumberCreated]);
         // Browse in LC
         InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );

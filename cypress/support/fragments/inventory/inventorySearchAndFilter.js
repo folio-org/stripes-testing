@@ -415,7 +415,7 @@ export default {
     cy.expect(Button(`${tab}`).has({ default: false }));
   },
 
-  verifyCallNumberBrowseEmptyPane() {
+  verifyBrowseResultsEmptyPane() {
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(
       callNumberBrowsePane.has({
@@ -1109,7 +1109,7 @@ export default {
 
   verifySearchAndFilterPaneBrowseToggle() {
     this.verifyKeywordsAsDefault();
-    this.verifyCallNumberBrowseEmptyPane();
+    this.verifyBrowseResultsEmptyPane();
     cy.expect([
       searchButton.has({ disabled: true }),
       resetAllBtn.has({ disabled: true }),
@@ -1604,5 +1604,31 @@ export default {
     else {
       cy.expect([targetCell.exists(), targetCell.find(Icon({ warning: true })).absent()]);
     }
+  },
+
+  verifyEveryRowContainsLinkButtonInBrowse(columnIndex = 0) {
+    cy.then(() => inventorySearchResultsPane.find(MultiColumnList()).rowCount()).then(
+      (rowsCount) => {
+        if (rowsCount) {
+          for (let i = 0; i < rowsCount; i++) {
+            const targetCell = inventorySearchResultsPane
+              .find(MultiColumnList())
+              .find(MultiColumnListCell({ columnIndex, row: i }));
+            cy.expect(
+              targetCell.has({
+                innerHTML: or(including('href="/inventory'), including('would be here')),
+              }),
+            );
+          }
+        }
+      },
+    );
+  },
+
+  validateColumnValueForSearchResult(columnName, expectedValue, rowIndex = 0) {
+    const targetCell = instancesList.find(
+      MultiColumnListCell({ column: columnName, row: rowIndex }),
+    );
+    cy.expect(targetCell.has({ content: expectedValue }));
   },
 };

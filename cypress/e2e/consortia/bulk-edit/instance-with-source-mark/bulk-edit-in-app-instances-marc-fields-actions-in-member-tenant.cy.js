@@ -204,7 +204,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectActionForMarcInstance('Add');
           BulkEditActions.fillInDataTextAreaForMarcInstance(notes.addedLocal);
           BulkEditActions.verifyConfirmButtonDisabled(false);
-          BulkEditActions.verifyTheActionOptionsEqual(['Additional subfield']);
+          BulkEditActions.verifyTheSecondActionOptionsEqual(['Additional subfield']);
           BulkEditActions.selectSecondActionForMarcInstance('Additional subfield');
           BulkEditActions.verifyAdditionalSubfieldRowInitialState();
           BulkEditActions.fillInSubfieldInSubRow('3');

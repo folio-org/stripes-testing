@@ -204,6 +204,63 @@ export default {
     );
   },
 
+  verifyCompletedWithErrorsWithDuplicatesExportResultCells(
+    resultFileName,
+    totalRecordsCount,
+    exportedRecordsCount,
+    failedRecordsCount,
+    duplicatesCount,
+    jobId,
+    user,
+    jobType = 'Default instances',
+  ) {
+    const row = ListRow({ content: including(resultFileName) });
+    const resultRow = {
+      fileName: row.find(MultiColumnListCell({ columnIndex: 0 })),
+      status: row.find(MultiColumnListCell({ columnIndex: 1 })),
+      total: row.find(MultiColumnListCell({ columnIndex: 2 })),
+      exported: row.find(MultiColumnListCell({ columnIndex: 3 })),
+      failed: row.find(MultiColumnListCell({ columnIndex: 4 })),
+      jobProfile: row.find(MultiColumnListCell({ columnIndex: 5 })),
+      endedRunning: row.find(MultiColumnListCell({ columnIndex: 7 })),
+      runBy: row.find(MultiColumnListCell({ columnIndex: 8 })),
+      id: row.find(MultiColumnListCell({ columnIndex: 9 })),
+    };
+
+    const userNameToVerify = `${user.firstName} ${user.lastName}`;
+    const expectedFailedContent = `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`;
+
+    cy.expect([
+      resultRow.status.is({ content: 'Completed with errors' }),
+      resultRow.total.is({ content: totalRecordsCount.toString() }),
+      resultRow.exported.is({ content: exportedRecordsCount.toString() }),
+      resultRow.failed.is({ content: expectedFailedContent }),
+      resultRow.jobProfile.is({ content: `${jobType} export job profile` }),
+      resultRow.runBy.is({ content: userNameToVerify }),
+      resultRow.id.is({ content: jobId.toString() }),
+    ]);
+
+    // verify file name
+    cy.do(
+      resultRow.fileName.perform((element) => {
+        expect(element.innerText).to.equal(resultFileName);
+        expect(element.innerText).to.include(`-${jobId}.mrc`);
+      }),
+    );
+
+    // verify date (ended running)
+    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+    cy.do(
+      resultRow.endedRunning.perform((element) => {
+        const actualDate = element.innerText;
+        expect(actualDate).to.match(dateString);
+
+        const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
+        DateTools.verifyDate(dateWithUTC, 180000);
+      }),
+    );
+  },
+
   verifyLastLog(fileName, status) {
     const result = {
       fileName: MultiColumnListCell({ row: 0, columnIndex: 0 }),

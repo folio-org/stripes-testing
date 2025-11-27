@@ -63,33 +63,36 @@ export default {
     deletedRecordsSupport,
     errorsProcessing,
   ) {
-    const newValue = `{"suppressedRecordsProcessing":"${suppressedRecordsProcessing}","recordsSource":"${recordsSource}","deletedRecordsSupport":"${deletedRecordsSupport}","errorsProcessing":"${errorsProcessing}"}`;
+    const configValue = {
+      suppressedRecordsProcessing,
+      recordsSource,
+      deletedRecordsSupport,
+      errorsProcessing,
+    };
 
-    cy.getConfigByName('OAIPMH', 'behavior').then((body) => {
-      let config = body.configs[0];
+    cy.getOaiPmhConfigurations('behavior').then((body) => {
+      let config = body.configurationSettings[0];
 
-      if (body.configs.length === 0) {
+      if (body.configurationSettings.length === 0) {
         config = {
-          value: newValue,
-          module: 'OAIPMH',
+          configValue,
           configName: 'behavior',
           id: uuid(),
-          enabled: true,
         };
 
         cy.okapiRequest({
           method: 'POST',
-          path: 'configurations/entries',
+          path: 'oai-pmh/configuration-settings',
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: config,
         });
       } else {
-        config.value = newValue;
+        config.configValue = configValue;
 
         cy.okapiRequest({
           method: 'PUT',
-          path: `configurations/entries/${config.id}`,
+          path: `oai-pmh/configuration-settings/${config.id}`,
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: config,

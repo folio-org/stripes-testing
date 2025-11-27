@@ -25,10 +25,10 @@ describe('Acquisition Units', () => {
     });
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
-      permissions.uiSettingsFinanceViewEditCreateDeleter.gui,
+      permissions.uiSettingsFinanceViewEditCreateDelete.gui,
       permissions.uiFinanceViewEditDeleteLedger.gui,
-      permissions.uiFinanceViewEditDeletGroups.gui,
-      permissions.uiFinanceViewEditDeletFundBudget.gui,
+      permissions.uiFinanceViewEditDeleteGroups.gui,
+      permissions.uiFinanceViewEditDeleteFundBudget.gui,
       permissions.uiFinanceViewEditDeleteFiscalYear.gui,
       permissions.uiFinanceViewEditCreateLedger.gui,
       permissions.uiFinanceCreateViewEditGroups.gui,

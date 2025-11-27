@@ -173,6 +173,7 @@ export default {
   clearStaffClips: () => {
     cy.get('.ql-container > .ql-editor').type('{selectAll}{backspace}');
     cy.do(staffClipsDescription.fillIn('{selectAll}{backspace}'));
+    cy.wait(1000);
     cy.do(saveButton.click());
   },
   saveAndClose: () => {

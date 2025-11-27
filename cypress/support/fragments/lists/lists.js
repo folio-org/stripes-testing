@@ -104,7 +104,7 @@ const UI = {
 
   expandListInformationAccordion() {
     cy.do(listInformationAccording.open());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   clickOnQueryAccordion() {
@@ -269,6 +269,10 @@ const UI = {
   verifyExportListVisibleColumnsButtonIsActive() {
     cy.expect(exportListVisibleColumns.exists());
     cy.expect(exportListVisibleColumns.has({ disabled: false }));
+  },
+
+  verifyExportListVisibleColumnsButtonIsDisabled() {
+    cy.expect(exportListVisibleColumns.has({ disabled: true }));
   },
 
   verifyExportListButtonIsDisabled() {
@@ -785,7 +789,7 @@ const QueryBuilder = {
   },
 
   verifyQueryHeader(header) {
-    cy.get('[class^="mclContainer"] [class^="mclScrollable"]').scrollTo('right');
+    cy.get('[class^="mclContainer"] [class^="mclScrollable"]').scrollTo('right', { ensureScrollable: false });
     // cy.xpath(`//div[contains(@id, 'list-column-pol') and contains(., '${header}')]`).scrollIntoView();
     cy.expect(MultiColumnListHeader(header).exists());
   },
@@ -923,6 +927,7 @@ const API = {
       path: `query/${queryId}`,
       isDefaultSearchParamsRequired: false,
       searchParams: searchParameters,
+      customTimeout: 5000,
     });
   },
 
@@ -956,6 +961,7 @@ const API = {
       .okapiRequest({
         method: 'GET',
         path: `lists/${listId}`,
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
@@ -984,10 +990,18 @@ const API = {
   },
 
   getVersionApi() {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: 'fqm/version',
-    });
+    if (!Cypress.env('LISTS_VERSION_API')) {
+      return cy.okapiRequest({
+        method: 'GET',
+        path: 'fqm/version',
+        isDefaultSearchParamsRequired: false,
+      }).then((response) => {
+        Cypress.env('LISTS_VERSION_API', response.body);
+        return response.body;
+      });
+    } else {
+      return cy.wrap(Cypress.env('LISTS_VERSION_API'));
+    }
   },
 
   getTypesViaApi() {
@@ -1007,6 +1021,16 @@ const API = {
     return cy.okapiRequest({
       method: 'GET',
       path: `entity-types/${id}`,
+    });
+  },
+
+  getEntityTypeColumnsViaApi(id, labelName) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/${id}/columns/${labelName}/values`,
+      isDefaultSearchParamsRequired: false,
+    }).then((response) => {
+      return response.body;
     });
   },
 
@@ -1138,7 +1162,7 @@ const API = {
       });
   },
 
-  // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
+  // Use only with USER token, not ADMIN token!!! Admin doesn't have access to private lists of other users
   deleteListByNameViaApi(listName, recursively = false) {
     this.getViaApi().then((response) => {
       const filteredItem = response.body.content.find((item) => item.name === listName);

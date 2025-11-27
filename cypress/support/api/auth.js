@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
-import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
+import Tenant from '../tenant';
 
 let authRefreshCounter = 0;
 
@@ -116,7 +116,6 @@ Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
   cy.intercept('POST', '/authn/refresh').as(alias);
 
   callback();
-
   // cy.log(`Waiting ${timeout / 1000} sec for /authn/refresh call...`);
   // cy.window({ log: false }).then(() => {
   //   return cy.wrap(null, { log: false }).then(() => {

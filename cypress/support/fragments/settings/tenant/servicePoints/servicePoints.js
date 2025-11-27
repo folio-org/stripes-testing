@@ -121,6 +121,60 @@ export default {
     }
   },
 
+  createCircDesk1ServicePointViaApi() {
+    const servicePointData = {
+      id: uuid(),
+      name: CIRC_DESK_1,
+      code: 'cd1',
+      discoveryDisplayName: CIRC_DESK_1,
+      pickupLocation: true,
+      holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 24 },
+    };
+
+    return this.createViaApi(servicePointData).then((response) => {
+      Cypress.env(CIRC_DESK_1, response.body);
+      return response.body;
+    });
+  },
+
+  createCircDesk2ServicePointViaApi() {
+    const servicePointData = {
+      id: uuid(),
+      name: CIRC_DESK_2,
+      code: 'cd2',
+      discoveryDisplayName: CIRC_DESK_2,
+      pickupLocation: true,
+      holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 24 },
+    };
+
+    return this.createViaApi(servicePointData).then((response) => {
+      Cypress.env(CIRC_DESK_2, response.body);
+      return response.body;
+    });
+  },
+
+  getOrCreateCircDesk1ServicePointViaApi() {
+    return this.getViaApi({ limit: 1, query: `name=="${CIRC_DESK_1}"` }).then((servicePoints) => {
+      if (servicePoints && servicePoints.length > 0) {
+        Cypress.env(CIRC_DESK_1, servicePoints[0]);
+        return servicePoints[0];
+      } else {
+        return this.createCircDesk1ServicePointViaApi();
+      }
+    });
+  },
+
+  getOrCreateCircDesk2ServicePointViaApi() {
+    return this.getViaApi({ limit: 1, query: `name=="${CIRC_DESK_2}"` }).then((servicePoints) => {
+      if (servicePoints && servicePoints.length > 0) {
+        Cypress.env(CIRC_DESK_2, servicePoints[0]);
+        return servicePoints[0];
+      } else {
+        return this.createCircDesk2ServicePointViaApi();
+      }
+    });
+  },
+
   createViaApi: (servicePointParameters = defaultServicePoint) => cy.okapiRequest({
     path: 'service-points',
     body: servicePointParameters,
