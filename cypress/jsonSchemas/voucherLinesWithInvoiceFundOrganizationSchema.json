@@ -1,0 +1,700 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Voucher Lines with Invoice, Fund, Organization",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "voucher_line.amount": {
+            "type": ["number", "null"]
+          },
+          "voucher_line.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.created_date": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.external_account_number": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.fund_distribution": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.source_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "voucher_line.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.updated_date": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.id": {
+            "type": ["string", "null"]
+          },
+          "voucher_line.voucher_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.account_no": {
+            "type": ["string", "null"]
+          },
+          "voucher.accounting_code": {
+            "type": ["string", "null"]
+          },
+          "voucher.acquisition_units": {
+            "type": ["string", "null"]
+          },
+          "voucher.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "voucher.batch_group": {
+            "type": ["string", "null"]
+          },
+          "voucher.batch_group_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.created_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.disbursement_amount": {
+            "type": ["number", "null"]
+          },
+          "voucher.disbursement_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.disbursement_number": {
+            "type": ["string", "null"]
+          },
+          "voucher.enclosure_needed": {
+            "type": ["string", "null"]
+          },
+          "voucher.exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "voucher.export_to_accounting": {
+            "type": ["string", "null"]
+          },
+          "voucher.invoice_currency": {
+            "type": ["string", "null"]
+          },
+          "voucher.invoice_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.status": {
+            "type": ["string", "null"]
+          },
+          "voucher.system_currency": {
+            "type": ["string", "null"]
+          },
+          "voucher.amount": {
+            "type": ["number", "null"]
+          },
+          "voucher.type": {
+            "type": ["string", "null"]
+          },
+          "voucher.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.updated_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.id": {
+            "type": ["string", "null"]
+          },
+          "voucher.vendor_id": {
+            "type": ["string", "null"]
+          },
+          "voucher.voucher_date": {
+            "type": ["string", "null"]
+          },
+          "voucher.voucher_number": {
+            "type": ["string", "null"]
+          },
+          "invoice.account_no": {
+            "type": ["string", "null"]
+          },
+          "invoice.accounting_code": {
+            "type": ["string", "null"]
+          },
+          "invoice.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "invoice.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "invoice.approved_by": {
+            "type": ["string", "null"]
+          },
+          "invoice.approved_by_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.approval_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.batch_group": {
+            "type": ["string", "null"]
+          },
+          "invoice.batch_group_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.bill_to": {
+            "type": ["string", "null"]
+          },
+          "invoice.bill_to_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.chk_subscription_overlap": {
+            "type": ["string", "null"]
+          },
+          "invoice.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.created_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.currency": {
+            "type": ["string", "null"]
+          },
+          "invoice.enclosure_needed": {
+            "type": ["string", "null"]
+          },
+          "invoice.exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "invoice.export_to_accounting": {
+            "type": ["string", "null"]
+          },
+          "invoice.fiscal_year": {
+            "type": ["string", "null"]
+          },
+          "invoice.fiscal_year_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.folio_invoice_no": {
+            "type": ["string", "null"]
+          },
+          "invoice.invoice_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.jsonb": {
+            "type": ["string", "null"]
+          },
+          "invoice.next_invoice_line_number": {
+            "type": ["number", "null"]
+          },
+          "invoice.note": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_due": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_method": {
+            "type": ["string", "null"]
+          },
+          "invoice.po_numbers": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "invoice.source": {
+            "type": ["string", "null"]
+          },
+          "invoice.status": {
+            "type": ["string", "null"]
+          },
+          "invoice.sub_total": {
+            "type": ["number", "null"]
+          },
+          "invoice.tag_list": {
+            "type": ["string", "null"]
+          },
+          "invoice.payment_terms": {
+            "type": ["string", "null"]
+          },
+          "invoice.adjustments_total": {
+            "type": ["number", "null"]
+          },
+          "invoice.total": {
+            "type": ["number", "null"]
+          },
+          "invoice.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.updated_date": {
+            "type": ["string", "null"]
+          },
+          "invoice.id": {
+            "type": ["string", "null"]
+          },
+          "invoice.vendor_invoice_no": {
+            "type": ["string", "null"]
+          },
+          "invoice.vendor_name": {
+            "type": ["string", "null"]
+          },
+          "invoice.vendor_id": {
+            "type": ["string", "null"]
+          },
+          "invoice.voucher_number": {
+            "type": ["string", "null"]
+          },
+          "fund.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "fund.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.code": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.description": {
+            "type": ["string", "null"]
+          },
+          "fund.donor_organization_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.donor_organizations": {
+            "type": ["string", "null"]
+          },
+          "fund.external_account_no": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_type_id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger_id": {
+            "type": ["string", "null"]
+          },
+          "fund.locations": {
+            "type": ["string", "null"]
+          },
+          "fund.name": {
+            "type": ["string", "null"]
+          },
+          "fund.restrict_by_locations": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_status": {
+            "type": ["string", "null"]
+          },
+          "fund.tag_list": {
+            "type": ["string", "null"]
+          },
+          "fund.allocated_from": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.allocated_from_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.allocated_to": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.allocated_to_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.id": {
+            "type": ["string", "null"]
+          },
+          "fund.version": {
+            "type": ["number", "null"]
+          },
+          "fund_type.name": {
+            "type": ["string", "null"]
+          },
+          "fund_type.id": {
+            "type": ["string", "null"]
+          },
+          "fund_type.version": {
+            "type": ["number", "null"]
+          },
+          "ledger.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "ledger.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "ledger.code": {
+            "type": ["string", "null"]
+          },
+          "ledger.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "ledger.created_date": {
+            "type": ["string", "null"]
+          },
+          "ledger.currency": {
+            "type": ["string", "null"]
+          },
+          "ledger.description": {
+            "type": ["string", "null"]
+          },
+          "ledger.fiscal_year_one": {
+            "type": ["string", "null"]
+          },
+          "ledger.fiscal_year_one_id": {
+            "type": ["string", "null"]
+          },
+          "ledger.name": {
+            "type": ["string", "null"]
+          },
+          "ledger.restrict_encumbrance": {
+            "type": ["string", "null"]
+          },
+          "ledger.restrict_expenditures": {
+            "type": ["string", "null"]
+          },
+          "ledger.ledger_status": {
+            "type": ["string", "null"]
+          },
+          "ledger.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "ledger.updated_date": {
+            "type": ["string", "null"]
+          },
+          "ledger.id": {
+            "type": ["string", "null"]
+          },
+          "ledger.version": {
+            "type": ["number", "null"]
+          },
+          "organization.code": {
+            "type": ["string", "null"]
+          },
+          "organization.edi_vendor_edi_code": {
+            "type": ["string", "null"]
+          },
+          "organization.edi_vendor_edi_type": {
+            "type": ["string", "null"]
+          },
+          "organization.is_donor": {
+            "type": ["string", "null"]
+          },
+          "organization.is_vendor": {
+            "type": ["string", "null"]
+          },
+          "organization.jsonb": {
+            "type": ["string", "null"]
+          },
+          "organization.name": {
+            "type": ["string", "null"]
+          },
+          "organization.status": {
+            "type": ["string", "null"]
+          },
+          "organization.id": {
+            "type": ["string", "null"]
+          },
+          "organization._id": {
+            "type": ["string", "null"]
+          },
+          "created_by.active": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.email": {
+            "type": ["string", "null"]
+          },
+          "created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "created_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "created_by.id": {
+            "type": ["string", "null"]
+          },
+          "created_by.username": {
+            "type": ["string", "null"]
+          },
+          "updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "updated_by.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "updated_by.username": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "voucher_line.amount",
+          "voucher_line.created_by_user_id",
+          "voucher_line.created_date",
+          "voucher_line.external_account_number",
+          "voucher_line.fund_distribution",
+          "voucher_line.source_ids",
+          "voucher_line.updated_by_user_id",
+          "voucher_line.updated_date",
+          "voucher_line.id",
+          "voucher_line.voucher_id",
+          "voucher.account_no",
+          "voucher.accounting_code",
+          "voucher.acquisition_units",
+          "voucher.acq_unit_ids",
+          "voucher.batch_group",
+          "voucher.batch_group_id",
+          "voucher.created_by_user_id",
+          "voucher.created_date",
+          "voucher.disbursement_amount",
+          "voucher.disbursement_date",
+          "voucher.disbursement_number",
+          "voucher.enclosure_needed",
+          "voucher.exchange_rate",
+          "voucher.export_to_accounting",
+          "voucher.invoice_currency",
+          "voucher.invoice_id",
+          "voucher.status",
+          "voucher.system_currency",
+          "voucher.amount",
+          "voucher.type",
+          "voucher.updated_by_user_id",
+          "voucher.updated_date",
+          "voucher.id",
+          "voucher.vendor_id",
+          "voucher.voucher_date",
+          "voucher.voucher_number",
+          "invoice.account_no",
+          "invoice.accounting_code",
+          "invoice.acquisition_unit",
+          "invoice.acq_unit_ids",
+          "invoice.approved_by",
+          "invoice.approved_by_id",
+          "invoice.approval_date",
+          "invoice.batch_group",
+          "invoice.batch_group_id",
+          "invoice.bill_to",
+          "invoice.bill_to_id",
+          "invoice.chk_subscription_overlap",
+          "invoice.created_by_user_id",
+          "invoice.created_date",
+          "invoice.currency",
+          "invoice.enclosure_needed",
+          "invoice.exchange_rate",
+          "invoice.export_to_accounting",
+          "invoice.fiscal_year",
+          "invoice.fiscal_year_id",
+          "invoice.folio_invoice_no",
+          "invoice.invoice_date",
+          "invoice.jsonb",
+          "invoice.next_invoice_line_number",
+          "invoice.note",
+          "invoice.payment_date",
+          "invoice.payment_due",
+          "invoice.payment_method",
+          "invoice.po_numbers",
+          "invoice.source",
+          "invoice.status",
+          "invoice.sub_total",
+          "invoice.tag_list",
+          "invoice.payment_terms",
+          "invoice.adjustments_total",
+          "invoice.total",
+          "invoice.updated_by_user_id",
+          "invoice.updated_date",
+          "invoice.id",
+          "invoice.vendor_invoice_no",
+          "invoice.vendor_name",
+          "invoice.vendor_id",
+          "invoice.voucher_number",
+          "fund.acquisition_unit",
+          "fund.acq_unit_ids",
+          "fund.code",
+          "fund.created_by_user_id",
+          "fund.created_date",
+          "fund.description",
+          "fund.donor_organization_ids",
+          "fund.donor_organizations",
+          "fund.external_account_no",
+          "fund.fund_type_id",
+          "fund.ledger_id",
+          "fund.locations",
+          "fund.name",
+          "fund.restrict_by_locations",
+          "fund.fund_status",
+          "fund.tag_list",
+          "fund.allocated_from",
+          "fund.allocated_from_ids",
+          "fund.allocated_to",
+          "fund.allocated_to_ids",
+          "fund.updated_by_user_id",
+          "fund.updated_date",
+          "fund.id",
+          "fund.version",
+          "fund_type.name",
+          "fund_type.id",
+          "fund_type.version",
+          "ledger.acquisition_unit",
+          "ledger.acq_unit_ids",
+          "ledger.code",
+          "ledger.created_by_user_id",
+          "ledger.created_date",
+          "ledger.currency",
+          "ledger.description",
+          "ledger.fiscal_year_one",
+          "ledger.fiscal_year_one_id",
+          "ledger.name",
+          "ledger.restrict_encumbrance",
+          "ledger.restrict_expenditures",
+          "ledger.ledger_status",
+          "ledger.updated_by_user_id",
+          "ledger.updated_date",
+          "ledger.id",
+          "ledger.version",
+          "organization.code",
+          "organization.edi_vendor_edi_code",
+          "organization.edi_vendor_edi_type",
+          "organization.is_donor",
+          "organization.is_vendor",
+          "organization.jsonb",
+          "organization.name",
+          "organization.status",
+          "organization.id",
+          "organization._id",
+          "created_by.active",
+          "created_by.user_created_date",
+          "created_by.email",
+          "created_by.last_name_first_name",
+          "created_by.created_by_user_id",
+          "created_by.updated_by_user_id",
+          "created_by.user_updated_date",
+          "created_by.id",
+          "created_by.username",
+          "updated_by.active",
+          "updated_by.user_created_date",
+          "updated_by.email",
+          "updated_by.last_name_first_name",
+          "updated_by.created_by_user_id",
+          "updated_by.updated_by_user_id",
+          "updated_by.user_updated_date",
+          "updated_by.id",
+          "updated_by.username"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

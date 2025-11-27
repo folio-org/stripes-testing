@@ -1704,4 +1704,9 @@ export default {
       });
     });
   },
+
+  verifyColumnHeaderSortableButNotSorted(headerName, isSortable = true) {
+    const targetHeader = inventoriesList.find(MultiColumnListHeader(headerName));
+    cy.expect(targetHeader.has({ sortable: isSortable }));
+  },
 };

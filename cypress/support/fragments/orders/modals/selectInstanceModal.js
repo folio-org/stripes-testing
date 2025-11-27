@@ -3,6 +3,7 @@ import {
   HTML,
   Modal,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   TextField,
   including,
@@ -11,7 +12,7 @@ import {
   Accordion,
   Checkbox,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import { DEFAULT_WAIT_TIME, INVENTORY_COLUMN_HEADERS } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
 
 const selectInstanceModal = Modal('Select instance');
@@ -77,6 +78,13 @@ const searchItemsOptions = [
   'Item UUID',
   'All',
   'Query search',
+];
+export const COLUMN_HEADERS = [
+  INVENTORY_COLUMN_HEADERS.TITLE,
+  INVENTORY_COLUMN_HEADERS.CONTRIBUTORS,
+  INVENTORY_COLUMN_HEADERS.PUBLISHERS,
+  INVENTORY_COLUMN_HEADERS.DATE,
+  INVENTORY_COLUMN_HEADERS.INSTANCE_HRID,
 ];
 
 export default {
@@ -273,5 +281,21 @@ export default {
   },
   checkSearchButtonEnabled() {
     cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  validateSearchTableColumnsShown(columnHeaders = COLUMN_HEADERS, isShown = true) {
+    const headers = Array.isArray(columnHeaders) ? columnHeaders : [columnHeaders];
+    cy.get('#list-plugin-find-records div[class^="mclScrollable"]')
+      .should('exist')
+      .scrollTo('right', { ensureScrollable: false });
+    headers.forEach((header) => {
+      if (isShown) cy.expect(resultsList.find(MultiColumnListHeader(header)).exists());
+      else cy.expect(resultsList.find(MultiColumnListHeader(header)).absent());
+    });
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(selectInstanceModal.find(Accordion(accordionName)).clickHeader());
+    cy.expect(selectInstanceModal.find(Accordion(accordionName)).has({ open: true }));
   },
 };

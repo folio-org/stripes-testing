@@ -145,7 +145,7 @@ export default {
   verifyProfilesSortedByUpdatedBy(sortOrder = 'ascending') {
     cy.expect(MultiColumnListHeader({ id: 'list-column-updatedby' }).has({ sort: sortOrder }));
     verifyTextColumnSorted(
-      'div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:nth-child(4) [class^="label-"]',
+      'div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:nth-child(4)',
       sortOrder,
       'Updated by names',
     );
@@ -154,27 +154,27 @@ export default {
   verifyProfilesSortedByUpdatedDate(sortOrder = 'ascending') {
     cy.expect(MultiColumnListHeader({ id: 'list-column-updateddate' }).has({ sort: sortOrder }));
 
-    cy.get(
-      'div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:nth-child(3) [class^="label-"]',
-    ).then(($elements) => {
-      const updatedDates = Array.from($elements).map((el) => el.textContent.trim());
+    cy.get('div[class^="profilesList-"] [data-row-index] [class^="mclCell-"]:nth-child(3)').then(
+      ($elements) => {
+        const updatedDates = Array.from($elements).map((el) => el.textContent.trim());
 
-      const sortedDates = [...updatedDates].sort((a, b) => {
-        const dateA = new Date(a);
-        const dateB = new Date(b);
+        const sortedDates = [...updatedDates].sort((a, b) => {
+          const dateA = new Date(a);
+          const dateB = new Date(b);
 
-        if (sortOrder === 'ascending') {
-          return dateA - dateB;
-        } else {
-          return dateB - dateA;
-        }
-      });
+          if (sortOrder === 'ascending') {
+            return dateA - dateB;
+          } else {
+            return dateB - dateA;
+          }
+        });
 
-      expect(updatedDates).to.deep.equal(
-        sortedDates,
-        `Updated dates should be sorted in ${sortOrder} order`,
-      );
-    });
+        expect(updatedDates).to.deep.equal(
+          sortedDates,
+          `Updated dates should be sorted in ${sortOrder} order`,
+        );
+      },
+    );
   },
 
   changeSortOrderByName() {

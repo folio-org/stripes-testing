@@ -11,6 +11,7 @@ import {
 } from '../../../../../interactors';
 import ExportNewJobProfile from './exportNewJobProfile';
 import SettingsDataExport from '../settingsDataExport';
+import { defaultJobProfiles } from '../exportFile';
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
@@ -112,15 +113,9 @@ export default {
   verifyDefaultProfiles() {
     this.scrollDownIfListOfResultsIsLong();
 
-    const defaultProfiles = [
-      'Default authority export job profile',
-      'Default holdings export job profile',
-      'Default instances export job profile',
-      'Deleted authority export job profile',
-    ];
     const datePattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
 
-    defaultProfiles.forEach((profileName) => {
+    defaultJobProfiles.forEach((profileName) => {
       const targetRow = MultiColumnListRow(including(profileName), { isContainer: false });
 
       cy.expect(
