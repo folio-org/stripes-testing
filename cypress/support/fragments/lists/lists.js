@@ -15,6 +15,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  not,
   Pane,
   RadioButton,
   TextArea,
@@ -789,26 +790,92 @@ const QueryBuilder = {
   },
 
   verifyQueryHeader(header) {
-    cy.get('[class^="mclContainer"] [class^="mclScrollable"]').scrollTo('right', { ensureScrollable: false });
+    cy.get('[class^="mclContainer"] [class^="mclScrollable"]').scrollTo('right', {
+      ensureScrollable: false,
+    });
     // cy.xpath(`//div[contains(@id, 'list-column-pol') and contains(., '${header}')]`).scrollIntoView();
     cy.expect(MultiColumnListHeader(header).exists());
   },
 
-  verifyQueryValue(value, condition) {
-    cy.get('div[class^="mclRowContainer--"]')
-      .find('[data-row-index]')
-      .each(() => {
-        switch (condition) {
-          case 'equals':
-            cy.expect(MultiColumnListCell({ content: value }).exists());
-            break;
-          case 'contains':
-            cy.expect(MultiColumnListCell(including(value)).exists());
-            break;
-          default:
-            // cy.log('not implemented yet');
-            break;
+  verifyQueryValue(value, condition, locator) {
+    let columnNumber = 0;
+    cy.wrap(true)
+      .then(() => {
+        if (locator) {
+          cy.log(`Locator is: ${locator}`);
+          cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).then(($index) => {
+            columnNumber = $index;
+          });
+          cy.log(`Column number is: ${columnNumber}`);
         }
+      })
+      .then(() => {
+        cy.get('div[class^="mclRowContainer--"]')
+          .find('[data-row-index]')
+          .each(($el, index) => {
+            switch (condition) {
+              case 'equals':
+                if (locator) {
+                  cy.log(`Index is: ${index}, column number is: ${columnNumber}`);
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      columnIndex: columnNumber,
+                      content: value,
+                    }).exists(),
+                  );
+                } else {
+                  cy.expect(MultiColumnListCell({ row: index, content: value }).exists());
+                }
+                break;
+              case 'contains':
+                if (locator) {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      columnIndex: columnNumber,
+                      content: including(value),
+                    }).exists(),
+                  );
+                } else {
+                  cy.expect(
+                    MultiColumnListCell({ row: index, content: including(value) }).exists(),
+                  );
+                }
+                break;
+              case 'not in':
+                if (locator) {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      columnIndex: columnNumber,
+                      content: not(including(value)),
+                    }).exists(),
+                  );
+                } else {
+                  cy.expect(
+                    MultiColumnListCell({ row: index, content: not(including(value)) }).exists(),
+                  );
+                }
+                break;
+              case 'is null/empty':
+                if (locator) {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      columnIndex: columnNumber,
+                      content: '',
+                    }).exists(),
+                  );
+                } else {
+                  cy.expect(MultiColumnListCell({ row: index, content: '' }).exists());
+                }
+                break;
+              default:
+                // cy.log('not implemented yet');
+                break;
+            }
+          });
       });
   },
 
@@ -991,14 +1058,16 @@ const API = {
 
   getVersionApi() {
     if (!Cypress.env('LISTS_VERSION_API')) {
-      return cy.okapiRequest({
-        method: 'GET',
-        path: 'fqm/version',
-        isDefaultSearchParamsRequired: false,
-      }).then((response) => {
-        Cypress.env('LISTS_VERSION_API', response.body);
-        return response.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'fqm/version',
+          isDefaultSearchParamsRequired: false,
+        })
+        .then((response) => {
+          Cypress.env('LISTS_VERSION_API', response.body);
+          return response.body;
+        });
     } else {
       return cy.wrap(Cypress.env('LISTS_VERSION_API'));
     }
@@ -1025,13 +1094,15 @@ const API = {
   },
 
   getEntityTypeColumnsViaApi(id, labelName) {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: `entity-types/${id}/columns/${labelName}/values`,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      return response.body;
-    });
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `entity-types/${id}/columns/${labelName}/values`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 
   deleteRecursivelyViaApi(id) {
