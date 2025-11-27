@@ -285,7 +285,7 @@ describe('Orders', () => {
             Funds.deleteFundViaApi(testData.funds.second.id);
             Funds.deleteFundViaApi(testData.funds.third.id);
             Funds.deleteFundViaApi(testData.funds.fourth.id);
-            Ledgers.deleteledgerViaApi(testData.ledger.id);
+            Ledgers.deleteLedgerViaApi(testData.ledger.id);
             FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
           });
         },
