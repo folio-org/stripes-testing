@@ -116,7 +116,7 @@ export const holdingsFieldValues = {
   receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
-  holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
+  holdingsStatisticalCodeNames: 'Holdings — Statistical codes',
   holdingsTags: 'Holdings — Tags',
 };
 export const instanceFieldValues = {
@@ -131,7 +131,7 @@ export const instanceFieldValues = {
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
-  statisticalCodeNames: 'Instance — Statistical code names',
+  statisticalCodeNames: 'Instance — Statistical codes',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
   noteType: 'Instance — Notes — Note type',
@@ -197,7 +197,7 @@ export const itemFieldValues = {
   electronicAccessURLPublicNote: 'Item — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Item — Electronic access — URL relationship',
   yearCaption: 'Item — Year, caption',
-  itemStatisticalCodeNames: 'Item — Statistical code',
+  itemStatisticalCodeNames: 'Item — Statistical codes',
   itemTags: 'Item — Tags',
   itemFormerIdentifiers: 'Item — Former identifiers',
 };

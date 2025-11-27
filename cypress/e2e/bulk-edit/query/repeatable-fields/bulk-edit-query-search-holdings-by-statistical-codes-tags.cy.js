@@ -163,7 +163,7 @@ describe('Bulk-edit', () => {
         'C700836 Search holdings by Statistical code names, Tags (firebird)',
         { tags: ['criticalPath', 'firebird', 'C700836'] },
         () => {
-          // Step 1: Search holdings by "Holdings — Statistical code names" field using "in" operator
+          // Step 1: Search holdings by "Holdings — Statistical codes" field using "in" operator
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.clickBuildQueryButton();
