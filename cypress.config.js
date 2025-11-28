@@ -61,7 +61,7 @@ module.exports = defineConfig({
     async setupNodeEvents(on, config) {
       on('file:preprocessor', webpackPreprocessor());
 
-      allureWriter(on, config);
+      const allureConfig = allureWriter(on, config);
 
       on('task', {
         log(message) {
@@ -153,7 +153,7 @@ module.exports = defineConfig({
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
 
-      return result;
+      return result || allureConfig || config;
     },
     baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,
