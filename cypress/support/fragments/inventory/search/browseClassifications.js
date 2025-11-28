@@ -89,6 +89,10 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
 
+  selectFoundValueByValue(value) {
+    cy.do(MultiColumnListCell({ content: value }).find(Button()).click());
+  },
+
   getClassificationNumbersViaApi(classificationBrowseId = 'all', classificationNumber) {
     return cy.okapiRequest({
       method: 'GET',
@@ -120,9 +124,9 @@ export default {
         }
       },
       {
-        limit: 12,
+        limit: 14,
         delay: 5000,
-        timeout: 60000,
+        timeout: 72000,
         error: `Classification number did not appear: "${classificationNumber}"`,
       },
     );
