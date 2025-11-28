@@ -47,10 +47,11 @@ describe('Finance › Funds', () => {
 
     FiscalYears.createViaApi(fiscalYear1).then((fy1) => {
       fiscalYear1.id = fy1.id;
+      fiscalYear1.code = fy1.code;
       ledger.fiscalYearOneId = fy1.id;
       budgetACurrent.fiscalYearId = fy1.id;
       budgetBCurrent.fiscalYearId = fy1.id;
-      fiscalYear2.code = fiscalYear1.code.slice(0, -1) + '2';
+      fiscalYear2.code = fy1.code.slice(0, -1) + '2';
       FiscalYears.createViaApi(fiscalYear2).then((fy2) => {
         fiscalYear2.id = fy2.id;
         budgetAPlanned.fiscalYearId = fy2.id;
