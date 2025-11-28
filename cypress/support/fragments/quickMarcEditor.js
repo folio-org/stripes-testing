@@ -1151,6 +1151,7 @@ export default {
     isArrowUpButtonShown,
     isArrowDownButtonShown,
     isDeleteFieldButtonShown = true,
+    isAddFieldButtonShown = true,
   ) {
     if (isArrowUpButtonShown) {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
@@ -1162,8 +1163,11 @@ export default {
     } else {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).absent());
     }
-
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
+    if (isAddFieldButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).absent());
+    }
     if (isDeleteFieldButtonShown) {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
     } else {
@@ -3438,5 +3442,15 @@ export default {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ focused: isFocused }));
+  },
+
+  verifyRowOrderByTags(expectedTagsOrder) {
+    expectedTagsOrder.forEach((tag, index) => {
+      cy.expect(
+        QuickMarcEditorRow({ index })
+          .find(TextField({ name: `records[${index}].tag` }))
+          .has({ value: tag }),
+      );
+    });
   },
 };

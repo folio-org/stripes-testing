@@ -216,6 +216,10 @@ export default {
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
+  scrollToFundDistributionSection() {
+    cy.get('[id="fundDistributionAccordion"]').scrollIntoView().should('be.visible');
+    cy.wait(1000);
+  },
   addFundDistribution({ fund, index, amount }) {
     this.clickAddFundDistributionButton();
     this.selectFundDistribution(fund, index);
@@ -223,6 +227,7 @@ export default {
     cy.wait(2000);
   },
   updateFundDistribution({ fund, index }) {
+    this.scrollToFundDistributionSection();
     this.selectFundDistribution(fund, index);
   },
   deleteFundDistribution({ index = 0 } = {}) {
@@ -246,13 +251,15 @@ export default {
     cy.do(SelectionList().filter(option));
   },
   selectDropDownValue(label, option, index = 0) {
+    cy.wait(1000); // Wait for elements to be ready
     cy.do([
       RepeatableFieldItem({ index })
         .find(Selection(including(label)))
         .open(),
-      SelectionList().filter(option),
-      SelectionList().select(including(option)),
     ]);
+    cy.wait(500); // Wait for dropdown to open
+    cy.do([SelectionList().filter(option), SelectionList().select(including(option))]);
+    cy.wait(500); // Wait for selection to complete
   },
   selectFundDistribution(fund, index) {
     this.selectDropDownValue('Fund ID', fund, index);
