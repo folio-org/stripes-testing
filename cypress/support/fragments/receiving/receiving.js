@@ -75,6 +75,7 @@ export default {
     this.expandActionsDropdown();
     cy.expect(Button('Export results (CSV)').is({ disabled: false }));
     cy.do(Button('Export results (CSV)').click());
+    cy.wait(2000);
     ExportSettingsModal.verifyModalView();
 
     return ExportSettingsModal;
