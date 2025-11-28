@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Permissions from '../../../../support/dictionary/permissions';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -42,9 +42,9 @@ describe('Inventory', () => {
           item: { barcode: uuid() },
         },
       };
-      const userPermissions = [
-        Permissions.inventoryAll.gui,
-        Permissions.uiInventoryUpdateOwnership.gui,
+      const capabilitySets = [
+        CapabilitySets.inventoryAll,
+        CapabilitySets.uiConsortiaInventoryUpdateOwnershipItem,
       ];
 
       before('Create test data', () => {
@@ -154,16 +154,19 @@ describe('Inventory', () => {
         cy.resetTenant();
 
         cy.getAdminToken();
-        cy.createTempUser(userPermissions).then((userProperties) => {
+        cy.createTempUser([]).then((userProperties) => {
           testData.user = userProperties;
 
-          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
-            cy.affiliateUserToTenant({
-              tenantId: affiliation,
-              userId: testData.user.userId,
-              permissions: userPermissions,
-            });
-          });
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabilitySets);
+
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabilitySets);
+          cy.resetTenant();
+          cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+          cy.setTenant(Affiliations.University);
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabilitySets);
+          cy.resetTenant();
 
           cy.login(testData.user.username, testData.user.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -215,7 +218,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692044  (consortia) (folijet)',
+        'C692044 Check "Update ownership" option with only call number in Item option menu (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C692044'] },
         () => {
           InstanceRecordView.openHoldingItem({

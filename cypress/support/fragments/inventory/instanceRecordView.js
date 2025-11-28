@@ -359,7 +359,7 @@ export default {
     if (shouldOpen) {
       cy.do(holdingsSection.clickHeader());
     }
-
+    cy.wait(2500);
     cy.do(
       holdingsSection
         .find(MultiColumnListCell({ columnIndex: 1, content: barcode }))

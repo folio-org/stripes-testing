@@ -45,6 +45,7 @@ describe('Inventory', () => {
       InstanceRecordEdit.waitLoading();
       InstanceRecordEdit.clickAddNoteButton(testData.instanceNoteType, testData.instanceNote);
       InstanceRecordEdit.saveAndClose();
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceRecordViewOpened();
       InstanceRecordView.verifyInstanceNote(testData.instanceNote);
     });
