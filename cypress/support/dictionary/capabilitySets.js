@@ -194,6 +194,11 @@ export default {
     resource: 'UI-Data-Import',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiConsortiaInventoryUpdateOwnershipItem: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Consortia Inventory Update-Ownership Item',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiConsortiaDataImportCentralRecordUpdate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Consortia Data-Import Central-Record-Update',

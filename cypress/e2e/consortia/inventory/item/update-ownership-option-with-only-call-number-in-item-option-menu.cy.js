@@ -215,7 +215,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692044  (consortia) (folijet)',
+        'C692044 Check "Update ownership" option with only call number in Item option menu (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C692044'] },
         () => {
           InstanceRecordView.openHoldingItem({

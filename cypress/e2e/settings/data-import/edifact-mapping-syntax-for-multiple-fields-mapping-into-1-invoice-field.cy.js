@@ -101,13 +101,6 @@ describe('Data Import', () => {
     ];
 
     before('Create test user and login', () => {
-      cy.getAdminToken();
-      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => {
-        if (id) {
-          cy.deleteInvoiceFromStorageViaApi(id);
-        }
-      });
-
       cy.createTempUser([
         Permissions.dataImportUploadAll.gui,
         Permissions.moduleDataImportEnabled.gui,
