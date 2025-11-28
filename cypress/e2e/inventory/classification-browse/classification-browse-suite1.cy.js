@@ -2,7 +2,10 @@ import { Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -2425,6 +2428,10 @@ describe('Inventory', () => {
       classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
       allBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
       allBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm,
+      lcBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,
+      lcBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[2].algorithm,
+      deweyBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
+      deweyBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
       callNumberTypeName: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
     };
     const instanceTitles = [
@@ -2449,6 +2456,212 @@ describe('Inventory', () => {
     before('Creating user and test data', () => {
       cy.getAdminToken();
       InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C468263');
+
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+        (createdUserProperties) => {
+          user = createdUserProperties;
+
+          cy.then(() => {
+            cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
+              instanceTypeId = instanceTypes[0].id;
+            });
+            cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then((res) => {
+              permanentLocationId = res.id;
+            });
+            cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
+              loanTypeId = loanTypes[0].id;
+            });
+            cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
+              materialTypeId = res.id;
+            });
+            cy.getHoldingTypes({ limit: 1, query: 'source=folio' }).then((holdingTypes) => {
+              holdingsTypeId = holdingTypes[0].id;
+            });
+            InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
+              callNumberTypeId = res.find((type) => type.name === testData.callNumberTypeName).id;
+            });
+          }).then(() => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId,
+                title: instanceTitles[0],
+                classifications: [
+                  {
+                    classificationNumber: classificationNumbers[0],
+                    classificationTypeId: testData.classificationTypeId,
+                  },
+                ],
+              },
+              holdings: [
+                {
+                  holdingsTypeId,
+                  permanentLocationId,
+                  callNumber: callNumbers[0],
+                  callNumberTypeId,
+                },
+              ],
+            }).then((specialInstanceIds) => {
+              instanceIds.push(specialInstanceIds.instanceId);
+            });
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId,
+                title: instanceTitles[1],
+                classifications: [
+                  {
+                    classificationNumber: classificationNumbers[1],
+                    classificationTypeId: testData.classificationTypeId,
+                  },
+                ],
+              },
+              holdings: [
+                {
+                  holdingsTypeId,
+                  permanentLocationId,
+                },
+              ],
+              items: [
+                {
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                  permanentLoanType: { id: loanTypeId },
+                  materialType: { id: materialTypeId },
+                  itemLevelCallNumber: callNumbers[1],
+                  itemLevelCallNumberTypeId: callNumberTypeId,
+                },
+              ],
+            }).then((specialInstanceIds) => {
+              instanceIds.push(specialInstanceIds.instanceId);
+            });
+          });
+        },
+      );
+    });
+
+    after('Deleting created user and test data', () => {
+      cy.getAdminToken();
+      // Reset LC browse option to default
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.lcBrowseId,
+        testData.lcBrowseAlgorithm,
+        [],
+      );
+      instanceIds.forEach((id) => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C468263 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Classification (all)" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C468263'] },
+      () => {
+        cy.getAdminToken();
+        // Reset "all" browse option to default
+        ClassificationBrowse.updateIdentifierTypesAPI(
+          testData.allBrowseId,
+          testData.allBrowseAlgorithm,
+          [],
+        );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
+        );
+        classificationNumbers.forEach((classificationNumber) => {
+          BrowseClassifications.waitForClassificationNumberToAppear(classificationNumber);
+        });
+
+        InventorySearchAndFilter.browseSearch(classificationNumbers[0]);
+        BrowseClassifications.verifySearchResultsTable();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[0]);
+        BrowseCallNumber.checkValuePresentInResults(classificationNumbers[0]);
+        callNumbers.forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+        });
+      },
+    );
+
+    it(
+      'C468264 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Library of Congress classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C468264'] },
+      () => {
+        cy.getAdminToken();
+        // Set LC browse option types
+        ClassificationBrowse.updateIdentifierTypesAPI(
+          testData.lcBrowseId,
+          testData.lcBrowseAlgorithm,
+          [testData.classificationTypeId],
+        );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
+        );
+        classificationNumbers.forEach((classificationNumber) => {
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            classificationNumber,
+            testData.lcBrowseId,
+          );
+        });
+
+        InventorySearchAndFilter.browseSearch(classificationNumbers[0]);
+        BrowseClassifications.verifySearchResultsTable();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[0]);
+        BrowseCallNumber.checkValuePresentInResults(classificationNumbers[0]);
+        callNumbers.forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+        });
+      },
+    );
+  });
+
+  describe('Instance classification browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const testData = {
+      instanceTitlePrefix: `AT_C468265_FolioInstance_${randomPostfix}`,
+      classificationNumberPrefix: `AT_C468265_ClassifNumber_${randomPostfix}`,
+      callNumberPrefix: `AT_C468265_CallNumber_${randomPostfix}`,
+      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+      deweyBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
+      deweyBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
+      callNumberTypeName: CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL,
+    };
+    const instanceTitles = [
+      `${testData.instanceTitlePrefix}_1`,
+      `${testData.instanceTitlePrefix}_2`,
+    ];
+    const classificationNumbers = [
+      `${testData.classificationNumberPrefix}_1`,
+      `${testData.classificationNumberPrefix}_2`,
+    ];
+    const callNumbers = [`${testData.callNumberPrefix}_1`, `${testData.callNumberPrefix}_2`];
+
+    const instanceIds = [];
+    let instanceTypeId;
+    let loanTypeId;
+    let permanentLocationId;
+    let materialTypeId;
+    let holdingsTypeId;
+    let callNumberTypeId;
+    let user;
+
+    before('Creating user and test data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C468265');
 
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
         (createdUserProperties) => {
@@ -2528,10 +2741,144 @@ describe('Inventory', () => {
               });
             })
             .then(() => {
-              // Reset "all" browse option to default
+              // Set Dewey browse option types
               ClassificationBrowse.updateIdentifierTypesAPI(
-                testData.allBrowseId,
-                testData.allBrowseAlgorithm,
+                testData.deweyBrowseId,
+                testData.deweyBrowseAlgorithm,
+                [testData.classificationTypeId],
+              );
+
+              cy.login(user.username, user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
+              });
+              InventorySearchAndFilter.switchToBrowseTab();
+              InventorySearchAndFilter.verifyCallNumberBrowsePane();
+            });
+        },
+      );
+    });
+
+    after('Deleting created user and test data', () => {
+      cy.getAdminToken();
+      // Reset Dewey browse option to default
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.deweyBrowseId,
+        testData.deweyBrowseAlgorithm,
+        [],
+      );
+
+      instanceIds.forEach((id) => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C468265 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Dewey Decimal classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C468265'] },
+      () => {
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+        );
+        classificationNumbers.forEach((classificationNumber) => {
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            classificationNumber,
+            testData.deweyBrowseId,
+          );
+        });
+
+        InventorySearchAndFilter.browseSearch(classificationNumbers[0]);
+        BrowseClassifications.verifySearchResultsTable();
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[0]);
+        BrowseCallNumber.checkValuePresentInResults(classificationNumbers[0]);
+        callNumbers.forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+        });
+      },
+    );
+  });
+
+  describe('Instance classification browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const randomDigits = randomFourDigitNumber();
+    const classificationNumberInfix = `594477${randomDigits}${randomDigits}`;
+    const testData = {
+      instanceTitlePrefix: `AT_C594477_FolioInstance_${randomPostfix}`,
+      classificationNumberPrefix: `Y 5.9/4:477.B123${classificationNumberInfix}`,
+      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+      browseId: defaultClassificationBrowseIdsAlgorithms[0].id, // "all"
+      browseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm, // "default"
+      numberOfInstances: 26,
+    };
+    const instanceTitles = Array.from(
+      { length: testData.numberOfInstances },
+      (_, index) => `${testData.instanceTitlePrefix}_${index}`,
+    );
+    const classificationNumbers = Array.from(
+      { length: testData.numberOfInstances },
+      (_, index) => `${testData.classificationNumberPrefix}${String(index).padStart(2, '0')}`,
+    );
+    const browseData = [
+      {
+        query: classificationNumbers.at(-1),
+        results: classificationNumbers.slice(-6),
+        isMatch: true,
+      },
+      { query: classificationNumbers.at(0), results: classificationNumbers, isMatch: true },
+      {
+        query: `${classificationNumbers.at(-1)}1`,
+        results: classificationNumbers.slice(-5),
+        isMatch: false,
+      },
+      {
+        query: testData.classificationNumberPrefix,
+        results: classificationNumbers,
+        isMatch: false,
+      },
+    ];
+
+    const instanceIds = [];
+    let instanceTypeId;
+    let user;
+
+    before('Creating user and test data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('AT_C594477');
+
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+        (createdUserProperties) => {
+          user = createdUserProperties;
+
+          cy.then(() => {
+            cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
+              instanceTypeId = instanceTypes[0].id;
+            });
+          })
+            .then(() => {
+              instanceTitles.forEach((instanceTitle, index) => {
+                InventoryInstances.createFolioInstanceViaApi({
+                  instance: {
+                    instanceTypeId,
+                    title: instanceTitle,
+                    classifications: [
+                      {
+                        classificationNumber: classificationNumbers[index],
+                        classificationTypeId: testData.classificationTypeId,
+                      },
+                    ],
+                  },
+                }).then((specialInstanceIds) => {
+                  instanceIds.push(specialInstanceIds.instanceId);
+                });
+              });
+            })
+            .then(() => {
+              // Reset "all" browse option types to default
+              ClassificationBrowse.updateIdentifierTypesAPI(
+                testData.browseId,
+                testData.browseAlgorithm,
                 [],
               );
 
@@ -2550,14 +2897,14 @@ describe('Inventory', () => {
     after('Deleting created user and test data', () => {
       cy.getAdminToken();
       instanceIds.forEach((id) => {
-        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+        InventoryInstance.deleteInstanceViaApi(id);
       });
       Users.deleteViaApi(user.userId);
     });
 
     it(
-      'C468263 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468263'] },
+      'C594477 Browse for classification which has (at least) 25 preceding classifications with the same first 10 characters using "Classification (all)" browse option - LC type (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C594477'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
@@ -2566,12 +2913,16 @@ describe('Inventory', () => {
           BrowseClassifications.waitForClassificationNumberToAppear(classificationNumber);
         });
 
-        InventorySearchAndFilter.browseSearch(classificationNumbers[0]);
-        BrowseClassifications.verifySearchResultsTable();
-        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[0]);
-        BrowseCallNumber.checkValuePresentInResults(classificationNumbers[0]);
-        callNumbers.forEach((callNumber) => {
-          BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+        browseData.forEach((browse) => {
+          InventorySearchAndFilter.browseSearch(browse.query);
+          if (browse.isMatch) {
+            BrowseClassifications.verifyValueInResultTableIsHighlighted(browse.query);
+          } else {
+            BrowseCallNumber.checkNonExactSearchResult(browse.query);
+          }
+          browse.results.forEach((classificationNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(classificationNumber);
+          });
         });
       },
     );
