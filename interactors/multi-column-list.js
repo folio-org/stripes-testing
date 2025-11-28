@@ -15,7 +15,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
   .filters({
     content,
     isContainer: (el) => /mclRowFormatterContainer/.test(el.className),
-    selected: (el) => el.className.match(/mclSelected/),
+    selected: (el) => !!el.className.match(/mclSelected/),
     cellCount: (el) => [...el.querySelectorAll('div[class*=mclCell-]')].length,
     index: (el) => parseInt(el.getAttribute('data-row-inner'), 10),
     // rowIndex filter is needed for cases when we don't have data-row-inner
@@ -58,6 +58,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     innerHTML: (el) => el.innerHTML,
     innerText: (el) => el.innerText,
     boldText: (el) => el.querySelector('b')?.innerText,
+    highlightedText: (el) => el.querySelector('mark')?.innerText,
   })
   .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 

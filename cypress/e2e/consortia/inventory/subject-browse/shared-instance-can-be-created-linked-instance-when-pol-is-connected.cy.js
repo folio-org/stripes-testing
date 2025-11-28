@@ -1,16 +1,16 @@
-import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import { NewOrder, Orders } from '../../../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
+import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {

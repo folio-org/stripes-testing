@@ -12,13 +12,17 @@ describe('fse-smtp', () => {
     () => {
       cy.getSmtpStatus().then((response) => {
         cy.expect(response.status).to.eq(200);
-        const smtpHost = response.body.smtpConfigurations[0].host;
-        cy.log('SMTP Host:', smtpHost);
-        // host should not be empty or contain 'disabled'
-        if (smtpHost) {
-          cy.expect(smtpHost).to.not.contain('disabled');
+        const smtpConfiguration = response.body.smtpConfigurations[0];
+
+        if (Cypress.env('CHECK_SMTP_ENABLED')) {
+          // when SMTP should be enabled, configuration must exist and host should not contain 'disabled'
+          cy.expect(smtpConfiguration.host).to.not.contain('disabled');
+        } else if (smtpConfiguration) {
+          // when SMTP check is not required, if configuration exists, check if it's disabled
+          cy.expect(smtpConfiguration.host).to.contain('disabled');
         } else {
-          throw new Error('SMTP host is empty');
+          // no SMTP configuration - acceptable when CHECK_SMTP_ENABLED is false
+          cy.log('SMTP host is not configured.');
         }
       });
     },

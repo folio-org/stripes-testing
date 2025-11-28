@@ -308,15 +308,8 @@ export default {
     cy.expect(Accordion().absent());
   },
 
-  selectRecordByTitle(title) {
-    cy.do(
-      MultiColumnListRow({
-        isContainer: true,
-        content: title,
-      })
-        .find(Link())
-        .click(),
-    );
+  selectRecordByTitle(subjectValue) {
+    cy.do(MultiColumnListCell(subjectValue).find(Link()).click());
   },
 
   checkSearchResultRecord(record) {
@@ -472,6 +465,20 @@ export default {
     });
   },
 
+  verifySubjectSourceDropdownOptions(sources) {
+    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectSource-multiselect' })).exists());
+    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).open());
+    cy.expect(MultiSelectMenu().exists());
+    cy.wait(2000);
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      sources.forEach((option) => {
+        cy.wrap(options).then(
+          (opts) => expect(opts.some((opt) => opt.includes(option))).to.be.true,
+        );
+      });
+    });
+  },
+
   clickOnAuthorityIcon(value) {
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen');
@@ -489,5 +496,14 @@ export default {
         cy.visit(openedUrl);
         cy.url().should('include', '/marc-authorities/authorities');
       });
+  },
+
+  verifyRowShownAsSelected(subjectValue) {
+    cy.expect(
+      MultiColumnListRow({
+        content: including(subjectValue),
+        selected: true,
+      }).exists(),
+    );
   },
 };

@@ -12,7 +12,9 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.expect(response.status).to.eq(200);
-        cy.expect(response.body.user.username).to.eq(Cypress.env('diku_login'));
+        cy.expect(response.body.user.username.toLowerCase()).to.eq(
+          Cypress.env('diku_login').toLowerCase(),
+        );
       });
     },
   );

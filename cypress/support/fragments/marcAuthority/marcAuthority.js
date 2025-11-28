@@ -185,25 +185,6 @@ const langOptions = {
   f: 'f - French only',
   '|': '| - No attempt to code',
 };
-const kindRecOptions = {
-  a: 'a - Established heading',
-  b: 'b - Untraced reference',
-  c: 'c - Traced reference',
-  d: 'd - Subdivision',
-  e: 'e - Node label',
-  f: 'f - Established heading and subdivision',
-  g: 'g - Reference and subdivision',
-  '|': '| - No attempt to code',
-};
-const catRulesOptions = {
-  a: 'a - Earlier rules',
-  b: 'b - AACR 1',
-  c: 'c - AACR 2',
-  d: 'd - AACR 2 compatible heading',
-  z: 'z - Other',
-  n: 'n - Not applicable',
-  '|': '| - No attempt to code',
-};
 
 export default {
   defaultAuthority,
@@ -307,14 +288,6 @@ export default {
   checkNotDeletableTags: (tag) => {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent());
   },
-  change008Field: (lang, kindrec, catrules) => {
-    cy.do([
-      Select('Lang').choose(langOptions[lang]),
-      Select('Kind rec').choose(kindRecOptions[kindrec]),
-      Select('CatRules').choose(catRulesOptions[catrules]),
-    ]);
-  },
-
   select008DropdownsIfOptionsExist(dropdownSelections, rowIndex = 3) {
     Object.entries(dropdownSelections).forEach(([label, value]) => {
       const selector = `select[name="records[${rowIndex}].content.${label}"]`;

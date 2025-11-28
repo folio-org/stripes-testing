@@ -170,6 +170,7 @@ export const ERROR_MESSAGES = {
   MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
   INVALID_MARC_RECORD:
     'Underlying MARC record contains invalid data and the record cannot be updated.',
+  MISSING_SRS_RECORD: 'SRS record associated with the instance is missing.',
   MULTIPLE_SRS_RECORDS_ASSOCIATED:
     'Multiple SRS records are associated with the instance. The following SRS have been identified:',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
@@ -1285,6 +1286,7 @@ export default {
   changeShowColumnCheckbox(...names) {
     names.forEach((name) => {
       cy.do(DropdownMenu().find(Checkbox(name)).click());
+      cy.wait(500);
     });
     cy.wait(500);
   },

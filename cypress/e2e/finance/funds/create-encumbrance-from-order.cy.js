@@ -54,7 +54,7 @@ describe('Transactions', () => {
       orderNumber = response.body.poNumber;
     });
     cy.createTempUser([
-      permissions.uiFinanceViewEditDeletFundBudget.gui,
+      permissions.uiFinanceViewEditDeleteFundBudget.gui,
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersView.gui,

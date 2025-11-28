@@ -47,7 +47,7 @@ describe('Funds', () => {
     Funds.getFundsViaApi({ query: `code="${defaultfund.code}"` }).then((body) => {
       Funds.deleteFundViaApi(body.funds[0].id);
     });
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

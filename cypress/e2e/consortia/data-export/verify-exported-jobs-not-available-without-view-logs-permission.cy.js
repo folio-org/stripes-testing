@@ -130,12 +130,12 @@ describe('Data Export', () => {
         ConsortiumManagerApp.chooseSettingsItem(settingsItems.dataExport);
         ConsortiumManagerApp.verifySelectedSettingIsDisplayed(settingsItems.dataExport);
         ConsortiumManagerApp.verifyMembersSelected(2);
-        ConsortiumManagerApp.verifySelectedMember(tenantNames.college);
+        ConsortiumManagerApp.verifySelectedMember(tenantNames.central);
         ConsortiumManagerApp.verifyListIsEmpty();
         ConsortiumManagerApp.checkMessage(permissionErrorMessage, calloutTypes.error);
 
         // Step 2: Select member tenant in "Member" dropdown
-        ConsortiumManagerApp.selectTenantFromDropdown(tenantNames.central);
+        ConsortiumManagerApp.selectTenantFromDropdown(tenantNames.college);
         ConsortiumManagerApp.verifyListIsEmpty();
         ConsortiumManagerApp.checkMessage(permissionErrorMessage, calloutTypes.error);
       },
