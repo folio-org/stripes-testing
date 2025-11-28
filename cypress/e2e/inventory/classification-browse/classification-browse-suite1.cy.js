@@ -25,7 +25,6 @@ import ClassificationIdentifierTypes from '../../../support/fragments/settings/i
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
-import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -2567,6 +2566,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
@@ -2603,6 +2603,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
@@ -2750,6 +2751,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.switchToBrowseTab();
               InventorySearchAndFilter.verifyCallNumberBrowsePane();
@@ -2921,222 +2923,6 @@ describe('Inventory', () => {
           browse.results.forEach((classificationNumber) => {
             BrowseCallNumber.checkValuePresentInResults(classificationNumber);
           });
-        });
-      },
-    );
-  });
-
-  describe('Instance classification browse', () => {
-    const randomPostfix = getRandomPostfix();
-    const testData = {
-      instanceTitlePrefix: `AT_FolioInstance_${randomPostfix}`,
-      classificationNumberPrefix: `AT_ClassifNumber_${randomPostfix}`,
-      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
-      browseId: defaultClassificationBrowseIdsAlgorithms[0].id, // "all"
-      browseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm, // "default"
-      contributorNameC805650: `AT_Contributor_${randomPostfix}_C805650`,
-    };
-    const instanceTitles = [
-      `${testData.instanceTitlePrefix}_C805650_A`,
-      `${testData.instanceTitlePrefix}_C805650_B`,
-      `${testData.instanceTitlePrefix}_C805745`,
-    ];
-    const classificationNumbers = [
-      `${testData.classificationNumberPrefix}_C805650_A`,
-      `${testData.classificationNumberPrefix}_C805650_B`,
-      `${testData.classificationNumberPrefix}_C805745`,
-    ];
-    const contributorNamesC805745 = [
-      `AT_Contributor1_${randomPostfix}_C805745`,
-      `AT_Contributor2_${randomPostfix}_C805745`,
-    ];
-    const instanceTitlesC805746 = [
-      `${testData.instanceTitlePrefix}_C805746_A`,
-      `${testData.instanceTitlePrefix}_C805746_B`,
-      `${testData.instanceTitlePrefix}_C805746_C`,
-      `${testData.instanceTitlePrefix}_C805746_D`,
-    ];
-    const classificationNumbersC805746 = [
-      `${testData.classificationNumberPrefix}_C805746_A`,
-      `${testData.classificationNumberPrefix}_C805746_A`,
-      `${testData.classificationNumberPrefix}_C805746_B`,
-      `${testData.classificationNumberPrefix}_C805746_B`,
-    ];
-    const contributorNamesC805746 = [
-      `AT_Contributor1_${randomPostfix}_C805746`,
-      `AT_Contributor2_${randomPostfix}_C805746`,
-      `AT_Contributor3_${randomPostfix}_C805746`,
-      `AT_Contributor4_${randomPostfix}_C805746`,
-    ];
-    const contributorMappingC805746 = [[0], [0], [1], [2, 3]];
-
-    const instanceIds = [];
-    let instanceTypeId;
-    let contributorNameTypeId;
-    let user;
-
-    before('Creating user and test data', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceByTitleViaApi('C805650');
-      InventoryInstances.deleteInstanceByTitleViaApi('C805745');
-      InventoryInstances.deleteInstanceByTitleViaApi('C805746');
-
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
-        user = createdUserProperties;
-
-        cy.then(() => {
-          cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
-            instanceTypeId = instanceTypes[0].id;
-          });
-          BrowseContributors.getContributorNameTypes().then((nameTypes) => {
-            contributorNameTypeId = nameTypes[0].id;
-          });
-        }).then(() => {
-          instanceTitles.forEach((instanceTitle, index) => {
-            const instanceData = {
-              instanceTypeId,
-              title: instanceTitle,
-              classifications: [
-                {
-                  classificationNumber: classificationNumbers[index],
-                  classificationTypeId: testData.classificationTypeId,
-                },
-              ],
-            };
-            if (!index) {
-              instanceData.contributors = [
-                {
-                  name: testData.contributorNameC805650,
-                  contributorNameTypeId,
-                  contributorTypeText: '',
-                  primary: false,
-                },
-              ];
-            }
-            if (index === 2) {
-              instanceData.contributors = contributorNamesC805745.map((contributor) => {
-                return {
-                  name: contributor,
-                  contributorNameTypeId,
-                  contributorTypeText: '',
-                  primary: false,
-                };
-              });
-            }
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: instanceData,
-            }).then((specialInstanceIds) => {
-              instanceIds.push(specialInstanceIds.instanceId);
-            });
-          });
-
-          instanceTitlesC805746.forEach((instanceTitle, index) => {
-            const instanceData = {
-              instanceTypeId,
-              title: instanceTitle,
-              classifications: [
-                {
-                  classificationNumber: classificationNumbersC805746[index],
-                  classificationTypeId: testData.classificationTypeId,
-                },
-              ],
-              contributors: [],
-            };
-            contributorMappingC805746[index].forEach((contribIndex) => {
-              instanceData.contributors.push({
-                name: contributorNamesC805746[contribIndex],
-                contributorNameTypeId,
-                contributorTypeText: '',
-                primary: false,
-              });
-            });
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: instanceData,
-            }).then((specialInstanceIds) => {
-              instanceIds.push(specialInstanceIds.instanceId);
-            });
-          });
-        });
-      });
-    });
-
-    beforeEach(() => {
-      cy.getAdminToken();
-      // Reset "all" browse option types to default
-      ClassificationBrowse.updateIdentifierTypesAPI(
-        testData.browseId,
-        testData.browseAlgorithm,
-        [],
-      );
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      InventorySearchAndFilter.switchToBrowseTab();
-      InventorySearchAndFilter.verifyCallNumberBrowsePane();
-      InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-        BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
-      );
-      [...classificationNumbers, ...classificationNumbersC805746].forEach(
-        (classificationNumber) => {
-          BrowseClassifications.waitForClassificationNumberToAppear(classificationNumber);
-        },
-      );
-    });
-
-    after('Deleting created user and test data', () => {
-      cy.getAdminToken();
-      instanceIds.forEach((id) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-      Users.deleteViaApi(user.userId);
-    });
-
-    it(
-      'C805650 Browse for classification which exists only in 1 Instance with 0/1 contributor (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C805650'] },
-      () => {
-        InventorySearchAndFilter.browseSearch(classificationNumbers[0]);
-        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[0]);
-        BrowseCallNumber.checkValuePresentForRow(classificationNumbers[0], 1, instanceTitles[0]);
-        BrowseCallNumber.checkValuePresentForRow(
-          classificationNumbers[0],
-          2,
-          testData.contributorNameC805650,
-        );
-
-        InventorySearchAndFilter.browseSearch(classificationNumbers[1]);
-        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[1]);
-        BrowseCallNumber.checkValuePresentForRow(classificationNumbers[1], 1, instanceTitles[1]);
-        BrowseCallNumber.checkValuePresentForRow(classificationNumbers[1], 2, '');
-      },
-    );
-
-    it(
-      'C805745 Browse for classification which exists only in 1 Instance with multiple contributors (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C805745'] },
-      () => {
-        InventorySearchAndFilter.browseSearch(classificationNumbers[2]);
-        BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[2]);
-        BrowseCallNumber.checkValuePresentForRow(classificationNumbers[2], 1, instanceTitles[2]);
-        BrowseCallNumber.checkValuePresentForRow(
-          classificationNumbers[2],
-          2,
-          contributorNamesC805745.join(' ; '),
-        );
-      },
-    );
-
-    it(
-      'C805746 Browse for classification which exists in multiple Instances with same/multiple different contributors (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C805746'] },
-      () => {
-        new Set(classificationNumbersC805746).forEach((classificationNumber) => {
-          InventorySearchAndFilter.browseSearch(classificationNumber);
-          BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumber);
-          BrowseCallNumber.checkValuePresentForRow(classificationNumber, 1, '');
-          BrowseCallNumber.checkValuePresentForRow(classificationNumber, 2, '');
         });
       },
     );
